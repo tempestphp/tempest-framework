@@ -1,0 +1,23 @@
+{
+  "require": {
+    "php": "^8.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.2",
+    "larapack/dd": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tempest\\": "src/",
+      "App\\": "app/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Tempest\\": "tests/"
+    }
+  }
+}
