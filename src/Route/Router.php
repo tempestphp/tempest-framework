@@ -46,9 +46,9 @@ final class Router implements \Tempest\Interfaces\Router
         return $this;
     }
 
-    public function dispatch(Method $method, string $uri): Response
+    public function dispatch(Request $request): Response
     {
-        $actionsForMethod = $this->routes[$method->value] ?? null;
+        $actionsForMethod = $this->routes[$request->method->value] ?? null;
 
         if (! $actionsForMethod) {
             return Response::notFound();
@@ -58,7 +58,7 @@ final class Router implements \Tempest\Interfaces\Router
         $matchedAction = null;
 
         foreach ($actionsForMethod as $pattern => $action) {
-            $routeParams = $this->resolveParams($pattern, $uri);
+            $routeParams = $this->resolveParams($pattern, $request->uri);
 
             if ($routeParams !== null) {
                 $matchedAction = $action;

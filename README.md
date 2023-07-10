@@ -1,8 +1,7 @@
-![](/.github/tempest-xs.png)
+![](/.github/tempest-logo-sm.png)
 
 ## Todo
 
 - [ ] Requests
 - [ ] Request Validation
 - [ ] DB Data Mapping
-- [ ] 

@@ -2,7 +2,7 @@
 
 namespace Tests\Tempest\Route;
 use App\Controllers\TestController;
-use Tempest\Route\Method;
+use Tempest\Route\Request;
 use Tempest\Route\Router;
 use Tempest\Route\Status;
 use Tests\Tempest\TestCase;
@@ -14,7 +14,7 @@ class RouterTest extends TestCase
     {
         $router = $this->container->get(Router::class);
 
-        $response = $router->dispatch(Method::GET, '/test');
+        $response = $router->dispatch(Request::get('/test'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
         $this->assertEquals('test', $response->body);
@@ -25,7 +25,7 @@ class RouterTest extends TestCase
     {
         $router = $this->container->get(Router::class);
 
-        $response = $router->dispatch(Method::GET, '/test/1/a');
+        $response = $router->dispatch(Request::get('/test/1/a'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
         $this->assertEquals('1a', $response->body);
@@ -45,7 +45,7 @@ class RouterTest extends TestCase
     {
         $router = $this->container->get(Router::class);
 
-        $response = $router->dispatch(Method::GET, '/view');
+        $response = $router->dispatch(Request::get('/view'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
 

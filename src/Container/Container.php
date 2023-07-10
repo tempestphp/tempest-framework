@@ -91,7 +91,7 @@ final class Container implements \Tempest\Interfaces\Container
                 throw new Exception("Initializers must be callable, {$initializerClassName} is not.");
             }
 
-            return $initializer();
+            return $initializer($this);
         }
 
         $parameters = array_map(
