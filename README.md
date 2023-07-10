@@ -1,8 +1,4 @@
-<p align="center">
-
-![](/.github/tempest-small.png)
-
-</p>
+![](/.github/tempest-xs.png)
 
 ## Todo
 
