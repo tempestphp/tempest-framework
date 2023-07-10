@@ -3,9 +3,10 @@
 namespace Tempest\Route;
 
 use Tempest\Container\InitializedBy;
+use Tempest\Interfaces\Server;
 
 #[InitializedBy(ServerInitializer::class)]
-final readonly class Server implements \Tempest\Interfaces\Server
+final readonly class GenericServer implements Server
 {
     public function __construct(
         private Method $method,

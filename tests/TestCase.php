@@ -2,7 +2,8 @@
 
 namespace Tests\Tempest;
 
-use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
+use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Server;
 use Tempest\Kernel;
 use Tempest\Route\Method;

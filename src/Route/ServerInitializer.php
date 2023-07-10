@@ -7,9 +7,9 @@ use Tempest\Interfaces\Server as ServerInterface;
 
 final readonly class ServerInitializer
 {
-    public function __invoke(Container $container): Server
+    public function __invoke(Container $container): GenericServer
     {
-        $server = new Server(
+        $server = new GenericServer(
             method: Method::from($_SERVER['REQUEST_METHOD']),
             uri: $_SERVER['REQUEST_URI'],
             body: [],

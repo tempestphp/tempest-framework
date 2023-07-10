@@ -2,14 +2,18 @@
 
 namespace Tempest;
 
-use Tempest\Container\Container;
-use Tempest\Interfaces\Container as ContainerInterface;
-use Tempest\Interfaces\Router as RouterInterface;
-use Tempest\Route\Router;
+use Tempest\Container\GenericContainer;
+use Tempest\Interfaces\Container;
+use Tempest\Interfaces\Request;
+use Tempest\Interfaces\Router;
+use Tempest\Interfaces\Server;
+use Tempest\Route\GenericRequest;
+use Tempest\Route\GenericRouter;
+use Tempest\Route\RequestResolver;
 
 final readonly class Kernel
 {
-    public function init(string $rootDirectory): ContainerInterface
+    public function init(string $rootDirectory): Container
     {
         $container = $this->registerContainer();
 
@@ -20,17 +24,19 @@ final readonly class Kernel
 
     public function registerContainer(): Container
     {
-        $container = new Container();
+        $container = new GenericContainer();
 
         $container
             ->singleton(Kernel::class, fn() => $this)
-            ->singleton(ContainerInterface::class, fn() => $container)
-            ->singleton(RouterInterface::class, fn(ContainerInterface $container) => $container->get(Router::class));
+            ->singleton(Container::class, fn() => $container)
+            ->singleton(Router::class, fn(Container $container) => $container->get(GenericRouter::class))
+            ->addResolver(new RequestResolver())
+        ;
 
         return $container;
     }
 
-    private function initConfig(string $rootDirectory, ContainerInterface $container): void
+    private function initConfig(string $rootDirectory, Container $container): void
     {
         $configFiles = glob(path($rootDirectory, 'Config/**.php'));
 

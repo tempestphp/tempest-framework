@@ -2,7 +2,7 @@
 
 namespace Tests\Tempest\Container;
 
-use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\InitializedBy;
 
@@ -11,7 +11,7 @@ class ContainerTest extends TestCase
     /** @test */
     public function get_with_autowire()
     {
-        $container = new Container();
+        $container = new GenericContainer();
 
         $b = $container->get(ContainerObjectB::class);
 
@@ -22,7 +22,7 @@ class ContainerTest extends TestCase
     /** @test */
     public function get_with_definition()
     {
-        $container = new Container();
+        $container = new GenericContainer();
 
         $container->register(
             ContainerObjectC::class,
@@ -37,7 +37,7 @@ class ContainerTest extends TestCase
     /** @test */
     public function get_with_initializer()
     {
-        $container = new Container();
+        $container = new GenericContainer();
 
         $d = $container->get(ContainerObjectD::class);
 
@@ -47,7 +47,7 @@ class ContainerTest extends TestCase
     /** @test */
     public function test_singleton()
     {
-        $container = new Container();
+        $container = new GenericContainer();
 
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
 

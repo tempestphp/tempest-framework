@@ -5,12 +5,14 @@ namespace Tempest\Route;
 use ReflectionAttribute;
 use ReflectionClass;
 use Tempest\AppConfig;
-use Tempest\Container\Container;
 use Tempest\Container\InitializedBy;
+use Tempest\Interfaces\Container;
+use Tempest\Interfaces\Request;
+use Tempest\Interfaces\Router;
 use Tempest\Interfaces\View;
 
 #[InitializedBy(RouteInitializer::class)]
-final class Router implements \Tempest\Interfaces\Router
+final class GenericRouter implements Router
 {
     public function __construct(
         private readonly Container $container,
@@ -74,7 +76,9 @@ final class Router implements \Tempest\Interfaces\Router
 
         $controller = $this->container->get($controllerClass);
 
-        return $this->createResponse($controller->{$controllerMethod}(...$routeParams));
+        return $this->createResponse(
+            $this->container->call($controller, $controllerMethod, ...$routeParams)
+        );
     }
 
     public function toUri(
@@ -106,7 +110,7 @@ final class Router implements \Tempest\Interfaces\Router
         if ($pattern === $uri) {
             return [];
         }
-
+        
         $result = preg_match_all('/\{\w+}/', $pattern, $tokens);
 
         if (! $result) {

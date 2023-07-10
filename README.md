@@ -5,3 +5,4 @@
 - [ ] Requests
 - [ ] Request Validation
 - [ ] DB Data Mapping
+- [ ] Events

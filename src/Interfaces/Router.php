@@ -2,7 +2,7 @@
 
 namespace Tempest\Interfaces;
 
-use Tempest\Route\Request;
+use Tempest\Route\GenericRequest;
 use Tempest\Route\Response;
 use Tempest\Route\Route;
 

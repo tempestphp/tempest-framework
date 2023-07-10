@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Modules\Home;
 
 use Tempest\Route\Get;
 

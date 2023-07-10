@@ -3,7 +3,7 @@
 namespace Tempest\Route;
 
 use Tempest\AppConfig;
-use Tempest\Container\Container;
+use Tempest\Interfaces\Container;
 
 final readonly class RouteInitializer
 {
@@ -13,9 +13,9 @@ final readonly class RouteInitializer
         private AppConfig $appConfig,
     ) {}
 
-    public function __invoke(): Router
+    public function __invoke(): GenericRouter
     {
-        $router = new Router(
+        $router = new GenericRouter(
             container: $this->container,
             appConfig: $this->appConfig,
         );

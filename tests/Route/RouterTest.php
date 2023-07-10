@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Route;
 use App\Controllers\TestController;
-use Tempest\Route\Request;
-use Tempest\Route\Router;
+use Tempest\Route\GenericRequest;
+use Tempest\Route\GenericRouter;
 use Tempest\Route\Status;
 use Tests\Tempest\TestCase;
 
@@ -12,9 +12,9 @@ class RouterTest extends TestCase
     /** @test */
     public function test_dispatch()
     {
-        $router = $this->container->get(Router::class);
+        $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(Request::get('/test'));
+        $response = $router->dispatch(GenericRequest::get('/test'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
         $this->assertEquals('test', $response->body);
@@ -23,9 +23,9 @@ class RouterTest extends TestCase
     /** @test */
     public function test_dispatch_with_parameter()
     {
-        $router = $this->container->get(Router::class);
+        $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(Request::get('/test/1/a'));
+        $response = $router->dispatch(GenericRequest::get('/test/1/a'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
         $this->assertEquals('1a', $response->body);
@@ -34,7 +34,7 @@ class RouterTest extends TestCase
     /** @test */
     public function test_generate_uri()
     {
-        $router = $this->container->get(Router::class);
+        $router = $this->container->get(GenericRouter::class);
 
         $this->assertEquals('/test/1/a', $router->toUri(TestController::class, method: 'withParams', id: 1, name: 'a'));
         $this->assertEquals('/test', $router->toUri(TestController::class));
@@ -43,9 +43,9 @@ class RouterTest extends TestCase
     /** @test */
     public function test_with_view()
     {
-        $router = $this->container->get(Router::class);
+        $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(Request::get('/view'));
+        $response = $router->dispatch(GenericRequest::get('/view'));
 
         $this->assertEquals(Status::HTTP_200, $response->status);
 

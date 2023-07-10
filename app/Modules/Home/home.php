@@ -1,5 +1,5 @@
 <?php
-/** @var \App\Views\HomeView $this */
+/** @var \App\Modules\Home\HomeView $this */
 
 $this->extends = 'Views/base.php';
 ?>

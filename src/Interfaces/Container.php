@@ -16,4 +16,8 @@ interface Container
      * @return TClassName
      */
     public function get(string $className): object;
+
+    public function call(object $object, string $methodName, mixed ...$params): mixed;
+
+    public function addResolver(Resolver $resolver): self;
 }

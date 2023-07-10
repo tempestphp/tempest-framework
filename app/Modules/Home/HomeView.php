@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Views;
+namespace App\Modules\Home;
 
 use Tempest\Interfaces\View;
 use Tempest\View\BaseView;
@@ -12,6 +12,6 @@ final class HomeView implements View
     public function __construct(
         public string $name,
     ) {
-        $this->path = 'Views/home.php';
+        $this->path = 'Modules/Home/home.php';
     }
 }

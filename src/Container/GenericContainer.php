@@ -5,13 +5,18 @@ namespace Tempest\Container;
 use Exception;
 use ReflectionClass;
 use ReflectionParameter;
+use Tempest\Interfaces\Container;
+use Tempest\Interfaces\Resolver;
 use Throwable;
 
-final class Container implements \Tempest\Interfaces\Container
+final class GenericContainer implements Container
 {
     private array $definitions = [];
 
     private array $singletons = [];
+
+    /** @var Resolver[] */
+    private array $resolvers = [];
 
     public function register(string $className, callable $definition): self
     {
@@ -23,7 +28,7 @@ final class Container implements \Tempest\Interfaces\Container
     public function singleton(string $className, callable $definition): self
     {
         $this->definitions[$className] = function () use ($definition, $className) {
-            $instance = $definition();
+            $instance = $definition($this);
 
             $this->singletons[$className] = $instance;
 
@@ -35,16 +40,11 @@ final class Container implements \Tempest\Interfaces\Container
 
     public function config(object $config): self
     {
-        $this->singleton($config::class, fn () => $config);
+        $this->singleton($config::class, fn() => $config);
 
         return $this;
     }
 
-    /**
-     * @template TClassName
-     * @param class-string<TClassName> $className
-     * @return TClassName
-     */
     public function get(string $className): object
     {
         $log = new ContainerLog();
@@ -59,12 +59,46 @@ final class Container implements \Tempest\Interfaces\Container
         }
     }
 
+    public function call(object $object, string $methodName, ...$params): mixed
+    {
+        $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
+
+        foreach ($reflectionMethod->getParameters() as $parameter) {
+            $className = $parameter->getName();
+
+            if (array_key_exists($className, $params)) {
+                continue;
+            }
+
+            $params[$className] = $this->get($parameter->getType()->getName());
+        }
+
+        return $object->{$methodName}(...$params);
+    }
+
+    public function addResolver(Resolver $resolver): Container
+    {
+        $this->resolvers[] = $resolver;
+
+        return $this;
+    }
+
     private function resolve(string $className, ContainerLog $log): object
     {
         if ($instance = $this->singletons[$className] ?? null) {
             $log->add($className);
 
             return $instance;
+        }
+
+        foreach ($this->resolvers as $resolver) {
+            if ($resolver->canResolve($className)) {
+                $log
+                    ->add($resolver::class)
+                    ->add($className);
+
+                return $resolver->resolve($className, $this);
+            }
         }
 
         $definition = $this->definitions[$className] ?? null;

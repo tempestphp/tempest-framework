@@ -2,10 +2,7 @@
 
 namespace Tempest\Route;
 
-use Tempest\Container\InitializedBy;
-
-#[InitializedBy(RequestInitializer::class)]
-final readonly class Request
+trait BaseRequest
 {
     private function __construct(
         public Method $method,
@@ -42,5 +39,30 @@ final readonly class Request
     public static function post(string $uri, array $body = []): self
     {
         return self::new(Method::POST, $uri, $body);
+    }
+
+    public function getMethod(): Method
+    {
+        return $this->method;
+    }
+
+    public function getUri(): string
+    {
+        return $this->uri;
+    }
+
+    public function getBody(): array
+    {
+        return $this->body;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getQuery(): ?string
+    {
+        return $this->query;
     }
 }
