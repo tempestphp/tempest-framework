@@ -4,7 +4,8 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^10.2",
-    "larapack/dd": "^1.1"
+    "larapack/dd": "^1.1",
+    "phpstan/phpstan": "^1.10"
   },
   "autoload": {
     "psr-4": {
@@ -19,5 +20,8 @@
     "psr-4": {
       "Tests\\Tempest\\": "tests/"
     }
+  },
+  "scripts": {
+    "phpstan": "vendor/bin/phpstan analyse src tests app"
   }
 }

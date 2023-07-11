@@ -17,6 +17,7 @@ trait BaseView
         ...$params,
     ): self
     {
+        /** @phpstan-ignore-next-line */
         $template = new self();
 
         $template->path = $templatePath;
