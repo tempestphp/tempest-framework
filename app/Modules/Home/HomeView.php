@@ -10,7 +10,7 @@ final class HomeView implements View
     use BaseView;
 
     public function __construct(
-        public string $name,
+        public readonly string $name,
     ) {
         $this->path = 'Modules/Home/home.php';
     }
