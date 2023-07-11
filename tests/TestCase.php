@@ -25,6 +25,11 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->container->singleton(Server::class, fn() => new TestServer());
     }
 
+    protected function tearDown(): void
+    {
+//        $this->kernel->end();
+    }
+
     protected function server(
         Method $method = Method::GET,
         string $uri = '/',
