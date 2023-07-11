@@ -3,11 +3,12 @@
 namespace Tempest\Http;
 
 use Tempest\Interfaces\Container;
+use Tempest\Interfaces\Initializer;
 use Tempest\Interfaces\Server as ServerInterface;
 
-final readonly class ServerInitializer
+final readonly class ServerInitializer implements Initializer
 {
-    public function __invoke(Container $container): GenericServer
+    public function initialize(string $className, Container $container): GenericServer
     {
         $server = new GenericServer(
             method: Method::from($_SERVER['REQUEST_METHOD']),

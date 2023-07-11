@@ -5,6 +5,8 @@ namespace Tests\Tempest\Container;
 use Tempest\Container\GenericContainer;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\InitializedBy;
+use Tempest\Interfaces\Container;
+use Tempest\Interfaces\Initializer;
 
 class ContainerTest extends TestCase
 {
@@ -81,9 +83,9 @@ class ContainerObjectD
     public function __construct(public string $prop) {}
 }
 
-class ContainerObjectDInitializer
+class ContainerObjectDInitializer implements Initializer
 {
-    public function __invoke(): ContainerObjectD
+    public function initialize(string $className, Container $container): ContainerObjectD
     {
         return new ContainerObjectD(prop: 'test');
     }

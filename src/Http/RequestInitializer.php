@@ -3,20 +3,20 @@
 namespace Tempest\Http;
 
 use Tempest\Interfaces\Container;
+use Tempest\Interfaces\MatchingInitializer;
 use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Resolver;
 use Tempest\Interfaces\Server;
 
-final readonly class RequestResolver implements Resolver
+final readonly class RequestInitializer implements MatchingInitializer
 {
-    public function canResolve(string $className): bool 
+    public function canInitialize(string $className): bool
     {
         $interface = class_implements($className)[Request::class] ?? null;
         
         return $interface !== null;
     }
 
-    public function resolve(string $className, Container $container): Request
+    public function initialize(string $className, Container $container): Request
     {
         $server = $container->get(Server::class);
 

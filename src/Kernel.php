@@ -11,7 +11,7 @@ use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Discoverer;
 use Tempest\Interfaces\Router;
 use Tempest\Http\GenericRouter;
-use Tempest\Http\RequestResolver;
+use Tempest\Http\RequestInitializer;
 use Throwable;
 
 final readonly class Kernel
@@ -38,7 +38,7 @@ final readonly class Kernel
             ->singleton(Kernel::class, fn() => $this)
             ->singleton(Container::class, fn() => $container)
             ->singleton(Router::class, fn(Container $container) => $container->get(GenericRouter::class))
-            ->addResolver(new RequestResolver());
+            ->addInitializer(new RequestInitializer());
 
         return $container;
     }

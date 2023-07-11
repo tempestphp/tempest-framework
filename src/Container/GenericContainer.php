@@ -6,7 +6,8 @@ use Exception;
 use ReflectionClass;
 use ReflectionParameter;
 use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Resolver;
+use Tempest\Interfaces\Initializer;
+use Tempest\Interfaces\MatchingInitializer;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -15,8 +16,8 @@ final class GenericContainer implements Container
 
     private array $singletons = [];
 
-    /** @var Resolver[] */
-    private array $resolvers = [];
+    /** @var MatchingInitializer[] */
+    private array $initializers = [];
 
     public function register(string $className, callable $definition): self
     {
@@ -80,23 +81,37 @@ final class GenericContainer implements Container
         return $object->{$methodName}(...$params);
     }
 
-    public function addResolver(Resolver $resolver): Container
+    public function addInitializer(MatchingInitializer $initializer): Container
     {
-        $this->resolvers[] = $resolver;
+        $this->initializers[] = $initializer;
 
         return $this;
     }
 
     private function resolve(string $className, ContainerLog $log): object
     {
-        foreach ($this->resolvers as $resolver) {
-            if ($resolver->canResolve($className)) {
+        foreach ($this->initializers as $initializer) {
+            if ($initializer->canInitialize($className)) {
                 $log
-                    ->add($resolver::class)
+                    ->add($initializer::class)
                     ->add($className);
 
-                return $resolver->resolve($className, $this);
+                return $initializer->initialize($className, $this);
             }
+        }
+
+        $reflectionClass = new ReflectionClass($className);
+
+        if ($initializedBy = ($reflectionClass->getAttributes(InitializedBy::class)[0] ?? null)) {
+            $initializerClassName = $initializedBy->newInstance()->className;
+
+            $initializer = $this->get($initializerClassName);
+
+            if (! $initializer instanceof Initializer) {
+                throw new Exception("Initializers must be implement Initializer, {$initializerClassName} does not.");
+            }
+
+            return $initializer->initialize($className, $this);
         }
 
         $definition = $this->definitions[$className] ?? null;
@@ -107,30 +122,16 @@ final class GenericContainer implements Container
 
         $log->add($className);
 
-        return $this->autowire($className, $log);
+        return $this->autowire($reflectionClass, $log);
     }
 
-    private function autowire(string $className, ContainerLog $log): object
+    private function autowire(ReflectionClass $reflectionClass, ContainerLog $log): object
     {
-        $reflection = new ReflectionClass($className);
-
-        if ($initializedBy = ($reflection->getAttributes(InitializedBy::class)[0] ?? null)) {
-            $initializerClassName = $initializedBy->newInstance()->className;
-
-            $initializer = $this->get($initializerClassName);
-
-            if (! is_callable($initializer)) {
-                throw new Exception("Initializers must be callable, {$initializerClassName} is not.");
-            }
-
-            return $initializer($this);
-        }
-
         $parameters = array_map(
             fn(ReflectionParameter $parameter) => $this->resolve($parameter->getType()->getName(), $log),
-            $reflection->getConstructor()?->getParameters() ?? [],
+            $reflectionClass->getConstructor()?->getParameters() ?? [],
         );
 
-        return new $className(...$parameters);
+        return $reflectionClass->newInstance(...$parameters);
     }
 }
