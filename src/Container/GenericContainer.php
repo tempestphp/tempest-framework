@@ -47,6 +47,10 @@ final class GenericContainer implements Container
 
     public function get(string $className): object
     {
+        if ($instance = $this->singletons[$className] ?? null) {
+            return $instance;
+        }
+
         $log = new ContainerLog();
 
         try {
@@ -85,12 +89,6 @@ final class GenericContainer implements Container
 
     private function resolve(string $className, ContainerLog $log): object
     {
-        if ($instance = $this->singletons[$className] ?? null) {
-            $log->add($className);
-
-            return $instance;
-        }
-
         foreach ($this->resolvers as $resolver) {
             if ($resolver->canResolve($className)) {
                 $log
