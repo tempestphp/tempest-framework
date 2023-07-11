@@ -2,7 +2,7 @@
 
 namespace Tempest\Interfaces;
 
-use Tempest\Route\Method;
+use Tempest\Http\Method;
 
 interface Request
 {

@@ -2,9 +2,9 @@
 
 namespace Tempest\Interfaces;
 
-use Tempest\Route\GenericRequest;
-use Tempest\Route\Response;
-use Tempest\Route\Route;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Response;
+use Tempest\Http\Route;
 
 interface Router
 {

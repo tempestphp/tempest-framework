@@ -7,9 +7,9 @@ use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Router;
 use Tempest\Interfaces\Server;
-use Tempest\Route\GenericRequest;
-use Tempest\Route\GenericRouter;
-use Tempest\Route\RequestResolver;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\GenericRouter;
+use Tempest\Http\RequestResolver;
 
 final readonly class Kernel
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Route;
+namespace Tempest\Http;
 
 use Tempest\Container\InitializedBy;
 use Tempest\Interfaces\Server;

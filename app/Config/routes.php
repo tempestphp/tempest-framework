@@ -3,7 +3,7 @@
 use App\Controllers\TestController;
 use App\Modules\Home\HomeController;
 use App\Modules\Posts\PostController;
-use Tempest\Route\RouteConfig;
+use Tempest\Http\RouteConfig;
 
 return new RouteConfig(
     controllers: [

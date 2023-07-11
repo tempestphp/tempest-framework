@@ -3,7 +3,7 @@
 namespace Tests\Tempest;
 
 use Tempest\Interfaces\Server;
-use Tempest\Route\Method;
+use Tempest\Http\Method;
 
 final readonly class TestServer implements Server
 {

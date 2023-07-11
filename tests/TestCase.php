@@ -6,7 +6,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Server;
 use Tempest\Kernel;
-use Tempest\Route\Method;
+use Tempest\Http\Method;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {

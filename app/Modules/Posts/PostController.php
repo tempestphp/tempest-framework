@@ -2,8 +2,8 @@
 
 namespace App\Modules\Posts;
 
-use Tempest\Route\Post;
-use Tempest\Route\Response;
+use Tempest\Http\Post;
+use Tempest\Http\Response;
 
 final readonly class PostController
 {

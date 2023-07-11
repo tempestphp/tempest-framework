@@ -2,9 +2,9 @@
 
 namespace Tests\Tempest\Route;
 use App\Controllers\TestController;
-use Tempest\Route\GenericRequest;
-use Tempest\Route\GenericRouter;
-use Tempest\Route\Status;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\GenericRouter;
+use Tempest\Http\Status;
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase

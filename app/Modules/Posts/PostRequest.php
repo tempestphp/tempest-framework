@@ -3,7 +3,7 @@
 namespace App\Modules\Posts;
 
 use Tempest\Interfaces\Request;
-use Tempest\Route\BaseRequest;
+use Tempest\Http\BaseRequest;
 
 final class PostRequest implements Request
 {

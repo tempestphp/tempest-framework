@@ -4,9 +4,9 @@ namespace Tests\Tempest\Route;
 
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Router;
-use Tempest\Route\Method;
-use Tempest\Route\GenericRequest;
-use Tempest\Route\Status;
+use Tempest\Http\Method;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Status;
 use Tests\Tempest\TestCase;
 
 class RequestTest extends TestCase
@@ -20,8 +20,7 @@ class RequestTest extends TestCase
             body: ['test'],
         );
 
-        /** @var GenericRequest $request */
-        $request = $this->container->get(Request::class);
+        $request = $this->container->get(GenericRequest::class);
 
         $this->assertEquals(Method::POST, $request->method);
         $this->assertEquals('/test', $request->uri);

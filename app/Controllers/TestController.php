@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use Tempest\Route\Get;
-use Tempest\Route\Response;
+use Tempest\Http\Get;
+use Tempest\Http\Response;
 use Tempest\View\GenericView;
 
 final readonly class TestController

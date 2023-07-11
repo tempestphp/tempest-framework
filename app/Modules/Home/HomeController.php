@@ -2,7 +2,7 @@
 
 namespace App\Modules\Home;
 
-use Tempest\Route\Get;
+use Tempest\Http\Get;
 
 final readonly class HomeController
 {
