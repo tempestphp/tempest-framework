@@ -7,5 +7,7 @@ use Tempest\Http\Get;
 final readonly class HomeController
 {
     #[Get(uri: '/')]
-    public function __invoke() {}
+    public function __invoke()
+    {
+    }
 }

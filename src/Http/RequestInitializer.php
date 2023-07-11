@@ -12,7 +12,7 @@ final readonly class RequestInitializer implements MatchingInitializer
     public function canInitialize(string $className): bool
     {
         $interface = class_implements($className)[Request::class] ?? null;
-        
+
         return $interface !== null;
     }
 

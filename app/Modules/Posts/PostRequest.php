@@ -2,8 +2,8 @@
 
 namespace App\Modules\Posts;
 
-use Tempest\Interfaces\Request;
 use Tempest\Http\BaseRequest;
+use Tempest\Interfaces\Request;
 
 final class PostRequest implements Request
 {

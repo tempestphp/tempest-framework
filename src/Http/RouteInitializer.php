@@ -12,7 +12,8 @@ final readonly class RouteInitializer implements Initializer
         private Container $container,
         private RouteConfig $routeConfig,
         private AppConfig $appConfig,
-    ) {}
+    ) {
+    }
 
     public function initialize(string $className, Container $container): GenericRouter
     {

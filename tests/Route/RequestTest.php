@@ -2,11 +2,10 @@
 
 namespace Tests\Tempest\Route;
 
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Router;
-use Tempest\Http\Method;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
 use Tempest\Http\Status;
+use Tempest\Interfaces\Router;
 use Tests\Tempest\TestCase;
 
 class RequestTest extends TestCase

@@ -6,7 +6,8 @@ final class ContainerLog
 {
     public function __construct(
         private array $lines = [],
-    ) {}
+    ) {
+    }
 
     public function add(string $item): self
     {

@@ -12,7 +12,8 @@ final readonly class GenericServer implements Server
         private Method $method,
         private string $uri,
         private array $body,
-    ) {}
+    ) {
+    }
 
     public function getMethod(): Method
     {

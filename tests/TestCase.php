@@ -2,11 +2,10 @@
 
 namespace Tests\Tempest;
 
-use Tempest\Container\GenericContainer;
+use Tempest\Http\Method;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Server;
 use Tempest\Kernel;
-use Tempest\Http\Method;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -22,12 +21,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $this->container = $this->kernel->init(__DIR__ . '/../app');
 
-        $this->container->singleton(Server::class, fn() => new TestServer());
+        $this->container->singleton(Server::class, fn () => new TestServer());
     }
 
     protected function tearDown(): void
     {
-//        $this->kernel->end();
+        //        $this->kernel->end();
     }
 
     protected function server(
@@ -41,7 +40,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             body: $body,
         );
 
-        $this->container->singleton(Server::class, fn() => $server);
+        $this->container->singleton(Server::class, fn () => $server);
 
         return $server;
     }

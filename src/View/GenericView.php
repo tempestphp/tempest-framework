@@ -8,5 +8,7 @@ final class GenericView implements View
 {
     use BaseView;
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 }

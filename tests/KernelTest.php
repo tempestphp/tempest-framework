@@ -8,7 +8,7 @@ use Tempest\Kernel;
 class KernelTest extends \PHPUnit\Framework\TestCase
 {
     /** @test */
-    public function test_discovery() 
+    public function test_discovery()
     {
         $kernel = new Kernel();
 

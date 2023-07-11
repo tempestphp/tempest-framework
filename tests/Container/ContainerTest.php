@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Container;
 
-use Tempest\Container\GenericContainer;
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\GenericContainer;
 use Tempest\Container\InitializedBy;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
@@ -28,7 +28,7 @@ class ContainerTest extends TestCase
 
         $container->register(
             ContainerObjectC::class,
-            fn() => new ContainerObjectC(prop: 'test'),
+            fn () => new ContainerObjectC(prop: 'test'),
         );
 
         $c = $container->get(ContainerObjectC::class);
@@ -69,18 +69,24 @@ class ContainerObjectA
 
 class ContainerObjectB
 {
-    public function __construct(public ContainerObjectA $a) {}
+    public function __construct(public ContainerObjectA $a)
+    {
+    }
 }
 
 class ContainerObjectC
 {
-    public function __construct(public string $prop) {}
+    public function __construct(public string $prop)
+    {
+    }
 }
 
 #[InitializedBy(ContainerObjectDInitializer::class)]
 class ContainerObjectD
 {
-    public function __construct(public string $prop) {}
+    public function __construct(public string $prop)
+    {
+    }
 }
 
 class ContainerObjectDInitializer implements Initializer

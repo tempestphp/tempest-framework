@@ -7,7 +7,8 @@ final readonly class Response
     public function __construct(
         public Status $status,
         public string $body = '',
-    ) {}
+    ) {
+    }
 
     public static function notFound(): self
     {

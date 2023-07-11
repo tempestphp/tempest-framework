@@ -7,11 +7,11 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\Container\GenericContainer;
 use Tempest\Discovery\ControllerDiscoverer;
+use Tempest\Http\GenericRouter;
+use Tempest\Http\RequestInitializer;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Discoverer;
 use Tempest\Interfaces\Router;
-use Tempest\Http\GenericRouter;
-use Tempest\Http\RequestInitializer;
 use Throwable;
 
 final readonly class Kernel
@@ -19,8 +19,7 @@ final readonly class Kernel
     public function init(
         string $rootDirectory = '/app',
         string $rootNamespace = 'App\\',
-    ): Container
-    {
+    ): Container {
         $container = $this->initContainer();
 
         $this->initConfig($rootDirectory, $container);
@@ -35,9 +34,9 @@ final readonly class Kernel
         $container = new GenericContainer();
 
         $container
-            ->singleton(Kernel::class, fn() => $this)
-            ->singleton(Container::class, fn() => $container)
-            ->singleton(Router::class, fn(Container $container) => $container->get(GenericRouter::class))
+            ->singleton(Kernel::class, fn () => $this)
+            ->singleton(Container::class, fn () => $container)
+            ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
             ->addInitializer(new RequestInitializer());
 
         return $container;
@@ -58,8 +57,7 @@ final readonly class Kernel
         string $rootDirectory,
         string $rootNamespace,
         Container $container,
-    ): void
-    {
+    ): void {
         $directories = new RecursiveDirectoryIterator($rootDirectory);
 
         $files = new RecursiveIteratorIterator($directories);

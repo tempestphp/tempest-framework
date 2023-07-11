@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest;
 
-use Tempest\Interfaces\Server;
 use Tempest\Http\Method;
+use Tempest\Interfaces\Server;
 
 final readonly class TestServer implements Server
 {
@@ -11,7 +11,8 @@ final readonly class TestServer implements Server
         private Method $method = Method::GET,
         private string $uri = '/',
         private array $body = [],
-    ) {}
+    ) {
+    }
 
     public function getMethod(): Method
     {

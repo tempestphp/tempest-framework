@@ -15,8 +15,7 @@ trait BaseView
     public static function new(
         string $templatePath,
         ...$params,
-    ): self
-    {
+    ): self {
         /** @phpstan-ignore-next-line */
         $template = new self();
 

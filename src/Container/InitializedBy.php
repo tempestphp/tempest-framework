@@ -9,5 +9,6 @@ final readonly class InitializedBy
 {
     public function __construct(
         public string $className,
-    ) {}
+    ) {
+    }
 }

@@ -41,7 +41,7 @@ final class GenericContainer implements Container
 
     public function config(object $config): self
     {
-        $this->singleton($config::class, fn() => $config);
+        $this->singleton($config::class, fn () => $config);
 
         return $this;
     }
@@ -128,7 +128,7 @@ final class GenericContainer implements Container
     private function autowire(ReflectionClass $reflectionClass, ContainerLog $log): object
     {
         $parameters = array_map(
-            fn(ReflectionParameter $parameter) => $this->resolve($parameter->getType()->getName(), $log),
+            fn (ReflectionParameter $parameter) => $this->resolve($parameter->getType()->getName(), $log),
             $reflectionClass->getConstructor()?->getParameters() ?? [],
         );
 

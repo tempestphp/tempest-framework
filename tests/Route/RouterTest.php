@@ -1,6 +1,7 @@
 <?php
 
 namespace Tests\Tempest\Route;
+
 use App\Controllers\TestController;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericRouter;
