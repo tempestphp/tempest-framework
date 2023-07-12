@@ -7,6 +7,7 @@ trait BaseResponse
     public function __construct(
         private Status $status,
         private string $body = '',
+        private array $headers = [],
     ) {
     }
 
@@ -18,6 +19,18 @@ trait BaseResponse
     public function getBody(): string
     {
         return $this->body;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function header(string $key, string $value): self
+    {
+        $this->headers[$key] = $value;
+
+        return $this;
     }
 
     public function body(string $body): self

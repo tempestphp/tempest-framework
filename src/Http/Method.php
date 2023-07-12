@@ -4,6 +4,6 @@ namespace Tempest\Http;
 
 enum Method: string
 {
-    case GET = 'get';
-    case POST = 'post';
+    case GET = 'GET';
+    case POST = 'POST';
 }

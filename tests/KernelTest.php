@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest;
 
+use Tempest\Application\Kernel;
 use Tempest\Http\RouteConfig;
-use Tempest\Kernel;
 
 class KernelTest extends \PHPUnit\Framework\TestCase
 {

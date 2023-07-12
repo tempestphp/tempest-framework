@@ -83,7 +83,7 @@ final class GenericContainer implements Container
 
     public function addInitializer(CanInitialize $initializer): Container
     {
-        $this->initializers[] = $initializer;
+        $this->initializers = [$initializer, ...$this->initializers];
 
         return $this;
     }

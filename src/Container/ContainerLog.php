@@ -2,6 +2,8 @@
 
 namespace Tempest\Container;
 
+use _PHPStan_690619d82\Nette\Neon\Exception;
+
 final class ContainerLog
 {
     public function __construct(
@@ -11,6 +13,10 @@ final class ContainerLog
 
     public function add(string $item): self
     {
+        if (in_array($item, $this->lines)) {
+            throw new Exception("Circular dependency on {$item}!");
+        }
+
         $this->lines[] = $item;
 
         return $this;

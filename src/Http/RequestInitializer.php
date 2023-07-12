@@ -13,12 +13,16 @@ final readonly class RequestInitializer implements CanInitialize
     {
         $interface = class_implements($className)[Request::class] ?? null;
 
-        return $interface !== null;
+        return $interface !== null || $className === Request::class;
     }
 
     public function initialize(string $className, Container $container): Request
     {
         $server = $container->get(Server::class);
+
+        if ($className === Request::class) {
+            $className = GenericRequest::class;
+        }
 
         /** @var Request $request */
         $request = new $className(

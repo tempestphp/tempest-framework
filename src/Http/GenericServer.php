@@ -2,10 +2,8 @@
 
 namespace Tempest\Http;
 
-use Tempest\Container\InitializedBy;
 use Tempest\Interfaces\Server;
 
-#[InitializedBy(ServerInitializer::class)]
 final readonly class GenericServer implements Server
 {
     public function __construct(

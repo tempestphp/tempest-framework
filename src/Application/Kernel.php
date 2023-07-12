@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest;
+namespace Tempest\Application;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -9,6 +9,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\Discovery\ControllerDiscoverer;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
+use Tempest\Http\ServerInitializer;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Discoverer;
 use Tempest\Interfaces\Router;
@@ -37,7 +38,9 @@ final readonly class Kernel
             ->singleton(Kernel::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
-            ->addInitializer(new RequestInitializer());
+            ->addInitializer(new ServerInitializer())
+            ->addInitializer(new RequestInitializer())
+        ;
 
         return $container;
     }

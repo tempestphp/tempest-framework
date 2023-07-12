@@ -2,21 +2,27 @@
 
 namespace Tempest\Http;
 
+use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
-use Tempest\Interfaces\Server as ServerInterface;
+use Tempest\Interfaces\Server;
 
-final readonly class ServerInitializer implements Initializer
+final readonly class ServerInitializer implements Initializer, CanInitialize
 {
+    public function canInitialize(string $className): bool
+    {
+        return $className === Server::class;
+    }
+
     public function initialize(string $className, Container $container): GenericServer
     {
         $server = new GenericServer(
-            method: Method::from($_SERVER['REQUEST_METHOD']),
-            uri: $_SERVER['REQUEST_URI'],
+            method: Method::tryFrom($_SERVER['REQUEST_METHOD']) ?? Method::GET,
+            uri: $_SERVER['REQUEST_URI'] ?? '/',
             body: [],
         );
 
-        $container->singleton(ServerInterface::class, fn () => $server);
+        $container->singleton(Server::class, fn () => $server);
 
         return $server;
     }

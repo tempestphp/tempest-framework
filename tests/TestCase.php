@@ -2,10 +2,9 @@
 
 namespace Tests\Tempest;
 
+use Tempest\Application\Kernel;
 use Tempest\Http\Method;
 use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Server;
-use Tempest\Kernel;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -21,22 +20,18 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $this->container = $this->kernel->init(__DIR__ . '/../app');
 
-        $this->container->singleton(Server::class, fn () => new TestServer());
+        $this->container->addInitializer(new TestServerInitializer());
     }
 
     protected function server(
         Method $method = Method::GET,
         string $uri = '/',
         array $body = [],
-    ): Server {
-        $server = new TestServer(
+    ): void {
+        $this->container->addInitializer(new TestServerInitializer(
             method: $method,
             uri: $uri,
             body: $body,
-        );
-
-        $this->container->singleton(Server::class, fn () => $server);
-
-        return $server;
+        ));
     }
 }

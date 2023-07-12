@@ -2,6 +2,7 @@
 
 namespace Tempest\Http;
 
+use Exception;
 use ReflectionAttribute;
 use ReflectionClass;
 use Tempest\AppConfig;
@@ -79,9 +80,13 @@ final class GenericRouter implements Router
 
         $controller = $this->container->get($controllerClass);
 
-        return $this->createResponse(
-            $this->container->call($controller, $controllerMethod, ...$routeParams)
-        );
+        $outputFromController = $this->container->call($controller, $controllerMethod, ...$routeParams);
+
+        if ($outputFromController === null) {
+            throw new Exception("{$controllerClass}::{$controllerMethod}() did not return anything");
+        }
+
+        return $this->createResponse($outputFromController);
     }
 
     public function toUri(
