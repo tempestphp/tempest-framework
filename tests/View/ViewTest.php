@@ -45,7 +45,7 @@ HTML;
 
         $expected = <<<HTML
 
-Hello Brent, 2020-01-01
+ViewModel Brent, 2020-01-01
 HTML;
 
         $this->assertEquals($expected, $renderedView->contents);

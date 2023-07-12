@@ -68,6 +68,17 @@ final readonly class Kernel
         ];
 
         foreach ($files as $file) {
+            $fileName = pathinfo($file, PATHINFO_FILENAME);
+
+            if (
+                $fileName === ''
+                || $fileName === '.'
+                || $fileName === '..'
+                || ucfirst($fileName) !== $fileName
+            ) {
+                continue;
+            }
+
             $className = str_replace(
                 [$rootDirectory, '/', '.php', '\\\\'],
                 [$rootNamespace, '\\', '', '\\'],

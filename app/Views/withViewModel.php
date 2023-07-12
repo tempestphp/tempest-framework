@@ -2,4 +2,4 @@
 /** @var \App\Views\ViewModel $this */
 ?>
 
-Hello <?= $this->name ?>, <?= $this->currentDate() ?>
+ViewModel <?= $this->name ?>, <?= $this->currentDate() ?>

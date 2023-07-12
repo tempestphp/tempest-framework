@@ -42,9 +42,7 @@ trait BaseView
         $path = path($appConfig->rootPath, $this->path);
 
         ob_start();
-
-        require $path;
-
+        include $path;
         $contents = ob_get_clean();
 
         if ($this->extends) {
