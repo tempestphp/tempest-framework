@@ -9,14 +9,22 @@ use Tempest\Interfaces\Router;
 final readonly class HttpApplication implements Application
 {
     public function __construct(
-        private Request $request,
-        private Router $router,
+        private string $rootDirectory,
+        private string $rootNamespace = 'App\\',
     ) {
     }
 
     public function run(): void
     {
-        $response = $this->router->dispatch($this->request);
+        $container = (new Kernel())->init(
+            $this->rootDirectory,
+            $this->rootNamespace,
+        );
+
+        $router = $container->get(Router::class);
+        $request = $container->get(Request::class);
+
+        $response = $router->dispatch($request);
 
         ob_start();
 

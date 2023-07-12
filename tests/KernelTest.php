@@ -12,7 +12,7 @@ class KernelTest extends \PHPUnit\Framework\TestCase
     {
         $kernel = new Kernel();
 
-        $container = $kernel->init(__DIR__ . '/../app/');
+        $container = $kernel->init(__DIR__ . '/../app/', 'App\\');
 
         $config = $container->get(RouteConfig::class);
 

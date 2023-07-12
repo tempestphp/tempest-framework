@@ -18,8 +18,8 @@ use Throwable;
 final readonly class Kernel
 {
     public function init(
-        string $rootDirectory = '/app',
-        string $rootNamespace = 'App\\',
+        string $rootDirectory,
+        string $rootNamespace,
     ): Container {
         $container = $this->initContainer();
 

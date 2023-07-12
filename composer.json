@@ -27,8 +27,8 @@
     "csfixer": "vendor/bin/php-cs-fixer fix",
     "phpstan": "vendor/bin/phpstan analyse src tests app",
     "qa": [
-      "composer phpunit",
       "composer phpstan",
+      "composer phpunit",
       "composer csfixer"
     ]
   }

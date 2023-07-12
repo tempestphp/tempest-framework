@@ -18,7 +18,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $this->kernel = new Kernel();
 
-        $this->container = $this->kernel->init(__DIR__ . '/../app');
+        $this->container = $this->kernel->init(
+            __DIR__ . '/../app',
+            'App\\',
+        );
 
         $this->container->addInitializer(new TestServerInitializer());
     }

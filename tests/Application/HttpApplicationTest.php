@@ -10,9 +10,11 @@ class HttpApplicationTest extends TestCase
     /** @test */
     public function test_run()
     {
-        $app = $this->container->get(HttpApplication::class);
+        $app = new HttpApplication(__DIR__ . '/../../app');
 
+        ob_start(fn () => null);
         $app->run();
+        ob_end_clean();
 
         $this->assertTrue(true);
     }
