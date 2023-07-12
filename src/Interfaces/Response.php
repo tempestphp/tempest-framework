@@ -17,4 +17,8 @@ interface Response
     public function ok(): self;
 
     public function notFound(): self;
+
+    public function redirect(string $to): self;
+
+    public function status(Status $status): self;
 }

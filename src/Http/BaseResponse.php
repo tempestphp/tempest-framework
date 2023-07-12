@@ -53,4 +53,18 @@ trait BaseResponse
 
         return $this;
     }
+
+    public function status(Status $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function redirect(string $to): self
+    {
+        return $this
+            ->header('Location', $to)
+            ->status(Status::HTTP_302);
+    }
 }

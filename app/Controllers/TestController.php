@@ -27,4 +27,10 @@ final readonly class TestController
             name: 'Brent',
         );
     }
+
+    #[Get(uri: '/redirect')]
+    public function redirect(): Response
+    {
+        return response()->redirect('/');
+    }
 }
