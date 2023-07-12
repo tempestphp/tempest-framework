@@ -49,7 +49,7 @@ The base view, in turn, can look like this, where `$this->slot` is the content f
 
 ### View Models
 
-By using the `view()` helper function in controllers, you'll use the `GenericView` implementation provided by Tempest.
+Calling the `view()` helper function in controllers means you'll use the `GenericView` implementation provided by Tempest.
 
 Many views however might benefit by using a dedicated class — a View Model. View Models will provide improved static insights both in your controllers and view files, and will allow you to expose custom methods to your views.
 

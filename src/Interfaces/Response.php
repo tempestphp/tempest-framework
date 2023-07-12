@@ -9,4 +9,10 @@ interface Response
     public function getStatus(): Status;
 
     public function getBody(): string;
+
+    public function body(string $body): self;
+
+    public function ok(): self;
+
+    public function notFound(): self;
 }

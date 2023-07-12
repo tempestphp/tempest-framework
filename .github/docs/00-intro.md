@@ -5,4 +5,3 @@ To ensure simplicity, Tempest encourages a very flat class-structure: all framew
 Here are some examples of what code looks like in Tempest.
 
 Your average controller using a custom view class — a View Model:
-

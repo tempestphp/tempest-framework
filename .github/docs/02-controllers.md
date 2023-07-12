@@ -6,7 +6,7 @@ final readonly class HomeController
     #[Get(uri: '/home')]
     public function __invoke(): Response
     {
-        return Response::ok();
+        return response()->ok();
     }
 }
 ```
@@ -21,7 +21,7 @@ final readonly class BlogPostController
     {
         // …
         
-        return Response::redirect(route(BlogPostController::class, 'show', id: $id)) 
+        return response()->redirect(uri(BlogPostController::class, 'show', id: $id)) 
     }
 }
 ```
@@ -50,7 +50,7 @@ final readonly class BlogPostController
     {
         // …
         
-        return Response::redirect(route(BlogPostController::class, 'show', id: $id)) 
+        return response()->redirect(uri(BlogPostController::class, 'show', id: $id)) 
     }
 }
 ```
