@@ -19,5 +19,5 @@ interface Container
 
     public function call(object $object, string $methodName, mixed ...$params): mixed;
 
-    public function addInitializer(MatchingInitializer $initializer): self;
+    public function addInitializer(CanInitialize $initializer): self;
 }

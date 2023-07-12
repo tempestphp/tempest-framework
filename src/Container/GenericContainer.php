@@ -5,9 +5,9 @@ namespace Tempest\Container;
 use Exception;
 use ReflectionClass;
 use ReflectionParameter;
+use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
-use Tempest\Interfaces\MatchingInitializer;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -16,7 +16,7 @@ final class GenericContainer implements Container
 
     private array $singletons = [];
 
-    /** @var MatchingInitializer[] */
+    /** @var CanInitialize[] */
     private array $initializers = [];
 
     public function register(string $className, callable $definition): self
@@ -81,7 +81,7 @@ final class GenericContainer implements Container
         return $object->{$methodName}(...$params);
     }
 
-    public function addInitializer(MatchingInitializer $initializer): Container
+    public function addInitializer(CanInitialize $initializer): Container
     {
         $this->initializers[] = $initializer;
 

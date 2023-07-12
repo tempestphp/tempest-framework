@@ -2,12 +2,12 @@
 
 namespace Tempest\Http;
 
+use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
-use Tempest\Interfaces\MatchingInitializer;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Server;
 
-final readonly class RequestInitializer implements MatchingInitializer
+final readonly class RequestInitializer implements CanInitialize
 {
     public function canInitialize(string $className): bool
     {

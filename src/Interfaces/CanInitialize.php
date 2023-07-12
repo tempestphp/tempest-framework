@@ -2,7 +2,7 @@
 
 namespace Tempest\Interfaces;
 
-interface MatchingInitializer extends Initializer
+interface CanInitialize extends Initializer
 {
     public function canInitialize(string $className): bool;
 }
