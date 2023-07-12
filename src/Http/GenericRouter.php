@@ -8,6 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Container\InitializedBy;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Request;
+use Tempest\Interfaces\Response;
 use Tempest\Interfaces\Router;
 use Tempest\Interfaces\View;
 
@@ -54,7 +55,7 @@ final class GenericRouter implements Router
         $actionsForMethod = $this->routes[$request->method->value] ?? null;
 
         if (! $actionsForMethod) {
-            return Response::notFound();
+            return response()->notFound();
         }
 
         $routeParams = null;
@@ -71,7 +72,7 @@ final class GenericRouter implements Router
         }
 
         if ($routeParams === null) {
-            return Response::notFound();
+            return response()->notFound();
         }
 
         [$controllerClass, $controllerMethod] = $matchedAction;
@@ -149,7 +150,7 @@ final class GenericRouter implements Router
     private function createResponse(Response|View $input): Response
     {
         if ($input instanceof View) {
-            return Response::ok($input->render($this->appConfig)->contents);
+            return response($input->render($this->appConfig)->contents);
         }
 
         return $input;

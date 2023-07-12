@@ -2,7 +2,6 @@
 
 namespace Tempest\Interfaces;
 
-use Tempest\Http\Response;
 use Tempest\Http\Route;
 
 interface Router

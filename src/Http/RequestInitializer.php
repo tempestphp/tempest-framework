@@ -21,11 +21,11 @@ final readonly class RequestInitializer implements MatchingInitializer
         $server = $container->get(Server::class);
 
         /** @var Request $request */
-        $request = call_user_func_array("{$className}::new", [
-            'method' => $server->getMethod(),
-            'uri' => $server->getUri(),
-            'body' => $server->getBody(),
-        ]);
+        $request = new $className(
+            method: $server->getMethod(),
+            uri: $server->getUri(),
+            body: $server->getBody(),
+        );
 
         foreach ($request->getBody() as $key => $value) {
             if (property_exists($request, $key)) {

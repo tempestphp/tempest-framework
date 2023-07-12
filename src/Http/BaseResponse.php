@@ -2,7 +2,7 @@
 
 namespace Tempest\Http;
 
-final readonly class Response
+trait BaseResponse
 {
     public function __construct(
         private Status $status,
@@ -20,13 +20,24 @@ final readonly class Response
         return $this->body;
     }
 
-    public static function notFound(): self
+    public function body(string $body): self
     {
-        return new self(Status::HTTP_404);
+        $this->body = $body;
+
+        return $this;
     }
 
-    public static function ok(string $body = ''): self
+    public function ok(): self
     {
-        return new self(Status::HTTP_200, $body);
+        $this->status = Status::HTTP_200;
+
+        return $this;
+    }
+
+    public function notFound(): self
+    {
+        $this->status = Status::HTTP_404;
+
+        return $this;
     }
 }

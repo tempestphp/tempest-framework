@@ -4,41 +4,34 @@ namespace Tempest\Http;
 
 trait BaseRequest
 {
-    private function __construct(
+    public string $path;
+    public ?string $query = null;
+
+    public function __construct(
         public Method $method,
         public string $uri,
         public array $body,
-        public string $path,
-        public ?string $query = null,
     ) {
-    }
-
-    public static function new(
-        Method $method,
-        string $uri,
-        array $body = []
-    ): self {
         $decodedUri = rawurldecode($uri);
-
         $parsedUrl = parse_url($decodedUri);
 
-        return new self(
-            method: $method,
-            uri: $decodedUri,
-            body: $body,
-            path: $parsedUrl['path'],
-            query: $parsedUrl['query'] ?? null,
-        );
+        $this->path = $parsedUrl['path'];
+        $this->query = $parsedUrl['query'] ?? null;
     }
 
-    public static function get(string $uri): self
+    public function get(): self
     {
-        return self::new(Method::GET, $uri);
+        $this->method = Method::GET;
+
+        return $this;
     }
 
-    public static function post(string $uri, array $body = []): self
+    public function post(?array $body = null): self
     {
-        return self::new(Method::POST, $uri, $body);
+        $this->method = Method::POST;
+        $this->body = $body ?? $this->body;
+
+        return $this;
     }
 
     public function getMethod(): Method

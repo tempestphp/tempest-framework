@@ -3,28 +3,27 @@
 namespace App\Controllers;
 
 use Tempest\Http\Get;
-use Tempest\Http\Response;
-use Tempest\View\GenericView;
+use Tempest\Interfaces\Response;
+use Tempest\Interfaces\View;
 
 final readonly class TestController
 {
     #[Get(uri: '/test/{id}/{name}')]
     public function withParams(int $id, string $name): Response
     {
-        return Response::ok($id . $name);
+        return response($id . $name);
     }
 
     #[Get(uri: '/test')]
     public function __invoke(): Response
     {
-        return Response::ok('test');
+        return response('test');
     }
 
     #[Get(uri: '/view')]
-    public function withView(): GenericView
+    public function withView(): View
     {
-        return GenericView::new(
-            'Views/overview.php',
+        return view('Views/overview.php')->data(
             name: 'Brent',
         );
     }
