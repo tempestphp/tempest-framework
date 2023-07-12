@@ -44,7 +44,7 @@ class RequestTest extends TestCase
 
         $response = $router->dispatch(GenericRequest::post('/create-post', $body));
 
-        $this->assertEquals(Status::HTTP_200, $response->status);
-        $this->assertEquals('test-title test-text', $response->body);
+        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals('test-title test-text', $response->getBody());
     }
 }

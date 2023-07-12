@@ -5,9 +5,19 @@ namespace Tempest\Http;
 final readonly class Response
 {
     public function __construct(
-        public Status $status,
-        public string $body = '',
+        private Status $status,
+        private string $body = '',
     ) {
+    }
+
+    public function getStatus(): Status
+    {
+        return $this->status;
+    }
+
+    public function getBody(): string
+    {
+        return $this->body;
     }
 
     public static function notFound(): self
