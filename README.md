@@ -6,6 +6,7 @@ Tempest is an MVC micro framework that gets out of your way.
 
 - [ ] Response::redirect()
 - [ ] `uri` helper
+- [ ] include in views
 - [ ] Request Validation
 - [ ] DB Data Mapping
 - [ ] Events
