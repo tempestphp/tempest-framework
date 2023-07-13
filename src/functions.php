@@ -22,7 +22,7 @@ function path(string ...$parts): string
 
 function view(string $path): View
 {
-    return GenericView::new($path);
+    return new GenericView($path);
 }
 
 function request(string $uri, array $body = []): Request

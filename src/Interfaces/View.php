@@ -3,11 +3,14 @@
 namespace Tempest\Interfaces;
 
 use Tempest\AppConfig;
-use Tempest\View\RenderedView;
 
 interface View
 {
-    public function render(AppConfig $appConfig): RenderedView;
+    public function render(AppConfig $appConfig): string;
 
     public function data(...$params): self;
+
+    public function extends(string $path, ...$params): self;
+
+    public function raw(string $name): ?string;
 }

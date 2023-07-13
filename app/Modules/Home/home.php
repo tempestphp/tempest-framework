@@ -1,7 +1,7 @@
 <?php
 /** @var \App\Modules\Home\HomeView $this */
 
-$this->extends = 'Views/base.php';
+$this->extendsPath = 'Views/base.php';
 ?>
 
 Hello, <?= $this->name ?>

@@ -1,6 +1,6 @@
 <?php
 /** @var \Tempest\View\GenericView $this */
-$this->extends = 'Views/index.php';
+$this->extendsPath = 'Views/index.php';
 ?>
 
 Hello <?= $this->name ?? 'World' ?>!

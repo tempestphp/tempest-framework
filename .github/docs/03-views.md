@@ -27,7 +27,7 @@ You can extend from other views like so:
 // View/home.php
 
 /** @var \Tempest\View\GenericView $this */ 
-$this->extends = 'View/base.php';
+$this->extendsPath = 'View/base.php';
 ?>
 
 Hello, <?= $this->name ?>
@@ -89,7 +89,7 @@ Its view file would look like this:
 <?php
 /** @var \App\Modules\Home\HomeView $this */
 
-$this->extends = 'Views/base.php';
+$this->extendsPath = 'Views/base.php';
 ?>
 
 Hello, <?= $this->name ?>

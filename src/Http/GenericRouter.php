@@ -155,7 +155,7 @@ final class GenericRouter implements Router
     private function createResponse(Response|View $input): Response
     {
         if ($input instanceof View) {
-            return response($input->render($this->appConfig)->contents);
+            return response($input->render($this->appConfig));
         }
 
         return $input;
