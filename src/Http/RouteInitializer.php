@@ -5,6 +5,7 @@ namespace Tempest\Http;
 use Tempest\AppConfig;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
+use Tempest\Interfaces\Router;
 
 final readonly class RouteInitializer implements Initializer
 {
@@ -25,6 +26,8 @@ final readonly class RouteInitializer implements Initializer
         foreach ($this->routeConfig->controllers as $controller) {
             $router->registerController($controller);
         }
+
+        $this->container->singleton(Router::class, fn () => $router);
 
         return $router;
     }
