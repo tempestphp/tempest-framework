@@ -26,6 +26,13 @@ trait BaseView
         return $this->params[$name] ?? null;
     }
 
+    public function path(string $path): self
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
     public function data(...$params): self
     {
         $this->rawParams = [...$this->rawParams, ...$params];

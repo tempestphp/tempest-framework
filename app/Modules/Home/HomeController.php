@@ -3,13 +3,15 @@
 namespace App\Modules\Home;
 
 use Tempest\Http\Get;
-use Tempest\Interfaces\Response;
+use Tempest\Interfaces\View;
 
 final readonly class HomeController
 {
     #[Get(uri: '/')]
-    public function __invoke(): Response
+    public function __invoke(): View
     {
-        return response('Hello!');
+        return new HomeView(
+            name: 'Brent',
+        );
     }
 }
