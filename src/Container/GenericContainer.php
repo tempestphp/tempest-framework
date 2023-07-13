@@ -90,11 +90,11 @@ final class GenericContainer implements Container
 
     private function resolve(string $className, ContainerLog $log): object
     {
+        $log->add($className);
+
         foreach ($this->initializers as $initializer) {
             if ($initializer->canInitialize($className)) {
-                $log
-                    ->add($initializer::class)
-                    ->add($className);
+                $log->add($initializer::class);
 
                 return $initializer->initialize($className, $this);
             }
@@ -119,8 +119,6 @@ final class GenericContainer implements Container
         if ($definition) {
             return $definition($this);
         }
-
-        $log->add($className);
 
         return $this->autowire($reflectionClass, $log);
     }
