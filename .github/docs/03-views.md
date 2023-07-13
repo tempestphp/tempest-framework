@@ -20,6 +20,8 @@ final readonly class HomeController
 }
 ```
 
+### Extending views
+
 You can extend from other views like so:
 
 ```php
@@ -27,13 +29,19 @@ You can extend from other views like so:
 // View/home.php
 
 /** @var \Tempest\View\GenericView $this */ 
-$this->extendsPath = 'View/base.php';
+$this->extends('View/base.php');
 ?>
 
 Hello, <?= $this->name ?>
 ```
 
-The base view, in turn, can look like this, where `$this->slot` is the content from the child's view.
+You can pass in optional data to the parent view as well:
+
+```php
+$this->extends('View/base.php', title: 'Blog');
+```
+
+The parent view, in turn, can look like this, where `$this->slot` is the content from the child's view.
 
 ```php
 <?php /** @var \Tempest\View\GenericView $this */?>
@@ -46,6 +54,10 @@ The base view, in turn, can look like this, where `$this->slot` is the content f
 </body>
 </html>
 ```
+
+### Including views
+
+TODO
 
 ### View Models
 
@@ -89,13 +101,13 @@ Its view file would look like this:
 <?php
 /** @var \App\Modules\Home\HomeView $this */
 
-$this->extendsPath = 'Views/base.php';
+$this->extends('Views/base.php');
 ?>
 
 Hello, <?= $this->name ?>
 ```
 
-Note that you could also set the `extend` parameter within the View Model:
+Note that you could also extend from within the View Model:
 
 ```php
 final class HomeView implements View
@@ -106,7 +118,7 @@ final class HomeView implements View
         public readonly string $name,
     ) {
         $this->path = 'Modules/Home/home.php';
-        $this->extends = 'Views/base.php';
+        $this->extends('Views/base.php');
     }
 }
 ```
@@ -129,7 +141,7 @@ final class BlogPostView implements View
     public function formatDate(DateTimeImmutable $date): string
     {
         return $date->format('Y-m-d');
-    }   
+    }
 }
 ```
 
