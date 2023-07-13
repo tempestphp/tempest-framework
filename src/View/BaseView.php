@@ -11,6 +11,7 @@ trait BaseView
     private array $rawParams = [];
     public ?string $extendsPath = null;
     public array $extendsParams = [];
+    private AppConfig $appConfig;
 
     public function __construct(
         string $path,
@@ -49,6 +50,11 @@ trait BaseView
         return $this;
     }
 
+    public function include(string $path): string
+    {
+        return view($path)->data(...$this->rawParams)->render($this->appConfig);
+    }
+
     public function raw(string $name): ?string
     {
         return $this->rawParams[$name] ?? null;
@@ -56,6 +62,8 @@ trait BaseView
 
     public function render(AppConfig $appConfig): string
     {
+        $this->appConfig = $appConfig;
+
         $path = path($appConfig->rootPath, $this->path);
 
         ob_start();

@@ -98,4 +98,19 @@ HTML;
 
         $this->assertStringContainsString('<title>Test</title>', $html);
     }
+
+    /** @test */
+    public function test_include_parameters()
+    {
+        $html = view('Views/include-parent.php')
+            ->data(prop: 'test')
+            ->render($this->container->get(AppConfig::class));
+
+        $expected = <<<HTML
+        parent test 
+        child test
+        HTML;
+
+        $this->assertSame(trim($expected), trim($html));
+    }
 }
