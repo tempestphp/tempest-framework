@@ -12,6 +12,8 @@ use Throwable;
 
 final class GenericContainer implements Container
 {
+    use HasInstance;
+    
     private array $definitions = [];
 
     private array $singletons = [];

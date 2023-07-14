@@ -2,11 +2,14 @@
 
 namespace App\Modules\Books;
 
-use Tempest\Interfaces\Entity;
+use Tempest\Interfaces\Model;
 use Tempest\ORM\Attributes\Lazy;
+use Tempest\ORM\BaseModel;
 
-class Book implements Entity
+class Book implements Model
 {
+    use BaseModel;
+
     public string $title;
 
     public Author $author;

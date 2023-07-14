@@ -1,5 +1,6 @@
 <?php
 
+use Tempest\Container\GenericContainer;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Method;
@@ -8,6 +9,18 @@ use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 use Tempest\Interfaces\View;
 use Tempest\View\GenericView;
+
+/**
+ * @template TClassName
+ * @param class-string<TClassName> $className
+ * @return TClassName
+ */
+function get(string $className): object
+{
+    $container = GenericContainer::instance();
+
+    return $container->get($className);
+}
 
 function path(string ...$parts): string
 {

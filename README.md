@@ -12,4 +12,5 @@ Tempest is an MVC micro framework that gets out of your way.
 - [ ] Events
 - [ ] Console
 - [ ] Frontend bootstrap
+- [ ] .env support
 - [ ] Authentication & Authorization

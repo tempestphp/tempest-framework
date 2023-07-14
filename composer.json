@@ -1,6 +1,7 @@
 {
   "require": {
-    "php": "^8.2"
+    "php": "^8.2",
+    "ext-pdo": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^10.2",

@@ -6,7 +6,9 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\Container\GenericContainer;
+use Tempest\Database\PDOInitializer;
 use Tempest\Discovery\ControllerDiscoverer;
+use Tempest\Discovery\MigrationDiscoverer;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\ServerInitializer;
@@ -34,12 +36,15 @@ final readonly class Kernel
     {
         $container = new GenericContainer();
 
+        GenericContainer::setInstance($container);
+
         $container
             ->singleton(Kernel::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
+            ->addInitializer(new PDOInitializer())
         ;
 
         return $container;
@@ -68,6 +73,7 @@ final readonly class Kernel
         /** @var Discoverer[] $discoverers */
         $discoverers = [
             $container->get(ControllerDiscoverer::class),
+            $container->get(MigrationDiscoverer::class),
         ];
 
         foreach ($files as $file) {

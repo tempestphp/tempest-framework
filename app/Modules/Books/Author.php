@@ -2,10 +2,14 @@
 
 namespace App\Modules\Books;
 
+use Tempest\Interfaces\Model;
 use Tempest\ORM\Attributes\Lazy;
+use Tempest\ORM\BaseModel;
 
-class Author
+class Author implements Model
 {
+    use BaseModel;
+
     public string $name;
 
     /** @var Book[] */

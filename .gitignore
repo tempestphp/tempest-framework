@@ -1,3 +1,4 @@
 vendor/
 .phpunit.result.cache
 .php-cs-fixer.cache
+app/database.sqlite
