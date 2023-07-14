@@ -7,5 +7,4 @@ use Attribute;
 #[Attribute]
 final readonly class Lazy
 {
-
 }
