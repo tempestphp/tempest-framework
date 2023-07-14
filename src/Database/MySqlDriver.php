@@ -13,9 +13,11 @@ final readonly class MySqlDriver implements DatabaseDriver
         #[SensitiveParameter] public string $username = 'root',
         #[SensitiveParameter] public string $password = '',
         #[SensitiveParameter] public string $database = 'app',
-    ) {}
+    ) {
+    }
 
-    public function getDsn(): string {
+    public function getDsn(): string
+    {
         return "mysql:host={$this->host};port={$this->port};dbname={$this->database}";
     }
 

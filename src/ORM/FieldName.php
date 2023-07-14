@@ -7,7 +7,8 @@ final readonly class FieldName
     public function __construct(
         public TableName $tableName,
         public string $fieldName,
-    ) {}
+    ) {
+    }
 
     public function __toString(): string
     {

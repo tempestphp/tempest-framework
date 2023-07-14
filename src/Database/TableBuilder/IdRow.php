@@ -8,7 +8,8 @@ final readonly class IdRow implements TableRow
 {
     public function __construct(
         private string $name = 'id',
-    ) {}
+    ) {
+    }
 
     public function getDefinition(): string
     {

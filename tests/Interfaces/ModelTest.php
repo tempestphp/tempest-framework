@@ -10,8 +10,8 @@ class ModelTest extends TestCase
     /** @test */
     public function test_model_query()
     {
-//        $results = Author::query()->get();
-        
-//        dd(Author::table());
+        //        $results = Author::query()->get();
+
+        //        dd(Author::table());
     }
 }

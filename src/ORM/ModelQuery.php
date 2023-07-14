@@ -19,7 +19,8 @@ final class ModelQuery implements Query
 
     private function __construct(
         private readonly string $modelClass,
-    ) {}
+    ) {
+    }
 
     /**
      * @template ModelClassName

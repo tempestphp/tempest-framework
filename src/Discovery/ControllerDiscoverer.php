@@ -11,7 +11,9 @@ use Tempest\Interfaces\Discoverer;
 
 final readonly class ControllerDiscoverer implements Discoverer
 {
-    public function __construct(private RouteConfig $routeConfig) {}
+    public function __construct(private RouteConfig $routeConfig)
+    {
+    }
 
     public function discover(ReflectionClass $class): void
     {

@@ -9,7 +9,8 @@ final readonly class IntRow implements TableRow
     public function __construct(
         private string $name,
         private bool $nullable = false,
-    ) {}
+    ) {
+    }
 
     public function getDefinition(): string
     {

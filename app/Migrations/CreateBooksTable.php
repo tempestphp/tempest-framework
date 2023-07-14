@@ -3,7 +3,6 @@
 namespace App\Migrations;
 
 use App\Modules\Books\Book;
-use PDO;
 use Tempest\Database\TableBuilder\IdRow;
 use Tempest\Database\TableBuilder\IntRow;
 use Tempest\Database\TableBuilder\TableBuilder;

@@ -15,7 +15,8 @@ final readonly class MigrationManager
         private Container $container,
         private DatabaseConfig $databaseConfig,
         private PDO $pdo,
-    ) {}
+    ) {
+    }
 
     public function up(): void
     {
@@ -53,14 +54,14 @@ final readonly class MigrationManager
         Migration::create(
             name: $migration->getName(),
         );
-//
-//        $this->pdo
-//            ->prepare(<<<SQL
-//                INSERT INTO Migration (name) VALUES (:migration_name);
-//                SQL,
-//            )
-//            ->execute([
-//                'migration_name' => $migration->getName()
-//            ]);
+        //
+        //        $this->pdo
+        //            ->prepare(<<<SQL
+        //                INSERT INTO Migration (name) VALUES (:migration_name);
+        //                SQL,
+        //            )
+        //            ->execute([
+        //                'migration_name' => $migration->getName()
+        //            ]);
     }
 }
