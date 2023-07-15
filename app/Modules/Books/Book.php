@@ -12,10 +12,19 @@ class Book implements Model
 {
     use BaseModel;
 
-    public string $title;
-
-    public Author $author;
-
     /** @var Chapter[] */
     #[Lazy] public array $chapters;
+
+    #[Lazy] public Author $author;
+
+    public function __construct(
+        public string $title,
+    ) {}
+
+    public function setAuthor(Author $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
 }
