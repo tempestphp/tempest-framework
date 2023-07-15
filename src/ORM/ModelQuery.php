@@ -8,7 +8,6 @@ use PDO;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Interfaces\Model;
-use Tempest\Interfaces\Query;
 
 /**
  * @template ModelClass

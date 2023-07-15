@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\ORM\Mappers;
 
 use ReflectionClass;
@@ -50,7 +52,7 @@ final readonly class ArrayMapper implements Mapper
                     $input = [
                         lcfirst($class->getShortName()) => $object, // Inverse 1:1 relation, if present
                         lcfirst($class->getShortName()) . 's' => [$object], // Inverse 1:n relation, if present
-                        ...$data[$propertyName]
+                        ...$data[$propertyName],
                     ];
 
                     $value = make($targetClass)->from($caster?->cast($input) ?? $input);
@@ -68,7 +70,7 @@ final readonly class ArrayMapper implements Mapper
                             $input = [
                                 lcfirst($class->getShortName()) => $object, // Inverse 1:1 relation, if present
                                 lcfirst($class->getShortName()) . 's' => [$object], // Inverse 1:n relation, if present
-                                ...$item
+                                ...$item,
                             ];
 
                             return make($targetClass)->from($caster?->cast($input) ?? $input);

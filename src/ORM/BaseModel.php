@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\ORM;
 
-use Tempest\Database\Id;
-use Tempest\Database\Query;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
+use Tempest\Database\Id;
+use Tempest\Database\Query;
 use Tempest\ORM\Attributes\Lazy;
 
 trait BaseModel
@@ -47,7 +47,7 @@ trait BaseModel
             "SELECT * FROM {$table} WHERE id = :id LIMIT 1",
             ['id' => $id],
         ))->fetchFirst();
-        
+
         $model = make(static::class)->from($params);
 
         return $model;

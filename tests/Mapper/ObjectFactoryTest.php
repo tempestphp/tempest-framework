@@ -33,7 +33,7 @@ class ObjectFactoryTest extends TestCase
             'books' => [
                 ['title' => 'a'],
                 ['title' => 'b'],
-            ]
+            ],
         ]);
 
         $this->assertSame('test', $author->name);
@@ -50,7 +50,7 @@ class ObjectFactoryTest extends TestCase
             'title' => 'test',
             'author' => [
                 'name' => 'author',
-            ]
+            ],
         ]);
 
         $this->assertSame('test', $book->title);
@@ -66,7 +66,7 @@ class ObjectFactoryTest extends TestCase
         make(Book::class)->from([
             'title' => 'test',
             'author' => [
-            ]
+            ],
         ]);
     }
 
