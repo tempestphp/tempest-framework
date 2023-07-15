@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database;
 
 use PDO;
@@ -9,7 +11,8 @@ final readonly class Query
     public function __construct(
         private string $query,
         private array $bindings = [],
-    ) {}
+    ) {
+    }
 
     public function execute(): Id
     {

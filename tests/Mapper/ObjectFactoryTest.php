@@ -22,7 +22,7 @@ class ObjectFactoryTest extends TestCase
             new Book('A'),
             new Book('B'),
         );
-        
+
         $factory = $this->container->get(ObjectFactory::class);
 
         $query = make(Query::class)->from($author);
