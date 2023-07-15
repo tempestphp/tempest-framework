@@ -19,7 +19,8 @@ class Book implements Model
 
     public function __construct(
         public string $title,
-    ) {}
+    ) {
+    }
 
     public function setAuthor(Author $author): self
     {
