@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\ORM;
 
 use PDO;
@@ -97,7 +99,7 @@ final class ModelQuery implements Query
         );
     }
 
-    public function insert(...$params): int
+    public function insert(...$params): string
     {
         $pdo = get(PDO::class);
 

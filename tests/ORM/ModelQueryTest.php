@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\ORM;
 
 use App\Modules\Books\Author;

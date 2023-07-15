@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\SQLiteDriver;
 

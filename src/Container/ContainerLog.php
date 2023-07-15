@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Container;
 
 use _PHPStan_690619d82\Nette\Neon\Exception;

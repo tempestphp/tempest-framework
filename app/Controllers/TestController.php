@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use Tempest\Http\Get;
@@ -9,7 +11,7 @@ use Tempest\Interfaces\View;
 final readonly class TestController
 {
     #[Get(uri: '/test/{id}/{name}')]
-    public function withParams(int $id, string $name): Response
+    public function withParams(string $id, string $name): Response
     {
         return response($id . $name);
     }

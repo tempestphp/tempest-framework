@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http;
 
 use Tempest\Interfaces\CanInitialize;
@@ -32,6 +34,10 @@ final readonly class RequestInitializer implements CanInitialize
         );
 
         foreach ($request->getBody() as $key => $value) {
+            if (! is_string($key)) {
+                continue;
+            }
+
             if (property_exists($request, $key)) {
                 $request->$key = $value;
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Tempest\Container\GenericContainer;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\GenericResponse;
@@ -54,7 +56,8 @@ function response(string $body = ''): Response
  * @param class-string<InputClassType> $className
  * @return ObjectFactory<InputClassType>
  */
-function make(string $className): ObjectFactory {
+function make(string $className): ObjectFactory
+{
     $factory = get(ObjectFactory::class);
 
     return $factory->className($className);

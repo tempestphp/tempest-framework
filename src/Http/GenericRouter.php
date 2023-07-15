@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http;
 
 use Exception;
@@ -107,7 +109,7 @@ final class GenericRouter implements Router
         $uri = $routeAttribute->newInstance()->uri;
 
         foreach ($params as $key => $value) {
-            $uri = str_replace('{' . $key . '}', $value, $uri);
+            $uri = str_replace('{' . $key . '}', "{$value}", $uri);
         }
 
         return $uri;

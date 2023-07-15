@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Container;
 
 use PHPUnit\Framework\TestCase;

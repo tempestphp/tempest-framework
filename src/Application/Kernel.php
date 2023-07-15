@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Application;
 
 use RecursiveDirectoryIterator;
@@ -76,8 +78,9 @@ final readonly class Kernel
             $container->get(MigrationDiscoverer::class),
         ];
 
+        /** @var \SplFileInfo $file */
         foreach ($files as $file) {
-            $fileName = pathinfo($file, PATHINFO_FILENAME);
+            $fileName = $file->getFilename();
 
             if (
                 $fileName === ''
@@ -91,7 +94,7 @@ final readonly class Kernel
             $className = str_replace(
                 [$rootDirectory, '/', '.php', '\\\\'],
                 [$rootNamespace, '\\', '', '\\'],
-                $file,
+                $file->getPathname(),
             );
 
             try {

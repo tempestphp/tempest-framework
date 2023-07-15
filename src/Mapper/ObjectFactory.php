@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper;
 
 use _PHPStan_690619d82\Nette\PhpGenerator\ClassType;
@@ -12,7 +14,8 @@ final class ObjectFactory
 
     public function __construct(
         private readonly SqlMapper $sqlMapper,
-    ) {}
+    ) {
+    }
 
     /**
      * @template InputClassType

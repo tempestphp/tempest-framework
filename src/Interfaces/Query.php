@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Interfaces;
 
 use Tempest\ORM\Direction;
@@ -21,7 +23,7 @@ interface Query
 
     public function orderBy(FieldName $field, Direction $direction = Direction::ASC): self;
 
-    public function insert(...$params): int;
+    public function insert(...$params): string;
 
     /**
      * @return ModelClass[]
