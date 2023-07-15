@@ -8,6 +8,7 @@ use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 use Tempest\Interfaces\View;
+use Tempest\Mapper\ObjectFactory;
 use Tempest\View\GenericView;
 
 /**
@@ -46,4 +47,15 @@ function request(string $uri, array $body = []): Request
 function response(string $body = ''): Response
 {
     return new GenericResponse(Status::HTTP_200, $body);
+}
+
+/**
+ * @template InputClassType
+ * @param class-string<InputClassType> $className
+ * @return ObjectFactory<InputClassType>
+ */
+function make(string $className): ObjectFactory {
+    $factory = get(ObjectFactory::class);
+
+    return $factory->className($className);
 }
