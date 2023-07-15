@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Interfaces;
 
-use Tempest\Database\TableBuilder\TableBuilder;
+use Tempest\Database\Builder\TableBuilder;
 
-interface DatabaseMigration
+interface Migration
 {
     public function getName(): string;
 

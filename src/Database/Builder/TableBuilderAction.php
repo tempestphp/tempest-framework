@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\TableBuilder;
+namespace Tempest\Database\Builder;
 
 enum TableBuilderAction
 {

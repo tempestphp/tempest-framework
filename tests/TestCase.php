@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest;
 
 use Tempest\Application\Kernel;
+use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\Method;
 use Tempest\Interfaces\Container;
 
@@ -44,5 +45,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             uri: $uri,
             body: $body,
         ));
+    }
+
+    protected function migrate(string ...$migrationClasses): void
+    {
+        $migrationManager = get(MigrationManager::class);
+
+        foreach ($migrationClasses as $migrationClass) {
+            $migrationManager->executeUp(get($migrationClass));
+        }
     }
 }

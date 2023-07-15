@@ -14,18 +14,6 @@ class Author implements Model
 
     public string $name;
 
-    /** @var Book[] */
+    /** @var \App\Modules\Books\Book[] */
     #[Lazy] public array $books;
-
-    public function addBooks(Book ...$books): self
-    {
-        $this->books ??= [];
-
-        foreach ($books as $book) {
-            $book->setAuthor($this);
-            $this->books[] = $book;
-        }
-
-        return $this;
-    }
 }

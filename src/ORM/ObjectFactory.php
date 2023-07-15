@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper;
+namespace Tempest\ORM;
 
 use _PHPStan_690619d82\Nette\PhpGenerator\ClassType;
-use Tempest\Mapper\Mappers\SqlMapper;
+use Tempest\ORM\Mappers\ArrayMapper;
 
 /* @template ClassType */
 final class ObjectFactory
@@ -13,7 +13,7 @@ final class ObjectFactory
     private string $className;
 
     public function __construct(
-        private readonly SqlMapper $sqlMapper,
+        private readonly ArrayMapper $arrayMapper,
     ) {
     }
 
@@ -22,7 +22,7 @@ final class ObjectFactory
      * @param class-string<InputClassType> $className
      * @return self<InputClassType>
      */
-    public function className(string $className): self
+    public function forClass(string $className): self
     {
         $this->className = $className;
 
@@ -34,6 +34,7 @@ final class ObjectFactory
      */
     public function from(mixed $data): object
     {
-        return $this->sqlMapper->map($this->className, $data);
+        // TODO: dynamic mappers
+        return $this->arrayMapper->map($this->className, $data);
     }
 }

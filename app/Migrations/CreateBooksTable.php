@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Migrations;
 
 use App\Modules\Books\Book;
-use Tempest\Database\TableBuilder\IdRow;
-use Tempest\Database\TableBuilder\IntRow;
-use Tempest\Database\TableBuilder\TableBuilder;
-use Tempest\Database\TableBuilder\TextRow;
-use Tempest\Interfaces\DatabaseMigration;
+use Tempest\Database\Builder\IdRow;
+use Tempest\Database\Builder\IntRow;
+use Tempest\Database\Builder\TableBuilder;
+use Tempest\Database\Builder\TextRow;
+use Tempest\Interfaces\Migration;
 
-final readonly class CreateBooksTable implements DatabaseMigration
+final readonly class CreateBooksTable implements Migration
 {
     public function getName(): string
     {

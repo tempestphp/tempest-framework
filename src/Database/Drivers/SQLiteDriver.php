@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tempest\Database\Drivers;
 
 use SensitiveParameter;
 use Tempest\Interfaces\DatabaseDriver;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\Database\Builder;
 
 final readonly class TableName
 {

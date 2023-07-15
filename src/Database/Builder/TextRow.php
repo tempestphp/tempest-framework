@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\TableBuilder;
+namespace Tempest\Database\Builder;
 
 use Tempest\Interfaces\TableRow;
 
-final readonly class IntRow implements TableRow
+final readonly class TextRow implements TableRow
 {
     public function __construct(
         private string $name,
@@ -18,6 +18,6 @@ final readonly class IntRow implements TableRow
     {
         $nullable = $this->nullable ? '' : 'NOT NULL';
 
-        return "{$this->name} INT {$nullable}";
+        return "{$this->name} TEXT {$nullable}";
     }
 }

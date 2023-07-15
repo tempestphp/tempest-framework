@@ -10,7 +10,7 @@ use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 use Tempest\Interfaces\View;
-use Tempest\Mapper\ObjectFactory;
+use Tempest\ORM\ObjectFactory;
 use Tempest\View\GenericView;
 
 /**
@@ -52,13 +52,13 @@ function response(string $body = ''): Response
 }
 
 /**
- * @template InputClassType
- * @param class-string<InputClassType> $className
- * @return ObjectFactory<InputClassType>
+ * @template TClassName
+ * @param class-string<TClassName> $className
+ * @return ObjectFactory<TClassName>
  */
 function make(string $className): ObjectFactory
 {
     $factory = get(ObjectFactory::class);
 
-    return $factory->className($className);
+    return $factory->forClass($className);
 }

@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\TableBuilder;
+namespace Tempest\Database\Builder;
 
 use Tempest\Interfaces\TableRow;
-use Tempest\ORM\TableName;
 
 final class TableBuilder
 {

@@ -6,37 +6,91 @@ namespace Tests\Tempest\Mapper;
 
 use App\Modules\Books\Author;
 use App\Modules\Books\Book;
-use Tempest\Database\Query;
-use Tempest\Mapper\ObjectFactory;
+use Tempest\Interfaces\Caster;
+use Tempest\ORM\Attributes\CastWith;
+use Tempest\ORM\MissingValuesException;
 use Tests\Tempest\TestCase;
 
 class ObjectFactoryTest extends TestCase
 {
     /** @test */
-    public function test_store()
+    public function make_object()
     {
-        $author = new Author();
+        $author = make(Author::class)->from([
+            'id' => 1,
+            'name' => 'test',
+        ]);
 
-        $author->name = 'Brent';
-        $author->addBooks(
-            new Book('A'),
-            new Book('B'),
-        );
-        
-        $factory = $this->container->get(ObjectFactory::class);
-
-        $query = make(Query::class)->from($author);
-
-        $factory->persist($author)->as();
+        $this->assertSame('test', $author->name);
+        $this->assertSame(1, $author->id->id);
     }
 
     /** @test */
-    public function test_map_from_sql()
+    public function make_object_with_has_many_relation()
     {
-        $book = make(Book::class)->from(new Query("SELECT * FROM Book WHERE id = :id", [
-            'id' => 1,
-        ]));
+        $author = make(Author::class)->from([
+            'name' => 'test',
+            'books' => [
+                ['title' => 'a'],
+                ['title' => 'b'],
+            ]
+        ]);
 
-        $this->assertInstanceOf(Book::class, $book);
+        $this->assertSame('test', $author->name);
+        $this->assertCount(2, $author->books);
+        $this->assertSame('a', $author->books[0]->title);
+        $this->assertSame('b', $author->books[1]->title);
+        $this->assertSame('test', $author->books[0]->author->name);
+    }
+
+    /** @test */
+    public function make_object_with_one_to_one_relation()
+    {
+        $book = make(Book::class)->from([
+            'title' => 'test',
+            'author' => [
+                'name' => 'author',
+            ]
+        ]);
+
+        $this->assertSame('test', $book->title);
+        $this->assertSame('author', $book->author->name);
+        $this->assertSame('test', $book->author->books[0]->title);
+    }
+
+    /** @test */
+    public function make_object_with_missing_values_throws_exception()
+    {
+        $this->expectException(MissingValuesException::class);
+
+        make(Book::class)->from([
+            'title' => 'test',
+            'author' => [
+            ]
+        ]);
+    }
+
+    /** @test */
+    public function test_caster_on_field()
+    {
+        $object = make(ObjectFactoryA::class)->from([
+            'prop' => [],
+        ]);
+
+        $this->assertSame('a', $object->prop);
+    }
+}
+
+class ObjectFactoryA
+{
+    #[CastWith(ObjectFactoryACaster::class)]
+    public string $prop;
+}
+
+class ObjectFactoryACaster implements Caster
+{
+    public function cast(mixed $input): mixed
+    {
+        return 'a';
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Interfaces;
 
-use Closure;
-use Tempest\ORM\FieldName;
-use Tempest\ORM\TableName;
+use Tempest\Database\Id;
+use Tempest\Database\Builder\FieldName;
+use Tempest\Database\Builder\TableName;
 
 interface Model
 {
@@ -14,12 +14,13 @@ interface Model
 
     public static function field(string $field): FieldName;
 
-    /**
-     * @return Query<static>
-     */
-    public static function query(): Query;
+    public static function create(...$params): self;
 
-    public static function create(...$params): static;
+    public static function find(Id $id): self;
 
-    public function load(Closure $load): self;
+    public function getId(): Id;
+
+    public function setId(Id $id): self;
+
+    public function update(...$params): self;
 }

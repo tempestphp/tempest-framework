@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\Database\Migrations;
 
-use Tempest\Database\TableBuilder\IdRow;
-use Tempest\Database\TableBuilder\TableBuilder;
-use Tempest\Database\TableBuilder\TextRow;
+use Tempest\Database\Builder\IdRow;
+use Tempest\Database\Builder\TableBuilder;
+use Tempest\Database\Builder\TextRow;
 
-final readonly class CreateMigrationsTable implements \Tempest\Interfaces\DatabaseMigration
+final readonly class CreateMigrationsTable implements \Tempest\Interfaces\Migration
 {
     public function getName(): string
     {

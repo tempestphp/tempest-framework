@@ -26,7 +26,16 @@ final readonly class Query
     {
         $pdo = get(PDO::class);
 
-        return $pdo->prepare($this->query)->fetchAll($this->resolveBindings());
+        $query = $pdo->prepare($this->query);
+
+        $query->execute($this->resolveBindings());
+
+        return $query->fetchAll(PDO::FETCH_NAMED);
+    }
+
+    public function fetchFirst(): ?array
+    {
+        return $this->fetch()[0] ?? null;
     }
 
     private function resolveBindings(): array

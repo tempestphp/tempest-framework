@@ -6,7 +6,7 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Interfaces\DatabaseMigration;
+use Tempest\Interfaces\Migration;
 use Tempest\Interfaces\Discoverer;
 
 final readonly class MigrationDiscoverer implements Discoverer
@@ -17,7 +17,7 @@ final readonly class MigrationDiscoverer implements Discoverer
 
     public function discover(ReflectionClass $class): void
     {
-        if (! $class->implementsInterface(DatabaseMigration::class)) {
+        if (! $class->implementsInterface(Migration::class)) {
             return;
         }
 

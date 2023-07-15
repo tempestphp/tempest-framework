@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tempest\Database\Migrations;
 
 use PDO;
-use Tempest\Database\TableBuilder\TableBuilder;
+use Tempest\Database\Builder\TableBuilder;
+use Tempest\Database\DatabaseConfig;
 use Tempest\Interfaces\Container;
-use Tempest\Interfaces\DatabaseMigration;
-use Tempest\ORM\CreateMigrationsTable;
-use Tempest\ORM\Migration;
+use Tempest\Interfaces\Migration as MigrationInterface;
 
 final readonly class MigrationManager
 {
@@ -36,7 +35,7 @@ final readonly class MigrationManager
         );
 
         foreach ($this->databaseConfig->migrations as $migrationClassName) {
-            /** @var DatabaseMigration $migration */
+            /** @var MigrationInterface $migration */
             $migration = $this->container->get($migrationClassName);
 
             if (in_array($migration->getName(), $existingMigrations)) {
@@ -47,7 +46,7 @@ final readonly class MigrationManager
         }
     }
 
-    private function executeUp(DatabaseMigration $migration): void
+    public function executeUp(MigrationInterface $migration): void
     {
         $tableBuilder = $migration->up(new TableBuilder());
 
@@ -56,14 +55,5 @@ final readonly class MigrationManager
         Migration::create(
             name: $migration->getName(),
         );
-        //
-        //        $this->pdo
-        //            ->prepare(<<<SQL
-        //                INSERT INTO Migration (name) VALUES (:migration_name);
-        //                SQL,
-        //            )
-        //            ->execute([
-        //                'migration_name' => $migration->getName()
-        //            ]);
     }
 }

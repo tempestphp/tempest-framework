@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Tempest\ORM;
 
 use PDO;
+use Tempest\Database\Builder\FieldName;
+use Tempest\Database\Builder\TableName;
 use Tempest\Interfaces\Model;
 use Tempest\Interfaces\Query;
 
 /**
  * @template ModelClass
  */
-final class ModelQuery implements Query
+final class ModelQuery
 {
     private array $select = [];
     private array $from = [];
@@ -34,7 +36,7 @@ final class ModelQuery implements Query
         return new self($modelClass);
     }
 
-    public function select(string|FieldName ...$statements): Query
+    public function select(string|FieldName ...$statements): self
     {
         foreach ($statements as $statement) {
             $this->select[] = $statement;
@@ -43,35 +45,35 @@ final class ModelQuery implements Query
         return $this;
     }
 
-    public function from(TableName $table): Query
+    public function from(TableName $table): self
     {
         $this->from[] = $table;
 
         return $this;
     }
 
-    public function join(TableName $table, FieldName $left, FieldName $right): Query
+    public function join(TableName $table, FieldName $left, FieldName $right): self
     {
         $this->from[] = "INNER JOIN {$table} ON {$left} = {$right}";
 
         return $this;
     }
 
-    public function where(FieldName $field, mixed $value): Query
+    public function where(FieldName $field, mixed $value): self
     {
         $this->where[] = "{$field} = {$value}";
 
         return $this;
     }
 
-    public function orderBy(FieldName $field, Direction $direction = Direction::ASC): Query
+    public function orderBy(FieldName $field, Direction $direction = Direction::ASC): self
     {
         $this->orderBy[] = "{$field} {$direction->value}";
 
         return $this;
     }
 
-    public function limit(int $limit): Query
+    public function limit(int $limit): self
     {
         $this->limit = $limit;
 
@@ -97,24 +99,6 @@ final class ModelQuery implements Query
             fn (array $item) => $this->resolveModel($item),
             $pdo->query($this->buildSelect())->fetchAll(PDO::FETCH_NAMED),
         );
-    }
-
-    public function insert(...$params): string
-    {
-        $pdo = get(PDO::class);
-
-        $columns = implode(', ', array_keys($params));
-
-        $valuePlaceholders = implode(', ', array_map(
-            fn (string $key) => ":{$key}",
-            array_keys($params),
-        ));
-
-        $query = "INSERT INTO {$this->table()} ({$columns}) VALUES ({$valuePlaceholders})";
-
-        $pdo->prepare($query)->execute($params);
-
-        return $pdo->lastInsertId();
     }
 
     public function buildSelect(): string
