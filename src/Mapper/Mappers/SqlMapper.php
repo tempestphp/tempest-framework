@@ -7,7 +7,9 @@ use Tempest\Interfaces\Mapper;
 
 class SqlMapper implements Mapper
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private PDO $pdo)
+    {
+    }
 
     public function map(string $className, mixed $data): object
     {

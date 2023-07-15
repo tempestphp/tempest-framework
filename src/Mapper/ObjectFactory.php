@@ -12,7 +12,8 @@ final class ObjectFactory
 
     public function __construct(
         private readonly SqlMapper $sqlMapper,
-    ) {}
+    ) {
+    }
 
     /**
      * @template InputClassType

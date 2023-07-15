@@ -54,7 +54,8 @@ function response(string $body = ''): Response
  * @param class-string<InputClassType> $className
  * @return ObjectFactory<InputClassType>
  */
-function make(string $className): ObjectFactory {
+function make(string $className): ObjectFactory
+{
     $factory = get(ObjectFactory::class);
 
     return $factory->className($className);
