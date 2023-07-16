@@ -39,18 +39,23 @@ trait BaseModel
         );
     }
 
+    public static function all(): array
+    {
+        $table = self::table();
+
+        return make(static::class)->collection()->from(new Query(
+            "SELECT * FROM {$table}",
+        ));
+    }
+
     public static function find(Id $id): self
     {
         $table = self::table();
 
-        $params = (new Query(
+        return make(static::class)->from(new Query(
             "SELECT * FROM {$table} WHERE id = :id LIMIT 1",
             ['id' => $id],
-        ))->fetchFirst();
-
-        $model = make(static::class)->from($params);
-
-        return $model;
+        ));
     }
 
     public static function create(...$params): self

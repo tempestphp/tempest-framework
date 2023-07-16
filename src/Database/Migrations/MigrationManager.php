@@ -22,11 +22,11 @@ final readonly class MigrationManager
     public function up(): void
     {
         try {
-            $existingMigrations = Migration::query()->get();
+            $existingMigrations = Migration::all();
         } catch (\PDOException) {
             $this->executeUp(new CreateMigrationsTable());
 
-            $existingMigrations = Migration::query()->get();
+            $existingMigrations = Migration::all();
         }
 
         $existingMigrations = array_map(

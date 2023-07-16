@@ -4,17 +4,26 @@ declare(strict_types=1);
 
 namespace Tempest\ORM;
 
-use _PHPStan_690619d82\Nette\PhpGenerator\ClassType;
+use Tempest\ORM\Exceptions\CannotMapDataException;
 use Tempest\ORM\Mappers\ArrayMapper;
+use Tempest\ORM\Mappers\SqlMapper;
 
 /* @template ClassType */
 final class ObjectFactory
 {
     private string $className;
 
-    public function __construct(
-        private readonly ArrayMapper $arrayMapper,
-    ) {
+    /** @var \Tempest\Interfaces\Mapper[] */
+    private readonly array $mappers;
+
+    public function __construct()
+    {
+        $arrayMapper = new ArrayMapper();
+
+        $this->mappers = [
+            $arrayMapper,
+            new SqlMapper(),
+        ];
     }
 
     /**
@@ -30,11 +39,24 @@ final class ObjectFactory
     }
 
     /**
+     * @return self<ClassType[]>
+     */
+    public function collection(): self
+    {
+        return $this;
+    }
+
+    /**
      * @return ClassType
      */
-    public function from(mixed $data): object
+    public function from(mixed $data): array|object
     {
-        // TODO: dynamic mappers
-        return $this->arrayMapper->map($this->className, $data);
+        foreach ($this->mappers as $mapper) {
+            if ($mapper->canMap($data)) {
+                return $mapper->map($this->className, $data);
+            }
+        }
+
+        throw new CannotMapDataException();
     }
 }

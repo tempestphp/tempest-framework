@@ -11,7 +11,7 @@ use Tempest\Interfaces\Caster;
 use Tempest\Interfaces\Mapper;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Attributes\Lazy;
-use Tempest\ORM\MissingValuesException;
+use Tempest\ORM\Exceptions\MissingValuesException;
 
 final readonly class ArrayMapper implements Mapper
 {
@@ -20,7 +20,7 @@ final readonly class ArrayMapper implements Mapper
         return is_array($data);
     }
 
-    public function map(string $className, mixed $data): object
+    public function map(string $className, mixed $data): array|object
     {
         $class = new ReflectionClass($className);
 
@@ -55,7 +55,7 @@ final readonly class ArrayMapper implements Mapper
                         ...$data[$propertyName],
                     ];
 
-                    $value = make($targetClass)->from($caster?->cast($input) ?? $input);
+                    $value = $this->map($targetClass, $caster?->cast($input) ?? $input);
                 }
             } elseif ($targetClass = $this->getTargetClassForArray($property)) {
                 $value = array_map(
@@ -73,7 +73,7 @@ final readonly class ArrayMapper implements Mapper
                                 ...$item,
                             ];
 
-                            return make($targetClass)->from($caster?->cast($input) ?? $input);
+                            return $this->map($targetClass, $caster?->cast($input) ?? $input);
                         }
                     },
                     $data[$propertyName],

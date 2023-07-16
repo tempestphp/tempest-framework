@@ -9,8 +9,8 @@ use PDO;
 final readonly class Query
 {
     public function __construct(
-        private string $query,
-        private array $bindings = [],
+        public string $query,
+        public array $bindings = [],
     ) {
     }
 

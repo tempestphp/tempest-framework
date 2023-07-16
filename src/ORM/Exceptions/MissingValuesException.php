@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\ORM\Exceptions;
 
 use Exception;
 

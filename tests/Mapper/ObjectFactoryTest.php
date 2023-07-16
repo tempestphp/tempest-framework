@@ -6,9 +6,17 @@ namespace Tests\Tempest\Mapper;
 
 use App\Modules\Books\Author;
 use App\Modules\Books\Book;
+use Tempest\Database\Builder\IdRow;
+use Tempest\Database\Builder\TableBuilder;
+use Tempest\Database\Builder\TextRow;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Query;
 use Tempest\Interfaces\Caster;
+use Tempest\Interfaces\Migration;
+use Tempest\Interfaces\Model;
 use Tempest\ORM\Attributes\CastWith;
-use Tempest\ORM\MissingValuesException;
+use Tempest\ORM\BaseModel;
+use Tempest\ORM\Exceptions\MissingValuesException;
 use Tests\Tempest\TestCase;
 
 class ObjectFactoryTest extends TestCase
@@ -77,20 +85,81 @@ class ObjectFactoryTest extends TestCase
             'prop' => [],
         ]);
 
-        $this->assertSame('a', $object->prop);
+        $this->assertSame('casted', $object->prop);
+    }
+
+    /** @test */
+    public function test_single_with_query()
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            ObjectFactoryAMigration::class
+        );
+
+        ObjectFactoryA::create(
+            prop: 'a',
+        );
+
+        ObjectFactoryA::create(
+            prop: 'b',
+        );
+
+        $a = make(ObjectFactoryA::class)->from(new Query(
+            "SELECT * FROM ObjectFactoryA WHERE id = :id",
+            [
+                'id' => 1,
+            ],
+        ));
+
+        $this->assertSame(1, $a->id->id);
+        $this->assertSame('casted', $a->prop);
+
+        $collection = make(ObjectFactoryA::class)->collection()->from(new Query(
+            "SELECT * FROM ObjectFactoryA",
+        ));
+
+        $this->assertCount(2, $collection);
+        $this->assertSame('casted', $collection[0]->prop);
+        $this->assertSame('casted', $collection[1]->prop);
     }
 }
 
-class ObjectFactoryA
+class ObjectFactoryA implements Model
 {
+    use BaseModel;
+
     #[CastWith(ObjectFactoryACaster::class)]
     public string $prop;
 }
 
 class ObjectFactoryACaster implements Caster
 {
-    public function cast(mixed $input): mixed
+    public function cast(mixed $input): string
     {
-        return 'a';
+        return 'casted';
+    }
+}
+
+class ObjectFactoryAMigration implements Migration
+{
+    public function getName(): string
+    {
+        return 'object-a';
+    }
+
+    public function up(TableBuilder $builder): TableBuilder
+    {
+        return $builder
+            ->name(ObjectFactoryA::table())
+            ->add(new IdRow())
+            ->add(new TextRow('prop'))
+            ->create();
+    }
+
+    public function down(TableBuilder $builder): TableBuilder
+    {
+        return $builder
+            ->name(ObjectFactoryA::table())
+            ->drop();
     }
 }

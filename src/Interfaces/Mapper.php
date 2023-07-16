@@ -9,10 +9,10 @@ interface Mapper
     public function canMap(mixed $data): bool;
 
     /**
-     * @template ClassType
-     * @param class-string<ClassType> $className
+     * @template ClassName
+     * @param class-string<ClassName> $className
      * @param mixed $data
-     * @return ClassType
+     * @return ClassName[]|ClassName
      */
-    public function map(string $className, mixed $data): object;
+    public function map(string $className, mixed $data): array|object;
 }

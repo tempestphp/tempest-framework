@@ -14,6 +14,8 @@ interface Model
 
     public static function field(string $field): FieldName;
 
+    public static function all(): array;
+
     public static function create(...$params): self;
 
     public static function find(Id $id): self;
