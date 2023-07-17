@@ -28,21 +28,27 @@ class QueryMapperTest extends TestCase
     /** @test */
     public function create_query_with_nested_relation()
     {
-        $this->markTestIncomplete();
-        $book = Book::new(
-            title: 'test',
-            author: Author::new(
-                name: 'test'
-            )
+        $book = new Book(
+            title: 'Book Title',
+            author: new Author(
+                name: 'Author Name',
+            ),
         );
 
         $query = make(Query::class)->from($book);
 
         $bookTable = Book::table();
+
+        $this->assertSame("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);", $query->query);
+        $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
+        $this->assertSame('Book Title', $query->bindings['title']);
+
         $authorTable = Author::table();
 
-        $this->assertSame("INSERT INTO {$bookTable} (name) VALUES (:name);", $query->query);
-        $this->assertSame(['name' => 'test'], $query->bindings);
+        $authorQuery = $query->bindings['author_id'];
+        $this->assertInstanceOf(Query::class, $authorQuery);
+        $this->assertSame("INSERT INTO {$authorTable} (name) VALUES (:name);", $authorQuery->query);
+        $this->assertSame('Author Name', $authorQuery->bindings['name']);
     }
 
     /** @test */

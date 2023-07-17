@@ -20,7 +20,7 @@ final readonly class BookController
     #[Post('/books')]
     public function store(CreateBookRequest $request): Response
     {
-        $book = make(Book::class)->from($request);
+        $book = map($request)->to(Book::class)->save();
 
         return redirect(BookController::class, 'show', book: $book);
     }
@@ -28,8 +28,14 @@ final readonly class BookController
     #[Post('/books/{book}')]
     public function update(Book $book, StoreBookRequest $request): Response
     {
-        map($request)->to($book)->save();
+        $book = map($request)->to($book)->save();
 
         return redirect(BookController::class, 'show', book: $book);
     }
+
+
+
+
+
+
 }

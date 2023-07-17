@@ -10,7 +10,7 @@ use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;
 use Tempest\Interfaces\Model;
 
-final readonly class QueryMapper implements Mapper
+final readonly class ModelToQueryMapper implements Mapper
 {
     public function canMap(object|string $objectOrClass, mixed $data): bool
     {
@@ -24,7 +24,7 @@ final readonly class QueryMapper implements Mapper
 
         $fields = $this->fields($model);
 
-        if (! isset($fields['id'])) {
+        if ($fields['id'] === null) {
             return $this->createQuery($model, $fields);
         } else {
             return $this->updateQuery($model, $fields);
@@ -33,18 +33,34 @@ final readonly class QueryMapper implements Mapper
 
     private function createQuery(Model $model, array $fields): Query
     {
-        $columns = implode(', ', array_keys($fields));
+        unset($fields['id']);
 
-        $valuePlaceholders = implode(', ', array_map(
-            fn (string $key) => ":{$key}",
-            array_keys($fields),
-        ));
+        $columns = [];
+        $valuePlaceholders = [];
+        $bindings = [];
+        
+        foreach ($fields as $key => $value) {
+            $columns[] = $key;
+            $valuePlaceholders[] = ":{$key}";
+            $bindings[$key] = $value;
+        }
 
+        $relations = $this->relations($model);
+
+        foreach ($relations as $key => $relation) {
+            $key = "{$key}_id";
+            $columns[] = $key;
+            $valuePlaceholders[] = ":{$key}";
+            $bindings[$key] = make(Query::class)->from($relation);
+        }
+
+        $valuePlaceholders = implode(', ', $valuePlaceholders);
+        $columns = implode(', ', $columns);
         $table = $model::table();
 
         return new Query(
             "INSERT INTO {$table} ({$columns}) VALUES ({$valuePlaceholders});",
-            $fields,
+            $bindings,
         );
     }
 
@@ -65,6 +81,30 @@ final readonly class QueryMapper implements Mapper
         );
     }
 
+    private function relations(Model $model): array
+    {
+        $class = new ReflectionClass($model);
+
+        $fields = [];
+
+        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            if (! $property->isInitialized($model)) {
+                continue;
+            }
+
+            $value = $property->getValue($model);
+
+            if (! $value instanceof Model) {
+                continue;
+            }
+
+            // Only 1:1 or n:1 relations
+            $fields[$property->getName()] = $value;
+        }
+
+        return $fields;
+    }
+
     private function fields(Model $model): array
     {
         $class = new ReflectionClass($model);
@@ -78,8 +118,14 @@ final readonly class QueryMapper implements Mapper
 
             $value = $property->getValue($model);
 
+            // 1:1 or n:1 relations
             if ($value instanceof Model) {
-                $value = $this->fields($value);
+                continue;
+            }
+
+            // 1:n relations
+            if (is_array($value)) {
+                continue;
             }
 
             $fields[$property->getName()] = $value;

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\ORM;
 
 use Tempest\ORM\Exceptions\CannotMapDataException;
-use Tempest\ORM\Mappers\ArrayMapper;
-use Tempest\ORM\Mappers\QueryMapper;
-use Tempest\ORM\Mappers\SqlMapper;
+use Tempest\ORM\Mappers\ArrayToObjectMapper;
+use Tempest\ORM\Mappers\ModelToQueryMapper;
+use Tempest\ORM\Mappers\QueryToModelMapper;
 
 /* @template ClassType */
 final class ObjectFactory
@@ -22,9 +22,9 @@ final class ObjectFactory
     public function __construct()
     {
         $this->mappers = [
-            new ArrayMapper(),
-            new SqlMapper(),
-            new QueryMapper(),
+            new ArrayToObjectMapper(),
+            new QueryToModelMapper(),
+            new ModelToQueryMapper(),
         ];
     }
 

@@ -53,27 +53,30 @@ class BaseModelTest extends TestCase
     /** @test */
     public function complex_query()
     {
-        $this->markTestSkipped();
         $this->migrate(
             CreateMigrationsTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
 
-        $a = Author::create(name: 'A');
-        $b = Author::create(name: 'B');
-        Book::create(title: 'A1', author: $a);
-        Book::create(title: 'A2', author: $a);
-        Book::create(title: 'B1', author: $b);
-        Book::create(title: 'B2', author: $b);
-
-        $authors = make(Author::class)->collection()->from(
-            new Query(<<<SQL
-            SELECT * 
-            FROM Author
-            INNER JOIN Book on Author.id = Book.author_id
-            SQL)
+        $book = new Book(
+            title: 'Book Title',
+            author: new Author(
+                name: 'Author Name',
+            ),
         );
+
+        $book = $book->save();
+
+        $book = Book::find($book->id, relations: [
+            Author::class,
+        ]);
+
+        $this->assertEquals(1, $book->id->id);
+        $this->assertSame('Book Title', $book->title);
+        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertSame('Author Name', $book->author->name);
+        $this->assertEquals(1, $book->author->id->id);
     }
 }
 

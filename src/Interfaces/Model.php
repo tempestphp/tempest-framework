@@ -14,6 +14,8 @@ interface Model
 
     public static function field(string $field): FieldName;
 
+    public static function relationField(string $relation): FieldName;
+
     public static function all(): array;
 
     public static function new(...$params): self;
@@ -21,6 +23,8 @@ interface Model
     public static function create(...$params): self;
 
     public static function find(Id $id): self;
+
+    public function save(): self;
 
     public function getId(): Id;
 

@@ -50,6 +50,10 @@ final readonly class Query
                 $value = $value->id;
             }
 
+            if ($value instanceof Query) {
+                $value = $value->execute();
+            }
+
             $bindings[$key] = $value;
         }
 
