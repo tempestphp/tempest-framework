@@ -95,7 +95,7 @@ final class GenericRouter implements Router
         string $controller,
         ?string $method = null,
         ...$params,
-    ): ?string {
+    ): string {
         $reflection = new ReflectionClass($controller);
 
         $method = $reflection->getMethod($method ?? '__invoke');
@@ -103,7 +103,7 @@ final class GenericRouter implements Router
         $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
 
         if (! $routeAttribute) {
-            return null;
+            throw new Exception("No route found");
         }
 
         $uri = $routeAttribute->newInstance()->uri;

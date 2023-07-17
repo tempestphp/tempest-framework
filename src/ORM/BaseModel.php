@@ -39,6 +39,11 @@ trait BaseModel
         );
     }
 
+    public static function new(...$params): self
+    {
+        return make(self::class)->from($params);
+    }
+
     public static function all(): array
     {
         $table = self::table();
@@ -60,21 +65,9 @@ trait BaseModel
 
     public static function create(...$params): self
     {
-        $columns = implode(', ', array_keys($params));
+        $model = self::new(...$params);
 
-        $valuePlaceholders = implode(', ', array_map(
-            fn (string $key) => ":{$key}",
-            array_keys($params),
-        ));
-
-        $table = self::table();
-
-        $id = (new Query(
-            "INSERT INTO {$table} ({$columns}) VALUES ({$valuePlaceholders})",
-            $params,
-        ))->execute();
-
-        $model = make(static::class)->from($params);
+        $id = make(Query::class)->from($model)->execute();
 
         $model->setId($id);
 
@@ -83,22 +76,14 @@ trait BaseModel
 
     public function update(...$params): self
     {
-        $values = implode(', ', array_map(
-            fn (string $key) => "{$key} = :{$key}",
-            array_keys($params),
-        ));
-
-        $table = self::table();
-
-        (new Query(
-            "UPDATE {$table} SET {$values} WHERE id = {$this->id}",
-            $params,
-        ))->execute();
-
         foreach ($params as $key => $value) {
             $this->{$key} = $value;
         }
 
-        return self::find($this->id);
+        $query = make(Query::class)->from($this);
+
+        $query->execute();
+
+        return $this;
     }
 }

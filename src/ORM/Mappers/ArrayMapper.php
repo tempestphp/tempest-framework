@@ -15,16 +15,18 @@ use Tempest\ORM\Exceptions\MissingValuesException;
 
 final readonly class ArrayMapper implements Mapper
 {
-    public function canMap(mixed $data): bool
+    public function canMap(object|string $objectOrClass, mixed $data): bool
     {
         return is_array($data);
     }
 
-    public function map(string $className, mixed $data): array|object
+    public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        $class = new ReflectionClass($className);
+        $class = new ReflectionClass($objectOrClass);
 
-        $object = $class->newInstanceWithoutConstructor();
+        $object = is_string($objectOrClass)
+            ? $class->newInstanceWithoutConstructor()
+            : $objectOrClass;
 
         $reflectionProperties = $class->getProperties(ReflectionProperty::IS_PUBLIC);
 
@@ -88,7 +90,7 @@ final readonly class ArrayMapper implements Mapper
         }
 
         if ($missingValues !== []) {
-            throw new MissingValuesException($className, $missingValues);
+            throw new MissingValuesException($objectOrClass, $missingValues);
         }
 
         return $object;

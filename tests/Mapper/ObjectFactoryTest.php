@@ -22,7 +22,7 @@ use Tests\Tempest\TestCase;
 class ObjectFactoryTest extends TestCase
 {
     /** @test */
-    public function make_object()
+    public function make_object_from_class_string()
     {
         $author = make(Author::class)->from([
             'id' => 1,
@@ -30,6 +30,38 @@ class ObjectFactoryTest extends TestCase
         ]);
 
         $this->assertSame('test', $author->name);
+        $this->assertSame(1, $author->id->id);
+    }
+
+    /** @test */
+    public function make_object_from_existing_object()
+    {
+        $author = Author::new(
+            name: 'original',
+        );
+
+        $author = make($author)->from([
+            'id' => 1,
+            'name' => 'other',
+        ]);
+
+        $this->assertSame('other', $author->name);
+        $this->assertSame(1, $author->id->id);
+    }
+
+    /** @test */
+    public function make_object_with_map_to()
+    {
+        $author = Author::new(
+            name: 'original',
+        );
+
+        $author = map([
+            'id' => 1,
+            'name' => 'other',
+        ])->to($author);
+
+        $this->assertSame('other', $author->name);
         $this->assertSame(1, $author->id->id);
     }
 
@@ -114,7 +146,7 @@ class ObjectFactoryTest extends TestCase
         $this->assertSame(1, $a->id->id);
         $this->assertSame('casted', $a->prop);
 
-        $collection = make(ObjectFactoryA::class)->collection()->from(new Query(
+        $collection = make(ObjectFactoryA::class)->from(new Query(
             "SELECT * FROM ObjectFactoryA",
         ));
 

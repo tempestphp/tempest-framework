@@ -9,6 +9,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
+use Tempest\Interfaces\Router;
 use Tempest\Interfaces\View;
 use Tempest\ORM\ObjectFactory;
 use Tempest\View\GenericView;
@@ -51,14 +52,37 @@ function response(string $body = ''): Response
     return new GenericResponse(Status::HTTP_200, $body);
 }
 
+function uri(string $controller, ?string $method = null, ...$params): string
+{
+    $router = get(Router::class);
+
+    return $router->toUri(
+        ...$params,
+        controller: $controller,
+        method: $method,
+    );
+}
+
+function redirect(string $controller, ?string $method = null, ...$params): Response
+{
+    return response()->redirect(uri($controller, $method, ...$params));
+}
+
 /**
- * @template TClassName
- * @param class-string<TClassName> $className
- * @return ObjectFactory<TClassName>
+ * @template T
+ * @param T|class-string<T> $objectOrClass
+ * @return ObjectFactory<T>
  */
-function make(string $className): ObjectFactory
+function make(object|string $objectOrClass): ObjectFactory
 {
     $factory = get(ObjectFactory::class);
 
-    return $factory->forClass($className);
+    return $factory->forClass($objectOrClass);
+}
+
+function map(mixed $data): ObjectFactory
+{
+    $factory = get(ObjectFactory::class);
+
+    return $factory->withData($data);
 }

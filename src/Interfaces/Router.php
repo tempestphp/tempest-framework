@@ -12,5 +12,5 @@ interface Router
 
     public function dispatch(Request $request): Response;
 
-    public function toUri(string $controller, ?string $method = null, ...$params): ?string;
+    public function toUri(string $controller, ?string $method = null, ...$params): string;
 }

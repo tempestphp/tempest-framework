@@ -4,10 +4,12 @@ Tempest is an MVC micro framework that gets out of your way.
 
 ## Todo
 
-- [ ] Response::redirect()
+- [ ] `map()->to()`
+- [ ] clean up array mapper
+- [ ] support for nested updates and creates in query mapper
 - [ ] `uri` helper
-- [ ] include in views
 - [ ] Request Validation
+- [ ] support for nested request validation
 - [ ] DB Data Mapping
 - [ ] Events
 - [ ] Console

@@ -17,10 +17,10 @@ class MigrationManagerTest extends TestCase
 
         $migrationManager->up();
         $migrations = Migration::all();
-        $this->assertCount(2, $migrations);
+        $this->assertCount(3, $migrations);
 
         $migrationManager->up();
         $migrations = Migration::all();
-        $this->assertCount(2, $migrations);
+        $this->assertCount(3, $migrations);
     }
 }

@@ -11,11 +11,11 @@ use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
 use Tempest\Interfaces\Migration;
 
-final readonly class CreateBooksTable implements Migration
+final readonly class CreateBookTable implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_books_table';
+        return '0000-00-00_create_book_table';
     }
 
     public function up(TableBuilder $builder): TableBuilder
