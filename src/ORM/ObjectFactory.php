@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\ORM;
 
-use SebastianBergmann\CodeUnit\Mapper;
 use Tempest\ORM\Exceptions\CannotMapDataException;
 use Tempest\ORM\Mappers\ArrayMapper;
 use Tempest\ORM\Mappers\QueryMapper;

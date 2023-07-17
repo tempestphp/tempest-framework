@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Migrations;
 
 use App\Modules\Books\Author;
 use App\Modules\Books\Book;
 use Tempest\Database\Builder\IdRow;
-use Tempest\Database\Builder\IntRow;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
 use Tempest\Interfaces\Migration;

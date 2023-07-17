@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\ORM\Mappers;
 
-use App\Migrations\CreateAuthorTable;
 use App\Modules\Books\Author;
 use App\Modules\Books\Book;
 use Tempest\Database\Id;
@@ -23,7 +24,7 @@ class QueryMapperTest extends TestCase
         $this->assertSame("INSERT INTO {$table} (name) VALUES (:name);", $query->query);
         $this->assertSame(['name' => 'test'], $query->bindings);
     }
-    
+
     /** @test */
     public function create_query_with_nested_relation()
     {

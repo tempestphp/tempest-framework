@@ -67,7 +67,8 @@ class BaseModelTest extends TestCase
         Book::create(title: 'B1', author: $b);
         Book::create(title: 'B2', author: $b);
 
-        $authors = make(Author::class)->collection()->from(new Query(<<<SQL
+        $authors = make(Author::class)->collection()->from(
+            new Query(<<<SQL
             SELECT * 
             FROM Author
             INNER JOIN Book on Author.id = Book.author_id
