@@ -13,9 +13,10 @@ class Book implements Model
 
     public function __construct(
         public string $title,
+
         public ?Author $author = null,
 
-        /** @var Chapter[] */
+        /** @var \App\Modules\Books\Models\Chapter[] */
         public array $chapters = [],
     ) {
     }
