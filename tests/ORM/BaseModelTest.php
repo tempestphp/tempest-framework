@@ -59,7 +59,7 @@ class BaseModelTest extends TestCase
             CreateBookTable::class,
         );
 
-        $book = new Book(
+        $book = Book::new(
             title: 'Book Title',
             author: new Author(
                 name: 'Author Name',

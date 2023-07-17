@@ -11,13 +11,10 @@ class Book implements Model
 {
     use BaseModel;
 
-    public function __construct(
-        public string $title,
+    public string $title;
 
-        public ?Author $author = null,
+    public ?Author $author = null;
 
-        /** @var \App\Modules\Books\Models\Chapter[] */
-        public array $chapters = [],
-    ) {
-    }
+    /** @var \App\Modules\Books\Models\Chapter[] */
+    public array $chapters = [];
 }

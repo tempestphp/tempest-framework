@@ -28,9 +28,9 @@ class QueryMapperTest extends TestCase
     /** @test */
     public function create_query_with_nested_relation()
     {
-        $book = new Book(
+        $book = Book::new(
             title: 'Book Title',
-            author: new Author(
+            author: Author::new(
                 name: 'Author Name',
             ),
         );

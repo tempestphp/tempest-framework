@@ -11,10 +11,9 @@ class Chapter implements Model
 {
     use BaseModel;
 
-    public function __construct(
-        public Book $book,
-        public string $title,
-        public string $contents,
-    ) {
-    }
+    public Book $book;
+
+    public string $title;
+
+    public string $contents;
 }
