@@ -11,9 +11,9 @@ class Chapter implements Model
 {
     use BaseModel;
 
-    public Book $book;
-
     public string $title;
 
     public string $contents;
+
+    public Book $book;
 }
