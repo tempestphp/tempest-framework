@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\ORM\Mappers;
 
-use App\Modules\Books\Author;
-use App\Modules\Books\Book;
+use App\Modules\Books\Models\Author;
+use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tests\Tempest\TestCase;

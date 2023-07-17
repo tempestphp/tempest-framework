@@ -38,7 +38,7 @@ final readonly class ModelToQueryMapper implements Mapper
         $columns = [];
         $valuePlaceholders = [];
         $bindings = [];
-        
+
         foreach ($fields as $key => $value) {
             $columns[] = $key;
             $valuePlaceholders[] = ":{$key}";

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\ORM;
 
-use App\Modules\Books\Author;
-use App\Modules\Books\Book;
+use App\Modules\Books\Models\Author;
+use App\Modules\Books\Models\Book;
 use PHPUnit\Framework\TestCase;
 use Tempest\ORM\Direction;
 use Tempest\ORM\ModelQuery;

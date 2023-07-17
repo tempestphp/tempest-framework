@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Books;
+namespace App\Modules\Books\Models;
 
 use Tempest\Interfaces\Model;
 use Tempest\ORM\BaseModel;
@@ -15,6 +15,6 @@ class Chapter implements Model
         public Book $book,
         public string $title,
         public string $contents,
-    ) {}
-
+    ) {
+    }
 }

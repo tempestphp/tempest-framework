@@ -38,7 +38,7 @@ trait BaseModel
         );
     }
 
-    public static function relationField(string $relation): FieldName 
+    public static function relationField(string $relation): FieldName
     {
         $field = lcfirst(pathinfo(str_replace('\\', '/', $relation), PATHINFO_FILENAME)) . '_id';
 
@@ -65,7 +65,7 @@ trait BaseModel
 
         $statements[] = 'SELECT * FROM ' . self::table();
 
-        /** @var class-string<\Tempest\Interfaces\Model> $relation 
+        /** @var class-string<\Tempest\Interfaces\Model> $relation
          */
         foreach ($relations as $relation) {
             $statements[] = 'INNER JOIN ' . $relation::table() . ' ON ' . $relation::field('id') . ' = ' . self::relationField($relation);

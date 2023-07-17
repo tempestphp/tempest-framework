@@ -102,8 +102,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         ReflectionProperty $property,
         object $parent,
-    ): mixed
-    {
+    ): mixed {
         $type = $this->resolveType($property);
 
         if (! $type) {
@@ -133,8 +132,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         ReflectionProperty $property,
         object $parent,
-    ): mixed
-    {
+    ): mixed {
         $type = $this->resolveTypeForArray($property);
 
         if (! $type) {

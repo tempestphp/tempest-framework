@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Books;
+namespace App\Modules\Books\Requests;
 
 use Tempest\Http\BaseRequest;
 use Tempest\Interfaces\Request;

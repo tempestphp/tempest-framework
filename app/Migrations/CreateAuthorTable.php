@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Migrations;
 
-use App\Modules\Books\Author;
-use App\Modules\Books\Book;
+use App\Modules\Books\Models\Author;
+use App\Modules\Books\Models\Book;
 use Tempest\Database\Builder\IdRow;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;

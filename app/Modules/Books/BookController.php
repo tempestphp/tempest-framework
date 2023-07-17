@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Books;
 
+use App\Modules\Books\Models\Book;
+use App\Modules\Books\Requests\CreateBookRequest;
+use App\Modules\Books\Requests\StoreBookRequest;
 use Tempest\Http\Get;
 use Tempest\Http\Post;
 use Tempest\Interfaces\Response;
@@ -32,10 +35,4 @@ final readonly class BookController
 
         return redirect(BookController::class, 'show', book: $book);
     }
-
-
-
-
-
-
 }
