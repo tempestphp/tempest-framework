@@ -29,7 +29,7 @@ final class ObjectFactory
     }
 
     /**
-     * @template T
+     * @template T of object
      * @param T|class-string<T> $objectOrClass
      * @return self<T>
      */
@@ -70,8 +70,8 @@ final class ObjectFactory
     }
 
     /**
-     * @template T
-     * @param T|class-string<T> $object
+     * @template T of object
+     * @param T|class-string<T> $objectOrClass
      * @return T
      */
     public function to(object|string $objectOrClass): object

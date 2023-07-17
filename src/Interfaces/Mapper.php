@@ -9,8 +9,8 @@ interface Mapper
     public function canMap(object|string $objectOrClass, mixed $data): bool;
 
     /**
-     * @template ClassName
-     * @param ClassName|class-string<ClassName> $className
+     * @template ClassName of object
+     * @param ClassName|class-string<ClassName> $objectOrClass
      * @param mixed $data
      * @return ClassName[]|ClassName
      */

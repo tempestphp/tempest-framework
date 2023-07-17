@@ -69,7 +69,7 @@ function redirect(string $controller, ?string $method = null, ...$params): Respo
 }
 
 /**
- * @template T
+ * @template T of object
  * @param T|class-string<T> $objectOrClass
  * @return ObjectFactory<T>
  */
