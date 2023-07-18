@@ -13,6 +13,7 @@ use Tempest\Discovery\ControllerDiscoverer;
 use Tempest\Discovery\MigrationDiscoverer;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
+use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Discoverer;
@@ -46,6 +47,7 @@ final readonly class Kernel
             ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
+            ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer())
         ;
 

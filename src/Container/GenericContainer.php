@@ -75,7 +75,23 @@ final class GenericContainer implements Container
         foreach ($reflectionMethod->getParameters() as $parameter) {
             $className = $parameter->getName();
 
-            if (array_key_exists($className, $params)) {
+            if (! array_key_exists($className, $params)) {
+                $params[$className] = $this->get($parameter->getType()->getName());
+
+                continue;
+            }
+
+            $originalValue = $params[$className];
+
+            // If the original value can be passed to this parameter without type errors,
+            // we'll simply use it. However, if the value can't be passed,
+            // we'll try to resolve the required dependency from the container.
+            // TODO: this is only used for route model binding, perhaps it's better
+            //       to move this check to the router instead?
+            if (
+                is_a($originalValue, $parameter->getType()->getName())
+                || $parameter->getType()->getName() === gettype($originalValue)
+            ) {
                 continue;
             }
 

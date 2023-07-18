@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Route;
 
 use App\Controllers\TestController;
+use App\Migrations\CreateAuthorTable;
+use App\Migrations\CreateBookTable;
+use App\Modules\Books\Models\Author;
+use App\Modules\Books\Models\Book;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Status;
+use Tempest\Interfaces\Router;
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase
@@ -62,5 +68,27 @@ Hello Brent!</body>
 HTML;
 
         $this->assertEquals($expected, $response->getBody());
+    }
+
+    /** @test */
+    public function test_route_binding()
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateAuthorTable::class,
+        );
+
+        Book::create(
+            title: 'Test',
+            author: new Author(name: 'Brent')
+        );
+
+        $router = $this->container->get(Router::class);
+
+        $response = $router->dispatch(request('/books/1'));
+
+        $this->assertSame(Status::HTTP_200, $response->getStatus());
+        $this->assertSame('Test', $response->getBody());
     }
 }

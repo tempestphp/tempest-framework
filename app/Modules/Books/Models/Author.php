@@ -11,8 +11,11 @@ class Author implements Model
 {
     use BaseModel;
 
-    public string $name;
+    public function __construct(
+        public string $name,
 
-    /** @var \App\Modules\Books\Models\Book[] */
-    public array $books = [];
+        /** @var \App\Modules\Books\Models\Book[] */
+        public array $books = [],
+    ) {
+    }
 }

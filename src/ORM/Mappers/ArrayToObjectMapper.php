@@ -199,7 +199,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     {
         $constructorParameters = [];
 
-        foreach ($property->getDeclaringClass()->getConstructor()?->getParameters() as $parameter) {
+        foreach (($property->getDeclaringClass()->getConstructor()?->getParameters() ?? []) as $parameter) {
             $constructorParameters[$parameter->getName()] = $parameter;
         }
 

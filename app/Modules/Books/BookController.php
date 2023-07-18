@@ -10,14 +10,13 @@ use App\Modules\Books\Requests\StoreBookRequest;
 use Tempest\Http\Get;
 use Tempest\Http\Post;
 use Tempest\Interfaces\Response;
-use Tempest\Interfaces\View;
 
 final readonly class BookController
 {
     #[Get('/books/{book}')]
-    public function show(Book $book): View
+    public function show(Book $book): Response
     {
-        return new BookDetailView(book: $book);
+        return response()->ok()->body($book->title);
     }
 
     #[Post('/books')]

@@ -78,6 +78,11 @@ final class GenericRouter implements Router
             return response()->notFound();
         }
 
+        $this->container->singleton(
+            RouteParams::class,
+            fn () => new RouteParams($routeParams)
+        );
+
         [$controllerClass, $controllerMethod] = $matchedAction;
 
         $controller = $this->container->get($controllerClass);

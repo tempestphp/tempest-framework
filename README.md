@@ -5,7 +5,6 @@ Tempest is an MVC micro framework that gets out of your way.
 ## Todo
 
 - [ ] support for loading nested relations in ORM
-- [ ] Route binding + URI param conversions
 - [ ] Middleware
 - [ ] Route groups
 - [ ] Request Validation
@@ -15,3 +14,4 @@ Tempest is an MVC micro framework that gets out of your way.
 - [ ] Frontend bootstrap
 - [ ] .env support
 - [ ] Authentication & Authorization
+- [ ] Refactor container::call magic to router for route binding

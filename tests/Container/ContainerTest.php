@@ -7,6 +7,7 @@ namespace Tests\Tempest\Container;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\InitializedBy;
+use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
 
@@ -63,6 +64,34 @@ class ContainerTest extends TestCase
 
         $this->assertEquals(1, $instance::$count);
     }
+
+    /** @test */
+    public function initialize_with_can_initializer()
+    {
+        $container = new GenericContainer();
+
+        $container->addInitializer(new ContainerObjectEInitializer());
+
+        $object = $container->get(ContainerObjectE::class);
+
+        $this->assertInstanceOf(ContainerObjectE::class, $object);
+    }
+
+    /** @test */
+    public function call_tries_to_transform_unmatched_values()
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(new ContainerObjectEInitializer());
+        $classToCall = new CallContainerObjectE();
+
+        $return = $container->call($classToCall, 'method', input: '1');
+        $this->assertInstanceOf(ContainerObjectE::class, $return);
+        $this->assertSame('default', $return->id);
+
+        $return = $container->call($classToCall, 'method', input: new ContainerObjectE('other'));
+        $this->assertInstanceOf(ContainerObjectE::class, $return);
+        $this->assertSame('other', $return->id);
+    }
 }
 
 class ContainerObjectA
@@ -90,12 +119,31 @@ class ContainerObjectD
     {
     }
 }
-
 class ContainerObjectDInitializer implements Initializer
 {
     public function initialize(string $className, Container $container): ContainerObjectD
     {
         return new ContainerObjectD(prop: 'test');
+    }
+}
+
+class ContainerObjectE
+{
+    public function __construct(public string $id = 'default')
+    {
+    }
+}
+
+class ContainerObjectEInitializer implements CanInitialize
+{
+    public function initialize(string $className, Container $container): ContainerObjectE
+    {
+        return new ContainerObjectE();
+    }
+
+    public function canInitialize(string $className): bool
+    {
+        return $className === ContainerObjectE::class;
     }
 }
 
@@ -106,5 +154,13 @@ class SingletonClass
     public function __construct()
     {
         self::$count += 1;
+    }
+}
+
+class CallContainerObjectE
+{
+    public function method(ContainerObjectE $input): ContainerObjectE
+    {
+        return $input;
     }
 }
