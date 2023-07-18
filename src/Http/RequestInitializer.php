@@ -24,22 +24,22 @@ final readonly class RequestInitializer implements CanInitialize
             $className = GenericRequest::class;
         }
 
-        /** @var Request $request */
-        $request = new $className(
-            method: $server->getMethod(),
-            uri: $server->getUri(),
-            body: $server->getBody(),
-        );
+        $decodedUri = rawurldecode($server->getUri());
+        $parsedUrl = parse_url($decodedUri);
 
-        foreach ($request->getBody() as $key => $value) {
-            if (! is_string($key)) {
-                continue;
-            }
+        $path = $parsedUrl['path'];
+        $query = $parsedUrl['query'] ?? null;
 
-            if (property_exists($request, $key)) {
-                $request->$key = $value;
-            }
-        }
+        $request = map(
+            [
+                'method' => $server->getMethod(),
+                'uri' => $server->getUri(),
+                'body' => $server->getBody(),
+                'path' => $path,
+                'query' => $query,
+                ...$server->getBody(),
+            ],
+        )->to($className);
 
         $container->singleton($className, fn () => $request);
 

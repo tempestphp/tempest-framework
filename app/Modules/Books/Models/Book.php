@@ -6,11 +6,13 @@ namespace App\Modules\Books\Models;
 
 use Tempest\Interfaces\Model;
 use Tempest\ORM\BaseModel;
+use Tempest\Validation\Rules\Length;
 
 class Book implements Model
 {
     use BaseModel;
 
+    #[Length(min: 1, max: 120)]
     public string $title;
 
     public ?Author $author = null;

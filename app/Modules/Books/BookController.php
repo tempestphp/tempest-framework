@@ -6,9 +6,9 @@ namespace App\Modules\Books;
 
 use App\Modules\Books\Models\Book;
 use App\Modules\Books\Requests\CreateBookRequest;
-use App\Modules\Books\Requests\StoreBookRequest;
 use Tempest\Http\Get;
 use Tempest\Http\Post;
+use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 
 final readonly class BookController
@@ -28,8 +28,9 @@ final readonly class BookController
     }
 
     #[Post('/books/{book}')]
-    public function update(Book $book, StoreBookRequest $request): Response
+    public function update(Book $book, Request $request): Response
     {
+        // TODO request mapper
         $book = map($request)->to($book)->save();
 
         return redirect(BookController::class, 'show', book: $book);

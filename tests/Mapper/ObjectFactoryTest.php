@@ -17,6 +17,8 @@ use Tempest\Interfaces\Model;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\BaseModel;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Rules\Length;
 use Tests\Tempest\TestCase;
 
 class ObjectFactoryTest extends TestCase
@@ -154,6 +156,14 @@ class ObjectFactoryTest extends TestCase
         $this->assertSame('casted', $collection[0]->prop);
         $this->assertSame('casted', $collection[1]->prop);
     }
+
+    /** @test */
+    public function test_validation()
+    {
+        $this->expectException(ValidationException::class);
+
+        map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
+    }
 }
 
 class ObjectFactoryA implements Model
@@ -161,6 +171,14 @@ class ObjectFactoryA implements Model
     use BaseModel;
 
     #[CastWith(ObjectFactoryACaster::class)]
+    public string $prop;
+}
+
+class ObjectFactoryWithValidation implements Model
+{
+    use BaseModel;
+
+    #[Length(min: 2)]
     public string $prop;
 }
 

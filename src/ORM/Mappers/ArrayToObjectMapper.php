@@ -8,9 +8,11 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
 use Tempest\Interfaces\Caster;
+use Tempest\Interfaces\IsValidated;
 use Tempest\Interfaces\Mapper;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
@@ -64,6 +66,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         if ($missingValues !== []) {
             throw new MissingValuesException($objectOrClass, $missingValues);
         }
+
+        $this->validate($object);
 
         return $object;
     }
@@ -209,5 +213,16 @@ final readonly class ArrayToObjectMapper implements Mapper
             && $constructorParameters[$property->getName()]->isDefaultValueAvailable();
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
+    }
+
+    private function validate(object|string $object): void
+    {
+        if (! $object instanceof IsValidated) {
+            return;
+        }
+
+        $validator = new Validator();
+
+        $validator->validate($object);
     }
 }

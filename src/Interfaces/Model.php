@@ -8,7 +8,7 @@ use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
 
-interface Model
+interface Model extends IsValidated
 {
     public static function table(): TableName;
 

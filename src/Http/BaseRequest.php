@@ -6,14 +6,21 @@ namespace Tempest\Http;
 
 trait BaseRequest
 {
+    public Method $method;
+    public string $uri;
+    public array $body;
     public string $path;
     public ?string $query = null;
 
     public function __construct(
-        public Method $method,
-        public string $uri,
-        public array $body,
+        Method $method,
+        string $uri,
+        array $body,
     ) {
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->body = $body;
+
         $decodedUri = rawurldecode($uri);
         $parsedUrl = parse_url($decodedUri);
 

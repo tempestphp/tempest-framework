@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Route;
 
+use App\Modules\Books\BookController;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
@@ -45,6 +46,29 @@ class RequestTest extends TestCase
         );
 
         $response = $router->dispatch(request('/create-post')->post($body));
+
+        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals('test-title test-text', $response->getBody());
+    }
+
+    /** @test */
+    public function custom_request_test_with_validation()
+    {
+        $router = $this->container->get(Router::class);
+
+        $body = [
+            'title' => 'a',
+        ];
+
+        $uri = uri(BookController::class, 'store');
+
+        $this->server(
+            method: Method::POST,
+            uri: $uri,
+            body: $body,
+        );
+
+        $response = $router->dispatch(request($uri)->post($body));
 
         $this->assertEquals(Status::HTTP_200, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
