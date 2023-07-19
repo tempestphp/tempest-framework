@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Route;
 
+use App\Migrations\CreateBookTable;
 use App\Modules\Books\BookController;
+use App\Modules\Books\Models\Book;
+use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
@@ -54,6 +58,8 @@ class RequestTest extends TestCase
     /** @test */
     public function custom_request_test_with_validation()
     {
+        $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
+
         $router = $this->container->get(Router::class);
 
         $body = [
@@ -70,7 +76,9 @@ class RequestTest extends TestCase
 
         $response = $router->dispatch(request($uri)->post($body));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
-        $this->assertEquals('test-title test-text', $response->getBody());
+        $this->assertSame(Status::HTTP_302, $response->getStatus());
+        $book = Book::find(new Id(1));
+        $this->assertSame(1, $book->id->id);
+        $this->assertSame('a', $book->title);
     }
 }

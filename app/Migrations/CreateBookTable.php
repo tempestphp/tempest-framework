@@ -24,7 +24,7 @@ final readonly class CreateBookTable implements Migration
             ->name(Book::table())
             ->add(new IdRow())
             ->add(new TextRow('title'))
-            ->add(new IntRow('author_id'))
+            ->add(new IntRow('author_id', nullable: true))
             ->create();
     }
 

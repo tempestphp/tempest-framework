@@ -24,7 +24,7 @@ final readonly class BookController
     {
         $book = map($request)->to(Book::class)->save();
 
-        return redirect(BookController::class, 'show', book: $book);
+        return redirect(BookController::class, 'show', book: $book->id);
     }
 
     #[Post('/books/{book}')]
@@ -33,6 +33,6 @@ final readonly class BookController
         // TODO request mapper
         $book = map($request)->to($book)->save();
 
-        return redirect(BookController::class, 'show', book: $book);
+        return redirect(BookController::class, 'show', book: $book->id);
     }
 }

@@ -5,9 +5,10 @@ Tempest is an MVC micro framework that gets out of your way.
 ## Todo
 
 - [ ] support for loading nested relations in ORM
+- [ ] Mapping nested request data to arrays that work with the mapper
+- [ ] Additional validation rules
 - [ ] Middleware
 - [ ] Route groups
-- [ ] Request Validation
 - [ ] support for nested request validation
 - [ ] Events
 - [ ] Console
