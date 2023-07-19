@@ -97,13 +97,18 @@ final class GenericRouter implements Router
     }
 
     public function toUri(
-        string $controller,
-        ?string $method = null,
+        array|string $action,
         ...$params,
     ): string {
-        $reflection = new ReflectionClass($controller);
-
-        $method = $reflection->getMethod($method ?? '__invoke');
+        if (is_array($action)) {
+            $controller = $action[0];
+            $reflection = new ReflectionClass($controller);
+            $method = $reflection->getMethod($action[1]);
+        } else {
+            $controller = $action;
+            $reflection = new ReflectionClass($controller);
+            $method = $reflection->getMethod('__invoke');
+        }
 
         $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
 

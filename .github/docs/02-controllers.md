@@ -21,7 +21,7 @@ final readonly class BlogPostController
     {
         // …
         
-        return response()->redirect(uri(BlogPostController::class, 'show', id: $id)) 
+        return response()->redirect(uri([BlogPostController::class, 'show'], id: $id)) 
     }
 }
 ```
@@ -50,7 +50,7 @@ final readonly class BlogPostController
     {
         // …
         
-        return response()->redirect(uri(BlogPostController::class, 'show', id: $id)) 
+        return response()->redirect(uri([BlogPostController::class, 'show'], id: $id)) 
     }
 }
 ```

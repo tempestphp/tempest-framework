@@ -52,20 +52,19 @@ function response(string $body = ''): Response
     return new GenericResponse(Status::HTTP_200, $body);
 }
 
-function uri(string $controller, ?string $method = null, ...$params): string
+function uri(array|string $action, ...$params): string
 {
     $router = get(Router::class);
 
     return $router->toUri(
+        $action,
         ...$params,
-        controller: $controller,
-        method: $method,
     );
 }
 
-function redirect(string $controller, ?string $method = null, ...$params): Response
+function redirect(string|array $action, ...$params): Response
 {
-    return response()->redirect(uri($controller, $method, ...$params));
+    return response()->redirect(uri($action, ...$params));
 }
 
 /**

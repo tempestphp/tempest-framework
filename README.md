@@ -9,7 +9,6 @@ Tempest is an MVC micro framework that gets out of your way.
 - [ ] Additional validation rules
 - [ ] Middleware
 - [ ] Route groups
-- [ ] support for nested request validation
 - [ ] Events
 - [ ] Console
 - [ ] Frontend bootstrap

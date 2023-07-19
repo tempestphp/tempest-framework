@@ -24,15 +24,14 @@ final readonly class BookController
     {
         $book = map($request)->to(Book::class)->save();
 
-        return redirect(BookController::class, 'show', book: $book->id);
+        return redirect([BookController::class, 'show'], book: $book->id);
     }
 
     #[Post('/books/{book}')]
     public function update(Book $book, Request $request): Response
     {
-        // TODO request mapper
         $book = map($request)->to($book)->save();
 
-        return redirect(BookController::class, 'show', book: $book->id);
+        return redirect([BookController::class, 'show'], book: $book->id);
     }
 }

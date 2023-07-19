@@ -66,7 +66,7 @@ class RequestTest extends TestCase
             'title' => 'a',
         ];
 
-        $uri = uri(BookController::class, 'store');
+        $uri = uri([BookController::class, 'store']);
 
         $this->server(
             method: Method::POST,
