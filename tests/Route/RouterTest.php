@@ -13,6 +13,9 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Router;
+
+use function Tempest\request;
+
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase
@@ -44,7 +47,7 @@ class RouterTest extends TestCase
     {
         $router = $this->container->get(GenericRouter::class);
 
-        $this->assertEquals('/test/1/a', $router->toUri(TestController::class, method: 'withParams', id: 1, name: 'a'));
+        $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
         $this->assertEquals('/test', $router->toUri(TestController::class));
     }
 

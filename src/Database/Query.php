@@ -6,6 +6,8 @@ namespace Tempest\Database;
 
 use PDO;
 
+use function Tempest\get;
+
 final readonly class Query
 {
     public function __construct(

@@ -18,6 +18,9 @@ use Tempest\Http\ServerInitializer;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Discoverer;
 use Tempest\Interfaces\Router;
+
+use function Tempest\path;
+
 use Throwable;
 
 final readonly class Kernel

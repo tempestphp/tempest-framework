@@ -7,6 +7,9 @@ namespace Tempest\ORM\Mappers;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+
+use function Tempest\get;
+
 use Tempest\Interfaces\Caster;
 use Tempest\Interfaces\IsValidated;
 use Tempest\Interfaces\Mapper;

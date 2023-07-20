@@ -10,6 +10,8 @@ use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;
 use Tempest\Interfaces\Model;
 
+use function Tempest\make;
+
 final readonly class ModelToQueryMapper implements Mapper
 {
     public function canMap(object|string $objectOrClass, mixed $data): bool
@@ -116,19 +118,19 @@ final readonly class ModelToQueryMapper implements Mapper
                 continue;
             }
 
-            $value = $property->getValue($model);
+            $type = $property->getType()->getName();
 
             // 1:1 or n:1 relations
-            if ($value instanceof Model) {
+            if (is_a($type, Model::class, true)) {
                 continue;
             }
 
             // 1:n relations
-            if (is_array($value)) {
+            if ($type === 'array') {
                 continue;
             }
 
-            $fields[$property->getName()] = $value;
+            $fields[$property->getName()] = $property->getValue($model);
         }
 
         return $fields;

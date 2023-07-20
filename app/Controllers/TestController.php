@@ -8,6 +8,9 @@ use Tempest\Http\Get;
 use Tempest\Interfaces\Response;
 use Tempest\Interfaces\View;
 
+use function Tempest\response;
+use function Tempest\view;
+
 final readonly class TestController
 {
     #[Get(uri: '/test/{id}/{name}')]

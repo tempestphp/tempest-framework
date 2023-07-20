@@ -6,6 +6,9 @@ namespace Tests\Tempest\View;
 
 use App\Views\ViewModel;
 use Tempest\AppConfig;
+
+use function Tempest\view;
+
 use Tempest\View\GenericView;
 use Tests\Tempest\TestCase;
 
