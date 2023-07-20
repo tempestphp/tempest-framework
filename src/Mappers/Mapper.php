@@ -2,16 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\Mappers;
 
 use Tempest\ORM\Exceptions\CannotMapDataException;
-use Tempest\ORM\Mappers\ArrayToObjectMapper;
-use Tempest\ORM\Mappers\ModelToQueryMapper;
-use Tempest\ORM\Mappers\QueryToModelMapper;
-use Tempest\ORM\Mappers\RequestToObjectMapper;
 
 /* @template ClassType */
-final class ObjectFactory
+final class Mapper
 {
     private object|string $objectOrClass;
 

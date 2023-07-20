@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM\Mappers;
+namespace Tempest\Mappers;
 
 use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;

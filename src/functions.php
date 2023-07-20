@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Tempest {
+
     use Tempest\Container\GenericContainer;
     use Tempest\Http\GenericRequest;
     use Tempest\Http\GenericResponse;
@@ -12,7 +13,7 @@ namespace Tempest {
     use Tempest\Interfaces\Response;
     use Tempest\Interfaces\Router;
     use Tempest\Interfaces\View;
-    use Tempest\ORM\ObjectFactory;
+    use Tempest\Mappers\Mapper;
     use Tempest\View\GenericView;
 
     /**
@@ -71,18 +72,18 @@ namespace Tempest {
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
-     * @return ObjectFactory<T>
+     * @return Mapper<T>
      */
-    function make(object|string $objectOrClass): ObjectFactory
+    function make(object|string $objectOrClass): Mapper
     {
-        $factory = get(ObjectFactory::class);
+        $factory = get(Mapper::class);
 
         return $factory->forClass($objectOrClass);
     }
 
-    function map(mixed $data): ObjectFactory
+    function map(mixed $data): Mapper
     {
-        $factory = get(ObjectFactory::class);
+        $factory = get(Mapper::class);
 
         return $factory->withData($data);
     }
