@@ -6,6 +6,9 @@ namespace Tempest\View;
 
 use Tempest\AppConfig;
 
+use function Tempest\path;
+use function Tempest\view;
+
 trait BaseView
 {
     public string $path;

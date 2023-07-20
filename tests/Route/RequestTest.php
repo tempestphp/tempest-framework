@@ -13,6 +13,10 @@ use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Router;
+
+use function Tempest\request;
+use function Tempest\uri;
+
 use Tests\Tempest\TestCase;
 
 class RequestTest extends TestCase

@@ -7,6 +7,9 @@ namespace Tempest\ORM;
 use PDO;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
+
+use function Tempest\get;
+
 use Tempest\Interfaces\Model;
 
 /**

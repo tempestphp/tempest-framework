@@ -9,6 +9,8 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 
+use function Tempest\make;
+
 trait BaseModel
 {
     public ?Id $id = null;

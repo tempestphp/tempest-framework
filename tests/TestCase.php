@@ -6,6 +6,9 @@ namespace Tests\Tempest;
 
 use Tempest\Application\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
+
+use function Tempest\get;
+
 use Tempest\Http\Method;
 use Tempest\Interfaces\Container;
 

@@ -7,6 +7,8 @@ namespace Tempest\ORM\Mappers;
 use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;
 
+use function Tempest\make;
+
 final readonly class QueryToModelMapper implements Mapper
 {
     public function canMap(object|string $objectOrClass, mixed $data): bool

@@ -11,6 +11,10 @@ use Tempest\Http\Post;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 
+use function Tempest\map;
+use function Tempest\redirect;
+use function Tempest\response;
+
 final readonly class BookController
 {
     #[Get('/books/{book}')]

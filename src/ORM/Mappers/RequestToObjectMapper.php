@@ -7,6 +7,8 @@ namespace Tempest\ORM\Mappers;
 use Tempest\Interfaces\Mapper;
 use Tempest\Interfaces\Request;
 
+use function Tempest\map;
+
 final readonly class RequestToObjectMapper implements Mapper
 {
     public function canMap(object|string $objectOrClass, mixed $data): bool

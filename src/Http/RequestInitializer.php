@@ -9,6 +9,8 @@ use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Server;
 
+use function Tempest\map;
+
 final readonly class RequestInitializer implements CanInitialize
 {
     public function canInitialize(string $className): bool

@@ -15,6 +15,8 @@ use Tempest\Interfaces\Response;
 use Tempest\Interfaces\Router;
 use Tempest\Interfaces\View;
 
+use function Tempest\response;
+
 #[InitializedBy(RouteInitializer::class)]
 final class GenericRouter implements Router
 {

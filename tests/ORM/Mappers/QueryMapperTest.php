@@ -8,6 +8,9 @@ use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
+
+use function Tempest\make;
+
 use Tests\Tempest\TestCase;
 
 class QueryMapperTest extends TestCase

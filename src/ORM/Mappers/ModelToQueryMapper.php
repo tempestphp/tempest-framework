@@ -10,6 +10,8 @@ use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;
 use Tempest\Interfaces\Model;
 
+use function Tempest\make;
+
 final readonly class ModelToQueryMapper implements Mapper
 {
     public function canMap(object|string $objectOrClass, mixed $data): bool

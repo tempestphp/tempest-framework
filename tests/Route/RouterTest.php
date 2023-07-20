@@ -13,6 +13,9 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Status;
 use Tempest\Interfaces\Router;
+
+use function Tempest\request;
+
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase
