@@ -25,7 +25,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\Length;
 use Tests\Tempest\TestCase;
 
-class ObjectFactoryTest extends TestCase
+class MapperTest extends TestCase
 {
     /** @test */
     public function make_object_from_class_string()
