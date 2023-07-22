@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\ORM;
 
+use ReflectionClass;
+use ReflectionProperty;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 
 use function Tempest\make;
+
+use Tempest\ORM\Attributes\CastWith;
 
 trait BaseModel
 {
@@ -56,8 +60,15 @@ trait BaseModel
     {
         $table = self::table();
 
+        $fields = self::fieldNames();
+
+        $fields = implode(', ', array_map(
+            fn (FieldName $fieldName) => $fieldName->asDefault(),
+            $fields,
+        ));
+
         return make(static::class)->collection()->from(new Query(
-            "SELECT * FROM {$table}",
+            "SELECT {$fields} FROM {$table}",
         ));
     }
 
@@ -65,10 +76,20 @@ trait BaseModel
     {
         $statements = [];
 
-        $statements[] = 'SELECT * FROM ' . self::table();
+        $fields = self::fieldNames();
 
-        /** @var class-string<\Tempest\Interfaces\Model> $relation
-         */
+        /** @var class-string<\Tempest\Interfaces\Model> $relation */
+        foreach ($relations as $relation) {
+            $fields = [...$fields, ...$relation::fieldNames()];
+        }
+
+        $fields = implode(', ', array_map(
+            fn (FieldName $fieldName) => $fieldName->asDefault(),
+            $fields,
+        ));
+
+        $statements[] = "SELECT {$fields} FROM " . self::table();
+
         foreach ($relations as $relation) {
             $statements[] = 'INNER JOIN ' . $relation::table() . ' ON ' . $relation::field('id') . ' = ' . self::relationField($relation);
         }
@@ -115,5 +136,34 @@ trait BaseModel
         $query->execute();
 
         return $this;
+    }
+
+    public static function fieldNames(): array
+    {
+        $fieldNames = [];
+
+        foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            if (! $property->getType()->isBuiltin()) {
+                $hasCast = $property->getAttributes(CastWith::class) !== [];
+
+                if (! $hasCast) {
+                    $hasCast = (new ReflectionClass($property->getType()->getName()))->getAttributes(CastWith::class) !== [];
+                }
+
+                if ($hasCast) {
+                    $fieldNames[] = self::field($property->getName());
+                }
+
+                continue;
+            }
+
+            if ($property->getType()->getName() === 'array') {
+                continue;
+            }
+
+            $fieldNames[] = self::field($property->getName());
+        }
+
+        return $fieldNames;
     }
 }

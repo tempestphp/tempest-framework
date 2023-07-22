@@ -52,7 +52,6 @@ class BaseModelTest extends TestCase
     /** @test */
     public function complex_query()
     {
-        $this->markTestSkipped();
         $this->migrate(
             CreateMigrationsTable::class,
             CreateAuthorTable::class,

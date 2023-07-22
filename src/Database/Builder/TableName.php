@@ -13,6 +13,6 @@ final readonly class TableName
 
     public function __toString(): string
     {
-        return $this->tableName;
+        return "`{$this->tableName}`";
     }
 }

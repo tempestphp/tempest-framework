@@ -13,7 +13,7 @@ namespace Tempest {
     use Tempest\Interfaces\Response;
     use Tempest\Interfaces\Router;
     use Tempest\Interfaces\View;
-    use Tempest\Mappers\Mapper;
+    use Tempest\Mappers\ObjectMapper;
     use Tempest\View\GenericView;
 
     /**
@@ -72,18 +72,18 @@ namespace Tempest {
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
-     * @return Mapper<T>
+     * @return ObjectMapper<T>
      */
-    function make(object|string $objectOrClass): Mapper
+    function make(object|string $objectOrClass): ObjectMapper
     {
-        $factory = get(Mapper::class);
+        $factory = get(ObjectMapper::class);
 
         return $factory->forClass($objectOrClass);
     }
 
-    function map(mixed $data): Mapper
+    function map(mixed $data): ObjectMapper
     {
-        $factory = get(Mapper::class);
+        $factory = get(ObjectMapper::class);
 
         return $factory->withData($data);
     }

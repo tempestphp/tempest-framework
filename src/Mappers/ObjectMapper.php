@@ -7,7 +7,7 @@ namespace Tempest\Mappers;
 use Tempest\ORM\Exceptions\CannotMapDataException;
 
 /* @template ClassType */
-final class Mapper
+final class ObjectMapper
 {
     private object|string $objectOrClass;
 

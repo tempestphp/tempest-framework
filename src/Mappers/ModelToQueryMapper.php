@@ -10,7 +10,7 @@ use Tempest\Database\Query;
 use Tempest\Interfaces\Mapper;
 use Tempest\Interfaces\Model;
 
-use function Tempest\make;
+use function Tempest\map;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
@@ -53,7 +53,7 @@ final readonly class ModelToQueryMapper implements Mapper
             $key = "{$key}_id";
             $columns[] = $key;
             $valuePlaceholders[] = ":{$key}";
-            $bindings[$key] = make(Query::class)->from($relation);
+            $bindings[$key] = map($relation)->to(Query::class);
         }
 
         $valuePlaceholders = implode(', ', $valuePlaceholders);

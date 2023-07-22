@@ -16,6 +16,9 @@ interface Model extends IsValidated
 
     public static function relationField(string $relation): FieldName;
 
+    /** @return \Tempest\Database\Builder\FieldName[] */
+    public static function fieldNames(): array;
+
     public static function all(): array;
 
     public static function new(...$params): self;
