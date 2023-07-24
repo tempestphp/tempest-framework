@@ -31,6 +31,14 @@ final readonly class BookController
         return redirect([BookController::class, 'show'], book: $book->id);
     }
 
+    #[Post('/books-with-author')]
+    public function storeWithAuthor(Request $request): Response
+    {
+        $book = map($request)->to(Book::class)->save();
+
+        return redirect([BookController::class, 'show'], book: $book->id);
+    }
+
     #[Post('/books/{book}')]
     public function update(Book $book, Request $request): Response
     {

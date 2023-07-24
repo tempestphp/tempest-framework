@@ -17,8 +17,12 @@ final readonly class ArrayHelper
         return $result;
     }
 
-    public function toArray(string $key, mixed $value): array
+    public function toArray(string|int $key, mixed $value): array
     {
+        if (is_int($key)) {
+            return [$key => $value];
+        }
+
         $keys = explode('.', $key);
 
         for ($i = array_key_last($keys); $i >= 0; $i--) {

@@ -11,6 +11,8 @@ use Tempest\Interfaces\Server;
 
 use function Tempest\map;
 
+use Tempest\Support\ArrayHelper;
+
 final readonly class RequestInitializer implements CanInitialize
 {
     public function canInitialize(string $className): bool
@@ -39,7 +41,7 @@ final readonly class RequestInitializer implements CanInitialize
                 'body' => $server->getBody(),
                 'path' => $path,
                 'query' => $query,
-                ...$server->getBody(),
+                ...(new ArrayHelper())->unwrap($server->getBody()),
             ],
         )->to($className);
 

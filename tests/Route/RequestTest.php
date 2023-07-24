@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Route;
 
+use App\Migrations\CreateAuthorTable;
 use App\Migrations\CreateBookTable;
 use App\Modules\Books\BookController;
+use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -82,6 +84,38 @@ class RequestTest extends TestCase
 
         $this->assertSame(Status::HTTP_302, $response->getStatus());
         $book = Book::find(new Id(1));
+        $this->assertSame(1, $book->id->id);
+        $this->assertSame('a', $book->title);
+    }
+
+    /** @test */
+    public function custom_request_test_with_nested_validation()
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateAuthorTable::class
+        );
+
+        $router = $this->container->get(Router::class);
+
+        $body = [
+            'title' => 'a',
+            'author.name' => 'b'
+        ];
+
+        $uri = uri([BookController::class, 'storeWithAuthor']);
+
+        $this->server(
+            method: Method::POST,
+            uri: $uri,
+            body: $body,
+        );
+
+        $response = $router->dispatch(request($uri)->post($body));
+
+        $this->assertSame(Status::HTTP_302, $response->getStatus());
+        $book = Book::find(new Id(1), relations: [Author::class]);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
     }
