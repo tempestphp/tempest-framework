@@ -11,10 +11,12 @@ use ReflectionProperty;
 use function Tempest\get;
 
 use Tempest\Interfaces\Caster;
+
 use Tempest\Interfaces\IsValidated;
 use Tempest\Interfaces\Mapper;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Support\Reflection\Attributes;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
@@ -77,23 +79,25 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function getCaster(ReflectionProperty $property): ?Caster
     {
-        /** @var \Tempest\ORM\Attributes\CastWith|null $attribute */
-        $attribute = ($property->getAttributes(CastWith::class)[0] ?? null)?->newInstance();
+        $castWith = Attributes::forProperty($property)
+            ->instanceOf(CastWith::class)
+            ->first();
 
-        if (! $attribute) {
+        if (! $castWith) {
             try {
-                $class = new ReflectionClass($property->getType()->getName());
-                $attribute = ($class->getAttributes(CastWith::class)[0] ?? null)?->newInstance();
+                $castWith = Attributes::forClass($property->getType()->getName())
+                    ->instanceOf(CastWith::class)
+                    ->first();
             } catch (ReflectionException) {
                 return null;
             }
         }
 
-        if (! $attribute) {
+        if (! $castWith) {
             return null;
         }
 
-        return get($attribute->className);
+        return get($castWith->className);
     }
 
     private function resolveObject(object|string $objectOrClass): object

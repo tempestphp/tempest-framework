@@ -15,6 +15,8 @@ use function Tempest\make;
 
 use Tempest\ORM\Attributes\CastWith;
 
+use Tempest\Support\Reflection\Attributes;
+
 trait BaseModel
 {
     public ?Id $id = null;
@@ -144,13 +146,17 @@ trait BaseModel
 
         foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if (! $property->getType()->isBuiltin()) {
-                $hasCast = $property->getAttributes(CastWith::class) !== [];
+                $withCast = Attributes::forProperty($property)
+                    ->instanceOf(CastWith::class)
+                    ->first();
 
-                if (! $hasCast) {
-                    $hasCast = (new ReflectionClass($property->getType()->getName()))->getAttributes(CastWith::class) !== [];
+                if (! $withCast) {
+                    $withCast = Attributes::forClass($property->getType()->getName())
+                        ->instanceOf(CastWith::class)
+                        ->first();
                 }
 
-                if ($hasCast) {
+                if ($withCast) {
                     $fieldNames[] = self::field($property->getName());
                 }
 

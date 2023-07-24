@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
-use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Interfaces\Discoverer;
+use Tempest\Support\Reflection\Attributes;
 
 final readonly class ControllerDiscoverer implements Discoverer
 {
@@ -20,7 +20,7 @@ final readonly class ControllerDiscoverer implements Discoverer
     public function discover(ReflectionClass $class): void
     {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $attributes = $method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF);
+            $attributes = Attributes::forMethod($method)->instanceOf(Route::class)->all();
 
             if ($attributes !== []) {
                 $this->routeConfig->addController($class->getName());

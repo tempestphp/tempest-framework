@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Validation;
 
-use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionProperty;
 use Tempest\Interfaces\IsValidated;
 use Tempest\Interfaces\Rule;
+use Tempest\Support\Reflection\Attributes;
 use Tempest\Validation\Exceptions\ValidationException;
 
 final readonly class Validator
@@ -20,11 +20,7 @@ final readonly class Validator
         $failingRules = [];
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            /** @var \Tempest\Interfaces\Rule[] $rules */
-            $rules = array_map(
-                fn (ReflectionAttribute $attribute) => $attribute->newInstance(),
-                $property->getAttributes(Rule::class, ReflectionAttribute::IS_INSTANCEOF),
-            );
+            $rules = Attributes::forProperty($property)->instanceOf(Rule::class)->all();
 
             if (! $property->isInitialized($object)) {
                 continue;

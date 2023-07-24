@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use ReflectionAttribute;
 use ReflectionClass;
 use Tempest\AppConfig;
 use Tempest\Container\InitializedBy;
@@ -18,6 +17,8 @@ use Tempest\Interfaces\View;
 
 use function Tempest\response;
 
+use Tempest\Support\Reflection\Attributes;
+
 #[InitializedBy(RouteInitializer::class)]
 final class GenericRouter implements Router
 {
@@ -30,19 +31,21 @@ final class GenericRouter implements Router
 
     public function registerController(string $controller): self
     {
-        $reflection = new ReflectionClass($controller);
+        $class = new ReflectionClass($controller);
 
-        foreach ($reflection->getMethods() as $method) {
-            $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
+        foreach ($class->getMethods() as $controllerMethod) {
+            $routeAttribute = Attributes::forMethod($controllerMethod)
+                ->instanceOf(Route::class)
+                ->first();
 
             if (! $routeAttribute) {
                 continue;
             }
 
             $this->registerRoute(
-                $routeAttribute->newInstance(),
+                $routeAttribute,
                 $controller,
-                $method->getName(),
+                $controllerMethod->getName(),
             );
         }
 
@@ -113,13 +116,13 @@ final class GenericRouter implements Router
             $controllerMethod = $reflection->getMethod('__invoke');
         }
 
-        $routeAttribute = ($controllerMethod->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
+        $routeAttribute = Attributes::forMethod($controllerMethod)->instanceOf(Route::class)->first();
 
         if (! $routeAttribute) {
             throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
         }
 
-        $uri = $routeAttribute->newInstance()->uri;
+        $uri = $routeAttribute->uri;
 
         foreach ($params as $key => $value) {
             $uri = str_replace('{' . $key . '}', "{$value}", $uri);
