@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Exception;
 use ReflectionAttribute;
 use ReflectionClass;
 use Tempest\AppConfig;
 use Tempest\Container\InitializedBy;
+use Tempest\Http\Exceptions\InvalidRouteException;
+use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
@@ -92,7 +93,7 @@ final class GenericRouter implements Router
         $outputFromController = $this->container->call($controller, $controllerMethod, ...$routeParams);
 
         if ($outputFromController === null) {
-            throw new Exception("{$controllerClass}::{$controllerMethod}() did not return anything");
+            throw new MissingControllerOutputException($controllerClass, $controllerMethod);
         }
 
         return $this->createResponse($outputFromController);
@@ -103,19 +104,19 @@ final class GenericRouter implements Router
         ...$params,
     ): string {
         if (is_array($action)) {
-            $controller = $action[0];
-            $reflection = new ReflectionClass($controller);
-            $method = $reflection->getMethod($action[1]);
+            $controllerClass = $action[0];
+            $reflection = new ReflectionClass($controllerClass);
+            $controllerMethod = $reflection->getMethod($action[1]);
         } else {
-            $controller = $action;
-            $reflection = new ReflectionClass($controller);
-            $method = $reflection->getMethod('__invoke');
+            $controllerClass = $action;
+            $reflection = new ReflectionClass($controllerClass);
+            $controllerMethod = $reflection->getMethod('__invoke');
         }
 
-        $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
+        $routeAttribute = ($controllerMethod->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
 
         if (! $routeAttribute) {
-            throw new Exception("No route found");
+            throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
         }
 
         $uri = $routeAttribute->newInstance()->uri;

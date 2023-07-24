@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Exception;
 use ReflectionClass;
 use ReflectionParameter;
+use Tempest\Container\Exceptions\ContainerException;
+use Tempest\Container\Exceptions\InvalidInitializerException;
 use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
@@ -61,10 +62,7 @@ final class GenericContainer implements Container
         try {
             return $this->resolve($className, $log);
         } catch (Throwable $throwable) {
-            throw new Exception(
-                message: "Could not resolve {$log}",
-                previous: $throwable,
-            );
+            throw new ContainerException($log, $throwable);
         }
     }
 
@@ -128,7 +126,7 @@ final class GenericContainer implements Container
             $initializer = $this->get($initializerClassName);
 
             if (! $initializer instanceof Initializer) {
-                throw new Exception("Initializers must be implement Initializer, {$initializerClassName} does not.");
+                throw new InvalidInitializerException($initializerClassName);
             }
 
             return $initializer->initialize($className, $this);

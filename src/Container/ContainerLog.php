@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Exception;
+use Tempest\Container\Exceptions\CircularDependencyException;
 
 final class ContainerLog
 {
@@ -16,7 +16,7 @@ final class ContainerLog
     public function add(string $item): self
     {
         if (in_array($item, $this->lines)) {
-            throw new Exception("Circular dependency on {$item}!");
+            throw new CircularDependencyException($item);
         }
 
         $this->lines[] = $item;
