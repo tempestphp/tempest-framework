@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mappers;
+namespace Tempest\Mapper;
 
 use ReflectionClass;
 use Tempest\Database\Query;

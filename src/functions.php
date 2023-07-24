@@ -13,7 +13,7 @@ namespace Tempest {
     use Tempest\Interfaces\Response;
     use Tempest\Interfaces\Router;
     use Tempest\Interfaces\View;
-    use Tempest\Mappers\ObjectMapper;
+    use Tempest\Mapper\ObjectMapper;
     use Tempest\View\GenericView;
 
     /**
