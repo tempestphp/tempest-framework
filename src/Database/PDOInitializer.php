@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use PDO;
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
 
 final readonly class PDOInitializer implements CanInitialize
 {

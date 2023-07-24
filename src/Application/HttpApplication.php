@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Application;
 
-use Tempest\Interfaces\Application;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Router;
+use Tempest\Interface\Application;
+use Tempest\Interface\Request;
+use Tempest\Interface\Router;
 
 final readonly class HttpApplication implements Application
 {

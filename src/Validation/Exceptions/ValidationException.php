@@ -13,7 +13,7 @@ final class ValidationException extends Exception
         $messages = [];
 
         foreach ($failingRules as $field => $failingRulesForField) {
-            /** @var \Tempest\Interfaces\Rule $failingRuleForField */
+            /** @var \Tempest\Interface\Rule $failingRuleForField */
             foreach ($failingRulesForField as $failingRuleForField) {
                 $messages[$field][] = $failingRuleForField->message();
             }

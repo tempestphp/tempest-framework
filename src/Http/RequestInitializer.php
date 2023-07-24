@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Server;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Request;
+use Tempest\Interface\Server;
 
 use function Tempest\map;
 

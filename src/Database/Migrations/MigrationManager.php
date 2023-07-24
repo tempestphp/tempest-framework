@@ -7,8 +7,8 @@ namespace Tempest\Database\Migrations;
 use PDO;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Migration as MigrationInterface;
+use Tempest\Interface\Container;
+use Tempest\Interface\Migration as MigrationInterface;
 
 final readonly class MigrationManager
 {

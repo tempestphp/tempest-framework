@@ -12,12 +12,12 @@ use function Tempest\attribute;
 use Tempest\Container\InitializedBy;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Response;
-use Tempest\Interfaces\Router;
+use Tempest\Interface\Container;
+use Tempest\Interface\Request;
+use Tempest\Interface\Response;
+use Tempest\Interface\Router;
 
-use Tempest\Interfaces\View;
+use Tempest\Interface\View;
 
 use function Tempest\response;
 

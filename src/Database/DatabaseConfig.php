@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Interfaces\DatabaseDriver;
+use Tempest\Interface\DatabaseDriver;
 
 final class DatabaseConfig
 {

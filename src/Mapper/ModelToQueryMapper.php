@@ -7,8 +7,8 @@ namespace Tempest\Mapper;
 use ReflectionClass;
 use ReflectionProperty;
 use Tempest\Database\Query;
-use Tempest\Interfaces\Mapper;
-use Tempest\Interfaces\Model;
+use Tempest\Interface\Mapper;
+use Tempest\Interface\Model;
 
 use function Tempest\map;
 
@@ -21,7 +21,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\Interfaces\Model $model */
+        /** @var \Tempest\Interface\Model $model */
         $model = $data;
 
         $fields = $this->fields($model);

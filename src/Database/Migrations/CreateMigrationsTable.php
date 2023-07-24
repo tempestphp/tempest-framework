@@ -8,7 +8,7 @@ use Tempest\Database\Builder\IdRow;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
 
-final readonly class CreateMigrationsTable implements \Tempest\Interfaces\Migration
+final readonly class CreateMigrationsTable implements \Tempest\Interface\Migration
 {
     public function getName(): string
     {

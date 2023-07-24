@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\Books\Requests;
 
 use Tempest\Http\BaseRequest;
-use Tempest\Interfaces\IsValidated;
-use Tempest\Interfaces\Request;
+use Tempest\Interface\IsValidated;
+use Tempest\Interface\Request;
 
 final class CreateBookRequest implements Request, IsValidated
 {

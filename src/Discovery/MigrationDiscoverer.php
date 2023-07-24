@@ -6,8 +6,8 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Interfaces\Discoverer;
-use Tempest\Interfaces\Migration;
+use Tempest\Interface\Discoverer;
+use Tempest\Interface\Migration;
 
 final readonly class MigrationDiscoverer implements Discoverer
 {

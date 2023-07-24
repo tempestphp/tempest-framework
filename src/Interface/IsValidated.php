@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Interfaces;
+namespace Tempest\Interface;
 
 interface IsValidated
 {

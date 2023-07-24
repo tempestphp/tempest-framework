@@ -11,9 +11,9 @@ use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
-use Tempest\Interfaces\Caster;
-use Tempest\Interfaces\Migration;
-use Tempest\Interfaces\Model;
+use Tempest\Interface\Caster;
+use Tempest\Interface\Migration;
+use Tempest\Interface\Model;
 
 use function Tempest\make;
 use function Tempest\map;

@@ -82,7 +82,7 @@ trait BaseModel
 
         $fields = self::fieldNames();
 
-        /** @var class-string<\Tempest\Interfaces\Model> $relation */
+        /** @var class-string<\Tempest\Interface\Model> $relation */
         foreach ($relations as $relation) {
             $fields = [...$fields, ...$relation::fieldNames()];
         }

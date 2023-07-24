@@ -13,7 +13,7 @@ final class ObjectMapper
 
     private mixed $data;
 
-    /** @var \Tempest\Interfaces\Mapper[] */
+    /** @var \Tempest\Interface\Mapper[] */
     private readonly array $mappers;
 
     public function __construct()

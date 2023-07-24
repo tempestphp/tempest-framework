@@ -6,7 +6,7 @@ namespace Tempest\Mapper;
 
 use ReflectionClass;
 use Tempest\Database\Query;
-use Tempest\Interfaces\Mapper;
+use Tempest\Interface\Mapper;
 
 use function Tempest\make;
 

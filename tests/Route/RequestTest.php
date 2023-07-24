@@ -13,8 +13,8 @@ use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Router;
+use Tempest\Interface\Request;
+use Tempest\Interface\Router;
 
 use function Tempest\request;
 use function Tempest\uri;

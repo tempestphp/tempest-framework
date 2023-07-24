@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Home;
 
-use Tempest\Interfaces\View;
+use Tempest\Interface\View;
 use Tempest\View\BaseView;
 
 final class HomeView implements View

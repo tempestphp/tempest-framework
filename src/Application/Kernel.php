@@ -15,9 +15,9 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Discoverer;
-use Tempest\Interfaces\Router;
+use Tempest\Interface\Container;
+use Tempest\Interface\Discoverer;
+use Tempest\Interface\Router;
 
 use function Tempest\path;
 

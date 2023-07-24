@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use Tempest\Interfaces\Mapper;
-use Tempest\Interfaces\Request;
+use Tempest\Interface\Mapper;
+use Tempest\Interface\Request;
 
 use function Tempest\map;
 
@@ -18,7 +18,7 @@ final readonly class RequestToObjectMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\Interfaces\Request $data */
+        /** @var \Tempest\Interface\Request $data */
         return map($data->getBody())->to($objectOrClass);
     }
 }

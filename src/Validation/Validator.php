@@ -9,8 +9,8 @@ use ReflectionProperty;
 
 use function Tempest\attribute;
 
-use Tempest\Interfaces\IsValidated;
-use Tempest\Interfaces\Rule;
+use Tempest\Interface\IsValidated;
+use Tempest\Interface\Rule;
 use Tempest\Validation\Exceptions\ValidationException;
 
 final readonly class Validator

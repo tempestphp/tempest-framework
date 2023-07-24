@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Tempest\Http\Get;
-use Tempest\Interfaces\Response;
-use Tempest\Interfaces\View;
+use Tempest\Interface\Response;
+use Tempest\Interface\View;
 
 use function Tempest\response;
 use function Tempest\view;

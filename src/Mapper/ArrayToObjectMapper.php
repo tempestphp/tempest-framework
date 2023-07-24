@@ -11,10 +11,10 @@ use ReflectionProperty;
 use function Tempest\attribute;
 use function Tempest\get;
 
-use Tempest\Interfaces\Caster;
+use Tempest\Interface\Caster;
 
-use Tempest\Interfaces\IsValidated;
-use Tempest\Interfaces\Mapper;
+use Tempest\Interface\IsValidated;
+use Tempest\Interface\Mapper;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Validation\Validator;

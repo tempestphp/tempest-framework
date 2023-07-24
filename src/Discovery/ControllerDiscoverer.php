@@ -11,7 +11,7 @@ use function Tempest\attribute;
 
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
-use Tempest\Interfaces\Discoverer;
+use Tempest\Interface\Discoverer;
 
 final readonly class ControllerDiscoverer implements Discoverer
 {

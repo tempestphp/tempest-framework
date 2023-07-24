@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Interfaces;
+namespace Tempest\Interface;
 
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;

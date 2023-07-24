@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Interfaces\Server;
+use Tempest\Interface\Server;
 
 final readonly class GenericServer implements Server
 {

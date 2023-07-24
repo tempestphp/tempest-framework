@@ -10,7 +10,7 @@ use Tempest\Database\Migrations\MigrationManager;
 use function Tempest\get;
 
 use Tempest\Http\Method;
-use Tempest\Interfaces\Container;
+use Tempest\Interface\Container;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {

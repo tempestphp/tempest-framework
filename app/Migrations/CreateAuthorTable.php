@@ -9,7 +9,7 @@ use App\Modules\Books\Models\Book;
 use Tempest\Database\Builder\IdRow;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
-use Tempest\Interfaces\Migration;
+use Tempest\Interface\Migration;
 
 final readonly class CreateAuthorTable implements Migration
 {
