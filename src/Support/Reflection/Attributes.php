@@ -9,83 +9,69 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
-/* @template ClassType of object */
-class Attributes
+/** @template T */
+final class Attributes
 {
-    /** @var class-string<ClassType>|null */
-    private ?string $instanceOf = null;
+    private ReflectionClass|ReflectionMethod|ReflectionProperty $reflector;
 
     public function __construct(
-        private readonly ReflectionClass|ReflectionMethod|ReflectionProperty $reflector,
+        private readonly string $attributeName,
     ) {
     }
 
-    public static function forClass(ReflectionClass|string $class): self
+    /**
+     * @template U
+     * @param class-string<U> $attributeName
+     * @return self<U>
+     */
+    public static function find(string $attributeName): self
     {
-        $class = $class instanceof ReflectionClass
-            ? $class
-            : new ReflectionClass($class);
-
-        return new self($class);
-    }
-
-    public static function forMethod(
-        ReflectionMethod|ReflectionClass|string $classOrMethod,
-        ?string $methodName = null
-    ): self {
-        if ($classOrMethod instanceof ReflectionMethod) {
-            return new self($classOrMethod);
-        }
-
-        if ($classOrMethod instanceof ReflectionClass) {
-            $classOrMethod = $classOrMethod->getName();
-        }
-
-        return new self(new ReflectionMethod($classOrMethod, $methodName));
-    }
-
-    public static function forProperty(ReflectionProperty $property): self
-    {
-        return new self($property);
+        return new self($attributeName);
     }
 
     /**
-     * @template T of object
-     * @param class-string<T> $attributeClass
-     * @return self<T>
+     * @param \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector
+     * @return $this<T>
      */
-    public function instanceOf(string $attributeClass): self
+    public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|string $reflector): self
     {
-        $this->instanceOf = $attributeClass;
+        if (is_string($reflector)) {
+            $reflector = new ReflectionClass($reflector);
+        }
+
+        $this->reflector = $reflector;
 
         return $this;
     }
 
     /**
-     * @return ClassType[]
+     * @return T[]
      */
     public function all(): array
     {
         return array_map(
             fn (ReflectionAttribute $reflectionAttribute) => $reflectionAttribute->newInstance(),
-            $this->resolveAttributes($this->reflector),
+            $this->resolveAttributes(),
         );
     }
 
     /**
-     * @return ClassType
+     * @return T|null
      */
-    public function first(): ?object
+    public function first(): object|null
     {
-        $firstAttribute = $this->resolveAttributes($this->reflector)[0] ?? null;
+        $firstAttribute = $this->resolveAttributes()[0] ?? null;
 
         return $firstAttribute?->newInstance();
     }
 
-    private function resolveAttributes(ReflectionClass|ReflectionMethod|ReflectionProperty $reflector): array
+    /**
+     * @return \ReflectionAttribute[]
+     */
+    private function resolveAttributes(): array
     {
-        return $reflector->getAttributes(
-            name: $this->instanceOf,
+        return $this->reflector->getAttributes(
+            name: $this->attributeName,
             flags: ReflectionAttribute::IS_INSTANCEOF,
         );
     }

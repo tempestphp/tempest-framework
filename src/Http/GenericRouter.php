@@ -6,6 +6,9 @@ namespace Tempest\Http;
 
 use ReflectionClass;
 use Tempest\AppConfig;
+
+use function Tempest\attribute;
+
 use Tempest\Container\InitializedBy;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
@@ -13,11 +16,10 @@ use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Request;
 use Tempest\Interfaces\Response;
 use Tempest\Interfaces\Router;
+
 use Tempest\Interfaces\View;
 
 use function Tempest\response;
-
-use Tempest\Support\Reflection\Attributes;
 
 #[InitializedBy(RouteInitializer::class)]
 final class GenericRouter implements Router
@@ -34,8 +36,8 @@ final class GenericRouter implements Router
         $class = new ReflectionClass($controller);
 
         foreach ($class->getMethods() as $controllerMethod) {
-            $routeAttribute = Attributes::forMethod($controllerMethod)
-                ->instanceOf(Route::class)
+            $routeAttribute = attribute(Route::class)
+                ->in($controllerMethod)
                 ->first();
 
             if (! $routeAttribute) {
@@ -116,7 +118,7 @@ final class GenericRouter implements Router
             $controllerMethod = $reflection->getMethod('__invoke');
         }
 
-        $routeAttribute = Attributes::forMethod($controllerMethod)->instanceOf(Route::class)->first();
+        $routeAttribute = attribute(Route::class)->in($controllerMethod)->first();
 
         if (! $routeAttribute) {
             throw new InvalidRouteException($controllerClass, $controllerMethod->getName());

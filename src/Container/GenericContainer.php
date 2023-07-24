@@ -6,12 +6,14 @@ namespace Tempest\Container;
 
 use ReflectionClass;
 use ReflectionParameter;
+
+use function Tempest\attribute;
+
 use Tempest\Container\Exceptions\ContainerException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Tempest\Interfaces\CanInitialize;
 use Tempest\Interfaces\Container;
 use Tempest\Interfaces\Initializer;
-use Tempest\Support\Reflection\Attributes;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -121,8 +123,8 @@ final class GenericContainer implements Container
 
         $reflectionClass = new ReflectionClass($className);
 
-        $initializedBy = Attributes::forClass($reflectionClass)
-            ->instanceOf(InitializedBy::class)
+        $initializedBy = attribute(InitializedBy::class)
+            ->in($reflectionClass)
             ->first();
 
         if ($initializedBy) {

@@ -6,16 +6,18 @@ namespace Tempest\ORM;
 
 use ReflectionClass;
 use ReflectionProperty;
+
+use function Tempest\attribute;
+
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
+
 use Tempest\Database\Query;
 
 use function Tempest\make;
 
 use Tempest\ORM\Attributes\CastWith;
-
-use Tempest\Support\Reflection\Attributes;
 
 trait BaseModel
 {
@@ -146,17 +148,17 @@ trait BaseModel
 
         foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if (! $property->getType()->isBuiltin()) {
-                $withCast = Attributes::forProperty($property)
-                    ->instanceOf(CastWith::class)
+                $castWith = attribute(CastWith::class)
+                    ->in($property)
                     ->first();
 
-                if (! $withCast) {
-                    $withCast = Attributes::forClass($property->getType()->getName())
-                        ->instanceOf(CastWith::class)
+                if (! $castWith) {
+                    $castWith = attribute(CastWith::class)
+                        ->in($property->getType()->getName())
                         ->first();
                 }
 
-                if ($withCast) {
+                if ($castWith) {
                     $fieldNames[] = self::field($property->getName());
                 }
 
