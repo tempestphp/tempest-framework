@@ -33,15 +33,16 @@ final readonly class RequestInitializer implements CanInitialize
 
         $path = $parsedUrl['path'];
         $query = $parsedUrl['query'] ?? null;
+        $body = (new ArrayHelper())->unwrap($server->getBody());
 
         $request = map(
             [
                 'method' => $server->getMethod(),
                 'uri' => $server->getUri(),
-                'body' => $server->getBody(),
+                'body' => $body,
                 'path' => $path,
                 'query' => $query,
-                ...(new ArrayHelper())->unwrap($server->getBody()),
+                ...$body,
             ],
         )->to($className);
 
