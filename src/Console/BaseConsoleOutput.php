@@ -7,14 +7,17 @@ use Tempest\Interface\ConsoleFormatter;
 trait BaseConsoleOutput
 {
     public function __construct(
-        private readonly ConsoleFormatter $formatter
+        private readonly ConsoleFormatter $formatter,
     ) {}
 
-    public function writeln(string $line): void
+    public function writeln(string $line, ConsoleStyle ...$styles): void
     {
         $stdout = fopen('php://stdout', 'w');
 
-        fwrite($stdout, $line . PHP_EOL);
+        fwrite(
+            $stdout,
+            $this->formatter->format($line . PHP_EOL, ...$styles),
+        );
 
         fclose($stdout);
     }
@@ -27,14 +30,12 @@ trait BaseConsoleOutput
     public function error(string $line): void
     {
         $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_RED, ConsoleStyle::BOLD)
+            $this->formatter->format($line, ConsoleStyle::FG_RED, ConsoleStyle::BOLD),
         );
     }
 
     public function success(string $line): void
     {
-        $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_GREEN, ConsoleStyle::BOLD)
-        );
+        $this->writeln($line, ConsoleStyle::FG_GREEN, ConsoleStyle::BOLD);
     }
 }

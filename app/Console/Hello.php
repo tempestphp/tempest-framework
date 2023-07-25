@@ -13,7 +13,7 @@ use Tempest\Interface\ConsoleOutput;
 final readonly class Hello implements ConsoleCommand
 {
     public function __construct(
-        private ConsoleOutput $output
+        private ConsoleOutput $output,
     ) {}
 
     // hello:world {input} --flag
@@ -21,5 +21,18 @@ final readonly class Hello implements ConsoleCommand
     {
         $this->output->info('Hi');
         $this->output->error($input);
+    }
+
+    public function test(?int $optionalValue = null, bool $flag = false)
+    {
+        $value = $optionalValue ?? 'null';
+
+        $this->output->info("{$value}");
+
+        if ($flag) {
+            $this->output->info('flag');
+        } else {
+            $this->output->info('no-flag');
+        }
     }
 }

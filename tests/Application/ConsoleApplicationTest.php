@@ -18,4 +18,37 @@ class ConsoleApplicationTest extends TestCase
             $output->lines,
         );
     }
+
+    /** @test */
+    public function test_cli_application_flags()
+    {
+        $output = $this->console('hello:test --flag --optionalValue=1');
+
+        $this->assertSame(
+            ['1', 'flag'],
+            $output->lines,
+        );
+    }
+
+    /** @test */
+    public function test_cli_application_flags_defaults()
+    {
+        $output = $this->console('hello:test');
+
+        $this->assertSame(
+            ['null', 'no-flag'],
+            $output->lines,
+        );
+    }
+
+    /** @test */
+    public function test_failing_command()
+    {
+        $output = $this->console('hello:world');
+
+        $this->assertSame(
+            ['Something went wrong'],
+            $output->lines,
+        );
+    }
 }

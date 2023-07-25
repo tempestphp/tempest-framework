@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Application;
 
+use ArgumentCountError;
 use Exception;
 use ReflectionMethod;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Interface\Application;
+use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
 
 final readonly class ConsoleApplication implements Application
@@ -43,23 +45,43 @@ final readonly class ConsoleApplication implements Application
         /** @var \Tempest\Interface\ConsoleCommand $commandClass */
         $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
-        $handler->invoke($commandClass, ...$params);
+        try {
+            $handler->invoke($commandClass, ...$params);
+        } catch (ArgumentCountError) {
+            $this->handleFailingCommand();
+        }
     }
 
     private function resolveParameters(ReflectionMethod $handler): array
     {
-        $parameters = [];
-
+        $parameters = $handler->getParameters();
         $inputArguments = $this->args;
-
         unset($inputArguments[0], $inputArguments[1]);
-
         $inputArguments = array_values($inputArguments);
 
-        foreach ($handler->getParameters() as $i => $parameter) {
-            $parameters[$parameter->getName()] = $inputArguments[$i];
+        $result = [];
+
+        foreach ($inputArguments as $i => $argument) {
+            if (str_starts_with($argument, '--')) {
+                $parts = explode('=', str_replace('--', '', $argument));
+
+                $key = $parts[0];
+
+                $result[$key] = $parts[1] ?? true;
+            } else {
+                $key = ($parameters[$i] ?? null)?->getName();
+
+                $result[$key ?? $i] = $argument;
+            }
         }
 
-        return $parameters;
+        return $result;
+    }
+
+    private function handleFailingCommand(): void
+    {
+        $output = $this->container->get(ConsoleOutput::class);
+
+        $output->error('Something went wrong');
     }
 }

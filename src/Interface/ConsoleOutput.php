@@ -2,9 +2,11 @@
 
 namespace Tempest\Interface;
 
+use Tempest\Console\ConsoleStyle;
+
 interface ConsoleOutput
 {
-    public function writeln(string $line): void;
+    public function writeln(string $line, ConsoleStyle ...$styles): void;
 
     public function info(string $line): void;
 

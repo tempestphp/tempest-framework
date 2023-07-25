@@ -3,6 +3,7 @@
 namespace Tests\Tempest;
 
 use Tempest\Console\BaseConsoleOutput;
+use Tempest\Console\ConsoleStyle;
 use Tempest\Interface\ConsoleOutput;
 
 final class TestConsoleOutput implements ConsoleOutput
@@ -11,7 +12,7 @@ final class TestConsoleOutput implements ConsoleOutput
 
     use BaseConsoleOutput;
 
-    public function writeln(string $line): void
+    public function writeln(string $line, ConsoleStyle ...$styles): void
     {
         $this->lines[] = $line;
     }
