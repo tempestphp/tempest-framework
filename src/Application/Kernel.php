@@ -7,14 +7,19 @@ namespace Tempest\Application;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use Tempest\Console\GenericConsoleFormatter;
+use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
+use Tempest\Discovery\ConsoleCommandDiscoverer;
 use Tempest\Discovery\ControllerDiscoverer;
 use Tempest\Discovery\MigrationDiscoverer;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
+use Tempest\Interface\ConsoleFormatter;
+use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
 use Tempest\Interface\Discoverer;
 use Tempest\Interface\Router;
@@ -48,11 +53,12 @@ final readonly class Kernel
             ->singleton(Kernel::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
+            ->singleton(ConsoleFormatter::class, fn () => $container->get(GenericConsoleFormatter::class))
+            ->singleton(ConsoleOutput::class, fn () => $container->get(GenericConsoleOutput::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
-            ->addInitializer(new PDOInitializer())
-        ;
+            ->addInitializer(new PDOInitializer());
 
         return $container;
     }
@@ -81,6 +87,7 @@ final readonly class Kernel
         $discoverers = [
             $container->get(ControllerDiscoverer::class),
             $container->get(MigrationDiscoverer::class),
+            $container->get(ConsoleCommandDiscoverer::class),
         ];
 
         /** @var \SplFileInfo $file */
