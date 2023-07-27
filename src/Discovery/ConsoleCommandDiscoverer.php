@@ -11,7 +11,9 @@ use Tempest\Interface\Discoverer;
 
 final readonly class ConsoleCommandDiscoverer implements Discoverer
 {
-    public function __construct(private ConsoleConfig $config) {}
+    public function __construct(private ConsoleConfig $config)
+    {
+    }
 
     public function discover(ReflectionClass $class): void
     {

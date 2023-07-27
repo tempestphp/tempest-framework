@@ -17,7 +17,8 @@ final readonly class ConsoleApplication implements Application
     public function __construct(
         private array $args,
         private Container $container,
-    ) {}
+    ) {
+    }
 
     public function run(): void
     {

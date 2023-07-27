@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console;
 
 use Tempest\Interface\ConsoleFormatter;
@@ -8,7 +10,8 @@ trait BaseConsoleOutput
 {
     public function __construct(
         private readonly ConsoleFormatter $formatter,
-    ) {}
+    ) {
+    }
 
     public function writeln(string $line, ConsoleStyle ...$styles): void
     {

@@ -65,12 +65,17 @@ final readonly class Kernel
 
     private function initConfig(string $rootDirectory, Container $container): void
     {
-        $configFiles = glob(path($rootDirectory, 'Config/**.php'));
+        $folders = [
+            glob(__DIR__ . '/../Config/**.php'),
+            glob(path($rootDirectory, 'Config/**.php')),
+        ];
 
-        foreach ($configFiles as $configFile) {
-            $configFile = require $configFile;
+        foreach ($folders as $configFiles) {
+            foreach ($configFiles as $configFile) {
+                $configFile = require $configFile;
 
-            $container->config($configFile);
+                $container->config($configFile);
+            }
         }
     }
 

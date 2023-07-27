@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console;
 
 use Tempest\Interface\ConsoleOutput;
