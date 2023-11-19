@@ -88,9 +88,14 @@ trait BaseView
 
     private function escape(array $items): array
     {
-        return array_map(
-            fn ($item) => htmlentities($item),
-            $items,
-        );
+        foreach ($items as $key => $value) {
+            if ($key === 'slot') {
+                continue;
+            }
+
+            $items[$key] = htmlentities($value);
+        }
+
+        return $items;
     }
 }
