@@ -9,11 +9,12 @@ namespace Tempest {
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Method;
     use Tempest\Http\Status;
-    use Tempest\Interfaces\Request;
-    use Tempest\Interfaces\Response;
-    use Tempest\Interfaces\Router;
-    use Tempest\Interfaces\View;
-    use Tempest\Mappers\ObjectMapper;
+    use Tempest\Interface\Request;
+    use Tempest\Interface\Response;
+    use Tempest\Interface\Router;
+    use Tempest\Interface\View;
+    use Tempest\Mapper\ObjectMapper;
+    use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
 
     /**
@@ -86,5 +87,15 @@ namespace Tempest {
         $factory = get(ObjectMapper::class);
 
         return $factory->withData($data);
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $attributeName
+     * @return \Tempest\Support\Reflection\Attributes<T>
+     */
+    function attribute(string $attributeName): Attributes
+    {
+        return Attributes::find($attributeName);
     }
 }

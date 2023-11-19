@@ -7,9 +7,9 @@ namespace Tests\Tempest\Container;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\InitializedBy;
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Initializer;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Initializer;
 
 class ContainerTest extends TestCase
 {

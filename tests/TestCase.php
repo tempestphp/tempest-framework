@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
+use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
 
 use function Tempest\get;
 
 use Tempest\Http\Method;
-use Tempest\Interfaces\Container;
+
+use Tempest\Interface\ConsoleOutput;
+use Tempest\Interface\Container;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +38,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             'App\\',
         );
 
-        $this->container->addInitializer(new TestServerInitializer());
+        $this->container
+            ->addInitializer(new TestServerInitializer());
     }
 
     protected function server(
@@ -57,5 +61,23 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         foreach ($migrationClasses as $migrationClass) {
             $migrationManager->executeUp(get($migrationClass));
         }
+    }
+
+    protected function console(string $command): TestConsoleOutput
+    {
+        $this->container
+            ->singleton(
+                ConsoleOutput::class,
+                fn () => new TestConsoleOutput(new TestConsoleFormatter()),
+            );
+
+        $application = new ConsoleApplication(
+            args: ['tempest.php', ...explode(' ', $command)],
+            container: $this->container,
+        );
+
+        $application->run();
+
+        return $this->container->get(ConsoleOutput::class);
     }
 }

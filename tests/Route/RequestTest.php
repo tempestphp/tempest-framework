@@ -13,8 +13,8 @@ use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Router;
+use Tempest\Interface\Request;
+use Tempest\Interface\Router;
 
 use function Tempest\request;
 use function Tempest\uri;
@@ -101,7 +101,7 @@ class RequestTest extends TestCase
 
         $body = [
             'title' => 'a',
-            'author.name' => 'b'
+            'author.name' => 'b',
         ];
 
         $uri = uri([BookController::class, 'storeWithAuthor']);
@@ -118,5 +118,6 @@ class RequestTest extends TestCase
         $book = Book::find(new Id(1), relations: [Author::class]);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
+        $this->assertSame('b', $book->author->name);
     }
 }

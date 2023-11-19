@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest;
 
 use Tempest\Http\Method;
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Initializer;
-use Tempest\Interfaces\Server;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Initializer;
+use Tempest\Interface\Server;
 
 final readonly class TestServerInitializer implements Initializer, CanInitialize
 {

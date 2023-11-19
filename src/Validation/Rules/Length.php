@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use Tempest\Interfaces\Rule;
+use Tempest\Interface\Rule;
 
 #[Attribute]
 final readonly class Length implements Rule

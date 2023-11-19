@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Interfaces\Response;
+use Tempest\Interface\Response;
 
 final class GenericResponse implements Response
 {

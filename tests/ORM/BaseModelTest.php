@@ -13,8 +13,8 @@ use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\Builder\TextRow;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Interfaces\Migration;
-use Tempest\Interfaces\Model;
+use Tempest\Interface\Migration;
+use Tempest\Interface\Model;
 use Tempest\ORM\BaseModel;
 use Tests\Tempest\TestCase;
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Initializer;
-use Tempest\Interfaces\Server;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Initializer;
+use Tempest\Interface\Server;
 
 final readonly class ServerInitializer implements Initializer, CanInitialize
 {

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Exception;
-use ReflectionAttribute;
 use ReflectionClass;
 use Tempest\AppConfig;
+
+use function Tempest\attribute;
+
 use Tempest\Container\InitializedBy;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Response;
-use Tempest\Interfaces\Router;
-use Tempest\Interfaces\View;
+use Tempest\Http\Exceptions\InvalidRouteException;
+use Tempest\Http\Exceptions\MissingControllerOutputException;
+use Tempest\Interface\Container;
+use Tempest\Interface\Request;
+use Tempest\Interface\Response;
+use Tempest\Interface\Router;
+
+use Tempest\Interface\View;
 
 use function Tempest\response;
 
@@ -29,19 +33,21 @@ final class GenericRouter implements Router
 
     public function registerController(string $controller): self
     {
-        $reflection = new ReflectionClass($controller);
+        $class = new ReflectionClass($controller);
 
-        foreach ($reflection->getMethods() as $method) {
-            $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
+        foreach ($class->getMethods() as $controllerMethod) {
+            $routeAttribute = attribute(Route::class)
+                ->in($controllerMethod)
+                ->first();
 
             if (! $routeAttribute) {
                 continue;
             }
 
             $this->registerRoute(
-                $routeAttribute->newInstance(),
+                $routeAttribute,
                 $controller,
-                $method->getName(),
+                $controllerMethod->getName(),
             );
         }
 
@@ -92,7 +98,7 @@ final class GenericRouter implements Router
         $outputFromController = $this->container->call($controller, $controllerMethod, ...$routeParams);
 
         if ($outputFromController === null) {
-            throw new Exception("{$controllerClass}::{$controllerMethod}() did not return anything");
+            throw new MissingControllerOutputException($controllerClass, $controllerMethod);
         }
 
         return $this->createResponse($outputFromController);
@@ -103,22 +109,22 @@ final class GenericRouter implements Router
         ...$params,
     ): string {
         if (is_array($action)) {
-            $controller = $action[0];
-            $reflection = new ReflectionClass($controller);
-            $method = $reflection->getMethod($action[1]);
+            $controllerClass = $action[0];
+            $reflection = new ReflectionClass($controllerClass);
+            $controllerMethod = $reflection->getMethod($action[1]);
         } else {
-            $controller = $action;
-            $reflection = new ReflectionClass($controller);
-            $method = $reflection->getMethod('__invoke');
+            $controllerClass = $action;
+            $reflection = new ReflectionClass($controllerClass);
+            $controllerMethod = $reflection->getMethod('__invoke');
         }
 
-        $routeAttribute = ($method->getAttributes(Route::class, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null);
+        $routeAttribute = attribute(Route::class)->in($controllerMethod)->first();
 
         if (! $routeAttribute) {
-            throw new Exception("No route found");
+            throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
         }
 
-        $uri = $routeAttribute->newInstance()->uri;
+        $uri = $routeAttribute->uri;
 
         foreach ($params as $key => $value) {
             $uri = str_replace('{' . $key . '}', "{$value}", $uri);

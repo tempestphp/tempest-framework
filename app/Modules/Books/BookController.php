@@ -8,8 +8,8 @@ use App\Modules\Books\Models\Book;
 use App\Modules\Books\Requests\CreateBookRequest;
 use Tempest\Http\Get;
 use Tempest\Http\Post;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Response;
+use Tempest\Interface\Request;
+use Tempest\Interface\Response;
 
 use function Tempest\map;
 use function Tempest\redirect;

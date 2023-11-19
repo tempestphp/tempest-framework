@@ -6,9 +6,13 @@ namespace Tempest\ORM;
 
 use ReflectionClass;
 use ReflectionProperty;
+
+use function Tempest\attribute;
+
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
+
 use Tempest\Database\Query;
 
 use function Tempest\make;
@@ -78,7 +82,7 @@ trait BaseModel
 
         $fields = self::fieldNames();
 
-        /** @var class-string<\Tempest\Interfaces\Model> $relation */
+        /** @var class-string<\Tempest\Interface\Model> $relation */
         foreach ($relations as $relation) {
             $fields = [...$fields, ...$relation::fieldNames()];
         }
@@ -144,13 +148,17 @@ trait BaseModel
 
         foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if (! $property->getType()->isBuiltin()) {
-                $hasCast = $property->getAttributes(CastWith::class) !== [];
+                $castWith = attribute(CastWith::class)
+                    ->in($property)
+                    ->first();
 
-                if (! $hasCast) {
-                    $hasCast = (new ReflectionClass($property->getType()->getName()))->getAttributes(CastWith::class) !== [];
+                if (! $castWith) {
+                    $castWith = attribute(CastWith::class)
+                        ->in($property->getType()->getName())
+                        ->first();
                 }
 
-                if ($hasCast) {
+                if ($castWith) {
                     $fieldNames[] = self::field($property->getName());
                 }
 

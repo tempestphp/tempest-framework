@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Books;
 
 use App\Modules\Books\Models\Book;
-use Tempest\Interfaces\View;
+use Tempest\Interface\View;
 use Tempest\View\BaseView;
 
 final class BookDetailView implements View

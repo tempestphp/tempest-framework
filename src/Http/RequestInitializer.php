@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Request;
-use Tempest\Interfaces\Server;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Request;
+use Tempest\Interface\Server;
 
 use function Tempest\map;
 
@@ -33,15 +33,16 @@ final readonly class RequestInitializer implements CanInitialize
 
         $path = $parsedUrl['path'];
         $query = $parsedUrl['query'] ?? null;
+        $body = (new ArrayHelper())->unwrap($server->getBody());
 
         $request = map(
             [
                 'method' => $server->getMethod(),
                 'uri' => $server->getUri(),
-                'body' => $server->getBody(),
+                'body' => $body,
                 'path' => $path,
                 'query' => $query,
-                ...(new ArrayHelper())->unwrap($server->getBody()),
+                ...$body,
             ],
         )->to($className);
 

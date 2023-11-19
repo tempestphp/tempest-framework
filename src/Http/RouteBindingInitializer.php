@@ -6,9 +6,9 @@ namespace Tempest\Http;
 
 use ReflectionClass;
 use Tempest\Database\Id;
-use Tempest\Interfaces\CanInitialize;
-use Tempest\Interfaces\Container;
-use Tempest\Interfaces\Model;
+use Tempest\Interface\CanInitialize;
+use Tempest\Interface\Container;
+use Tempest\Interface\Model;
 
 final readonly class RouteBindingInitializer implements CanInitialize
 {
