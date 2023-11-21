@@ -28,8 +28,7 @@ final class GenericRouter implements Router
         private readonly Container $container,
         private readonly AppConfig $appConfig,
         private array $routes = [],
-    ) {
-    }
+    ) {}
 
     public function registerController(string $controller): self
     {
@@ -73,7 +72,7 @@ final class GenericRouter implements Router
         $matchedAction = null;
 
         foreach ($actionsForMethod as $pattern => $action) {
-            $routeParams = $this->resolveParams($pattern, $request->uri);
+            $routeParams = $this->resolveParams($pattern, $request->getPath());
 
             if ($routeParams !== null) {
                 $matchedAction = $action;
@@ -88,7 +87,7 @@ final class GenericRouter implements Router
 
         $this->container->singleton(
             RouteParams::class,
-            fn () => new RouteParams($routeParams)
+            fn () => new RouteParams($routeParams),
         );
 
         [$controllerClass, $controllerMethod] = $matchedAction;
@@ -107,7 +106,8 @@ final class GenericRouter implements Router
     public function toUri(
         array|string $action,
         ...$params,
-    ): string {
+    ): string
+    {
         if (is_array($action)) {
             $controllerClass = $action[0];
             $reflection = new ReflectionClass($controllerClass);
@@ -148,10 +148,10 @@ final class GenericRouter implements Router
         $tokens = $tokens[0];
 
         $matchingRegex = '/^' . str_replace(
-            ['/', ...$tokens],
-            ['\\/', ...array_fill(0, count($tokens), '([\w\d\s]+)')],
-            $pattern,
-        ) . '$/';
+                ['/', ...$tokens],
+                ['\\/', ...array_fill(0, count($tokens), '([\w\d\s]+)')],
+                $pattern,
+            ) . '$/';
 
         $result = preg_match_all($matchingRegex, $uri, $matches);
 

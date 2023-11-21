@@ -55,9 +55,9 @@ trait BaseView
         return $this;
     }
 
-    public function include(string $path): string
+    public function include(string $path, ...$params): string
     {
-        return view($path)->data(...$this->rawParams)->render($this->appConfig);
+        return view($path)->data(...$this->rawParams, ...$params)->render($this->appConfig);
     }
 
     public function raw(string $name): ?string
@@ -88,6 +88,7 @@ trait BaseView
 
     private function escape(array $items): array
     {
+        return $items;
         foreach ($items as $key => $value) {
             if ($key === 'slot') {
                 continue;
