@@ -1,4 +1,5 @@
 {
+  "name": "brendt/tempest",
   "require": {
     "php": "^8.2",
     "ext-pdo": "*"

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/tempest.iml" filepath="$PROJECT_DIR$/.idea/tempest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../tempest-app/.idea/tempest-app.iml" filepath="$PROJECT_DIR$/../tempest-app/.idea/tempest-app.iml" />
     </modules>
   </component>
 </project>
