@@ -7,6 +7,7 @@ namespace Tempest\Application;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use Tempest\AppConfig;
 use Tempest\Console\GenericConsoleFormatter;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
@@ -76,6 +77,15 @@ final readonly class Kernel
 
                 $container->config($configFile);
             }
+        }
+
+        // Automatically resolve AppConfig when not provided
+        try {
+            $container->get(AppConfig::class);
+        } catch(Throwable) {
+            $container->config(new AppConfig(
+                rootPath: $rootDirectory,
+            ));
         }
     }
 
