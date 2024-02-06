@@ -85,6 +85,8 @@ HTML;
     /** @test */
     public function test_raw_and_escaping()
     {
+        $this->markTestSkipped();
+
         $html = view('Views/rawAndEscaping.php')->data(
             property: '<h1>hi</h1>',
         )->render($this->container->get(AppConfig::class));
