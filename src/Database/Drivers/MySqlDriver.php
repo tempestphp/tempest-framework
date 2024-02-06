@@ -10,11 +10,16 @@ use Tempest\Interface\DatabaseDriver;
 final readonly class MySqlDriver implements DatabaseDriver
 {
     public function __construct(
-        #[SensitiveParameter] public string $host = 'localhost',
-        #[SensitiveParameter] public string $port = '3306',
-        #[SensitiveParameter] public string $username = 'root',
-        #[SensitiveParameter] public string $password = '',
-        #[SensitiveParameter] public string $database = 'app',
+        #[SensitiveParameter]
+        public string $host = 'localhost',
+        #[SensitiveParameter]
+        public string $port = '3306',
+        #[SensitiveParameter]
+        public string $username = 'root',
+        #[SensitiveParameter]
+        public string $password = '',
+        #[SensitiveParameter]
+        public string $database = 'app',
     ) {
     }
 

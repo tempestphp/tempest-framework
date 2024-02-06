@@ -28,7 +28,8 @@ final class GenericRouter implements Router
         private readonly Container $container,
         private readonly AppConfig $appConfig,
         private array $routes = [],
-    ) {}
+    ) {
+    }
 
     public function registerController(string $controller): self
     {
@@ -106,8 +107,7 @@ final class GenericRouter implements Router
     public function toUri(
         array|string $action,
         ...$params,
-    ): string
-    {
+    ): string {
         if (is_array($action)) {
             $controllerClass = $action[0];
             $reflection = new ReflectionClass($controllerClass);
@@ -148,10 +148,10 @@ final class GenericRouter implements Router
         $tokens = $tokens[0];
 
         $matchingRegex = '/^' . str_replace(
-                ['/', ...$tokens],
-                ['\\/', ...array_fill(0, count($tokens), '([\w\d\s]+)')],
-                $pattern,
-            ) . '$/';
+            ['/', ...$tokens],
+            ['\\/', ...array_fill(0, count($tokens), '([\w\d\s]+)')],
+            $pattern,
+        ) . '$/';
 
         $result = preg_match_all($matchingRegex, $uri, $matches);
 

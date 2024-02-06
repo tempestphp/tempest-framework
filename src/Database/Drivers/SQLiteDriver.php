@@ -10,7 +10,8 @@ use Tempest\Interface\DatabaseDriver;
 final readonly class SQLiteDriver implements DatabaseDriver
 {
     public function __construct(
-        #[SensitiveParameter] public string $path = 'localhost',
+        #[SensitiveParameter]
+        public string $path = 'localhost',
     ) {
     }
 
