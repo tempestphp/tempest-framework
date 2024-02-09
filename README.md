@@ -1,7 +1,7 @@
 ## Tempest is an MVC micro framework that gets out of your way.
 
 ```php
-composer create-project brendt/tempest-app <project-name> -s dev
+composer create-project tempest/app <project-name>
 cd <project-name>
 npm run dev
 ```
