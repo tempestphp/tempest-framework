@@ -9,6 +9,7 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
 use Tempest\Console\GenericConsoleFormatter;
+use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
@@ -20,6 +21,7 @@ use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
 use Tempest\Interface\ConsoleFormatter;
+use Tempest\Interface\ConsoleInput;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
 use Tempest\Interface\Discoverer;
@@ -56,6 +58,7 @@ final readonly class Kernel
             ->singleton(Router::class, fn (Container $container) => $container->get(GenericRouter::class))
             ->singleton(ConsoleFormatter::class, fn () => $container->get(GenericConsoleFormatter::class))
             ->singleton(ConsoleOutput::class, fn () => $container->get(GenericConsoleOutput::class))
+            ->singleton(ConsoleInput::class, fn () => $container->get(GenericConsoleInput::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
