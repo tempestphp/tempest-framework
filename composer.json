@@ -1,5 +1,5 @@
 {
-  "name": "brendt/tempest",
+  "name": "tempest/framework",
   "require": {
     "php": "^8.2",
     "ext-pdo": "*"
