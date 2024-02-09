@@ -3,3 +3,4 @@ vendor/
 .php-cs-fixer.cache
 app/database.sqlite
 .idea
+composer.lock
