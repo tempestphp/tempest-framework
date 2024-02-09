@@ -1,37 +1,38 @@
 {
-  "name": "tempest/framework",
-  "require": {
-    "php": "^8.2",
-    "ext-pdo": "*"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^10.2",
-    "larapack/dd": "^1.1",
-    "phpstan/phpstan": "^1.10",
-    "friendsofphp/php-cs-fixer": "^3.21"
-  },
-  "autoload": {
-    "psr-4": {
-      "Tempest\\": "src/",
-      "App\\": "app/"
+    "name": "tempest/framework",
+    "require": {
+        "php": "^8.2",
+        "ext-pdo": "*"
     },
-    "files": [
-      "src/functions.php"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\Tempest\\": "tests/"
-    }
-  },
-  "scripts": {
-    "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
-    "csfixer": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-    "phpstan": "vendor/bin/phpstan analyse src tests app",
-    "qa": [
-      "composer csfixer",
-      "composer phpstan",
-      "composer phpunit"
-    ]
-  }
+    "require-dev": {
+        "phpunit/phpunit": "^10.2",
+        "larapack/dd": "^1.1",
+        "phpstan/phpstan": "^1.10",
+        "friendsofphp/php-cs-fixer": "^3.21"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\": "src/",
+            "App\\": "app/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Tempest\\": "tests/"
+        }
+    },
+    "scripts": {
+        "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
+        "csfixer": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "phpstan": "vendor/bin/phpstan analyse src tests app",
+        "qa": [
+            "composer csfixer",
+            "composer phpstan",
+            "composer phpunit"
+        ]
+    },
+    "license": "MIT"
 }
