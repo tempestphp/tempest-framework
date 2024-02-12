@@ -49,6 +49,11 @@ enum ConsoleStyle: string
     case REVERSE_TEXT = "7m";
     case NON_REVERSE_TEXT = "27m";
 
+    public static function RESET(string $text = ''): string
+    {
+        return $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
     public static function FG_BLACK(string $text = ''): string
     {
         return self::ESC->value . self::FG_BLACK->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;

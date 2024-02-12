@@ -1,4 +1,8 @@
-## Tempest is an MVC micro framework that gets out of your way.
+# Tempest is an MVC micro framework that gets out of your way.
+
+## Installation
+
+You can install tempest as a web project using `composer create-project`:
 
 ```php
 composer create-project tempest/app <project-name>
@@ -6,16 +10,14 @@ cd <project-name>
 npm run dev
 ```
 
-## Todo
+Or you could require the standalone framework in any existing project:
 
-- [ ] support for loading nested relations in ORM
-- [ ] Mapping nested request data to arrays that work with the mapper
-- [ ] Additional validation rules
-- [ ] Middleware
-- [ ] Route groups
-- [ ] Events
-- [ ] Console
-- [ ] Frontend bootstrap
-- [ ] .env support
-- [ ] Authentication & Authorization
-- [ ] Refactor container::call magic to router for route binding
+```php
+composer require tempest/framework
+```
+
+Optionally, you can interactively install Tempest's entry points: `index.php` and/or `tempest.php`:
+
+```php
+php vendor/bin/tempest.php install
+```

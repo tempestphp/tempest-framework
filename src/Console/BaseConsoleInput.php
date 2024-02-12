@@ -43,7 +43,7 @@ trait BaseConsoleInput
                 . ']';
         }
 
-        $this->output->info($questionString);
+        $this->output->write($questionString);
 
         $answer = trim($this->readln());
 

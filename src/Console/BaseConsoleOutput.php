@@ -13,16 +13,21 @@ trait BaseConsoleOutput
     ) {
     }
 
-    public function writeln(string $line, ConsoleStyle ...$styles): void
+    public function write(string $line, ConsoleStyle ...$styles): void
     {
         $stdout = fopen('php://stdout', 'w');
 
         fwrite(
             $stdout,
-            $this->formatter->format($line . PHP_EOL, ...$styles),
+            ConsoleStyle::RESET($this->formatter->format($line, ...$styles)),
         );
 
         fclose($stdout);
+    }
+
+    public function writeln(string $line, ConsoleStyle ...$styles): void
+    {
+        $this->write($line . PHP_EOL, ...$styles);
     }
 
     public function info(string $line): void

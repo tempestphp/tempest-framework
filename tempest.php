@@ -26,6 +26,8 @@ if (! $foundAutoloaderPath) {
 $appPaths = [
     __DIR__ . '/app/',
     getcwd() . '/app/',
+    __DIR__ . '/src/',
+    getcwd() . '/src/',
 ];
 
 $foundAppPath = null;
@@ -37,7 +39,7 @@ foreach ($appPaths as $appPath) {
     }
 }
 
-if (! $appPath) {
+if (! $foundAppPath) {
     throw new Exception("Could not locate app directory.");
 }
 

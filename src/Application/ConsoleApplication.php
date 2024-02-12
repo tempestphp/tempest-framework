@@ -28,8 +28,13 @@ final readonly class ConsoleApplication implements Application
         $output = $this->container->get(ConsoleOutput::class);
 
         if (! $commandName) {
-            // TODO: show list of available commands
-            $output->success("Hello Tempest");
+            $config = $this->container->get(ConsoleConfig::class);
+
+            $output->success("Available Commands:" . PHP_EOL);
+
+            foreach ($config->handlers as $name => $handler) {
+                $output->writeln("- {$name}");
+            }
 
             return;
         }
@@ -53,7 +58,6 @@ final readonly class ConsoleApplication implements Application
 
         $params = $this->resolveParameters($handler);
 
-        /** @var \Tempest\Interface\ConsoleCommand $commandClass */
         $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
         try {
