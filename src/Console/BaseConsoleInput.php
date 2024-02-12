@@ -29,15 +29,16 @@ trait BaseConsoleInput
         ?string $default = null,
     ): string
     {
-        $questionString = $question;
+        $questionString = ConsoleStyle::BG_YELLOW($question);
 
         if ($options) {
-            $questionString .= ' [' .
-                implode(
-                    ',',
-                    array_map(
-                        fn (string $option) => $option === $default ? strtoupper($option) : $option,
-                        $options,
+            $questionString .= ' [' . ConsoleStyle::FG_BLUE(
+                    implode(
+                        ',',
+                        array_map(
+                            fn (string $option) => $option === $default ? strtoupper($option) : $option,
+                            $options,
+                        ),
                     ),
                 )
                 . '] ';
@@ -72,7 +73,7 @@ trait BaseConsoleInput
         bool $default = false,
     ): bool
     {
-        $answer = $this->ask($question, ['y','n'], $default ? 'y' : 'n');
+        $answer = $this->ask($question, ['y', 'n'], $default ? 'y' : 'n');
 
         return strtolower($answer) === 'y';
     }
