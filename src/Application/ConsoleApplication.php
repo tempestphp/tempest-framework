@@ -11,6 +11,7 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Interface\Application;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
+use Throwable;
 
 final readonly class ConsoleApplication implements Application
 {
@@ -24,11 +25,20 @@ final readonly class ConsoleApplication implements Application
     {
         $commandName = $this->args[1] ?? null;
 
+        $output = $this->container->get(ConsoleOutput::class);
+
         if (! $commandName) {
-            throw new Exception("No command passed");
+            // TODO: show list of available commands
+            $output->success("Hello Tempest");
+
+            return;
         }
 
-        $this->handleCommand($commandName);
+        try {
+            $this->handleCommand($commandName);
+        } catch (Throwable $error) {
+            $output->error($error->getMessage());
+        }
     }
 
     private function handleCommand(string $commandName): void
@@ -38,7 +48,7 @@ final readonly class ConsoleApplication implements Application
         $handler = $config->handlers[$commandName] ?? null;
 
         if (! $handler) {
-            throw new Exception("Command {$commandName} not found");
+            throw new Exception("Command `{$commandName}` not found");
         }
 
         $params = $this->resolveParameters($handler);

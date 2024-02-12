@@ -48,4 +48,189 @@ enum ConsoleStyle: string
     case NO_UNDERLINE = "24m";
     case REVERSE_TEXT = "7m";
     case NON_REVERSE_TEXT = "27m";
+
+    public static function FG_BLACK(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_BLACK->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_RED(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_RED->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_GREEN(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_GREEN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_YELLOW(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_YELLOW->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_BLUE(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_BLUE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_MAGENTA(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_MAGENTA->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_DARK_CYAN(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_DARK_CYAN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_LIGHT_GRAY(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_LIGHT_GRAY->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_GRAY(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_GRAY->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_RED(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_RED->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_GREEN(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_GREEN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_YELLOW(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_YELLOW->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_BLUE(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_BLUE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_MAGENTA(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_MAGENTA->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_CYAN(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_CYAN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function FG_WHITE(string $text = ''): string
+    {
+        return self::ESC->value . self::FG_WHITE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_BLACK(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_BLACK->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_RED(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_RED->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_GREEN(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_GREEN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_YELLOW(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_YELLOW->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_BLUE(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_BLUE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_MAGENTA(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_MAGENTA->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_DARK_CYAN(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_DARK_CYAN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_LIGHT_GRAY(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_LIGHT_GRAY->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_GRAY(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_GRAY->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_RED(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_RED->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_GREEN(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_GREEN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_YELLOW(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_YELLOW->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_BLUE(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_BLUE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_MAGENTA(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_MAGENTA->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_CYAN(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_CYAN->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BG_WHITE(string $text = ''): string
+    {
+        return self::ESC->value . self::BG_WHITE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function BOLD(string $text = ''): string
+    {
+        return self::ESC->value . self::BOLD->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function UNDERLINE(string $text = ''): string
+    {
+        return self::ESC->value . self::UNDERLINE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function NO_UNDERLINE(string $text = ''): string
+    {
+        return self::ESC->value . self::NO_UNDERLINE->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function REVERSE_TEXT(string $text = ''): string
+    {
+        return self::ESC->value . self::REVERSE_TEXT->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
+
+    public static function NON_REVERSE_TEXT(string $text = ''): string
+    {
+        return self::ESC->value . self::NON_REVERSE_TEXT->value . $text . ConsoleStyle::ESC->value . ConsoleStyle::RESET->value;
+    }
 }

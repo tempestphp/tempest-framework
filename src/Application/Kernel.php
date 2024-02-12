@@ -41,7 +41,17 @@ final readonly class Kernel
 
         $this->initConfig($rootDirectory, $container);
 
-        $this->initDiscovery($rootDirectory, $rootNamespace, $container);
+        $this->initDiscovery(
+            rootDirectory: $rootDirectory,
+            rootNamespace: $rootNamespace,
+            container: $container
+        );
+
+        $this->initDiscovery(
+            rootDirectory: __DIR__ . '/../Console/Commands',
+            rootNamespace: '\\Tempest\\Console\\Commands',
+            container: $container
+        );
 
         return $container;
     }
