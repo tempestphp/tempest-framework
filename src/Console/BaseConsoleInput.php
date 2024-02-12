@@ -40,7 +40,7 @@ trait BaseConsoleInput
                         $options,
                     ),
                 )
-                . ']';
+                . '] ';
         }
 
         $this->output->write($questionString);
