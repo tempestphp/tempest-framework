@@ -5,7 +5,7 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Interface\Console;
 
-final readonly class Install
+final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
