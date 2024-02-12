@@ -3,14 +3,12 @@
 namespace Tempest\Console\Commands;
 
 use Tempest\Console\ConsoleCommand;
-use Tempest\Interface\ConsoleInput;
-use Tempest\Interface\ConsoleOutput;
+use Tempest\Interface\Console;
 
 final readonly class Install
 {
     public function __construct(
-        private ConsoleInput $input,
-        private ConsoleOutput $output,
+        private Console $console,
     ) {}
 
     #[ConsoleCommand(name: 'install')]
@@ -18,14 +16,11 @@ final readonly class Install
     {
         $cwd = getcwd();
 
-//        if (! $this->input->confirm(
-//            question: sprintf(
-//                "Installing Tempest in %s, continue?",
-//                ConsoleStyle::BG_BLUE(str_replace('/', "\/", $cwd)),
-//            ),
-//        )) {
-//            return;
-//        }
+        if (! $this->console->confirm(
+            question: "Installing Tempest in {$cwd}, continue?",
+        )) {
+            return;
+        }
 
         $this->copyTempest($cwd);
 
@@ -37,11 +32,11 @@ final readonly class Install
         $path = $cwd . '/tempest.php';
 
         if (file_exists($path)) {
-            $this->output->info("{$path} already exists, skipped.");
+            $this->console->error("{$path} already exists, skipped.");
             return;
         }
 
-        if (! $this->input->confirm(
+        if (! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
@@ -50,7 +45,7 @@ final readonly class Install
 
         copy(__DIR__ . '/../../../tempest.php', $path);
 
-        $this->output->success("{$path} created");
+        $this->console->success("{$path} created");
     }
 
     private function copyIndex(string $cwd): void
@@ -58,11 +53,11 @@ final readonly class Install
         $path = $cwd . '/public/index.php';
 
         if (file_exists($path)) {
-            $this->output->info("{$path} already exists, skipped.");
+            $this->console->error("{$path} already exists, skipped.");
             return;
         }
 
-        if (! $this->input->confirm(
+        if (! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
@@ -75,6 +70,6 @@ final readonly class Install
 
         copy(__DIR__ . '/../../../public/index.php', $path);
 
-        $this->output->success("{$path} created");
+        $this->console->success("{$path} created");
     }
 }
