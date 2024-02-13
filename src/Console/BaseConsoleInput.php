@@ -10,7 +10,8 @@ trait BaseConsoleInput
 {
     public function __construct(
         private readonly ConsoleOutput $output,
-    ) {}
+    ) {
+    }
 
     public function readln(): string
     {
@@ -27,20 +28,19 @@ trait BaseConsoleInput
         string $question,
         ?array $options = null,
         ?string $default = null,
-    ): string
-    {
+    ): string {
         $questionString = ConsoleStyle::BG_YELLOW($question);
 
         if ($options) {
             $questionString .= ' [' . ConsoleStyle::FG_BLUE(
-                    implode(
-                        ',',
-                        array_map(
-                            fn (string $option) => $option === $default ? strtoupper($option) : $option,
-                            $options,
-                        ),
+                implode(
+                    ',',
+                    array_map(
+                        fn (string $option) => $option === $default ? strtoupper($option) : $option,
+                        $options,
                     ),
-                )
+                ),
+            )
                 . '] ';
         }
 
@@ -71,8 +71,7 @@ trait BaseConsoleInput
     public function confirm(
         string $question,
         bool $default = false,
-    ): bool
-    {
+    ): bool {
         $answer = $this->ask($question, ['y', 'n'], $default ? 'y' : 'n');
 
         return strtolower($answer) === 'y';

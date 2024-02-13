@@ -40,6 +40,21 @@ class MapperTest extends TestCase
     }
 
     /** @test */
+    public function make_collection()
+    {
+        $authors = make(Author::class)->collection()->from([
+            [
+                'id' => 1,
+                'name' => 'test',
+            ],
+        ]);
+
+        $this->assertCount(1, $authors);
+        $this->assertSame('test', $authors[0]->name);
+        $this->assertSame(1, $authors[0]->id->id);
+    }
+
+    /** @test */
     public function make_object_from_existing_object()
     {
         $author = Author::new(
@@ -131,7 +146,7 @@ class MapperTest extends TestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            ObjectFactoryAMigration::class
+            ObjectFactoryAMigration::class,
         );
 
         ObjectFactoryA::create(

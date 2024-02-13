@@ -6,10 +6,12 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use ReflectionMethod;
+
+use function Tempest\attribute;
+
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Interface\Discoverer;
-use function Tempest\attribute;
 
 final readonly class ConsoleCommandDiscoverer implements Discoverer
 {

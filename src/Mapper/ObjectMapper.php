@@ -13,6 +13,8 @@ final class ObjectMapper
 
     private mixed $data;
 
+    private bool $isCollection = false;
+
     /** @var \Tempest\Interface\Mapper[] */
     private readonly array $mappers;
 
@@ -50,6 +52,8 @@ final class ObjectMapper
      */
     public function collection(): self
     {
+        $this->isCollection = true;
+
         return $this;
     }
 
@@ -58,13 +62,7 @@ final class ObjectMapper
      */
     public function from(mixed $data): array|object
     {
-        foreach ($this->mappers as $mapper) {
-            if ($mapper->canMap($this->objectOrClass, $data)) {
-                return $mapper->map($this->objectOrClass, $data);
-            }
-        }
-
-        throw new CannotMapDataException();
+        return $this->map($this->objectOrClass, $data, $this->isCollection);
     }
 
     /**
@@ -74,9 +72,28 @@ final class ObjectMapper
      */
     public function to(object|string $objectOrClass): object
     {
+        return $this->map($objectOrClass, $this->data, $this->isCollection);
+    }
+
+    private function map(
+        object|string $objectOrClass,
+        mixed $data,
+        bool $isCollection,
+    ): array|object {
+        if ($isCollection && is_array($data)) {
+            return array_map(
+                fn (mixed $item) => $this->map(
+                    objectOrClass: $objectOrClass,
+                    data: $item,
+                    isCollection: false
+                ),
+                $data,
+            );
+        }
+
         foreach ($this->mappers as $mapper) {
-            if ($mapper->canMap($objectOrClass, $this->data)) {
-                return $mapper->map($objectOrClass, $this->data);
+            if ($mapper->canMap($objectOrClass, $data)) {
+                return $mapper->map($objectOrClass, $data);
             }
         }
 

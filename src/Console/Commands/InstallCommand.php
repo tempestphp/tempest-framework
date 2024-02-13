@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Commands;
 
 use Tempest\Console\ConsoleCommand;
@@ -9,7 +11,8 @@ final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'install')]
     public function install(): void
@@ -33,6 +36,7 @@ final readonly class InstallCommand
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
+
             return;
         }
 
@@ -54,6 +58,7 @@ final readonly class InstallCommand
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
+
             return;
         }
 

@@ -11,7 +11,7 @@ use Tempest\Interface\ConsoleOutput;
 final class TestConsoleOutput implements ConsoleOutput
 {
     use BaseConsoleOutput;
-    
+
     public array $lines = [];
 
     public function writeln(string $line, ConsoleStyle ...$styles): void
