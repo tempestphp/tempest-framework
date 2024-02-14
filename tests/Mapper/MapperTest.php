@@ -14,10 +14,8 @@ use Tempest\Database\Query;
 use Tempest\Interface\Caster;
 use Tempest\Interface\Migration;
 use Tempest\Interface\Model;
-
 use function Tempest\make;
 use function Tempest\map;
-
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\BaseModel;
 use Tempest\ORM\Exceptions\MissingValuesException;
