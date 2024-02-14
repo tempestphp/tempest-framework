@@ -8,6 +8,7 @@ use ArgumentCountError;
 use Exception;
 use ReflectionMethod;
 use Tempest\Console\ConsoleConfig;
+use Tempest\Console\RenderConsoleCommandOverview;
 use Tempest\Interface\Application;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
@@ -30,11 +31,7 @@ final readonly class ConsoleApplication implements Application
         if (! $commandName) {
             $config = $this->container->get(ConsoleConfig::class);
 
-            $output->success("Available Commands:" . PHP_EOL);
-
-            foreach ($config->handlers as $name => $handler) {
-                $output->writeln("- {$name}");
-            }
+            $output->writeln((new RenderConsoleCommandOverview)($config));
 
             return;
         }
@@ -50,11 +47,13 @@ final readonly class ConsoleApplication implements Application
     {
         $config = $this->container->get(ConsoleConfig::class);
 
-        $handler = $config->handlers[$commandName] ?? null;
+        $consoleCommandConfig = $config->commands[$commandName] ?? null;
 
-        if (! $handler) {
+        if (! $consoleCommandConfig) {
             throw new Exception("Command `{$commandName}` not found");
         }
+
+        $handler = $consoleCommandConfig->handler;
 
         $params = $this->resolveParameters($handler);
 

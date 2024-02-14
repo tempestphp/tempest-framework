@@ -6,23 +6,18 @@ namespace Tempest\Console;
 
 use ReflectionMethod;
 
-use function Tempest\attribute;
-
 final class ConsoleConfig
 {
     public function __construct(
-        /** @var \ReflectionMethod[] $handlers */
-        public array $handlers = [],
-    ) {
-    }
+        /** @var \Tempest\Console\ConsoleCommand[] $commands */
+        public array $commands = [],
+    ) {}
 
-    public function addCommand(ReflectionMethod $handler): self
+    public function addCommand(ReflectionMethod $handler, ConsoleCommand $consoleCommand): self
     {
-        $attribute = attribute(ConsoleCommand::class)->in($handler)->first();
+        $consoleCommand->setHandler($handler);
 
-        $commandName = $attribute->name ?? strtolower($handler->getDeclaringClass()->getShortName() . ':' . $handler->getName());
-
-        $this->handlers[$commandName] = $handler;
+        $this->commands[$consoleCommand->getName()] = $consoleCommand;
 
         return $this;
     }

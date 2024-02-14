@@ -13,7 +13,10 @@ final readonly class InstallCommand
         private Console $console,
     ) {}
 
-    #[ConsoleCommand(name: 'install')]
+    #[ConsoleCommand(
+        name: 'install',
+        description:  'Interactively install Tempest in your project'
+    )]
     public function install(bool $force = false): void
     {
         $cwd = getcwd();

@@ -22,11 +22,13 @@ final readonly class ConsoleCommandDiscoverer implements Discoverer
     public function discover(ReflectionClass $class): void
     {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $attributes = attribute(ConsoleCommand::class)->in($method)->all();
+            $consoleCommand = attribute(ConsoleCommand::class)->in($method)->first();
 
-            if ($attributes !== []) {
-                $this->config->addCommand($method);
+            if (! $consoleCommand) {
+                continue;
             }
+
+            $this->config->addCommand($method, $consoleCommand);
         }
     }
 }
