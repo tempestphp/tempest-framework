@@ -11,17 +11,16 @@ final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'install')]
-    public function install(): void
+    public function install(bool $force = false): void
     {
         $cwd = getcwd();
 
-        if (! $this->console->confirm(
-            question: "Installing Tempest in {$cwd}, continue?",
-        )) {
+        if (! $force && ! $this->console->confirm(
+                question: "Installing Tempest in {$cwd}, continue?",
+            )) {
             return;
         }
 
@@ -32,7 +31,7 @@ final readonly class InstallCommand
 
     private function copyTempest(string $cwd): void
     {
-        $path = $cwd . '/tempest.php';
+        $path = $cwd . '/tempest';
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
@@ -48,6 +47,7 @@ final readonly class InstallCommand
         }
 
         copy(__DIR__ . '/../../../tempest', $path);
+        exec("chmod +x {$path}");
 
         $this->console->success("{$path} created");
     }
