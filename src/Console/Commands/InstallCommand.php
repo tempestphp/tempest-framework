@@ -47,7 +47,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../tempest.php', $path);
+        copy(__DIR__ . '/../../../tempest', $path);
 
         $this->console->success("{$path} created");
     }

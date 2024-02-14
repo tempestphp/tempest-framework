@@ -10,7 +10,9 @@
         "phpstan/phpstan": "^1.10",
         "friendsofphp/php-cs-fixer": "^3.21"
     },
-    "bin": ["tempest.php"],
+    "bin": [
+        "tempest"
+    ],
     "autoload": {
         "psr-4": {
             "Tempest\\": "src/",
