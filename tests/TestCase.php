@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
+use Tempest\AppConfig;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
-
 use function Tempest\get;
-
 use Tempest\Http\Method;
-
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
 
@@ -31,12 +29,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->kernel = new Kernel();
+        $this->kernel = new Kernel(new AppConfig(
+            appPath: __DIR__ . '/../app/',
+            appNamespace: 'App\\',
+        ));
 
-        $this->container = $this->kernel->init(
-            __DIR__ . '/../app',
-            'App\\',
-        );
+        $this->container = $this->kernel->init();
 
         $this->container
             ->addInitializer(new TestServerInitializer());

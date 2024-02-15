@@ -46,7 +46,6 @@ final readonly class RouteDiscovery implements Discovery
     public function restoreCache(Container $container): void
     {
         $routes = unserialize(file_get_contents(self::CACHE_PATH));
-        dd($routes);
         $this->routeConfig->routes = $routes;
     }
 

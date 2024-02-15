@@ -1,17 +1,18 @@
 <?php
 
-use Tempest\Application\HttpApplication;
-use Tempest\Application\Kernel;
+use Tempest\AppConfig;
+use Tempest\Application\Environment;
+use Tempest\Tempest;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$container = (new Kernel)->init(
-    rootDirectory: __DIR__ . '/../app',
-    rootNamespace: 'App\\',
-);
+Tempest::setupEnv(__DIR__ . '/../');
 
-$app = new HttpApplication($container);
-
-$app->run();
+Tempest::boot(new AppConfig(
+    appPath: __DIR__ . '/../app',
+    appNamespace: 'App\\',
+    environment: Environment::from(getenv('ENVIRONMENT')),
+    discoveryCache: getenv('DISCOVERY_CACHE'),
+))->http()->run();
 
 exit;

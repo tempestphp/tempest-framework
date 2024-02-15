@@ -69,7 +69,7 @@ trait BaseView
     {
         $this->appConfig = $appConfig;
 
-        $path = path($appConfig->rootPath, $this->path);
+        $path = path($appConfig->appPath, $this->path);
 
         ob_start();
         include $path;

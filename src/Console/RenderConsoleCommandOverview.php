@@ -4,19 +4,32 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Tempest\AppConfig;
+
 final readonly class RenderConsoleCommandOverview
 {
-    public function __invoke(ConsoleConfig $config): string
+    public function __construct(
+        private AppConfig $appConfig,
+        private ConsoleConfig $consoleConfig,
+    ) {
+    }
+
+    public function __invoke(): string
     {
         $lines = [
             ConsoleStyle::BOLD(ConsoleStyle::BG_DARK_BLUE(" Tempest Console ")),
-            '',
         ];
+
+        if ($this->appConfig->discoveryCache) {
+            $lines[] = ConsoleStyle::BG_RED(' Discovery cache is enabled! ');
+        }
+
+        $lines[] = '';
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
 
-        foreach ($config->commands as $consoleCommand) {
+        foreach ($this->consoleConfig->commands as $consoleCommand) {
             $parts = explode(':', $consoleCommand->getName());
 
             $group = count($parts) > 1 ? $parts[0] : 'General';

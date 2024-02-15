@@ -1,59 +1,24 @@
 #!/usr/bin/env php
 <?php
 
-use Tempest\Application\ConsoleApplication;
-use Tempest\Application\Kernel;
+use Tempest\AppConfig;
+use Tempest\Application\Environment;
+use Tempest\Tempest;
+use function Tempest\env;
 
-$autoloaderPaths = [
-    __DIR__ . '/vendor/autoload.php',
-    getcwd() . '/vendor/autoload.php',
-    getcwd() . '/../autoload.php',
-];
-
-$foundAutoloaderPath = null;
-
-foreach ($autoloaderPaths as $autoloaderPath) {
-    if (file_exists($autoloaderPath)) {
-        require_once $autoloaderPath;
-        $foundAutoloaderPath = $autoloaderPath;
-        break;
-    }
+try {
+    require_once __DIR__ . '/vendor/autoload.php';
+} catch (Throwable) {
+    require_once getcwd() . '/../autoload.php';
 }
 
-if (! $foundAutoloaderPath) {
-    throw new Exception("Could not find autoload.php");
-}
+Tempest::setupEnv(__DIR__);
 
-$appPaths = [
-    __DIR__ . '/app/',
-    getcwd() . '/app/',
-    __DIR__ . '/src/',
-    getcwd() . '/src/',
-];
-
-$foundAppPath = null;
-
-foreach ($appPaths as $appPath) {
-    if (is_dir($appPath)) {
-        $foundAppPath = $appPath;
-        break;
-    }
-}
-
-if (! $foundAppPath) {
-    throw new Exception("Could not locate app directory.");
-}
-
-$container = (new Kernel())->init(
-    rootDirectory: $foundAppPath,
-    rootNamespace: 'App\\',
-);
-
-$app = new ConsoleApplication(
-    args: $_SERVER['argv'],
-    container: $container,
-);
-
-$app->run();
+Tempest::boot(new AppConfig(
+    appPath: __DIR__ . '/app',
+    appNamespace: 'App\\',
+    environment: Environment::from(env('ENVIRONMENT')),
+    discoveryCache: env('DISCOVERY_CACHE'),
+))->console()->run();
 
 exit;

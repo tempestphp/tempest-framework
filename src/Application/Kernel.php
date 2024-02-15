@@ -33,6 +33,11 @@ use Throwable;
 
 final readonly class Kernel
 {
+    public function __construct(
+        private AppConfig $appConfig,
+    ) {
+    }
+
     public function getDiscoveries(): array
     {
         return [
@@ -43,20 +48,13 @@ final readonly class Kernel
         ];
     }
 
-    public function init(
-        string $rootDirectory,
-        string $rootNamespace,
-    ): Container {
+    public function init(): Container
+    {
         $container = $this->initContainer();
 
-        $this->initConfig($rootDirectory, $container);
+        $this->initConfig($container);
 
-        $this->initDiscovery(
-            appDirectory: $rootDirectory,
-            appNamespace: $rootNamespace,
-            container: $container,
-            useCache: false,
-        );
+        $this->initDiscovery($container);
 
         return $container;
     }
@@ -83,11 +81,11 @@ final readonly class Kernel
         return $container;
     }
 
-    private function initConfig(string $appDirectory, Container $container): void
+    private function initConfig(Container $container): void
     {
         $folders = [
             glob(__DIR__ . '/../Config/**.php'),
-            glob(path($appDirectory, 'Config/**.php')),
+            glob(path($this->appConfig->appPath, 'Config/**.php')),
         ];
 
         foreach ($folders as $configFiles) {
@@ -98,24 +96,13 @@ final readonly class Kernel
             }
         }
 
-        // Automatically resolve AppConfig when not provided
-        try {
-            $container->get(AppConfig::class);
-        } catch (Throwable) {
-            $container->config(new AppConfig(
-                rootPath: $appDirectory,
-            ));
-        }
+        $container->config($this->appConfig);
     }
 
-    private function initDiscovery(
-        string $appDirectory,
-        string $appNamespace,
-        Container $container,
-        bool $useCache,
-    ): void {
+    private function initDiscovery(Container $container): void
+    {
         $scanDirectories = [
-            [$appDirectory, $appNamespace],
+            [$this->appConfig->appPath, $this->appConfig->appNamespace],
             [__DIR__ . '/../', '\\Tempest\\'],
         ];
 
@@ -125,7 +112,7 @@ final readonly class Kernel
             /** @var \Tempest\Interface\Discovery $discovery */
             $discovery = $container->get($discoveryClass);
 
-            if ($useCache && $discovery->hasCache()) {
+            if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
                 $discovery->restoreCache($container);
 
                 continue;

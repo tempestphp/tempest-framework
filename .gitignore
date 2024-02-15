@@ -5,3 +5,4 @@ app/database.sqlite
 .idea
 composer.lock
 *.cache.php
+.env
