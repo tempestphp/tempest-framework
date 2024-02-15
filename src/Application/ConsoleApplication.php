@@ -31,7 +31,7 @@ final readonly class ConsoleApplication implements Application
         if (! $commandName) {
             $config = $this->container->get(ConsoleConfig::class);
 
-            $output->writeln((new RenderConsoleCommandOverview)($config));
+            $output->writeln((new RenderConsoleCommandOverview())($config));
 
             return;
         }

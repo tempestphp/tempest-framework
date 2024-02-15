@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console;
 
 use ReflectionParameter;
@@ -21,7 +23,7 @@ final readonly class RenderConsoleCommand
         return implode(' ', $parts);
     }
 
-    private function renderParameter(ReflectionParameter $parameter): string 
+    private function renderParameter(ReflectionParameter $parameter): string
     {
         $type = $parameter->getType()?->getName();
         $optional = $parameter->isOptional();

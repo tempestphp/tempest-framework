@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console;
 
 final readonly class RenderConsoleCommandOverview
@@ -28,7 +30,7 @@ final readonly class RenderConsoleCommandOverview
             $lines[] = ConsoleStyle::BOLD(ConsoleStyle::BG_BLUE(' ' . ucfirst($group) . ' '));
 
             foreach ($commandsForGroup as $consoleCommand) {
-                $renderedConsoleCommand = (new RenderConsoleCommand)($consoleCommand);
+                $renderedConsoleCommand = (new RenderConsoleCommand())($consoleCommand);
                 $lines[] = "  {$renderedConsoleCommand}";
             }
 

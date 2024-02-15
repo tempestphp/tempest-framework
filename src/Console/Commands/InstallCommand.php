@@ -11,7 +11,8 @@ final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'install',
@@ -22,8 +23,8 @@ final readonly class InstallCommand
         $cwd = getcwd();
 
         if (! $force && ! $this->console->confirm(
-                question: "Installing Tempest in {$cwd}, continue?",
-            )) {
+            question: "Installing Tempest in {$cwd}, continue?",
+        )) {
             return;
         }
 

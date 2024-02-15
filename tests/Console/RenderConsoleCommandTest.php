@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use function Tempest\attribute;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\RenderConsoleCommand;
-use function Tempest\attribute;
 
 class RenderConsoleCommandTest extends TestCase
 {
@@ -28,7 +30,7 @@ class RenderConsoleCommandTest extends TestCase
                 ConsoleStyle::ESC->value,
             ],
             '',
-            (new RenderConsoleCommand)($consoleCommand)
+            (new RenderConsoleCommand())($consoleCommand)
         );
 
         $this->assertSame(
@@ -46,7 +48,8 @@ class MyConsole
     )]
     public function handle(
         string $path,
-        int $times=1,
+        int $times = 1,
         bool $force = false,
-    ) {}
+    ) {
+    }
 }

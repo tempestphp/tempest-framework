@@ -11,7 +11,8 @@ final class ConsoleConfig
     public function __construct(
         /** @var \Tempest\Console\ConsoleCommand[] $commands */
         public array $commands = [],
-    ) {}
+    ) {
+    }
 
     public function addCommand(ReflectionMethod $handler, ConsoleCommand $consoleCommand): self
     {

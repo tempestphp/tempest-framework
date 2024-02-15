@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Bus;
 
 use Closure;
@@ -20,7 +22,8 @@ final class GenericCommandBus implements CommandBus
 
     public function __construct(
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function dispatch(object $command): void
     {
@@ -63,6 +66,8 @@ final class GenericCommandBus implements CommandBus
     public function addMiddleware(string $middleware): self
     {
         $this->middleware[] = $middleware;
+
+        return $this;
     }
 
     public function addHandler(string $commandName, ReflectionMethod $handler): self

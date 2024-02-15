@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Discovery;
 
 use ReflectionClass;
@@ -11,7 +13,9 @@ use Tempest\Interface\Discoverer;
 
 final readonly class CommandDiscoverer implements Discoverer
 {
-    public function __construct(private CommandBus $commandBus) {}
+    public function __construct(private CommandBus $commandBus)
+    {
+    }
 
     public function discover(ReflectionClass $class): void
     {

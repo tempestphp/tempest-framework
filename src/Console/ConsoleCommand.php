@@ -15,7 +15,8 @@ final class ConsoleCommand
     public function __construct(
         private readonly ?string $name = null,
         private readonly ?string $description = null,
-    ) {}
+    ) {
+    }
 
     public function setHandler(ReflectionMethod $handler): self
     {

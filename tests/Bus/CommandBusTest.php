@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Bus;
 
+use function Tempest\command;
 use Tempest\Http\Dispatch;
 use Tests\Tempest\TestCase;
-use function Tempest\command;
 
 class CommandBusTest extends TestCase
 {
