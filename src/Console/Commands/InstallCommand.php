@@ -31,6 +31,54 @@ final readonly class InstallCommand
         $this->copyTempest($cwd);
 
         $this->copyIndex($cwd);
+
+        $this->copyEnvExample($cwd);
+
+        $this->copyEnv($cwd);
+    }
+
+    private function copyEnv(string $cwd): void
+    {
+        $path = $cwd . '/.env';
+
+        if (file_exists($path)) {
+            $this->console->error("{$path} already exists, skipped.");
+
+            return;
+        }
+
+        if (! $this->console->confirm(
+            question: sprintf("Do you want to create %s?", $path),
+            default: true,
+        )) {
+            return;
+        }
+
+        copy(__DIR__ . '/../../../.env.example', $path);
+
+        $this->console->success("{$path} created");
+    }
+
+    private function copyEnvExample(string $cwd): void
+    {
+        $path = $cwd . '/.env.example';
+
+        if (file_exists($path)) {
+            $this->console->error("{$path} already exists, skipped.");
+
+            return;
+        }
+
+        if (! $this->console->confirm(
+            question: sprintf("Do you want to create %s?", $path),
+            default: true,
+        )) {
+            return;
+        }
+
+        copy(__DIR__ . '/../../../.env.example', $path);
+
+        $this->console->success("{$path} created");
     }
 
     private function copyTempest(string $cwd): void

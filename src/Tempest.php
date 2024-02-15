@@ -6,6 +6,7 @@ namespace Tempest;
 
 use _PHPStan_11268e5ee\Nette\Neon\Exception;
 use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidPathException;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
@@ -16,13 +17,16 @@ final readonly class Tempest
         private Kernel $kernel,
         private AppConfig $appConfig,
         private string $projectRoot,
-    ) {
-    }
+    ) {}
 
     public static function setupEnv(string $dir): void
     {
-        $dotenv = Dotenv::createUnsafeImmutable($dir);
-        $dotenv->load();
+        try {
+            $dotenv = Dotenv::createUnsafeImmutable($dir);
+            $dotenv->load();
+        } catch (InvalidPathException) {
+            die("Missing .env file in {$dir}" . PHP_EOL);
+        }
     }
 
     public static function boot(AppConfig $appConfig): self
