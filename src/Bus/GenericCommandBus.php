@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Bus;
 
 use Closure;
-use ReflectionMethod;
 use Tempest\Interface\CommandBus;
 use Tempest\Interface\Container;
 
@@ -14,14 +13,9 @@ final class GenericCommandBus implements CommandBus
     /** @var object[] */
     private array $history = [];
 
-    /** @var ReflectionMethod[] */
-    private array $handlers = [];
-
-    /** @var \Tempest\Bus\Middleware[] */
-    private array $middleware = [];
-
     public function __construct(
         private readonly Container $container,
+        private readonly CommandBusConfig $commandBusConfig,
     ) {
     }
 
@@ -35,7 +29,7 @@ final class GenericCommandBus implements CommandBus
     private function getCallable(): Closure
     {
         $callable = function (object $command) {
-            $handler = $this->getHandler($command);
+            $handler = $this->getCommandHandler($command)->handler;
 
             if (! $handler) {
                 throw new CommandHandlerNotFound($command);
@@ -49,7 +43,7 @@ final class GenericCommandBus implements CommandBus
             $this->history[] = $command;
         };
 
-        $middlewareStack = $this->middleware;
+        $middlewareStack = $this->commandBusConfig->middleware;
 
         while ($middleware = array_pop($middlewareStack)) {
             $callable = fn (object $command) => $this->container->get($middleware::class)($command, $callable);
@@ -58,23 +52,9 @@ final class GenericCommandBus implements CommandBus
         return $callable;
     }
 
-    private function getHandler(object $command): ?ReflectionMethod
+    private function getCommandHandler(object $command): ?CommandHandler
     {
-        return $this->handlers[$command::class] ?? null;
-    }
-
-    public function addMiddleware(string $middleware): self
-    {
-        $this->middleware[] = $middleware;
-
-        return $this;
-    }
-
-    public function addHandler(string $commandName, ReflectionMethod $handler): self
-    {
-        $this->handlers[$commandName] = $handler;
-
-        return $this;
+        return $this->commandBusConfig->handlers[$command::class] ?? null;
     }
 
     public function getHistory(): array

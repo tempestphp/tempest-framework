@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Attribute;
+use ReflectionClass;
 use ReflectionMethod;
 
 #[Attribute]
@@ -39,5 +40,25 @@ final class ConsoleCommand
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+            'handler_class' => $this->handler->getDeclaringClass()->getName(),
+            'handler_method' => $this->handler->getName(),
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->name = $data['name'];
+        $this->description = $data['description'];
+        $this->handler = new ReflectionMethod(
+            objectOrMethod: new ReflectionClass($data['handler_class']),
+            method: $data['handler_method'],
+        );
     }
 }

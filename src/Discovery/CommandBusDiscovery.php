@@ -7,14 +7,18 @@ namespace Tempest\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use Tempest\Bus\CommandBusConfig;
 use Tempest\Interface\Command;
-use Tempest\Interface\CommandBus;
-use Tempest\Interface\Discoverer;
+use Tempest\Interface\Container;
+use Tempest\Interface\Discovery;
 
-final readonly class CommandDiscoverer implements Discoverer
+final readonly class CommandBusDiscovery implements Discovery
 {
-    public function __construct(private CommandBus $commandBus)
-    {
+    private const CACHE_PATH = __DIR__ . '/command-bus-discovery.cache.php';
+
+    public function __construct(
+        private CommandBusConfig $commandBusConfig,
+    ) {
     }
 
     public function discover(ReflectionClass $class): void
@@ -48,7 +52,29 @@ final readonly class CommandDiscoverer implements Discoverer
                 continue;
             }
 
-            $this->commandBus->addHandler($typeClass->getName(), $method);
+            $this->commandBusConfig->addHandler($typeClass->getName(), $method);
         }
+    }
+
+    public function hasCache(): bool
+    {
+        return file_exists(self::CACHE_PATH);
+    }
+
+    public function storeCache(): void
+    {
+        file_put_contents(self::CACHE_PATH, serialize($this->commandBusConfig->handlers));
+    }
+
+    public function restoreCache(Container $container): void
+    {
+        $handlers = unserialize(file_get_contents(self::CACHE_PATH));
+
+        $this->commandBusConfig->handlers = $handlers;
+    }
+
+    public function destroyCache(): void
+    {
+        unlink(self::CACHE_PATH);
     }
 }

@@ -2,35 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Bus;
 
-use Attribute;
 use ReflectionClass;
 use ReflectionMethod;
 
-#[Attribute]
-class Route
+final readonly class CommandHandler
 {
-    public ReflectionMethod $handler;
-
     public function __construct(
-        public string $uri,
-        public Method $method,
+        public ReflectionMethod $handler
     ) {
-    }
-
-    public function setHandler(ReflectionMethod $handler): self
-    {
-        $this->handler = $handler;
-
-        return $this;
     }
 
     public function __serialize(): array
     {
         return [
-            'uri' => $this->uri,
-            'method' => $this->method,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
         ];
@@ -38,8 +24,6 @@ class Route
 
     public function __unserialize(array $data): void
     {
-        $this->uri = $data['uri'];
-        $this->method = $data['method'];
         $this->handler = new ReflectionMethod(
             objectOrMethod: new ReflectionClass($data['handler_class']),
             method: $data['handler_method'],
