@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Attribute;
-use ReflectionClass;
 use ReflectionMethod;
 
 #[Attribute]
@@ -41,7 +40,7 @@ class Route
         $this->uri = $data['uri'];
         $this->method = $data['method'];
         $this->handler = new ReflectionMethod(
-            objectOrMethod: new ReflectionClass($data['handler_class']),
+            objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
     }

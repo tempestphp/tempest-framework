@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Attribute;
-use ReflectionClass;
 use ReflectionMethod;
 
 #[Attribute]
@@ -57,7 +56,7 @@ final class ConsoleCommand
         $this->name = $data['name'];
         $this->description = $data['description'];
         $this->handler = new ReflectionMethod(
-            objectOrMethod: new ReflectionClass($data['handler_class']),
+            objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
     }

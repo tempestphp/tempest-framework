@@ -27,15 +27,22 @@ use Tempest\Interface\ConsoleFormatter;
 use Tempest\Interface\ConsoleInput;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
-use Tempest\Interface\Discovery;
 use Tempest\Interface\Router;
-
 use function Tempest\path;
-
 use Throwable;
 
 final readonly class Kernel
 {
+    public function getDiscoveries(): array
+    {
+        return [
+            RouteDiscovery::class,
+            MigrationDiscovery::class,
+            ConsoleCommandDiscovery::class,
+            CommandBusDiscovery::class,
+        ];
+    }
+
     public function init(
         string $rootDirectory,
         string $rootNamespace,
@@ -45,15 +52,8 @@ final readonly class Kernel
         $this->initConfig($rootDirectory, $container);
 
         $this->initDiscovery(
-            rootDirectory: $rootDirectory,
-            rootNamespace: $rootNamespace,
-            container: $container,
-            useCache: false,
-        );
-
-        $this->initDiscovery(
-            rootDirectory: __DIR__ . '/../',
-            rootNamespace: '\\Tempest\\',
+            appDirectory: $rootDirectory,
+            appNamespace: $rootNamespace,
             container: $container,
             useCache: false,
         );
@@ -83,11 +83,11 @@ final readonly class Kernel
         return $container;
     }
 
-    private function initConfig(string $rootDirectory, Container $container): void
+    private function initConfig(string $appDirectory, Container $container): void
     {
         $folders = [
             glob(__DIR__ . '/../Config/**.php'),
-            glob(path($rootDirectory, 'Config/**.php')),
+            glob(path($appDirectory, 'Config/**.php')),
         ];
 
         foreach ($folders as $configFiles) {
@@ -103,62 +103,65 @@ final readonly class Kernel
             $container->get(AppConfig::class);
         } catch (Throwable) {
             $container->config(new AppConfig(
-                rootPath: $rootDirectory,
+                rootPath: $appDirectory,
             ));
         }
     }
 
     private function initDiscovery(
-        string $rootDirectory,
-        string $rootNamespace,
+        string $appDirectory,
+        string $appNamespace,
         Container $container,
         bool $useCache,
     ): void {
-        $directories = new RecursiveDirectoryIterator($rootDirectory);
-
-        $files = new RecursiveIteratorIterator($directories);
-
-        /** @var Discovery[] $discoveries */
-        $discoveries = [
-            $container->get(RouteDiscovery::class),
-            $container->get(MigrationDiscovery::class),
-            $container->get(ConsoleCommandDiscovery::class),
-            $container->get(CommandBusDiscovery::class),
+        $scanDirectories = [
+            [$appDirectory, $appNamespace],
+            [__DIR__ . '/../', '\\Tempest\\'],
         ];
 
-        foreach ($discoveries as $discovery) {
+        $discoveries = $this->getDiscoveries();
+
+        foreach ($discoveries as $discoveryClass) {
+            /** @var \Tempest\Interface\Discovery $discovery */
+            $discovery = $container->get($discoveryClass);
+
             if ($useCache && $discovery->hasCache()) {
                 $discovery->restoreCache($container);
 
                 continue;
             }
 
-            /** @var \SplFileInfo $file */
-            foreach ($files as $file) {
-                $fileName = $file->getFilename();
+            foreach ($scanDirectories as [$directory, $namespace]) {
+                $directories = new RecursiveDirectoryIterator($directory);
+                $files = new RecursiveIteratorIterator($directories);
 
-                if (
-                    $fileName === ''
-                    || $fileName === '.'
-                    || $fileName === '..'
-                    || ucfirst($fileName) !== $fileName
-                ) {
-                    continue;
+                /** @var \SplFileInfo $file */
+                foreach ($files as $file) {
+                    $fileName = $file->getFilename();
+
+                    if (
+                        $fileName === ''
+                        || $fileName === '.'
+                        || $fileName === '..'
+                        || ucfirst($fileName) !== $fileName
+                    ) {
+                        continue;
+                    }
+
+                    $className = str_replace(
+                        [$directory, '/', '.php', '\\\\'],
+                        [$namespace, '\\', '', '\\'],
+                        $file->getPathname(),
+                    );
+
+                    try {
+                        $reflection = new ReflectionClass($className);
+                    } catch (Throwable) {
+                        continue;
+                    }
+
+                    $discovery->discover($reflection);
                 }
-
-                $className = str_replace(
-                    [$rootDirectory, '/', '.php', '\\\\'],
-                    [$rootNamespace, '\\', '', '\\'],
-                    $file->getPathname(),
-                );
-
-                try {
-                    $reflection = new ReflectionClass($className);
-                } catch (Throwable) {
-                    continue;
-                }
-
-                $discovery->discover($reflection);
             }
 
             $discovery->storeCache();

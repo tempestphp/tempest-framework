@@ -17,7 +17,10 @@ final readonly class RoutesCommand
     ) {
     }
 
-    #[ConsoleCommand('route:list')]
+    #[ConsoleCommand(
+        name: 'routes',
+        description: 'List all registered routes'
+    )]
     public function list(): void
     {
         $sortedRoutes = [];
