@@ -13,4 +13,6 @@ interface Router
     public function dispatch(Request $request): Response;
 
     public function toUri(array|string $action, ...$params): string;
+
+    public function getRoutes(): array;
 }
