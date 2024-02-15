@@ -61,6 +61,11 @@ final class GenericRouter implements Router
         return $this;
     }
 
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
+
     public function dispatch(Request $request): Response
     {
         $actionsForMethod = $this->routes[$request->method->value] ?? null;
