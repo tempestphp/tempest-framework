@@ -8,11 +8,13 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
+use Tempest\Bus\GenericCommandBus;
 use Tempest\Console\GenericConsoleFormatter;
 use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
+use Tempest\Discovery\CommandDiscoverer;
 use Tempest\Discovery\ConsoleCommandDiscoverer;
 use Tempest\Discovery\ControllerDiscoverer;
 use Tempest\Discovery\MigrationDiscoverer;
@@ -20,6 +22,7 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
+use Tempest\Interface\CommandBus;
 use Tempest\Interface\ConsoleFormatter;
 use Tempest\Interface\ConsoleInput;
 use Tempest\Interface\ConsoleOutput;
@@ -48,8 +51,8 @@ final readonly class Kernel
         );
 
         $this->initDiscovery(
-            rootDirectory: __DIR__ . '/../Console/Commands',
-            rootNamespace: '\\Tempest\\Console\\Commands',
+            rootDirectory: __DIR__ . '/../',
+            rootNamespace: '\\Tempest\\',
             container: $container
         );
 
@@ -69,6 +72,7 @@ final readonly class Kernel
             ->singleton(ConsoleFormatter::class, fn () => $container->get(GenericConsoleFormatter::class))
             ->singleton(ConsoleOutput::class, fn () => $container->get(GenericConsoleOutput::class))
             ->singleton(ConsoleInput::class, fn () => $container->get(GenericConsoleInput::class))
+            ->singleton(CommandBus::class, fn () => $container->get(GenericCommandBus::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
@@ -116,6 +120,7 @@ final readonly class Kernel
             $container->get(ControllerDiscoverer::class),
             $container->get(MigrationDiscoverer::class),
             $container->get(ConsoleCommandDiscoverer::class),
+            $container->get(CommandDiscoverer::class),
         ];
 
         /** @var \SplFileInfo $file */

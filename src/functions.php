@@ -9,6 +9,7 @@ namespace Tempest {
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Method;
     use Tempest\Http\Status;
+    use Tempest\Interface\CommandBus;
     use Tempest\Interface\Request;
     use Tempest\Interface\Response;
     use Tempest\Interface\Router;
@@ -97,5 +98,12 @@ namespace Tempest {
     function attribute(string $attributeName): Attributes
     {
         return Attributes::find($attributeName);
+    }
+
+    function command(object $command): void
+    {
+        $commandBus = get(CommandBus::class);
+
+        $commandBus->dispatch($command);
     }
 }
