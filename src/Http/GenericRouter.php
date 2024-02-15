@@ -22,69 +22,46 @@ use Tempest\Interface\View;
 use function Tempest\response;
 
 #[InitializedBy(RouteInitializer::class)]
-final class GenericRouter implements Router
+final readonly class GenericRouter implements Router
 {
     public function __construct(
-        private readonly Container $container,
-        private readonly AppConfig $appConfig,
-        private array $routes = [],
+        private Container $container,
+        private AppConfig $appConfig,
+        private RouteConfig $routeConfig,
     ) {
     }
 
-    public function registerController(string $controller): self
-    {
-        $class = new ReflectionClass($controller);
-
-        foreach ($class->getMethods() as $controllerMethod) {
-            $routeAttribute = attribute(Route::class)
-                ->in($controllerMethod)
-                ->first();
-
-            if (! $routeAttribute) {
-                continue;
-            }
-
-            $this->registerRoute(
-                $routeAttribute,
-                $controller,
-                $controllerMethod->getName(),
-            );
-        }
-
-        return $this;
-    }
-
-    public function registerRoute(Route $route, string $controllerClass, string $controllerMethod): self
-    {
-        $this->routes[$route->method->value][$route->uri] = [$controllerClass, $controllerMethod];
-
-        return $this;
-    }
-
+    /**
+     * @return \Tempest\Http\Route[][]
+     */
     public function getRoutes(): array
     {
-        return $this->routes;
+        return $this->routeConfig->routes;
     }
 
     public function dispatch(Request $request): Response
     {
-        $actionsForMethod = $this->routes[$request->method->value] ?? null;
+        $actionsForMethod = $this->getRoutes()[$request->method->value] ?? null;
 
         if (! $actionsForMethod) {
             return response()->notFound();
         }
 
         $routeParams = null;
-        $matchedAction = null;
+        $matchedRoute = null;
 
-        foreach ($actionsForMethod as $pattern => $action) {
-            $routeParams = $this->resolveParams($pattern, $request->getPath());
+        foreach ($actionsForMethod as $route) {
+            $routeParams = $this->resolveParams($route->uri, $request->getPath());
 
             if ($routeParams !== null) {
-                $matchedAction = $action;
+                $matchedRoute = $route;
 
                 break;
             }
+        }
+
+        if ($routeParams === null) {
+            // TODO: not found
         }
 
         if ($routeParams === null) {
@@ -96,23 +73,28 @@ final class GenericRouter implements Router
             fn () => new RouteParams($routeParams),
         );
 
-        [$controllerClass, $controllerMethod] = $matchedAction;
+        $controller = $this->container->get(
+            $matchedRoute->handler->getDeclaringClass()->getName()
+        );
 
-        $controller = $this->container->get($controllerClass);
-
-        $outputFromController = $this->container->call($controller, $controllerMethod, ...$routeParams);
+        $outputFromController = $this->container->call(
+            $controller,
+            $matchedRoute->handler->getName(),
+            ...$routeParams
+        );
 
         if ($outputFromController === null) {
-            throw new MissingControllerOutputException($controllerClass, $controllerMethod);
+            throw new MissingControllerOutputException(
+                $matchedRoute->handler->getDeclaringClass()->getName(),
+                $matchedRoute->handler->getName(),
+            );
         }
 
         return $this->createResponse($outputFromController);
     }
 
-    public function toUri(
-        array|string $action,
-        ...$params,
-    ): string {
+    public function toUri(array|string $action, ...$params): string
+    {
         if (is_array($action)) {
             $controllerClass = $action[0];
             $reflection = new ReflectionClass($controllerClass);

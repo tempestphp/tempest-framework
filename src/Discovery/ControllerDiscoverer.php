@@ -22,13 +22,13 @@ final readonly class ControllerDiscoverer implements Discoverer
     public function discover(ReflectionClass $class): void
     {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $attributes = attribute(Route::class)->in($method)->all();
+            $routeAttribute = attribute(Route::class)->in($method)->first();
 
-            if ($attributes !== []) {
-                $this->routeConfig->addController($class->getName());
-
-                return;
+            if (! $routeAttribute) {
+                continue;
             }
+
+            $this->routeConfig->addRoute($method, $routeAttribute);
         }
     }
 }

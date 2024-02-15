@@ -17,6 +17,10 @@ final readonly class MigrationDiscoverer implements Discoverer
 
     public function discover(ReflectionClass $class): void
     {
+        if (! $class->isInstantiable()) {
+            return;
+        }
+
         if (! $class->implementsInterface(Migration::class)) {
             return;
         }

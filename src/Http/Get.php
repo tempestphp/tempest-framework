@@ -7,7 +7,7 @@ namespace Tempest\Http;
 use Attribute;
 
 #[Attribute]
-final readonly class Get extends Route
+final class Get extends Route
 {
     public function __construct(string $uri)
     {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDO;
+use PDOException;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Interface\Container;
@@ -23,7 +24,7 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (\PDOException) {
+        } catch (PDOException) {
             $this->executeUp(new CreateMigrationsTable());
 
             $existingMigrations = Migration::all();

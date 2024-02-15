@@ -18,6 +18,6 @@ class KernelTest extends \PHPUnit\Framework\TestCase
 
         $config = $container->get(RouteConfig::class);
 
-        $this->assertTrue(count($config->controllers) > 1);
+        $this->assertTrue(count($config->routes) > 1);
     }
 }

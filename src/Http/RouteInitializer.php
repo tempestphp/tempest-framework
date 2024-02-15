@@ -13,8 +13,8 @@ final readonly class RouteInitializer implements Initializer
 {
     public function __construct(
         private Container $container,
-        private RouteConfig $routeConfig,
         private AppConfig $appConfig,
+        private RouteConfig $routeConfig,
     ) {
     }
 
@@ -23,11 +23,8 @@ final readonly class RouteInitializer implements Initializer
         $router = new GenericRouter(
             container: $this->container,
             appConfig: $this->appConfig,
+            routeConfig: $this->routeConfig,
         );
-
-        foreach ($this->routeConfig->controllers as $controller) {
-            $router->registerController($controller);
-        }
 
         $this->container->singleton(Router::class, fn () => $router);
 

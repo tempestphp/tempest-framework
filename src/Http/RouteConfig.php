@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use ReflectionMethod;
+
 final class RouteConfig
 {
     public function __construct(
-        public array $controllers = [],
+        /** @var \Tempest\Http\Route[][] */
+        public array $routes = [],
     ) {
     }
 
-    public function addController(string $controllerClass): self
+    public function addRoute(ReflectionMethod $handler, Route $route): self
     {
-        $this->controllers[] = $controllerClass;
+        $route->setHandler($handler);
+
+        $this->routes[$route->method->value][] = $route;
 
         return $this;
     }
