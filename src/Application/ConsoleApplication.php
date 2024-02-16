@@ -38,6 +38,8 @@ final readonly class ConsoleApplication implements Application
             $this->handleCommand($commandName);
         } catch (Throwable $error) {
             $output->error($error->getMessage());
+            
+            throw $error;
         }
     }
 

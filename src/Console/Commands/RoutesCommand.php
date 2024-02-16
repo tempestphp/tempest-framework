@@ -23,28 +23,24 @@ final readonly class RoutesCommand
     )]
     public function list(): void
     {
+        /** @var \Tempest\Http\Route[] $sortedRoutes */
         $sortedRoutes = [];
 
-        foreach($this->router->getRoutes() as $method => $routesForMethod) {
+        foreach($this->router->getRoutes() as $routesForMethod) {
             foreach ($routesForMethod as $uri => $route) {
-                $sortedRoutes[$uri] = [
-                    'method' => $method,
-                    'uri' => $uri,
-                    'controller' => $route[0],
-                    'action' => $route[1],
-                ];
+                $sortedRoutes[$uri] = $route;
             }
         }
 
         ksort($sortedRoutes);
 
-        foreach ($sortedRoutes as ['method' => $method, 'uri' => $uri, 'controller' => $controller, 'action' => $action]) {
+        foreach ($sortedRoutes as $route) {
             $this->console->writeln(implode(' ', [
-                ConsoleStyle::FG_BLUE(str_pad($method, 4)),
-                ConsoleStyle::FG_DARK_BLUE($uri),
+                ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
+                ConsoleStyle::FG_DARK_BLUE($route->uri),
                 PHP_EOL,
                 '   ',
-                $controller . '::' . $action . '()',
+                $route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName() . '()',
             ]));
         }
     }
