@@ -2,5 +2,5 @@
 <head>
     <title><?= $this->title ?></title>
 </head>
-<body><?= $this->slot ?></body>
+<body><?= $this->slot() ?></body>
 </html>
