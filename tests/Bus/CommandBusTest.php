@@ -44,10 +44,10 @@ class CommandBusMiddleware implements Middleware
 {
     public static bool $hit = false;
 
-    public function __invoke(object $command, callable $next): mixed
+    public function __invoke(object $command, callable $next): void
     {
         self::$hit = true;
 
-        return $next($command);
+        $next($command);
     }
 }
