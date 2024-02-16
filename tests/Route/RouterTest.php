@@ -65,8 +65,7 @@ class RouterTest extends TestCase
 <head>
     <title></title>
 </head>
-<body>
-Hello Brent!</body>
+<body>Hello Brent!</body>
 </html>
 HTML;
 

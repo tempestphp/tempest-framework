@@ -17,4 +17,6 @@ interface View
     public function extends(string $path, ...$params): self;
 
     public function raw(string $name): ?string;
+
+    public function slot(string $name = 'slot'): ?string;
 }

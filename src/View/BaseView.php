@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Tempest\AppConfig;
-
 use function Tempest\path;
 use function Tempest\view;
 
@@ -65,6 +64,11 @@ trait BaseView
         return $this->rawParams[$name] ?? null;
     }
 
+    public function slot(string $name = 'slot'): ?string
+    {
+        return $this->rawParams[$name] ?? null;
+    }
+
     public function render(AppConfig $appConfig): string
     {
         $this->appConfig = $appConfig;
@@ -76,7 +80,9 @@ trait BaseView
         $contents = ob_get_clean();
 
         if ($this->extendsPath) {
-            $extendsData = ['slot' => $contents, ...$this->extendsParams];
+            $slots = $this->parseSlots($contents);
+
+            $extendsData = [...$slots, ...$this->extendsParams];
 
             return view($this->extendsPath)
                 ->data(...$extendsData)
@@ -88,15 +94,46 @@ trait BaseView
 
     private function escape(array $items): array
     {
-        return $items;
         foreach ($items as $key => $value) {
-            if ($key === 'slot') {
-                continue;
-            }
-
             $items[$key] = htmlentities($value);
         }
 
         return $items;
+    }
+
+    private function parseSlots(string $content): array
+    {
+        $parts = array_map(
+            fn (string $slot) => explode('<x-slot', $slot),
+            explode('</x-slot>', $content),
+        );
+
+        $slots = [];
+
+        foreach ($parts as $partsGroup) {
+            foreach ($partsGroup as $part) {
+                $part = trim($part);
+
+                $slotName = $this->determineSlotName($part);
+
+                if ($slotName !== 'slot') {
+                    $part = trim(str_replace("name=\"{$slotName}\">", '', $part));
+                }
+
+                $slots[$slotName][] = $part;
+            }
+        }
+
+        return array_map(
+            fn (array $content) => implode(PHP_EOL, $content),
+            $slots,
+        );
+    }
+
+    private function determineSlotName(string $content): string
+    {
+        preg_match('/name=\"(\w+)\">/', $content, $matches);
+
+        return $matches[1] ?? 'slot';
     }
 }

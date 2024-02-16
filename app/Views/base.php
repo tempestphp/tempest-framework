@@ -5,6 +5,6 @@
     <title><?= $this->title ?? 'Home' ?></title>
 </head>
 <body>
-<?= $this->slot ?? '' ?>
+<?= $this->slot() ?? '' ?>
 </body>
 </html>

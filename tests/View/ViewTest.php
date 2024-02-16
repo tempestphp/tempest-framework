@@ -33,8 +33,7 @@ class ViewTest extends TestCase
 <head>
     <title></title>
 </head>
-<body>
-Hello Brent!</body>
+<body>Hello Brent!</body>
 </html>
 HTML;
 
@@ -74,8 +73,7 @@ HTML;
 <head>
     <title></title>
 </head>
-<body>
-Hello Brent!</body>
+<body>Hello Brent!</body>
 </html>
 HTML;
 
@@ -85,8 +83,6 @@ HTML;
     /** @test */
     public function test_raw_and_escaping()
     {
-        $this->markTestSkipped();
-
         $html = view('Views/rawAndEscaping.php')->data(
             property: '<h1>hi</h1>',
         )->render($this->container->get(AppConfig::class));
@@ -104,6 +100,36 @@ HTML;
         $html = view('Views/extendsWithVariables.php')->render($this->container->get(AppConfig::class));
 
         $this->assertStringContainsString('<title>Test</title>', $html);
+        $this->assertStringContainsString('<h1>Hello</h1>', $html);
+    }
+
+    /** @test */
+    public function test_named_slots()
+    {
+        $html = view('Views/extendsWithNamedSlot.php')->render($this->container->get(AppConfig::class));
+
+        $this->assertStringContainsString(
+            needle: <<<HTML
+            <div class="defaultSlot"><h1>beginning</h1>
+            <p>in between</p>
+            <p>default slot</p></div>
+            HTML,
+            haystack: $html
+        );
+
+        $this->assertStringContainsString(
+            needle: <<<HTML
+            <div class="namedSlot"><h1>named slot</h1></div>
+            HTML,
+            haystack: $html
+        );
+
+        $this->assertStringContainsString(
+            needle: <<<HTML
+            <div class="namedSlot2"><h1>named slot 2</h1></div>
+            HTML,
+            haystack: $html
+        );
     }
 
     /** @test */
