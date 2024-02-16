@@ -9,10 +9,10 @@ use Egulias\EmailValidator\Validation\RFCValidation;
 use Tempest\Interface\Rule;
 
 #[Attribute]
-final class Email implements Rule
+final readonly class Email implements Rule
 {
     public function __construct(
-        private readonly EmailValidation $validationMethod = new RFCValidation()
+        private EmailValidation $validationMethod = new RFCValidation()
     ) {}
 
     public function isValid(mixed $value): bool
