@@ -61,10 +61,6 @@ final readonly class GenericRouter implements Router
         }
 
         if ($routeParams === null) {
-            // TODO: not found
-        }
-
-        if ($routeParams === null) {
             return response()->notFound();
         }
 
