@@ -26,7 +26,7 @@ final class CommandBusConfig
         return $this;
     }
 
-    public function addMiddleware(string $middleware): self
+    public function addMiddleware(Middleware $middleware): self
     {
         $this->middleware[] = $middleware;
 
