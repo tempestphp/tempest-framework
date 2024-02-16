@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest;
 
-use _PHPStan_11268e5ee\Nette\Neon\Exception;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
+use Exception;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
@@ -17,7 +17,8 @@ final readonly class Tempest
         private Kernel $kernel,
         private AppConfig $appConfig,
         private string $projectRoot,
-    ) {}
+    ) {
+    }
 
     public static function setupEnv(string $dir): void
     {
