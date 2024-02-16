@@ -7,8 +7,9 @@ namespace Tempest\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use function Tempest\attribute;
 use Tempest\Bus\CommandBusConfig;
-use Tempest\Interface\Command;
+use Tempest\Bus\CommandHandler;
 use Tempest\Interface\Container;
 use Tempest\Interface\Discovery;
 
@@ -24,7 +25,9 @@ final readonly class CommandBusDiscovery implements Discovery
     public function discover(ReflectionClass $class): void
     {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if ($method->isConstructor() || $method->isDestructor()) {
+            $commandHandler = attribute(CommandHandler::class)->in($method)->first();
+
+            if (! $commandHandler) {
                 continue;
             }
 
@@ -34,9 +37,7 @@ final readonly class CommandBusDiscovery implements Discovery
                 continue;
             }
 
-            $firstParameter = $parameters[0];
-
-            $type = $firstParameter->getType();
+            $type = $parameters[0]->getType();
 
             if (! $type instanceof ReflectionNamedType) {
                 continue;
@@ -46,13 +47,11 @@ final readonly class CommandBusDiscovery implements Discovery
                 continue;
             }
 
-            $typeClass = new ReflectionClass($type->getName());
-
-            if (! $typeClass->implementsInterface(Command::class)) {
-                continue;
-            }
-
-            $this->commandBusConfig->addHandler($typeClass->getName(), $method);
+            $this->commandBusConfig->addHandler(
+                commandHandler: $commandHandler,
+                commandName: $type->getName(),
+                handler: $method,
+            );
         }
     }
 

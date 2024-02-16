@@ -17,9 +17,11 @@ final class CommandBusConfig
     ) {
     }
 
-    public function addHandler(string $commandName, ReflectionMethod $handler): self
+    public function addHandler(CommandHandler $commandHandler, string $commandName, ReflectionMethod $handler): self
     {
-        $this->handlers[$commandName] = new CommandHandler($handler);
+        $this->handlers[$commandName] = $commandHandler
+            ->setCommandName($commandName)
+            ->setHandler($handler);
 
         return $this;
     }
