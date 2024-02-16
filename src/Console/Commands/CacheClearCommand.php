@@ -25,7 +25,7 @@ final readonly class CacheClearCommand
     )]
     public function __invoke(): void
     {
-        $discoveries = $this->kernel->getDiscoveries();
+        $discoveries = $this->kernel->getDiscovery();
 
         foreach ($discoveries as $discoveryClass) {
             /** @var \Tempest\Interface\Discovery $discovery */

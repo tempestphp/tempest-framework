@@ -1,18 +1,25 @@
 <?php
 
+use App\AppPackage;
 use Tempest\AppConfig;
 use Tempest\Application\Environment;
 use Tempest\Tempest;
+use Tempest\TempestPackage;
+use function Tempest\env;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 Tempest::setupEnv(__DIR__ . '/../');
 
-Tempest::boot(new AppConfig(
-    appPath: __DIR__ . '/../app',
-    appNamespace: 'App\\',
-    environment: Environment::from(getenv('ENVIRONMENT')),
-    discoveryCache: getenv('DISCOVERY_CACHE'),
-))->http()->run();
+$appConfig = new AppConfig(
+    environment: Environment::from(env('ENVIRONMENT')),
+    discoveryCache: env('DISCOVERY_CACHE'),
+    packages: [
+        new TempestPackage(),
+        new AppPackage(),
+    ],
+);
+
+Tempest::boot($appConfig)->http()->run();
 
 exit;

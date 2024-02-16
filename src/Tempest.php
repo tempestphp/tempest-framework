@@ -16,7 +16,6 @@ final readonly class Tempest
     private function __construct(
         private Kernel $kernel,
         private AppConfig $appConfig,
-        private string $projectRoot,
     ) {
     }
 
@@ -32,17 +31,14 @@ final readonly class Tempest
 
     public static function boot(AppConfig $appConfig): self
     {
-        $projectRoot = $appConfig->appPath . '/..';
-
         $kernel = new Kernel($appConfig);
 
-        return new self($kernel, $appConfig, $projectRoot);
+        return new self($kernel, $appConfig);
     }
 
     public function detectAutoloader(): self
     {
         $autoloaderPaths = [
-            $this->projectRoot . '/vendor/autoload.php',
             getcwd() . '/vendor/autoload.php',
             getcwd() . '/../autoload.php',
         ];
@@ -64,9 +60,7 @@ final readonly class Tempest
         require_once $autoloaderPath;
 
         $appPaths = [
-            $this->projectRoot . '/app/',
             getcwd() . '/app/',
-            $this->projectRoot . '/src/',
             getcwd() . '/src/',
         ];
 

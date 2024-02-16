@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+use Exception;
 use Tempest\AppConfig;
 use function Tempest\path;
 use function Tempest\view;
@@ -73,7 +74,19 @@ trait BaseView
     {
         $this->appConfig = $appConfig;
 
-        $path = path($appConfig->appPath, $this->path);
+        $path = null;
+
+        foreach ($appConfig->packages as $package) {
+            $path = path($package->getPath(), $this->path);
+
+            if (file_exists($path)) {
+                break;
+            }
+        }
+
+        if ($path === null) {
+            throw new Exception("View {$path} not found");
+        }
 
         ob_start();
         include $path;

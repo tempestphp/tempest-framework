@@ -14,10 +14,6 @@ use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
-use Tempest\Discovery\CommandBusDiscovery;
-use Tempest\Discovery\ConsoleCommandDiscovery;
-use Tempest\Discovery\MigrationDiscovery;
-use Tempest\Discovery\RouteDiscovery;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
@@ -38,14 +34,15 @@ final readonly class Kernel
     ) {
     }
 
-    public function getDiscoveries(): array
+    public function getDiscovery(): array
     {
-        return [
-            RouteDiscovery::class,
-            MigrationDiscovery::class,
-            ConsoleCommandDiscovery::class,
-            CommandBusDiscovery::class,
-        ];
+        $discovery = [];
+
+        foreach ($this->appConfig->packages as $package) {
+            $discovery = [...$discovery, ...$package->getDiscovery()];
+        }
+
+        return $discovery;
     }
 
     public function init(): Container
@@ -83,30 +80,24 @@ final readonly class Kernel
 
     private function initConfig(Container $container): void
     {
-        $folders = [
-            glob(__DIR__ . '/../Config/**.php'),
-            glob(path($this->appConfig->appPath, 'Config/**.php')),
-        ];
+        // Register AppConfig
+        $container->config($this->appConfig);
 
-        foreach ($folders as $configFiles) {
+        // Scan for package config files
+        foreach ($this->appConfig->packages as $package) {
+            $configFiles = glob(path($package->getPath(), 'Config/**.php'));
+
             foreach ($configFiles as $configFile) {
                 $configFile = require $configFile;
 
                 $container->config($configFile);
             }
         }
-
-        $container->config($this->appConfig);
     }
 
     private function initDiscovery(Container $container): void
     {
-        $scanDirectories = [
-            [$this->appConfig->appPath, $this->appConfig->appNamespace],
-            [__DIR__ . '/../', '\\Tempest\\'],
-        ];
-
-        $discoveries = $this->getDiscoveries();
+        $discoveries = $this->getDiscovery();
 
         foreach ($discoveries as $discoveryClass) {
             /** @var \Tempest\Interface\Discovery $discovery */
@@ -118,8 +109,8 @@ final readonly class Kernel
                 continue;
             }
 
-            foreach ($scanDirectories as [$directory, $namespace]) {
-                $directories = new RecursiveDirectoryIterator($directory);
+            foreach ($this->appConfig->packages as $package) {
+                $directories = new RecursiveDirectoryIterator($package->getPath());
                 $files = new RecursiveIteratorIterator($directories);
 
                 /** @var \SplFileInfo $file */
@@ -136,8 +127,8 @@ final readonly class Kernel
                     }
 
                     $className = str_replace(
-                        [$directory, '/', '.php', '\\\\'],
-                        [$namespace, '\\', '', '\\'],
+                        [$package->getPath(), '/', '.php', '\\\\'],
+                        [$package->getNamespace(), '\\', '', '\\'],
                         $file->getPathname(),
                     );
 

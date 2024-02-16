@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 
+use App\AppPackage;
 use Tempest\AppConfig;
 use Tempest\Application\Environment;
 use Tempest\Tempest;
+use Tempest\TempestPackage;
 use function Tempest\env;
 
 try {
@@ -14,11 +16,15 @@ try {
 
 Tempest::setupEnv(__DIR__);
 
-Tempest::boot(new AppConfig(
-    appPath: __DIR__ . '/app',
-    appNamespace: 'App\\',
+$appConfig = new AppConfig(
     environment: Environment::from(env('ENVIRONMENT')),
     discoveryCache: env('DISCOVERY_CACHE'),
-))->console()->run();
+    packages: [
+        new TempestPackage(),
+        new AppPackage(),
+    ],
+);
+
+Tempest::boot($appConfig)->console()->run();
 
 exit;

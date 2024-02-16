@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
+use App\AppPackage;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Http\RouteConfig;
+use Tempest\TempestPackage;
 
 class KernelTest extends \PHPUnit\Framework\TestCase
 {
@@ -14,8 +16,10 @@ class KernelTest extends \PHPUnit\Framework\TestCase
     public function test_discovery()
     {
         $kernel = new Kernel(new AppConfig(
-            appPath: __DIR__ . '/../app/',
-            appNamespace: 'App\\',
+            packages: [
+                new TempestPackage(),
+                new AppPackage(),
+            ],
         ));
 
         $container = $kernel->init();
