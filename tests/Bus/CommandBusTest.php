@@ -24,9 +24,9 @@ class CommandBusTest extends TestCase
 
         $this->assertEquals([$command], $bus->getHistory());
     }
-    
+
     /** @test */
-    public function command_bus_with_middleware() 
+    public function command_bus_with_middleware()
     {
         CommandBusMiddleware::$hit = false;
 
@@ -42,12 +42,12 @@ class CommandBusTest extends TestCase
 
 class CommandBusMiddleware implements Middleware
 {
-    static bool $hit = false;
+    public static bool $hit = false;
 
-    public function __invoke(object $command, callable $next): void
+    public function __invoke(object $command, callable $next): mixed
     {
         self::$hit = true;
 
-        $next($command);
+        return $next($command);
     }
 }
