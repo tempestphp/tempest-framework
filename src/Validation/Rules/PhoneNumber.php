@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Validation\Rules;
 
 use Attribute;
@@ -11,7 +13,8 @@ use Throwable;
 final readonly class PhoneNumber implements Rule
 {
     public function __construct(private ?string $defaultRegion = null)
-    {}
+    {
+    }
 
     public function isValid(mixed $value): bool
     {
