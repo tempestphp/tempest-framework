@@ -5,7 +5,8 @@
         "ext-pdo": "*",
         "vlucas/phpdotenv": "^5.6",
         "ext-dom": "*",
-        "giggsey/libphonenumber-for-php": "^8.13"
+        "giggsey/libphonenumber-for-php": "^8.13",
+        "egulias/email-validator": "^4.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",
