@@ -21,22 +21,22 @@ final class GenericCommandBus implements CommandBus
 
     public function dispatch(object $command): void
     {
-        $callable = $this->getCallable();
+        $commandHandler = $this->getCommandHandler($command);
+
+        if (! $commandHandler) {
+            throw new CommandHandlerNotFound($command);
+        }
+
+        $callable = $this->getCallable($commandHandler);
 
         $callable($command);
     }
 
-    private function getCallable(): Closure
+    private function getCallable(CommandHandler $commandHandler): Closure
     {
-        $callable = function (object $command) {
-            $handler = $this->getCommandHandler($command)->handler;
-
-            if (! $handler) {
-                throw new CommandHandlerNotFound($command);
-            }
-
-            $handler->invoke(
-                $this->container->get($handler->getDeclaringClass()->getName()),
+        $callable = function (object $command) use ($commandHandler) {
+            $commandHandler->handler->invoke(
+                $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
                 $command,
             );
 

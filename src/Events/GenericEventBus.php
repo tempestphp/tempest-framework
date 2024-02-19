@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Events;
 
+use Closure;
 use Tempest\Interface\Container;
 use Tempest\Interface\EventBus;
 
@@ -20,10 +21,28 @@ final readonly class GenericEventBus implements EventBus
         /** @var \Tempest\Events\EventHandler[] $eventHandlers */
         $eventHandlers = $this->eventBusConfig->handlers[$event::class] ?? [];
 
-        foreach ($eventHandlers as $handler) {
-            $handlerClass = $this->container->get($handler->handler->getDeclaringClass()->getName());
+        foreach ($eventHandlers as $eventHandler) {
+            $callable = $this->getCallable($eventHandler);
 
-            $handler->handler->invoke($handlerClass, $event);
+            $callable($event);
         }
+    }
+
+    private function getCallable(EventHandler $eventHandler): Closure
+    {
+        $callable = function (object $event) use ($eventHandler) {
+            $eventHandler->handler->invoke(
+                $this->container->get($eventHandler->handler->getDeclaringClass()->getName()),
+                $event,
+            );
+        };
+
+        $middlewareStack = $this->eventBusConfig->middleware;
+
+        while ($middleware = array_pop($middlewareStack)) {
+            $callable = fn (object $event) => $this->container->get($middleware::class)($event, $callable);
+        }
+
+        return $callable;
     }
 }

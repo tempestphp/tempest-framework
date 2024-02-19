@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Events;
 
 use ReflectionMethod;
-use Tempest\Interface\CommandBusMiddleware;
+use Tempest\Interface\EventBusMiddleware;
 
 final class EventBusConfig
 {
@@ -13,7 +13,7 @@ final class EventBusConfig
         /** @var \Tempest\Events\EventHandler[][] */
         public array $handlers = [],
 
-        /** @var \Tempest\Interface\CommandBusMiddleware[] */
+        /** @var \Tempest\Interface\EventBusMiddleware[] */
         public array $middleware = [],
     ) {
     }
@@ -27,7 +27,7 @@ final class EventBusConfig
         return $this;
     }
 
-    public function addMiddleware(CommandBusMiddleware $middleware): self
+    public function addMiddleware(EventBusMiddleware $middleware): self
     {
         $this->middleware[] = $middleware;
 
