@@ -14,6 +14,7 @@ class UrlTest extends TestCase
         $rule = new Url();
 
         $this->assertFalse($rule->isValid('this is not a url'));
+        $this->assertFalse($rule->isValid('https://https://example.com'));
         $this->assertTrue($rule->isValid('https://example.com'));
         $this->assertTrue($rule->isValid('http://example.com'));
     }
