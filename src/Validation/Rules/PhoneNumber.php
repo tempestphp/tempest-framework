@@ -31,11 +31,11 @@ final readonly class PhoneNumber implements Rule
     public function message(): string
     {
         if (! $this->defaultRegion) {
-            return 'Value should be a valid phone number.';
+            return 'Value should be a valid phone number';
         }
 
         return sprintf(
-            'Value should be a valid %s phone number.',
+            'Value should be a valid %s phone number',
             strtoupper($this->defaultRegion)
         );
     }
