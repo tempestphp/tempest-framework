@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Events;
 
 use ReflectionMethod;
-use Tempest\Commands\CommandBusMiddleware;
+use Tempest\Interface\CommandBusMiddleware;
 
 final class EventBusConfig
 {
@@ -13,7 +13,7 @@ final class EventBusConfig
         /** @var \Tempest\Events\EventHandler[][] */
         public array $handlers = [],
 
-        /** @var \Tempest\Commands\CommandBusMiddleware[] */
+        /** @var \Tempest\Interface\CommandBusMiddleware[] */
         public array $middleware = [],
     ) {
     }

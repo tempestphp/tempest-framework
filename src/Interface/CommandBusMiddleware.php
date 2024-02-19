@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Commands;
+namespace Tempest\Interface;
 
 interface CommandBusMiddleware
 {

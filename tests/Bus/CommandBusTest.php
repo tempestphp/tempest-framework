@@ -7,8 +7,8 @@ namespace Tests\Tempest\Bus;
 use App\Commands\MyCommand;
 use function Tempest\command;
 use Tempest\Commands\CommandBusConfig;
-use Tempest\Commands\CommandBusMiddleware;
 use Tempest\Interface\CommandBus;
+use Tempest\Interface\CommandBusMiddleware;
 use Tests\Tempest\TestCase;
 
 class CommandBusTest extends TestCase
