@@ -7,7 +7,7 @@ namespace Tests\Tempest\Bus;
 use App\Commands\MyCommand;
 use function Tempest\command;
 use Tempest\Commands\CommandBusConfig;
-use Tempest\Commands\Middleware;
+use Tempest\Commands\CommandBusMiddleware;
 use Tempest\Interface\CommandBus;
 use Tests\Tempest\TestCase;
 
@@ -28,19 +28,19 @@ class CommandBusTest extends TestCase
     /** @test */
     public function command_bus_with_middleware()
     {
-        CommandBusMiddleware::$hit = false;
+        MyCommandBusMiddleware::$hit = false;
 
         $config = $this->container->get(CommandBusConfig::class);
 
-        $config->addMiddleware(new CommandBusMiddleware());
+        $config->addMiddleware(new MyCommandBusMiddleware());
 
         command(new MyCommand());
 
-        $this->assertTrue(CommandBusMiddleware::$hit);
+        $this->assertTrue(MyCommandBusMiddleware::$hit);
     }
 }
 
-class CommandBusMiddleware implements Middleware
+class MyCommandBusMiddleware implements CommandBusMiddleware
 {
     public static bool $hit = false;
 
