@@ -1,22 +1,20 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tempest\Commands;
+namespace Tempest\Events;
 
 use Attribute;
 use ReflectionMethod;
 
 #[Attribute]
-final class CommandHandler
+final readonly class EventHandler
 {
-    public string $commandName;
+    public string $eventName;
 
     public ReflectionMethod $handler;
 
-    public function setCommandName(string $commandName): self
+    public function setEventName(string $eventName): self
     {
-        $this->commandName = $commandName;
+        $this->eventName = $eventName;
 
         return $this;
     }
@@ -31,7 +29,7 @@ final class CommandHandler
     public function __serialize(): array
     {
         return [
-            'commandName' => $this->commandName,
+            'eventName' => $this->eventName,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
         ];
@@ -39,7 +37,7 @@ final class CommandHandler
 
     public function __unserialize(array $data): void
     {
-        $this->commandName = $data['commandName'];
+        $this->eventName = $data['eventName'];
         $this->handler = new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],

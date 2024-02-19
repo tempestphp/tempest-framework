@@ -6,6 +6,8 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Database\Migrations\MigrationMigrated;
+use Tempest\Events\EventHandler;
 use Tempest\Interface\Console;
 
 final readonly class MigrateCommand
@@ -27,5 +29,9 @@ final readonly class MigrateCommand
         $this->console->success("Done");
     }
 
-    // TODO: add events for writing to the console which migrations have run
+    #[EventHandler]
+    public function onMigrationMigrated(MigrationMigrated $event): void
+    {
+        $this->console->writeln("- {$event->name}");
+    }
 }

@@ -10,6 +10,7 @@ use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Interface\Container;
 use Tempest\Interface\Migration as MigrationInterface;
+use function Tempest\event;
 
 final readonly class MigrationManager
 {
@@ -56,5 +57,7 @@ final readonly class MigrationManager
         Migration::create(
             name: $migration->getName(),
         );
+
+        event(new MigrationMigrated($migration->getName()));
     }
 }

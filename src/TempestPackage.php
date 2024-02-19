@@ -6,6 +6,7 @@ namespace Tempest;
 
 use Tempest\Discovery\CommandBusDiscovery;
 use Tempest\Discovery\ConsoleCommandDiscovery;
+use Tempest\Discovery\EventBusDiscovery;
 use Tempest\Discovery\MigrationDiscovery;
 use Tempest\Discovery\RouteDiscovery;
 use Tempest\Interface\Package;
@@ -29,6 +30,7 @@ final readonly class TempestPackage implements Package
             MigrationDiscovery::class,
             ConsoleCommandDiscovery::class,
             CommandBusDiscovery::class,
+            EventBusDiscovery::class,
         ];
     }
 }

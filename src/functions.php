@@ -10,6 +10,7 @@ namespace Tempest {
     use Tempest\Http\Method;
     use Tempest\Http\Status;
     use Tempest\Interface\CommandBus;
+    use Tempest\Interface\EventBus;
     use Tempest\Interface\Request;
     use Tempest\Interface\Response;
     use Tempest\Interface\Router;
@@ -105,6 +106,13 @@ namespace Tempest {
         $commandBus = get(CommandBus::class);
 
         $commandBus->dispatch($command);
+    }
+
+    function event(object $event): void
+    {
+        $eventBus = get(EventBus::class);
+
+        $eventBus->dispatch($event);
     }
 
     function env($key, $default = null): mixed
