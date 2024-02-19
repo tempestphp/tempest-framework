@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Bus\CommandBusConfig;
+use Tempest\Commands\CommandBusConfig;
 
 return new CommandBusConfig();

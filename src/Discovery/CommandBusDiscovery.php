@@ -8,8 +8,8 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use function Tempest\attribute;
-use Tempest\Bus\CommandBusConfig;
-use Tempest\Bus\CommandHandler;
+use Tempest\Commands\CommandBusConfig;
+use Tempest\Commands\CommandHandler;
 use Tempest\Interface\Container;
 use Tempest\Interface\Discovery;
 

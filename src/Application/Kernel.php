@@ -8,7 +8,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
-use Tempest\Bus\GenericCommandBus;
+use Tempest\Commands\GenericCommandBus;
 use Tempest\Console\GenericConsoleFormatter;
 use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;

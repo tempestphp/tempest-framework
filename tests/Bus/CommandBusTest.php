@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Bus;
 
 use App\Commands\MyCommand;
-use Tempest\Bus\CommandBusConfig;
-use Tempest\Bus\Middleware;
 use function Tempest\command;
+use Tempest\Commands\CommandBusConfig;
+use Tempest\Commands\Middleware;
 use Tempest\Interface\CommandBus;
 use Tests\Tempest\TestCase;
 

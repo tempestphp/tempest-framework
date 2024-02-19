@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Bus;
+namespace Tempest\Commands;
 
 use Exception;
 
