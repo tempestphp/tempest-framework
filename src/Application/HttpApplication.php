@@ -17,6 +17,8 @@ final readonly class HttpApplication implements Application
 
     public function run(): void
     {
+        $this->container->singleton(Application::class, fn () => $this);
+
         $router = $this->container->get(Router::class);
         $request = $this->container->get(Request::class);
 

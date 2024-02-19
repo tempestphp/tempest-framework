@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Bus;
+namespace Tests\Tempest\CommandBus;
 
 use App\Commands\MyCommand;
 use function Tempest\command;

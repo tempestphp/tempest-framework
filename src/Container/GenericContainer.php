@@ -113,6 +113,12 @@ final class GenericContainer implements Container
     {
         $log->add($className);
 
+        $definition = $this->definitions[$className] ?? null;
+
+        if ($definition) {
+            return $definition($this);
+        }
+
         foreach ($this->initializers as $initializer) {
             if ($initializer->canInitialize($className)) {
                 $log->add($initializer::class);
@@ -137,12 +143,6 @@ final class GenericContainer implements Container
             }
 
             return $initializer->initialize($className, $this);
-        }
-
-        $definition = $this->definitions[$className] ?? null;
-
-        if ($definition) {
-            return $definition($this);
         }
 
         return $this->autowire($reflectionClass, $log);

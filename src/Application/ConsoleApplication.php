@@ -24,6 +24,8 @@ final readonly class ConsoleApplication implements Application
 
     public function run(): void
     {
+        $this->container->singleton(Application::class, fn () => $this);
+
         $commandName = $this->args[1] ?? null;
 
         $output = $this->container->get(ConsoleOutput::class);

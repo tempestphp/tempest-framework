@@ -35,13 +35,18 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
             packages: [
                 new TempestPackage(),
                 new AppPackage(),
-            ]
+            ],
         ));
 
         $this->container = $this->kernel->init();
 
         $this->container
             ->addInitializer(new TestServerInitializer());
+
+        $this->container->singleton(
+            ConsoleOutput::class,
+            fn () => new TestConsoleOutput(new TestConsoleFormatter()),
+        );
     }
 
     protected function server(
@@ -67,14 +72,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function console(string $command): TestConsoleOutput
     {
-        $this->container
-            ->singleton(
-                ConsoleOutput::class,
-                fn () => new TestConsoleOutput(new TestConsoleFormatter()),
-            );
-
         $application = new ConsoleApplication(
-            args: ['tempest.php', ...explode(' ', $command)],
+            args: ['tempest', ...explode(' ', $command)],
             container: $this->container,
         );
 
