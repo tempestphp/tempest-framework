@@ -13,7 +13,7 @@ class PhoneNumberTest extends TestCase
     {
         $rule = new PhoneNumber();
 
-        $this->assertSame('Value should be a valid phone number.', $rule->message());
+        $this->assertSame('Value should be a valid phone number', $rule->message());
 
         $this->assertFalse($rule->isValid('this is not a phone number'));
         $this->assertFalse($rule->isValid('john.doe@example.com'));
@@ -22,12 +22,12 @@ class PhoneNumberTest extends TestCase
 
         $rule = new PhoneNumber('US');
 
-        $this->assertSame('Value should be a valid US phone number.', $rule->message());
+        $this->assertSame('Value should be a valid US phone number', $rule->message());
         $this->assertTrue($rule->isValid('(805) 380-4329'));
 
         $rule = new PhoneNumber('BE');
 
-        $this->assertSame('Value should be a valid BE phone number.', $rule->message());
+        $this->assertSame('Value should be a valid BE phone number', $rule->message());
         $this->assertTrue($rule->isValid('0497 88 93 11'));
     }
 }

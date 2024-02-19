@@ -27,6 +27,6 @@ final readonly class Email implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid email address.";
+        return "Value should be a valid email address";
     }
 }
