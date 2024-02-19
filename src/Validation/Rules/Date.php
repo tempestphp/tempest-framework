@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Validation\Rules;
+
+use Attribute;
+use DateTime;
+use Tempest\Interface\Rule;
+
+#[Attribute]
+final readonly class Date implements Rule
+{
+    public function __construct(private string $format = 'Y-m-d')
+    {
+    }
+
+    public function isValid(mixed $value): bool
+    {
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (! is_string($value)) {
+            return false;
+        }
+
+        $date = DateTime::createFromFormat($this->format, $value);
+
+        return $date && $date->format($this->format) === $value;
+    }
+
+    public function message(): string
+    {
+        return "Value should be a valid date in the format {$this->format}";
+    }
+}
