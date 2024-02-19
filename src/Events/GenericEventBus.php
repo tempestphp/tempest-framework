@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Events;
 
 use Tempest\Interface\Container;
@@ -10,7 +12,8 @@ final readonly class GenericEventBus implements EventBus
     public function __construct(
         private Container $container,
         private EventBusConfig $eventBusConfig,
-    ) {}
+    ) {
+    }
 
     public function dispatch(object $event): void
     {

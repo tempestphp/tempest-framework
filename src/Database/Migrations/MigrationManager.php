@@ -8,9 +8,9 @@ use PDO;
 use PDOException;
 use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\DatabaseConfig;
+use function Tempest\event;
 use Tempest\Interface\Container;
 use Tempest\Interface\Migration as MigrationInterface;
-use function Tempest\event;
 
 final readonly class MigrationManager
 {

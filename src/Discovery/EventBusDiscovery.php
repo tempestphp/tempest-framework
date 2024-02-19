@@ -7,10 +7,9 @@ namespace Tempest\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use function Tempest\attribute;
 use Tempest\Events\EventBusConfig;
 use Tempest\Events\EventHandler;
-use function Tempest\attribute;
-use Tempest\Commands\CommandBusConfig;
 use Tempest\Interface\Container;
 use Tempest\Interface\Discovery;
 
@@ -31,7 +30,7 @@ final readonly class EventBusDiscovery implements Discovery
             if (! $eventHandler) {
                 continue;
             }
-            
+
             $parameters = $method->getParameters();
 
             if (count($parameters) !== 1) {

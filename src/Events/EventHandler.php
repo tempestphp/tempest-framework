@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Events;
 
 use Attribute;
 use ReflectionMethod;
 
 #[Attribute]
-final readonly class EventHandler
+final class EventHandler
 {
     public string $eventName;
 
