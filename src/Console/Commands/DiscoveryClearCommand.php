@@ -11,7 +11,7 @@ use Tempest\Console\ConsoleStyle;
 use Tempest\Interface\Console;
 use Tempest\Interface\Container;
 
-final readonly class CacheClearCommand
+final readonly class DiscoveryClearCommand
 {
     public function __construct(
         private Container $container,
@@ -22,7 +22,7 @@ final readonly class CacheClearCommand
     }
 
     #[ConsoleCommand(
-        name: 'clear',
+        name: 'discovery:clear',
         description: 'Clear all cached discovery files',
     )]
     public function __invoke(): void

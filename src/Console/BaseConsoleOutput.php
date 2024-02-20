@@ -32,7 +32,7 @@ trait BaseConsoleOutput
 
     public function info(string $line): void
     {
-        $this->writeln($line);
+        $this->writeln(ConsoleStyle::FG_DARK_BLUE($line));
     }
 
     public function error(string $line): void
