@@ -13,7 +13,7 @@ final readonly class ShouldBeFalse implements Rule
 
     public function isValid(mixed $value): bool
     {
-        return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === null;
+        return $value === false || $value === 'false' || $value === 0 || $value === '0';
     }
 
     public function message(): string
