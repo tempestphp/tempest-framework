@@ -39,51 +39,6 @@ final class Tempest
         );
     }
 
-    public function detectAutoloader(): self
-    {
-        $autoloaderPaths = [
-            getcwd() . '/vendor/autoload.php',
-            getcwd() . '/../autoload.php',
-        ];
-
-        $foundAutoloaderPath = null;
-
-        foreach ($autoloaderPaths as $autoloaderPath) {
-            if (file_exists($autoloaderPath)) {
-                $foundAutoloaderPath = $autoloaderPath;
-
-                break;
-            }
-        }
-
-        if (! $foundAutoloaderPath) {
-            throw new Exception("Could not find autoload.php");
-        }
-
-        require_once $autoloaderPath;
-
-        $appPaths = [
-            getcwd() . '/app/',
-            getcwd() . '/src/',
-        ];
-
-        $foundAppPath = null;
-
-        foreach ($appPaths as $appPath) {
-            if (is_dir($appPath)) {
-                $foundAppPath = $appPath;
-
-                break;
-            }
-        }
-
-        if (! $foundAppPath) {
-            throw new Exception("Could not locate app directory.");
-        }
-
-        return $this;
-    }
-
     public function console(): ConsoleApplication
     {
         return new ConsoleApplication(
