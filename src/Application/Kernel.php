@@ -36,18 +36,6 @@ final readonly class Kernel
     ) {
     }
 
-    public function getDiscovery(): array
-    {
-        $discovery = [];
-
-        foreach ($this->appConfig->discoveryLocations as $package) {
-            // TODO: scan for discovery classes
-            $discovery = [...$discovery, ...$package->getDiscovery()];
-        }
-
-        return $discovery;
-    }
-
     public function init(): Container
     {
         $container = $this->initContainer();
@@ -81,6 +69,18 @@ final readonly class Kernel
             ->addInitializer(new PDOInitializer());
 
         return $container;
+    }
+
+    public function getDiscovery(): array
+    {
+        $discovery = [];
+
+        foreach ($this->appConfig->discoveryLocations as $package) {
+            // TODO: scan for discovery classes
+            $discovery = [...$discovery, ...$package->getDiscovery()];
+        }
+
+        return $discovery;
     }
 
     private function initPackages(): void

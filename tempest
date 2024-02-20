@@ -1,11 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-use App\AppPackage;
 use Tempest\AppConfig;
 use Tempest\Application\Environment;
 use Tempest\Tempest;
-use Tempest\TempestPackage;
 use function Tempest\env;
 
 try {
