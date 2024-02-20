@@ -14,17 +14,11 @@ try {
     require_once getcwd() . '/../autoload.php';
 }
 
-Tempest::setupEnv(__DIR__);
-
-$appConfig = new AppConfig(
+$createAppConfig = fn () => new AppConfig(
     environment: Environment::from(env('ENVIRONMENT')),
     discoveryCache: env('DISCOVERY_CACHE'),
-    packages: [
-        new TempestPackage(),
-        new AppPackage(),
-    ],
 );
 
-Tempest::boot($appConfig)->console()->run();
+Tempest::boot(__DIR__, $createAppConfig)->console()->run();
 
 exit;

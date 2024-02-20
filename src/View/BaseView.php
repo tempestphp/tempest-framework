@@ -76,7 +76,7 @@ trait BaseView
 
         $path = null;
 
-        foreach ($appConfig->packages as $package) {
+        foreach ($appConfig->discoveryLocations as $package) {
             $path = path($package->getPath(), $this->path);
 
             if (file_exists($path)) {

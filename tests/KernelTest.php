@@ -15,8 +15,8 @@ class KernelTest extends \PHPUnit\Framework\TestCase
     /** @test */
     public function test_discovery()
     {
-        $kernel = new Kernel(new AppConfig(
-            packages: [
+        $kernel = new Kernel(__DIR__ . '/../', new AppConfig(
+            discoveryLocations: [
                 new TempestPackage(),
                 new AppPackage(),
             ],

@@ -9,17 +9,11 @@ use function Tempest\env;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-Tempest::setupEnv(__DIR__ . '/../');
-
-$appConfig = new AppConfig(
+$createAppConfig = fn () => new AppConfig(
     environment: Environment::from(env('ENVIRONMENT')),
     discoveryCache: env('DISCOVERY_CACHE'),
-    packages: [
-        new TempestPackage(),
-        new AppPackage(),
-    ],
 );
 
-Tempest::boot($appConfig)->http()->run();
+Tempest::boot(__DIR__ . '/../', $createAppConfig)->http()->run();
 
 exit;

@@ -12,15 +12,14 @@ final class AppConfig
     public function __construct(
         public Environment $environment = Environment::LOCAL,
         public bool $discoveryCache = false,
-        public array $packages = [
-            new TempestPackage(),
-        ],
+        /** @var \Tempest\Discovery\DiscoveryLocation[] */
+        public array $discoveryLocations = [],
     ) {
     }
 
     public function withPackages(Package ...$packages): self
     {
-        $this->packages = [...$this->packages, ...$packages];
+        $this->discoveryLocations = [...$this->discoveryLocations, ...$packages];
 
         return $this;
     }

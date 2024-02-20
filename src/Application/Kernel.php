@@ -14,6 +14,7 @@ use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
@@ -30,6 +31,7 @@ use Throwable;
 final readonly class Kernel
 {
     public function __construct(
+        private string $root,
         private AppConfig $appConfig,
     ) {
     }
@@ -38,7 +40,8 @@ final readonly class Kernel
     {
         $discovery = [];
 
-        foreach ($this->appConfig->packages as $package) {
+        foreach ($this->appConfig->discoveryLocations as $package) {
+            // TODO: scan for discovery classes
             $discovery = [...$discovery, ...$package->getDiscovery()];
         }
 
@@ -48,6 +51,8 @@ final readonly class Kernel
     public function init(): Container
     {
         $container = $this->initContainer();
+
+        $this->initPackages();
 
         $this->initConfig($container);
 
@@ -78,14 +83,32 @@ final readonly class Kernel
         return $container;
     }
 
+    private function initPackages(): void
+    {
+        $namespaces = require path($this->root, '/vendor/composer/autoload_psr4.php');
+
+        foreach ($namespaces as $namespace => $path) {
+            if (in_array($namespace, ['App\\', 'Src\\', 'Tempest\\'])) {
+                $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
+                    namespace: $namespace,
+                    path: $path[0],
+                );
+                
+                continue;
+            }
+
+            // TODO: support other packages
+        }
+    }
+
     private function initConfig(Container $container): void
     {
         // Register AppConfig
         $container->config($this->appConfig);
 
         // Scan for package config files
-        foreach ($this->appConfig->packages as $package) {
-            $configFiles = glob(path($package->getPath(), 'Config/**.php'));
+        foreach ($this->appConfig->discoveryLocations as $package) {
+            $configFiles = glob(path($package->path, 'Config/**.php'));
 
             foreach ($configFiles as $configFile) {
                 $configFile = require $configFile;
@@ -109,8 +132,8 @@ final readonly class Kernel
                 continue;
             }
 
-            foreach ($this->appConfig->packages as $package) {
-                $directories = new RecursiveDirectoryIterator($package->getPath());
+            foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
+                $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
                 $files = new RecursiveIteratorIterator($directories);
 
                 /** @var \SplFileInfo $file */
@@ -127,8 +150,8 @@ final readonly class Kernel
                     }
 
                     $className = str_replace(
-                        [$package->getPath(), '/', '.php', '\\\\'],
-                        [$package->getNamespace(), '\\', '', '\\'],
+                        [$discoveryLocation->path, '/', '.php', '\\\\'],
+                        [$discoveryLocation->namespace, '\\', '', '\\'],
                         $file->getPathname(),
                     );
 

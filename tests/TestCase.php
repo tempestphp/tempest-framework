@@ -31,8 +31,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->kernel = new Kernel(new AppConfig(
-            packages: [
+        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig(
+            discoveryLocations: [
                 new TempestPackage(),
                 new AppPackage(),
             ],

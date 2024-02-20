@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest;
 
+use Closure;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Exception;
@@ -11,29 +12,31 @@ use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
 
-final readonly class Tempest
+final class Tempest
 {
     private function __construct(
-        private Kernel $kernel,
-        private AppConfig $appConfig,
+        private readonly Kernel $kernel,
+        private readonly AppConfig $appConfig,
     ) {
     }
 
-    public static function setupEnv(string $dir): void
+    public static function boot(string $root, Closure $createAppConfig): self
     {
         try {
-            $dotenv = Dotenv::createUnsafeImmutable($dir);
+            $dotenv = Dotenv::createUnsafeImmutable($root);
             $dotenv->load();
         } catch (InvalidPathException) {
-            die("Missing .env file in {$dir}" . PHP_EOL);
+            die("Missing .env file in {$root}" . PHP_EOL);
         }
-    }
 
-    public static function boot(AppConfig $appConfig): self
-    {
-        $kernel = new Kernel($appConfig);
+        $appConfig = $createAppConfig();
 
-        return new self($kernel, $appConfig);
+        $kernel = new Kernel($root, $appConfig);
+
+        return new self(
+            kernel: $kernel,
+            appConfig: $appConfig
+        );
     }
 
     public function detectAutoloader(): self
