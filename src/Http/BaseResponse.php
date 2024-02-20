@@ -44,14 +44,14 @@ trait BaseResponse
 
     public function ok(): self
     {
-        $this->status = Status::HTTP_200;
+        $this->status = Status::OK;
 
         return $this;
     }
 
     public function notFound(): self
     {
-        $this->status = Status::HTTP_404;
+        $this->status = Status::NOT_FOUND;
 
         return $this;
     }
@@ -67,6 +67,6 @@ trait BaseResponse
     {
         return $this
             ->header('Location', $to)
-            ->status(Status::HTTP_302);
+            ->status(Status::FOUND);
     }
 }

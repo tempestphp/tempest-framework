@@ -57,7 +57,7 @@ class RequestTest extends TestCase
 
         $response = $router->dispatch(request('/create-post')->post($body));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
@@ -82,7 +82,7 @@ class RequestTest extends TestCase
 
         $response = $router->dispatch(request($uri)->post($body));
 
-        $this->assertSame(Status::HTTP_302, $response->getStatus());
+        $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1));
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
@@ -114,7 +114,7 @@ class RequestTest extends TestCase
 
         $response = $router->dispatch(request($uri)->post($body));
 
-        $this->assertSame(Status::HTTP_302, $response->getStatus());
+        $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1), relations: [Author::class]);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
