@@ -9,7 +9,7 @@ use DateTime;
 use Tempest\Interface\Rule;
 
 #[Attribute]
-final readonly class Date implements Rule
+final readonly class DateTimeFormat implements Rule
 {
     public function __construct(private string $format = 'Y-m-d')
     {
@@ -32,6 +32,6 @@ final readonly class Date implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid date in the format {$this->format}";
+        return "Value should be a valid datetime in the format {$this->format}";
     }
 }
