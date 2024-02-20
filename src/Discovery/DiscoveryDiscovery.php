@@ -11,6 +11,8 @@ use Tempest\Interface\Discovery;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
+    public const CACHE_PATH = __DIR__ . '/discovery-discovery.cache.php';
+
     public function __construct(
         private AppConfig $appConfig,
     ) {
@@ -29,23 +31,26 @@ final readonly class DiscoveryDiscovery implements Discovery
         $this->appConfig->discoveryClasses[] = $class->getName();
     }
 
+
     public function hasCache(): bool
     {
-        return false;
+        return file_exists(self::CACHE_PATH);
     }
 
     public function storeCache(): void
     {
-        // TODO: Implement storeCache() method.
+        file_put_contents(self::CACHE_PATH, serialize($this->appConfig->discoveryClasses));
     }
 
     public function restoreCache(Container $container): void
     {
-        // TODO: Implement restoreCache() method.
+        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH));
+
+        $this->appConfig->discoveryClasses = $discoveryClasses;
     }
 
     public function destroyCache(): void
     {
-        // TODO: Implement destroyCache() method.
+        @unlink(self::CACHE_PATH);
     }
 }

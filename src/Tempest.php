@@ -7,16 +7,15 @@ namespace Tempest;
 use Closure;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
-use Exception;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
 
-final class Tempest
+final readonly class Tempest
 {
     private function __construct(
-        private readonly Kernel $kernel,
-        private readonly AppConfig $appConfig,
+        private Kernel $kernel,
+        private AppConfig $appConfig,
     ) {
     }
 

@@ -125,7 +125,7 @@ final readonly class Kernel
 
             if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
                 $discovery->restoreCache($container);
-
+                next($this->appConfig->discoveryClasses);
                 continue;
             }
 

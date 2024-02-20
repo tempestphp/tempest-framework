@@ -29,7 +29,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig());
+        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig(
+            discoveryCache: true,
+        ));
 
         $this->container = $this->kernel->init();
 
