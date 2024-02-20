@@ -1,8 +1,9 @@
+.idea/
+build/
 vendor/
-.phpunit.result.cache
+.env
 .php-cs-fixer.cache
+.phpunit.result.cache
 app/database.sqlite
-.idea
 composer.lock
 *.cache.php
-.env

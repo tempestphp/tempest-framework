@@ -31,7 +31,6 @@ final readonly class DiscoveryDiscovery implements Discovery
         $this->appConfig->discoveryClasses[] = $class->getName();
     }
 
-
     public function hasCache(): bool
     {
         return file_exists(self::CACHE_PATH);
