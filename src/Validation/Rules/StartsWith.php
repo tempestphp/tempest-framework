@@ -17,11 +17,7 @@ final readonly class StartsWith implements Rule
 
     public function isValid(mixed $value): bool
     {
-        if (str_starts_with($value, $this->needle)) {
-            return true;
-        }
-
-        return false;
+        return str_starts_with($value, $this->needle);
     }
 
     public function message(): string
