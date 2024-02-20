@@ -39,7 +39,7 @@ final readonly class Kernel
     {
         $container = $this->initContainer();
 
-        $this->initPackages();
+        $this->initDiscoveryLocations();
 
         $this->initConfig($container);
 
@@ -70,16 +70,25 @@ final readonly class Kernel
         return $container;
     }
 
-    private function initPackages(): void
+    private function initDiscoveryLocations(): void
     {
         $namespaces = require path($this->root, '/vendor/composer/autoload_psr4.php');
 
         foreach ($namespaces as $namespace => $path) {
-            if (
-                in_array($namespace, ['Src\\', 'App\\'])
-                || class_exists("{$namespace}TempestPackage")
-                || is_file(path($path[0], ".tempest"))
-            ) {
+            if (in_array($namespace, ['Src\\', 'App\\'])) {
+                $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
+                    namespace: $namespace,
+                    path: $path[0],
+                );
+            }
+
+            $composer = @file_get_contents(path($path[0], '/../composer.json'));
+
+            if (! $composer) {
+                continue;
+            }
+            
+            if (str_contains($composer, '"tempest/framework"')) {
                 $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
                     namespace: $namespace,
                     path: $path[0],
@@ -150,9 +159,9 @@ final readonly class Kernel
 
                     $discovery->discover($reflection);
                 }
-
-                next($this->appConfig->discoveryClasses);
             }
+
+            next($this->appConfig->discoveryClasses);
 
             $discovery->storeCache();
         }
