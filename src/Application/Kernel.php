@@ -76,13 +76,6 @@ final readonly class Kernel
         $namespaces = require path($this->root, '/vendor/composer/autoload_psr4.php');
 
         foreach ($namespaces as $namespace => $path) {
-            if (in_array($namespace, ['Src\\', 'App\\'])) {
-                $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
-                    namespace: $namespace,
-                    path: $path[0],
-                );
-            }
-
             $composer = @file_get_contents(path($path[0], '/../composer.json'));
 
             if (! $composer) {
