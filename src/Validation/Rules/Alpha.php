@@ -17,6 +17,6 @@ final readonly class Alpha implements Rule
 
     public function message(): string
     {
-        return 'Value should only contain alphabetic characters.';
+        return 'Value should only contain alphabetic characters';
     }
 }

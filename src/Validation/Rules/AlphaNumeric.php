@@ -17,6 +17,6 @@ final readonly class AlphaNumeric implements Rule
 
     public function message(): string
     {
-        return 'Value should only contain alphanumeric characters.';
+        return 'Value should only contain alphanumeric characters';
     }
 }

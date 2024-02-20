@@ -13,7 +13,7 @@ class AlphaTest extends TestCase
     {
         $rule = new Alpha();
 
-        $this->assertSame('Value should only contain alphabetic characters.', $rule->message());
+        $this->assertSame('Value should only contain alphabetic characters', $rule->message());
         $this->assertFalse($rule->isValid('string123'));
         $this->assertTrue($rule->isValid('string'));
         $this->assertTrue($rule->isValid('STRING'));
