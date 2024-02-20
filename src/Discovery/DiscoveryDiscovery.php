@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Discovery;
 
 use ReflectionClass;
@@ -11,7 +13,8 @@ final readonly class DiscoveryDiscovery implements Discovery
 {
     public function __construct(
         private AppConfig $appConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(ReflectionClass $class): void
     {

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Commands;
 
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleStyle;
 use Tempest\Interface\ConsoleOutput;
 
 final readonly class DiscoveryStatusCommand
@@ -12,7 +13,8 @@ final readonly class DiscoveryStatusCommand
     public function __construct(
         private ConsoleOutput $output,
         private AppConfig $appConfig,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'discovery:status',

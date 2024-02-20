@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
-use App\AppPackage;
 use Tempest\AppConfig;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Kernel;
@@ -13,7 +12,6 @@ use function Tempest\get;
 use Tempest\Http\Method;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
-use Tempest\TempestPackage;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -31,12 +29,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig(
-            discoveryLocations: [
-                new TempestPackage(),
-                new AppPackage(),
-            ],
-        ));
+        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig());
 
         $this->container = $this->kernel->init();
 

@@ -22,11 +22,4 @@ final class AppConfig
         ],
     ) {
     }
-
-    public function withPackages(Package ...$packages): self
-    {
-        $this->discoveryLocations = [...$this->discoveryLocations, ...$packages];
-
-        return $this;
-    }
 }

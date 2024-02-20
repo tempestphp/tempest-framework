@@ -33,7 +33,8 @@ final readonly class Kernel
     public function __construct(
         private string $root,
         private AppConfig $appConfig,
-    ) {}
+    ) {
+    }
 
     public function init(): Container
     {
@@ -87,7 +88,7 @@ final readonly class Kernel
             if (! $composer) {
                 continue;
             }
-            
+
             if (str_contains($composer, '"tempest/framework"')) {
                 $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
                     namespace: $namespace,
