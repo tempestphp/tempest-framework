@@ -51,6 +51,6 @@ final readonly class RouteDiscovery implements Discovery
 
     public function destroyCache(): void
     {
-        unlink(self::CACHE_PATH);
+        @unlink(self::CACHE_PATH);
     }
 }

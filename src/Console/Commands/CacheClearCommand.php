@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
+use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
@@ -16,6 +17,7 @@ final readonly class CacheClearCommand
         private Container $container,
         private Kernel $kernel,
         private Console $console,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -25,9 +27,7 @@ final readonly class CacheClearCommand
     )]
     public function __invoke(): void
     {
-        $discoveries = $this->kernel->getDiscovery();
-
-        foreach ($discoveries as $discoveryClass) {
+        foreach ($this->appConfig->discoveryClasses as $discoveryClass) {
             /** @var \Tempest\Interface\Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 

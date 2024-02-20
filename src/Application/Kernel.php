@@ -33,8 +33,7 @@ final readonly class Kernel
     public function __construct(
         private string $root,
         private AppConfig $appConfig,
-    ) {
-    }
+    ) {}
 
     public function init(): Container
     {
@@ -71,33 +70,21 @@ final readonly class Kernel
         return $container;
     }
 
-    public function getDiscovery(): array
-    {
-        $discovery = [];
-
-        foreach ($this->appConfig->discoveryLocations as $package) {
-            // TODO: scan for discovery classes
-            $discovery = [...$discovery, ...$package->getDiscovery()];
-        }
-
-        return $discovery;
-    }
-
     private function initPackages(): void
     {
         $namespaces = require path($this->root, '/vendor/composer/autoload_psr4.php');
 
         foreach ($namespaces as $namespace => $path) {
-            if (in_array($namespace, ['App\\', 'Src\\', 'Tempest\\'])) {
+            if (
+                in_array($namespace, ['Src\\', 'App\\'])
+                || class_exists("{$namespace}TempestPackage")
+                || is_file(path($path[0], ".tempest"))
+            ) {
                 $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
                     namespace: $namespace,
                     path: $path[0],
                 );
-                
-                continue;
             }
-
-            // TODO: support other packages
         }
     }
 
@@ -120,9 +107,9 @@ final readonly class Kernel
 
     private function initDiscovery(Container $container): void
     {
-        $discoveries = $this->getDiscovery();
+        reset($this->appConfig->discoveryClasses);
 
-        foreach ($discoveries as $discoveryClass) {
+        while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
             /** @var \Tempest\Interface\Discovery $discovery */
             $discovery = $container->get($discoveryClass);
 
@@ -163,6 +150,8 @@ final readonly class Kernel
 
                     $discovery->discover($reflection);
                 }
+
+                next($this->appConfig->discoveryClasses);
             }
 
             $discovery->storeCache();

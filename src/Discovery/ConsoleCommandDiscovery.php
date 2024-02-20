@@ -52,6 +52,6 @@ final readonly class ConsoleCommandDiscovery implements Discovery
 
     public function destroyCache(): void
     {
-        unlink(self::CACHE_PATH);
+        @unlink(self::CACHE_PATH);
     }
 }
