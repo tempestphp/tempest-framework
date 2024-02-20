@@ -8,15 +8,15 @@ use Attribute;
 use Tempest\Interface\Rule;
 
 #[Attribute]
-final readonly class ShouldBeFalse implements Rule
+final readonly class Alpha implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return $value === false || $value === 'false' || $value === 0 || $value === '0';
+        return boolval(preg_match('/^[A-Za-z]+$/', $value));
     }
 
     public function message(): string
     {
-        return 'Value should represent a boolean false value.';
+        return 'Value should only contain alphabetic characters.';
     }
 }

@@ -10,7 +10,6 @@ use Tempest\Interface\Rule;
 #[Attribute]
 final readonly class ShouldBeTrue implements Rule
 {
-
     public function isValid(mixed $value): bool
     {
         return $value === true || $value === 'true' || $value === 1 || $value === '1';

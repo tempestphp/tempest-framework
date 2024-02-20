@@ -6,7 +6,6 @@ namespace Tests\Tempest\Validation\Rules;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\ShouldBeFalse;
-use Tempest\Validation\Rules\ShouldBeTrue;
 
 class ShouldBeFalseTest extends TestCase
 {
