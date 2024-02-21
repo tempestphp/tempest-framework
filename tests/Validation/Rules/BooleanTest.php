@@ -21,6 +21,9 @@ class BooleanTest extends TestCase
         $this->assertTrue($rule->isValid('false'));
         $this->assertTrue($rule->isValid(0));
         $this->assertTrue($rule->isValid('0'));
+        $this->assertFalse($rule->isValid(5));
+        $this->assertFalse($rule->isValid(2.5));
+        $this->assertFalse($rule->isValid('string'));
     }
 
     public function test_boolean_message()
