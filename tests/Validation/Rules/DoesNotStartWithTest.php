@@ -10,13 +10,9 @@ use Tests\Tempest\TestCase;
 class DoesNotStartWithTest extends TestCase
 {
     /**
-     * @param string $needle
-     * @param string $stringToTest
-     * @param bool $expected
      *
      * @dataProvider dataSets
      *
-     * @return void
      */
     public function test_rule(string $needle, string $stringToTest, bool $expected): void
     {
@@ -25,7 +21,7 @@ class DoesNotStartWithTest extends TestCase
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    public function dataSets(): array
+    public static function dataSets(): array
     {
         return [
             'should return false if it starts with the given string' => ['test', 'test this is a test', false],
