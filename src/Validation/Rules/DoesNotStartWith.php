@@ -10,8 +10,9 @@ use Tempest\Interface\Rule;
 #[Attribute]
 final readonly class DoesNotStartWith implements Rule
 {
-    public function __construct(private string $needle)
-    {
+    public function __construct(
+        private string $needle
+    ) {
     }
 
     public function isValid(mixed $value): bool
@@ -21,6 +22,6 @@ final readonly class DoesNotStartWith implements Rule
 
     public function message(): string
     {
-        return "Value should start with {$this->needle}";
+        return "Value should not start with {$this->needle}";
     }
 }
