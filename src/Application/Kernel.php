@@ -7,6 +7,7 @@ namespace Tempest\Application;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use SplFileInfo;
 use Tempest\AppConfig;
 use Tempest\Commands\GenericCommandBus;
 use Tempest\Console\GenericConsoleFormatter;
@@ -24,6 +25,7 @@ use Tempest\Interface\ConsoleFormatter;
 use Tempest\Interface\ConsoleInput;
 use Tempest\Interface\ConsoleOutput;
 use Tempest\Interface\Container;
+use Tempest\Interface\Discovery;
 use Tempest\Interface\Router;
 use function Tempest\path;
 use Throwable;
@@ -96,7 +98,34 @@ final readonly class Kernel
         // Register AppConfig
         $container->config($this->appConfig);
 
-        // Scan for package config files
+        $this->scanForPackageConfigFiles($container);
+    }
+
+    private function initDiscovery(Container $container): void
+    {
+        reset($this->appConfig->discoveryClasses);
+
+        while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
+            /** @var Discovery $discovery */
+            $discovery = $container->get($discoveryClass);
+
+            if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
+                $discovery->restoreCache($container);
+                next($this->appConfig->discoveryClasses);
+
+                continue;
+            }
+
+            $this->executeDiscovery($discovery);
+
+            next($this->appConfig->discoveryClasses);
+
+            $discovery->storeCache();
+        }
+    }
+
+    private function scanForPackageConfigFiles(Container $container): void
+    {
         foreach ($this->appConfig->discoveryLocations as $package) {
             $configFiles = glob(path($package->path, 'Config/**.php'));
 
@@ -108,57 +137,39 @@ final readonly class Kernel
         }
     }
 
-    private function initDiscovery(Container $container): void
+    private function executeDiscovery(Discovery $discovery): void
     {
-        reset($this->appConfig->discoveryClasses);
+        foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
+            $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
+            $files = new RecursiveIteratorIterator($directories);
 
-        while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
-            /** @var \Tempest\Interface\Discovery $discovery */
-            $discovery = $container->get($discoveryClass);
+            /** @var SplFileInfo $file */
+            foreach ($files as $file) {
+                $fileName = $file->getFilename();
 
-            if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
-                $discovery->restoreCache($container);
-                next($this->appConfig->discoveryClasses);
-
-                continue;
-            }
-
-            foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
-                $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
-                $files = new RecursiveIteratorIterator($directories);
-
-                /** @var \SplFileInfo $file */
-                foreach ($files as $file) {
-                    $fileName = $file->getFilename();
-
-                    if (
-                        $fileName === ''
-                        || $fileName === '.'
-                        || $fileName === '..'
-                        || ucfirst($fileName) !== $fileName
-                    ) {
-                        continue;
-                    }
-
-                    $className = str_replace(
-                        [$discoveryLocation->path, '/', '.php', '\\\\'],
-                        [$discoveryLocation->namespace, '\\', '', '\\'],
-                        $file->getPathname(),
-                    );
-
-                    try {
-                        $reflection = new ReflectionClass($className);
-                    } catch (Throwable) {
-                        continue;
-                    }
-
-                    $discovery->discover($reflection);
+                if (
+                    $fileName === ''
+                    || $fileName === '.'
+                    || $fileName === '..'
+                    || ucfirst($fileName) !== $fileName
+                ) {
+                    continue;
                 }
+
+                $className = str_replace(
+                    [$discoveryLocation->path, '/', '.php', '\\\\'],
+                    [$discoveryLocation->namespace, '\\', '', '\\'],
+                    $file->getPathname(),
+                );
+
+                try {
+                    $reflection = new ReflectionClass($className);
+                } catch (Throwable) {
+                    continue;
+                }
+
+                $discovery->discover($reflection);
             }
-
-            next($this->appConfig->discoveryClasses);
-
-            $discovery->storeCache();
         }
     }
 }
