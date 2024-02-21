@@ -20,6 +20,6 @@ final readonly class Boolean implements Rule
 
     public function message(): string
     {
-        return 'Value should represent a boolean value.';
+        return 'Value should represent a boolean value';
     }
 }
