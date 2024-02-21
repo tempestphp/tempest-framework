@@ -6,6 +6,7 @@ jobs:
   style:
     name: Check Styling
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       -   name: Checkout code
