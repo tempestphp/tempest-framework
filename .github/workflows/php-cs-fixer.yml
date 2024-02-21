@@ -1,31 +1,17 @@
 name: PHP-CS-Fixer
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   style:
     name: Check Styling
     runs-on: ubuntu-latest
-    permissions: write-all
 
     steps:
       -   name: Checkout code
           uses: actions/checkout@v4
 
       -   name: Run PHP-CS-Fixer
-          id:   csFixer
           uses: docker://oskarstark/php-cs-fixer-ga
           with:
-            args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v --dry-run
-
-      -   name: Remind User to run QA
-          if:   failure() && steps.csFixer.outcome == 'failure'
-          uses: actions/github-script@v7
-          with:
-            script: |
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: 'Thanks for the pull request! Unfortunately, it appears that your code does not adhere to our style guide. Please run `composer qa` to automagically fix this and then commit your changes!'
-              })
+            args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
