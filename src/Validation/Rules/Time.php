@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Validation\Rules;
 
 use Attribute;
@@ -10,7 +12,8 @@ final readonly class Time implements Rule
 {
     public function __construct(
         private bool $twentyFourHour = false
-    ) {}
+    ) {
+    }
 
     public function isValid(mixed $value): bool
     {
