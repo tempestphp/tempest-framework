@@ -14,7 +14,7 @@ on:
 
 jobs:
   phpstan:
-    name: phpstan
+    name: Perform Static Analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
