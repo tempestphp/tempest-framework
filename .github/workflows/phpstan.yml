@@ -6,12 +6,13 @@ on:
       - '**.php'
       - 'phpstan.neon.dist'
 
+
 jobs:
   phpstan:
     name: phpstan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

@@ -40,7 +40,7 @@
         "qa": [
             "composer csfixer",
             "composer phpstan",
-            "composer coverage"
+            "composer phpunit"
         ]
     },
     "license": "MIT"
