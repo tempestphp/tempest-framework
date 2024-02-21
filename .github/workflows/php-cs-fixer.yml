@@ -1,0 +1,16 @@
+name: PHP-CS-Fixer
+
+on: [push, pull_request]
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+
+    steps:
+      -   name: Checkout code
+          uses: actions/checkout@v4
+
+      -   name: Check Styling
+          uses: docker://oskarstark/php-cs-fixer-ga
+          with:
+            args: --config=.php-cs-fixer.php --allow-risky=yes -v --dry-run
