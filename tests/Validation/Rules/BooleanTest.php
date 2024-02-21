@@ -30,6 +30,6 @@ class BooleanTest extends TestCase
     {
         $rule = new Boolean();
 
-        $this->assertSame('Value should represent a boolean value.', $rule->message());
+        $this->assertSame('Value should represent a boolean value', $rule->message());
     }
 }
