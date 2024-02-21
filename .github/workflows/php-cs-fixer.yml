@@ -4,13 +4,14 @@ on: [push, pull_request]
 
 jobs:
   style:
+    name: Check Styling
     runs-on: ubuntu-latest
 
     steps:
       -   name: Checkout code
           uses: actions/checkout@v4
 
-      -   name: Check Styling
+      -   name: Run PHP-CS-Fixer
           uses: docker://oskarstark/php-cs-fixer-ga
           with:
-            args: --config=.php-cs-fixer.php --allow-risky=yes -v --dry-run
+            args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v --dry-run
