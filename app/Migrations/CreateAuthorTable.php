@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Migrations;
 
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
-use Tempest\Database\Builder\IdRow;
-use Tempest\Database\Builder\TableBuilder;
-use Tempest\Database\Builder\TextRow;
+use Tempest\Database\Query;
 use Tempest\Interface\Migration;
 
 final readonly class CreateAuthorTable implements Migration
@@ -18,17 +14,16 @@ final readonly class CreateAuthorTable implements Migration
         return '0000-00-00_create_author_table';
     }
 
-    public function up(TableBuilder $builder): TableBuilder
+    public function up(): Query|null
     {
-        return $builder
-            ->name(Author::table())
-            ->add(new IdRow())
-            ->add(new TextRow('name'))
-            ->create();
+        return new Query("CREATE TABLE Author (
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `name` TEXT NOT NULL
+        )");
     }
 
-    public function down(TableBuilder $builder): TableBuilder
+    public function down(): Query|null
     {
-        return $builder->name(Book::table())->drop();
+        return null;
     }
 }

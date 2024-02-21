@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-use PDO;
 use PDOException;
-use Tempest\Database\Builder\TableBuilder;
 use Tempest\Database\DatabaseConfig;
 use function Tempest\event;
 use Tempest\Interface\Container;
+use Tempest\Interface\Database;
 use Tempest\Interface\Migration as MigrationInterface;
 
 final readonly class MigrationManager
@@ -17,7 +16,7 @@ final readonly class MigrationManager
     public function __construct(
         private Container $container,
         private DatabaseConfig $databaseConfig,
-        private PDO $pdo,
+        private Database $database,
     ) {
     }
 
@@ -50,9 +49,13 @@ final readonly class MigrationManager
 
     public function executeUp(MigrationInterface $migration): void
     {
-        $tableBuilder = $migration->up(new TableBuilder());
+        $query = $migration->up();
 
-        $this->pdo->query($tableBuilder->getQuery())->execute();
+        if (! $query) {
+            return;
+        }
+
+        $this->database->execute($query);
 
         Migration::create(
             name: $migration->getName(),

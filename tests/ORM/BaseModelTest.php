@@ -8,11 +8,9 @@ use App\Migrations\CreateAuthorTable;
 use App\Migrations\CreateBookTable;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
-use Tempest\Database\Builder\IdRow;
-use Tempest\Database\Builder\TableBuilder;
-use Tempest\Database\Builder\TextRow;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Query;
 use Tempest\Interface\Migration;
 use Tempest\Interface\Model;
 use Tempest\ORM\BaseModel;
@@ -25,7 +23,7 @@ class BaseModelTest extends TestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class
+            FooMigration::class,
         );
 
         $foo = Foo::create(
@@ -93,19 +91,16 @@ class FooMigration implements Migration
         return 'foo';
     }
 
-    public function up(TableBuilder $builder): TableBuilder
+    public function up(): Query|null
     {
-        return $builder
-            ->name(Foo::table())
-            ->add(new IdRow())
-            ->add(new TextRow('bar'))
-            ->create();
+        return new Query("CREATE TABLE Foo (
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `bar` TEXT
+        )");
     }
 
-    public function down(TableBuilder $builder): TableBuilder
+    public function down(): Query|null
     {
-        return $builder
-            ->name(Foo::table())
-            ->drop();
+        return null;
     }
 }

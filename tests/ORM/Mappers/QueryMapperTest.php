@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\ORM\Mappers;
 
-use App\Migrations\CreateAuthorTable;
-use App\Migrations\CreateBookTable;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
-use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 
 use function Tempest\make;

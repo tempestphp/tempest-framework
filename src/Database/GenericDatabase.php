@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database;
 
 use PDO;
@@ -9,7 +11,8 @@ final readonly class GenericDatabase implements Database
 {
     public function __construct(
         private PDO $pdo,
-    ) {}
+    ) {
+    }
 
     public function execute(Query $query): void
     {
