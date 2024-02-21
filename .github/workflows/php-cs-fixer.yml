@@ -29,4 +29,3 @@ jobs:
                 repo: context.repo.repo,
                 body: 'Thanks for the pull request! Unfortunately, it appears that your code does not adhere to our style guide. Please run `composer qa` to automagically fix this and then commit your changes!'
               })
-          run: exit 1
