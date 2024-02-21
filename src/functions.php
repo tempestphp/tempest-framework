@@ -54,7 +54,7 @@ namespace Tempest {
 
     function response(string $body = ''): Response
     {
-        return new GenericResponse(Status::HTTP_200, $body);
+        return new GenericResponse(Status::OK, $body);
     }
 
     function uri(array|string $action, ...$params): string

@@ -27,7 +27,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/test'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test', $response->getBody());
     }
 
@@ -38,7 +38,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/test/1/a'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('1a', $response->getBody());
     }
 
@@ -58,7 +58,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/view'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
 
         $expected = <<<HTML
 <html lang="en">
@@ -90,7 +90,7 @@ HTML;
 
         $response = $router->dispatch(request('/books/1'));
 
-        $this->assertSame(Status::HTTP_200, $response->getStatus());
+        $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('Test', $response->getBody());
     }
 }
