@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
-use Tempest\Interface\Application;
-use Tempest\Interface\ConsoleOutput;
-use Tempest\Interface\Container;
-use Tempest\Interface\Initializer;
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
 
 final readonly class ConsoleOutputInitializer implements Initializer
 {

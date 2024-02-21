@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
-use Tempest\Interface\Console;
-use Tempest\Interface\Router;
+use Tempest\Http\Router;
 
 final readonly class RoutesCommand
 {

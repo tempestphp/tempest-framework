@@ -15,7 +15,7 @@ final class ObjectMapper
 
     private bool $isCollection = false;
 
-    /** @var \Tempest\Interface\Mapper[] */
+    /** @var \Tempest\Mapper\Mapper[] */
     private readonly array $mappers;
 
     public function __construct()

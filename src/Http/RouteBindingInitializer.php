@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use ReflectionClass;
+use Tempest\Container\CanInitialize;
+use Tempest\Container\Container;
 use Tempest\Database\Id;
-use Tempest\Interface\CanInitialize;
-use Tempest\Interface\Container;
-use Tempest\Interface\Model;
+use Tempest\ORM\Model;
 
 final readonly class RouteBindingInitializer implements CanInitialize
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Validation;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Interface\IsValidated;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\IsValidated;
 use Tempest\Validation\Rules\Length;
 use Tempest\Validation\Validator;
 

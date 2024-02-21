@@ -8,23 +8,23 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
+use Tempest\Commands\CommandBus;
 use Tempest\Commands\GenericCommandBus;
+use Tempest\Console\ConsoleFormatter;
+use Tempest\Console\ConsoleInput;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\GenericConsoleFormatter;
 use Tempest\Console\GenericConsoleInput;
 use Tempest\Console\GenericConsoleOutput;
+use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
+use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
-use Tempest\Interface\CommandBus;
-use Tempest\Interface\ConsoleFormatter;
-use Tempest\Interface\ConsoleInput;
-use Tempest\Interface\ConsoleOutput;
-use Tempest\Interface\Container;
-use Tempest\Interface\Router;
 use function Tempest\path;
 use Throwable;
 
@@ -113,7 +113,7 @@ final readonly class Kernel
         reset($this->appConfig->discoveryClasses);
 
         while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
-            /** @var \Tempest\Interface\Discovery $discovery */
+            /** @var \Tempest\Discovery\Discovery $discovery */
             $discovery = $container->get($discoveryClass);
 
             if ($this->appConfig->discoveryCache && $discovery->hasCache()) {

@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Commands;
 
 use Closure;
-use Tempest\Interface\CommandBus;
-use Tempest\Interface\Container;
+use Tempest\Container\Container;
 
 final class GenericCommandBus implements CommandBus
 {

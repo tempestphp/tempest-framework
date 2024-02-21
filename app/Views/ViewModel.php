@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Views;
 
-use Tempest\Interface\View;
-use Tempest\View\BaseView;
+use Tempest\View\IsView;
+use Tempest\View\View;
 
 final class ViewModel implements View
 {
-    use BaseView;
+    use IsView;
 
     public function __construct(
         public readonly string $name,

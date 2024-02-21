@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Commands;
 
 use ReflectionMethod;
-use Tempest\Interface\CommandBusMiddleware;
 
 final class CommandBusConfig
 {
@@ -13,7 +12,7 @@ final class CommandBusConfig
         /** @var \Tempest\Commands\CommandHandler[] */
         public array $handlers = [],
 
-        /** @var \Tempest\Interface\CommandBusMiddleware[] */
+        /** @var \Tempest\Commands\CommandBusMiddleware[] */
         public array $middleware = [],
     ) {
     }

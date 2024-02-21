@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Home;
 
-use Tempest\Interface\View;
-use Tempest\View\BaseView;
+use Tempest\View\IsView;
+use Tempest\View\View;
 
 final class HomeView implements View
 {
-    use BaseView;
+    use IsView;
 
     public function __construct(
         public readonly string $name,

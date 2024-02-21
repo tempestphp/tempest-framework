@@ -7,16 +7,12 @@ namespace Tempest\Mapper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
-
 use function Tempest\attribute;
 use function Tempest\get;
-
-use Tempest\Interface\Caster;
-
-use Tempest\Interface\IsValidated;
-use Tempest\Interface\Mapper;
 use Tempest\ORM\Attributes\CastWith;
+use Tempest\ORM\Caster;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Validation\IsValidated;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper

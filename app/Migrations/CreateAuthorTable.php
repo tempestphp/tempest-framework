@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Migrations;
 
+use Tempest\Database\Migration;
 use Tempest\Database\Query;
-use Tempest\Interface\Migration;
 
 final readonly class CreateAuthorTable implements Migration
 {

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Interface\ConsoleInput;
-
 final readonly class NullConsoleInput implements ConsoleInput
 {
     public function readln(): string

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
-use Tempest\Console\BaseConsoleOutput;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleStyle;
-use Tempest\Interface\ConsoleOutput;
+use Tempest\Console\HandlesConsoleOutput;
 
 final class TestConsoleOutput implements ConsoleOutput
 {
-    use BaseConsoleOutput;
+    use HandlesConsoleOutput;
 
     public array $lines = [];
 

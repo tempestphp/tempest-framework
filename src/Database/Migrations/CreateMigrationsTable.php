@@ -6,7 +6,7 @@ namespace Tempest\Database\Migrations;
 
 use Tempest\Database\Query;
 
-final readonly class CreateMigrationsTable implements \Tempest\Interface\Migration
+final readonly class CreateMigrationsTable implements \Tempest\Database\Migration
 {
     public function getName(): string
     {

@@ -7,11 +7,11 @@ namespace Tests\Tempest;
 use Tempest\AppConfig;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Kernel;
+use Tempest\Console\ConsoleOutput;
+use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use function Tempest\get;
 use Tempest\Http\Method;
-use Tempest\Interface\ConsoleOutput;
-use Tempest\Interface\Container;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
