@@ -1,5 +1,6 @@
 {
     "name": "tempest/framework",
+    "description": "The PHP framework that gets out of your way.",
     "require": {
         "php": "^8.2",
         "ext-pdo": "*",
