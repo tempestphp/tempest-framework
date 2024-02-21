@@ -10,9 +10,11 @@ use Tempest\ORM\Casters\IdCaster;
 #[CastWith(IdCaster::class)]
 final readonly class Id
 {
-    public function __construct(
-        public string|int $id,
-    ) {
+    public string|int $id;
+
+    public function __construct(string|int|self $id)
+    {
+        $this->id = $id instanceof self ? $id->id : $id;
     }
 
     public function __toString(): string

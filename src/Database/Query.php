@@ -4,61 +4,44 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use PDO;
-
 use function Tempest\get;
 
 final readonly class Query
 {
     public function __construct(
-        public string $query,
+        public string $sql,
         public array $bindings = [],
     ) {
     }
 
     public function execute(): Id
     {
-        $pdo = get(PDO::class);
+        $database = $this->getDatabase();
 
-        $bindings = $this->resolveBindings();
+        $database->execute($this);
 
-        $pdo->prepare($this->query)->execute($bindings);
-
-        return new Id($bindings['id'] ?? $pdo->lastInsertId());
+        return isset($this->bindings['id'])
+            ? new Id($this->bindings['id'])
+            : $database->getLastInsertId();
     }
 
     public function fetch(): array
     {
-        $pdo = get(PDO::class);
-
-        $query = $pdo->prepare($this->query);
-
-        $query->execute($this->resolveBindings());
-
-        return $query->fetchAll(PDO::FETCH_NAMED);
+        return $this->getDatabase()->fetch($this);
     }
 
     public function fetchFirst(): ?array
     {
-        return $this->fetch()[0] ?? null;
+        return $this->getDatabase()->fetchFirst($this);
     }
 
-    private function resolveBindings(): array
+    public function getSql(): string
     {
-        $bindings = [];
+        return $this->sql;
+    }
 
-        foreach ($this->bindings as $key => $value) {
-            if ($value instanceof Id) {
-                $value = $value->id;
-            }
-
-            if ($value instanceof Query) {
-                $value = $value->execute();
-            }
-
-            $bindings[$key] = $value;
-        }
-
-        return $bindings;
+    private function getDatabase(): Database
+    {
+        return get(Database::class);
     }
 }

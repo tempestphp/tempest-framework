@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use Tempest\Http\Get;
-use Tempest\Interface\Response;
-use Tempest\Interface\View;
-
+use Tempest\Http\Response;
 use function Tempest\response;
 use function Tempest\view;
+use Tempest\View\View;
 
 final readonly class TestController
 {

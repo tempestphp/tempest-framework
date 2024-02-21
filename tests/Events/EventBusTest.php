@@ -7,9 +7,9 @@ namespace Tests\Tempest\Events;
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;
 use function Tempest\event;
+use Tempest\Events\EventBus;
 use Tempest\Events\EventBusConfig;
-use Tempest\Interface\EventBus;
-use Tempest\Interface\EventBusMiddleware;
+use Tempest\Events\EventBusMiddleware;
 use Tests\Tempest\TestCase;
 
 class EventBusTest extends TestCase

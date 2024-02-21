@@ -8,7 +8,7 @@ use Attribute;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\EmailValidation;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Tempest\Interface\Rule;
+use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class Email implements Rule

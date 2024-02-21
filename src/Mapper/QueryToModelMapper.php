@@ -6,8 +6,6 @@ namespace Tempest\Mapper;
 
 use ReflectionClass;
 use Tempest\Database\Query;
-use Tempest\Interface\Mapper;
-
 use function Tempest\make;
 
 final readonly class QueryToModelMapper implements Mapper

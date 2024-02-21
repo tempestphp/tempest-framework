@@ -8,10 +8,9 @@ use ArgumentCountError;
 use Exception;
 use ReflectionMethod;
 use Tempest\Console\ConsoleConfig;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\RenderConsoleCommandOverview;
-use Tempest\Interface\Application;
-use Tempest\Interface\ConsoleOutput;
-use Tempest\Interface\Container;
+use Tempest\Container\Container;
 use Throwable;
 
 final readonly class ConsoleApplication implements Application

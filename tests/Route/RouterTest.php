@@ -11,11 +11,9 @@ use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
+use Tempest\Http\Router;
 use Tempest\Http\Status;
-use Tempest\Interface\Router;
-
 use function Tempest\request;
-
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase
@@ -27,7 +25,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/test'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test', $response->getBody());
     }
 
@@ -38,7 +36,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/test/1/a'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('1a', $response->getBody());
     }
 
@@ -58,7 +56,7 @@ class RouterTest extends TestCase
 
         $response = $router->dispatch(request('/view'));
 
-        $this->assertEquals(Status::HTTP_200, $response->getStatus());
+        $this->assertEquals(Status::OK, $response->getStatus());
 
         $expected = <<<HTML
 <html lang="en">
@@ -90,7 +88,7 @@ HTML;
 
         $response = $router->dispatch(request('/books/1'));
 
-        $this->assertSame(Status::HTTP_200, $response->getStatus());
+        $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('Test', $response->getBody());
     }
 }

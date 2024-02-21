@@ -24,7 +24,7 @@ class QueryMapperTest extends TestCase
 
         $table = Author::table();
 
-        $this->assertSame("INSERT INTO {$table} (name) VALUES (:name);", $query->query);
+        $this->assertSame("INSERT INTO {$table} (name) VALUES (:name);", $query->getSql());
         $this->assertSame(['name' => 'test'], $query->bindings);
     }
 
@@ -42,7 +42,7 @@ class QueryMapperTest extends TestCase
 
         $bookTable = Book::table();
 
-        $this->assertSame("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);", $query->query);
+        $this->assertSame("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);", $query->getSql());
         $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
         $this->assertSame('Book Title', $query->bindings['title']);
 
@@ -50,7 +50,7 @@ class QueryMapperTest extends TestCase
 
         $authorQuery = $query->bindings['author_id'];
         $this->assertInstanceOf(Query::class, $authorQuery);
-        $this->assertSame("INSERT INTO {$authorTable} (name) VALUES (:name);", $authorQuery->query);
+        $this->assertSame("INSERT INTO {$authorTable} (name) VALUES (:name);", $authorQuery->getSql());
         $this->assertSame('Author Name', $authorQuery->bindings['name']);
     }
 
@@ -63,7 +63,7 @@ class QueryMapperTest extends TestCase
 
         $table = Author::table();
 
-        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = 1;", $query->query);
+        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = 1;", $query->getSql());
         $this->assertSame(['name' => 'other'], $query->bindings);
     }
 }

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use ReflectionClass;
+use Tempest\Container\Container;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Interface\Container;
-use Tempest\Interface\Discovery;
-use Tempest\Interface\Migration;
+use Tempest\Database\Migration;
 
 final class MigrationDiscovery implements Discovery
 {

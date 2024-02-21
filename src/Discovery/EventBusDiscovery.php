@@ -8,10 +8,9 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use function Tempest\attribute;
+use Tempest\Container\Container;
 use Tempest\Events\EventBusConfig;
 use Tempest\Events\EventHandler;
-use Tempest\Interface\Container;
-use Tempest\Interface\Discovery;
 
 final readonly class EventBusDiscovery implements Discovery
 {

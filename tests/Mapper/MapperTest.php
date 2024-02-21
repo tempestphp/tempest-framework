@@ -6,19 +6,16 @@ namespace Tests\Tempest\Mapper;
 
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
-use Tempest\Database\Builder\IdRow;
-use Tempest\Database\Builder\TableBuilder;
-use Tempest\Database\Builder\TextRow;
+use Tempest\Database\Migration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
-use Tempest\Interface\Caster;
-use Tempest\Interface\Migration;
-use Tempest\Interface\Model;
 use function Tempest\make;
 use function Tempest\map;
 use Tempest\ORM\Attributes\CastWith;
-use Tempest\ORM\BaseModel;
+use Tempest\ORM\Caster;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\ORM\IsModel;
+use Tempest\ORM\Model;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\Length;
 use Tests\Tempest\TestCase;
@@ -185,7 +182,7 @@ class MapperTest extends TestCase
 
 class ObjectFactoryA implements Model
 {
-    use BaseModel;
+    use IsModel;
 
     #[CastWith(ObjectFactoryACaster::class)]
     public string $prop;
@@ -193,7 +190,7 @@ class ObjectFactoryA implements Model
 
 class ObjectFactoryWithValidation implements Model
 {
-    use BaseModel;
+    use IsModel;
 
     #[Length(min: 2)]
     public string $prop;
@@ -214,19 +211,16 @@ class ObjectFactoryAMigration implements Migration
         return 'object-a';
     }
 
-    public function up(TableBuilder $builder): TableBuilder
+    public function up(): Query|null
     {
-        return $builder
-            ->name(ObjectFactoryA::table())
-            ->add(new IdRow())
-            ->add(new TextRow('prop'))
-            ->create();
+        return new Query("CREATE TABLE ObjectFactoryA (
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `prop` TEXT
+        )");
     }
 
-    public function down(TableBuilder $builder): TableBuilder
+    public function down(): Query|null
     {
-        return $builder
-            ->name(ObjectFactoryA::table())
-            ->drop();
+        return null;
     }
 }

@@ -9,8 +9,7 @@ use ReflectionMethod;
 use function Tempest\attribute;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Interface\Container;
-use Tempest\Interface\Discovery;
+use Tempest\Container\Container;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {

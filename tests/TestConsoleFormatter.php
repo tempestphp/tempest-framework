@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest;
 
+use Tempest\Console\ConsoleFormatter;
 use Tempest\Console\ConsoleStyle;
-use Tempest\Interface\ConsoleFormatter;
 
 final readonly class TestConsoleFormatter implements ConsoleFormatter
 {

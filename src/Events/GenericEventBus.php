@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Events;
 
 use Closure;
-use Tempest\Interface\Container;
-use Tempest\Interface\EventBus;
+use Tempest\Container\Container;
 
 final readonly class GenericEventBus implements EventBus
 {

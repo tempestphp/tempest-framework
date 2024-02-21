@@ -6,7 +6,7 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use DateTime;
-use Tempest\Interface\Rule;
+use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class DateTimeFormat implements Rule

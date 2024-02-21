@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Interface\ConsoleOutput;
-
 final readonly class NullConsoleOutput implements ConsoleOutput
 {
     public function writeln(string $line, ConsoleStyle ...$styles): void

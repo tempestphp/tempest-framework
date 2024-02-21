@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest;
 
 use Tempest\Http\Method;
-use Tempest\Interface\Server;
+use Tempest\Http\Server;
 
 final readonly class TestServer implements Server
 {

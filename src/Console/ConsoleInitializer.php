@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Interface\Console;
-use Tempest\Interface\ConsoleInput;
-use Tempest\Interface\ConsoleOutput;
-use Tempest\Interface\Container;
-use Tempest\Interface\Initializer;
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
 
 class ConsoleInitializer implements Initializer
 {

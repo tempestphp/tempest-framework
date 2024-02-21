@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Tempest\Console\ConsoleCommand;
-use Tempest\Interface\ConsoleOutput;
+use Tempest\Console\ConsoleOutput;
 
 final readonly class Hello
 {

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Interface\DatabaseDriver;
-
 final class DatabaseConfig
 {
     public function __construct(
