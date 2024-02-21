@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\Events\EventHandler;
-use Tempest\Interface\Console;
 
 final readonly class MigrateCommand
 {

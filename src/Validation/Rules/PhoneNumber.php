@@ -6,7 +6,7 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use libphonenumber\PhoneNumberUtil;
-use Tempest\Interface\Rule;
+use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]

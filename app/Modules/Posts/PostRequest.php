@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Posts;
 
-use Tempest\Http\BaseRequest;
-use Tempest\Interface\Request;
+use Tempest\Http\IsRequest;
+use Tempest\Http\Request;
 
 final class PostRequest implements Request
 {
-    use BaseRequest;
+    use IsRequest;
 
     public string $title;
 

@@ -6,20 +6,13 @@ namespace Tempest\Http;
 
 use ReflectionClass;
 use Tempest\AppConfig;
-
 use function Tempest\attribute;
-
+use Tempest\Container\Container;
 use Tempest\Container\InitializedBy;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
-use Tempest\Interface\Container;
-use Tempest\Interface\Request;
-use Tempest\Interface\Response;
-use Tempest\Interface\Router;
-
-use Tempest\Interface\View;
-
 use function Tempest\response;
+use Tempest\View\View;
 
 #[InitializedBy(RouteInitializer::class)]
 final readonly class GenericRouter implements Router

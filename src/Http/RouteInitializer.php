@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Tempest\AppConfig;
-use Tempest\Interface\Container;
-use Tempest\Interface\Initializer;
-use Tempest\Interface\Router;
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
 
 final readonly class RouteInitializer implements Initializer
 {

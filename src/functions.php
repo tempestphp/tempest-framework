@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest {
 
+    use Tempest\Commands\CommandBus;
     use Tempest\Container\GenericContainer;
+    use Tempest\Events\EventBus;
     use Tempest\Http\GenericRequest;
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Method;
+    use Tempest\Http\Request;
+    use Tempest\Http\Response;
+    use Tempest\Http\Router;
     use Tempest\Http\Status;
-    use Tempest\Interface\CommandBus;
-    use Tempest\Interface\EventBus;
-    use Tempest\Interface\Request;
-    use Tempest\Interface\Response;
-    use Tempest\Interface\Router;
-    use Tempest\Interface\View;
     use Tempest\Mapper\ObjectMapper;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
+    use Tempest\View\View;
 
     /**
      * @template TClassName

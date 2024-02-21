@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Drivers;
 
 use SensitiveParameter;
-use Tempest\Interface\DatabaseDriver;
+use Tempest\Database\DatabaseDriver;
 
 final readonly class MySqlDriver implements DatabaseDriver
 {

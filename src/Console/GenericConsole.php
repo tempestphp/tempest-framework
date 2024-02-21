@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Interface\Console;
-use Tempest\Interface\ConsoleInput;
-use Tempest\Interface\ConsoleOutput;
-
 readonly class GenericConsole implements Console
 {
     public function __construct(

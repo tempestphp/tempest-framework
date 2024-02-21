@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Events;
 
-use Tempest\Interface\Container;
-use Tempest\Interface\EventBus;
-use Tempest\Interface\Initializer;
+use Tempest\Container\Container;
+use Tempest\Container\Initializer;
 
 final readonly class EventBusInitializer implements Initializer
 {

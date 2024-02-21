@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Books\Models;
 
-use Tempest\Interface\Model;
-use Tempest\ORM\BaseModel;
+use Tempest\ORM\IsModel;
+use Tempest\ORM\Model;
 
 class Author implements Model
 {
-    use BaseModel;
+    use IsModel;
 
     public function __construct(
         public string $name,

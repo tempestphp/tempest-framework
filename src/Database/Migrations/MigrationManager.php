@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDOException;
+use Tempest\Container\Container;
+use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Migration as MigrationInterface;
 use function Tempest\event;
-use Tempest\Interface\Container;
-use Tempest\Interface\Database;
-use Tempest\Interface\Migration as MigrationInterface;
 
 final readonly class MigrationManager
 {

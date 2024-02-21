@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use function Tempest\get;
-use Tempest\Interface\Database;
 
 final readonly class Query
 {

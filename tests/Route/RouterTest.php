@@ -11,11 +11,9 @@ use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
+use Tempest\Http\Router;
 use Tempest\Http\Status;
-use Tempest\Interface\Router;
-
 use function Tempest\request;
-
 use Tests\Tempest\TestCase;
 
 class RouterTest extends TestCase

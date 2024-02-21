@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Container;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\CanInitialize;
+use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\InitializedBy;
-use Tempest\Interface\CanInitialize;
-use Tempest\Interface\Container;
-use Tempest\Interface\Initializer;
+use Tempest\Container\Initializer;
 
 class ContainerTest extends TestCase
 {

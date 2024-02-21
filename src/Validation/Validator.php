@@ -6,11 +6,7 @@ namespace Tempest\Validation;
 
 use ReflectionClass;
 use ReflectionProperty;
-
 use function Tempest\attribute;
-
-use Tempest\Interface\IsValidated;
-use Tempest\Interface\Rule;
 use Tempest\Validation\Exceptions\ValidationException;
 
 final readonly class Validator

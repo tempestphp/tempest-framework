@@ -12,13 +12,11 @@ use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
+use Tempest\Http\Router;
 use Tempest\Http\Status;
-use Tempest\Interface\Request;
-use Tempest\Interface\Router;
-
 use function Tempest\request;
 use function Tempest\uri;
-
 use Tests\Tempest\TestCase;
 
 class RequestTest extends TestCase
