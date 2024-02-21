@@ -1,0 +1,18 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// +--------------------------------------------------------------------------------------------+ //
+// TempestPHP Version
+//
+// Holds a static string representing the current version of TempestPHP
+//
+// TempestPHP : Rapid Development Framework (https://github.com/tempestphp/tempest-framework)
+// Copyright (c) 2024-present Brent Roose brendt@stitcher.io, TempestPHP (https://github.com/tempestphp/tempest-framework)
+//
+// Licensed under The MIT License
+// Redistributions of files must retain the above copyright notice.
+//
+// @copyright     Copyright (c) 2024-present Brent Roose brendt@stitcher.io, TempestPHP (https://github.com/tempestphp/tempest-framework)
+// @link          https://github.com/tempestphp/tempest-framework
+// @license       https://opensource.org/licenses/mit-license.php MIT License
+// +--------------------------------------------------------------------------------------------+ //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+0.0.4
