@@ -10,6 +10,7 @@ use Dotenv\Exception\InvalidPathException;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
+use DateTime;
 
 final readonly class Tempest
 {
