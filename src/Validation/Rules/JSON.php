@@ -43,15 +43,16 @@ final readonly class JSON implements Rule
 
     public function isValid(mixed $value): bool
     {
-        $extraArguments = ['json' => $value];
+        $arguments = ['json' => $value];
+
         if ($this->depth !== null) {
-            $extraArguments['depth'] = $this->depth;
+            $arguments['depth'] = $this->depth;
         }
         if ($this->flags !== null) {
-            $extraArguments['flags'] = $this->flags;
+            $arguments['flags'] = $this->flags;
         }
 
-        return json_validate(...$extraArguments);
+        return json_validate(...$arguments);
     }
 
     public function message(): string
