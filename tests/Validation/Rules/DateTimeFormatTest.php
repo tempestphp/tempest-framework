@@ -13,6 +13,9 @@ class DateTimeFormatTest extends TestCase
     {
         $rule = new DateTimeFormat();
 
+        $this->assertFalse($rule->isValid(false));
+        $this->assertFalse($rule->isValid(null));
+        $this->assertFalse($rule->isValid(''));
         $this->assertFalse($rule->isValid('this is not a date'));
         $this->assertTrue($rule->isValid('2024-02-19'));
     }

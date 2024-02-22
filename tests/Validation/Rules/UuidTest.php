@@ -13,6 +13,8 @@ class UuidTest extends TestCase
     {
         $rule = new Uuid();
 
+        $this->assertSame('Value should contain a valid UUID', $rule->message());
+
         $this->assertFalse($rule->isValid('string_123'));
 
         // UUID v1
