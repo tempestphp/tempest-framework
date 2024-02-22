@@ -53,11 +53,11 @@ final readonly class IPAddress implements Rule
         $version = 'IP';
         $additions = [];
 
-        if ($this->options & FILTER_FLAG_IPV4 && !($this->options & FILTER_FLAG_IPV6)) {
+        if ($this->options & FILTER_FLAG_IPV4 && ! ($this->options & FILTER_FLAG_IPV6)) {
             $version = 'IPv4';
         }
 
-        if ($this->options & FILTER_FLAG_IPV6 && !($this->options & FILTER_FLAG_IPV4)) {
+        if ($this->options & FILTER_FLAG_IPV6 && ! ($this->options & FILTER_FLAG_IPV4)) {
             $version = 'IPv6';
         }
 
