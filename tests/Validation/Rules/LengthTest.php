@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Validation\Rules;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Length;
 
@@ -20,9 +21,18 @@ class LengthTest extends TestCase
     /**
      * @dataProvider dataSetsMessage
      */
-    public function test_returns_the_proper_message_based_on_min_and_max_arguments(Length $rule, string $expectedMessage): void
-    {
+    public function test_returns_the_proper_message_based_on_min_and_max_arguments(
+        Length $rule,
+        string $expectedMessage
+    ): void {
         $this->assertEquals($expectedMessage, $rule->message());
+    }
+
+    public function test_throws_an_exception_if_neither_min_or_max_is_supplied(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Length();
     }
 
     public static function dataSetsMessage(): array
@@ -39,10 +49,6 @@ class LengthTest extends TestCase
             'Should provide correct message for string length validation being no more than 10' => [
                 new Length(max: 10),
                 'Value should be no more than 10',
-            ],
-            'Should result in an empty message when neither minimum nor maximum arguments are supplied' => [
-                new Length(),
-                '',
             ],
         ];
     }
