@@ -63,48 +63,6 @@ trait IsResponse
         return $this;
     }
 
-    public function sendHeaders(): self
-    {
-        // TODO: Handle SAPI/FastCGI
-
-        if (headers_sent()) {
-            return $this;
-        }
-
-        foreach ($this->getHeaders() as $key => $value) {
-            header("{$key}: {$value}");
-        }
-
-        /**
-         * TODO: Is there a reason to manually set the headers
-         * vs this http_response_code helper?
-         */
-        http_response_code($this->status->value);
-
-        return $this;
-    }
-
-    public function sendContent(): self
-    {
-        // TODO: Should we be checking if content has already been sent?
-
-        echo $this->getBody();
-
-        return $this;
-    }
-
-    public function send(): self
-    {
-        ob_start();
-
-        $this->sendHeaders();
-        $this->sendContent();
-
-        ob_end_flush();
-
-        return $this;
-    }
-
     public function redirect(string $to): self
     {
         return $this

@@ -22,6 +22,7 @@ use Tempest\Database\PDOInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
+use Tempest\Http\ResponseSenderInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
@@ -65,6 +66,7 @@ final readonly class Kernel
             ->singleton(CommandBus::class, fn () => $container->get(GenericCommandBus::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
+            ->addInitializer(new ResponseSenderInitializer())
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());
 
