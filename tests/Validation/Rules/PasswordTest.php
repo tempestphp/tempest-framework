@@ -17,6 +17,13 @@ class PasswordTest extends TestCase
         $this->assertTrue($rule->isValid('aaaaaaaa'));
     }
 
+    public function test_invalid_input()
+    {
+        $rule = new Password();
+        $this->assertFalse($rule->isValid(12345678));
+        $this->assertFalse($rule->isValid([12345678]));
+    }
+
     public function test_minimum()
     {
         $rule = new Password(min: 4);
@@ -31,6 +38,12 @@ class PasswordTest extends TestCase
         $this->assertTrue($rule->isValid('12345678'));
         $this->assertTrue($rule->isValid('1234567890'));
         $this->assertFalse($rule->isValid('12345678901'));
+    }
+
+    public function test_maximum_less_than_minimum()
+    {
+        $rule = new Password(min: 4, max: 2);
+        $this->assertTrue($rule->isValid('1234'));
     }
 
     public function test_mixed_case()

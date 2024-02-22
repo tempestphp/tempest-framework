@@ -5,33 +5,30 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use http\Exception\InvalidArgumentException;
 use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class Password implements Rule
 {
+    private int $min;
+    private ?int $max;
+
     public function __construct(
-        private int $min = 8,
-        private ?int $max = null,
+        int $min = 8,
+        ?int $max = null,
         private bool $mixedCase = false,
         private bool $numbers = false,
         private bool $letters = false,
         private bool $symbols = false,
     ) {
-        if ($this->min < 1) {
-            throw new \InvalidArgumentException("Minimum length must be at least 1");
-        }
-
-        if ($this->max !== null && $this->max < $this->min) {
-            throw new \InvalidArgumentException("Maximum length must be greater than or equal to the minimum length");
-        }
+        $this->min = max(1, $min);
+        $this->max = $max ? max($this->min, $max) : null;
     }
 
     public function isValid(mixed $value): bool
     {
         if (! is_string($value)) {
-            throw new InvalidArgumentException("Value must be a string");
+            return false;
         }
 
         if (strlen($value) < $this->min) {
