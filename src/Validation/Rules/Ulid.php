@@ -12,7 +12,7 @@ final readonly class Ulid implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/', $value) === 1;
+        return preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/i', $value) === 1;
     }
 
     public function message(): string
