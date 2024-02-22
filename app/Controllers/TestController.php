@@ -37,4 +37,12 @@ final readonly class TestController
     {
         return response()->redirect('/');
     }
+
+    #[Get(uri: '/with-middleware', middleware: [
+        TestMiddleware::class,
+    ])]
+    public function withMiddleware(): Response
+    {
+        return response()->ok();
+    }
 }

@@ -81,7 +81,7 @@ HTML;
 
         Book::create(
             title: 'Test',
-            author: new Author(name: 'Brent')
+            author: new Author(name: 'Brent'),
         );
 
         $router = $this->container->get(Router::class);
@@ -90,5 +90,15 @@ HTML;
 
         $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('Test', $response->getBody());
+    }
+
+    /** @test */
+    public function test_middleware()
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $response = $router->dispatch(request('/with-middleware'));
+
+        $this->assertEquals(['middleware' => 'from-dependency'], $response->getHeaders());
     }
 }

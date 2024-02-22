@@ -15,6 +15,12 @@ class Route
     public function __construct(
         public string $uri,
         public Method $method,
+
+        /**
+         * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
+         * @var class-string<MiddlewareClass>[] $middleware
+         */
+        public array $middleware = [],
     ) {
     }
 
@@ -30,6 +36,7 @@ class Route
         return [
             'uri' => $this->uri,
             'method' => $this->method,
+            'middleware' => $this->middleware,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
         ];
@@ -39,6 +46,7 @@ class Route
     {
         $this->uri = $data['uri'];
         $this->method = $data['method'];
+        $this->middleware = $data['middleware'];
         $this->handler = new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
