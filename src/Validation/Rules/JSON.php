@@ -9,9 +9,9 @@ use Tempest\Validation\Rule;
 
 /**
  * We need to polyfill this, because at the moment the minimum required version of php for tempest is ^8.2,
- *  and json_validate was introduced in 8.3
+ * and json_validate was introduced in 8.3
  * @TODO remove this polyfill once the minimum php version is >= than 8.3
- * @link https://php.watch/versions/8.3/json_validate#polyfill
+ * Source @link https://php.watch/versions/8.3/json_validate#polyfill
  */
 if (! function_exists('json_validate')) {
     function json_validate(string $json, int $depth = 512, int $flags = 0): bool
