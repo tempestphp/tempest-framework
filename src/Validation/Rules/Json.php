@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class JSON implements Rule
+final readonly class Json implements Rule
 {
     public function __construct(
         private ?int $depth = null,

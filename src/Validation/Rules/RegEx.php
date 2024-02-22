@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Regex implements Rule
+final readonly class RegEx implements Rule
 {
     public function __construct(private string $pattern)
     {

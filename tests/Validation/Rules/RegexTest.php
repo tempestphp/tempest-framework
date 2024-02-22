@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Validation\Rules;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\Regex;
+use Tempest\Validation\Rules\RegEx;
 
 class RegexTest extends TestCase
 {
     public function test_regex_rule()
     {
-        $rule = new Regex('/^[aA][bB]$/');
+        $rule = new RegEx('/^[aA][bB]$/');
 
         $this->assertSame(
             'The value must match the regular expression pattern: /^[aA][bB]$/',
