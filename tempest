@@ -6,17 +6,13 @@ use Tempest\Application\Environment;
 use Tempest\Tempest;
 use function Tempest\env;
 
-try {
-    require_once __DIR__ . '/vendor/autoload.php';
-} catch (Throwable) {
-    require_once getcwd() . '/../autoload.php';
-}
+require_once getcwd() . '/vendor/autoload.php';
 
 $createAppConfig = fn () => new AppConfig(
     environment: Environment::from(env('ENVIRONMENT')),
     discoveryCache: env('DISCOVERY_CACHE'),
 );
 
-Tempest::boot(__DIR__, $createAppConfig)->console()->run();
+Tempest::boot(getcwd(), $createAppConfig)->console()->run();
 
 exit;
