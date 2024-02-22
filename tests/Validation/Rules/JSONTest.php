@@ -8,8 +8,6 @@ use Tempest\Validation\Rules\JSON;
 use Tests\Tempest\TestCase;
 use ValueError;
 
-
-
 class JSONTest extends TestCase
 {
     public function test_it_returns_true_for_valid_json_string(): void
