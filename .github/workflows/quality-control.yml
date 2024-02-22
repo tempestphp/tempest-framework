@@ -96,4 +96,4 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          php-coveralls --coverage_clover=build/reports/clover.xml -v
+          php-coveralls --coverage_clover=build/reports/clover.xml --json_path=build/reports/coveralls-upload.json -v
