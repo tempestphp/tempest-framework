@@ -12,7 +12,8 @@ use Tempest\Http\Router;
 final readonly class HttpApplication implements Application
 {
     public function __construct(private Container $container)
-    {}
+    {
+    }
 
     public function run(): void
     {

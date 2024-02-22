@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http;
 
 final readonly class GenericResponseSender implements ResponseSender
