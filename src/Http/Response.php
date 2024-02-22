@@ -20,5 +20,7 @@ interface Response
 
     public function redirect(string $to): self;
 
+    public function send(): self;
+
     public function status(Status $status): self;
 }

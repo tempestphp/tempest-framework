@@ -21,16 +21,6 @@ final readonly class HttpApplication implements Application
         $router = $this->container->get(Router::class);
         $request = $this->container->get(Request::class);
 
-        $response = $router->dispatch($request);
-
-        ob_start();
-
-        foreach ($response->getHeaders() as $key => $value) {
-            header("{$key}: {$value}");
-        }
-
-        echo $response->getBody();
-
-        ob_end_flush();
+        $router->dispatch($request)->send();
     }
 }

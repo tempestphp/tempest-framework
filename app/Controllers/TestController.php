@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use Tempest\Http\Get;
 use Tempest\Http\Response;
+use Tempest\Http\Status;
 use function Tempest\response;
 use function Tempest\view;
 use Tempest\View\View;
@@ -36,5 +37,23 @@ final readonly class TestController
     public function redirect(): Response
     {
         return response()->redirect('/');
+    }
+
+    #[Get(uri: '/not-found')]
+    public function notFound(): Response
+    {
+        return response(
+            body: 'Not Found Test',
+            status: Status::NOT_FOUND
+        );
+    }
+
+    #[Get(uri: '/server-error')]
+    public function serverError(): Response
+    {
+        return response(
+            body: 'Server Error Test',
+            status: Status::INTERNAL_SERVER_ERROR
+        );
     }
 }
