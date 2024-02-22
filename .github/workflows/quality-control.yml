@@ -90,7 +90,7 @@ jobs:
         run: composer show -D
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
       - name: Upload coverage results to Coveralls
         env:
