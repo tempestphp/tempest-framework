@@ -1,4 +1,5 @@
 # The PHP framework that gets out of your way.
+[![Coverage Status](https://coveralls.io/repos/github/tempestphp/tempest-framework/badge.svg?branch=main)](https://coveralls.io/github/tempestphp/tempest-framework?branch=main)
 
 Read how to get started with Tempest [here](https://github.com/tempestphp/tempest-docs/blob/master/01-getting-started.md).
 
