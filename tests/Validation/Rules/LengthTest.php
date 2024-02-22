@@ -9,27 +9,117 @@ use Tempest\Validation\Rules\Length;
 
 class LengthTest extends TestCase
 {
-    /** @test */
-    public function test_length()
+    /**
+     * @dataProvider dataSets
+     */
+    public function test_length(Length $rule, string $stringToTest, bool $expected): void
     {
-        $rule = new Length(min: 10);
+        $this->assertEquals($expected, $rule->isValid($stringToTest));
+    }
 
-        $this->assertTrue($rule->isValid('aaaaaaaaaa'));
-        $this->assertTrue($rule->isValid('aaaaaaaaaaa'));
-        $this->assertFalse($rule->isValid('aaaaaaaaa'));
+    /**
+     * @dataProvider dataSetsMessage
+     */
+    public function test_returns_the_proper_message_based_on_min_and_max_arguments(Length $rule, string $expectedMessage): void
+    {
+        $this->assertEquals($expectedMessage, $rule->message());
+    }
 
-        $rule = new Length(max: 5);
+    public static function dataSetsMessage(): array
+    {
+        return [
+            'Should provide correct message for string length validation with both minimum and maximum limits of 10 to 20' => [
+                new Length(min: 10, max: 20),
+                'Value should be between 10 and 20',
+            ],
+            'Should provide correct message for string length validation being no less than 10' => [
+                new Length(min: 10),
+                'Value should be no less than 10',
+            ],
+            'Should provide correct message for string length validation being no more than 10' => [
+                new Length(max: 10),
+                'Value should be no more than 10',
+            ],
+            'Should result in an empty message when neither minimum nor maximum arguments are supplied' => [
+                new Length(),
+                '',
+            ],
+        ];
+    }
 
-        $this->assertTrue($rule->isValid('aaaaa'));
-        $this->assertTrue($rule->isValid('aaaa'));
-        $this->assertFalse($rule->isValid('aaaaaa'));
-
-        $rule = new Length(min:2, max: 5);
-
-        $this->assertTrue($rule->isValid('aaaaa'));
-        $this->assertTrue($rule->isValid('aaaa'));
-        $this->assertTrue($rule->isValid('aa'));
-        $this->assertFalse($rule->isValid('a'));
-        $this->assertFalse($rule->isValid('aaaaaa'));
+    public static function dataSets(): array
+    {
+        return [
+            'Should return true when string meets minimum length requirement of 10' => [
+                new Length(min: 10),
+                'aaaaaaaaaa',
+                true,
+            ],
+            'Should return true when string exceeds minimum length requirement of 10' => [
+                new Length(min: 10),
+                'aaaaaaaaaaa',
+                true,
+            ],
+            'Should return false when string does not meet minimum length requirement of 10' => [
+                new Length(min: 10),
+                'aaaaaaaaa',
+                false,
+            ],
+            'Should return true when string meets maximum length requirement of 5' => [
+                new Length(max: 5),
+                'aaaaa',
+                true,
+            ],
+            'Should return true when string is shorter than maximum length requirement of 5' => [
+                new Length(max: 5),
+                'aaaa',
+                true,
+            ],
+            'Should return false when string exceeds maximum length requirement of 5' => [
+                new Length(max: 5),
+                'aaaaaa',
+                false,
+            ],
+            'Should return true when string is within minimum and maximum length requirement of 2-5' => [
+                new Length(
+                    min: 2,
+                    max: 5
+                ),
+                'aaaaa',
+                true,
+            ],
+            'Should return true when string is within minimum and maximum length requirement of 2-5 but shorter' => [
+                new Length(
+                    min: 2,
+                    max: 5
+                ),
+                'aaaa',
+                true,
+            ],
+            'Should return true when string meets minimum length requirement of 2 within 2-5 limit' => [
+                new Length(
+                    min: 2,
+                    max: 5
+                ),
+                'aa',
+                true,
+            ],
+            'Should return false when string does not meet minimum length requirement of 2 within 2-5 limit' => [
+                new Length(
+                    min: 2,
+                    max: 5
+                ),
+                'a',
+                false,
+            ],
+            'Should return false when string exceeds maximum length requirement of 5 within 2-5 limit' => [
+                new Length(
+                    min: 2,
+                    max: 5
+                ),
+                'aaaaaa',
+                false,
+            ],
+        ];
     }
 }
