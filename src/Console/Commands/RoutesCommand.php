@@ -23,14 +23,6 @@ final readonly class RoutesCommand
     )]
     public function list(): void
     {
-        /**
-         * Here we flatten the multidimensional array and then run
-         * this array through a custom sort function that sorts
-         * first by URI and then by method name.
-         *
-         * @var \Tempest\Http\Route[] $routes
-         */
-
         $sortedRoutes = [];
 
         foreach ($this->router->getRoutes() as $method => $routesForMethod) {
