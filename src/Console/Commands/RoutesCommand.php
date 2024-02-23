@@ -34,6 +34,8 @@ final readonly class RoutesCommand
 
         ksort($sortedRoutes);
 
+        var_dump($sortedRoutes);
+
         foreach ($sortedRoutes as $route) {
             $this->console->writeln(implode(' ', [
                 ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
