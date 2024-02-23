@@ -26,13 +26,13 @@ final readonly class RoutesCommand
         /** @var \Tempest\Http\Route[] $sortedRoutes */
         $sortedRoutes = [];
 
-        var_dump(get_class($this->router), $this->router->getRoutes());
-
         foreach($this->router->getRoutes() as $routesForMethod) {
             foreach ($routesForMethod as $uri => $route) {
                 $sortedRoutes[$uri] = $route;
             }
         }
+
+        var_dump($sortedRoutes);
 
         ksort($sortedRoutes);
 
