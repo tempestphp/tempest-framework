@@ -26,7 +26,8 @@ class StatusTest extends TestCase
         $status = Status::code($code);
 
         $this->assertSame(
-            $this->descriptionToStatus($description), $status
+            $this->descriptionToStatus($description),
+            $status
         );
 
         $this->assertSame($description, $status->description());

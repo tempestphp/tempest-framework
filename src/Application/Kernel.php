@@ -22,7 +22,6 @@ use Tempest\Database\PDOInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\RequestInitializer;
-use Tempest\Http\ResponseSenderInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
