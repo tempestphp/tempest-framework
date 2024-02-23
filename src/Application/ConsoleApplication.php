@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use ArgumentCountError;
-use Exception;
 use ReflectionMethod;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
