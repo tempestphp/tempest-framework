@@ -30,10 +30,6 @@ final readonly class GenericResponseSender implements ResponseSender
             header("{$key}: {$value}");
         }
 
-        /**
-         * TODO: Is there a reason to manually set the headers
-         * vs this http_response_code helper?
-         */
         http_response_code($response->getStatus()->value);
     }
 
