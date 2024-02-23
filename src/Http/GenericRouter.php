@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Closure;
 use ReflectionClass;
 use Tempest\AppConfig;
 use function Tempest\attribute;
@@ -62,15 +63,9 @@ final readonly class GenericRouter implements Router
             fn () => new RouteParams($routeParams),
         );
 
-        $controller = $this->container->get(
-            $matchedRoute->handler->getDeclaringClass()->getName()
-        );
+        $callable = $this->getCallable($matchedRoute, $routeParams);
 
-        $outputFromController = $this->container->call(
-            $controller,
-            $matchedRoute->handler->getName(),
-            ...$routeParams
-        );
+        $outputFromController = $callable($request);
 
         if ($outputFromController === null) {
             throw new MissingControllerOutputException(
@@ -80,6 +75,25 @@ final readonly class GenericRouter implements Router
         }
 
         return $this->createResponse($outputFromController);
+    }
+
+    private function getCallable(
+        Route $route,
+        array $routeParams
+    ): Closure {
+        $callable = fn (Request $request) => $this->container->call(
+            $this->container->get($route->handler->getDeclaringClass()->getName()),
+            $route->handler->getName(),
+            ...$routeParams,
+        );
+
+        $middlewareStack = $route->middleware;
+
+        while ($middlewareClass = array_pop($middlewareStack)) {
+            $callable = fn (Request $request) => $this->container->get($middlewareClass)($request, $callable);
+        }
+
+        return $callable;
     }
 
     public function toUri(array|string $action, ...$params): string
