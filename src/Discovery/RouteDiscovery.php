@@ -24,10 +24,6 @@ final readonly class RouteDiscovery implements Discovery
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $routeAttribute = attribute(Route::class)->in($method)->first();
 
-            if (! is_null($routeAttribute)) {
-                var_dump($routeAttribute);
-            }
-
             if (! $routeAttribute) {
                 continue;
             }

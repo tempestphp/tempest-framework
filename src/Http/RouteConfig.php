@@ -20,6 +20,8 @@ final class RouteConfig
 
         $this->routes[$route->method->value][] = $route;
 
+        var_dump($this->routes);
+
         return $this;
     }
 }
