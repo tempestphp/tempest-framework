@@ -14,7 +14,7 @@ final readonly class Password implements Rule
     private ?int $max;
 
     public function __construct(
-        int $min = 8,
+        int $min = 12,
         ?int $max = null,
         private bool $mixedCase = false,
         private bool $numbers = false,
