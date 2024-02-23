@@ -17,6 +17,8 @@ class DoesNotEndWithTest extends TestCase
     {
         $rule = new DoesNotEndWith($needle);
 
+        $this->assertSame('Value should not end with ' . $needle, $rule->message());
+
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 

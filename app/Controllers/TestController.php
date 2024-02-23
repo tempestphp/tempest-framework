@@ -56,4 +56,12 @@ final readonly class TestController
             status: Status::INTERNAL_SERVER_ERROR
         );
     }
+
+    #[Get(uri: '/with-middleware', middleware: [
+        TestMiddleware::class,
+    ])]
+    public function withMiddleware(): Response
+    {
+        return response()->ok();
+    }
 }

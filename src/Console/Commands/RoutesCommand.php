@@ -23,12 +23,11 @@ final readonly class RoutesCommand
     )]
     public function list(): void
     {
-        /** @var \Tempest\Http\Route[] $sortedRoutes */
         $sortedRoutes = [];
 
-        foreach($this->router->getRoutes() as $routesForMethod) {
-            foreach ($routesForMethod as $uri => $route) {
-                $sortedRoutes[$uri] = $route;
+        foreach ($this->router->getRoutes() as $method => $routesForMethod) {
+            foreach ($routesForMethod as $route) {
+                $sortedRoutes["{$route->uri}:{$method}"] = $route;
             }
         }
 

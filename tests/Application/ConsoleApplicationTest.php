@@ -4,10 +4,37 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Application;
 
+use Tempest\Application\CommandNotFound;
+use Tempest\Application\ConsoleApplication;
+use Tempest\Console\ConsoleOutput;
 use Tests\Tempest\TestCase;
 
 class ConsoleApplicationTest extends TestCase
 {
+    /** @test */
+    public function test_run()
+    {
+        $app = new ConsoleApplication(
+            ['hello:world input'],
+            $this->container
+        );
+
+        $app->run();
+
+        /** @var \Tests\Tempest\TestConsoleOutput $output */
+        $output = $this->container->get(ConsoleOutput::class);
+
+        $this->assertStringContainsString('Tempest Console', $output->lines[0]);
+    }
+
+    /** @test */
+    public function test_unhandled_command()
+    {
+        $this->expectException(CommandNotFound::class);
+
+        $this->console('unknown');
+    }
+
     /** @test */
     public function test_cli_application()
     {

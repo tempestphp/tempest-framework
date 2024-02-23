@@ -115,7 +115,7 @@ namespace Tempest {
         $eventBus->dispatch($event);
     }
 
-    function env($key, $default = null): mixed
+    function env(string $key, mixed $default = null): mixed
     {
         $value = getenv($key);
 

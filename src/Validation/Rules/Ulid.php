@@ -8,15 +8,15 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-class Uppercase implements Rule
+final readonly class Ulid implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return $value === mb_strtoupper($value);
+        return preg_match('/^[0-9A-HJKMNP-TV-Z]{26}$/i', $value) === 1;
     }
 
     public function message(): string
     {
-        return 'Value should be an uppercase string';
+        return "Value should be a valid ULID";
     }
 }

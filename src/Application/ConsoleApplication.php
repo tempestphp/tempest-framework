@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use ArgumentCountError;
-use Exception;
 use ReflectionMethod;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
@@ -51,7 +50,7 @@ final readonly class ConsoleApplication implements Application
         $consoleCommandConfig = $config->commands[$commandName] ?? null;
 
         if (! $consoleCommandConfig) {
-            throw new Exception("Command `{$commandName}` not found");
+            throw new CommandNotFound($commandName);
         }
 
         $handler = $consoleCommandConfig->handler;

@@ -18,4 +18,9 @@ final class TestConsoleOutput implements ConsoleOutput
     {
         $this->lines[] = $line;
     }
+
+    public function asText(): string
+    {
+        return implode(PHP_EOL, $this->lines);
+    }
 }

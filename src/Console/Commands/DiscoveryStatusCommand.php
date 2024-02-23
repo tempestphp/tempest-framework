@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Commands;
+namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleCommand;
@@ -20,7 +20,7 @@ final readonly class DiscoveryStatusCommand
         name: 'discovery:status',
         description: 'List all discovery locations and discovery classes'
     )]
-    public function __invoke()
+    public function __invoke(): void
     {
         $this->output->info('Loaded Discovery classes');
 

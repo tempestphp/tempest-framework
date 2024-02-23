@@ -17,6 +17,6 @@ class Lowercase implements Rule
 
     public function message(): string
     {
-        return 'Value should be a lowercase string.';
+        return 'Value should be a lowercase string';
     }
 }

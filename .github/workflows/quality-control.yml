@@ -15,7 +15,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
@@ -38,6 +38,7 @@ jobs:
           uses: stefanzweifel/git-auto-commit-action@v5
           with:
             commit_message: Fixes styling.
+
   phpstan:
     name: Perform Static Analysis
     runs-on: ubuntu-latest
@@ -47,7 +48,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.3
           coverage: none
 
       - name: Install composer dependencies
@@ -62,7 +63,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
-        php: [8.2]
+        php: [8.3]
         stability: [prefer-stable]
 
     name: Run Tests - P${{ matrix.php }} - ${{ matrix.stability }} - ${{ matrix.os }}
@@ -76,7 +77,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
+          coverage: pcov
 
       - name: Setup problem matchers
         run: |
@@ -84,9 +85,21 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
       - name: Install dependencies
         run: |
+          composer global require php-coveralls/php-coveralls
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
       - name: List Installed Dependencies
         run: composer show -D
 
+      - name: List Discovered Locations
+        run: |
+          cp .env.example .env
+          php ./tempest discovery:status
+
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
+
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          php-coveralls --coverage_clover=build/reports/clover.xml --json_path=build/reports/coveralls-upload.json -v
