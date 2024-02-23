@@ -32,20 +32,6 @@ class PasswordTest extends TestCase
         $this->assertFalse($rule->isValid('123'));
     }
 
-    public function test_maximum()
-    {
-        $rule = new Password(max: 14);
-        $this->assertTrue($rule->isValid('1234567890123'));
-        $this->assertTrue($rule->isValid('12345678901234'));
-        $this->assertFalse($rule->isValid('12345678901'));
-    }
-
-    public function test_maximum_less_than_minimum()
-    {
-        $rule = new Password(min: 4, max: 2);
-        $this->assertTrue($rule->isValid('1234'));
-    }
-
     public function test_mixed_case()
     {
         $rule = new Password(mixedCase: true);

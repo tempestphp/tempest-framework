@@ -11,18 +11,15 @@ use Tempest\Validation\Rule;
 final readonly class Password implements Rule
 {
     private int $min;
-    private ?int $max;
 
     public function __construct(
         int $min = 12,
-        ?int $max = null,
         private bool $mixedCase = false,
         private bool $numbers = false,
         private bool $letters = false,
         private bool $symbols = false,
     ) {
         $this->min = max(1, $min);
-        $this->max = $max ? max($this->min, $max) : null;
     }
 
     public function isValid(mixed $value): bool
@@ -32,10 +29,6 @@ final readonly class Password implements Rule
         }
 
         if (strlen($value) < $this->min) {
-            return false;
-        }
-
-        if ($this->max !== null && strlen($value) > $this->max) {
             return false;
         }
 
