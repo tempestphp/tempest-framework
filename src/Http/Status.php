@@ -49,7 +49,7 @@ enum Status: int
     case GONE = 410;
     case LENGTH_REQUIRED = 411;
     case PRECONDITION_FAILED = 412;
-    case PAYLOAD_TOO_LARGE = 413;
+    case CONTENT_TOO_LARGE = 413;
     case URI_TOO_LONG = 414;
     case UNSUPPORTED_MEDIA_TYPE = 415;
     case RANGE_NOT_SATISFIABLE = 416;
