@@ -2,59 +2,60 @@ name: Quality Control
 
 on:
   push:
-    branches: [main, fix-brent-bugs-v2]
+    branches: [main]
 
 jobs:
-#  validate-composer:
-#    name: Validate Composer File
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: 8.3
-#          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-#          coverage: none
-#
-#      - name: Validate Composer
-#        run: composer validate
-#
-#  style:
-#    name: Fix Styling
-#    runs-on: ubuntu-latest
-#    steps:
-#      -   name: Checkout code
-#          uses: actions/checkout@v4
-#
-#      -   name: Run PHP-CS-Fixer
-#          uses: docker://oskarstark/php-cs-fixer-ga
-#          with:
-#            args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v
-#
-#      -   name: Commit Changes
-#          uses: stefanzweifel/git-auto-commit-action@v5
-#          with:
-#            commit_message: Fixes styling.
-#  phpstan:
-#    name: Perform Static Analysis
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: 8.3
-#          coverage: none
-#
-#      - name: Install composer dependencies
-#        uses: ramsey/composer-install@v2
-#
-#      - name: Run PHPStan
-#        run: vendor/bin/phpstan --error-format=github
+  validate-composer:
+    name: Validate Composer File
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate
+
+  style:
+    name: Fix Styling
+    runs-on: ubuntu-latest
+    steps:
+      -   name: Checkout code
+          uses: actions/checkout@v4
+
+      -   name: Run PHP-CS-Fixer
+          uses: docker://oskarstark/php-cs-fixer-ga
+          with:
+            args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v
+
+      -   name: Commit Changes
+          uses: stefanzweifel/git-auto-commit-action@v5
+          with:
+            commit_message: Fixes styling.
+
+  phpstan:
+    name: Perform Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan --error-format=github
 
   phpunit:
     runs-on: ${{ matrix.os }}
@@ -93,7 +94,6 @@ jobs:
         run: |
           cp .env.example .env
           php ./tempest discovery:status
-          php ./tempest routes
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
