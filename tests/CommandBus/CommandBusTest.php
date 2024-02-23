@@ -9,6 +9,7 @@ use function Tempest\command;
 use Tempest\Commands\CommandBus;
 use Tempest\Commands\CommandBusConfig;
 use Tempest\Commands\CommandBusMiddleware;
+use Tempest\Commands\CommandHandlerNotFound;
 use Tests\Tempest\TestCase;
 
 class CommandBusTest extends TestCase
@@ -37,6 +38,14 @@ class CommandBusTest extends TestCase
         command(new MyCommand());
 
         $this->assertTrue(MyCommandBusMiddleware::$hit);
+    }
+
+    /** @test */
+    public function unknown_handler_throws_exception()
+    {
+        $this->expectException(CommandHandlerNotFound::class);
+
+        command(new class () {});
     }
 }
 
