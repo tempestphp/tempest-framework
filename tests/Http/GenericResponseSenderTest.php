@@ -13,6 +13,8 @@ class GenericResponseSenderTest extends TestCase
 {
     public function test_sending()
     {
+        ob_start();
+
         $response = new GenericResponse(
             status: Status::CREATED,
             body: '{"key": "value"}',
@@ -22,5 +24,7 @@ class GenericResponseSenderTest extends TestCase
         $responseSender = new GenericResponseSender();
 
         $this->assertSame($response, $responseSender->send($response));
+
+        ob_get_clean();
     }
 }
