@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
+use InvalidArgumentException;
 use Tempest\Validation\Rule;
 
 #[Attribute]
@@ -14,6 +15,9 @@ final readonly class Count implements Rule
         private ?int $min = null,
         private ?int $max = null,
     ) {
+        if($min === null && $max === null) {
+            throw new InvalidArgumentException("At least one of min or max must be provided");
+        }
     }
 
     public function isValid(mixed $value): bool
@@ -36,10 +40,6 @@ final readonly class Count implements Rule
             return "Array should contain no less than {$this->min} items";
         }
 
-        if ($this->max) {
-            return "Array should contain no more than {$this->max} items";
-        }
-
-        return '';
+        return "Array should contain no more than {$this->max} items";
     }
 }
