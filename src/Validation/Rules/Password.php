@@ -53,6 +53,31 @@ final readonly class Password implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid password";
+        $messages = ["at least {$this->min} characters"];
+
+        if ($this->mixedCase) {
+            $messages[] = 'at least one uppercase and one lowercase letter';
+        }
+        if ($this->numbers) {
+            $messages[] = 'at least one number';
+        }
+        if ($this->letters) {
+            $messages[] = 'at least one letter';
+        }
+        if ($this->symbols) {
+            $messages[] = 'at least one symbol';
+        }
+
+        return 'Value should contain ' . $this->natural_language_join($messages);
+    }
+
+    private function natural_language_join(array $list)
+    {
+        $last = array_pop($list);
+        if ($list) {
+            return implode(', ', $list) . ' ' . 'and' . ' ' . $last;
+        }
+
+        return $last;
     }
 }

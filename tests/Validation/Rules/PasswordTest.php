@@ -65,6 +65,24 @@ class PasswordTest extends TestCase
     public function test_message()
     {
         $rule = new Password();
-        $this->assertSame('Value should be a valid password', $rule->message());
+        $this->assertSame('Value should contain at least 12 characters', $rule->message());
+
+        $rule = new Password(min: 4);
+        $this->assertSame('Value should contain at least 4 characters', $rule->message());
+
+        $rule = new Password(mixedCase: true);
+        $this->assertSame('Value should contain at least 12 characters and at least one uppercase and one lowercase letter', $rule->message());
+
+        $rule = new Password(letters: true);
+        $this->assertSame('Value should contain at least 12 characters and at least one letter', $rule->message());
+
+        $rule = new Password(numbers: true);
+        $this->assertSame('Value should contain at least 12 characters and at least one number', $rule->message());
+
+        $rule = new Password(symbols: true);
+        $this->assertSame('Value should contain at least 12 characters and at least one symbol', $rule->message());
+
+        $rule = new Password(min: 4, mixedCase: true, letters: true, numbers: true, symbols: true);
+        $this->assertSame('Value should contain at least 4 characters, at least one uppercase and one lowercase letter, at least one number, at least one letter and at least one symbol', $rule->message());
     }
 }
