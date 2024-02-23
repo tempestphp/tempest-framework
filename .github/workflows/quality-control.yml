@@ -38,6 +38,7 @@ jobs:
           uses: stefanzweifel/git-auto-commit-action@v5
           with:
             commit_message: Fixes styling.
+
   phpstan:
     name: Perform Static Analysis
     runs-on: ubuntu-latest

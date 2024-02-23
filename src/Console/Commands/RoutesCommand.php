@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
+use Tempest\Http\Route;
 use Tempest\Http\Router;
 
 final readonly class RoutesCommand
@@ -23,18 +24,28 @@ final readonly class RoutesCommand
     )]
     public function list(): void
     {
-        /** @var \Tempest\Http\Route[] $sortedRoutes */
-        $sortedRoutes = [];
+        /**
+         * Here we flatten the multidimensional array and then run
+         * this array through a custom sort function that sorts
+         * first by URI and then by method name.
+         *
+         * @var \Tempest\Http\Route[] $routes
+         */
+        $routes = array_merge([], ...array_values($this->router->getRoutes()));
 
-        foreach($this->router->getRoutes() as $routesForMethod) {
-            foreach ($routesForMethod as $uri => $route) {
-                $sortedRoutes[$uri] = $route;
+        usort($routes, function (Route $a, Route $b) {
+            if ($a->uri !== $b->uri) {
+                return $a->uri < $b->uri ? -1 : 1;
             }
-        }
 
-        ksort($sortedRoutes);
+            if ($a->method === $b->method) {
+                return 0;
+            }
 
-        foreach ($sortedRoutes as $route) {
+            return $a->method->name < $b->method->name ? -1 : 1;
+        });
+
+        foreach ($routes as $route) {
             $this->console->writeln(implode(' ', [
                 ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
                 ConsoleStyle::FG_DARK_BLUE($route->uri),
