@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Application;
 
-use JsonException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
+use Tempest\Application\Exceptions\KernelException;
 use Tempest\Commands\CommandBus;
 use Tempest\Commands\GenericCommandBus;
 use Tempest\Console\ConsoleFormatter;
@@ -27,7 +27,6 @@ use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
 use Throwable;
-use function Tempest\env;
 use function Tempest\path;
 
 final readonly class Kernel
@@ -153,21 +152,19 @@ final readonly class Kernel
     private function discoverInstalledPackageLocations(): void
     {
         $composerPath = path($this->root, 'vendor/composer');
-        $installed = path($composerPath, 'installed.json');
+        $installedPath = path($composerPath, 'installed.json');
 
-        if (is_file($installed)) {
-            $installed = $this->loadJsonFile($installed);
+        $installedJson = $this->loadJsonFile($installedPath);
+        $packages = $installedJson['packages'] ?? [];
+        foreach ($packages as $package) {
+            $packagePath = path($composerPath, $package['install-path']);
 
-            foreach ($installed['packages'] ?? [] as $package) {
-                $packagePath = realpath(path($composerPath, $package['install-path']));
-
-                if (isset($package['require']['tempest/framework'], $package['autoload']['psr-4'])
-                    && is_array($package['autoload']['psr-4'])
-                ) {
-                    foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
-                        $namespacePath = path($packagePath, $namespacePath);
-                        $this->addDiscoveryLocation($namespace, $namespacePath);
-                    }
+            $requiresTempest = isset($package['require']['tempest/framework']);
+            $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
+            if ($requiresTempest && $hasPsr4Namespaces) {
+                foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
+                    $namespacePath = path($packagePath, $namespacePath);
+                    $this->addDiscoveryLocation($namespace, $namespacePath);
                 }
             }
         }
@@ -177,13 +174,8 @@ final readonly class Kernel
     {
         $composer = $this->loadJsonFile(path($this->root, 'composer.json'));
 
-        $autoloads = [$composer['autoload']['psr-4'] ?? []];
-        if (env('ENVIRONMENT') === 'production') {
-            $autoloads[] = $composer['autoload']['psr-4'] ?? [];
-        }
-        $autoload = array_merge(...$autoloads);
-
-        foreach ($autoload as $namespace => $path) {
+        $namespaceMap = $composer['autoload']['psr-4'] ?? [];
+        foreach ($namespaceMap as $namespace => $path) {
             $path = path($this->root, $path);
             $this->addDiscoveryLocation($namespace, $path);
         }
@@ -199,7 +191,11 @@ final readonly class Kernel
 
     private function loadJsonFile(string $path): array
     {
-        return json_decode(file_get_contents($path), true)
-               ?? throw new JsonException('Cannot read json file: ' . str_replace($this->root, './', $path));
+        if (!is_file($path)) {
+            $relativePath = str_replace($this->root, './', $path);
+            throw new KernelException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
+        }
+
+        return json_decode(file_get_contents($path), true);
     }
 }
