@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Commands;
 
 use Tests\Tempest\TestCase;

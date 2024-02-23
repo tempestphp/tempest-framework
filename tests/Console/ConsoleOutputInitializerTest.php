@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console;
 
 use Tempest\Application\Application;
@@ -13,16 +15,17 @@ use Tests\Tempest\TestCase;
 class ConsoleOutputInitializerTest extends TestCase
 {
     /** @test */
-    public function test_in_console_application() 
+    public function test_in_console_application()
     {
         $initializer = new ConsoleOutputInitializer();
 
         $this->container->singleton(Application::class, fn () => new ConsoleApplication([], $this->container));
-        
+
         $consoleOutput = $initializer->initialize('', $this->container);
 
         $this->assertInstanceOf(GenericConsoleOutput::class, $consoleOutput);
     }
+
     /** @test */
     public function test_in_http_application()
     {
