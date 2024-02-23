@@ -24,9 +24,6 @@ final readonly class RoutesCommand
     )]
     public function list(): void
     {
-        /** @var \Tempest\Http\Route[] $sortedRoutes */
-        $sortedRoutes = [];
-
         /**
          * Here we flatten the multidimensional array and then run
          * this array through a custom sort function that sorts
