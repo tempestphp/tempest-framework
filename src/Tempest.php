@@ -25,7 +25,7 @@ final readonly class Tempest
             $dotenv = Dotenv::createUnsafeImmutable($root);
             $dotenv->load();
         } catch (InvalidPathException) {
-            die("Missing .env file in {$root}" . PHP_EOL);
+            // Do nothing, only avoid the exception making the app crash
         }
 
         $appConfig = $createAppConfig();
