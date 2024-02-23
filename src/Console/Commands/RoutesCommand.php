@@ -28,7 +28,9 @@ final readonly class RoutesCommand
         $sortedRoutes = [];
 
         /**
-         * Flattens the multi-dimensional array.
+         * Here we flatten the multidimensional array and then run
+         * this array through a custom sort function that sorts
+         * first by URI and then by method name.
          *
          * @var \Tempest\Http\Route[] $routes
          */
