@@ -66,7 +66,6 @@ final readonly class Kernel
             ->singleton(CommandBus::class, fn () => $container->get(GenericCommandBus::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
-            ->addInitializer(new ResponseSenderInitializer())
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());
 
