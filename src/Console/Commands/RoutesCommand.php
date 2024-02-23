@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
+use Tempest\Http\Route;
 use Tempest\Http\Router;
 
 final readonly class RoutesCommand
@@ -26,17 +27,26 @@ final readonly class RoutesCommand
         /** @var \Tempest\Http\Route[] $sortedRoutes */
         $sortedRoutes = [];
 
-        foreach($this->router->getRoutes() as $routesForMethod) {
-            foreach ($routesForMethod as $uri => $route) {
-                $sortedRoutes[$uri] = $route;
+        /**
+         * Flattens the multi-dimensional array.
+         *
+         * @var \Tempest\Http\Route[] $routes
+         */
+        $routes = array_merge([], ...array_values($this->router->getRoutes()));
+
+        usort($routes, function (Route $a, Route $b) {
+            if ($a->uri !== $b->uri) {
+                return $a->uri < $b->uri ? -1 : 1;
             }
-        }
 
-        var_dump($sortedRoutes);
+            if ($a->method === $b->method) {
+                return 0;
+            }
 
-        ksort($sortedRoutes);
+            return $a->method->name < $b->method->name ? -1 : 1;
+        });
 
-        foreach ($sortedRoutes as $route) {
+        foreach ($routes as $route) {
             $this->console->writeln(implode(' ', [
                 ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
                 ConsoleStyle::FG_DARK_BLUE($route->uri),
