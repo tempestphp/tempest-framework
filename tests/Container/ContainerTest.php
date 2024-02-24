@@ -214,19 +214,22 @@ class CallContainerObjectE
 class BuiltinArrayClass
 {
     public function __construct(public array $anArray)
-    {}
+    {
+    }
 }
 
 class BuiltinTypesWithDefaultsClass
 {
     public function __construct(
         public string $aString = 'This is a default value',
-    ) {}
+    ) {
+    }
 }
 
 class OptionalTypesClass
 {
     public function __construct(
         public ?string $aString
-    ) {}
+    ) {
+    }
 }
