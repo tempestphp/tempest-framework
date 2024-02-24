@@ -85,8 +85,6 @@ final class GenericContainer implements Container
             // If the original value can be passed to this parameter without type errors,
             // we'll simply use it. However, if the value can't be passed,
             // we'll try to resolve the required dependency from the container.
-            // TODO: this is only used for route model binding, perhaps it's better
-            //       to move this check to the router instead?
             if (
                 is_a($originalValue, $parameter->getType()->getName())
                 || $parameter->getType()->getName() === gettype($originalValue)
