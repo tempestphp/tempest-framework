@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Container;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
@@ -92,6 +93,67 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
     }
+
+    /**
+     * @test
+     */
+    public function arrays_are_automatically_created()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var BuiltinArrayClass $class
+         */
+        $class = $container->get(BuiltinArrayClass::class);
+
+        $this->assertIsArray($class->anArray);
+        $this->assertEmpty($class->anArray);
+    }
+
+    /**
+     * @test
+     */
+    public function builtin_defaults_are_used()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var BuiltinTypesWithDefaultsClass $class
+         */
+        $class = $container->get(BuiltinTypesWithDefaultsClass::class);
+
+        $this->assertSame('This is a default value', $class->aString);
+    }
+
+    /**
+     * @test
+     */
+    public function optional_types_resolve_to_null()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var OptionalTypesClass $class
+         */
+        $class = $container->get(OptionalTypesClass::class);
+
+        $this->assertNull($class->aString);
+    }
+
+    /**
+     * @test
+     */
+    public function union_types_iterate_to_resolution()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var UnionTypesClass $class
+         */
+        $class = $container->get(UnionTypesClass::class);
+
+        $this->assertInstanceOf(DateTime::class, $class->aStringOrDate);
+    }
 }
 
 class ContainerObjectA
@@ -162,5 +224,36 @@ class CallContainerObjectE
     public function method(ContainerObjectE $input): ContainerObjectE
     {
         return $input;
+    }
+}
+
+class BuiltinArrayClass
+{
+    public function __construct(public array $anArray)
+    {
+    }
+}
+
+class BuiltinTypesWithDefaultsClass
+{
+    public function __construct(
+        public string $aString = 'This is a default value',
+    ) {
+    }
+}
+
+class OptionalTypesClass
+{
+    public function __construct(
+        public ?string $aString
+    ) {
+    }
+}
+
+class UnionTypesClass
+{
+    public function __construct(
+        public DateTime $aStringOrDate
+    ) {
     }
 }
