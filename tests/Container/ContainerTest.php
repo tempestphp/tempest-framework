@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Container;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
@@ -138,6 +139,21 @@ class ContainerTest extends TestCase
 
         $this->assertNull($class->aString);
     }
+
+    /**
+     * @test
+     */
+    public function union_types_iterate_to_resolution()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var UnionTypesClass $class
+         */
+        $class = $container->get(UnionTypesClass::class);
+
+        $this->assertInstanceOf(DateTime::class, $class->aStringOrDate);
+    }
 }
 
 class ContainerObjectA
@@ -232,4 +248,11 @@ class OptionalTypesClass
         public ?string $aString
     ) {
     }
+}
+
+class UnionTypesClass
+{
+    public function __construct(
+        public DateTime $aStringOrDate
+    ) {}
 }

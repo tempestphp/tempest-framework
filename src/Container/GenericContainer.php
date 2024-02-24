@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use DateTime;
 use LogicException;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
@@ -185,24 +187,35 @@ final class GenericContainer implements Container
 
     private function autowireDependency(ReflectionParameter $parameter, ContainerLog $log): mixed
     {
+        $parameterType = $parameter->getType();
+
         // If the parameter is a built-in type, immediately skip
         // reflection stuff and attempt to give it a default
         // or null value.
-        if ($parameter->getType()->isBuiltin()) {
+        if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
             return $this->autowireBuiltinDependency($parameter);
-        }
-
-        // If this is a single type, attempt to resolve it.
-        if (! ($parameter->getType() instanceof ReflectionUnionType)) {
-            return $this->resolve($parameter->getType()->getName(), $log);
         }
 
         // If there are multiple possible types, loop through them
         // until we hit a match.
-        foreach ($parameter->getType()->getTypes() as $type) {
-            if ($instance = $this->resolve($type->getName(), $log)) {
-                return $instance;
+        if ($parameterType instanceof ReflectionUnionType) {
+            foreach ($parameterType->getTypes() as $type) {
+                try {
+                    if ($instance = $this->resolve($type->getName(), $log)) {
+                        return $instance;
+                    }
+                } catch (Throwable) {
+                }
             }
+        }
+
+        // If this is a single type, attempt to resolve it.
+        try {
+            return $this->resolve($parameter->getType()->getName(), $log);
+        } catch (Throwable) {}
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
         }
 
         throw new LogicException(
@@ -223,7 +236,7 @@ final class GenericContainer implements Container
             return [];
         }
 
-        if ($parameter->allowsNull()) {
+        if ($parameter->allowsNull() || $parameter->isOptional()) {
             return null;
         }
 
