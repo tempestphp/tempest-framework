@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use DateTime;
 use LogicException;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -212,7 +211,8 @@ final class GenericContainer implements Container
         // If this is a single type, attempt to resolve it.
         try {
             return $this->resolve($parameter->getType()->getName(), $log);
-        } catch (Throwable) {}
+        } catch (Throwable) {
+        }
 
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();

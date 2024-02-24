@@ -254,5 +254,6 @@ class UnionTypesClass
 {
     public function __construct(
         public DateTime $aStringOrDate
-    ) {}
+    ) {
+    }
 }
