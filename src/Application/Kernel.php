@@ -26,8 +26,8 @@ use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
-use Throwable;
 use function Tempest\path;
+use Throwable;
 
 final readonly class Kernel
 {
@@ -191,8 +191,9 @@ final readonly class Kernel
 
     private function loadJsonFile(string $path): array
     {
-        if (!is_file($path)) {
+        if (! is_file($path)) {
             $relativePath = str_replace($this->root, './', $path);
+
             throw new KernelException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
         }
 
