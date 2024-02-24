@@ -92,6 +92,52 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
     }
+
+    /**
+     * @test
+     */
+    public function arrays_are_automatically_created()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var BuiltinArrayClass $class
+         */
+        $class = $container->get(BuiltinArrayClass::class);
+
+        $this->assertIsArray($class->anArray);
+        $this->assertEmpty($class->anArray);
+    }
+
+    /**
+     * @test
+     */
+    public function builtin_defaults_are_used()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var BuiltinTypesWithDefaultsClass $class
+         */
+        $class = $container->get(BuiltinTypesWithDefaultsClass::class);
+
+        $this->assertSame('This is a default value', $class->aString);
+    }
+
+    /**
+     * @test
+     */
+    public function optional_types_resolve_to_null()
+    {
+        $container = new GenericContainer();
+
+        /**
+         * @var OptionalTypesClass $class
+         */
+        $class = $container->get(OptionalTypesClass::class);
+
+        $this->assertNull($class->aString);
+    }
 }
 
 class ContainerObjectA
@@ -163,4 +209,24 @@ class CallContainerObjectE
     {
         return $input;
     }
+}
+
+class BuiltinArrayClass
+{
+    public function __construct(public array $anArray)
+    {}
+}
+
+class BuiltinTypesWithDefaultsClass
+{
+    public function __construct(
+        public string $aString = 'This is a default value',
+    ) {}
+}
+
+class OptionalTypesClass
+{
+    public function __construct(
+        public ?string $aString
+    ) {}
 }

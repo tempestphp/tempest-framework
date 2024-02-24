@@ -216,11 +216,14 @@ final class GenericContainer implements Container
             return $parameter->getDefaultValue();
         }
 
-        if ($parameter->isVariadic()) {
+        if (
+            $parameter->getType()?->getName() === 'array' ||
+            $parameter->isVariadic()
+        ) {
             return [];
         }
 
-        if ($parameter->isOptional()) {
+        if ($parameter->allowsNull()) {
             return null;
         }
 
