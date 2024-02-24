@@ -52,9 +52,9 @@ namespace Tempest {
         return new GenericRequest(Method::GET, $uri, $body);
     }
 
-    function response(string $body = ''): Response
+    function response(string $body = '', Status $status = Status::OK): Response
     {
-        return new GenericResponse(Status::OK, $body);
+        return new GenericResponse($status, $body);
     }
 
     function uri(array|string $action, ...$params): string
