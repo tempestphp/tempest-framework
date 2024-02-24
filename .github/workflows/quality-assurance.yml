@@ -52,7 +52,7 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan --error-format=github
 
-  phpunit:
+  pest:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -86,7 +86,7 @@ jobs:
         run: composer show -D
 
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
+        run: vendor/bin/pest --coverage-clover build/reports/clover.xml --compact
 
       - name: Upload coverage results to Coveralls
         env:
