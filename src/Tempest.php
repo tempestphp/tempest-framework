@@ -6,7 +6,6 @@ namespace Tempest;
 
 use Closure;
 use Dotenv\Dotenv;
-use Dotenv\Exception\InvalidPathException;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
@@ -22,16 +21,12 @@ final readonly class Tempest
 
     public static function boot(string $root, ?Closure $createAppConfig = null): self
     {
-        try {
-            $dotenv = Dotenv::createUnsafeImmutable($root);
-            $dotenv->load();
-        } catch (InvalidPathException) {
-            die("Missing .env file in {$root}" . PHP_EOL);
-        }
+        $dotenv = Dotenv::createUnsafeImmutable($root);
+        $dotenv->safeLoad();
 
         $createAppConfig ??= fn () => new AppConfig(
-            environment: Environment::from(env('ENVIRONMENT')),
-            discoveryCache: env('DISCOVERY_CACHE'),
+            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+            discoveryCache: env('DISCOVERY_CACHE', false),
         );
 
         $appConfig = $createAppConfig();
