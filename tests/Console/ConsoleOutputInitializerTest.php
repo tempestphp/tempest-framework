@@ -21,7 +21,7 @@ class ConsoleOutputInitializerTest extends TestCase
 
         $this->container->singleton(Application::class, fn () => new ConsoleApplication([], $this->container));
 
-        $consoleOutput = $initializer->initialize('', $this->container);
+        $consoleOutput = $initializer->initialize($this->container);
 
         $this->assertInstanceOf(GenericConsoleOutput::class, $consoleOutput);
     }
@@ -33,7 +33,7 @@ class ConsoleOutputInitializerTest extends TestCase
 
         $this->container->singleton(Application::class, fn () => new HttpApplication($this->container));
 
-        $consoleOutput = $initializer->initialize('', $this->container);
+        $consoleOutput = $initializer->initialize($this->container);
 
         $this->assertInstanceOf(NullConsoleOutput::class, $consoleOutput);
     }

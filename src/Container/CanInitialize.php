@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-interface CanInitialize extends Initializer
+interface CanInitialize
 {
     public function canInitialize(string $className): bool;
 }

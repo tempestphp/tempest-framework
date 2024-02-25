@@ -6,19 +6,30 @@ namespace Tempest\Http;
 
 use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
+use Tempest\Container\Initializer;
+use Tempest\Container\RequiresClassName;
 use function Tempest\map;
 use Tempest\Support\ArrayHelper;
 
-final readonly class RequestInitializer implements CanInitialize
+final class RequestInitializer implements Initializer, CanInitialize, RequiresClassName
 {
+    private string $className;
+
     public function canInitialize(string $className): bool
     {
         return is_a($className, Request::class, true);
     }
 
-    public function initialize(string $className, Container $container): Request
+    public function setClassName(string $className): void
+    {
+        $this->className = $className;
+    }
+
+    public function initialize(Container $container): Request
     {
         $server = $container->get(Server::class);
+
+        $className = $this->className;
 
         if ($className === Request::class) {
             $className = GenericRequest::class;

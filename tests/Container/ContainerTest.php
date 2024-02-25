@@ -183,7 +183,7 @@ class ContainerObjectD
 }
 class ContainerObjectDInitializer implements Initializer
 {
-    public function initialize(string $className, Container $container): ContainerObjectD
+    public function initialize(Container $container): ContainerObjectD
     {
         return new ContainerObjectD(prop: 'test');
     }
@@ -196,9 +196,9 @@ class ContainerObjectE
     }
 }
 
-class ContainerObjectEInitializer implements CanInitialize
+class ContainerObjectEInitializer implements Initializer, CanInitialize
 {
-    public function initialize(string $className, Container $container): ContainerObjectE
+    public function initialize(Container $container): ContainerObjectE
     {
         return new ContainerObjectE();
     }

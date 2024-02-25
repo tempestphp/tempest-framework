@@ -15,7 +15,7 @@ final readonly class ServerInitializer implements Initializer, CanInitialize
         return $className === Server::class;
     }
 
-    public function initialize(string $className, Container $container): GenericServer
+    public function initialize(Container $container): GenericServer
     {
         $server = new GenericServer(
             method: Method::tryFrom($_SERVER['REQUEST_METHOD']) ?? Method::GET,

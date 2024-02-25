@@ -118,9 +118,15 @@ final class GenericContainer implements Container
         // Next we check if any of our default initializers
         // can initialize this class.
         if ($initializer = $this->initializerFor($className)) {
+            // Provide the classname of the object we're trying to result
+            // if the initializer requires it
+            if ($initializer instanceof RequiresClassName) {
+                $initializer->setClassName($className);
+            }
+
             $log->add($initializer::class);
 
-            return $initializer->initialize($className, $this);
+            return $initializer->initialize($this);
         }
 
         // Finally, autowire the class.
