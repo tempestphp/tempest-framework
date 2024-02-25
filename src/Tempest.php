@@ -6,12 +6,10 @@ namespace Tempest;
 
 use Closure;
 use Dotenv\Dotenv;
-use Tempest\Application\Application;
+use Dotenv\Exception\InvalidPathException;
 use Tempest\Application\ConsoleApplication;
-use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
-use Tempest\Exceptions\ExceptionHandler;
 
 final readonly class Tempest
 {
@@ -21,16 +19,14 @@ final readonly class Tempest
     ) {
     }
 
-    public static function boot(string $root, ?Closure $createAppConfig = null): self
+    public static function boot(string $root, Closure $createAppConfig): self
     {
-        $dotenv = Dotenv::createUnsafeImmutable($root);
-        $dotenv->safeLoad();
-
-        $createAppConfig ??= fn () => new AppConfig(
-            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            discoveryCache: env('DISCOVERY_CACHE', false),
-            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
-        );
+        try {
+            $dotenv = Dotenv::createUnsafeImmutable($root);
+            $dotenv->load();
+        } catch (InvalidPathException) {
+            die("Missing .env file in {$root}" . PHP_EOL);
+        }
 
         $appConfig = $createAppConfig();
 
@@ -44,35 +40,17 @@ final readonly class Tempest
 
     public function console(): ConsoleApplication
     {
-        $container = $this->kernel->init();
-
-        $application = new ConsoleApplication(
+        return new ConsoleApplication(
             args: $_SERVER['argv'],
-            container: $container,
-            appConfig: $this->appConfig,
+            container: $this->kernel->init(),
         );
-
-        $container->singleton(Application::class, fn () => $application);
-
-        $this->appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
-
-        return $application;
     }
 
     public function http(): HttpApplication
     {
-        $container = $this->kernel->init();
-
-        $application = new HttpApplication(
-            container: $container,
-            appConfig: $this->appConfig,
+        return new HttpApplication(
+            container: $this->kernel->init(),
         );
-
-        $container->singleton(Application::class, fn () => $application);
-
-        $this->appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
-
-        return $application;
     }
 
     public function kernel(): Kernel
