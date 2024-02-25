@@ -10,7 +10,9 @@ use Throwable;
 
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
-    public function __construct(private Console $console) {}
+    public function __construct(private Console $console)
+    {
+    }
 
     public function handle(Throwable $throwable): void
     {
@@ -28,6 +30,6 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ($line['class'] ?? '') . '::' . ($line['function'] ?? ''),
             ]));
         }
-//        throw $throwable;
+        //        throw $throwable;
     }
 }
