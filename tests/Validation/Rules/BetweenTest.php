@@ -2,24 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Between;
 
-class BetweenTest extends TestCase
-{
-    /** @test */
-    public function test_between()
-    {
-        $rule = new Between(min: 0, max: 10);
+test('between', function () {
+	$rule = new Between(min: 0, max: 10);
 
-        $this->assertSame('Value should be between 0 and 10', $rule->message());
+	expect($rule->message())->toBe('Value should be between 0 and 10');
 
-        $this->assertTrue($rule->isValid(0));
-        $this->assertTrue($rule->isValid(10));
-        $this->assertTrue($rule->isValid(5));
-        $this->assertFalse($rule->isValid(11));
-        $this->assertFalse($rule->isValid(-1));
-    }
-}
+	expect($rule->isValid(0))->toBeTrue();
+	expect($rule->isValid(10))->toBeTrue();
+	expect($rule->isValid(5))->toBeTrue();
+	expect($rule->isValid(11))->toBeFalse();
+	expect($rule->isValid(-1))->toBeFalse();
+});

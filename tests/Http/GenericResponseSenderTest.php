@@ -2,29 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Http;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\GenericResponseSender;
 use Tempest\Http\Status;
+use Tests\Tempest\TestCase;
 
-class GenericResponseSenderTest extends TestCase
-{
-    public function test_sending()
-    {
-        ob_start();
+uses(TestCase::class);
 
-        $response = new GenericResponse(
-            status: Status::CREATED,
-            body: '{"key": "value"}',
-            headers: ['Content-Type' => 'application/json']
-        );
+test('sending', function () {
+	ob_start();
 
-        $responseSender = new GenericResponseSender();
+	$response = new GenericResponse(
+		status: Status::CREATED,
+		body: '{"key": "value"}',
+		headers: ['Content-Type' => 'application/json']
+	);
 
-        $this->assertSame($response, $responseSender->send($response));
+	$responseSender = new GenericResponseSender();
 
-        ob_get_clean();
-    }
-}
+	expect($responseSender->send($response))->toBe($response);
+
+	ob_get_clean();
+});

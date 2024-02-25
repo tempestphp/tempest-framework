@@ -2,40 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Events;
-
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;
 use Tempest\Events\EventBus;
 use Tempest\Events\EventBusConfig;
+use Tests\Tempest\Events\MyEventBusMiddleware;
 use Tests\Tempest\TestCase;
 use function Tempest\event;
 
-class EventBusTest extends TestCase
-{
-    /** @test */
-    public function it_works()
-    {
-        $eventBus = $this->container->get(EventBus::class);
+uses(TestCase::class);
 
-        MyEventHandler::$itHappened = false;
+it('works', function () {
+	$eventBus = $this->container->get(EventBus::class);
 
-        $eventBus->dispatch(new ItHappened());
+	MyEventHandler::$itHappened = false;
 
-        $this->assertTrue(MyEventHandler::$itHappened);
-    }
+	$eventBus->dispatch(new ItHappened());
 
-    /** @test */
-    public function event_bus_with_middleware()
-    {
-        MyEventBusMiddleware::$hit = false;
+	expect(MyEventHandler::$itHappened)->toBeTrue();
+});
 
-        $config = $this->container->get(EventBusConfig::class);
+test('event bus with middleware', function () {
+	MyEventBusMiddleware::$hit = false;
 
-        $config->addMiddleware(new MyEventBusMiddleware());
+	$config = $this->container->get(EventBusConfig::class);
 
-        event(new ItHappened());
+	$config->addMiddleware(new MyEventBusMiddleware());
 
-        $this->assertTrue(MyEventBusMiddleware::$hit);
-    }
-}
+	event(new ItHappened());
+
+	expect(MyEventBusMiddleware::$hit)->toBeTrue();
+});

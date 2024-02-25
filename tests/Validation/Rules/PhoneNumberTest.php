@@ -2,32 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\PhoneNumber;
 
-class PhoneNumberTest extends TestCase
-{
-    public function test_phone_number()
-    {
-        $rule = new PhoneNumber();
+test('phone number', function () {
+	$rule = new PhoneNumber();
 
-        $this->assertSame('Value should be a valid phone number', $rule->message());
+	expect($rule->message())->toBe('Value should be a valid phone number');
 
-        $this->assertFalse($rule->isValid('this is not a phone number'));
-        $this->assertFalse($rule->isValid('john.doe@example.com'));
-        $this->assertTrue($rule->isValid('+1 (805) 380-4329'));
-        $this->assertTrue($rule->isValid('+32 0497 88 93 11'));
+	expect($rule->isValid('this is not a phone number'))->toBeFalse();
+	expect($rule->isValid('john.doe@example.com'))->toBeFalse();
+	expect($rule->isValid('+1 (805) 380-4329'))->toBeTrue();
+	expect($rule->isValid('+32 0497 88 93 11'))->toBeTrue();
 
-        $rule = new PhoneNumber('US');
+	$rule = new PhoneNumber('US');
 
-        $this->assertSame('Value should be a valid US phone number', $rule->message());
-        $this->assertTrue($rule->isValid('(805) 380-4329'));
+	expect($rule->message())->toBe('Value should be a valid US phone number');
+	expect($rule->isValid('(805) 380-4329'))->toBeTrue();
 
-        $rule = new PhoneNumber('BE');
+	$rule = new PhoneNumber('BE');
 
-        $this->assertSame('Value should be a valid BE phone number', $rule->message());
-        $this->assertTrue($rule->isValid('0497 88 93 11'));
-    }
-}
+	expect($rule->message())->toBe('Value should be a valid BE phone number');
+	expect($rule->isValid('0497 88 93 11'))->toBeTrue();
+});

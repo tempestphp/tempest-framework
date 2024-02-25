@@ -2,31 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\ShouldBeFalse;
 
-class ShouldBeFalseTest extends TestCase
-{
-    public function test_should_be_false()
-    {
-        $rule = new ShouldBeFalse();
+test('should be false', function () {
+	$rule = new ShouldBeFalse();
 
-        $this->assertFalse($rule->isValid(true));
-        $this->assertFalse($rule->isValid('true'));
-        $this->assertFalse($rule->isValid(1));
-        $this->assertFalse($rule->isValid('1'));
-        $this->assertTrue($rule->isValid(false));
-        $this->assertTrue($rule->isValid('false'));
-        $this->assertTrue($rule->isValid(0));
-        $this->assertTrue($rule->isValid('0'));
-    }
+	expect($rule->isValid(true))->toBeFalse();
+	expect($rule->isValid('true'))->toBeFalse();
+	expect($rule->isValid(1))->toBeFalse();
+	expect($rule->isValid('1'))->toBeFalse();
+	expect($rule->isValid(false))->toBeTrue();
+	expect($rule->isValid('false'))->toBeTrue();
+	expect($rule->isValid(0))->toBeTrue();
+	expect($rule->isValid('0'))->toBeTrue();
+});
 
-    public function test_should_be_false_message()
-    {
-        $rule = new ShouldBeFalse();
+test('should be false message', function () {
+	$rule = new ShouldBeFalse();
 
-        $this->assertSame('Value should represent a boolean false value.', $rule->message());
-    }
-}
+	expect($rule->message())->toBe('Value should represent a boolean false value.');
+});

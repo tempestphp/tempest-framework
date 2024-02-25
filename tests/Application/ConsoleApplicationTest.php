@@ -2,80 +2,53 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Application;
-
 use Tempest\Application\CommandNotFound;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Console\ConsoleOutput;
 use Tests\Tempest\TestCase;
 
-class ConsoleApplicationTest extends TestCase
-{
-    /** @test */
-    public function test_run()
-    {
-        $app = new ConsoleApplication(
-            ['hello:world input'],
-            $this->container
-        );
+uses(TestCase::class);
 
-        $app->run();
+test('run', function () {
+	$app = new ConsoleApplication(
+		['hello:world input'],
+		$this->container
+	);
 
-        /** @var \Tests\Tempest\TestConsoleOutput $output */
-        $output = $this->container->get(ConsoleOutput::class);
+	$app->run();
 
-        $this->assertStringContainsString('Tempest Console', $output->lines[0]);
-    }
+	/** @var \Tests\Tempest\TestConsoleOutput $output */
+	$output = $this->container->get(ConsoleOutput::class);
 
-    /** @test */
-    public function test_unhandled_command()
-    {
-        $this->expectException(CommandNotFound::class);
+	$this->assertStringContainsString('Tempest Console', $output->lines[0]);
+});
 
-        $this->console('unknown');
-    }
+test('unhandled command', function () {
+	$this->expectException(CommandNotFound::class);
 
-    /** @test */
-    public function test_cli_application()
-    {
-        $output = $this->console('hello:world input');
+	$this->console('unknown');
+});
 
-        $this->assertSame(
-            ['Hi', 'input'],
-            $output->lines,
-        );
-    }
+test('cli application', function () {
+	$output = $this->console('hello:world input');
 
-    /** @test */
-    public function test_cli_application_flags()
-    {
-        $output = $this->console('hello:test --flag --optionalValue=1');
+	expect($output->lines)->toBe(['Hi', 'input']);
+});
 
-        $this->assertSame(
-            ['1', 'flag'],
-            $output->lines,
-        );
-    }
+test('cli application flags', function () {
+	$output = $this->console('hello:test --flag --optionalValue=1');
 
-    /** @test */
-    public function test_cli_application_flags_defaults()
-    {
-        $output = $this->console('hello:test');
+	expect($output->lines)->toBe(['1', 'flag']);
+});
 
-        $this->assertSame(
-            ['null', 'no-flag'],
-            $output->lines,
-        );
-    }
+test('cli application flags defaults', function () {
+	$output = $this->console('hello:test');
 
-    /** @test */
-    public function test_failing_command()
-    {
-        $output = $this->console('hello:world');
+	expect($output->lines)->toBe(['null', 'no-flag']);
+});
 
-        $this->assertSame(
-            ['Something went wrong'],
-            $output->lines,
-        );
-    }
-}
+test('failing command', function () {
+	$output = $this->console('hello:world');
+
+	expect($output->lines)->toBe(['Something went wrong']);
+});

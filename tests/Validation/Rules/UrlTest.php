@@ -2,42 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Url;
 
-class UrlTest extends TestCase
-{
-    public function test_url()
-    {
-        $rule = new Url();
+test('url', function () {
+	$rule = new Url();
 
-        $this->assertFalse($rule->isValid('this is not a url'));
-        $this->assertFalse($rule->isValid('https://https://example.com'));
-        $this->assertTrue($rule->isValid('https://example.com'));
-        $this->assertTrue($rule->isValid('http://example.com'));
-    }
+	expect($rule->isValid('this is not a url'))->toBeFalse();
+	expect($rule->isValid('https://https://example.com'))->toBeFalse();
+	expect($rule->isValid('https://example.com'))->toBeTrue();
+	expect($rule->isValid('http://example.com'))->toBeTrue();
+});
 
-    public function test_url_with_restricted_protocols()
-    {
-        $rule = new Url(['https']);
+test('url with restricted protocols', function () {
+	$rule = new Url(['https']);
 
-        $this->assertFalse($rule->isValid('http://example.com'));
-        $this->assertTrue($rule->isValid('https://example.com'));
-    }
+	expect($rule->isValid('http://example.com'))->toBeFalse();
+	expect($rule->isValid('https://example.com'))->toBeTrue();
+});
 
-    public function test_url_with_integer_value()
-    {
-        $rule = new Url();
+test('url with integer value', function () {
+	$rule = new Url();
 
-        $this->assertFalse($rule->isValid(1));
-    }
+	expect($rule->isValid(1))->toBeFalse();
+});
 
-    public function test_url_message()
-    {
-        $rule = new Url();
+test('url message', function () {
+	$rule = new Url();
 
-        $this->assertSame('Value should be a valid URL', $rule->message());
-    }
-}
+	expect($rule->message())->toBe('Value should be a valid URL');
+});

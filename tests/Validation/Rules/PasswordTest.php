@@ -2,87 +2,73 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Password;
 
-class PasswordTest extends TestCase
-{
-    public function test_defaults()
-    {
-        $rule = new Password();
+test('defaults', function () {
+	$rule = new Password();
 
-        $this->assertTrue($rule->isValid('123456789012'));
-        $this->assertTrue($rule->isValid('aaaaaaaaaaaa'));
-    }
+	expect($rule->isValid('123456789012'))->toBeTrue();
+	expect($rule->isValid('aaaaaaaaaaaa'))->toBeTrue();
+});
 
-    public function test_invalid_input()
-    {
-        $rule = new Password();
-        $this->assertFalse($rule->isValid(123456789012));
-        $this->assertFalse($rule->isValid([123456789012]));
-    }
+test('invalid input', function () {
+	$rule = new Password();
+	expect($rule->isValid(123456789012))->toBeFalse();
+	expect($rule->isValid([123456789012]))->toBeFalse();
+});
 
-    public function test_minimum()
-    {
-        $rule = new Password(min: 4);
-        $this->assertTrue($rule->isValid('12345'));
-        $this->assertTrue($rule->isValid('1234'));
-        $this->assertFalse($rule->isValid('123'));
-    }
+test('minimum', function () {
+	$rule = new Password(min: 4);
+	expect($rule->isValid('12345'))->toBeTrue();
+	expect($rule->isValid('1234'))->toBeTrue();
+	expect($rule->isValid('123'))->toBeFalse();
+});
 
-    public function test_mixed_case()
-    {
-        $rule = new Password(mixedCase: true);
-        $this->assertTrue($rule->isValid('abcdEFGHIJKL'));
-        $this->assertFalse($rule->isValid('abcdefghijkl'));
-        $this->assertFalse($rule->isValid('ABCDEFGHIJKL'));
-    }
+test('mixed case', function () {
+	$rule = new Password(mixedCase: true);
+	expect($rule->isValid('abcdEFGHIJKL'))->toBeTrue();
+	expect($rule->isValid('abcdefghijkl'))->toBeFalse();
+	expect($rule->isValid('ABCDEFGHIJKL'))->toBeFalse();
+});
 
-    public function test_letters()
-    {
-        $rule = new Password(letters: true);
-        $this->assertTrue($rule->isValid('12345678901a'));
-        $this->assertFalse($rule->isValid('123456789012'));
-    }
+test('letters', function () {
+	$rule = new Password(letters: true);
+	expect($rule->isValid('12345678901a'))->toBeTrue();
+	expect($rule->isValid('123456789012'))->toBeFalse();
+});
 
-    public function test_numbers()
-    {
-        $rule = new Password(numbers: true);
-        $this->assertTrue($rule->isValid('123456789012'));
-        $this->assertTrue($rule->isValid('1aaaaaaaaaaa'));
-        $this->assertFalse($rule->isValid('abcdefghijkl'));
-    }
+test('numbers', function () {
+	$rule = new Password(numbers: true);
+	expect($rule->isValid('123456789012'))->toBeTrue();
+	expect($rule->isValid('1aaaaaaaaaaa'))->toBeTrue();
+	expect($rule->isValid('abcdefghijkl'))->toBeFalse();
+});
 
-    public function test_symbols()
-    {
-        $rule = new Password(symbols: true);
-        $this->assertTrue($rule->isValid('123456789012@'));
-        $this->assertFalse($rule->isValid('123456789012'));
-    }
+test('symbols', function () {
+	$rule = new Password(symbols: true);
+	expect($rule->isValid('123456789012@'))->toBeTrue();
+	expect($rule->isValid('123456789012'))->toBeFalse();
+});
 
-    public function test_message()
-    {
-        $rule = new Password();
-        $this->assertSame('Value should contain at least 12 characters', $rule->message());
+test('message', function () {
+	$rule = new Password();
+	expect($rule->message())->toBe('Value should contain at least 12 characters');
 
-        $rule = new Password(min: 4);
-        $this->assertSame('Value should contain at least 4 characters', $rule->message());
+	$rule = new Password(min: 4);
+	expect($rule->message())->toBe('Value should contain at least 4 characters');
 
-        $rule = new Password(mixedCase: true);
-        $this->assertSame('Value should contain at least 12 characters and at least one uppercase and one lowercase letter', $rule->message());
+	$rule = new Password(mixedCase: true);
+	expect($rule->message())->toBe('Value should contain at least 12 characters and at least one uppercase and one lowercase letter');
 
-        $rule = new Password(letters: true);
-        $this->assertSame('Value should contain at least 12 characters and at least one letter', $rule->message());
+	$rule = new Password(letters: true);
+	expect($rule->message())->toBe('Value should contain at least 12 characters and at least one letter');
 
-        $rule = new Password(numbers: true);
-        $this->assertSame('Value should contain at least 12 characters and at least one number', $rule->message());
+	$rule = new Password(numbers: true);
+	expect($rule->message())->toBe('Value should contain at least 12 characters and at least one number');
 
-        $rule = new Password(symbols: true);
-        $this->assertSame('Value should contain at least 12 characters and at least one symbol', $rule->message());
+	$rule = new Password(symbols: true);
+	expect($rule->message())->toBe('Value should contain at least 12 characters and at least one symbol');
 
-        $rule = new Password(min: 4, mixedCase: true, letters: true, numbers: true, symbols: true);
-        $this->assertSame('Value should contain at least 4 characters, at least one uppercase and one lowercase letter, at least one number, at least one letter and at least one symbol', $rule->message());
-    }
-}
+	$rule = new Password(min: 4, mixedCase: true, letters: true, numbers: true, symbols: true);
+	expect($rule->message())->toBe('Value should contain at least 4 characters, at least one uppercase and one lowercase letter, at least one number, at least one letter and at least one symbol');
+});

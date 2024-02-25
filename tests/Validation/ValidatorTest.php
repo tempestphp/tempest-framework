@@ -2,21 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
+use Tests\Tempest\Validation\ObjectTobeValidated;
 
-class ValidatorTest extends TestCase
-{
-    /** @test */
-    public function test_validator()
-    {
-        $this->expectException(ValidationException::class);
+test('validator', function () {
+	$this->expectException(ValidationException::class);
 
-        $validator = new Validator();
+	$validator = new Validator();
 
-        $validator->validate(new ObjectTobeValidated(name: 'a'));
-    }
-}
+	$validator->validate(new ObjectTobeValidated(name: 'a'));
+});

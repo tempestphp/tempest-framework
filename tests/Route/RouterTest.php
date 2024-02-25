@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Route;
-
 use App\Controllers\TestController;
 use App\Migrations\CreateAuthorTable;
 use App\Migrations\CreateBookTable;
@@ -13,52 +11,44 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use function Tempest\request;
 use Tests\Tempest\TestCase;
+use function Tempest\request;
 
-class RouterTest extends TestCase
-{
-    /** @test */
-    public function test_dispatch()
-    {
-        $router = $this->container->get(GenericRouter::class);
+uses(TestCase::class);
 
-        $response = $router->dispatch(request('/test'));
+test('dispatch', function () {
+	$router = $this->container->get(GenericRouter::class);
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('test', $response->getBody());
-    }
+	$response = $router->dispatch(request('/test'));
 
-    /** @test */
-    public function test_dispatch_with_parameter()
-    {
-        $router = $this->container->get(GenericRouter::class);
+	expect($response->getStatus())->toEqual(Status::OK);
+	expect($response->getBody())->toEqual('test');
+});
 
-        $response = $router->dispatch(request('/test/1/a'));
+test('dispatch with parameter', function () {
+	$router = $this->container->get(GenericRouter::class);
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('1a', $response->getBody());
-    }
+	$response = $router->dispatch(request('/test/1/a'));
 
-    /** @test */
-    public function test_generate_uri()
-    {
-        $router = $this->container->get(GenericRouter::class);
+	expect($response->getStatus())->toEqual(Status::OK);
+	expect($response->getBody())->toEqual('1a');
+});
 
-        $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
-        $this->assertEquals('/test', $router->toUri(TestController::class));
-    }
+test('generate uri', function () {
+	$router = $this->container->get(GenericRouter::class);
 
-    /** @test */
-    public function test_with_view()
-    {
-        $router = $this->container->get(GenericRouter::class);
+	expect($router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'))->toEqual('/test/1/a');
+	expect($router->toUri(TestController::class))->toEqual('/test');
+});
 
-        $response = $router->dispatch(request('/view'));
+test('with view', function () {
+	$router = $this->container->get(GenericRouter::class);
 
-        $this->assertEquals(Status::OK, $response->getStatus());
+	$response = $router->dispatch(request('/view'));
 
-        $expected = <<<HTML
+	expect($response->getStatus())->toEqual(Status::OK);
+
+	$expected = <<<HTML
 <html lang="en">
 <head>
     <title></title>
@@ -67,38 +57,33 @@ class RouterTest extends TestCase
 </html>
 HTML;
 
-        $this->assertEquals($expected, $response->getBody());
-    }
+	expect($response->getBody())->toEqual($expected);
+});
 
-    /** @test */
-    public function test_route_binding()
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateBookTable::class,
-            CreateAuthorTable::class,
-        );
+test('route binding', function () {
+	$this->migrate(
+		CreateMigrationsTable::class,
+		CreateBookTable::class,
+		CreateAuthorTable::class,
+	);
 
-        Book::create(
-            title: 'Test',
-            author: new Author(name: 'Brent'),
-        );
+	Book::create(
+		title: 'Test',
+		author: new Author(name: 'Brent'),
+	);
 
-        $router = $this->container->get(Router::class);
+	$router = $this->container->get(Router::class);
 
-        $response = $router->dispatch(request('/books/1'));
+	$response = $router->dispatch(request('/books/1'));
 
-        $this->assertSame(Status::OK, $response->getStatus());
-        $this->assertSame('Test', $response->getBody());
-    }
+	expect($response->getStatus())->toBe(Status::OK);
+	expect($response->getBody())->toBe('Test');
+});
 
-    /** @test */
-    public function test_middleware()
-    {
-        $router = $this->container->get(GenericRouter::class);
+test('middleware', function () {
+	$router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(request('/with-middleware'));
+	$response = $router->dispatch(request('/with-middleware'));
 
-        $this->assertEquals(['middleware' => 'from-dependency'], $response->getHeaders());
-    }
-}
+	expect($response->getHeaders())->toEqual(['middleware' => 'from-dependency']);
+});

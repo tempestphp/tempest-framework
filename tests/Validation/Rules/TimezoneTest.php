@@ -2,57 +2,47 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use DateTimeZone;
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Timezone;
 
-class TimezoneTest extends TestCase
-{
-    public function test_timezone()
-    {
-        $rule = new Timezone();
+test('timezone', function () {
+	$rule = new Timezone();
 
-        $this->assertSame('Value should be a valid timezone', $rule->message());
+	expect($rule->message())->toBe('Value should be a valid timezone');
 
-        $this->assertFalse($rule->isValid('invalid_timezone'));
-        $this->assertFalse($rule->isValid('Asia/Sydney'));
-        $this->assertTrue($rule->isValid('America/New_York'));
-        $this->assertTrue($rule->isValid('Europe/London'));
-        $this->assertTrue($rule->isValid('Europe/Paris'));
-        $this->assertTrue($rule->isValid('UTC'));
-    }
+	expect($rule->isValid('invalid_timezone'))->toBeFalse();
+	expect($rule->isValid('Asia/Sydney'))->toBeFalse();
+	expect($rule->isValid('America/New_York'))->toBeTrue();
+	expect($rule->isValid('Europe/London'))->toBeTrue();
+	expect($rule->isValid('Europe/Paris'))->toBeTrue();
+	expect($rule->isValid('UTC'))->toBeTrue();
+});
 
-    public function test_timezone_with_country_code()
-    {
-        $rule = new Timezone(DateTimeZone::PER_COUNTRY, 'AU');
+test('timezone with country code', function () {
+	$rule = new Timezone(DateTimeZone::PER_COUNTRY, 'AU');
 
-        $this->assertFalse($rule->isValid('America/New_York'));
-        $this->assertTrue($rule->isValid('Australia/Sydney'));
-        $this->assertTrue($rule->isValid('Australia/Melbourne'));
+	expect($rule->isValid('America/New_York'))->toBeFalse();
+	expect($rule->isValid('Australia/Sydney'))->toBeTrue();
+	expect($rule->isValid('Australia/Melbourne'))->toBeTrue();
 
-        $rule = new Timezone(DateTimeZone::PER_COUNTRY, 'US');
+	$rule = new Timezone(DateTimeZone::PER_COUNTRY, 'US');
 
-        $this->assertFalse($rule->isValid('Europe/Paris'));
-        $this->assertTrue($rule->isValid('America/New_York'));
-        $this->assertTrue($rule->isValid('America/Los_Angeles'));
-        $this->assertTrue($rule->isValid('America/Chicago'));
-    }
+	expect($rule->isValid('Europe/Paris'))->toBeFalse();
+	expect($rule->isValid('America/New_York'))->toBeTrue();
+	expect($rule->isValid('America/Los_Angeles'))->toBeTrue();
+	expect($rule->isValid('America/Chicago'))->toBeTrue();
+});
 
-    public function test_timezone_with_group()
-    {
-        $rule = new Timezone(DateTimeZone::ASIA);
+test('timezone with group', function () {
+	$rule = new Timezone(DateTimeZone::ASIA);
 
-        $this->assertFalse($rule->isValid('Africa/Nairobi'));
-        $this->assertTrue($rule->isValid('Asia/Tokyo'));
-        $this->assertTrue($rule->isValid('Asia/Hong_Kong'));
-        $this->assertTrue($rule->isValid('Asia/Singapore'));
+	expect($rule->isValid('Africa/Nairobi'))->toBeFalse();
+	expect($rule->isValid('Asia/Tokyo'))->toBeTrue();
+	expect($rule->isValid('Asia/Hong_Kong'))->toBeTrue();
+	expect($rule->isValid('Asia/Singapore'))->toBeTrue();
 
-        $rule = new Timezone(DateTimeZone::INDIAN);
+	$rule = new Timezone(DateTimeZone::INDIAN);
 
-        $this->assertFalse($rule->isValid('Europe/Paris'));
-        $this->assertTrue($rule->isValid('Indian/Reunion'));
-        $this->assertTrue($rule->isValid('Indian/Comoro'));
-    }
-}
+	expect($rule->isValid('Europe/Paris'))->toBeFalse();
+	expect($rule->isValid('Indian/Reunion'))->toBeTrue();
+	expect($rule->isValid('Indian/Comoro'))->toBeTrue();
+});

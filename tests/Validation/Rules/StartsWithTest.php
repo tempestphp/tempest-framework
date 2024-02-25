@@ -2,23 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\StartsWith;
 
-class StartsWithTest extends TestCase
-{
-    /** @test */
-    public function test_starts_with()
-    {
-        $rule = new StartsWith(needle: 'ab');
+test('starts with', function () {
+	$rule = new StartsWith(needle: 'ab');
 
-        $this->assertSame('Value should start with ab', $rule->message());
+	expect($rule->message())->toBe('Value should start with ab');
 
-        $this->assertTrue($rule->isValid('ab'));
-        $this->assertTrue($rule->isValid('abc'));
-        $this->assertFalse($rule->isValid('a'));
-        $this->assertFalse($rule->isValid('3434'));
-    }
-}
+	expect($rule->isValid('ab'))->toBeTrue();
+	expect($rule->isValid('abc'))->toBeTrue();
+	expect($rule->isValid('a'))->toBeFalse();
+	expect($rule->isValid('3434'))->toBeFalse();
+});

@@ -2,23 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
 use Tempest\Validation\Rules\Lowercase;
 use Tests\Tempest\TestCase;
 
-class LowercaseTest extends TestCase
-{
-    public function test_lowercase()
-    {
-        $rule = new Lowercase();
+uses(TestCase::class);
 
-        $this->assertSame('Value should be a lowercase string', $rule->message());
+test('lowercase', function () {
+	$rule = new Lowercase();
 
-        $this->assertTrue($rule->isValid('abc'));
-        $this->assertTrue($rule->isValid('àbç'));
-        $this->assertFalse($rule->isValid('ABC'));
-        $this->assertFalse($rule->isValid('ÀBÇ'));
-        $this->assertFalse($rule->isValid('AbC'));
-    }
-}
+	expect($rule->message())->toBe('Value should be a lowercase string');
+
+	expect($rule->isValid('abc'))->toBeTrue();
+	expect($rule->isValid('àbç'))->toBeTrue();
+	expect($rule->isValid('ABC'))->toBeFalse();
+	expect($rule->isValid('ÀBÇ'))->toBeFalse();
+	expect($rule->isValid('AbC'))->toBeFalse();
+});

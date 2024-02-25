@@ -2,20 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Alpha;
 
-class AlphaTest extends TestCase
-{
-    public function test_alpha()
-    {
-        $rule = new Alpha();
+test('alpha', function () {
+	$rule = new Alpha();
 
-        $this->assertSame('Value should only contain alphabetic characters', $rule->message());
-        $this->assertFalse($rule->isValid('string123'));
-        $this->assertTrue($rule->isValid('string'));
-        $this->assertTrue($rule->isValid('STRING'));
-    }
-}
+	expect($rule->message())->toBe('Value should only contain alphabetic characters');
+	expect($rule->isValid('string123'))->toBeFalse();
+	expect($rule->isValid('string'))->toBeTrue();
+	expect($rule->isValid('STRING'))->toBeTrue();
+});

@@ -2,34 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Boolean;
 
-class BooleanTest extends TestCase
-{
-    public function test_boolean()
-    {
-        $rule = new Boolean();
+test('boolean', function () {
+	$rule = new Boolean();
 
-        $this->assertTrue($rule->isValid(true));
-        $this->assertTrue($rule->isValid('true'));
-        $this->assertTrue($rule->isValid(1));
-        $this->assertTrue($rule->isValid('1'));
-        $this->assertTrue($rule->isValid(false));
-        $this->assertTrue($rule->isValid('false'));
-        $this->assertTrue($rule->isValid(0));
-        $this->assertTrue($rule->isValid('0'));
-        $this->assertFalse($rule->isValid(5));
-        $this->assertFalse($rule->isValid(2.5));
-        $this->assertFalse($rule->isValid('string'));
-    }
+	expect($rule->isValid(true))->toBeTrue();
+	expect($rule->isValid('true'))->toBeTrue();
+	expect($rule->isValid(1))->toBeTrue();
+	expect($rule->isValid('1'))->toBeTrue();
+	expect($rule->isValid(false))->toBeTrue();
+	expect($rule->isValid('false'))->toBeTrue();
+	expect($rule->isValid(0))->toBeTrue();
+	expect($rule->isValid('0'))->toBeTrue();
+	expect($rule->isValid(5))->toBeFalse();
+	expect($rule->isValid(2.5))->toBeFalse();
+	expect($rule->isValid('string'))->toBeFalse();
+});
 
-    public function test_boolean_message()
-    {
-        $rule = new Boolean();
+test('boolean message', function () {
+	$rule = new Boolean();
 
-        $this->assertSame('Value should represent a boolean value', $rule->message());
-    }
-}
+	expect($rule->message())->toBe('Value should represent a boolean value');
+});

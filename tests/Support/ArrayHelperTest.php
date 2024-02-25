@@ -2,92 +2,59 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Support;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Support\ArrayHelper;
+use Tests\Tempest\TestCase;
 
-class ArrayHelperTest extends TestCase
-{
-    /** @test */
-    public function unwrap_single_key()
-    {
-        $this->assertSame(
-            ['a' => 'a'],
-            (new ArrayHelper())->unwrap(['a' => 'a']),
-        );
-    }
+uses(TestCase::class);
 
-    /** @test */
-    public function unwrap_nested_key()
-    {
-        $this->assertSame(
-            [
-                'a' => [
-                    'b' => 'ab',
-                ],
-            ],
-            (new ArrayHelper())->unwrap(['a.b' => 'ab']),
-        );
-    }
+test('unwrap single key', function () {
+	expect((new ArrayHelper())->unwrap(['a' => 'a']))->toBe(['a' => 'a']);
+});
 
-    /** @test */
-    public function unwrap_several_items()
-    {
-        $this->assertSame(
-            ['a' => 'a', 'b' => 'b'],
-            (new ArrayHelper())->unwrap(['a' => 'a', 'b' => 'b']),
-        );
-    }
+test('unwrap nested key', function () {
+	expect((new ArrayHelper())->unwrap(['a.b' => 'ab']))->toBe([
+		'a' => [
+			'b' => 'ab',
+		],
+	]);
+});
 
-    /** @test */
-    public function unwrap_nested_key_multiple_items()
-    {
-        $this->assertSame(
-            [
-                'a' => [
-                    'x',
-                    'y',
-                ],
-            ],
-            (new ArrayHelper())->unwrap(['a.0' => 'x', 'a.1' => 'y']),
-        );
-    }
+test('unwrap several items', function () {
+	expect((new ArrayHelper())->unwrap(['a' => 'a', 'b' => 'b']))->toBe(['a' => 'a', 'b' => 'b']);
+});
 
-    /** @test */
-    public function unwrap_real()
-    {
-        $this->assertSame(
-            [
-                'author' => [
-                    'name' => 'Brent',
-                    'books' => [
-                        ['title' => 'a'],
-                        ['title' => 'b'],
-                    ],
-                ],
-            ],
-            (new ArrayHelper())->unwrap([
-                'author.name' => 'Brent',
-                'author.books.0.title' => 'a',
-                'author.books.1.title' => 'b',
-            ]),
-        );
-    }
+test('unwrap nested key multiple items', function () {
+	expect((new ArrayHelper())->unwrap(['a.0' => 'x', 'a.1' => 'y']))->toBe([
+		'a' => [
+			'x',
+			'y',
+		],
+	]);
+});
 
-    /** @test */
-    public function to_array_with_nested_property()
-    {
-        $this->assertSame(
-            [
-                'a' => [
-                    'b' => 'ab',
-                ],
-            ],
-            (new ArrayHelper())->toArray(
-                key: 'a.b',
-                value: 'ab',
-            ),
-        );
-    }
-}
+test('unwrap real', function () {
+	expect((new ArrayHelper())->unwrap([
+		'author.name' => 'Brent',
+		'author.books.0.title' => 'a',
+		'author.books.1.title' => 'b',
+	]))->toBe([
+		'author' => [
+			'name' => 'Brent',
+			'books' => [
+				['title' => 'a'],
+				['title' => 'b'],
+			],
+		],
+	]);
+});
+
+test('to array with nested property', function () {
+	expect((new ArrayHelper())->toArray(
+		key: 'a.b',
+		value: 'ab',
+	))->toBe([
+		'a' => [
+			'b' => 'ab',
+		],
+	]);
+});

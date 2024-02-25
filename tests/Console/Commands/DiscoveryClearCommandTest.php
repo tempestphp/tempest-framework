@@ -2,24 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Console\Commands;
-
 use Tempest\AppConfig;
+use Tests\Tempest\Console\Commands\MyDiscovery;
 use Tests\Tempest\TestCase;
 
-class DiscoveryClearCommandTest extends TestCase
-{
-    /** @test */
-    public function it_clears_discovery_cache()
-    {
-        $appConfig = $this->container->get(AppConfig::class);
+uses(TestCase::class);
 
-        MyDiscovery::$cacheCleared = false;
+it('clears discovery cache', function () {
+	$appConfig = $this->container->get(AppConfig::class);
 
-        $appConfig->discoveryClasses = [MyDiscovery::class];
+	MyDiscovery::$cacheCleared = false;
 
-        $this->console('discovery:clear');
+	$appConfig->discoveryClasses = [MyDiscovery::class];
 
-        $this->assertTrue(MyDiscovery::$cacheCleared);
-    }
-}
+	$this->console('discovery:clear');
+
+	expect(MyDiscovery::$cacheCleared)->toBeTrue();
+});

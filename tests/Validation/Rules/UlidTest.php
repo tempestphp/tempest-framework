@@ -2,24 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Ulid;
 
-class UlidTest extends TestCase
-{
-    public function test_ulid()
-    {
-        $rule = new Ulid();
+test('ulid', function () {
+	$rule = new Ulid();
 
-        $this->assertSame('Value should be a valid ULID', $rule->message());
+	expect($rule->message())->toBe('Value should be a valid ULID');
 
-        $this->assertTrue($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZA'));
-        $this->assertTrue($rule->isValid('01fv8ce8p3xvztvk0S6f05z5za'));
-        $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZU'));       // contains invalid character
-        $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05'));           // too short
-        $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZAAAAA'));   // too long
-
-    }
-}
+	expect($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZA'))->toBeTrue();
+	expect($rule->isValid('01fv8ce8p3xvztvk0S6f05z5za'))->toBeTrue();
+	expect($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZU'))->toBeFalse();
+	// contains invalid character
+	expect($rule->isValid('01FV8CE8P3XVZTVK0S6F05'))->toBeFalse();
+	// too short
+	expect($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZAAAAA'))->toBeFalse();
+	// too long
+});

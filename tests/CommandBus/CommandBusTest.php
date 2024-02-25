@@ -2,48 +2,41 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\CommandBus;
-
 use App\Commands\MyCommand;
 use Tempest\Commands\CommandBus;
 use Tempest\Commands\CommandBusConfig;
 use Tempest\Commands\CommandHandlerNotFound;
+use Tests\Tempest\CommandBus\MyCommandBusMiddleware;
 use Tests\Tempest\TestCase;
 use function Tempest\command;
 
-class CommandBusTest extends TestCase
-{
-    /** @test */
-    public function command_handlers_are_auto_discovered()
-    {
-        $command = new MyCommand();
+uses(TestCase::class);
 
-        command($command);
+test('command handlers are auto discovered', function () {
+	$command = new MyCommand();
 
-        $bus = $this->container->get(CommandBus::class);
+	command($command);
 
-        $this->assertEquals([$command], $bus->getHistory());
-    }
+	$bus = $this->container->get(CommandBus::class);
 
-    /** @test */
-    public function command_bus_with_middleware()
-    {
-        MyCommandBusMiddleware::$hit = false;
+	expect($bus->getHistory())->toEqual([$command]);
+});
 
-        $config = $this->container->get(CommandBusConfig::class);
+test('command bus with middleware', function () {
+	MyCommandBusMiddleware::$hit = false;
 
-        $config->addMiddleware(new MyCommandBusMiddleware());
+	$config = $this->container->get(CommandBusConfig::class);
 
-        command(new MyCommand());
+	$config->addMiddleware(new MyCommandBusMiddleware());
 
-        $this->assertTrue(MyCommandBusMiddleware::$hit);
-    }
+	command(new MyCommand());
 
-    /** @test */
-    public function unknown_handler_throws_exception()
-    {
-        $this->expectException(CommandHandlerNotFound::class);
+	expect(MyCommandBusMiddleware::$hit)->toBeTrue();
+});
 
-        command(new class () {});
-    }
-}
+test('unknown handler throws exception', function () {
+	$this->expectException(CommandHandlerNotFound::class);
+
+	command(new class () {
+	});
+});

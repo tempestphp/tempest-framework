@@ -2,152 +2,132 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Container;
-
-use DateTime;
-use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
+use Tests\Tempest\Container\BuiltinArrayClass;
+use Tests\Tempest\Container\BuiltinTypesWithDefaultsClass;
+use Tests\Tempest\Container\CallContainerObjectE;
+use Tests\Tempest\Container\ContainerObjectA;
+use Tests\Tempest\Container\ContainerObjectB;
+use Tests\Tempest\Container\ContainerObjectC;
+use Tests\Tempest\Container\ContainerObjectD;
+use Tests\Tempest\Container\ContainerObjectE;
+use Tests\Tempest\Container\ContainerObjectEInitializer;
+use Tests\Tempest\Container\OptionalTypesClass;
+use Tests\Tempest\Container\SingletonClass;
+use Tests\Tempest\Container\UnionTypesClass;
+use Tests\Tempest\TestCase;
 
-class ContainerTest extends TestCase
-{
-    /** @test */
-    public function get_with_autowire()
-    {
-        $container = new GenericContainer();
+uses(TestCase::class);
 
-        $b = $container->get(ContainerObjectB::class);
+test('get with autowire', function () {
+	$container = new GenericContainer();
 
-        $this->assertInstanceOf(ContainerObjectB::class, $b);
-        $this->assertInstanceOf(ContainerObjectA::class, $b->a);
-    }
+	$b = $container->get(ContainerObjectB::class);
 
-    /** @test */
-    public function get_with_definition()
-    {
-        $container = new GenericContainer();
+	expect($b)->toBeInstanceOf(ContainerObjectB::class);
+	expect($b->a)->toBeInstanceOf(ContainerObjectA::class);
+});
 
-        $container->register(
-            ContainerObjectC::class,
-            fn () => new ContainerObjectC(prop: 'test'),
-        );
+test('get with definition', function () {
+	$container = new GenericContainer();
 
-        $c = $container->get(ContainerObjectC::class);
+	$container->register(
+		ContainerObjectC::class,
+		fn() => new ContainerObjectC(prop: 'test'),
+	);
 
-        $this->assertEquals('test', $c->prop);
-    }
+	$c = $container->get(ContainerObjectC::class);
 
-    /** @test */
-    public function get_with_initializer()
-    {
-        $container = new GenericContainer();
+	expect($c->prop)->toEqual('test');
+});
 
-        $d = $container->get(ContainerObjectD::class);
+test('get with initializer', function () {
+	$container = new GenericContainer();
 
-        $this->assertEquals('test', $d->prop);
-    }
+	$d = $container->get(ContainerObjectD::class);
 
-    /** @test */
-    public function test_singleton()
-    {
-        $container = new GenericContainer();
+	expect($d->prop)->toEqual('test');
+});
 
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+test('singleton', function () {
+	$container = new GenericContainer();
 
-        $instance = $container->get(SingletonClass::class);
+	$container->singleton(SingletonClass::class, fn() => new SingletonClass());
 
-        $this->assertEquals(1, $instance::$count);
+	$instance = $container->get(SingletonClass::class);
 
-        $instance = $container->get(SingletonClass::class);
+	expect($instance::$count)->toEqual(1);
 
-        $this->assertEquals(1, $instance::$count);
-    }
+	$instance = $container->get(SingletonClass::class);
 
-    /** @test */
-    public function initialize_with_can_initializer()
-    {
-        $container = new GenericContainer();
+	expect($instance::$count)->toEqual(1);
+});
 
-        $container->addInitializer(new ContainerObjectEInitializer());
+test('initialize with can initializer', function () {
+	$container = new GenericContainer();
 
-        $object = $container->get(ContainerObjectE::class);
+	$container->addInitializer(new ContainerObjectEInitializer());
 
-        $this->assertInstanceOf(ContainerObjectE::class, $object);
-    }
+	$object = $container->get(ContainerObjectE::class);
 
-    /** @test */
-    public function call_tries_to_transform_unmatched_values()
-    {
-        $container = new GenericContainer();
-        $container->addInitializer(new ContainerObjectEInitializer());
-        $classToCall = new CallContainerObjectE();
+	expect($object)->toBeInstanceOf(ContainerObjectE::class);
+});
 
-        $return = $container->call($classToCall, 'method', input: '1');
-        $this->assertInstanceOf(ContainerObjectE::class, $return);
-        $this->assertSame('default', $return->id);
+test('call tries to transform unmatched values', function () {
+	$container = new GenericContainer();
+	$container->addInitializer(new ContainerObjectEInitializer());
+	$classToCall = new CallContainerObjectE();
 
-        $return = $container->call($classToCall, 'method', input: new ContainerObjectE('other'));
-        $this->assertInstanceOf(ContainerObjectE::class, $return);
-        $this->assertSame('other', $return->id);
-    }
+	$return = $container->call($classToCall, 'method', input: '1');
+	expect($return)->toBeInstanceOf(ContainerObjectE::class);
+	expect($return->id)->toBe('default');
 
-    /**
-     * @test
-     */
-    public function arrays_are_automatically_created()
-    {
-        $container = new GenericContainer();
+	$return = $container->call($classToCall, 'method', input: new ContainerObjectE('other'));
+	expect($return)->toBeInstanceOf(ContainerObjectE::class);
+	expect($return->id)->toBe('other');
+});
 
-        /**
-         * @var BuiltinArrayClass $class
-         */
-        $class = $container->get(BuiltinArrayClass::class);
+test('arrays are automatically created', function () {
+	$container = new GenericContainer();
 
-        $this->assertIsArray($class->anArray);
-        $this->assertEmpty($class->anArray);
-    }
+	/**
+	 * @var BuiltinArrayClass $class
+	 */
+	$class = $container->get(BuiltinArrayClass::class);
 
-    /**
-     * @test
-     */
-    public function builtin_defaults_are_used()
-    {
-        $container = new GenericContainer();
+	expect($class->anArray)->toBeArray();
+	expect($class->anArray)->toBeEmpty();
+});
 
-        /**
-         * @var BuiltinTypesWithDefaultsClass $class
-         */
-        $class = $container->get(BuiltinTypesWithDefaultsClass::class);
+test('builtin defaults are used', function () {
+	$container = new GenericContainer();
 
-        $this->assertSame('This is a default value', $class->aString);
-    }
+	/**
+	 * @var BuiltinTypesWithDefaultsClass $class
+	 */
+	$class = $container->get(BuiltinTypesWithDefaultsClass::class);
 
-    /**
-     * @test
-     */
-    public function optional_types_resolve_to_null()
-    {
-        $container = new GenericContainer();
+	expect($class->aString)->toBe('This is a default value');
+});
 
-        /**
-         * @var OptionalTypesClass $class
-         */
-        $class = $container->get(OptionalTypesClass::class);
+test('optional types resolve to null', function () {
+	$container = new GenericContainer();
 
-        $this->assertNull($class->aString);
-    }
+	/**
+	 * @var OptionalTypesClass $class
+	 */
+	$class = $container->get(OptionalTypesClass::class);
 
-    /**
-     * @test
-     */
-    public function union_types_iterate_to_resolution()
-    {
-        $container = new GenericContainer();
+	expect($class->aString)->toBeNull();
+});
 
-        /**
-         * @var UnionTypesClass $class
-         */
-        $class = $container->get(UnionTypesClass::class);
+test('union types iterate to resolution', function () {
+	$container = new GenericContainer();
 
-        $this->assertInstanceOf(DateTime::class, $class->aStringOrDate);
-    }
-}
+	/**
+	 * @var UnionTypesClass $class
+	 */
+	$class = $container->get(UnionTypesClass::class);
+
+	expect($class->aStringOrDate)->toBeInstanceOf(DateTime::class);
+});

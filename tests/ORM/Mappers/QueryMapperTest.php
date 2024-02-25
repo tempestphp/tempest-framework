@@ -2,68 +2,57 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\ORM\Mappers;
-
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
-
+use Tests\Tempest\TestCase;
 use function Tempest\make;
 
-use Tests\Tempest\TestCase;
+uses(TestCase::class);
 
-class QueryMapperTest extends TestCase
-{
-    /** @test */
-    public function create_query()
-    {
-        $author = Author::new(name: 'test');
+test('create query', function () {
+	$author = Author::new(name: 'test');
 
-        $query = make(Query::class)->from($author);
+	$query = make(Query::class)->from($author);
 
-        $table = Author::table();
+	$table = Author::table();
 
-        $this->assertSame("INSERT INTO {$table} (name) VALUES (:name);", $query->getSql());
-        $this->assertSame(['name' => 'test'], $query->bindings);
-    }
+	expect($query->getSql())->toBe("INSERT INTO {$table} (name) VALUES (:name);");
+	expect($query->bindings)->toBe(['name' => 'test']);
+});
 
-    /** @test */
-    public function create_query_with_nested_relation()
-    {
-        $book = Book::new(
-            title: 'Book Title',
-            author: Author::new(
-                name: 'Author Name',
-            ),
-        );
+test('create query with nested relation', function () {
+	$book = Book::new(
+		title: 'Book Title',
+		author: Author::new(
+			name: 'Author Name',
+		),
+	);
 
-        $query = make(Query::class)->from($book);
+	$query = make(Query::class)->from($book);
 
-        $bookTable = Book::table();
+	$bookTable = Book::table();
 
-        $this->assertSame("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);", $query->getSql());
-        $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
-        $this->assertSame('Book Title', $query->bindings['title']);
+	expect($query->getSql())->toBe("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);");
+	expect(array_keys($query->bindings))->toBe(['title', 'author_id']);
+	expect($query->bindings['title'])->toBe('Book Title');
 
-        $authorTable = Author::table();
+	$authorTable = Author::table();
 
-        $authorQuery = $query->bindings['author_id'];
-        $this->assertInstanceOf(Query::class, $authorQuery);
-        $this->assertSame("INSERT INTO {$authorTable} (name) VALUES (:name);", $authorQuery->getSql());
-        $this->assertSame('Author Name', $authorQuery->bindings['name']);
-    }
+	$authorQuery = $query->bindings['author_id'];
+	expect($authorQuery)->toBeInstanceOf(Query::class);
+	expect($authorQuery->getSql())->toBe("INSERT INTO {$authorTable} (name) VALUES (:name);");
+	expect($authorQuery->bindings['name'])->toBe('Author Name');
+});
 
-    /** @test */
-    public function update_query()
-    {
-        $author = Author::new(id: new Id(1), name: 'other');
+test('update query', function () {
+	$author = Author::new(id: new Id(1), name: 'other');
 
-        $query = make(Query::class)->from($author);
+	$query = make(Query::class)->from($author);
 
-        $table = Author::table();
+	$table = Author::table();
 
-        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = 1;", $query->getSql());
-        $this->assertSame(['name' => 'other'], $query->bindings);
-    }
-}
+	expect($query->getSql())->toBe("UPDATE {$table} SET name = :name WHERE id = 1;");
+	expect($query->bindings)->toBe(['name' => 'other']);
+});

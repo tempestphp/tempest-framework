@@ -2,73 +2,68 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\ORM;
-
 use App\Migrations\CreateAuthorTable;
 use App\Migrations\CreateBookTable;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\ORM\Foo;
+use Tests\Tempest\ORM\FooMigration;
 use Tests\Tempest\TestCase;
 
-class IsModelTest extends TestCase
-{
-    /** @test */
-    public function create_and_update_model()
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            FooMigration::class,
-        );
+uses(TestCase::class);
 
-        $foo = Foo::create(
-            bar: 'baz',
-        );
+test('create and update model', function () {
+	$this->migrate(
+		CreateMigrationsTable::class,
+		FooMigration::class,
+	);
 
-        $this->assertSame('baz', $foo->bar);
-        $this->assertInstanceOf(Id::class, $foo->id);
+	$foo = Foo::create(
+		bar: 'baz',
+	);
 
-        $foo = Foo::find($foo->id);
+	expect($foo->bar)->toBe('baz');
+	expect($foo->id)->toBeInstanceOf(Id::class);
 
-        $this->assertSame('baz', $foo->bar);
-        $this->assertInstanceOf(Id::class, $foo->id);
+	$foo = Foo::find($foo->id);
 
-        $foo->update(
-            bar: 'boo',
-        );
+	expect($foo->bar)->toBe('baz');
+	expect($foo->id)->toBeInstanceOf(Id::class);
 
-        $foo = Foo::find($foo->id);
+	$foo->update(
+		bar: 'boo',
+	);
 
-        $this->assertSame('boo', $foo->bar);
-    }
+	$foo = Foo::find($foo->id);
 
-    /** @test */
-    public function complex_query()
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            CreateAuthorTable::class,
-            CreateBookTable::class,
-        );
+	expect($foo->bar)->toBe('boo');
+});
 
-        $book = Book::new(
-            title: 'Book Title',
-            author: new Author(
-                name: 'Author Name',
-            ),
-        );
+test('complex query', function () {
+	$this->migrate(
+		CreateMigrationsTable::class,
+		CreateAuthorTable::class,
+		CreateBookTable::class,
+	);
 
-        $book = $book->save();
+	$book = Book::new(
+		title: 'Book Title',
+		author: new Author(
+			name: 'Author Name',
+		),
+	);
 
-        $book = Book::find($book->id, relations: [
-            Author::class,
-        ]);
+	$book = $book->save();
 
-        $this->assertEquals(1, $book->id->id);
-        $this->assertSame('Book Title', $book->title);
-        $this->assertInstanceOf(Author::class, $book->author);
-        $this->assertSame('Author Name', $book->author->name);
-        $this->assertEquals(1, $book->author->id->id);
-    }
-}
+	$book = Book::find($book->id, relations: [
+		Author::class,
+	]);
+
+	expect($book->id->id)->toEqual(1);
+	expect($book->title)->toBe('Book Title');
+	expect($book->author)->toBeInstanceOf(Author::class);
+	expect($book->author->name)->toBe('Author Name');
+	expect($book->author->id->id)->toEqual(1);
+});

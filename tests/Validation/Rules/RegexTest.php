@@ -2,27 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\RegEx;
 
-class RegexTest extends TestCase
-{
-    public function test_regex_rule()
-    {
-        $rule = new RegEx('/^[aA][bB]$/');
+test('regex rule', function () {
+	$rule = new RegEx('/^[aA][bB]$/');
 
-        $this->assertSame(
-            'The value must match the regular expression pattern: /^[aA][bB]$/',
-            $rule->message()
-        );
+	expect($rule->message())->toBe('The value must match the regular expression pattern: /^[aA][bB]$/');
 
-        $this->assertFalse($rule->isValid('cd'));
-        $this->assertFalse($rule->isValid('za'));
+	expect($rule->isValid('cd'))->toBeFalse();
+	expect($rule->isValid('za'))->toBeFalse();
 
-        $this->assertTrue($rule->isValid('ab'));
-        $this->assertTrue($rule->isValid('AB'));
-        $this->assertTrue($rule->isValid('Ab'));
-    }
-}
+	expect($rule->isValid('ab'))->toBeTrue();
+	expect($rule->isValid('AB'))->toBeTrue();
+	expect($rule->isValid('Ab'))->toBeTrue();
+});

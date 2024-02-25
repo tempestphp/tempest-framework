@@ -2,28 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Validation\Rules;
-
-use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IPAddress;
 
-class IPAddressTest extends TestCase
-{
-    public function test_ip_address()
-    {
-        $rule = new IPAddress();
+test('ip address', function () {
+	$rule = new IPAddress();
 
-        $this->assertSame('Value should be a valid IP Address', $rule->message());
-        $this->assertTrue($rule->isValid('192.168.0.1'));
-        $this->assertTrue($rule->isValid('10.0.0.1'));
-        $this->assertTrue($rule->isValid('172.16.0.1'));
-        $this->assertTrue($rule->isValid('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
-        $this->assertTrue($rule->isValid('2001:db8:85a3::8a2e:370:7334'));
+	expect($rule->message())->toBe('Value should be a valid IP Address');
+	expect($rule->isValid('192.168.0.1'))->toBeTrue();
+	expect($rule->isValid('10.0.0.1'))->toBeTrue();
+	expect($rule->isValid('172.16.0.1'))->toBeTrue();
+	expect($rule->isValid('2001:0db8:85a3:0000:0000:8a2e:0370:7334'))->toBeTrue();
+	expect($rule->isValid('2001:db8:85a3::8a2e:370:7334'))->toBeTrue();
 
-        $this->assertFalse($rule->isValid('256.0.0.1'));
-        $this->assertFalse($rule->isValid('300.168.0.1'));
-        $this->assertFalse($rule->isValid('192.168.0'));
-        $this->assertFalse($rule->isValid('192.168.0.1.2'));
-        $this->assertFalse($rule->isValid('192.168.0.1/24'));
-    }
-}
+	expect($rule->isValid('256.0.0.1'))->toBeFalse();
+	expect($rule->isValid('300.168.0.1'))->toBeFalse();
+	expect($rule->isValid('192.168.0'))->toBeFalse();
+	expect($rule->isValid('192.168.0.1.2'))->toBeFalse();
+	expect($rule->isValid('192.168.0.1/24'))->toBeFalse();
+});

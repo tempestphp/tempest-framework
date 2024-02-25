@@ -2,174 +2,154 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Mapper;
-
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\Mapper\ObjectFactoryA;
+use Tests\Tempest\Mapper\ObjectFactoryAMigration;
+use Tests\Tempest\Mapper\ObjectFactoryWithValidation;
 use Tests\Tempest\TestCase;
 use function Tempest\make;
 use function Tempest\map;
 
-class MapperTest extends TestCase
-{
-    /** @test */
-    public function make_object_from_class_string()
-    {
-        $author = make(Author::class)->from([
-            'id' => 1,
-            'name' => 'test',
-        ]);
+uses(TestCase::class);
 
-        $this->assertSame('test', $author->name);
-        $this->assertSame(1, $author->id->id);
-    }
+test('make object from class string', function () {
+	$author = make(Author::class)->from([
+		'id' => 1,
+		'name' => 'test',
+	]);
 
-    /** @test */
-    public function make_collection()
-    {
-        $authors = make(Author::class)->collection()->from([
-            [
-                'id' => 1,
-                'name' => 'test',
-            ],
-        ]);
+	expect($author->name)->toBe('test');
+	expect($author->id->id)->toBe(1);
+});
 
-        $this->assertCount(1, $authors);
-        $this->assertSame('test', $authors[0]->name);
-        $this->assertSame(1, $authors[0]->id->id);
-    }
+test('make collection', function () {
+	$authors = make(Author::class)->collection()->from([
+		[
+			'id' => 1,
+			'name' => 'test',
+		],
+	]);
 
-    /** @test */
-    public function make_object_from_existing_object()
-    {
-        $author = Author::new(
-            name: 'original',
-        );
+	expect($authors)->toHaveCount(1);
+	expect($authors[0]->name)->toBe('test');
+	expect($authors[0]->id->id)->toBe(1);
+});
 
-        $author = make($author)->from([
-            'id' => 1,
-            'name' => 'other',
-        ]);
+test('make object from existing object', function () {
+	$author = Author::new(
+		name: 'original',
+	);
 
-        $this->assertSame('other', $author->name);
-        $this->assertSame(1, $author->id->id);
-    }
+	$author = make($author)->from([
+		'id' => 1,
+		'name' => 'other',
+	]);
 
-    /** @test */
-    public function make_object_with_map_to()
-    {
-        $author = Author::new(
-            name: 'original',
-        );
+	expect($author->name)->toBe('other');
+	expect($author->id->id)->toBe(1);
+});
 
-        $author = map([
-            'id' => 1,
-            'name' => 'other',
-        ])->to($author);
+test('make object with map to', function () {
+	$author = Author::new(
+		name: 'original',
+	);
 
-        $this->assertSame('other', $author->name);
-        $this->assertSame(1, $author->id->id);
-    }
+	$author = map([
+		'id' => 1,
+		'name' => 'other',
+	])->to($author);
 
-    /** @test */
-    public function make_object_with_has_many_relation()
-    {
-        $author = make(Author::class)->from([
-            'name' => 'test',
-            'books' => [
-                ['title' => 'a'],
-                ['title' => 'b'],
-            ],
-        ]);
+	expect($author->name)->toBe('other');
+	expect($author->id->id)->toBe(1);
+});
 
-        $this->assertSame('test', $author->name);
-        $this->assertCount(2, $author->books);
-        $this->assertSame('a', $author->books[0]->title);
-        $this->assertSame('b', $author->books[1]->title);
-        $this->assertSame('test', $author->books[0]->author->name);
-    }
+test('make object with has many relation', function () {
+	$author = make(Author::class)->from([
+		'name' => 'test',
+		'books' => [
+			['title' => 'a'],
+			['title' => 'b'],
+		],
+	]);
 
-    /** @test */
-    public function make_object_with_one_to_one_relation()
-    {
-        $book = make(Book::class)->from([
-            'title' => 'test',
-            'author' => [
-                'name' => 'author',
-            ],
-        ]);
+	expect($author->name)->toBe('test');
+	expect($author->books)->toHaveCount(2);
+	expect($author->books[0]->title)->toBe('a');
+	expect($author->books[1]->title)->toBe('b');
+	expect($author->books[0]->author->name)->toBe('test');
+});
 
-        $this->assertSame('test', $book->title);
-        $this->assertSame('author', $book->author->name);
-        $this->assertSame('test', $book->author->books[0]->title);
-    }
+test('make object with one to one relation', function () {
+	$book = make(Book::class)->from([
+		'title' => 'test',
+		'author' => [
+			'name' => 'author',
+		],
+	]);
 
-    /** @test */
-    public function make_object_with_missing_values_throws_exception()
-    {
-        $this->expectException(MissingValuesException::class);
+	expect($book->title)->toBe('test');
+	expect($book->author->name)->toBe('author');
+	expect($book->author->books[0]->title)->toBe('test');
+});
 
-        make(Book::class)->from([
-            'title' => 'test',
-            'author' => [
-            ],
-        ]);
-    }
+test('make object with missing values throws exception', function () {
+	$this->expectException(MissingValuesException::class);
 
-    /** @test */
-    public function test_caster_on_field()
-    {
-        $object = make(ObjectFactoryA::class)->from([
-            'prop' => [],
-        ]);
+	make(Book::class)->from([
+		'title' => 'test',
+		'author' => [
+		],
+	]);
+});
 
-        $this->assertSame('casted', $object->prop);
-    }
+test('caster on field', function () {
+	$object = make(ObjectFactoryA::class)->from([
+		'prop' => [],
+	]);
 
-    /** @test */
-    public function test_single_with_query()
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            ObjectFactoryAMigration::class,
-        );
+	expect($object->prop)->toBe('casted');
+});
 
-        ObjectFactoryA::create(
-            prop: 'a',
-        );
+test('single with query', function () {
+	$this->migrate(
+		CreateMigrationsTable::class,
+		ObjectFactoryAMigration::class,
+	);
 
-        ObjectFactoryA::create(
-            prop: 'b',
-        );
+	ObjectFactoryA::create(
+		prop: 'a',
+	);
 
-        $a = make(ObjectFactoryA::class)->from(new Query(
-            "SELECT * FROM ObjectFactoryA WHERE id = :id",
-            [
-                'id' => 1,
-            ],
-        ));
+	ObjectFactoryA::create(
+		prop: 'b',
+	);
 
-        $this->assertSame(1, $a->id->id);
-        $this->assertSame('casted', $a->prop);
+	$a = make(ObjectFactoryA::class)->from(new Query(
+		"SELECT * FROM ObjectFactoryA WHERE id = :id",
+		[
+			'id' => 1,
+		],
+	));
 
-        $collection = make(ObjectFactoryA::class)->from(new Query(
-            "SELECT * FROM ObjectFactoryA",
-        ));
+	expect($a->id->id)->toBe(1);
+	expect($a->prop)->toBe('casted');
 
-        $this->assertCount(2, $collection);
-        $this->assertSame('casted', $collection[0]->prop);
-        $this->assertSame('casted', $collection[1]->prop);
-    }
+	$collection = make(ObjectFactoryA::class)->from(new Query(
+		"SELECT * FROM ObjectFactoryA",
+	));
 
-    /** @test */
-    public function test_validation()
-    {
-        $this->expectException(ValidationException::class);
+	expect($collection)->toHaveCount(2);
+	expect($collection[0]->prop)->toBe('casted');
+	expect($collection[1]->prop)->toBe('casted');
+});
 
-        map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
-    }
-}
+test('validation', function () {
+	$this->expectException(ValidationException::class);
+
+	map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
+});
