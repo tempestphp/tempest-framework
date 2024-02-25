@@ -8,8 +8,8 @@ use Tests\Tempest\TestCase;
 uses(TestCase::class);
 
 test('migrate command', function () {
-	$output = $this->console('routes')->asText();
+    $output = $this->console('routes')->asText();
 
-	$this->assertStringContainsString('/create-post', $output);
-	$this->assertStringContainsString(PostController::class, $output);
+    $this->assertStringContainsString('/create-post', $output);
+    $this->assertStringContainsString(PostController::class, $output);
 });

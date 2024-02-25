@@ -10,17 +10,17 @@ use Tests\Tempest\TestCase;
 uses(TestCase::class);
 
 test('sending', function () {
-	ob_start();
+    ob_start();
 
-	$response = new GenericResponse(
-		status: Status::CREATED,
-		body: '{"key": "value"}',
-		headers: ['Content-Type' => 'application/json']
-	);
+    $response = new GenericResponse(
+        status: Status::CREATED,
+        body: '{"key": "value"}',
+        headers: ['Content-Type' => 'application/json']
+    );
 
-	$responseSender = new GenericResponseSender();
+    $responseSender = new GenericResponseSender();
 
-	expect($responseSender->send($response))->toBe($response);
+    expect($responseSender->send($response))->toBe($response);
 
-	ob_get_clean();
+    ob_get_clean();
 });

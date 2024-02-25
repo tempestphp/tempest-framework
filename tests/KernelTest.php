@@ -7,11 +7,11 @@ use Tempest\Application\Kernel;
 use Tempest\Http\RouteConfig;
 
 test('discovery', function () {
-	$kernel = new Kernel(__DIR__ . '/../', new AppConfig());
+    $kernel = new Kernel(__DIR__ . '/../', new AppConfig());
 
-	$container = $kernel->init();
+    $container = $kernel->init();
 
-	$config = $container->get(RouteConfig::class);
+    $config = $container->get(RouteConfig::class);
 
-	expect(count($config->routes) > 1)->toBeTrue();
+    expect(count($config->routes) > 1)->toBeTrue();
 });

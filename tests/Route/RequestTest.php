@@ -13,9 +13,9 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use Tests\Tempest\TestCase;
 use function Tempest\request;
 use function Tempest\uri;
+use Tests\Tempest\TestCase;
 
 uses(TestCase::class);
 

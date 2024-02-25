@@ -6,6 +6,7 @@ namespace Tempest\Application;
 
 use ArgumentCountError;
 use ReflectionMethod;
+use Tempest\AppConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\RenderConsoleCommandOverview;
@@ -17,29 +18,32 @@ final readonly class ConsoleApplication implements Application
     public function __construct(
         private array $args,
         private Container $container,
+        private AppConfig $appConfig,
     ) {
     }
 
     public function run(): void
     {
-        $this->container->singleton(Application::class, fn () => $this);
-
-        $commandName = $this->args[1] ?? null;
-
-        $output = $this->container->get(ConsoleOutput::class);
-
-        if (! $commandName) {
-            $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
-
-            return;
-        }
-
         try {
-            $this->handleCommand($commandName);
-        } catch (Throwable $error) {
-            $output->error($error->getMessage());
+            $commandName = $this->args[1] ?? null;
 
-            throw $error;
+            $output = $this->container->get(ConsoleOutput::class);
+
+            if (! $commandName) {
+                $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
+
+                return;
+            }
+
+            $this->handleCommand($commandName);
+        } catch (Throwable $throwable) {
+            if (! $this->appConfig->enableExceptionHandling) {
+                throw $throwable;
+            }
+
+            foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
+                $exceptionHandler->handle($throwable);
+            }
         }
     }
 

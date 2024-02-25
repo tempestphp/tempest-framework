@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Container;
 
 class SingletonClass
 {
-	public static int $count = 0;
+    public static int $count = 0;
 
-	public function __construct()
-	{
-		self::$count += 1;
-	}
+    public function __construct()
+    {
+        self::$count += 1;
+    }
 }

@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\CommandBus;
 
 use Tempest\Commands\CommandBusMiddleware;
 
 class MyCommandBusMiddleware implements CommandBusMiddleware
 {
-	public static bool $hit = false;
+    public static bool $hit = false;
 
-	public function __invoke(object $command, callable $next): void
-	{
-		self::$hit = true;
+    public function __invoke(object $command, callable $next): void
+    {
+        self::$hit = true;
 
-		$next($command);
-	}
+        $next($command);
+    }
 }

@@ -4,32 +4,32 @@ declare(strict_types=1);
 
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;
+use function Tempest\event;
 use Tempest\Events\EventBus;
 use Tempest\Events\EventBusConfig;
-use Tests\Tempest\Events\MyEventBusMiddleware;
+use Tests\Tempest\Events\Fixtures\MyEventBusMiddleware;
 use Tests\Tempest\TestCase;
-use function Tempest\event;
 
 uses(TestCase::class);
 
 it('works', function () {
-	$eventBus = $this->container->get(EventBus::class);
+    $eventBus = $this->container->get(EventBus::class);
 
-	MyEventHandler::$itHappened = false;
+    MyEventHandler::$itHappened = false;
 
-	$eventBus->dispatch(new ItHappened());
+    $eventBus->dispatch(new ItHappened());
 
-	expect(MyEventHandler::$itHappened)->toBeTrue();
+    expect(MyEventHandler::$itHappened)->toBeTrue();
 });
 
 test('event bus with middleware', function () {
-	MyEventBusMiddleware::$hit = false;
+    MyEventBusMiddleware::$hit = false;
 
-	$config = $this->container->get(EventBusConfig::class);
+    $config = $this->container->get(EventBusConfig::class);
 
-	$config->addMiddleware(new MyEventBusMiddleware());
+    $config->addMiddleware(new MyEventBusMiddleware());
 
-	event(new ItHappened());
+    event(new ItHappened());
 
-	expect(MyEventBusMiddleware::$hit)->toBeTrue();
+    expect(MyEventBusMiddleware::$hit)->toBeTrue();
 });

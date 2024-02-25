@@ -24,7 +24,7 @@ final readonly class TestServerInitializer implements Initializer, CanInitialize
         return $className === Server::class;
     }
 
-    public function initialize(string $className, Container $container): object
+    public function initialize(Container $container): object
     {
         return new TestServer(
             method: $this->method,
