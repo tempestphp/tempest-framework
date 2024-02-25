@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\CommandBus;
 
 use App\Commands\MyCommand;
-use function Tempest\command;
 use Tempest\Commands\CommandBus;
 use Tempest\Commands\CommandBusConfig;
-use Tempest\Commands\CommandBusMiddleware;
 use Tempest\Commands\CommandHandlerNotFound;
 use Tests\Tempest\TestCase;
+use function Tempest\command;
 
 class CommandBusTest extends TestCase
 {
@@ -46,17 +45,5 @@ class CommandBusTest extends TestCase
         $this->expectException(CommandHandlerNotFound::class);
 
         command(new class () {});
-    }
-}
-
-class MyCommandBusMiddleware implements CommandBusMiddleware
-{
-    public static bool $hit = false;
-
-    public function __invoke(object $command, callable $next): void
-    {
-        self::$hit = true;
-
-        $next($command);
     }
 }

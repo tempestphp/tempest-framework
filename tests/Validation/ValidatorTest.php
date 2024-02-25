@@ -6,8 +6,6 @@ namespace Tests\Tempest\Validation;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Validation\IsValidated;
-use Tempest\Validation\Rules\Length;
 use Tempest\Validation\Validator;
 
 class ValidatorTest extends TestCase
@@ -20,14 +18,5 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
 
         $validator->validate(new ObjectTobeValidated(name: 'a'));
-    }
-}
-
-class ObjectTobeValidated implements IsValidated
-{
-    public function __construct(
-        #[Length(min: 2, max: 3)]
-        public string $name,
-    ) {
     }
 }

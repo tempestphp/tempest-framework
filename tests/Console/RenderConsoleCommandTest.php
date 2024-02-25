@@ -6,10 +6,10 @@ namespace Tests\Tempest\Console;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use function Tempest\attribute;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\RenderConsoleCommand;
+use function Tempest\attribute;
 
 class RenderConsoleCommandTest extends TestCase
 {
@@ -37,19 +37,5 @@ class RenderConsoleCommandTest extends TestCase
             'test <path> [times=1] [--force=false] - description',
             $string
         );
-    }
-}
-
-class MyConsole
-{
-    #[ConsoleCommand(
-        name: 'test',
-        description: 'description',
-    )]
-    public function handle(
-        string $path,
-        int $times = 1,
-        bool $force = false,
-    ) {
     }
 }

@@ -6,19 +6,13 @@ namespace Tests\Tempest\Mapper;
 
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
-use Tempest\Database\Migration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\TestCase;
 use function Tempest\make;
 use function Tempest\map;
-use Tempest\ORM\Attributes\CastWith;
-use Tempest\ORM\Caster;
-use Tempest\ORM\Exceptions\MissingValuesException;
-use Tempest\ORM\IsModel;
-use Tempest\ORM\Model;
-use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Validation\Rules\Length;
-use Tests\Tempest\TestCase;
 
 class MapperTest extends TestCase
 {
@@ -177,50 +171,5 @@ class MapperTest extends TestCase
         $this->expectException(ValidationException::class);
 
         map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
-    }
-}
-
-class ObjectFactoryA implements Model
-{
-    use IsModel;
-
-    #[CastWith(ObjectFactoryACaster::class)]
-    public string $prop;
-}
-
-class ObjectFactoryWithValidation implements Model
-{
-    use IsModel;
-
-    #[Length(min: 2)]
-    public string $prop;
-}
-
-class ObjectFactoryACaster implements Caster
-{
-    public function cast(mixed $input): string
-    {
-        return 'casted';
-    }
-}
-
-class ObjectFactoryAMigration implements Migration
-{
-    public function getName(): string
-    {
-        return 'object-a';
-    }
-
-    public function up(): Query|null
-    {
-        return new Query("CREATE TABLE ObjectFactoryA (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `prop` TEXT
-        )");
-    }
-
-    public function down(): Query|null
-    {
-        return null;
     }
 }

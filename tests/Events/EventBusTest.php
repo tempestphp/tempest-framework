@@ -6,11 +6,10 @@ namespace Tests\Tempest\Events;
 
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;
-use function Tempest\event;
 use Tempest\Events\EventBus;
 use Tempest\Events\EventBusConfig;
-use Tempest\Events\EventBusMiddleware;
 use Tests\Tempest\TestCase;
+use function Tempest\event;
 
 class EventBusTest extends TestCase
 {
@@ -38,18 +37,5 @@ class EventBusTest extends TestCase
         event(new ItHappened());
 
         $this->assertTrue(MyEventBusMiddleware::$hit);
-    }
-}
-
-
-class MyEventBusMiddleware implements EventBusMiddleware
-{
-    public static bool $hit = false;
-
-    public function __invoke(object $event, callable $next): void
-    {
-        self::$hit = true;
-
-        $next($event);
     }
 }
