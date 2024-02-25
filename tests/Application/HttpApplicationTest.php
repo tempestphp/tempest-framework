@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Application;
 
+use Tempest\AppConfig;
 use Tempest\Application\HttpApplication;
 use Tests\Tempest\TestCase;
 
@@ -12,7 +13,10 @@ class HttpApplicationTest extends TestCase
     /** @test */
     public function test_http_application_run()
     {
-        $app = new HttpApplication($this->container);
+        $app = new HttpApplication(
+            $this->container,
+            $this->container->get(AppConfig::class),
+        );
 
         ob_start();
         $app->run();

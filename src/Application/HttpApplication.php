@@ -16,7 +16,8 @@ final readonly class HttpApplication implements Application
     public function __construct(
         private Container $container,
         private AppConfig $appConfig,
-    ) {}
+    ) {
+    }
 
     public function run(): void
     {

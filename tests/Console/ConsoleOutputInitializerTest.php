@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console;
 
+use Tempest\AppConfig;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
@@ -19,7 +20,11 @@ class ConsoleOutputInitializerTest extends TestCase
     {
         $initializer = new ConsoleOutputInitializer();
 
-        $this->container->singleton(Application::class, fn () => new ConsoleApplication([], $this->container));
+        $this->container->singleton(Application::class, fn () => new ConsoleApplication(
+            [],
+            $this->container,
+            $this->container->get(AppConfig::class),
+        ));
 
         $consoleOutput = $initializer->initialize($this->container);
 
@@ -31,7 +36,10 @@ class ConsoleOutputInitializerTest extends TestCase
     {
         $initializer = new ConsoleOutputInitializer();
 
-        $this->container->singleton(Application::class, fn () => new HttpApplication($this->container));
+        $this->container->singleton(Application::class, fn () => new HttpApplication(
+            $this->container,
+            $this->container->get(AppConfig::class),
+        ));
 
         $consoleOutput = $initializer->initialize($this->container);
 

@@ -70,6 +70,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $application = new ConsoleApplication(
             args: ['tempest', ...explode(' ', $command)],
             container: $this->container,
+            appConfig: $this->container->get(AppConfig::class)
         );
 
         $application->run();

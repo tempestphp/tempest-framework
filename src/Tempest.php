@@ -68,7 +68,7 @@ final readonly class Tempest
         );
 
         $container->singleton(Application::class, fn () => $application);
-        
+
         $this->appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
 
         return $application;
