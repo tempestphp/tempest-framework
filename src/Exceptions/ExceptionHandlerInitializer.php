@@ -17,8 +17,8 @@ final readonly class ExceptionHandlerInitializer implements Initializer
         $application = $container->get(Application::class);
 
         $exceptionHandler = match($application::class) {
-            HttpApplication::class => new HttpExceptionHandler(),
-            ConsoleApplication::class => new ConsoleExceptionHandler(),
+            HttpApplication::class => $container->get(HttpExceptionHandler::class),
+            ConsoleApplication::class => $container->get(ConsoleExceptionHandler::class),
         };
 
         $container->singleton(ExceptionHandler::class, fn () => $exceptionHandler);

@@ -10,6 +10,6 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 {
     public function handle(Throwable $throwable): void
     {
-        // TODO: Implement handle() method.
+        dd($throwable);
     }
 }
