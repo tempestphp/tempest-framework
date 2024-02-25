@@ -6,11 +6,19 @@ namespace Tests\Tempest\Container;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use Tempest\Container\CanInitialize;
-use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Container\InitializedBy;
-use Tempest\Container\Initializer;
+use Tests\Tempest\Container\Fixtures\BuiltinArrayClass;
+use Tests\Tempest\Container\Fixtures\BuiltinTypesWithDefaultsClass;
+use Tests\Tempest\Container\Fixtures\CallContainerObjectE;
+use Tests\Tempest\Container\Fixtures\ContainerObjectA;
+use Tests\Tempest\Container\Fixtures\ContainerObjectB;
+use Tests\Tempest\Container\Fixtures\ContainerObjectC;
+use Tests\Tempest\Container\Fixtures\ContainerObjectD;
+use Tests\Tempest\Container\Fixtures\ContainerObjectE;
+use Tests\Tempest\Container\Fixtures\ContainerObjectEInitializer;
+use Tests\Tempest\Container\Fixtures\OptionalTypesClass;
+use Tests\Tempest\Container\Fixtures\SingletonClass;
+use Tests\Tempest\Container\Fixtures\UnionTypesClass;
 
 class ContainerTest extends TestCase
 {
@@ -153,107 +161,5 @@ class ContainerTest extends TestCase
         $class = $container->get(UnionTypesClass::class);
 
         $this->assertInstanceOf(DateTime::class, $class->aStringOrDate);
-    }
-}
-
-class ContainerObjectA
-{
-}
-
-class ContainerObjectB
-{
-    public function __construct(public ContainerObjectA $a)
-    {
-    }
-}
-
-class ContainerObjectC
-{
-    public function __construct(public string $prop)
-    {
-    }
-}
-
-#[InitializedBy(ContainerObjectDInitializer::class)]
-class ContainerObjectD
-{
-    public function __construct(public string $prop)
-    {
-    }
-}
-class ContainerObjectDInitializer implements Initializer
-{
-    public function initialize(Container $container): ContainerObjectD
-    {
-        return new ContainerObjectD(prop: 'test');
-    }
-}
-
-class ContainerObjectE
-{
-    public function __construct(public string $id = 'default')
-    {
-    }
-}
-
-class ContainerObjectEInitializer implements Initializer, CanInitialize
-{
-    public function initialize(Container $container): ContainerObjectE
-    {
-        return new ContainerObjectE();
-    }
-
-    public function canInitialize(string $className): bool
-    {
-        return $className === ContainerObjectE::class;
-    }
-}
-
-class SingletonClass
-{
-    public static int $count = 0;
-
-    public function __construct()
-    {
-        self::$count += 1;
-    }
-}
-
-class CallContainerObjectE
-{
-    public function method(ContainerObjectE $input): ContainerObjectE
-    {
-        return $input;
-    }
-}
-
-class BuiltinArrayClass
-{
-    public function __construct(public array $anArray)
-    {
-    }
-}
-
-class BuiltinTypesWithDefaultsClass
-{
-    public function __construct(
-        public string $aString = 'This is a default value',
-    ) {
-    }
-}
-
-class OptionalTypesClass
-{
-    public function __construct(
-        public ?string $aString
-    ) {
-    }
-}
-
-class UnionTypesClass
-{
-    public function __construct(
-        public DateTime $aStringOrDate
-    ) {
     }
 }
