@@ -19,6 +19,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected Kernel $kernel;
 
+    protected AppConfig $appConfig;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,9 +31,12 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->kernel = new Kernel(__DIR__ . '/../', new AppConfig(
+        $this->appConfig = new AppConfig(
             discoveryCache: true,
-        ));
+            enableExceptionHandling: false,
+        );
+
+        $this->kernel = new Kernel(__DIR__ . '/../', $this->appConfig);
 
         $this->container = $this->kernel->init();
 

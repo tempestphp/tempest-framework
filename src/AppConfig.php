@@ -23,6 +23,7 @@ final class AppConfig
 
         /** @var \Tempest\Exceptions\ExceptionHandler[] */
         public array $exceptionHandlers = [],
+        public bool $enableExceptionHandling = true,
     ) {
     }
 }

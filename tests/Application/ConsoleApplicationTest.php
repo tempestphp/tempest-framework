@@ -32,8 +32,6 @@ class ConsoleApplicationTest extends TestCase
     /** @test */
     public function test_unhandled_command()
     {
-        // TODO: add `disableExceptionHandling`
-        $this->markTestSkipped();
         $this->expectException(CommandNotFound::class);
 
         $this->console('unknown');

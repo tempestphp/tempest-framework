@@ -30,6 +30,10 @@ final readonly class HttpApplication implements Application
                 $router->dispatch($request),
             );
         } catch (Throwable $throwable) {
+            if (! $this->appConfig->enableExceptionHandling) {
+                throw $throwable;
+            }
+
             foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }

@@ -37,6 +37,10 @@ final readonly class ConsoleApplication implements Application
 
             $this->handleCommand($commandName);
         } catch (Throwable $throwable) {
+            if (! $this->appConfig->enableExceptionHandling) {
+                throw $throwable;
+            }
+
             foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }

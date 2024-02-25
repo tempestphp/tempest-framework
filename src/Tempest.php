@@ -29,6 +29,7 @@ final readonly class Tempest
         $createAppConfig ??= fn () => new AppConfig(
             environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
             discoveryCache: env('DISCOVERY_CACHE', false),
+            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
         );
 
         $appConfig = $createAppConfig();
