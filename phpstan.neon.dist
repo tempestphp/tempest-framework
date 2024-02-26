@@ -1,3 +1,12 @@
+includes:
+    - vendor/phpat/phpat/extension.neon
+
+services:
+	-
+		class: Tests\Tempest\ArchitectureTest
+		tags:
+			- phpat.test
+
 parameters:
 	level: 0
 	paths:

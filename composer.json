@@ -14,7 +14,8 @@
         "phpunit/phpunit": "^10.2",
         "larapack/dd": "^1.1",
         "phpstan/phpstan": "^1.10.0",
-        "friendsofphp/php-cs-fixer": "^3.21"
+        "friendsofphp/php-cs-fixer": "^3.21",
+        "phpat/phpat": "^0.10.14"
     },
     "bin": [
         "tempest"
