@@ -1,6 +1,23 @@
+includes:
+  - vendor/spaze/phpstan-disallowed-calls/extension.neon
 parameters:
-	level: 0
-	paths:
-		- src
-		- app
-		- tests
+  level: 0
+  paths:
+    - src
+    - app
+    - tests
+  disallowedFunctionCalls:
+    -
+      function: 'exec()'
+    -
+      function: 'eval()'
+    -
+      function: 'dd()'
+    -
+      function: 'dump()'
+    -
+      function: 'phpinfo()'
+    -
+      function: 'var_export()'
+    -
+      function: 'var_dump()'
