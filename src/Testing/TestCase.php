@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
+use Tempest\Testing\Console\ConsoleCommandTester;
 use Tempest\Testing\Http\TestsHttpRequests;
 
 abstract class TestCase extends BaseTestCase
@@ -18,6 +19,8 @@ abstract class TestCase extends BaseTestCase
 
     private Container $container;
 
+    protected ConsoleCommandTester $console;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,5 +30,7 @@ abstract class TestCase extends BaseTestCase
         ));
 
         $this->container = $this->kernel->init();
+
+        $this->console = $this->container->get(ConsoleCommandTester::class);
     }
 }
