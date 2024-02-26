@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-interface Container
+use Psr\Container\ContainerInterface;
+
+interface Container extends ContainerInterface
 {
     public function register(string $className, callable $definition): self;
 
@@ -14,10 +16,12 @@ interface Container
 
     /**
      * @template TClassName
-     * @param class-string<TClassName> $className
+     * @param class-string<TClassName> $id
      * @return TClassName
      */
-    public function get(string $className): object;
+    public function get(string $id): object;
+
+    public function has(string $id): bool;
 
     public function call(object $object, string $methodName, mixed ...$params): mixed;
 

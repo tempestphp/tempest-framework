@@ -8,7 +8,8 @@
         "ext-dom": "*",
         "ext-mbstring": "*",
         "giggsey/libphonenumber-for-php": "^8.13",
-        "egulias/email-validator": "^4.0"
+        "egulias/email-validator": "^4.0",
+        "psr/container": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",

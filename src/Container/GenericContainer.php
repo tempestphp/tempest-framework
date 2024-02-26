@@ -52,19 +52,24 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className): object
+    public function get(string $id): object
     {
-        if ($instance = $this->singletons[$className] ?? null) {
+        if ($instance = $this->singletons[$id] ?? null) {
             return $instance;
         }
 
         $log = new ContainerLog();
 
         try {
-            return $this->resolve($className, $log);
+            return $this->resolve($id, $log);
         } catch (Throwable $throwable) {
             throw new ContainerException($log, $throwable);
         }
+    }
+
+    public function has(string $id): bool
+    {
+        return isset($this->singletons[$id]) || isset($this->definitions[$id]);
     }
 
     public function call(object $object, string $methodName, ...$params): mixed
