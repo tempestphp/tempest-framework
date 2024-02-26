@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Testing\Console;
 
 use PHPUnit\Framework\Assert;
@@ -11,7 +13,8 @@ final class TestConsoleHelper
     public function __construct(
         private readonly TestConsoleOutput $output,
         private readonly ConsoleFormatter $formatter
-    ) {}
+    ) {
+    }
 
     public function assertContains(string $text): self
     {

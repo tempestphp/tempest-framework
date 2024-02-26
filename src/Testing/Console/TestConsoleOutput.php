@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Testing\Console;
 
 use Tempest\Console\ConsoleFormatter;
@@ -15,7 +17,8 @@ final class TestConsoleOutput implements ConsoleOutput
     private array $successLines = [];
 
     public function __construct(private readonly ConsoleFormatter $formatter)
-    {}
+    {
+    }
 
     public function write(string $line, ConsoleStyle ...$styles): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Testing\Http;
 
 use Tempest\Container\Container;
@@ -11,7 +13,8 @@ use Tempest\Http\Router;
 final class HttpRouterTester
 {
     public function __construct(private Container $container)
-    {}
+    {
+    }
 
     public function get(string $path, array $headers = []): TestResponseHelper
     {
