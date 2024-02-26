@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http;
 
 use Psr\Http\Client\ClientInterface;
@@ -16,7 +18,8 @@ final class GenericHttpClient implements HttpClient
         private readonly UriFactoryInterface $uriFactory,
         private readonly RequestFactoryInterface $requestFactory,
         private readonly StreamFactoryInterface $streamFactory
-    ) {}
+    ) {
+    }
 
     public function get(string $uri, array $headers = []): ResponseInterface
     {
