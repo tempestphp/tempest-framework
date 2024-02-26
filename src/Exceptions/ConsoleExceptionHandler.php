@@ -25,10 +25,10 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         $this->console->writeln($throwable->getFile() . ':' . $throwable->getLine());
 
         foreach ($throwable->getTrace() as $line) {
-//            $this->console->writeln('');
+            //            $this->console->writeln('');
 
             $this->outputLine($line);
-//            $this->outputPath($line);
+            //            $this->outputPath($line);
         }
     }
 
