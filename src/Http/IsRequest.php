@@ -8,14 +8,14 @@ trait IsRequest
 {
     public Method $method;
     public string $uri;
-    public array $body;
+    public string $body;
     public string $path;
     public ?string $query = null;
 
     public function __construct(
         Method $method,
         string $uri,
-        array $body,
+        string $body,
     ) {
         $this->method = $method;
         $this->uri = $uri;
@@ -35,7 +35,7 @@ trait IsRequest
         return $this;
     }
 
-    public function post(?array $body = null): self
+    public function post(?string $body = null): self
     {
         $this->method = Method::POST;
         $this->body = $body ?? $this->body;
@@ -53,7 +53,7 @@ trait IsRequest
         return $this->uri;
     }
 
-    public function getBody(): array
+    public function getBody(): string
     {
         return $this->body;
     }

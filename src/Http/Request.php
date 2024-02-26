@@ -10,7 +10,7 @@ interface Request
 
     public function getUri(): string;
 
-    public function getBody(): array;
+    public function getBody(): string;
 
     public function getPath(): string;
 

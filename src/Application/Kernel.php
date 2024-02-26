@@ -26,6 +26,7 @@ use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\Router;
 use Tempest\Http\ServerInitializer;
+use Tempest\Mapper\ObjectMapper;
 use function Tempest\path;
 use Throwable;
 
@@ -64,7 +65,6 @@ final readonly class Kernel
             ->singleton(ConsoleOutput::class, fn () => $container->get(GenericConsoleOutput::class))
             ->singleton(ConsoleInput::class, fn () => $container->get(GenericConsoleInput::class))
             ->singleton(CommandBus::class, fn () => $container->get(GenericCommandBus::class))
-            ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());

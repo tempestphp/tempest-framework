@@ -8,8 +8,7 @@ use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\RequiresClassName;
-use function Tempest\map;
-use Tempest\Support\ArrayHelper;
+use Tempest\Mapper\ObjectMapper;
 
 final class RequestInitializer implements Initializer, CanInitialize, RequiresClassName
 {
@@ -25,35 +24,33 @@ final class RequestInitializer implements Initializer, CanInitialize, RequiresCl
         $this->className = $className;
     }
 
+    // TODO: We have a lot of work to do here, but this gets us up and running.
     public function initialize(Container $container): Request
     {
-        $server = $container->get(Server::class);
-
         $className = $this->className;
 
         if ($className === Request::class) {
             $className = GenericRequest::class;
         }
 
-        $decodedUri = rawurldecode($server->getUri());
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+
+        $decodedUri = rawurldecode($uri);
         $parsedUrl = parse_url($decodedUri);
 
         $path = $parsedUrl['path'];
         $query = $parsedUrl['query'] ?? null;
-        $body = (new ArrayHelper())->unwrap($server->getBody());
+        $body = file_get_contents('php://input');
 
-        $request = map(
-            [
-                'method' => $server->getMethod(),
-                'uri' => $server->getUri(),
-                'body' => $body,
-                'path' => $path,
-                'query' => $query,
-                ...$body,
-            ],
-        )->to($className);
+        $request = $container->get(ObjectMapper::class)->withData(            [
+            'method' => isset($_SERVER['REQUEST_METHOD']) ? Method::tryFrom($_SERVER['REQUEST_METHOD']) : Method::GET,
+            'uri' => $uri,
+            'body' => $body,
+            'path' => $path,
+            'query' => $query,
+        ])->to($className);
 
-        $container->singleton($className, fn () => $request);
+        $container->singleton(Request::class, fn () => $request);
 
         return $request;
     }

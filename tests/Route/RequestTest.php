@@ -22,22 +22,6 @@ use Tests\Tempest\TestCase;
 class RequestTest extends TestCase
 {
     /** @test */
-    public function from_container()
-    {
-        $this->server(
-            method: Method::POST,
-            uri: '/test',
-            body: ['test'],
-        );
-
-        $request = $this->container->get(Request::class);
-
-        $this->assertEquals(Method::POST, $request->method);
-        $this->assertEquals('/test', $request->uri);
-        $this->assertEquals(['test'], $request->body);
-    }
-
-    /** @test */
     public function custom_request_test()
     {
         $router = $this->container->get(Router::class);
@@ -53,7 +37,7 @@ class RequestTest extends TestCase
             body: $body,
         );
 
-        $response = $router->dispatch(request('/create-post')->post($body));
+        $response = $router->dispatch(request('/create-post')->post(json_encode($body)));
 
         $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
@@ -78,7 +62,7 @@ class RequestTest extends TestCase
             body: $body,
         );
 
-        $response = $router->dispatch(request($uri)->post($body));
+        $response = $router->dispatch(request($uri)->post(json_encode($body)));
 
         $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1));
@@ -104,13 +88,7 @@ class RequestTest extends TestCase
 
         $uri = uri([BookController::class, 'storeWithAuthor']);
 
-        $this->server(
-            method: Method::POST,
-            uri: $uri,
-            body: $body,
-        );
-
-        $response = $router->dispatch(request($uri)->post($body));
+        $response = $router->dispatch(request($uri)->post(json_encode($body)));
 
         $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1), relations: [Author::class]);
