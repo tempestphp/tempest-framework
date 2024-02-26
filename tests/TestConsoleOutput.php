@@ -14,6 +14,11 @@ final class TestConsoleOutput implements ConsoleOutput
 
     public array $lines = [];
 
+    public function write(string $line, ConsoleStyle ...$styles): void
+    {
+        $this->lines[] = $line;
+    }
+
     public function writeln(string $line, ConsoleStyle ...$styles): void
     {
         $this->lines[] = $line;

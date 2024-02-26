@@ -10,6 +10,10 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
 {
     public function handle(Throwable $throwable): void
     {
+        if (! function_exists('dd')) {
+            // TODO
+        }
+
         dd($throwable);
     }
 }

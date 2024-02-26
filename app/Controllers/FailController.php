@@ -7,9 +7,9 @@ namespace App\Controllers;
 use Exception;
 use Tempest\Http\Get;
 
-final readonly class WithException
+final readonly class FailController
 {
-    #[Get('/with-exception')]
+    #[Get('/fail')]
     public function __invoke()
     {
         throw new Exception('Hi!');

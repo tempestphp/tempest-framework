@@ -6,6 +6,11 @@ namespace Tempest\Console;
 
 final readonly class NullConsoleOutput implements ConsoleOutput
 {
+    public function write(string $line, ConsoleStyle ...$styles): void
+    {
+        return;
+    }
+
     public function writeln(string $line, ConsoleStyle ...$styles): void
     {
         return;
