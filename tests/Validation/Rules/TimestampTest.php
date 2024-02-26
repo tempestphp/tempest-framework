@@ -21,6 +21,6 @@ class TimestampTest extends TestCase
     {
         $rule = new Timestamp();
 
-        $this->assertSame('Value should be a valid timestamp.', $rule->message());
+        $this->assertSame('Value should be a valid timestamp', $rule->message());
     }
 }

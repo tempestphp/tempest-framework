@@ -10,13 +10,9 @@ use Tempest\Validation\Rule;
 #[Attribute]
 final readonly class Timestamp implements Rule
 {
-    public function __construct()
-    {
-    }
-
     public function isValid(mixed $value): bool
     {
-        if (! is_int($value) || empty($value)) {
+        if (!filter_var($value, FILTER_VALIDATE_INT)) {
             return false;
         }
 
@@ -25,6 +21,6 @@ final readonly class Timestamp implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid timestamp.";
+        return "Value should be a valid timestamp";
     }
 }
