@@ -153,17 +153,18 @@ final class GenericContainer implements Container
     {
         $reflectionClass = new ReflectionClass($className);
 
-        // If there isn't a constructor, don't waste time
-        // trying to build it.
-        if ($reflectionClass->getConstructor() === null) {
-            return $reflectionClass->newInstanceWithoutConstructor();
-        }
+        $constructor = $reflectionClass->getConstructor();
 
-        // Use our autowireDependencies helper to automagically
-        // build up each parameter.
-        return $reflectionClass->newInstanceArgs(
-            $this->autowireDependencies($reflectionClass->getConstructor(), [])
-        );
+        return ($constructor === null)
+            // If there isn't a constructor, don't waste time
+            // trying to build it.
+            ? $reflectionClass->newInstanceWithoutConstructor()
+
+            // Otherwise, use our autowireDependencies helper to automagically
+            // build up each parameter.
+            : $reflectionClass->newInstanceArgs(
+                $this->autowireDependencies($constructor)
+            );
     }
 
     /**
