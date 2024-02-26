@@ -9,10 +9,10 @@ use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use function Tempest\attribute;
 use Tempest\Container\Exceptions\ContainerException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
+use function Tempest\attribute;
 
 final class GenericContainer implements Container
 {
@@ -22,7 +22,7 @@ final class GenericContainer implements Container
 
     private array $singletons = [];
 
-    /** @var CanInitialize[] */
+    /** @var Initializer|CanInitialize[] */
     private array $initializers = [];
 
     public function register(string $className, callable $definition): self
@@ -173,7 +173,8 @@ final class GenericContainer implements Container
 
         // If there isn't a constructor, don't waste time
         // trying to build it.
-        if ($reflectionClass->getConstructor() === null) {
+        $constructor = $reflectionClass->getConstructor();
+        if ($constructor === null) {
             return $reflectionClass->newInstanceWithoutConstructor();
         }
 
@@ -181,7 +182,7 @@ final class GenericContainer implements Container
         // and resolving them.
         $dependencies = [];
 
-        foreach ($reflectionClass->getConstructor()->getParameters() as $parameter) {
+        foreach ($constructor->getParameters() as $parameter) {
             $dependencies[] = $this->autowireDependency($parameter, $log);
         }
 

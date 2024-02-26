@@ -8,39 +8,38 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
-use Tempest\Application\Exceptions\KernelException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
-use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 use Tempest\Http\ServerInitializer;
-use function Tempest\path;
 use Throwable;
 
 final readonly class Kernel
 {
     public function __construct(
-        private string $root,
+        public string $root,
         private AppConfig $appConfig,
+        private array $bootstraps = [],
     ) {
     }
 
     public function init(): Container
     {
-        $container = $this->initContainer();
+        $container = $this->createContainer();
+        $container->config($this->appConfig);
 
-        $this->initDiscoveryLocations();
-
-        $this->initConfig($container);
+        foreach ($this->bootstraps as $bootstrap) {
+            $container->get($bootstrap)->boot();
+        }
 
         $this->initDiscovery($container);
 
         return $container;
     }
 
-    private function initContainer(): Container
+    private function createContainer(): Container
     {
         $container = new GenericContainer();
 
@@ -54,30 +53,12 @@ final readonly class Kernel
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());
 
-        return $container;
-    }
-
-    private function initDiscoveryLocations(): void
-    {
-        $this->discoverTempestNamespaces();
-        $this->discoverInstalledPackageLocations();
-    }
-
-    private function initConfig(Container $container): void
-    {
-        // Register AppConfig
-        $container->config($this->appConfig);
-
-        // Scan for package config files
-        foreach ($this->appConfig->discoveryLocations as $package) {
-            $configFiles = glob(path($package->path, 'Config/**.php'));
-
-            foreach ($configFiles as $configFile) {
-                $configFile = require $configFile;
-
-                $container->config($configFile);
-            }
+        /** @var class-string<\Tempest\Bootstraps\Bootstrap> $bootstrap */
+        foreach ($this->bootstraps as $bootstrap) {
+            $container->singleton($bootstrap, fn () => new $bootstrap($container));
         }
+
+        return $container;
     }
 
     private function initDiscovery(Container $container): void
@@ -132,56 +113,5 @@ final readonly class Kernel
 
             $discovery->storeCache();
         }
-    }
-
-    private function discoverInstalledPackageLocations(): void
-    {
-        $composerPath = path($this->root, 'vendor/composer');
-        $installedPath = path($composerPath, 'installed.json');
-
-        $installedJson = $this->loadJsonFile($installedPath);
-        $packages = $installedJson['packages'] ?? [];
-        foreach ($packages as $package) {
-            $packagePath = path($composerPath, $package['install-path']);
-
-            $requiresTempest = isset($package['require']['tempest/framework']);
-            $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
-            if ($requiresTempest && $hasPsr4Namespaces) {
-                foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
-                    $namespacePath = path($packagePath, $namespacePath);
-                    $this->addDiscoveryLocation($namespace, $namespacePath);
-                }
-            }
-        }
-    }
-
-    private function discoverTempestNamespaces(): void
-    {
-        $composer = $this->loadJsonFile(path($this->root, 'composer.json'));
-
-        $namespaceMap = $composer['autoload']['psr-4'] ?? [];
-        foreach ($namespaceMap as $namespace => $path) {
-            $path = path($this->root, $path);
-            $this->addDiscoveryLocation($namespace, $path);
-        }
-    }
-
-    private function addDiscoveryLocation(string $namespace, string $path): void
-    {
-        $this->appConfig->discoveryLocations[] = new DiscoveryLocation(
-            namespace: $namespace,
-            path     : $path,
-        );
-    }
-
-    private function loadJsonFile(string $path): array
-    {
-        if (! is_file($path)) {
-            $relativePath = str_replace($this->root, './', $path);
-
-            throw new KernelException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
-        }
-
-        return json_decode(file_get_contents($path), true);
     }
 }
