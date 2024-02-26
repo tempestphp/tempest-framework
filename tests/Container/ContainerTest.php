@@ -97,7 +97,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('default', $return->id);
 
-        $return = $container->call($classToCall, 'method', input: new ContainerObjectE('other'));
+        $return = $container->call($classToCall, methodName: 'method', input: new ContainerObjectE('other'));
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
     }
