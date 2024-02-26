@@ -15,7 +15,6 @@
         "larapack/dd": "^1.1",
         "phpstan/phpstan": "^1.10.0",
         "friendsofphp/php-cs-fixer": "^3.21",
-        "ekino/phpstan-banned-code": "^1.0",
         "spaze/phpstan-disallowed-calls": "^3.1"
     },
     "bin": [
