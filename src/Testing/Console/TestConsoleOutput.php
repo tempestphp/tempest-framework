@@ -23,7 +23,7 @@ final class TestConsoleOutput implements ConsoleOutput
             $this->formatter->format($line, ...$styles)
         );
 
-        $this->lines[] = $line;
+        $this->lines[] = preg_replace('/\\e[[][A-Za-z0-9];?[0-9]*m?/', '', $line);
     }
 
     public function writeln(string $line, ConsoleStyle ...$styles): void
@@ -84,5 +84,10 @@ final class TestConsoleOutput implements ConsoleOutput
     public function getText(): string
     {
         return implode(PHP_EOL, $this->lines);
+    }
+
+    public function getFormattedText(): string
+    {
+        return implode(PHP_EOL, $this->formattedLines);
     }
 }

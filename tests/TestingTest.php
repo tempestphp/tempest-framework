@@ -11,6 +11,7 @@ class TestingTest extends \Tempest\Testing\TestCase
         $this
             ->console
             ->call('routes')
-            ->assertContainsStyledText(ConsoleStyle::FG_BLUE('POST'));
+            ->assertContains('GET  /test')
+            ->assertContainsFormattedText(ConsoleStyle::FG_BLUE('GET '));
     }
 }

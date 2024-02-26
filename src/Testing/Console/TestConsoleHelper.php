@@ -24,10 +24,14 @@ final class TestConsoleHelper
         return $this;
     }
 
-    public function assertContainsStyledText(string $text, ConsoleStyle ...$styles): self
+    public function assertContainsFormattedText(string $text, ConsoleStyle ...$styles): self
     {
-        $this->assertContains(
-            $this->formatter->format($text, ...$styles)
+        $text = $this->formatter->format($text, ...$styles);
+
+        Assert::assertStringContainsString(
+            $text,
+            $this->output->getFormattedText(),
+            sprintf('Failed to assert that console output included formatted text: %s.', $text)
         );
 
         return $this;
