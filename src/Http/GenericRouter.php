@@ -19,8 +19,8 @@ use Tempest\View\View;
 final readonly class GenericRouter implements Router
 {
     public function __construct(
-        private Container $container,
-        private AppConfig $appConfig,
+        private Container   $container,
+        private AppConfig   $appConfig,
         private RouteConfig $routeConfig,
     ) {
     }
@@ -68,15 +68,36 @@ final readonly class GenericRouter implements Router
             return null;
         }
 
-        foreach ($actionsForMethod as $route) {
-            $routeParams = $this->resolveParams($route->uri, $request->getPath());
-
-            if ($routeParams !== null) {
-                return new MatchedRoute($route, $routeParams);
-            }
+        // match static routes
+        if (isset($actionsForMethod[$request->getPath()])) {
+            return new MatchedRoute($actionsForMethod[$request->getPath()], []);
         }
 
-        return null;
+        $actionsForMethod = array_values($actionsForMethod);
+
+        // match dynamic routes
+        $combinedMatchingRegex = "#^(?|";
+        foreach ($actionsForMethod as $routeIndex => $route) {
+            $combinedMatchingRegex .= "$route->matchingRegex (*MARK:$routeIndex) |";
+        }
+        $combinedMatchingRegex = rtrim($combinedMatchingRegex, '|');
+        $combinedMatchingRegex .= ')$#';
+
+        $matchResult = preg_match($combinedMatchingRegex, $request->getPath(), $matches);
+
+        if (! $matchResult || ! array_key_exists('MARK', $matches)) {
+            return null;
+        }
+
+        $matchedRoute = $actionsForMethod[$matches['MARK']];
+
+        $routeParams = $this->resolveParams($matchedRoute, $request->getPath());
+
+        if ($routeParams === null) {
+            return null;
+        }
+
+        return new MatchedRoute($matchedRoute, $routeParams);
     }
 
     private function getCallable(MatchedRoute $matchedRoute): Closure
@@ -125,29 +146,23 @@ final readonly class GenericRouter implements Router
         return $uri;
     }
 
-    private function resolveParams(string $pattern, string $uri): ?array
+    private function resolveParams(Route $route, string $uri): ?array
     {
-        if ($pattern === $uri) {
+        if ($route->uri === $uri) {
             return [];
         }
 
-        $result = preg_match_all('/\{\w+}/', $pattern, $tokens);
+        $tokensResult = preg_match_all('#\{\w+}#', $route->uri, $tokens);
 
-        if (! $result) {
+        if (! $tokensResult) {
             return null;
         }
 
         $tokens = $tokens[0];
 
-        $matchingRegex = '/^' . str_replace(
-            ['/', ...$tokens],
-            ['\\/', ...array_fill(0, count($tokens), '([\w\d\s]+)')],
-            $pattern,
-        ) . '$/';
+        $tokensResult = preg_match_all("#^$route->matchingRegex$#", $uri, $matches);
 
-        $result = preg_match_all($matchingRegex, $uri, $matches);
-
-        if ($result === 0) {
+        if ($tokensResult === 0) {
             return null;
         }
 

@@ -11,6 +11,10 @@ use ReflectionMethod;
 class Route
 {
     public ReflectionMethod $handler;
+    /**
+     * @var string The Regex used for matching this route against a request URI
+     */
+    public readonly string $matchingRegex;
 
     public function __construct(
         public string $uri,
@@ -22,6 +26,13 @@ class Route
          */
         public array $middleware = [],
     ) {
+        // Routes can have parameters in the form of "/{PARAM}/", these parameters are replaced with a regex matching
+        // group
+        $this->matchingRegex = preg_replace(
+            '#\{(\w+)}#',
+            '([\w\d\s]+)',
+            $uri
+        );
     }
 
     public function setHandler(ReflectionMethod $handler): self
@@ -39,6 +50,7 @@ class Route
             'middleware' => $this->middleware,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
+            'matchingRegex' => $this->matchingRegex,
         ];
     }
 
@@ -51,5 +63,6 @@ class Route
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
+        $this->matchingRegex = $data['matchingRegex'];
     }
 }
