@@ -21,9 +21,11 @@ final class ContainerLog
      */
     public function add(ContainerLogItem $item): self
     {
-//        if ($this->currentStep->has($item)) {
-//            throw new CircularDependencyException($item->id, $this);
-//        }
+        // TODO: Dependency on the container causes a circular dependency
+        // exception.
+        if ($this->currentStep->has($item)) {
+            throw new CircularDependencyException($item->id, $this);
+        }
 
         $this->currentStep->add($item);
 
