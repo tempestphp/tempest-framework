@@ -23,7 +23,7 @@ final class GenericContainer implements Container
 
     private array $singletons = [];
 
-    /** @var CanInitialize[] */
+    /** @var (Initializer&CanInitialize)[] */
     private array $initializers = [];
 
     public function register(string $className, callable $definition): self
@@ -123,7 +123,6 @@ final class GenericContainer implements Container
                 continue;
             }
 
-            // TODO: This causes some errors because CanInitialize !== Initializer
             return $initializer;
         }
 
