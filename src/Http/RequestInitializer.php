@@ -47,6 +47,7 @@ final class RequestInitializer implements Initializer, CanInitialize, RequiresCl
                 'method' => $server->getMethod(),
                 'uri' => $server->getUri(),
                 'body' => $body,
+                'headers' => $server->getHeaders(),
                 'path' => $path,
                 'query' => $query,
                 ...$body,

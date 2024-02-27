@@ -47,9 +47,9 @@ namespace Tempest {
         return new GenericView($path);
     }
 
-    function request(string $uri, array $body = []): Request
+    function request(string $uri, array $body = [], array $headers = []): Request
     {
-        return new GenericRequest(Method::GET, $uri, $body);
+        return new GenericRequest(Method::GET, $uri, $body, $headers);
     }
 
     function response(string $body = '', Status $status = Status::OK): Response

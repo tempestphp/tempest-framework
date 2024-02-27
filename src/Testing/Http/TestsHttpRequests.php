@@ -18,7 +18,8 @@ trait TestsHttpRequests
             new GenericRequest(
                 method: Method::GET,
                 uri: $path,
-                body: []
+                body: [],
+                headers: [],
             )
         );
     }
@@ -29,7 +30,8 @@ trait TestsHttpRequests
             new GenericRequest(
                 method: Method::POST,
                 uri: $path,
-                body: []
+                body: [],
+                headers: [],
             )
         );
     }

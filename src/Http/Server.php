@@ -11,4 +11,6 @@ interface Server
     public function getUri(): string;
 
     public function getBody(): array;
+
+    public function getHeaders(): array;
 }

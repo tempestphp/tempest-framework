@@ -9,6 +9,7 @@ trait IsRequest
     public Method $method;
     public string $uri;
     public array $body;
+    public array $headers;
     public string $path;
     public ?string $query = null;
 
@@ -16,10 +17,12 @@ trait IsRequest
         Method $method,
         string $uri,
         array $body,
+        array $headers,
     ) {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
+        $this->headers = $headers;
 
         $decodedUri = rawurldecode($uri);
         $parsedUrl = parse_url($decodedUri);
@@ -56,6 +59,11 @@ trait IsRequest
     public function getBody(): array
     {
         return $this->body;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 
     public function getPath(): string

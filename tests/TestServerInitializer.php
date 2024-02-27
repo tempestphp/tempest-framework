@@ -16,6 +16,7 @@ final readonly class TestServerInitializer implements Initializer, CanInitialize
         private Method $method = Method::GET,
         private string $uri = '/',
         private array $body = [],
+        private array $headers = [],
     ) {
     }
 
@@ -30,6 +31,7 @@ final readonly class TestServerInitializer implements Initializer, CanInitialize
             method: $this->method,
             uri: $this->uri,
             body: $this->body,
+            headers: $this->headers,
         );
     }
 }

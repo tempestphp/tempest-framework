@@ -13,6 +13,7 @@ final readonly class TestServer implements Server
         private Method $method = Method::GET,
         private string $uri = '/',
         private array $body = [],
+        private array $headers = [],
     ) {
     }
 
@@ -29,5 +30,10 @@ final readonly class TestServer implements Server
     public function getBody(): array
     {
         return $this->body;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 }

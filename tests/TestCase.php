@@ -53,11 +53,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         Method $method = Method::GET,
         string $uri = '/',
         array $body = [],
+        array $headers = [],
     ): void {
         $this->container->addInitializer(new TestServerInitializer(
             method: $method,
             uri: $uri,
             body: $body,
+            headers: $headers,
         ));
     }
 

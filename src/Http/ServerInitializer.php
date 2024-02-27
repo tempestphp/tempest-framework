@@ -17,10 +17,16 @@ final readonly class ServerInitializer implements Initializer, CanInitialize
 
     public function initialize(Container $container): GenericServer
     {
+        $method = Method::tryFrom($_SERVER['REQUEST_METHOD']) ?? Method::GET;
+
         $server = new GenericServer(
-            method: Method::tryFrom($_SERVER['REQUEST_METHOD']) ?? Method::GET,
+            method: $method,
             uri: $_SERVER['REQUEST_URI'] ?? '/',
-            body: [],
+            body: match($method) {
+                Method::POST => $_POST,
+                default => $_GET,
+            },
+            headers: getallheaders(),
         );
 
         $container->singleton(Server::class, fn () => $server);

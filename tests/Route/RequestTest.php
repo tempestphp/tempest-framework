@@ -28,13 +28,15 @@ class RequestTest extends TestCase
             method: Method::POST,
             uri: '/test',
             body: ['test'],
+            headers: ['x-test' => 'test'],
         );
 
         $request = $this->container->get(Request::class);
 
-        $this->assertEquals(Method::POST, $request->method);
-        $this->assertEquals('/test', $request->uri);
-        $this->assertEquals(['test'], $request->body);
+        $this->assertEquals(Method::POST, $request->getMethod());
+        $this->assertEquals('/test', $request->getUri());
+        $this->assertEquals(['test'], $request->getBody());
+        $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
     }
 
     /** @test */

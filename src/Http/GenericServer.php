@@ -10,6 +10,7 @@ final readonly class GenericServer implements Server
         private Method $method,
         private string $uri,
         private array $body,
+        private array $headers,
     ) {
     }
 
@@ -26,5 +27,10 @@ final readonly class GenericServer implements Server
     public function getBody(): array
     {
         return $this->body;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 }
