@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest;
 
 use Tempest\AppConfig;
+use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
+use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
@@ -83,5 +85,26 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $application->run();
 
         return $this->container->get(ConsoleOutput::class);
+    }
+
+    protected function actAsConsoleApplication(): self
+    {
+        $this->container->singleton(Application::class, fn () => new ConsoleApplication(
+            [],
+            $this->container,
+            $this->container->get(AppConfig::class),
+        ));
+
+        return $this;
+    }
+
+    protected function actAsHttpApplication(): self
+    {
+        $this->container->singleton(Application::class, fn () => new HttpApplication(
+            $this->container,
+            $this->container->get(AppConfig::class),
+        ));
+
+        return $this;
     }
 }
