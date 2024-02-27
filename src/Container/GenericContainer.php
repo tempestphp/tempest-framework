@@ -19,12 +19,19 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
+    private ContainerLog $log;
+
     private array $definitions = [];
 
     private array $singletons = [];
 
     /** @var (Initializer&CanInitialize)[] */
     private array $initializers = [];
+
+    public function __construct()
+    {
+        $this->log = new ContainerLog(true);
+    }
 
     public function register(string $className, callable $definition): self
     {
@@ -48,23 +55,23 @@ final class GenericContainer implements Container
 
     public function config(object $config): self
     {
-        $this->singleton($config::class, fn () => $config);
+        $this->singleton($config::class, function () use ($config) {
+            return $config;
+        });
 
         return $this;
     }
 
     public function get(string $className): object
     {
-        if ($instance = $this->singletons[$className] ?? null) {
-            return $instance;
-        }
-
-        $log = new ContainerLog();
+        $this->log->startStep();
 
         try {
-            return $this->resolve($className, $log);
+            return $this->log->completeStepAfter(
+                $this->resolve($className)
+            );
         } catch (Throwable $throwable) {
-            throw new ContainerException($log, $throwable);
+            throw new ContainerException($this->log, $throwable);
         }
     }
 
@@ -86,12 +93,18 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, ContainerLog $log): object
+    private function resolve(string $className): object
     {
-        $log->add($className);
+        $this->log->add(
+            new ContainerLogItem(id: $className)
+        );
 
-        // First we check if a callable has been registered
-        // to resolve this class.
+        // Check if the class has been registered as a singleton.
+        if ($instance = $this->singletons[$className] ?? null) {
+            return $instance;
+        }
+
+        // Check if a callable has been registered to resolve this class.
         if ($definition = $this->definitions[$className] ?? null) {
             return $definition($this);
         }
@@ -105,13 +118,15 @@ final class GenericContainer implements Container
                 $initializer->setClassName($className);
             }
 
-            $log->add($initializer::class);
+            $this->log->add(
+                new ContainerLogItem(id: $initializer::class)
+            );
 
             return $initializer->initialize($this);
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className, $log);
+        return $this->autowire($className);
     }
 
     private function initializerFor(string $className): ?Initializer
@@ -148,13 +163,13 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, ContainerLog $log): object
+    private function autowire(string $className): object
     {
         $reflectionClass = new ReflectionClass($className);
 
         $constructor = $reflectionClass->getConstructor();
 
-        return $constructor
+        return $constructor === null
             // If there isn't a constructor, don't waste time
             // trying to build it.
             ? $reflectionClass->newInstanceWithoutConstructor()
@@ -171,21 +186,26 @@ final class GenericContainer implements Container
      */
     private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
     {
+        $this->log->add(new ContainerLogItem(
+            id: $method->getName(),
+            subject: $method
+        ));
+
         $dependencies = [];
 
         // Build the class by iterating through its
         // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
-            // TODO: Check with Brent on this one. Behavior
-            // is slight different than the built-in type
-            // approach since we are checking with the
-            // provided value is of the right type.
-            // We COULD early return here if a
-            // providedValue is set.
+            // Inform our log we are resolving a nested dependency.
+            $this->log->startStep();
+
             $dependencies[] = $this->autowireDependency(
                 parameter: $parameter,
                 providedValue: $parameters[$parameter->getName()] ?? null
             );
+
+            // Complete the resolution of that nested dependency.
+            $this->log->completeStep();
         }
 
         return $dependencies;
@@ -193,6 +213,11 @@ final class GenericContainer implements Container
 
     private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
     {
+        // Add this dependency to the log.
+        $this->log->add(
+            new ContainerLogItem(id: $parameter->getName(), subject: $parameter)
+        );
+
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, immediately skip reflection
@@ -211,9 +236,11 @@ final class GenericContainer implements Container
         foreach ($types as $type) {
             try {
                 return $this->autowireObjectDependency($type, $providedValue);
-            } catch (Throwable) {
+            } catch (Throwable $throwable) {
                 // We were unable to resolve the dependency for the last union
-                // type, so we are moving on to the next one.
+                // type, so we are moving on to the next one. We hang onto
+                // the exception in case it is a circular reference.
+                $lastThrowable = $throwable;
             }
         }
 
@@ -225,7 +252,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new LogicException(
+        throw $lastThrowable ?? new LogicException(
             sprintf('Unable to autowire dependency [%s].', $parameter->getName())
         );
     }

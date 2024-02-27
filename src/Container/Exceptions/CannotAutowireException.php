@@ -13,7 +13,7 @@ final class CannotAutowireException extends Exception
 {
     public function __construct(ContainerLog $log, ReflectionParameter $origin)
     {
-        $log->add(new ContainerLogItem(id: '_', parameter: $origin));
+        $log->add(new ContainerLogItem(id: '_', subject: $origin));
 
         $message = PHP_EOL. PHP_EOL;
 

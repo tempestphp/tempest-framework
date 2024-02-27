@@ -9,33 +9,43 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
+use Reflector;
 
 final readonly class ContainerLogItem
 {
     public function __construct(
         public string $id,
-        public ?ReflectionClass $class = null,
-        public ?ReflectionMethod $method = null,
-        public ?ReflectionParameter $parameter = null,
+        public ?Reflector $subject = null
     ) {
     }
 
     public function __toString(): string
     {
-        return match (true) {
-            $this->parameter !== null => $this->parameterAsString(),
-            $this->method !== null => "{$this->method->getDeclaringClass()->getName()}::{$this->method->getName()}()",
-            $this->class !== null => "{$this->class->getName()}",
+        $subjectType = $this->subject ? $this->subject::class : null;
+
+        return match ($subjectType) {
+            ReflectionParameter::class => $this->formatParameter(),
+            ReflectionMethod::class => $this->formatMethod(),
+            ReflectionClass::class => $this->formatClass(),
             default => $this->id,
         };
     }
 
-    private function parameterAsString(): string
+    private function formatParameter(): string
     {
-        $type = $this->shortTypeName($this->parameter->getType());
-        $class = $this->shortTypeName($this->parameter->getDeclaringClass());
+        $type = $this->shortTypeName($this->subject->getType());
 
-        return "{$type} \${$this->parameter->getName()} in {$class}::__construct()";
+        return " [unresolved parameter: {$type} \${$this->subject->getName()}]";
+    }
+
+    private function formatMethod(): string
+    {
+        return "::{$this->subject->getName()}()";
+    }
+
+    private function formatClass(): string
+    {
+        return PHP_EOL . "└── {$this->subject->getName()}";
     }
 
     private function shortTypeName(ReflectionNamedType|ReflectionUnionType|ReflectionClass $type): string

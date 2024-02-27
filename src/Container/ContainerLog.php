@@ -4,23 +4,67 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use LogicException;
 use Tempest\Container\Exceptions\CircularDependencyException;
 
 final class ContainerLog
 {
-    public function __construct(
-        /** @var \Tempest\Container\ContainerLogItem[] */
-        private array $lines = [],
-    ) {
+    private ContainerLogStep $currentStep;
+
+    public function __construct()
+    {
+        $this->reset();
     }
 
+    /**
+     * @throws CircularDependencyException
+     */
     public function add(ContainerLogItem $item): self
     {
-        if (isset($this->lines[$item->id])) {
+        if ($this->currentStep->has($item)) {
             throw new CircularDependencyException($item->id, $this);
         }
 
-        $this->lines[$item->id] = $item;
+        $this->currentStep->add($item);
+
+        return $this;
+    }
+
+    public function startStep(): self
+    {
+        $this->currentStep = new ContainerLogStep($this->currentStep);
+
+        return $this;
+    }
+
+    public function completeStep(): mixed
+    {
+        if ($this->currentStep->hasPreviousStep() === false) {
+            throw new LogicException(
+                'No step was started. Did you forget to call `startStep()`?'
+            );
+        }
+
+        $this->currentStep = $this->currentStep->previousStep;
+
+        return $this;
+    }
+
+    /**
+     * @template TValue
+     * @param TValue $value
+     * @return TValue
+     */
+    public function completeStepAfter(mixed $value): mixed
+    {
+        $this->completeStep();
+
+        return $value;
+    }
+
+    public function reset(): self
+    {
+        $this->currentStep = new ContainerLogStep();
 
         return $this;
     }
@@ -28,17 +72,23 @@ final class ContainerLog
     public function __toString(): string
     {
         $message = '';
-        $lines = array_reverse($this->lines);
-        $i = 1;
-        $count = count($lines);
 
-        foreach($lines as $line) {
-            $message .= match(true) {
-                $i === $count => PHP_EOL . "\t\t└── {$line}",
-                default => PHP_EOL . "\t\t├── {$line}",
-            };
+        $step = $this->currentStep->killUnfinishedSteps()->getFirstStep();
 
-            $i += 1;
+        while ($step) {
+            $break = '';
+
+            if ($step->getStepNumber() > 1) {
+                $break = str_repeat("\t", $step->getStepNumber() - 1);
+            }
+
+            if ($step->getStepNumber() > 1) {
+                $break .= '└── ';
+            }
+
+            $message .= $break . $step;
+
+            $step = $step->getNextStep();
         }
 
         return $message;
