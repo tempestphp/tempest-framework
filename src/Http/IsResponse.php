@@ -8,7 +8,7 @@ trait IsResponse
 {
     public function __construct(
         private Status $status,
-        private string $body = '',
+        private string|array $body = '',
         private array $headers = [],
     ) {
     }
@@ -18,7 +18,7 @@ trait IsResponse
         return $this->status;
     }
 
-    public function getBody(): string
+    public function getBody(): string|array
     {
         return $this->body;
     }

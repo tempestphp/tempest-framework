@@ -10,6 +10,8 @@ final readonly class GenericResponseSender implements ResponseSender
     {
         ob_start();
 
+        $response = $this->prepareResponse($response);
+
         $this->sendHeaders($response);
         $this->sendContent($response);
 
@@ -36,5 +38,17 @@ final readonly class GenericResponseSender implements ResponseSender
     private function sendContent(Response $response): void
     {
         echo $response->getBody();
+    }
+
+    private function prepareResponse(Response $response): Response
+    {
+        $body = $response->getBody();
+
+        if (is_array($body)) {
+            $response->header('Content-Type', 'application/json');
+            $response->body(json_encode($body));
+        }
+
+        return $response;
     }
 }
