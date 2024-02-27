@@ -15,7 +15,7 @@ final class CannotAutowireException extends Exception
         $message = PHP_EOL. PHP_EOL;
 
         $message .= sprintf(
-            '$%s in %s::__construct().',
+            'Cannot autowire $%s in %s::__construct()',
             $origin->getName(),
             $origin->getDeclaringClass()->getName(),
         );

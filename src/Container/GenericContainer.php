@@ -62,8 +62,10 @@ final class GenericContainer implements Container
         return $this->resolve($className, $log);
     }
 
-    public function call(object $object, string $methodName, ...$params): mixed
+    public function call(string|object $object, string $methodName, ...$params): mixed
     {
+        $object = is_string($object) ? $this->get($object) : $object;
+
         $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
 
         foreach ($reflectionMethod->getParameters() as $parameter) {
