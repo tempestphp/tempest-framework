@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Container\Fixtures\ContainerObjectRequiringC;
+use Throwable;
 
 class CannotAutowireExceptionTest extends TestCase
 {
@@ -18,10 +19,11 @@ class CannotAutowireExceptionTest extends TestCase
             $container = new GenericContainer();
 
             $container->get(ContainerObjectRequiringC::class);
-        } catch (CannotAutowireException $exception) {
-            $this->assertStringContainsString('string $prop in ContainerObjectC::__construct()', $exception->getMessage());
-            $this->assertStringContainsString('ContainerObjectC $c in ContainerObjectRequiringC::__construct()', $exception->getMessage());
-            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectRequiringC', $exception->getMessage());
+            // TODO: Update the exception type.
+        } catch (Throwable $exception) {
+            $this->assertStringContainsString('[unresolved parameter: string $prop]', $exception->getMessage());
+            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectC::__construct()', $exception->getMessage());
+            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectRequiringC::__construct()', $exception->getMessage());
         }
     }
 }

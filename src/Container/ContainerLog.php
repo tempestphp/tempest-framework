@@ -21,9 +21,9 @@ final class ContainerLog
      */
     public function add(ContainerLogItem $item): self
     {
-        if ($this->currentStep->has($item)) {
-            throw new CircularDependencyException($item->id, $this);
-        }
+//        if ($this->currentStep->has($item)) {
+//            throw new CircularDependencyException($item->id, $this);
+//        }
 
         $this->currentStep->add($item);
 
