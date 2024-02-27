@@ -76,35 +76,35 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function console(string $command): TestConsoleOutput
     {
-        $application = new ConsoleApplication(
-            args: ['tempest', ...explode(' ', $command)],
-            container: $this->container,
-            appConfig: $this->container->get(AppConfig::class)
-        );
+        $application = $this->actAsConsoleApplication($command);
 
         $application->run();
 
         return $this->container->get(ConsoleOutput::class);
     }
 
-    protected function actAsConsoleApplication(): self
+    protected function actAsConsoleApplication(string $command = ''): Application
     {
-        $this->container->singleton(Application::class, fn () => new ConsoleApplication(
-            [],
-            $this->container,
-            $this->container->get(AppConfig::class),
-        ));
+        $application = new ConsoleApplication(
+            args: ['tempest', ...explode(' ', $command)],
+            container: $this->container,
+            appConfig: $this->container->get(AppConfig::class),
+        );
 
-        return $this;
+        $this->container->singleton(Application::class, fn () => $application);
+
+        return $application;
     }
 
-    protected function actAsHttpApplication(): self
+    protected function actAsHttpApplication(): HttpApplication
     {
-        $this->container->singleton(Application::class, fn () => new HttpApplication(
+        $application = new HttpApplication(
             $this->container,
             $this->container->get(AppConfig::class),
-        ));
+        );
 
-        return $this;
+        $this->container->singleton(Application::class, fn () => $application);
+
+        return $application;
     }
 }
