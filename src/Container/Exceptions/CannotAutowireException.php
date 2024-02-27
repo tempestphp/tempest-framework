@@ -7,18 +7,17 @@ namespace Tempest\Container\Exceptions;
 use Exception;
 use ReflectionParameter;
 use Tempest\Container\ContainerLog;
+use Tempest\Container\ContainerLogItem;
 
 final class CannotAutowireException extends Exception
 {
     public function __construct(ContainerLog $log, ReflectionParameter $origin)
     {
+        $log->add(new ContainerLogItem(id: '_', parameter: $origin));
+
         $message = PHP_EOL. PHP_EOL;
 
-        $message .= sprintf(
-            'Cannot autowire $%s in %s::__construct()',
-            $origin->getName(),
-            $origin->getDeclaringClass()->getName(),
-        );
+        $message .= 'Cannot autowire';
 
         $message .= $log;
 

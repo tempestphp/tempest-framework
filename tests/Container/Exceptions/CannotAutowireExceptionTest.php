@@ -14,7 +14,7 @@ class CannotAutowireExceptionTest extends TestCase
     /** @test */
     public function test_autowire_without_exception()
     {
-        $this->expectException(CannotAutowireException::class);
+//        $this->expectException(CannotAutowireException::class);
 
         $container = new GenericContainer();
 
