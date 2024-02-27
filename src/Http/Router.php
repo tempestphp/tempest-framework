@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\Container\InitializedBy;
+
+#[InitializedBy(RouterInitializer::class)]
 interface Router
 {
     public function dispatch(Request $request): Response;

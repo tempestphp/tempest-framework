@@ -223,7 +223,11 @@ final class GenericContainer implements Container
         }
 
         throw new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $parameter->getName())
+            sprintf(
+                'Unable to autowire dependency $%s in %s::__construct().',
+                $parameter->getName(),
+                $parameter->getDeclaringClass()->getName(),
+            )
         );
     }
 
