@@ -15,8 +15,7 @@ final class CreatedResponse implements Response
     public function __construct(
         private string $body = '',
         private array $headers = [],
-    )
-    {
+    ) {
         $this->status = Status::CREATED;
     }
 }
