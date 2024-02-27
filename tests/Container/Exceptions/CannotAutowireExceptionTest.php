@@ -14,10 +14,14 @@ class CannotAutowireExceptionTest extends TestCase
     /** @test */
     public function test_autowire_without_exception()
     {
-//        $this->expectException(CannotAutowireException::class);
+        try {
+            $container = new GenericContainer();
 
-        $container = new GenericContainer();
-
-        $container->get(ContainerObjectRequiringC::class);
+            $container->get(ContainerObjectRequiringC::class);
+        } catch (CannotAutowireException $exception) {
+            $this->assertStringContainsString('string $prop in ContainerObjectC::__construct()', $exception->getMessage());
+            $this->assertStringContainsString('ContainerObjectC $c in ContainerObjectRequiringC::__construct()', $exception->getMessage());
+            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectRequiringC', $exception->getMessage());
+        }
     }
 }
