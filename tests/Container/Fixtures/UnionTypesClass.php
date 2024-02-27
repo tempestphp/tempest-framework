@@ -9,7 +9,7 @@ use DateTime;
 class UnionTypesClass
 {
     public function __construct(
-        public DateTime $aStringOrDate
+        public string|DateTime $aStringOrDate
     ) {
     }
 }

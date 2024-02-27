@@ -18,7 +18,7 @@ final readonly class ConsoleOutputInitializer implements Initializer
         if (! $app instanceof ConsoleApplication) {
             $consoleOutput = new NullConsoleOutput();
         } else {
-            $consoleOutput = new GenericConsoleOutput(new GenericConsoleFormatter());
+            $consoleOutput = new GenericConsoleOutput();
         }
 
         $container->singleton(ConsoleOutput::class, fn () => $consoleOutput);

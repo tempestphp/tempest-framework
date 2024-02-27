@@ -16,10 +16,10 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
     public function handle(Throwable $throwable): void
     {
-        $this->console->writeln($throwable::class, ConsoleStyle::FG_RED, ConsoleStyle::BOLD);
+        $this->console->writeln(ConsoleStyle::BOLD(ConsoleStyle::FG_RED($throwable::class)));
 
         if ($message = $throwable->getMessage()) {
-            $this->console->writeln($message, ConsoleStyle::FG_RED, ConsoleStyle::BOLD);
+            $this->console->writeln(ConsoleStyle::BOLD(ConsoleStyle::FG_RED($message)));
         }
 
         $this->console->writeln($throwable->getFile() . ':' . $throwable->getLine());
@@ -54,16 +54,16 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
     private function outputClassLine(array $line): void
     {
-        $this->console->write($line['class'], ConsoleStyle::FG_RED);
+        $this->console->write(ConsoleStyle::FG_RED($line['class']));
         $this->console->write($line['type']);
-        $this->console->write($line['function'], ConsoleStyle::FG_DARK_GREEN);
+        $this->console->write(ConsoleStyle::FG_DARK_GREEN($line['function']));
         $this->formatArguments($line['args']);
         $this->console->writeln('');
     }
 
     private function outputFunctionLine(array $line): void
     {
-        $this->console->write($line['function'], ConsoleStyle::FG_DARK_GREEN);
+        $this->console->write(ConsoleStyle::FG_DARK_GREEN($line['function']));
         $this->formatArguments($line['args']);
         $this->console->writeln('');
     }

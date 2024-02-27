@@ -47,7 +47,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $this->container->singleton(
             ConsoleOutput::class,
-            fn () => new TestConsoleOutput(new TestConsoleFormatter()),
+            fn () => new TestConsoleOutput(),
         );
     }
 

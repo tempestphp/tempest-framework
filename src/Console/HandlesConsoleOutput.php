@@ -6,44 +6,41 @@ namespace Tempest\Console;
 
 trait HandlesConsoleOutput
 {
-    public function __construct(
-        private readonly ConsoleFormatter $formatter,
-    ) {
-    }
-
-    public function write(string $line, ConsoleStyle ...$styles): void
+    public function write(string $line): void
     {
         $stdout = fopen('php://stdout', 'w');
 
         fwrite(
             $stdout,
-            ConsoleStyle::RESET($this->formatter->format($line, ...$styles)),
+            ConsoleStyle::RESET($line),
         );
 
         fclose($stdout);
     }
 
-    public function writeln(string $line, ConsoleStyle ...$styles): void
+    public function writeln(string $line): void
     {
-        $this->write($line . PHP_EOL, ...$styles);
+        $this->write($line . PHP_EOL);
     }
 
     public function info(string $line): void
     {
         $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_DARK_BLUE)
+            ConsoleStyle::FG_DARK_BLUE($line)
         );
     }
 
     public function error(string $line): void
     {
         $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_RED, ConsoleStyle::BOLD),
+            ConsoleStyle::BOLD(ConsoleStyle::FG_RED($line)),
         );
     }
 
     public function success(string $line): void
     {
-        $this->writeln($line, ConsoleStyle::FG_GREEN, ConsoleStyle::BOLD);
+        $this->writeln(
+            ConsoleStyle::BOLD(ConsoleStyle::FG_GREEN($line))
+        );
     }
 }
