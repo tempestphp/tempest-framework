@@ -100,7 +100,7 @@ final class GenericContainer implements Container
         // can initialize this class.
         if ($initializer = $this->initializerFor($className)) {
             // Provide the classname of the object we're trying to result
-            // if the initializer requires it
+            // if the initializer requires it.
             if ($initializer instanceof RequiresClassName) {
                 $initializer->setClassName($className);
             }
@@ -154,7 +154,7 @@ final class GenericContainer implements Container
 
         $constructor = $reflectionClass->getConstructor();
 
-        return ($constructor === null)
+        return $constructor
             // If there isn't a constructor, don't waste time
             // trying to build it.
             ? $reflectionClass->newInstanceWithoutConstructor()
@@ -171,14 +171,20 @@ final class GenericContainer implements Container
      */
     private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
     {
-        // Build the class by iterating through dependencies
-        // and resolving them.
         $dependencies = [];
 
+        // Build the class by iterating through its
+        // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
+            // TODO: Check with Brent on this one. Behavior
+            // is slight different than the built-in type
+            // approach since we are checking with the
+            // provided value is of the right type.
+            // We COULD early return here if a
+            // providedValue is set.
             $dependencies[] = $this->autowireDependency(
-                $parameter,
-                $parameters[$parameter->getName()] ?? null
+                parameter: $parameter,
+                providedValue: $parameters[$parameter->getName()] ?? null
             );
         }
 
@@ -189,9 +195,8 @@ final class GenericContainer implements Container
     {
         $parameterType = $parameter->getType();
 
-        // If the parameter is a built-in type, immediately skip
-        // reflection stuff and attempt to give it a default
-        // or null value.
+        // If the parameter is a built-in type, immediately skip reflection
+        // stuff and attempt to give it a default or null value.
         if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
             return $this->autowireBuiltinDependency($parameter, $providedValue);
         }
@@ -207,13 +212,19 @@ final class GenericContainer implements Container
             try {
                 return $this->autowireObjectDependency($type, $providedValue);
             } catch (Throwable) {
+                // We were unable to resolve the dependency for the last union
+                // type, so we are moving on to the next one.
             }
         }
 
+        // If the dependency has a default value, we do our best to prevent
+        // an error by using that.
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
         throw new LogicException(
             sprintf('Unable to autowire dependency [%s].', $parameter->getName())
         );
@@ -221,14 +232,20 @@ final class GenericContainer implements Container
 
     private function autowireObjectDependency(ReflectionNamedType $type, mixed $providedValue): mixed
     {
+        // If the provided value is of the right type,
+        // don't waste time autowiring, return it!
         if (is_a($providedValue, $type->getName())) {
             return $providedValue;
         }
 
+        // If we can successfully retrieve an instance
+        // of the necessary dependency, return it.
         if ($instance = $this->get($type->getName())) {
             return $instance;
         }
 
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
         throw new LogicException(
             sprintf('Unable to autowire dependency [%s].', $type->getName())
         );
@@ -236,16 +253,21 @@ final class GenericContainer implements Container
 
     private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
     {
-        // At this point, give up trying to do type work for people
-        // if they didn't provide the right type, that's on them.
-        if (! is_null($providedValue)) {
+        // Due to type coercion, the provided value may (or may not) work.
+        // Here we give up trying to do type work for people. If they
+        // didn't provide the right type, that's on them.
+        if ($providedValue !== null) {
             return $providedValue;
         }
 
+        // If the dependency has a default value, we might as well
+        // use that at this point.
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
+        // If the dependency's type is an array or variadic variable, we'll
+        // try to prevent an error by returning an empty array.
         if (
             $parameter->getType()?->getName() === 'array' ||
             $parameter->isVariadic()
@@ -253,10 +275,14 @@ final class GenericContainer implements Container
             return [];
         }
 
+        // If the dependency's type allows null or is optional, we'll
+        // try to prevent an error by returning null.
         if ($parameter->allowsNull() || $parameter->isOptional()) {
             return null;
         }
 
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
         throw new LogicException(
             sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName())
         );
