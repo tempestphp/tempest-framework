@@ -9,8 +9,6 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use Tempest\AppConfig;
 use Tempest\Application\Exceptions\KernelException;
-use Tempest\Commands\CommandBus;
-use Tempest\Commands\GenericCommandBus;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
@@ -51,7 +49,6 @@ final readonly class Kernel
         $container
             ->singleton(Kernel::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
-            ->singleton(CommandBus::class, fn () => $container->get(GenericCommandBus::class))
             ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
