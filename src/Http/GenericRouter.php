@@ -35,56 +35,58 @@ final readonly class GenericRouter implements Router
 
     public function dispatch(Request $request): Response
     {
-        $actionsForMethod = $this->getRoutes()[$request->method->value] ?? null;
+        $matchedRoute = $this->matchRoute($request);
 
-        if (! $actionsForMethod) {
-            return response()->notFound();
-        }
-
-        $routeParams = null;
-        $matchedRoute = null;
-
-        foreach ($actionsForMethod as $route) {
-            $routeParams = $this->resolveParams($route->uri, $request->getPath());
-
-            if ($routeParams !== null) {
-                $matchedRoute = $route;
-
-                break;
-            }
-        }
-
-        if ($routeParams === null) {
+        if ($matchedRoute === null) {
             return response()->notFound();
         }
 
         $this->container->singleton(
-            RouteParams::class,
-            fn () => new RouteParams($routeParams),
+            MatchedRoute::class,
+            fn () => $matchedRoute,
         );
 
-        $callable = $this->getCallable($matchedRoute, $routeParams);
+        $callable = $this->getCallable($matchedRoute);
 
         $outputFromController = $callable($request);
 
         if ($outputFromController === null) {
             throw new MissingControllerOutputException(
-                $matchedRoute->handler->getDeclaringClass()->getName(),
-                $matchedRoute->handler->getName(),
+                $matchedRoute->route->handler->getDeclaringClass()->getName(),
+                $matchedRoute->route->handler->getName(),
             );
         }
 
         return $this->createResponse($outputFromController);
     }
 
-    private function getCallable(
-        Route $route,
-        array $routeParams
-    ): Closure {
+    public function matchRoute(Request $request): ?MatchedRoute
+    {
+        $actionsForMethod = $this->getRoutes()[$request->method->value] ?? null;
+
+        if ($actionsForMethod === null) {
+            return null;
+        }
+
+        foreach ($actionsForMethod as $route) {
+            $routeParams = $this->resolveParams($route->uri, $request->getPath());
+
+            if ($routeParams !== null) {
+                return new MatchedRoute($route, $routeParams);
+            }
+        }
+
+        return null;
+    }
+
+    private function getCallable(MatchedRoute $matchedRoute): Closure
+    {
+        $route = $matchedRoute->route;
+
         $callable = fn (Request $request) => $this->container->call(
             $this->container->get($route->handler->getDeclaringClass()->getName()),
             $route->handler->getName(),
-            ...$routeParams,
+            ...$matchedRoute->params,
         );
 
         $middlewareStack = $route->middleware;

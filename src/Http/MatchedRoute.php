@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-final readonly class RouteParams
+final readonly class MatchedRoute
 {
     public function __construct(
-        public array $params
+        public Route $route,
+        public array $params,
     ) {
     }
 }

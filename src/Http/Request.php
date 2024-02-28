@@ -12,6 +12,8 @@ interface Request
 
     public function getBody(): array;
 
+    public function getHeaders(): array;
+
     public function getPath(): string;
 
     public function getQuery(): ?string;

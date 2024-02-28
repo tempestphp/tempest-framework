@@ -8,15 +8,19 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class IPAddress implements Rule
+final readonly class Timestamp implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return boolval(filter_var($value, FILTER_VALIDATE_IP));
+        if (! filter_var($value, FILTER_VALIDATE_INT)) {
+            return false;
+        }
+
+        return (bool)date('Y-m-d H:i:s', $value);
     }
 
     public function message(): string
     {
-        return 'Value should be a valid IP Address';
+        return "Value should be a valid timestamp";
     }
 }

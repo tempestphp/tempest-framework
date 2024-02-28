@@ -9,37 +9,38 @@ use Tempest\Container\Exceptions\CircularDependencyException;
 final class ContainerLog
 {
     public function __construct(
+        /** @var \Tempest\Container\ContainerLogItem[] */
         private array $lines = [],
     ) {
     }
 
-    public function add(string $item): self
+    public function add(ContainerLogItem $item): self
     {
-        if (in_array($item, $this->lines)) {
-            throw new CircularDependencyException($item);
+        if (isset($this->lines[$item->id])) {
+            throw new CircularDependencyException($item->id, $this);
         }
 
-        $this->lines[] = $item;
+        $this->lines[$item->id] = $item;
 
         return $this;
     }
 
     public function __toString(): string
     {
-        $string = '';
+        $message = '';
+        $lines = array_reverse($this->lines);
+        $i = 1;
+        $count = count($lines);
 
-        foreach ($this->lines as $i => $line) {
-            $string .= PHP_EOL;
+        foreach($lines as $line) {
+            $message .= match(true) {
+                $i === $count => PHP_EOL . "\t\t└── {$line}",
+                default => PHP_EOL . "\t\t├── {$line}",
+            };
 
-            $string .= str_repeat("\t", $i);
-
-            if ($i > 0) {
-                $string .= "^ ";
-            }
-
-            $string .= $line;
+            $i += 1;
         }
 
-        return $string;
+        return $message;
     }
 }

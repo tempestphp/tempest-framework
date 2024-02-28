@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use LogicException;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
-use Tempest\Container\Exceptions\ContainerException;
+use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
@@ -22,7 +21,7 @@ final class GenericContainer implements Container
 
     private array $singletons = [];
 
-    /** @var CanInitialize[] */
+    /** @var (Initializer&CanInitialize)[] */
     private array $initializers = [];
 
     public function register(string $className, callable $definition): self
@@ -60,15 +59,13 @@ final class GenericContainer implements Container
 
         $log = new ContainerLog();
 
-        try {
-            return $this->resolve($className, $log);
-        } catch (Throwable $throwable) {
-            throw new ContainerException($log, $throwable);
-        }
+        return $this->resolve($className, $log);
     }
 
-    public function call(object $object, string $methodName, ...$params): mixed
+    public function call(string|object $object, string $methodName, ...$params): mixed
     {
+        $object = is_string($object) ? $this->get($object) : $object;
+
         $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
 
         foreach ($reflectionMethod->getParameters() as $parameter) {
@@ -105,9 +102,12 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, ContainerLog $log): object
-    {
-        $log->add($className);
+    private function resolve(
+        string $className,
+        ContainerLog $log,
+        ?ContainerLogItem $logItem = null,
+    ): object {
+        $log->add($logItem ?? new ContainerLogItem($className));
 
         // First we check if a callable has been registered
         // to resolve this class.
@@ -124,7 +124,7 @@ final class GenericContainer implements Container
                 $initializer->setClassName($className);
             }
 
-            $log->add($initializer::class);
+            $log->add(new ContainerLogItem($initializer::class));
 
             return $initializer->initialize($this);
         }
@@ -196,43 +196,34 @@ final class GenericContainer implements Container
         // reflection stuff and attempt to give it a default
         // or null value.
         if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
-            return $this->autowireBuiltinDependency($parameter);
+            return $this->autowireBuiltinDependency($parameter, $log);
         }
 
         // If there are multiple possible types, loop through them
         // until we hit a match.
         if ($parameterType instanceof ReflectionUnionType) {
-            foreach ($parameterType->getTypes() as $type) {
-                try {
-                    if ($instance = $this->resolve($type->getName(), $log)) {
-                        return $instance;
-                    }
-                } catch (Throwable) {
-                }
-            }
+            return $this->autowireUnionDependency(
+                parameterType: $parameterType,
+                parameter: $parameter,
+                log: $log,
+            );
         }
 
         // If this is a single type, attempt to resolve it.
-        try {
-            return $this->resolve($parameter->getType()->getName(), $log);
-        } catch (Throwable) {
-        }
-
-        if ($parameter->isDefaultValueAvailable()) {
-            return $parameter->getDefaultValue();
-        }
-
-        throw new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $parameter->getName())
-        );
+        return $this->autowireTypedDependency($parameter, $log);
     }
 
-    private function autowireBuiltinDependency(ReflectionParameter $parameter): mixed
-    {
+    private function autowireBuiltinDependency(
+        ReflectionParameter $parameter,
+        ContainerLog $log,
+    ): mixed {
+        // Check if a default value is set
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
+        // If the dependency's type is an array or variadic variable,
+        // we'll return an empty array
         if (
             $parameter->getType()?->getName() === 'array' ||
             $parameter->isVariadic()
@@ -240,12 +231,67 @@ final class GenericContainer implements Container
             return [];
         }
 
+        // If the dependency's type allows null or is optional,
+        // we'll return null
         if ($parameter->allowsNull() || $parameter->isOptional()) {
             return null;
         }
 
-        throw new LogicException(
-            sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName())
-        );
+        // Nothing else we can do, we don't know how to autowire this dependency
+        throw new CannotAutowireException($log, $parameter);
+    }
+
+    private function autowireUnionDependency(
+        ReflectionUnionType $parameterType,
+        ReflectionParameter $parameter,
+        ContainerLog $log,
+    ): ?object {
+        // Loop over each type, and try to resolve a value for it.
+        // We'll use the first value that works
+        foreach ($parameterType->getTypes() as $type) {
+            // TODO: we should deal with error handling here,
+            // However, if we simply catch all exceptions here,
+            // Our container is gone
+            $instance = $this->resolve(
+                $type->getName(),
+                $log,
+                new ContainerLogItem(
+                    id: $type->getName(),
+                    parameter: $parameter,
+                ),
+            );
+
+            if ($instance) {
+                return $instance;
+            }
+        }
+
+        // Nothing else we can do, we don't know how to autowire this dependency
+        throw new CannotAutowireException($log, $parameter);
+    }
+
+    public function autowireTypedDependency(
+        ReflectionParameter $parameter,
+        ContainerLog $log
+    ): ?object {
+        // Try to resolve the dependency
+        try {
+            return $this->resolve(
+                className: $parameter->getType()->getName(),
+                log: $log,
+                logItem: new ContainerLogItem(
+                    id: $parameter->getType()->getName(),
+                    parameter: $parameter,
+                ),
+            );
+        } catch (Throwable $e) {
+            // Check if there's a default value we can use
+            if ($parameter->isDefaultValueAvailable()) {
+                return $parameter->getDefaultValue();
+            }
+
+            // Otherwise, we give up
+            throw $e;
+        }
     }
 }
