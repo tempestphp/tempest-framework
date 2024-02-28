@@ -9,8 +9,8 @@ services:
 parameters:
 	level: 0
 	paths:
-		- src
 		- app
+		- src
 		- tests
 	disallowedFunctionCalls:
 		-
