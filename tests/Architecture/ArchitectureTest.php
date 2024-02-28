@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest;
+namespace Tests\Tempest\Architecture;
 
 use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
