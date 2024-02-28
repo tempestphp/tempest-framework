@@ -5,11 +5,19 @@ declare(strict_types=1);
 namespace Tests\Tempest\Container;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Container\CanInitialize;
-use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Container\InitializedBy;
-use Tempest\Container\Initializer;
+use Tests\Tempest\Container\Fixtures\BuiltinArrayClass;
+use Tests\Tempest\Container\Fixtures\BuiltinTypesWithDefaultsClass;
+use Tests\Tempest\Container\Fixtures\CallContainerObjectE;
+use Tests\Tempest\Container\Fixtures\ContainerObjectA;
+use Tests\Tempest\Container\Fixtures\ContainerObjectB;
+use Tests\Tempest\Container\Fixtures\ContainerObjectC;
+use Tests\Tempest\Container\Fixtures\ContainerObjectD;
+use Tests\Tempest\Container\Fixtures\ContainerObjectE;
+use Tests\Tempest\Container\Fixtures\ContainerObjectEInitializer;
+use Tests\Tempest\Container\Fixtures\OptionalTypesClass;
+use Tests\Tempest\Container\Fixtures\SingletonClass;
+use Tests\Tempest\Container\Fixtures\UnionTypesClass;
 
 class ContainerTest extends TestCase
 {
@@ -92,75 +100,64 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
     }
-}
 
-class ContainerObjectA
-{
-}
+    /**
+     * @test
+     */
+    public function arrays_are_automatically_created()
+    {
+        $container = new GenericContainer();
 
-class ContainerObjectB
-{
-    public function __construct(public ContainerObjectA $a)
-    {
-    }
-}
+        /**
+         * @var BuiltinArrayClass $class
+         */
+        $class = $container->get(BuiltinArrayClass::class);
 
-class ContainerObjectC
-{
-    public function __construct(public string $prop)
-    {
-    }
-}
-
-#[InitializedBy(ContainerObjectDInitializer::class)]
-class ContainerObjectD
-{
-    public function __construct(public string $prop)
-    {
-    }
-}
-class ContainerObjectDInitializer implements Initializer
-{
-    public function initialize(string $className, Container $container): ContainerObjectD
-    {
-        return new ContainerObjectD(prop: 'test');
-    }
-}
-
-class ContainerObjectE
-{
-    public function __construct(public string $id = 'default')
-    {
-    }
-}
-
-class ContainerObjectEInitializer implements CanInitialize
-{
-    public function initialize(string $className, Container $container): ContainerObjectE
-    {
-        return new ContainerObjectE();
+        $this->assertIsArray($class->anArray);
+        $this->assertEmpty($class->anArray);
     }
 
-    public function canInitialize(string $className): bool
+    /**
+     * @test
+     */
+    public function builtin_defaults_are_used()
     {
-        return $className === ContainerObjectE::class;
+        $container = new GenericContainer();
+
+        /**
+         * @var BuiltinTypesWithDefaultsClass $class
+         */
+        $class = $container->get(BuiltinTypesWithDefaultsClass::class);
+
+        $this->assertSame('This is a default value', $class->aString);
     }
-}
 
-class SingletonClass
-{
-    public static int $count = 0;
-
-    public function __construct()
+    /**
+     * @test
+     */
+    public function optional_types_resolve_to_null()
     {
-        self::$count += 1;
+        $container = new GenericContainer();
+
+        /**
+         * @var OptionalTypesClass $class
+         */
+        $class = $container->get(OptionalTypesClass::class);
+
+        $this->assertNull($class->aString);
     }
-}
 
-class CallContainerObjectE
-{
-    public function method(ContainerObjectE $input): ContainerObjectE
+    /**
+     * @test
+     */
+    public function union_types_iterate_to_resolution()
     {
-        return $input;
+        $this->markTestSkipped("Currently there's a bug where the container cannot resolve the second union type if the first one fails");
+        $container = new GenericContainer();
+
+        /** @var UnionTypesClass $class */
+        $class = $container->get(UnionTypesClass::class);
+
+        $this->assertInstanceOf(UnionTypesClass::class, $class);
     }
 }

@@ -10,9 +10,11 @@ interface Response
 
     public function getHeaders(): array;
 
-    public function getBody(): string;
+    public function getBody(): string|array;
 
     public function body(string $body): self;
+
+    public function header(string $key, string $value): self;
 
     public function ok(): self;
 

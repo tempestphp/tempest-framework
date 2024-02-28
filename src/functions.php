@@ -47,14 +47,14 @@ namespace Tempest {
         return new GenericView($path);
     }
 
-    function request(string $uri, array $body = []): Request
+    function request(string $uri, array $body = [], array $headers = []): Request
     {
-        return new GenericRequest(Method::GET, $uri, $body);
+        return new GenericRequest(Method::GET, $uri, $body, $headers);
     }
 
-    function response(string $body = ''): Response
+    function response(string $body = '', Status $status = Status::OK): Response
     {
-        return new GenericResponse(Status::OK, $body);
+        return new GenericResponse($status, $body);
     }
 
     function uri(array|string $action, ...$params): string
@@ -115,7 +115,7 @@ namespace Tempest {
         $eventBus->dispatch($event);
     }
 
-    function env($key, $default = null): mixed
+    function env(string $key, mixed $default = null): mixed
     {
         $value = getenv($key);
 

@@ -4,10 +4,39 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Application;
 
+use Tempest\AppConfig;
+use Tempest\Application\CommandNotFound;
+use Tempest\Application\ConsoleApplication;
+use Tempest\Console\ConsoleOutput;
 use Tests\Tempest\TestCase;
 
 class ConsoleApplicationTest extends TestCase
 {
+    /** @test */
+    public function test_run()
+    {
+        $app = new ConsoleApplication(
+            ['hello:world input'],
+            $this->container,
+            $this->container->get(AppConfig::class),
+        );
+
+        $app->run();
+
+        /** @var \Tests\Tempest\TestConsoleOutput $output */
+        $output = $this->container->get(ConsoleOutput::class);
+
+        $this->assertStringContainsString('Tempest Console', $output->lines[0]);
+    }
+
+    /** @test */
+    public function test_unhandled_command()
+    {
+        $this->expectException(CommandNotFound::class);
+
+        $this->console('unknown');
+    }
+
     /** @test */
     public function test_cli_application()
     {
@@ -15,7 +44,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['Hi', 'input'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -26,7 +55,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['1', 'flag'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -37,7 +66,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['null', 'no-flag'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -48,7 +77,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['Something went wrong'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 }

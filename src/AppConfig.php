@@ -20,6 +20,10 @@ final class AppConfig
         public array $discoveryClasses = [
             DiscoveryDiscovery::class,
         ],
+
+        /** @var \Tempest\Exceptions\ExceptionHandler[] */
+        public array $exceptionHandlers = [],
+        public bool $enableExceptionHandling = true,
     ) {
     }
 }

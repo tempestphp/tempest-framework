@@ -13,6 +13,8 @@ class LowercaseTest extends TestCase
     {
         $rule = new Lowercase();
 
+        $this->assertSame('Value should be a lowercase string', $rule->message());
+
         $this->assertTrue($rule->isValid('abc'));
         $this->assertTrue($rule->isValid('àbç'));
         $this->assertFalse($rule->isValid('ABC'));

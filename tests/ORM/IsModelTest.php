@@ -9,11 +9,9 @@ use App\Migrations\CreateBookTable;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
-use Tempest\Database\Migration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Query;
-use Tempest\ORM\IsModel;
-use Tempest\ORM\Model;
+use Tests\Tempest\ORM\Fixtures\Foo;
+use Tests\Tempest\ORM\Fixtures\FooMigration;
 use Tests\Tempest\TestCase;
 
 class IsModelTest extends TestCase
@@ -74,33 +72,5 @@ class IsModelTest extends TestCase
         $this->assertInstanceOf(Author::class, $book->author);
         $this->assertSame('Author Name', $book->author->name);
         $this->assertEquals(1, $book->author->id->id);
-    }
-}
-
-class Foo implements Model
-{
-    use IsModel;
-
-    public string $bar;
-}
-
-class FooMigration implements Migration
-{
-    public function getName(): string
-    {
-        return 'foo';
-    }
-
-    public function up(): Query|null
-    {
-        return new Query("CREATE TABLE Foo (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `bar` TEXT
-        )");
-    }
-
-    public function down(): Query|null
-    {
-        return null;
     }
 }

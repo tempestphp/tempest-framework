@@ -9,7 +9,7 @@ use Tempest\Container\Initializer;
 
 class ConsoleInitializer implements Initializer
 {
-    public function initialize(string $className, Container $container): object
+    public function initialize(Container $container): object
     {
         $console = new GenericConsole(
             $container->get(ConsoleInput::class),

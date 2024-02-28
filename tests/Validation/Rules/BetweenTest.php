@@ -14,6 +14,8 @@ class BetweenTest extends TestCase
     {
         $rule = new Between(min: 0, max: 10);
 
+        $this->assertSame('Value should be between 0 and 10', $rule->message());
+
         $this->assertTrue($rule->isValid(0));
         $this->assertTrue($rule->isValid(10));
         $this->assertTrue($rule->isValid(5));

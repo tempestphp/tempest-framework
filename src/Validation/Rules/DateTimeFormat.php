@@ -17,11 +17,7 @@ final readonly class DateTimeFormat implements Rule
 
     public function isValid(mixed $value): bool
     {
-        if ($value === null || $value === '') {
-            return false;
-        }
-
-        if (! is_string($value)) {
+        if (! is_string($value) || empty($value)) {
             return false;
         }
 

@@ -17,6 +17,6 @@ class Uppercase implements Rule
 
     public function message(): string
     {
-        return 'Value should be an uppercase string.';
+        return 'Value should be an uppercase string';
     }
 }

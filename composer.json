@@ -2,7 +2,7 @@
     "name": "tempest/framework",
     "description": "The PHP framework that gets out of your way.",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-pdo": "*",
         "vlucas/phpdotenv": "^5.6",
         "ext-dom": "*",

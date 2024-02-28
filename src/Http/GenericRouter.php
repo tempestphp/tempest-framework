@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Closure;
 use ReflectionClass;
 use Tempest\AppConfig;
 use function Tempest\attribute;
@@ -34,52 +35,67 @@ final readonly class GenericRouter implements Router
 
     public function dispatch(Request $request): Response
     {
-        $actionsForMethod = $this->getRoutes()[$request->method->value] ?? null;
+        $matchedRoute = $this->matchRoute($request);
 
-        if (! $actionsForMethod) {
+        if ($matchedRoute === null) {
             return response()->notFound();
         }
 
-        $routeParams = null;
-        $matchedRoute = null;
+        $this->container->singleton(
+            MatchedRoute::class,
+            fn () => $matchedRoute,
+        );
+
+        $callable = $this->getCallable($matchedRoute);
+
+        $outputFromController = $callable($request);
+
+        if ($outputFromController === null) {
+            throw new MissingControllerOutputException(
+                $matchedRoute->route->handler->getDeclaringClass()->getName(),
+                $matchedRoute->route->handler->getName(),
+            );
+        }
+
+        return $this->createResponse($outputFromController);
+    }
+
+    public function matchRoute(Request $request): ?MatchedRoute
+    {
+        $actionsForMethod = $this->getRoutes()[$request->method->value] ?? null;
+
+        if ($actionsForMethod === null) {
+            return null;
+        }
 
         foreach ($actionsForMethod as $route) {
             $routeParams = $this->resolveParams($route->uri, $request->getPath());
 
             if ($routeParams !== null) {
-                $matchedRoute = $route;
-
-                break;
+                return new MatchedRoute($route, $routeParams);
             }
         }
 
-        if ($routeParams === null) {
-            return response()->notFound();
+        return null;
+    }
+
+    private function getCallable(MatchedRoute $matchedRoute): Closure
+    {
+        $route = $matchedRoute->route;
+
+        $callable = fn (Request $request) => $this->container->call(
+            $this->container->get($route->handler->getDeclaringClass()->getName()),
+            $route->handler->getName(),
+            ...$matchedRoute->params,
+        );
+
+        $middlewareStack = $route->middleware;
+
+        while ($middlewareClass = array_pop($middlewareStack)) {
+            $callable = fn (Request $request) => $this->container->get($middlewareClass)($request, $callable);
         }
 
-        $this->container->singleton(
-            RouteParams::class,
-            fn () => new RouteParams($routeParams),
-        );
-
-        $controller = $this->container->get(
-            $matchedRoute->handler->getDeclaringClass()->getName()
-        );
-
-        $outputFromController = $this->container->call(
-            $controller,
-            $matchedRoute->handler->getName(),
-            ...$routeParams
-        );
-
-        if ($outputFromController === null) {
-            throw new MissingControllerOutputException(
-                $matchedRoute->handler->getDeclaringClass()->getName(),
-                $matchedRoute->handler->getName(),
-            );
-        }
-
-        return $this->createResponse($outputFromController);
+        return $callable;
     }
 
     public function toUri(array|string $action, ...$params): string

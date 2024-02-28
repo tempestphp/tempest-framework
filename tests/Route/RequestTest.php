@@ -9,13 +9,14 @@ use App\Migrations\CreateBookTable;
 use App\Modules\Books\BookController;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
+use App\Modules\Books\Requests\CreateBookRequest;
+use App\Modules\Posts\PostRequest;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Http\Router;
 use Tempest\Http\Status;
-use function Tempest\request;
 use function Tempest\uri;
 use Tests\Tempest\TestCase;
 
@@ -24,36 +25,46 @@ class RequestTest extends TestCase
     /** @test */
     public function from_container()
     {
-        $this->server(
-            method: Method::POST,
-            uri: '/test',
-            body: ['test'],
-        );
+        $_SERVER['REQUEST_METHOD'] = Method::POST->value;
+        $_SERVER['REQUEST_URI'] = '/test';
+        $_POST = ['test'];
+        $_SERVER['HTTP_X-TEST'] = 'test';
 
         $request = $this->container->get(Request::class);
 
-        $this->assertEquals(Method::POST, $request->method);
-        $this->assertEquals('/test', $request->uri);
-        $this->assertEquals(['test'], $request->body);
+        $this->assertEquals(Method::POST, $request->getMethod());
+        $this->assertEquals('/test', $request->getUri());
+        $this->assertEquals(['test'], $request->getBody());
+        $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
     }
 
     /** @test */
     public function custom_request_test()
     {
-        $router = $this->container->get(Router::class);
-
-        $body = [
-            'title' => 'test-title',
-            'text' => 'test-text',
-        ];
-
-        $this->server(
+        $response = $this->send(new PostRequest(
             method: Method::POST,
-            uri: '/test',
-            body: $body,
-        );
+            uri: '/create-post',
+            body: [
+                'title' => 'test-title',
+                'text' => 'test-text',
+            ],
+        ));
 
-        $response = $router->dispatch(request('/create-post')->post($body));
+        $this->assertEquals(Status::OK, $response->getStatus());
+        $this->assertEquals('test-title test-text', $response->getBody());
+    }
+
+    /** @test */
+    public function generic_request_can_map_to_custom_request()
+    {
+        $response = $this->send(new GenericRequest(
+            method: Method::POST,
+            uri: '/create-post',
+            body: [
+                'title' => 'test-title',
+                'text' => 'test-text',
+            ],
+        ));
 
         $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
@@ -64,21 +75,13 @@ class RequestTest extends TestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
 
-        $router = $this->container->get(Router::class);
-
-        $body = [
-            'title' => 'a',
-        ];
-
-        $uri = uri([BookController::class, 'store']);
-
-        $this->server(
+        $response = $this->send(new CreateBookRequest(
             method: Method::POST,
-            uri: $uri,
-            body: $body,
-        );
-
-        $response = $router->dispatch(request($uri)->post($body));
+            uri: uri([BookController::class, 'store']),
+            body:  [
+                'title' => 'a',
+            ],
+        ));
 
         $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1));
@@ -95,22 +98,14 @@ class RequestTest extends TestCase
             CreateAuthorTable::class
         );
 
-        $router = $this->container->get(Router::class);
-
-        $body = [
-            'title' => 'a',
-            'author.name' => 'b',
-        ];
-
-        $uri = uri([BookController::class, 'storeWithAuthor']);
-
-        $this->server(
+        $response = $this->send(new GenericRequest(
             method: Method::POST,
-            uri: $uri,
-            body: $body,
-        );
-
-        $response = $router->dispatch(request($uri)->post($body));
+            uri: uri([BookController::class, 'storeWithAuthor']),
+            body: [
+                'title' => 'a',
+                'author.name' => 'b',
+            ],
+        ));
 
         $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1), relations: [Author::class]);

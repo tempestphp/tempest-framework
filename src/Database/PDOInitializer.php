@@ -7,15 +7,16 @@ namespace Tempest\Database;
 use PDO;
 use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
+use Tempest\Container\Initializer;
 
-final readonly class PDOInitializer implements CanInitialize
+final readonly class PDOInitializer implements Initializer, CanInitialize
 {
     public function canInitialize(string $className): bool
     {
         return $className === PDO::class;
     }
 
-    public function initialize(string $className, Container $container): PDO
+    public function initialize(Container $container): PDO
     {
         $databaseConfig = $container->get(DatabaseConfig::class);
 

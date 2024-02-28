@@ -11,15 +11,15 @@ use Tempest\Container\Initializer;
 
 final readonly class ConsoleInputInitializer implements Initializer
 {
-    public function initialize(string $className, Container $container): object
+    public function initialize(Container $container): object
     {
         $app = $container->get(Application::class);
 
         if (! $app instanceof ConsoleApplication) {
-            return new NullConsoleInput();
+            $consoleInput = new NullConsoleInput();
+        } else {
+            $consoleInput = new GenericConsoleInput($container->get(ConsoleOutput::class));
         }
-
-        $consoleInput = new GenericConsoleInput($container->get(ConsoleOutput::class));
 
         $container->singleton(ConsoleInput::class, fn () => $consoleInput);
 

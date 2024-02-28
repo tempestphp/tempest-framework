@@ -27,9 +27,14 @@ readonly class GenericConsole implements Console
         return $this->input->confirm($question, $default);
     }
 
-    public function writeln(string $line, ConsoleStyle ...$styles): void
+    public function write(string $line): void
     {
-        $this->output->writeln($line, ...$styles);
+        $this->output->write($line);
+    }
+
+    public function writeln(string $line): void
+    {
+        $this->output->writeln($line);
     }
 
     public function info(string $line): void
