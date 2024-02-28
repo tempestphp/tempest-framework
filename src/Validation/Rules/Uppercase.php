@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-class Uppercase implements Rule
+final readonly class Uppercase implements Rule
 {
     public function isValid(mixed $value): bool
     {
