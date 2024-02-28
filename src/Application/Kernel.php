@@ -31,6 +31,7 @@ final readonly class Kernel
         $container = $this->createContainer();
         $container->config($this->appConfig);
 
+        /** @var class-string<\Tempest\Bootstraps\Bootstrap> $bootstrap */
         foreach ($this->bootstraps as $bootstrap) {
             $container->get($bootstrap)->boot();
         }
@@ -47,16 +48,11 @@ final readonly class Kernel
         GenericContainer::setInstance($container);
 
         $container
-            ->singleton(Kernel::class, fn () => $this)
+            ->singleton(__CLASS__, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());
-
-        /** @var class-string<\Tempest\Bootstraps\Bootstrap> $bootstrap */
-        foreach ($this->bootstraps as $bootstrap) {
-            $container->singleton($bootstrap, fn () => new $bootstrap($container));
-        }
 
         return $container;
     }
