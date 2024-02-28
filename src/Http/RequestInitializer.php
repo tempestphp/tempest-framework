@@ -27,27 +27,29 @@ final class RequestInitializer implements Initializer, CanInitialize, RequiresCl
 
     public function initialize(Container $container): Request
     {
-        $server = $container->get(Server::class);
+        $className = $this->className === Request::class
+            ? GenericRequest::class
+            : $this->className;
 
-        $className = $this->className;
-
-        if ($className === Request::class) {
-            $className = GenericRequest::class;
-        }
-
-        $decodedUri = rawurldecode($server->getUri());
+        $uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $decodedUri = rawurldecode($uri);
         $parsedUrl = parse_url($decodedUri);
-
         $path = $parsedUrl['path'];
         $query = $parsedUrl['query'] ?? null;
-        $body = (new ArrayHelper())->unwrap($server->getBody());
+        $method = Method::tryFrom($_SERVER['REQUEST_METHOD'] ?? '') ?? Method::GET;
+        // Convert body dot notation `field.nested` into real arrays
+        // TODO: we might consider moving this logic to the ORM instead
+        $body = (new ArrayHelper())->unwrap(match ($method) {
+            Method::POST => $_POST,
+            default => $_GET,
+        });
 
         $request = map(
             [
-                'method' => $server->getMethod(),
-                'uri' => $server->getUri(),
+                'method' => $method,
+                'uri' => $uri,
                 'body' => $body,
-                'headers' => $server->getHeaders(),
+                'headers' => $this->getHeaders(),
                 'path' => $path,
                 'query' => $query,
                 ...$body,
@@ -57,5 +59,18 @@ final class RequestInitializer implements Initializer, CanInitialize, RequiresCl
         $container->singleton($className, fn () => $request);
 
         return $request;
+    }
+
+    private function getHeaders(): array
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $key => $value) {
+            if (str_starts_with($key, 'HTTP_')) {
+                $headers[strtolower(str_replace('HTTP_', '', $key))] = $value;
+            }
+        }
+
+        return $headers;
     }
 }

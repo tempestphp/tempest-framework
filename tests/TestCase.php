@@ -13,7 +13,11 @@ use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use function Tempest\get;
-use Tempest\Http\Method;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Http\Router;
+use function Tempest\map;
+use Tempest\Support\ArrayHelper;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -42,27 +46,10 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         $this->container = $this->kernel->init();
 
-        $this->container
-            ->addInitializer(new TestServerInitializer());
-
         $this->container->singleton(
             ConsoleOutput::class,
             fn () => new TestConsoleOutput(),
         );
-    }
-
-    protected function server(
-        Method $method = Method::GET,
-        string $uri = '/',
-        array $body = [],
-        array $headers = [],
-    ): void {
-        $this->container->addInitializer(new TestServerInitializer(
-            method: $method,
-            uri: $uri,
-            body: $body,
-            headers: $headers,
-        ));
     }
 
     protected function migrate(string ...$migrationClasses): void
@@ -106,5 +93,29 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->container->singleton(Application::class, fn () => $application);
 
         return $application;
+    }
+
+    protected function send(Request $request): Response
+    {
+        // Convert body dot notation `field.nested` into real arrays
+        // TODO: we might consider moving this logic to the ORM instead
+        $body = (new ArrayHelper())->unwrap($request->getBody());
+
+        $request = map([
+            'method' => $request->getMethod(),
+            'uri' => $request->getUri(),
+            'body' => $body,
+            'headers' => $request->getHeaders(),
+            'path' => $request->getPath(),
+            'query' => $request->getQuery(),
+            ...$body,
+        ])->to($request::class);
+
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton($request::class, fn () => $request);
+
+        $router = $this->container->get(Router::class);
+
+        return $router->dispatch($request);
     }
 }
