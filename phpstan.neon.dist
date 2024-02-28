@@ -1,21 +1,27 @@
 includes:
-  - vendor/spaze/phpstan-disallowed-calls/extension.neon
+	- vendor/phpat/phpat/extension.neon
+	- vendor/spaze/phpstan-disallowed-calls/extension.neon
+services:
+	-
+		class: Tests\Tempest\Architecture\ArchitectureTest
+		tags:
+			- phpat.test
 parameters:
-  level: 0
-  paths:
-    - src
-    - app
-    - tests
-  disallowedFunctionCalls:
-    -
-      function: 'exec()'
-    -
-      function: 'eval()'
-    -
-      function: 'dd()'
-    -
-      function: 'dump()'
-    -
-      function: 'phpinfo()'
-    -
-      function: 'var_dump()'
+	level: 0
+	paths:
+		- src
+		- app
+		- tests
+	disallowedFunctionCalls:
+		-
+			function: 'exec()'
+		-
+			function: 'eval()'
+		-
+			function: 'dd()'
+		-
+			function: 'dump()'
+		-
+			function: 'phpinfo()'
+		-
+			function: 'var_dump()'
