@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
+use Tempest\Validation\Rule;
 
 final class ValidationException extends Exception
 {
@@ -13,7 +14,7 @@ final class ValidationException extends Exception
         $messages = [];
 
         foreach ($failingRules as $field => $failingRulesForField) {
-            /** @var \Tempest\Validation\Rule $failingRuleForField */
+            /** @var Rule $failingRuleForField */
             foreach ($failingRulesForField as $failingRuleForField) {
                 $messages[$field][] = $failingRuleForField->message();
             }

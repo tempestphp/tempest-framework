@@ -9,6 +9,7 @@ use Tempest\Application\CommandNotFound;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Console\ConsoleOutput;
 use Tests\Tempest\TestCase;
+use Tests\Tempest\TestConsoleOutput;
 
 class ConsoleApplicationTest extends TestCase
 {
@@ -23,7 +24,7 @@ class ConsoleApplicationTest extends TestCase
 
         $app->run();
 
-        /** @var \Tests\Tempest\TestConsoleOutput $output */
+        /** @var TestConsoleOutput $output */
         $output = $this->container->get(ConsoleOutput::class);
 
         $this->assertStringContainsString('Tempest Console', $output->lines[0]);

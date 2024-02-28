@@ -97,7 +97,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function send(Request $request): Response
     {
-        /** @var \Tempest\Http\Router $router */
+        /** @var Router $router */
         $router = $this->container->get(Router::class);
 
         // Let's check whether the current request matches a route
