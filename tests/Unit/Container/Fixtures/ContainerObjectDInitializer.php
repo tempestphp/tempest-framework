@@ -9,8 +9,8 @@ use Tempest\Container\Initializer;
 
 class ContainerObjectDInitializer implements Initializer
 {
-    public function initialize(Container $container): \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD
+    public function initialize(Container $container): ContainerObjectD
     {
-        return new \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD(prop: 'test');
+        return new ContainerObjectD(prop: 'test');
     }
 }

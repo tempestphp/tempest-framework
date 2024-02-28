@@ -10,13 +10,13 @@ use Tempest\Container\Initializer;
 
 class ContainerObjectEInitializer implements Initializer, CanInitialize
 {
-    public function initialize(Container $container): \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE
+    public function initialize(Container $container): ContainerObjectE
     {
-        return new \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE();
+        return new ContainerObjectE();
     }
 
     public function canInitialize(string $className): bool
     {
-        return $className === \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE::class;
+        return $className === ContainerObjectE::class;
     }
 }

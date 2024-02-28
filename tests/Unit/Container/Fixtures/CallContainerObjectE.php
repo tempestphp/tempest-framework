@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 class CallContainerObjectE
 {
-    public function method(\Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE $input): \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE
+    public function method(ContainerObjectE $input): ContainerObjectE
     {
         return $input;
     }

@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 class ContainerObjectB
 {
-    public function __construct(public \Tests\Tempest\Unit\Container\Fixtures\ContainerObjectA $a)
+    public function __construct(public ContainerObjectA $a)
     {
     }
 }
