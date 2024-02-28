@@ -55,6 +55,22 @@ class RequestTest extends TestCase
     }
 
     /** @test */
+    public function generic_request_can_map_to_custom_request()
+    {
+        $response = $this->send(new GenericRequest(
+            method: Method::POST,
+            uri: '/create-post',
+            body: [
+                'title' => 'test-title',
+                'text' => 'test-text',
+            ],
+        ));
+
+        $this->assertEquals(Status::OK, $response->getStatus());
+        $this->assertEquals('test-title test-text', $response->getBody());
+    }
+
+    /** @test */
     public function custom_request_test_with_validation()
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
