@@ -11,7 +11,6 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
-use Tempest\Container\Exceptions\ContainerException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
@@ -19,19 +18,12 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
-    private ContainerLog $log;
-
     private array $definitions = [];
 
     private array $singletons = [];
 
     /** @var (Initializer&CanInitialize)[] */
     private array $initializers = [];
-
-    public function __construct()
-    {
-        $this->log = new ContainerLog(true);
-    }
 
     public function register(string $className, callable $definition): self
     {
@@ -64,14 +56,12 @@ final class GenericContainer implements Container
 
     public function get(string $className): object
     {
-        $this->log->startStep();
-
         try {
-            return $this->log->completeStepAfter(
-                $this->resolve($className)
-            );
+            return $this->resolve($className);
         } catch (Throwable $throwable) {
-            throw new ContainerException($this->log, $throwable);
+            // TODO: Logging
+
+            throw $throwable;
         }
     }
 
@@ -95,10 +85,6 @@ final class GenericContainer implements Container
 
     private function resolve(string $className): object
     {
-        $this->log->add(
-            new ContainerLogItem(id: $className)
-        );
-
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$className] ?? null) {
             return $instance;
@@ -117,10 +103,6 @@ final class GenericContainer implements Container
             if ($initializer instanceof RequiresClassName) {
                 $initializer->setClassName($className);
             }
-
-            $this->log->add(
-                new ContainerLogItem(id: $initializer::class)
-            );
 
             return $initializer->initialize($this);
         }
@@ -186,26 +168,15 @@ final class GenericContainer implements Container
      */
     private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
     {
-        $this->log->add(new ContainerLogItem(
-            id: $method->getName(),
-            subject: $method
-        ));
-
         $dependencies = [];
 
         // Build the class by iterating through its
         // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
-            // Inform our log we are resolving a nested dependency.
-            $this->log->startStep();
-
             $dependencies[] = $this->autowireDependency(
                 parameter: $parameter,
                 providedValue: $parameters[$parameter->getName()] ?? null
             );
-
-            // Complete the resolution of that nested dependency.
-            $this->log->completeStep();
         }
 
         return $dependencies;
@@ -213,11 +184,6 @@ final class GenericContainer implements Container
 
     private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
     {
-        // Add this dependency to the log.
-        $this->log->add(
-            new ContainerLogItem(id: $parameter->getName(), subject: $parameter)
-        );
-
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, immediately skip reflection

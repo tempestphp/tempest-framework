@@ -20,6 +20,9 @@ final readonly class ContainerCommand
     )]
     public function __invoke(): void
     {
+        $this->container->get(Test::class);
+        die;
+
         var_dump(
             $this->container->call(Test::class, '__construct')
         );
