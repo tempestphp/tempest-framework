@@ -47,9 +47,7 @@ final class GenericContainer implements Container
 
     public function config(object $config): self
     {
-        $this->singleton($config::class, function () use ($config) {
-            return $config;
-        });
+        $this->singleton($config::class, fn () => $config);
 
         return $this;
     }
