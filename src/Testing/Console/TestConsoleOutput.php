@@ -4,74 +4,70 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Console;
 
-use Tempest\Console\ConsoleFormatter;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleStyle;
 
 final class TestConsoleOutput implements ConsoleOutput
 {
-    private array $formattedLines = [];
     private array $lines = [];
     private array $errorLines = [];
     private array $infoLines = [];
     private array $successLines = [];
 
-    public function __construct(private readonly ConsoleFormatter $formatter)
+    public function write(string $line): void
     {
+        $this->lines[] = $line;
     }
 
-    public function write(string $line, ConsoleStyle ...$styles): void
+    public function writeln(string $line): void
     {
-        $this->formattedLines[] = ConsoleStyle::RESET(
-            $this->formatter->format($line, ...$styles)
-        );
-
-        $this->lines[] = preg_replace('/\\e[[][A-Za-z0-9];?[0-9]*m?/', '', $line);
-    }
-
-    public function writeln(string $line, ConsoleStyle ...$styles): void
-    {
-        $this->write($line . PHP_EOL, ...$styles);
+        $this->lines[] = $line;
     }
 
     public function info(string $line): void
     {
-        $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_DARK_BLUE)
-        );
-
+        $this->writeln($line);
         $this->infoLines[] = $line;
     }
 
     public function error(string $line): void
     {
-        $this->writeln(
-            $this->formatter->format($line, ConsoleStyle::FG_RED, ConsoleStyle::BOLD),
-        );
-
+        $this->writeln($line);
         $this->errorLines[] = $line;
     }
 
     public function success(string $line): void
     {
-        $this->writeln($line, ConsoleStyle::FG_GREEN, ConsoleStyle::BOLD);
-
+        $this->writeln($line);
         $this->successLines[] = $line;
     }
 
-    public function getLines(): array
+    public function getLinesWithFormatting(): array
     {
         return $this->lines;
     }
 
-    public function getFormattedLines(): array
+    public function getLinesWithoutFormatting(): array
     {
-        return $this->formattedLines;
+        $pattern = array_map(
+            fn (ConsoleStyle $consoleStyle) => ConsoleStyle::ESC->value . $consoleStyle->value,
+            ConsoleStyle::cases(),
+        );
+
+        return array_map(
+            fn (string $line) => str_replace($pattern, '', $line),
+            $this->getLinesWithFormatting(),
+        );
     }
 
-    public function getErrorLines(): array
+    public function getTextWithFormatting(): string
     {
-        return $this->errorLines;
+        return implode(PHP_EOL, $this->getLinesWithFormatting());
+    }
+
+    public function getTextWithoutFormatting(): string
+    {
+        return implode(PHP_EOL, $this->getLinesWithoutFormatting());
     }
 
     public function getInfoLines(): array
@@ -79,18 +75,13 @@ final class TestConsoleOutput implements ConsoleOutput
         return $this->infoLines;
     }
 
+    public function getErrorLines(): array
+    {
+        return $this->errorLines;
+    }
+
     public function getSuccessLines(): array
     {
         return $this->successLines;
-    }
-
-    public function getText(): string
-    {
-        return implode(PHP_EOL, $this->lines);
-    }
-
-    public function getFormattedText(): string
-    {
-        return implode(PHP_EOL, $this->formattedLines);
     }
 }

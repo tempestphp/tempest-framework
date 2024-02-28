@@ -19,12 +19,27 @@ final readonly class TestResponseHelper
         return $this->response;
     }
 
+    public function getStatus(): Status
+    {
+        return $this->getResponse()->getStatus();
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->getResponse()->getHeaders();
+    }
+
+    public function getBody(): string|array
+    {
+        return $this->getResponse()->getBody();
+    }
+
     public function assertHasHeader(string $name): self
     {
         Assert::assertArrayHasKey(
             $name,
             $this->response->getHeaders(),
-            sprintf('Failed to assert that response contains header [%s].', $name)
+            sprintf('Failed to assert that response contains header [%s].', $name),
         );
 
         return $this;
@@ -37,7 +52,7 @@ final readonly class TestResponseHelper
         Assert::assertEquals(
             $this->response->getHeaders()[$name],
             $value,
-            sprintf('Failed to assert that response header [%s] value equals %s.', $name, $value)
+            sprintf('Failed to assert that response header [%s] value equals %s.', $name, $value),
         );
 
         return $this;
@@ -47,7 +62,7 @@ final readonly class TestResponseHelper
     {
         Assert::assertTrue(
             $this->response->getStatus()->isRedirect(),
-            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->getStatus()->value)
+            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->getStatus()->value),
         );
 
         return $to === null
@@ -74,7 +89,7 @@ final readonly class TestResponseHelper
                 'Failed asserting status [%s] matched expected status of [%s].',
                 $expected->value,
                 $this->response->getStatus()->value,
-            )
+            ),
         );
 
         return $this;

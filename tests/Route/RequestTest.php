@@ -9,11 +9,8 @@ use App\Migrations\CreateBookTable;
 use App\Modules\Books\BookController;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
-use App\Modules\Books\Requests\CreateBookRequest;
-use App\Modules\Posts\PostRequest;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Status;
@@ -41,32 +38,32 @@ class RequestTest extends TestCase
     /** @test */
     public function custom_request_test()
     {
-        $response = $this->send(new PostRequest(
-            method: Method::POST,
-            uri: '/create-post',
-            body: [
-                'title' => 'test-title',
-                'text' => 'test-text',
-            ],
-        ));
+        $response = $this->http
+            ->post(
+                uri: '/create-post',
+                body: [
+                    'title' => 'test-title',
+                    'text' => 'test-text',
+                ],
+            )
+            ->assertOk();
 
-        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
     /** @test */
     public function generic_request_can_map_to_custom_request()
     {
-        $response = $this->send(new GenericRequest(
-            method: Method::POST,
-            uri: '/create-post',
-            body: [
-                'title' => 'test-title',
-                'text' => 'test-text',
-            ],
-        ));
+        $response = $this->http
+            ->post(
+                uri: '/create-post',
+                body: [
+                    'title' => 'test-title',
+                    'text' => 'test-text',
+                ],
+            )
+            ->assertOk();
 
-        $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
@@ -75,15 +72,15 @@ class RequestTest extends TestCase
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
 
-        $response = $this->send(new CreateBookRequest(
-            method: Method::POST,
-            uri: uri([BookController::class, 'store']),
-            body:  [
-                'title' => 'a',
-            ],
-        ));
+        $this->http
+            ->post(
+                uri: uri([BookController::class, 'store']),
+                body: [
+                    'title' => 'a',
+                ],
+            )
+            ->assertStatus(Status::FOUND);
 
-        $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1));
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
@@ -95,19 +92,19 @@ class RequestTest extends TestCase
         $this->migrate(
             CreateMigrationsTable::class,
             CreateBookTable::class,
-            CreateAuthorTable::class
+            CreateAuthorTable::class,
         );
 
-        $response = $this->send(new GenericRequest(
-            method: Method::POST,
-            uri: uri([BookController::class, 'storeWithAuthor']),
-            body: [
-                'title' => 'a',
-                'author.name' => 'b',
-            ],
-        ));
+        $this->http
+            ->post(
+                uri: uri([BookController::class, 'storeWithAuthor']),
+                body: [
+                    'title' => 'a',
+                    'author.name' => 'b',
+                ],
+            )
+            ->assertStatus(Status::FOUND);
 
-        $this->assertSame(Status::FOUND, $response->getStatus());
         $book = Book::find(new Id(1), relations: [Author::class]);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
+use Exception;
 use Tempest\Container\Container;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Router;
+use function Tempest\map;
 
 final class HttpRouterTester
 {
@@ -16,71 +18,69 @@ final class HttpRouterTester
     {
     }
 
-    public function get(string $path, array $headers = []): TestResponseHelper
+    public function get(string $uri, array $headers = []): TestResponseHelper
     {
-        return $this->performRequest(
+        return $this->sendRequest(
             new GenericRequest(
                 method: Method::GET,
-                uri: $path,
-                body: []
+                uri: $uri,
+                body: [],
+                headers: $headers,
             ),
-            $headers
         );
     }
 
-    public function post(string $path, array $headers = []): TestResponseHelper
+    public function post(string $uri, array $body = [], array $headers = []): TestResponseHelper
     {
-        return $this->performRequest(
+        return $this->sendRequest(
             new GenericRequest(
                 method: Method::POST,
-                uri: $path,
-                body: []
+                uri: $uri,
+                body: $body,
+                headers: $headers,
             ),
-            $headers
         );
     }
 
-    private function performRequest(Request $request, array $headers): TestResponseHelper
+    public function sendRequest(Request $request): TestResponseHelper
     {
-        // Register our headers as server variables.
-        $this->registerServerVariables($headers);
-        $this->registerRequestMethod($request);
-
-        // Register our test request in the container.
-        $this->container->singleton(Request::class, fn () => $request);
-
+        /** @var \Tempest\Http\Router $router */
         $router = $this->container->get(Router::class);
 
-        return new TestResponseHelper(
-            $router->dispatch($request)
-        );
-    }
+        // Let's check whether the current request matches a route
+        $matchedRoute = $router->matchRoute($request);
 
-    private function registerServerVariables(array $headers): void
-    {
-        foreach ($headers as $name => $value) {
-            $this->registerServerVariable($name, $value);
-        }
-    }
-
-    private function registerRequestMethod(Request $request): void
-    {
-        $_SERVER['REQUEST_METHOD'] = $request->getMethod()->value;
-    }
-
-    /**
-     * Somewhat based on Laravel's testing helper.
-     *
-     * @see https://github.com/laravel/framework/blob/10.x/src/Illuminate/Foundation/Testing/Concerns/MakesHttpRequests.php#L619-L626
-     */
-    private function registerServerVariable(string $name, mixed $value): void
-    {
-        $name = strtr(strtoupper($name), '-', '_');
-
-        if (! str_starts_with($name, 'HTTP_') && $name !== 'CONTENT_TYPE' && $name !== 'REMOTE_ADDR') {
-            $name = 'HTTP_'.$name;
+        // If not, there's nothing left to do, we can't send this request
+        if (! $matchedRoute) {
+            throw new Exception("No matching route found for {$request->getMethod()->value} {$request->getPath()}");
         }
 
-        $_SERVER[$name] = $value;
+        // If we have a match, let's find out if our input request data matches what the route's action needs
+        $requestClass = $request::class;
+
+        // We'll loop over all the handler's parameters
+        foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
+            // TODO: support unions
+
+            // If the parameter's type is an instance of Request…
+            if (is_a($parameter->getType()->getName(), Request::class, true)) {
+                // We'll use that specific request class
+                $requestClass = $parameter->getType()->getName();
+
+                break;
+            }
+        }
+
+        // We map the original request we got into this method to the right request class
+        $request = map($request)->to($requestClass);
+
+        // Finally, we register this newly created request object in the container
+        // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
+        // Making it so that we don't need to set any $_SERVER variables and stuff like that
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton($request::class, fn () => $request);
+
+        // Ok, now finally for real, we dispatch our request and return the response
+        return new TestResponseHelper($router->dispatch($request));
     }
 }

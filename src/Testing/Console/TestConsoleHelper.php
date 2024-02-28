@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Testing\Console;
 
 use PHPUnit\Framework\Assert;
-use Tempest\Console\ConsoleFormatter;
-use Tempest\Console\ConsoleStyle;
 
-final class TestConsoleHelper
+final readonly class TestConsoleHelper
 {
     public function __construct(
-        private readonly TestConsoleOutput $output,
-        private readonly ConsoleFormatter $formatter
+        private TestConsoleOutput $output,
     ) {
     }
 
@@ -20,20 +17,18 @@ final class TestConsoleHelper
     {
         Assert::assertStringContainsString(
             $text,
-            $this->output->getText(),
+            $this->output->getTextWithoutFormatting(),
             sprintf('Failed to assert that console output included text: %s.', $text)
         );
 
         return $this;
     }
 
-    public function assertContainsFormattedText(string $text, ConsoleStyle ...$styles): self
+    public function assertContainsFormattedText(string $text): self
     {
-        $text = $this->formatter->format($text, ...$styles);
-
         Assert::assertStringContainsString(
             $text,
-            $this->output->getFormattedText(),
+            $this->output->getTextWithFormatting(),
             sprintf('Failed to assert that console output included formatted text: %s.', $text)
         );
 

@@ -7,10 +7,9 @@ namespace Tempest\Testing\Console;
 use Tempest\AppConfig;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\GenericConsoleFormatter;
 use Tempest\Container\Container;
 
-final class ConsoleCommandTester
+final readonly class ConsoleCommandTester
 {
     public function __construct(private Container $container)
     {
@@ -32,7 +31,6 @@ final class ConsoleCommandTester
 
         return new TestConsoleHelper(
             $this->container->get(ConsoleOutput::class),
-            $this->container->get(GenericConsoleFormatter::class)
         );
     }
 }

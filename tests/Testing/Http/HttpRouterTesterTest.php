@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Testing\Http;
 
-use PHPUnit\Framework\AssertionFailedError;
+use Exception;
 use Tempest\Testing\TestCase;
 
 class HttpRouterTesterTest extends TestCase
@@ -19,7 +19,8 @@ class HttpRouterTesterTest extends TestCase
 
     public function test_get_requests_failure()
     {
-        $this->expectException(AssertionFailedError::class);
+        // TODO: we need a NotFoundException
+        $this->expectException(Exception::class);
 
         $this
             ->http
