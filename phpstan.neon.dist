@@ -18,6 +18,4 @@ parameters:
     -
       function: 'phpinfo()'
     -
-      function: 'var_export()'
-    -
       function: 'var_dump()'
