@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-class DoesNotEndWith implements Rule
+final readonly class DoesNotEndWith implements Rule
 {
     public function __construct(
         private string $needle
