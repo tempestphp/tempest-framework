@@ -44,7 +44,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['Hi', 'input'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -55,7 +55,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['1', 'flag'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -66,7 +66,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['null', 'no-flag'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 
@@ -77,7 +77,7 @@ class ConsoleApplicationTest extends TestCase
 
         $this->assertSame(
             ['Something went wrong'],
-            $output->lines,
+            $output->getLinesWithoutFormatting(),
         );
     }
 }

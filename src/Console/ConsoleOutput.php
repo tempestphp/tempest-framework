@@ -9,9 +9,9 @@ use Tempest\Container\InitializedBy;
 #[InitializedBy(ConsoleOutputInitializer::class)]
 interface ConsoleOutput
 {
-    public function write(string $line, ConsoleStyle ...$styles): void;
+    public function write(string $line): void;
 
-    public function writeln(string $line, ConsoleStyle ...$styles): void;
+    public function writeln(string $line): void;
 
     public function info(string $line): void;
 

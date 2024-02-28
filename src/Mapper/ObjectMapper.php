@@ -21,6 +21,7 @@ final class ObjectMapper
     public function __construct()
     {
         $this->mappers = [
+            new RequestToRequestMapper(),
             new ArrayToObjectMapper(),
             new QueryToModelMapper(),
             new ModelToQueryMapper(),

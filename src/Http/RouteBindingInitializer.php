@@ -28,13 +28,13 @@ final class RouteBindingInitializer implements Initializer, CanInitialize, Requi
 
     public function initialize(Container $container): object
     {
-        $routeParams = $container->get(RouteParams::class);
+        $matchedRoute = $container->get(MatchedRoute::class);
 
         $className = $this->className;
 
         $paramName = lcfirst((new ReflectionClass($className))->getShortName());
 
         /** @var class-string<Model>|Model $className */
-        return $className::find(new Id($routeParams->params[$paramName]));
+        return $className::find(new Id($matchedRoute->params[$paramName]));
     }
 }
