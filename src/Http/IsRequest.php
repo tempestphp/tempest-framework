@@ -16,8 +16,8 @@ trait IsRequest
     public function __construct(
         Method $method,
         string $uri,
-        array $body,
-        array $headers,
+        array $body = [],
+        array $headers = [],
     ) {
         $this->method = $method;
         $this->uri = $uri;
