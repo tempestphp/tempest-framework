@@ -29,11 +29,19 @@ final class Context
         return $this->dependencies[array_key_last($this->dependencies)] ?? null;
     }
 
-    public function getId(): string
+    public function getName(): string
     {
         return match($this->reflector::class) {
             ReflectionClass::class, ReflectionFunction::class => $this->reflector->getName(),
             ReflectionMethod::class => $this->reflector->getDeclaringClass()->getName(),
+        };
+    }
+
+    public function getShortName(): string
+    {
+        return match($this->reflector::class) {
+            ReflectionClass::class, ReflectionFunction::class => $this->reflector->getShortName(),
+            ReflectionMethod::class => $this->reflector->getDeclaringClass()->getShortName(),
         };
     }
 

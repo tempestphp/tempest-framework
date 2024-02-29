@@ -6,36 +6,38 @@ namespace Tempest\Container\Exceptions;
 
 use Exception;
 use Tempest\Container\ContainerLog;
+use Tempest\Container\Context;
 
 final class CircularDependencyException extends Exception
 {
-    public function __construct(ContainerLog $containerLog)
+    public function __construct(ContainerLog $containerLog, Context $circularDependencyContext)
     {
         $stack = $containerLog->getStack();
-
         $firstContext = $stack[array_key_first($stack)];
         $lastContext = $stack[array_key_last($stack)];
 
-        $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstContext->getId()} because it is a circular dependency:" . PHP_EOL;
+        $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstContext->getName()} because it has a circular dependency on {$circularDependencyContext->getName()}:" . PHP_EOL;
 
-        $i = 0;
+        $hasSeenDependency = false;
 
-        foreach ($stack as $currentContext) {
-            $pipe = match ($i) {
-                0 => '┌─►',
-                default => '│  ',
-            };
+        foreach ($stack as $context) {
+            if ($context->getName() === $circularDependencyContext->getName()) {
+                $prefix = '┌─►';
+                $hasSeenDependency = true;
+            } elseif ($hasSeenDependency) {
+                $prefix = '│  ';
+            } else {
+                $prefix = '   ';
+            }
 
-            $message .= PHP_EOL . "\t{$pipe} " . $currentContext;
 
-            $i++;
+            $message .= PHP_EOL . "\t{$prefix} " . $context;
         }
 
-
-        $circularName = explode('::', (string) $firstContext)[0] ?? null;
-        $firstPart = explode($circularName, (string) $lastContext)[0] ?? null;
+        $circularDependencyName = $circularDependencyContext->getShortName();
+        $firstPart = explode($circularDependencyName, (string) $lastContext)[0] ?? null;
         $fillerLines = str_repeat('─', strlen($firstPart) + 3);
-        $fillerArrows = str_repeat('▒', strlen($circularName));
+        $fillerArrows = str_repeat('▒', strlen($circularDependencyName));
 
         $message .= PHP_EOL . "\t└{$fillerLines}{$fillerArrows}";
         $message .= PHP_EOL . PHP_EOL;

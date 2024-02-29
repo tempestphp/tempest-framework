@@ -16,7 +16,7 @@ final class CannotAutowireException extends Exception
         $firstContext = $stack[array_key_first($stack)];
         $lastContext = $stack[array_key_last($stack)];
 
-        $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstContext->getId()} because {$lastContext->getId()} cannot be resolved" . PHP_EOL;
+        $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstContext->getName()} because {$lastContext->getName()} cannot be resolved" . PHP_EOL;
 
         $i = 0;
 

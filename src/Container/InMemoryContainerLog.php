@@ -31,11 +31,11 @@ final class InMemoryContainerLog implements ContainerLog
 
     public function addContext(Context $context): ContainerLog
     {
-        if (isset($this->stack[$context->getId()])) {
-            throw new CircularDependencyException($this);
+        if (isset($this->stack[$context->getName()])) {
+            throw new CircularDependencyException($this, $context);
         }
 
-        $this->stack[$context->getId()] = $context;
+        $this->stack[$context->getName()] = $context;
 
         return $this;
     }
