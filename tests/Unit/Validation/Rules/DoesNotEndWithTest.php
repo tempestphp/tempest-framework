@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation\Rules;
 
+use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\DoesNotEndWith;
-use Tests\Tempest\TestCase;
 
 class DoesNotEndWithTest extends TestCase
 {

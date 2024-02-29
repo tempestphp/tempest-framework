@@ -40,4 +40,25 @@ class ArchitectureTest
             ->classes(Selector::inNamespace('Tempest\Validation\Rules'))
             ->shouldBeReadonly();
     }
+
+    public function test_unit_tests_do_not_rely_on_application_classes(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('Tests\Tempest\Unit'))
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration'),
+                Selector::inNamespace('Tempest\Testing'),
+            );
+    }
+
+    public function test_integration_tests_do_not_rely_on_unit_test_fixtures(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('Tests\Tempest\Integration'))
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Unit'),
+            );
+    }
 }

@@ -6,7 +6,6 @@ namespace Tests\Tempest\Unit\Console;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use function Tempest\attribute;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\RenderConsoleCommand;
@@ -19,7 +18,7 @@ class RenderConsoleCommandTest extends TestCase
     {
         $handler = new ReflectionMethod(new MyConsole(), 'handle');
 
-        $consoleCommand = attribute(ConsoleCommand::class)->in($handler)->first();
+        $consoleCommand = $handler->getAttributes(ConsoleCommand::class)[0]->newInstance();
 
         $consoleCommand->setHandler($handler);
 
