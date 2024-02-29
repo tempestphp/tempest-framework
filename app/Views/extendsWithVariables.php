@@ -1,8 +1,9 @@
 <?php
 
 declare(strict_types=1);
+use Tempest\View\GenericView;
 
-/** @var \Tempest\View\GenericView $this */
+/** @var GenericView $this */
 $this->extends('Views/base.php', title: 'Test');
 
 ?>

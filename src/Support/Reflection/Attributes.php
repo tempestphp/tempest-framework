@@ -30,7 +30,7 @@ final class Attributes
     }
 
     /**
-     * @param \ReflectionClass|\ReflectionMethod|\ReflectionProperty $reflector
+     * @param ReflectionClass|ReflectionMethod|ReflectionProperty $reflector
      * @return $this<T>
      */
     public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|string $reflector): self
@@ -66,7 +66,7 @@ final class Attributes
     }
 
     /**
-     * @return \ReflectionAttribute[]
+     * @return ReflectionAttribute[]
      */
     private function resolveAttributes(): array
     {

@@ -17,7 +17,7 @@ final readonly class TestMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, callable $next): Response
     {
-        /** @var \Tempest\Http\Response $response */
+        /** @var Response $response */
         $response = $next($request);
 
         $response->header('middleware', $this->middlewareDependency->value);

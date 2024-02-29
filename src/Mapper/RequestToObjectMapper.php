@@ -16,7 +16,7 @@ final readonly class RequestToObjectMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\Http\Request $data */
+        /** @var Request $data */
         return map($data->getBody())->to($objectOrClass);
     }
 }
