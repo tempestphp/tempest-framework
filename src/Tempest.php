@@ -10,8 +10,6 @@ use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
-use Tempest\Bootstraps\ConfigBootstrap;
-use Tempest\Bootstraps\DiscoveryBootstrap;
 use Tempest\Exceptions\ExceptionHandler;
 
 final readonly class Tempest
@@ -33,12 +31,8 @@ final readonly class Tempest
         );
 
         $kernel = new Kernel(
-            $root,
-            $createAppConfig(),
-            [
-                DiscoveryBootstrap::class,
-                ConfigBootstrap::class,
-            ],
+            root: $root,
+            appConfig: $createAppConfig(),
         );
 
         return new self(

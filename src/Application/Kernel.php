@@ -9,6 +9,8 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use SplFileInfo;
 use Tempest\AppConfig;
+use Tempest\Bootstraps\ConfigBootstrap;
+use Tempest\Bootstraps\DiscoveryBootstrap;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
@@ -22,17 +24,19 @@ final readonly class Kernel
     public function __construct(
         public string $root,
         private AppConfig $appConfig,
-        private array $bootstraps = [],
     ) {
     }
 
     public function init(): Container
     {
         $container = $this->createContainer();
-        $container->config($this->appConfig);
 
-        /** @var class-string<\Tempest\Bootstraps\Bootstrap> $bootstrap */
-        foreach ($this->bootstraps as $bootstrap) {
+        $bootstraps = [
+            DiscoveryBootstrap::class,
+            ConfigBootstrap::class,
+        ];
+
+        foreach ($bootstraps as $bootstrap) {
             $container->get($bootstrap)->boot();
         }
 
@@ -48,7 +52,8 @@ final readonly class Kernel
         GenericContainer::setInstance($container);
 
         $container
-            ->singleton(__CLASS__, fn () => $this)
+            ->config($this->appConfig)
+            ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
