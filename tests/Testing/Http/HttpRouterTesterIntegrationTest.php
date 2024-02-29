@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Testing\Http;
 
 use Exception;
-use Tempest\Testing\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class HttpRouterTesterTest extends TestCase
+class HttpRouterTesterIntegrationTest extends IntegrationTest
 {
     public function test_get_requests()
     {

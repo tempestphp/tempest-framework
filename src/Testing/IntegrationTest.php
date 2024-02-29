@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Testing;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
 use Tempest\Testing\Console\ConsoleCommandTester;
 use Tempest\Testing\Http\HttpRouterTester;
 
-abstract class TestCase extends BaseTestCase
+abstract class IntegrationTest extends TestCase
 {
     private Kernel $kernel;
 
