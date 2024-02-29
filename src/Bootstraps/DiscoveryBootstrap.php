@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Bootstraps;
 
-use Override;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
@@ -16,16 +15,15 @@ final readonly class DiscoveryBootstrap implements Bootstrap
     private string $root;
 
     public function __construct(
-        private Container $container
+        private Container $container,
     ) {
         $this->root = $this->container->get(Kernel::class)->root;
     }
 
-    #[Override]
     public function boot(): void
     {
         $discoveredLocations = [
-            ...$this->discoverTempestNamespaces(),
+            ...$this->discoverAppNamespaces(),
             ...$this->discoverInstalledPackageLocations(),
         ];
 
@@ -35,19 +33,22 @@ final readonly class DiscoveryBootstrap implements Bootstrap
     private function discoverInstalledPackageLocations(): array
     {
         $composerPath = path($this->root, 'vendor/composer');
-        $installedPath = path($composerPath, 'installed.json');
+        $installed = $this->loadJsonFile(path($composerPath, 'installed.json'));
+        $packages = $installed['packages'] ?? [];
 
-        $installedJson = $this->loadJsonFile($installedPath);
-        $packages = $installedJson['packages'] ?? [];
         $discoveredLocations = [];
+
         foreach ($packages as $package) {
             $packagePath = path($composerPath, $package['install-path']);
 
             $requiresTempest = isset($package['require']['tempest/framework']);
+
             $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
+
             if ($requiresTempest && $hasPsr4Namespaces) {
                 foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
                     $namespacePath = path($packagePath, $namespacePath);
+
                     $discoveredLocations[] = [
                         'namespace' => $namespace,
                         'path' => $namespacePath,
@@ -59,14 +60,16 @@ final readonly class DiscoveryBootstrap implements Bootstrap
         return $discoveredLocations;
     }
 
-    private function discoverTempestNamespaces(): array
+    private function discoverAppNamespaces(): array
     {
         $composer = $this->loadJsonFile(path($this->root, 'composer.json'));
-
         $namespaceMap = $composer['autoload']['psr-4'] ?? [];
+
         $discoveredLocations = [];
+
         foreach ($namespaceMap as $namespace => $path) {
             $path = path($this->root, $path);
+
             $discoveredLocations[] = [
                 'namespace' => $namespace,
                 'path' => $path,
@@ -81,6 +84,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
         foreach ($discoveredLocations as &$location) {
             $location = new DiscoveryLocation(...$location);
         }
+
         unset($location);
 
         $this->container->get(AppConfig::class)->discoveryLocations = $discoveredLocations;
