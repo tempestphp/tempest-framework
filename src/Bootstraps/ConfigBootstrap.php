@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Bootstraps;
 
+use Override;
 use Tempest\AppConfig;
 use Tempest\Container\Container;
 use function Tempest\path;
@@ -15,7 +16,7 @@ final readonly class ConfigBootstrap implements Bootstrap
     ) {
     }
 
-    #[\Override]
+    #[Override]
     public function boot(): void
     {
         // Scan for package config files

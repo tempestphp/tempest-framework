@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Bootstraps;
 
+use Override;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
@@ -20,7 +21,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
         $this->root = $this->container->get(Kernel::class)->root;
     }
 
-    #[\Override]
+    #[Override]
     public function boot(): void
     {
         $discoveredLocations = [
