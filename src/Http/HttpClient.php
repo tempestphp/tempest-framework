@@ -11,5 +11,17 @@ interface HttpClient extends ClientInterface
 {
     public function get(string $uri, array $headers = []): ResponseInterface;
 
-    public function post(string $uri, string $content, array $headers = []): ResponseInterface;
+    public function head(string $uri, array $headers = []): ResponseInterface;
+
+    public function trace(string $uri, array $headers = []): ResponseInterface;
+
+    public function post(string $uri, array $headers = [], ?string $body = null): ResponseInterface;
+
+    public function put(string $uri, array $headers = [], ?string $body = null): ResponseInterface;
+
+    public function patch(string $uri, array $headers = [], ?string $body = null): ResponseInterface;
+
+    public function delete(string $uri, array $headers = [], ?string $body = null): ResponseInterface;
+
+    public function options(string $uri, array $headers = [], ?string $body = null): ResponseInterface;
 }

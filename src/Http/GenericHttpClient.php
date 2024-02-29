@@ -30,13 +30,71 @@ final class GenericHttpClient implements HttpClient
         );
     }
 
-    public function post(string $uri, string $content, array $headers = []): ResponseInterface
+    public function head(string $uri, array $headers = []): ResponseInterface
+    {
+        return $this->send(
+            method: Method::HEAD,
+            uri: $uri,
+            headers: $headers,
+        );
+    }
+
+    public function post(string $uri, array $headers = [], ?string $body = null): ResponseInterface
     {
         return $this->send(
             method: Method::POST,
             uri: $uri,
-            content: $content,
+            headers: $headers,
+            body: $body
+        );
+    }
+
+    public function trace(string $uri, array $headers = []): ResponseInterface
+    {
+        return $this->send(
+            method: Method::TRACE,
+            uri: $uri,
             headers: $headers
+        );
+    }
+
+    public function put(string $uri, array $headers = [], ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: Method::PUT,
+            uri: $uri,
+            headers: $headers,
+            body: $body
+        );
+    }
+
+    public function patch(string $uri, array $headers = [], ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: Method::PATCH,
+            uri: $uri,
+            headers: $headers,
+            body: $body
+        );
+    }
+
+    public function delete(string $uri, array $headers = [], ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: Method::DELETE,
+            uri: $uri,
+            headers: $headers,
+            body: $body
+        );
+    }
+
+    public function options(string $uri, array $headers = [], ?string $body = null): ResponseInterface
+    {
+        return $this->send(
+            method: Method::OPTIONS,
+            uri: $uri,
+            headers: $headers,
+            body: $body
         );
     }
 
@@ -45,7 +103,7 @@ final class GenericHttpClient implements HttpClient
         return $this->client->sendRequest($request);
     }
 
-    private function send(Method $method, string $uri, ?string $content = null, array $headers = []): ResponseInterface
+    private function send(Method $method, string $uri, array $headers = [], ?string $body = null): ResponseInterface
     {
         $uri = $this->uriFactory->createUri($uri);
         $request = $this->requestFactory->createRequest($method->value, $uri);
@@ -54,9 +112,9 @@ final class GenericHttpClient implements HttpClient
             $request = $request->withHeader($name, $value);
         }
 
-        $stream = is_file($content)
-            ? $this->streamFactory->createStreamFromFile($content)
-            : $this->streamFactory->createStream($content);
+        $stream = is_file($body)
+            ? $this->streamFactory->createStreamFromFile($body)
+            : $this->streamFactory->createStream($body);
 
         $request = $request->withBody($stream);
 
