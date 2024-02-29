@@ -69,7 +69,8 @@ final readonly class GenericRouter implements Router
         }
 
         // match static routes
-        if (isset($actionsForMethod[$request->getPath()])) {
+        $staticRoute = $actionsForMethod[$request->getPath()] ?? null;
+        if ($staticRoute !== null && $staticRoute->isDynamic === false) {
             return new MatchedRoute($actionsForMethod[$request->getPath()], []);
         }
 
@@ -77,8 +78,11 @@ final readonly class GenericRouter implements Router
 
         // match dynamic routes
         $combinedMatchingRegex = "#^(?|";
+        /** @var Route $route */
         foreach ($actionsForMethod as $routeIndex => $route) {
-            $combinedMatchingRegex .= "$route->matchingRegex (*MARK:$routeIndex) |";
+            if ($route->isDynamic) {
+                $combinedMatchingRegex .= "$route->matchingRegex (*MARK:$routeIndex) |";
+            }
         }
         $combinedMatchingRegex = rtrim($combinedMatchingRegex, '|');
         $combinedMatchingRegex .= ')$#x';

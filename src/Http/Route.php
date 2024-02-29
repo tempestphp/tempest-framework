@@ -15,6 +15,10 @@ class Route
      * @var string The Regex used for matching this route against a request URI
      */
     public readonly string $matchingRegex;
+    /**
+     * @var bool If the route has params
+     */
+    public readonly bool $isDynamic;
 
     public function __construct(
         public string $uri,
@@ -33,6 +37,7 @@ class Route
             '([^/]++)',
             $uri
         );
+        $this->isDynamic = $this->matchingRegex !== $this->uri;
     }
 
     public function setHandler(ReflectionMethod $handler): self
@@ -51,6 +56,7 @@ class Route
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
             'matchingRegex' => $this->matchingRegex,
+            'isDynamic' => $this->isDynamic,
         ];
     }
 
@@ -64,5 +70,6 @@ class Route
             method: $data['handler_method'],
         );
         $this->matchingRegex = $data['matchingRegex'];
+        $this->isDynamic = $data['isDynamic'];
     }
 }
