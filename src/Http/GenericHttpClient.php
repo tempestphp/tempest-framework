@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
@@ -103,6 +104,9 @@ final class GenericHttpClient implements HttpClient
         return $this->client->sendRequest($request);
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     private function send(Method $method, string $uri, array $headers = [], ?string $body = null): ResponseInterface
     {
         $uri = $this->uriFactory->createUri($uri);
@@ -112,11 +116,13 @@ final class GenericHttpClient implements HttpClient
             $request = $request->withHeader($name, $value);
         }
 
-        $stream = is_file($body)
-            ? $this->streamFactory->createStreamFromFile($body)
-            : $this->streamFactory->createStream($body);
+        if ($body !== null) {
+            $stream = is_file($body)
+                ? $this->streamFactory->createStreamFromFile($body)
+                : $this->streamFactory->createStream($body);
 
-        $request = $request->withBody($stream);
+            $request = $request->withBody($stream);
+        }
 
         return $this->sendRequest($request);
     }
