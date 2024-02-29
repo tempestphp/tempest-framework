@@ -81,7 +81,7 @@ final readonly class GenericRouter implements Router
             $combinedMatchingRegex .= "$route->matchingRegex (*MARK:$routeIndex) |";
         }
         $combinedMatchingRegex = rtrim($combinedMatchingRegex, '|');
-        $combinedMatchingRegex .= ')$#';
+        $combinedMatchingRegex .= ')$#x';
 
         $matchResult = preg_match($combinedMatchingRegex, $request->getPath(), $matches);
 
