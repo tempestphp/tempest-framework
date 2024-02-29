@@ -10,7 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
 use function Tempest\path;
 
-final readonly class DiscoveryBootstrap implements Bootstrap
+final readonly class DiscoveryLocationBootstrap implements Bootstrap
 {
     private string $root;
 

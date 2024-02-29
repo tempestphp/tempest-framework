@@ -10,7 +10,7 @@ use ReflectionClass;
 use SplFileInfo;
 use Tempest\AppConfig;
 use Tempest\Bootstraps\ConfigBootstrap;
-use Tempest\Bootstraps\DiscoveryBootstrap;
+use Tempest\Bootstraps\DiscoveryLocationBootstrap;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
@@ -32,7 +32,7 @@ final readonly class Kernel
         $container = $this->createContainer();
 
         $bootstraps = [
-            DiscoveryBootstrap::class,
+            DiscoveryLocationBootstrap::class,
             ConfigBootstrap::class,
         ];
 
