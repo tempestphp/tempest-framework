@@ -30,7 +30,7 @@ class Route
         // group
         $this->matchingRegex = preg_replace(
             '#\{(\w+)}#',
-            '([\w\d\s]+)',
+            '([^/]++)',
             $uri
         );
     }
