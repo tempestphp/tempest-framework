@@ -18,7 +18,7 @@ final readonly class RequestToRequestMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\Http\Request $origin */
+        /** @var Request $origin */
         $origin = $data;
 
         /** @var class-string<\Tempest\Http\Request> $requestClass */

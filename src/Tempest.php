@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest;
 
-use Closure;
 use Dotenv\Dotenv;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
@@ -17,44 +16,43 @@ final readonly class Tempest
 {
     private function __construct(
         private Kernel $kernel,
-        private AppConfig $appConfig,
     ) {
     }
 
-    public static function boot(string $root, ?Closure $createAppConfig = null): self
+    public static function boot(string $root): self
     {
         $dotenv = Dotenv::createUnsafeImmutable($root);
+
         $dotenv->safeLoad();
 
-        $createAppConfig ??= fn () => new AppConfig(
-            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            discoveryCache: env('DISCOVERY_CACHE', false),
-            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+        $kernel = new Kernel(
+            root: $root,
+            appConfig: new AppConfig(
+                environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+                discoveryCache: env('DISCOVERY_CACHE', false),
+                enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+            ),
         );
-
-        $appConfig = $createAppConfig();
-
-        $kernel = new Kernel($root, $appConfig);
 
         return new self(
             kernel: $kernel,
-            appConfig: $appConfig
         );
     }
 
     public function console(): ConsoleApplication
     {
         $container = $this->kernel->init();
+        $appConfig = $container->get(AppConfig::class);
 
         $application = new ConsoleApplication(
             args: $_SERVER['argv'],
             container: $container,
-            appConfig: $this->appConfig,
+            appConfig: $appConfig,
         );
 
         $container->singleton(Application::class, fn () => $application);
 
-        $this->appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
+        $appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
 
         return $application;
     }
@@ -62,15 +60,16 @@ final readonly class Tempest
     public function http(): HttpApplication
     {
         $container = $this->kernel->init();
+        $appConfig = $container->get(AppConfig::class);
 
         $application = new HttpApplication(
             container: $container,
-            appConfig: $this->appConfig,
+            appConfig: $appConfig,
         );
 
         $container->singleton(Application::class, fn () => $application);
 
-        $this->appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
+        $appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
 
         return $application;
     }

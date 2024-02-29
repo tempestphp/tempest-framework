@@ -19,6 +19,6 @@ final readonly class Test
     #[ConsoleCommand]
     public function test()
     {
-        dump($this->input->confirm('yes or no?'));
+        $this->input->confirm('yes or no?');
     }
 }

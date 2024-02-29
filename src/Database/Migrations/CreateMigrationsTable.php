@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
+use Tempest\Database\Migration;
 use Tempest\Database\Query;
 
-final readonly class CreateMigrationsTable implements \Tempest\Database\Migration
+final readonly class CreateMigrationsTable implements Migration
 {
     public function getName(): string
     {
