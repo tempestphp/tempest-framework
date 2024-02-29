@@ -44,7 +44,7 @@ final class HttpRouterTester
 
     public function sendRequest(Request $request): TestResponseHelper
     {
-        /** @var \Tempest\Http\Router $router */
+        /** @var Router $router */
         $router = $this->container->get(Router::class);
 
         // Let's check whether the current request matches a route
