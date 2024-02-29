@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Container\Fixtures;
 
-final readonly class CircularC
+final readonly class AutowireC
 {
     public function __construct(
         public ContainerObjectA $other,
-        public CircularA $a
+        public string $unknown
     ) {
     }
 }

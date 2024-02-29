@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Container;
 
 use Exception;
@@ -7,16 +9,21 @@ use Tempest\Container\Exceptions\CircularDependencyException;
 
 final class InMemoryContainerLog implements ContainerLog
 {
+    private string $origin = '';
+
     public function __construct(
         /** @var \Tempest\Container\Context[] $stack */
         private array $stack = [],
 
         /** @var \Tempest\Container\Dependency[] $stack */
         private array $dependencies = [],
-    ) {}
+    ) {
+    }
 
     public function startResolving(): ContainerLog
     {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $this->origin = $trace[1]['file'] . ':' . $trace[1]['line'];
         $this->stack = [];
 
         return $this;
@@ -25,7 +32,7 @@ final class InMemoryContainerLog implements ContainerLog
     public function addContext(Context $context): ContainerLog
     {
         if (isset($this->stack[$context->getId()])) {
-            throw new CircularDependencyException($this, $context);
+            throw new CircularDependencyException($this);
         }
 
         $this->stack[$context->getId()] = $context;
@@ -55,5 +62,10 @@ final class InMemoryContainerLog implements ContainerLog
     public function currentDependency(): ?Dependency
     {
         return $this->currentContext()->currentDependency();
+    }
+
+    public function getOrigin(): string
+    {
+        return $this->origin;
     }
 }

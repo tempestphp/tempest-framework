@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Container;
 
 interface ContainerLog
@@ -18,4 +20,6 @@ interface ContainerLog
     public function currentContext(): Context;
 
     public function currentDependency(): ?Dependency;
+
+    public function getOrigin(): string;
 }

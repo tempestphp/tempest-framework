@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Container;
 
 use ReflectionClass;
@@ -13,7 +15,8 @@ final readonly class Dependency
 {
     public function __construct(
         public ReflectionParameter|ReflectionClass $reflector,
-    ) {}
+    ) {
+    }
 
     public function getId(): string
     {
@@ -65,7 +68,7 @@ final readonly class Dependency
         return implode(
             '&',
             array_map(
-                fn(ReflectionType $subType) => $this->typeToString($subType),
+                fn (ReflectionType $subType) => $this->typeToString($subType),
                 $type->getTypes(),
             ),
         );
@@ -76,7 +79,7 @@ final readonly class Dependency
         return implode(
             '|',
             array_map(
-                fn(ReflectionType $subType) => $this->typeToString($subType),
+                fn (ReflectionType $subType) => $this->typeToString($subType),
                 $type->getTypes(),
             ),
         );

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use LogicException;
 use ReflectionClass;
+use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
+use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
@@ -24,7 +25,8 @@ final class GenericContainer implements Container
         /** @var (Initializer&CanInitialize)[] */
         private array $initializers = [],
         private ContainerLog $log = new InMemoryContainerLog(),
-    ) {}
+    ) {
+    }
 
     public function register(string $className, callable $definition): self
     {
@@ -62,6 +64,8 @@ final class GenericContainer implements Container
 
     public function call(string|object $object, string $methodName, ...$params): mixed
     {
+        $this->log->startResolving();
+
         $object = is_string($object) ? $this->get($object) : $object;
 
         $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
@@ -82,16 +86,21 @@ final class GenericContainer implements Container
     {
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$className] ?? null) {
+            $this->log->addContext(new Context(new ReflectionClass($className)));
+
             return $instance;
         }
 
         // Check if a callable has been registered to resolve this class.
         if ($definition = $this->definitions[$className] ?? null) {
+            $this->log->addContext(new Context(new ReflectionFunction($definition)));
+
             return $definition($this);
         }
 
-        // Next we check if any of our default initializers
-        // can initialize this class.
+        // Next we check if any of our default initializers can initialize this class.
+        // If there's an initializer, we don't keep track of the log anymore,
+        // since initializers are outside the container's responsibility.
         if ($initializer = $this->initializerFor($className)) {
             // Provide the classname of the object we're trying to result
             // if the initializer requires it.
@@ -128,7 +137,7 @@ final class GenericContainer implements Container
         if ($initializedBy) {
             $initializerClassName = $initializedBy->className;
 
-            $initializer = $this->get($initializerClassName);
+            $initializer = $this->resolve($initializerClassName);
 
             if (! $initializer instanceof Initializer) {
                 throw new InvalidInitializerException($initializerClassName);
@@ -217,9 +226,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw $lastThrowable ?? new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $parameter->getName()),
-        );
+        throw $lastThrowable ?? new CannotAutowireException($this->log);
     }
 
     private function autowireObjectDependency(ReflectionNamedType $type, mixed $providedValue): mixed
@@ -238,9 +245,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $type->getName()),
-        );
+        throw new CannotAutowireException($this->log);
     }
 
     private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
@@ -275,8 +280,6 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new LogicException(
-            sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName()),
-        );
+        throw new CannotAutowireException($this->log);
     }
 }
