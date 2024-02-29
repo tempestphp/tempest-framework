@@ -15,7 +15,6 @@ use Tempest\Database\PDOInitializer;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
-use Tempest\Http\ServerInitializer;
 use function Tempest\path;
 use Throwable;
 
@@ -49,7 +48,6 @@ final readonly class Kernel
         $container
             ->singleton(Kernel::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
-            ->addInitializer(new ServerInitializer())
             ->addInitializer(new RequestInitializer())
             ->addInitializer(new RouteBindingInitializer())
             ->addInitializer(new PDOInitializer());

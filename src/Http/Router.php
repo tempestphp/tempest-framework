@@ -13,6 +13,8 @@ interface Router
 
     public function toUri(array|string $action, ...$params): string;
 
+    public function matchRoute(Request $request): ?MatchedRoute;
+
     /**
      * @return \Tempest\Http\Route[][]
      */
