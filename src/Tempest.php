@@ -22,17 +22,16 @@ final readonly class Tempest
     public static function boot(string $root): self
     {
         $dotenv = Dotenv::createUnsafeImmutable($root);
-        $dotenv->safeLoad();
 
-        $createAppConfig = static fn (): AppConfig => new AppConfig(
-            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            discoveryCache: env('DISCOVERY_CACHE', false),
-            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
-        );
+        $dotenv->safeLoad();
 
         $kernel = new Kernel(
             root: $root,
-            appConfig: $createAppConfig(),
+            appConfig: new AppConfig(
+                environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+                discoveryCache: env('DISCOVERY_CACHE', false),
+                enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+            ),
         );
 
         return new self(
