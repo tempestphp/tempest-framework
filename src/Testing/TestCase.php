@@ -8,15 +8,18 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
-use Tempest\Testing\Http\TestsHttpRequests;
+use Tempest\Testing\Console\ConsoleCommandTester;
+use Tempest\Testing\Http\HttpRouterTester;
 
 abstract class TestCase extends BaseTestCase
 {
-    use TestsHttpRequests;
-
     private Kernel $kernel;
 
     private Container $container;
+
+    protected ConsoleCommandTester $console;
+
+    protected HttpRouterTester $http;
 
     protected function setUp(): void
     {
@@ -27,5 +30,8 @@ abstract class TestCase extends BaseTestCase
         ));
 
         $this->container = $this->kernel->init();
+
+        $this->console = $this->container->get(ConsoleCommandTester::class);
+        $this->http = $this->container->get(HttpRouterTester::class);
     }
 }
