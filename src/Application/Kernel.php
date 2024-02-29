@@ -7,11 +7,13 @@ namespace Tempest\Application;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use SplFileInfo;
 use Tempest\AppConfig;
 use Tempest\Application\Exceptions\KernelException;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
+use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
@@ -83,7 +85,7 @@ final readonly class Kernel
         reset($this->appConfig->discoveryClasses);
 
         while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
-            /** @var \Tempest\Discovery\Discovery $discovery */
+            /** @var Discovery $discovery */
             $discovery = $container->get($discoveryClass);
 
             if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
@@ -97,7 +99,7 @@ final readonly class Kernel
                 $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
                 $files = new RecursiveIteratorIterator($directories);
 
-                /** @var \SplFileInfo $file */
+                /** @var SplFileInfo $file */
                 foreach ($files as $file) {
                     $fileName = $file->getFilename();
 

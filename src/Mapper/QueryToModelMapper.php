@@ -17,7 +17,7 @@ final readonly class QueryToModelMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\Database\Query $data */
+        /** @var Query $data */
         if ($data->bindings['id'] ?? null) {
             return make($objectOrClass)->from($this->resolveData($objectOrClass, $data->fetchFirst()));
         } else {
