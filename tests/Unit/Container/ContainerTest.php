@@ -152,12 +152,12 @@ class ContainerTest extends TestCase
      */
     public function union_types_iterate_to_resolution()
     {
-        $this->markTestSkipped("Currently there's a bug where the container cannot resolve the second union type if the first one fails");
         $container = new GenericContainer();
 
         /** @var UnionTypesClass $class */
         $class = $container->get(UnionTypesClass::class);
 
         $this->assertInstanceOf(UnionTypesClass::class, $class);
+        $this->assertInstanceOf(ContainerObjectA::class, $class->input);
     }
 }

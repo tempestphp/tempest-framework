@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use LogicException;
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
-use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
@@ -53,13 +54,13 @@ final class GenericContainer implements Container
 
     public function get(string $className): object
     {
-        if ($instance = $this->singletons[$className] ?? null) {
-            return $instance;
+        try {
+            return $this->resolve($className);
+        } catch (Throwable $throwable) {
+            // TODO: Logging
+
+            throw $throwable;
         }
-
-        $log = new ContainerLog();
-
-        return $this->resolve($className, $log);
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed
@@ -68,31 +69,9 @@ final class GenericContainer implements Container
 
         $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
 
-        foreach ($reflectionMethod->getParameters() as $parameter) {
-            $className = $parameter->getName();
+        $parameters = $this->autowireDependencies($reflectionMethod, $params);
 
-            if (! array_key_exists($className, $params)) {
-                $params[$className] = $this->get($parameter->getType()->getName());
-
-                continue;
-            }
-
-            $originalValue = $params[$className];
-
-            // If the original value can be passed to this parameter without type errors,
-            // we'll simply use it. However, if the value can't be passed,
-            // we'll try to resolve the required dependency from the container.
-            if (
-                is_a($originalValue, $parameter->getType()->getName())
-                || $parameter->getType()->getName() === gettype($originalValue)
-            ) {
-                continue;
-            }
-
-            $params[$className] = $this->get($parameter->getType()->getName());
-        }
-
-        return $object->{$methodName}(...$params);
+        return $reflectionMethod->invokeArgs($object, $parameters);
     }
 
     public function addInitializer(CanInitialize $initializer): Container
@@ -102,15 +81,14 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(
-        string $className,
-        ContainerLog $log,
-        ?ContainerLogItem $logItem = null,
-    ): object {
-        $log->add($logItem ?? new ContainerLogItem($className));
+    private function resolve(string $className): object
+    {
+        // Check if the class has been registered as a singleton.
+        if ($instance = $this->singletons[$className] ?? null) {
+            return $instance;
+        }
 
-        // First we check if a callable has been registered
-        // to resolve this class.
+        // Check if a callable has been registered to resolve this class.
         if ($definition = $this->definitions[$className] ?? null) {
             return $definition($this);
         }
@@ -119,18 +97,16 @@ final class GenericContainer implements Container
         // can initialize this class.
         if ($initializer = $this->initializerFor($className)) {
             // Provide the classname of the object we're trying to result
-            // if the initializer requires it
+            // if the initializer requires it.
             if ($initializer instanceof RequiresClassName) {
                 $initializer->setClassName($className);
             }
-
-            $log->add(new ContainerLogItem($initializer::class));
 
             return $initializer->initialize($this);
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className, $log);
+        return $this->autowire($className);
     }
 
     private function initializerFor(string $className): ?Initializer
@@ -167,63 +143,122 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, ContainerLog $log): object
+    private function autowire(string $className): object
     {
         $reflectionClass = new ReflectionClass($className);
 
-        // If there isn't a constructor, don't waste time
-        // trying to build it.
-        if ($reflectionClass->getConstructor() === null) {
-            return $reflectionClass->newInstanceWithoutConstructor();
-        }
+        $constructor = $reflectionClass->getConstructor();
 
-        // Build the class by iterating through dependencies
-        // and resolving them.
-        $dependencies = [];
+        return $constructor === null
+            // If there isn't a constructor, don't waste time
+            // trying to build it.
+            ? $reflectionClass->newInstanceWithoutConstructor()
 
-        foreach ($reflectionClass->getConstructor()->getParameters() as $parameter) {
-            $dependencies[] = $this->autowireDependency($parameter, $log);
-        }
-
-        return $reflectionClass->newInstanceArgs($dependencies);
+            // Otherwise, use our autowireDependencies helper to automagically
+            // build up each parameter.
+            : $reflectionClass->newInstanceArgs(
+                $this->autowireDependencies($constructor)
+            );
     }
 
-    private function autowireDependency(ReflectionParameter $parameter, ContainerLog $log): mixed
+    /**
+     * @return ReflectionParameter[]
+     */
+    private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
     {
-        $parameterType = $parameter->getType();
+        $dependencies = [];
 
-        // If the parameter is a built-in type, immediately skip
-        // reflection stuff and attempt to give it a default
-        // or null value.
-        if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
-            return $this->autowireBuiltinDependency($parameter, $log);
-        }
-
-        // If there are multiple possible types, loop through them
-        // until we hit a match.
-        if ($parameterType instanceof ReflectionUnionType) {
-            return $this->autowireUnionDependency(
-                parameterType: $parameterType,
+        // Build the class by iterating through its
+        // dependencies and resolving them.
+        foreach ($method->getParameters() as $parameter) {
+            $dependencies[] = $this->autowireDependency(
                 parameter: $parameter,
-                log: $log,
+                providedValue: $parameters[$parameter->getName()] ?? null
             );
         }
 
-        // If this is a single type, attempt to resolve it.
-        return $this->autowireTypedDependency($parameter, $log);
+        return $dependencies;
     }
 
-    private function autowireBuiltinDependency(
-        ReflectionParameter $parameter,
-        ContainerLog $log,
-    ): mixed {
-        // Check if a default value is set
+    private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
+    {
+        $parameterType = $parameter->getType();
+
+        // If the parameter is a built-in type, immediately skip reflection
+        // stuff and attempt to give it a default or null value.
+        if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
+            return $this->autowireBuiltinDependency($parameter, $providedValue);
+        }
+
+        // Convert the types to an array regardless, so we can handle
+        // union types and single types the same.
+        $types = ($parameterType instanceof ReflectionUnionType)
+            ? $parameterType->getTypes()
+            : [$parameterType];
+
+        // Loop through each type until we hit a match.
+        foreach ($types as $type) {
+            try {
+                return $this->autowireObjectDependency($type, $providedValue);
+            } catch (Throwable $throwable) {
+                // We were unable to resolve the dependency for the last union
+                // type, so we are moving on to the next one. We hang onto
+                // the exception in case it is a circular reference.
+                $lastThrowable = $throwable;
+            }
+        }
+
+        // If the dependency has a default value, we do our best to prevent
+        // an error by using that.
         if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
-        // If the dependency's type is an array or variadic variable,
-        // we'll return an empty array
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
+        throw $lastThrowable ?? new LogicException(
+            sprintf('Unable to autowire dependency [%s].', $parameter->getName())
+        );
+    }
+
+    private function autowireObjectDependency(ReflectionNamedType $type, mixed $providedValue): mixed
+    {
+        // If the provided value is of the right type,
+        // don't waste time autowiring, return it!
+        if (is_a($providedValue, $type->getName())) {
+            return $providedValue;
+        }
+
+        // If we can successfully retrieve an instance
+        // of the necessary dependency, return it.
+        if ($instance = $this->get($type->getName())) {
+            return $instance;
+        }
+
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
+        throw new LogicException(
+            sprintf('Unable to autowire dependency [%s].', $type->getName())
+        );
+    }
+
+    private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
+    {
+        // Due to type coercion, the provided value may (or may not) work.
+        // Here we give up trying to do type work for people. If they
+        // didn't provide the right type, that's on them.
+        if ($providedValue !== null) {
+            return $providedValue;
+        }
+
+        // If the dependency has a default value, we might as well
+        // use that at this point.
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        // If the dependency's type is an array or variadic variable, we'll
+        // try to prevent an error by returning an empty array.
         if (
             $parameter->getType()?->getName() === 'array' ||
             $parameter->isVariadic()
@@ -231,67 +266,16 @@ final class GenericContainer implements Container
             return [];
         }
 
-        // If the dependency's type allows null or is optional,
-        // we'll return null
+        // If the dependency's type allows null or is optional, we'll
+        // try to prevent an error by returning null.
         if ($parameter->allowsNull() || $parameter->isOptional()) {
             return null;
         }
 
-        // Nothing else we can do, we don't know how to autowire this dependency
-        throw new CannotAutowireException($log, $parameter);
-    }
-
-    private function autowireUnionDependency(
-        ReflectionUnionType $parameterType,
-        ReflectionParameter $parameter,
-        ContainerLog $log,
-    ): ?object {
-        // Loop over each type, and try to resolve a value for it.
-        // We'll use the first value that works
-        foreach ($parameterType->getTypes() as $type) {
-            // TODO: we should deal with error handling here,
-            // However, if we simply catch all exceptions here,
-            // Our container is gone
-            $instance = $this->resolve(
-                $type->getName(),
-                $log,
-                new ContainerLogItem(
-                    id: $type->getName(),
-                    parameter: $parameter,
-                ),
-            );
-
-            if ($instance) {
-                return $instance;
-            }
-        }
-
-        // Nothing else we can do, we don't know how to autowire this dependency
-        throw new CannotAutowireException($log, $parameter);
-    }
-
-    public function autowireTypedDependency(
-        ReflectionParameter $parameter,
-        ContainerLog $log
-    ): ?object {
-        // Try to resolve the dependency
-        try {
-            return $this->resolve(
-                className: $parameter->getType()->getName(),
-                log: $log,
-                logItem: new ContainerLogItem(
-                    id: $parameter->getType()->getName(),
-                    parameter: $parameter,
-                ),
-            );
-        } catch (Throwable $e) {
-            // Check if there's a default value we can use
-            if ($parameter->isDefaultValueAvailable()) {
-                return $parameter->getDefaultValue();
-            }
-
-            // Otherwise, we give up
-            throw $e;
-        }
+        // At this point, there is nothing else we can do; we don't know
+        // how to autowire this dependency.
+        throw new LogicException(
+            sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName())
+        );
     }
 }
