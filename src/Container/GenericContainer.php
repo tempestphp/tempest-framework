@@ -18,12 +18,13 @@ final class GenericContainer implements Container
 {
     use HasInstance;
 
-    private array $definitions = [];
-
-    private array $singletons = [];
-
-    /** @var (Initializer&CanInitialize)[] */
-    private array $initializers = [];
+    public function __construct(
+        private array $definitions = [],
+        private array $singletons = [],
+        /** @var (Initializer&CanInitialize)[] */
+        private array $initializers = [],
+        private ContainerLog $log = new InMemoryContainerLog(),
+    ) {}
 
     public function register(string $className, callable $definition): self
     {
@@ -54,13 +55,9 @@ final class GenericContainer implements Container
 
     public function get(string $className): object
     {
-        try {
-            return $this->resolve($className);
-        } catch (Throwable $throwable) {
-            // TODO: Logging
+        $this->log->startResolving();
 
-            throw $throwable;
-        }
+        return $this->resolve($className);
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed
@@ -157,7 +154,7 @@ final class GenericContainer implements Container
             // Otherwise, use our autowireDependencies helper to automagically
             // build up each parameter.
             : $reflectionClass->newInstanceArgs(
-                $this->autowireDependencies($constructor)
+                $this->autowireDependencies($constructor),
             );
     }
 
@@ -166,6 +163,8 @@ final class GenericContainer implements Container
      */
     private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
     {
+        $this->log->addContext(new Context($method));
+
         $dependencies = [];
 
         // Build the class by iterating through its
@@ -173,7 +172,7 @@ final class GenericContainer implements Container
         foreach ($method->getParameters() as $parameter) {
             $dependencies[] = $this->autowireDependency(
                 parameter: $parameter,
-                providedValue: $parameters[$parameter->getName()] ?? null
+                providedValue: $parameters[$parameter->getName()] ?? null,
             );
         }
 
@@ -182,6 +181,8 @@ final class GenericContainer implements Container
 
     private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
     {
+        $this->log->addDependency(new Dependency($parameter));
+
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, immediately skip reflection
@@ -217,7 +218,7 @@ final class GenericContainer implements Container
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
         throw $lastThrowable ?? new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $parameter->getName())
+            sprintf('Unable to autowire dependency [%s].', $parameter->getName()),
         );
     }
 
@@ -231,14 +232,14 @@ final class GenericContainer implements Container
 
         // If we can successfully retrieve an instance
         // of the necessary dependency, return it.
-        if ($instance = $this->get($type->getName())) {
+        if ($instance = $this->resolve($type->getName())) {
             return $instance;
         }
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
         throw new LogicException(
-            sprintf('Unable to autowire dependency [%s].', $type->getName())
+            sprintf('Unable to autowire dependency [%s].', $type->getName()),
         );
     }
 
@@ -275,7 +276,7 @@ final class GenericContainer implements Container
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
         throw new LogicException(
-            sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName())
+            sprintf('Unable to autowire built-in dependency [%s].', $parameter->getName()),
         );
     }
 }

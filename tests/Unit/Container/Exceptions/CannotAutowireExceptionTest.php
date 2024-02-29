@@ -14,8 +14,6 @@ class CannotAutowireExceptionTest extends TestCase
     /** @test */
     public function test_autowire_without_exception()
     {
-        $this->markTestSkipped('We need to implement this per #165.');
-
         try {
             $container = new GenericContainer();
 
