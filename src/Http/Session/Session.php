@@ -15,7 +15,7 @@ final class Session
     // TODO: allow the passing of options
     public function __construct(private SessionHandlerInterface $sessionHandler)
     {
-        // Here we just make sure that if the application every
+        // Here we just make sure that if the application ever
         // prematurely stops (e.g., we call exit or die),
         // the session data will still be saved.
         session_register_shutdown();
