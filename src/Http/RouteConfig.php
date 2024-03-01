@@ -9,7 +9,7 @@ use ReflectionMethod;
 final class RouteConfig
 {
     public function __construct(
-        /** @var \Tempest\Http\Route[][] */
+        /** @var array<string, array<string, \Tempest\Http\Route>> */
         public array $routes = [],
     ) {
     }
@@ -18,7 +18,7 @@ final class RouteConfig
     {
         $route->setHandler($handler);
 
-        $this->routes[$route->method->value][] = $route;
+        $this->routes[$route->method->value][$route->uri] = $route;
 
         return $this;
     }
