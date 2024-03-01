@@ -11,7 +11,8 @@ use Tempest\Http\Response;
 final class GenericHttpClient implements HttpClient
 {
     public function __construct(private HttpClientDriver $driver)
-    {}
+    {
+    }
 
     public function get(string $uri, array $headers = []): Response
     {

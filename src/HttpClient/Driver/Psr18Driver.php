@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\HttpClient\Driver;
 
 use Psr\Http\Client\ClientInterface;
@@ -21,7 +23,8 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         private UriFactoryInterface $uriFactory,
         private RequestFactoryInterface $requestFactory,
         private StreamFactoryInterface $streamFactory
-    ) {}
+    ) {
+    }
 
     public function send(Request $request): Response
     {

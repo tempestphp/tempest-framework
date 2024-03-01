@@ -7,8 +7,6 @@ namespace Tests\Tempest\Unit\Http;
 use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\GenericRequest;
-use Tempest\Http\Method;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
