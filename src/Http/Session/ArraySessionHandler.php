@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Session;
 
 use SessionHandlerInterface;
@@ -20,7 +22,8 @@ final class ArraySessionHandler implements SessionHandlerInterface
 
     public function __construct(
         private readonly int $validForMinutes = 60
-    ) {}
+    ) {
+    }
 
     public function close(): bool
     {
@@ -57,7 +60,7 @@ final class ArraySessionHandler implements SessionHandlerInterface
     public function read(string $id): string|false
     {
         if (! isset($this->storage[$id])) {
-            return false;
+            return '';
         }
 
         $session = $this->storage[$id];
