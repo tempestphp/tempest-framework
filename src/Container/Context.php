@@ -11,9 +11,9 @@ use ReflectionMethod;
 final class Context
 {
     public function __construct(
-        public ReflectionClass|ReflectionMethod|ReflectionFunction $reflector,
+        private ReflectionClass|ReflectionMethod|ReflectionFunction $reflector,
         /** @var \Tempest\Container\Dependency[] $dependencies */
-        public array $dependencies = [],
+        private array $dependencies = [],
     ) {
     }
 
