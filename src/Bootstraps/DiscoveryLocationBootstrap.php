@@ -40,12 +40,11 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
         foreach ($packages as $package) {
             $packagePath = path($composerPath, $package['install-path']);
-
             $requiresTempest = isset($package['require']['tempest/framework']);
-
             $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
+            $isTempest = ($package['name'] ?? null) === 'tempest/framework';
 
-            if ($requiresTempest && $hasPsr4Namespaces) {
+            if (($requiresTempest && $hasPsr4Namespaces) || $isTempest) {
                 foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
                     $namespacePath = path($packagePath, $namespacePath);
 
