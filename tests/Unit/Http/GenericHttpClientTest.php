@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Http;
 
 use AidanCasey\MockClient\Client;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericHttpClient;
 use Tempest\Http\HttpClient;
@@ -14,7 +14,7 @@ class GenericHttpClientTest extends TestCase
 {
     private HttpClient $client;
     private Client $mock;
-    private Psr17Factory $factory;
+    private HttpFactory $factory;
 
     public function test_discovery_allows_for_easy_creation()
     {
@@ -150,7 +150,7 @@ class GenericHttpClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->factory = new Psr17Factory();
+        $this->factory = new HttpFactory();
 
         $this->mock = new Client(
             responseFactory: $this->factory,

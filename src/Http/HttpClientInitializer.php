@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use GuzzleHttp\Client;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use GuzzleHttp\Psr7\HttpFactory;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 
@@ -13,7 +13,7 @@ final class HttpClientInitializer implements Initializer
 {
     public function initialize(Container $container): object
     {
-        $psr17Factory = new Psr17Factory();
+        $psr17Factory = new HttpFactory();
         $client = new Client();
         $httpClient = new GenericHttpClient(
             client: $client,
