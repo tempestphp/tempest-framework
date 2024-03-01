@@ -4,43 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Tempest\Container\Exceptions\CircularDependencyException;
-
-final class ContainerLog
+interface ContainerLog
 {
-    public function __construct(
-        /** @var \Tempest\Container\ContainerLogItem[] */
-        private array $lines = [],
-    ) {
-    }
+    /**
+     * @return \Tempest\Container\Context[]
+     */
+    public function getStack(): array;
 
-    public function add(ContainerLogItem $item): self
-    {
-        if (isset($this->lines[$item->id])) {
-            throw new CircularDependencyException($item->id, $this);
-        }
+    public function startResolving(): self;
 
-        $this->lines[$item->id] = $item;
+    public function addContext(Context $context): self;
 
-        return $this;
-    }
+    public function addDependency(Dependency $dependency): self;
 
-    public function __toString(): string
-    {
-        $message = '';
-        $lines = array_reverse($this->lines);
-        $i = 1;
-        $count = count($lines);
+    public function currentContext(): Context;
 
-        foreach($lines as $line) {
-            $message .= match(true) {
-                $i === $count => PHP_EOL . "\t\t└── {$line}",
-                default => PHP_EOL . "\t\t├── {$line}",
-            };
+    public function currentDependency(): ?Dependency;
 
-            $i += 1;
-        }
-
-        return $message;
-    }
+    public function getOrigin(): string;
 }

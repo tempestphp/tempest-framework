@@ -2,8 +2,8 @@
 
 $finder = Symfony\Component\Finder\Finder::create()
     ->in([
-        __DIR__ . '/src',
         __DIR__ . '/app',
+        __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
     ->name('*.php')
@@ -17,6 +17,17 @@ return (new PhpCsFixer\Config())
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'no_unused_imports' => true,
         'blank_line_between_import_groups' => false,
+        'single_import_per_statement' => true,
+        'no_leading_import_slash' => true,
+        'no_unneeded_import_alias' => true,
+        'fully_qualified_strict_types' => [
+            'import_symbols' => true,
+        ],
+        'global_namespace_import' => [
+            'import_classes' => true,
+            'import_constants' => true,
+            'import_functions' => true,
+        ],
         'not_operator_with_successor_space' => true,
         'trailing_comma_in_multiline' => true,
         'phpdoc_scalar' => true,

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit;
 
+use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Http\RouteConfig;
 
-class KernelTest extends \PHPUnit\Framework\TestCase
+class KernelTest extends TestCase
 {
     /** @test */
     public function test_discovery()

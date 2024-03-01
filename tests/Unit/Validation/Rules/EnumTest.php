@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation\Rules;
 
+use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Enum;
-use Tests\Tempest\TestCase;
 use Tests\Tempest\Unit\Validation\Rules\Fixtures\SomeBackedEnum;
 use Tests\Tempest\Unit\Validation\Rules\Fixtures\SomeEnum;
 use UnexpectedValueException;

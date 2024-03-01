@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
-/** @var \Tempest\View\GenericView $this */
+use Tempest\View\GenericView;
+
+/** @var GenericView $this */
 $this->extendsPath = 'Views/index.php';
 ?>
 

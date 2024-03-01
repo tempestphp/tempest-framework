@@ -19,7 +19,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
     public function map(object|string $objectOrClass, mixed $data): array|object
     {
-        /** @var \Tempest\ORM\Model $model */
+        /** @var Model $model */
         $model = $data;
 
         $fields = $this->fields($model);
