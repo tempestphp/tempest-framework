@@ -14,9 +14,6 @@ final class InMemoryContainerLog implements ContainerLog
     public function __construct(
         /** @var \Tempest\Container\Context[] $stack */
         private array $stack = [],
-
-        /** @var \Tempest\Container\Dependency[] $stack */
-        private array $dependencies = [],
     ) {
     }
 
@@ -42,7 +39,6 @@ final class InMemoryContainerLog implements ContainerLog
 
     public function addDependency(Dependency $dependency): ContainerLog
     {
-        $this->dependencies[$dependency->getId()] = $dependency;
         $this->currentContext()->addDependency($dependency);
 
         return $this;
