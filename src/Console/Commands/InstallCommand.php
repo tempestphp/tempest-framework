@@ -28,16 +28,16 @@ final readonly class InstallCommand
             return;
         }
 
-        $this->copyTempest($cwd);
+        $this->copyTempest($cwd, $force);
 
-        $this->copyIndex($cwd);
+        $this->copyIndex($cwd, $force);
 
-        $this->copyEnvExample($cwd);
+        $this->copyEnvExample($cwd, $force);
 
-        $this->copyEnv($cwd);
+        $this->copyEnv($cwd, $force);
     }
 
-    private function copyEnv(string $cwd): void
+    private function copyEnv(string $cwd, bool $force): void
     {
         $path = $cwd . '/.env';
 
@@ -47,7 +47,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->console->confirm(
+        if (! $force && ! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
@@ -59,7 +59,7 @@ final readonly class InstallCommand
         $this->console->success("{$path} created");
     }
 
-    private function copyEnvExample(string $cwd): void
+    private function copyEnvExample(string $cwd, bool $force): void
     {
         $path = $cwd . '/.env.example';
 
@@ -69,7 +69,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->console->confirm(
+        if (! $force && ! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
@@ -81,7 +81,7 @@ final readonly class InstallCommand
         $this->console->success("{$path} created");
     }
 
-    private function copyTempest(string $cwd): void
+    private function copyTempest(string $cwd, bool $force): void
     {
         $path = $cwd . '/tempest';
 
@@ -91,7 +91,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->console->confirm(
+        if (! $force && ! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
@@ -103,7 +103,7 @@ final readonly class InstallCommand
         $this->console->success("{$path} created");
     }
 
-    private function copyIndex(string $cwd): void
+    private function copyIndex(string $cwd, bool $force): void
     {
         $path = $cwd . '/public/index.php';
 
@@ -113,7 +113,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->console->confirm(
+        if (! $force && ! $this->console->confirm(
             question: sprintf("Do you want to create %s?", $path),
             default: true,
         )) {
