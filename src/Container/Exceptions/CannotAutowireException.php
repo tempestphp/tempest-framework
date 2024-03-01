@@ -35,9 +35,9 @@ final class CannotAutowireException extends Exception
         $currentDependency = $lastContext->currentDependency();
         $currentDependencyName = (string) $currentDependency;
         $firstPart = explode($currentDependencyName, (string) $lastContext)[0] ?? null;
-        $fillerLines = str_repeat(' ', strlen($firstPart) + 3);
+        $fillerSpaces = str_repeat(' ', strlen($firstPart) + 3);
         $fillerArrows = str_repeat('▒', strlen($currentDependencyName));
-        $message .= PHP_EOL . "\t {$fillerLines}{$fillerArrows}";
+        $message .= PHP_EOL . "\t {$fillerSpaces}{$fillerArrows}";
 
 
         $message .= PHP_EOL . PHP_EOL;
