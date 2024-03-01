@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -14,12 +16,21 @@ use Psr\Http\Message\UriFactoryInterface;
 
 final class GenericHttpClient implements HttpClient
 {
+    private readonly ClientInterface $client;
+    private readonly UriFactoryInterface $uriFactory;
+    private readonly RequestFactoryInterface $requestFactory;
+    private readonly StreamFactoryInterface $streamFactory;
+
     public function __construct(
-        private readonly ClientInterface $client,
-        private readonly UriFactoryInterface $uriFactory,
-        private readonly RequestFactoryInterface $requestFactory,
-        private readonly StreamFactoryInterface $streamFactory
+        ?ClientInterface $client = null,
+        ?UriFactoryInterface $uriFactory = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null
     ) {
+        $this->client = $client ?? Psr18ClientDiscovery::find();
+        $this->uriFactory = $uriFactory ?? Psr17FactoryDiscovery::findUriFactory();
+        $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
     }
 
     public function get(string $uri, array $headers = []): ResponseInterface
