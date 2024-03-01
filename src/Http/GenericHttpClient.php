@@ -110,8 +110,12 @@ final class GenericHttpClient implements HttpClient
         );
     }
 
-    public function sendRequest(RequestInterface $request): ResponseInterface
+    public function sendRequest(Request|RequestInterface $request): ResponseInterface
     {
+        if ($request instanceof Request) {
+            $request = $this->createPsr17RequestFromTempest($request);
+        }
+
         return $this->client->sendRequest($request);
     }
 
@@ -136,5 +140,19 @@ final class GenericHttpClient implements HttpClient
         }
 
         return $this->sendRequest($request);
+    }
+
+    private function createPsr17RequestFromTempest(Request $tempestRequest): RequestInterface
+    {
+        $request = $this->requestFactory->createRequest(
+            method: $tempestRequest->getMethod()->value,
+            uri: $this->uriFactory->createUri($tempestRequest->getUri())
+        );
+
+        foreach ($tempestRequest->getHeaders() as $header => $value) {
+            $request = $request->withHeader($header, $value);
+        }
+
+        return $request;
     }
 }

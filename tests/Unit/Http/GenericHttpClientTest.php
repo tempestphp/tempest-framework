@@ -8,7 +8,9 @@ use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\GenericHttpClient;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\HttpClient;
+use Tempest\Http\Method;
 
 class GenericHttpClientTest extends TestCase
 {
@@ -144,6 +146,21 @@ class GenericHttpClientTest extends TestCase
             ->assertBodyIs(
                 file_get_contents(__DIR__ . '/Fixtures/test_request_body.json')
             );
+    }
+
+    public function test_sending_tempest_request()
+    {
+        $request = new GenericRequest(
+            method: Method::POST,
+            uri: '/testing-requests'
+        );
+
+        $this->client->sendRequest($request);
+
+        $this
+            ->mock
+            ->assertMethod('POST')
+            ->assertUri('/testing-requests');
     }
 
     protected function setUp(): void
