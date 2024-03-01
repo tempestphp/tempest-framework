@@ -11,13 +11,11 @@ use ReflectionMethod;
 class Route
 {
     public ReflectionMethod $handler;
-    /**
-     * @var string The Regex used for matching this route against a request URI
-     */
+
+    /** @var string The Regex used for matching this route against a request URI */
     public readonly string $matchingRegex;
-    /**
-     * @var bool If the route has params
-     */
+    
+    /** @var bool If the route has params */
     public readonly bool $isDynamic;
 
     public function __construct(
@@ -30,13 +28,14 @@ class Route
          */
         public array $middleware = [],
     ) {
-        // Routes can have parameters in the form of "/{PARAM}/", these parameters are replaced with a regex matching
-        // group
+        // Routes can have parameters in the form of "/{PARAM}/",
+        // these parameters are replaced with a regex matching group
         $this->matchingRegex = preg_replace(
             '#\{(\w+)}#',
             '([^/]++)',
             $uri
         );
+
         $this->isDynamic = $this->matchingRegex !== $this->uri;
     }
 
