@@ -14,7 +14,7 @@ class Route
 
     /** @var string The Regex used for matching this route against a request URI */
     public readonly string $matchingRegex;
-    
+
     /** @var bool If the route has params */
     public readonly bool $isDynamic;
 
