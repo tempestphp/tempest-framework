@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Session;
 
 use SessionHandlerInterface;
+use Tempest\Clock\Clock;
 
 final class ArraySessionHandler implements SessionHandlerInterface
 {
@@ -17,6 +18,7 @@ final class ArraySessionHandler implements SessionHandlerInterface
     private array $storage = [];
 
     public function __construct(
+        private readonly Clock $clock,
         private readonly int $validForMinutes = 60
     ) {
     }
@@ -35,7 +37,7 @@ final class ArraySessionHandler implements SessionHandlerInterface
 
     public function gc(int $max_lifetime): int|false
     {
-        $expiration = time() - $max_lifetime;
+        $expiration = $this->clock->time() - $max_lifetime;
         $sessionsDeleted = 0;
 
         foreach ($this->storage as $id => $session) {
@@ -60,22 +62,23 @@ final class ArraySessionHandler implements SessionHandlerInterface
         }
 
         $session = $this->storage[$id];
+
         $expiration = $session['time'] + ($this->validForMinutes * 60);
 
-        if (time() >= $expiration) {
+        if ($this->clock->time() <= $expiration) {
             return $session['data'];
         }
 
         unset($this->storage[$id]);
 
-        return false;
+        return '';
     }
 
     public function write(string $id, string $data): bool
     {
         $this->storage[$id] = [
             'data' => $data,
-            'time' => time(),
+            'time' => $this->clock->time(),
         ];
 
         return true;

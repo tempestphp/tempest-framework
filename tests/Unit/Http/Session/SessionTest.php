@@ -6,6 +6,7 @@ namespace Tests\Tempest\Unit\Http\Session;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Tempest\Clock\MockClock;
 use Tempest\Http\Session\ArraySessionHandler;
 use Tempest\Http\Session\Session;
 
@@ -69,6 +70,6 @@ class SessionTest extends TestCase
 
         session_abort();
 
-        $this->session = new Session(new ArraySessionHandler());
+        $this->session = new Session(new ArraySessionHandler(new MockClock()));
     }
 }
