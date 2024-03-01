@@ -6,10 +6,6 @@ namespace Tempest\Http\Session;
 
 use SessionHandlerInterface;
 
-// Session Handler - Determines how the session is stored.
-// Session Driver - Determines how the session is serialized.
-// Session
-
 final class ArraySessionHandler implements SessionHandlerInterface
 {
     /**
