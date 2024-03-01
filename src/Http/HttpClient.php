@@ -6,7 +6,9 @@ namespace Tempest\Http;
 
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
+use Tempest\Container\InitializedBy;
 
+#[InitializedBy(HttpClientInitializer::class)]
 interface HttpClient extends ClientInterface
 {
     public function get(string $uri, array $headers = []): ResponseInterface;

@@ -16,6 +16,13 @@ class GenericHttpClientTest extends TestCase
     private Client $mock;
     private Psr17Factory $factory;
 
+    public function test_discovery_allows_for_easy_creation()
+    {
+        $client = new GenericHttpClient();
+
+        $this->assertInstanceOf(GenericHttpClient::class, $client);
+    }
+
     public function test_get_proxies_to_http_client()
     {
         $this->client->get('/test-get');
