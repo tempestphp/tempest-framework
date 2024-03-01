@@ -19,8 +19,8 @@ use Tempest\View\View;
 final readonly class GenericRouter implements Router
 {
     public function __construct(
-        private Container   $container,
-        private AppConfig   $appConfig,
+        private Container $container,
+        private AppConfig $appConfig,
         private RouteConfig $routeConfig,
     ) {
     }
