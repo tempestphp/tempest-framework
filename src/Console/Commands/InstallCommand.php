@@ -9,6 +9,7 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class InstallCommand
 {
+    // test
     public function __construct(
         private Console $console,
     ) {
