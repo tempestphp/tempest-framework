@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Unit\Http\Session;
 
 use PHPUnit\Framework\TestCase;
@@ -22,7 +24,8 @@ class ArraySessionHandlerTest extends TestCase
     {
         $this->sessionHandler->open('test-path', 'test-name');
         $this->sessionHandler->write(
-            'blah-id', serialize(['test' => 'value'])
+            'blah-id',
+            serialize(['test' => 'value'])
         );
         $this->sessionHandler->close();
         $this->sessionHandler->open('test-path', 'test-name');
@@ -41,7 +44,8 @@ class ArraySessionHandlerTest extends TestCase
     {
         $this->sessionHandler->open('test-path', 'test-name');
         $this->sessionHandler->write(
-            'blah-id', serialize(['test' => 'value'])
+            'blah-id',
+            serialize(['test' => 'value'])
         );
         $this->sessionHandler->close();
         $this->sessionHandler->open('test-path', 'test-name');
@@ -55,7 +59,8 @@ class ArraySessionHandlerTest extends TestCase
     {
         $this->sessionHandler->open('test-path', 'test-name');
         $this->sessionHandler->write(
-            'foo-bar', serialize(['test' => 'value'])
+            'foo-bar',
+            serialize(['test' => 'value'])
         );
 
         $this->clock->sleep(3601);
@@ -69,7 +74,8 @@ class ArraySessionHandlerTest extends TestCase
     {
         $this->sessionHandler->open('test-path', 'test-name');
         $this->sessionHandler->write(
-            'fooly-bar', serialize(['test' => 'value'])
+            'fooly-bar',
+            serialize(['test' => 'value'])
         );
 
         $this->assertNotSame('', $this->sessionHandler->read('fooly-bar'));
