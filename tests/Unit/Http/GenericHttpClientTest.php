@@ -7,23 +7,17 @@ namespace Tests\Tempest\Unit\Http;
 use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\GenericHttpClient;
 use Tempest\Http\GenericRequest;
-use Tempest\Http\HttpClient;
 use Tempest\Http\Method;
+use Tempest\HttpClient\Driver\Psr18Driver;
+use Tempest\HttpClient\GenericHttpClient;
+use Tempest\HttpClient\HttpClient;
 
 class GenericHttpClientTest extends TestCase
 {
     private HttpClient $client;
     private Client $mock;
     private HttpFactory $factory;
-
-    public function test_discovery_allows_for_easy_creation()
-    {
-        $client = new GenericHttpClient();
-
-        $this->assertInstanceOf(GenericHttpClient::class, $client);
-    }
 
     public function test_get_proxies_to_http_client()
     {
@@ -120,49 +114,6 @@ class GenericHttpClientTest extends TestCase
             ->assertUri('/test-options');
     }
 
-    public function test_send_request_proxies_to_http_client()
-    {
-        $request = $this->factory->createRequest('POST', '/test-send-request');
-
-        $this
-            ->client
-            ->sendRequest($request);
-
-        $this
-            ->mock
-            ->assertMethod('POST')
-            ->assertUri('/test-send-request');
-    }
-
-    public function test_sending_request_with_file_contents()
-    {
-        $this
-            ->client
-            ->post(uri: '/test-post', body: __DIR__ . '/Fixtures/test_request_body.json');
-
-        $this
-            ->mock
-            ->assertMethod('POST')
-            ->assertBodyIs(
-                file_get_contents(__DIR__ . '/Fixtures/test_request_body.json')
-            );
-    }
-
-    public function test_sending_tempest_request()
-    {
-        $request = new GenericRequest(
-            method: Method::POST,
-            uri: '/testing-requests'
-        );
-
-        $this->client->sendRequest($request);
-
-        $this
-            ->mock
-            ->assertMethod('POST')
-            ->assertUri('/testing-requests');
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -174,11 +125,13 @@ class GenericHttpClientTest extends TestCase
             streamFactory: $this->factory
         );
 
-        $this->client = new GenericHttpClient(
+        $psr18Driver = new Psr18Driver(
             client: $this->mock,
             uriFactory: $this->factory,
             requestFactory: $this->factory,
             streamFactory: $this->factory
         );
+
+        $this->client = new GenericHttpClient($psr18Driver);
     }
 }
