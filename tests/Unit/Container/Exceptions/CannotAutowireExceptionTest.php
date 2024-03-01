@@ -5,26 +5,31 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Container\Exceptions;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\GenericContainer;
-use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectRequiringC;
-use Throwable;
+use Tests\Tempest\Unit\Container\Fixtures\AutowireA;
 
 class CannotAutowireExceptionTest extends TestCase
 {
     /** @test */
     public function test_autowire_without_exception()
     {
-        $this->markTestSkipped('We need to implement this per #165.');
+        $this->expectException(CannotAutowireException::class);
 
         try {
             $container = new GenericContainer();
 
-            $container->get(ContainerObjectRequiringC::class);
-            // TODO: Update the exception type.
-        } catch (Throwable $exception) {
-            $this->assertStringContainsString('[unresolved parameter: string $prop]', $exception->getMessage());
-            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectC::__construct()', $exception->getMessage());
-            $this->assertStringContainsString('Tests\Tempest\Container\Fixtures\ContainerObjectRequiringC::__construct()', $exception->getMessage());
+            $container->get(AutowireA::class);
+        } catch (CannotAutowireException $exception) {
+            $this->assertStringContainsString("Cannot autowire Tests\\Tempest\\Unit\\Container\\Fixtures\\AutowireA because Tests\\Tempest\\Unit\\Container\\Fixtures\\AutowireC cannot be resolved", $exception->getMessage());
+
+            $this->assertStringContainsString("┌── AutowireA::__construct(AutowireB \$b)", $exception->getMessage());
+            $this->assertStringContainsString("├── AutowireB::__construct(AutowireC \$c)", $exception->getMessage());
+            $this->assertStringContainsString("└── AutowireC::__construct(ContainerObjectA \$other, string \$unknown)", $exception->getMessage());
+            $this->assertStringContainsString("                                                ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒", $exception->getMessage());
+            $this->assertStringContainsString("CannotAutowireExceptionTest.php:22", $exception->getMessage());
+
+            throw $exception;
         }
     }
 }
