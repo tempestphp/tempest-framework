@@ -9,7 +9,6 @@ use Tempest\Bootstraps\ConfigBootstrap;
 use Tempest\Bootstraps\DiscoveryBootstrap;
 use Tempest\Bootstraps\DiscoveryLocationBootstrap;
 use Tempest\Container\Container;
-use Tempest\Container\ContainerConfig;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
 use Tempest\Http\RequestInitializer;
@@ -52,7 +51,6 @@ final readonly class Kernel
 
         $container
             ->config($this->appConfig)
-            ->config(new ContainerConfig())
             ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
             ->addInitializer(RequestInitializer::class)
