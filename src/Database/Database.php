@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Container\InitializedBy;
-
-#[InitializedBy(DatabaseInitializer::class)]
 interface Database
 {
     public function execute(Query $query): void;

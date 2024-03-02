@@ -9,13 +9,11 @@ use ReflectionClass;
 use Tempest\AppConfig;
 use function Tempest\attribute;
 use Tempest\Container\Container;
-use Tempest\Container\InitializedBy;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
 use function Tempest\response;
 use Tempest\View\View;
 
-#[InitializedBy(RouteInitializer::class)]
 final readonly class GenericRouter implements Router
 {
     private const string MARK_TOKEN = 'MARK';
