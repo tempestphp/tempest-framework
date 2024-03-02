@@ -37,7 +37,7 @@ final readonly class Kernel
             $container->get(
                 $bootstrap,
                 kernel: $this,
-                appConfig: $this->appConfig
+                appConfig: $this->appConfig,
             )->boot();
         }
 

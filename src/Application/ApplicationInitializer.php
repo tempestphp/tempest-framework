@@ -7,7 +7,9 @@ namespace Tempest\Application;
 use Tempest\AppConfig;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class ApplicationInitializer implements Initializer
 {
     public function initialize(Container $container): Application
@@ -24,8 +26,6 @@ final readonly class ApplicationInitializer implements Initializer
                 $container->get(AppConfig::class),
             );
         }
-
-        $container->singleton(Application::class, fn () => $application);
 
         return $application;
     }

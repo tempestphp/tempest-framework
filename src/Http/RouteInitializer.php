@@ -7,7 +7,9 @@ namespace Tempest\Http;
 use Tempest\AppConfig;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class RouteInitializer implements Initializer
 {
     public function __construct(
@@ -24,8 +26,6 @@ final readonly class RouteInitializer implements Initializer
             appConfig: $this->appConfig,
             routeConfig: $this->routeConfig,
         );
-
-        $this->container->singleton(Router::class, fn () => $router);
 
         return $router;
     }

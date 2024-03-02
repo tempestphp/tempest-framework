@@ -8,7 +8,9 @@ use PDO;
 use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class PDOInitializer implements Initializer, CanInitialize
 {
     public function canInitialize(string $className): bool
@@ -22,14 +24,10 @@ final readonly class PDOInitializer implements Initializer, CanInitialize
 
         $driver = $databaseConfig->driver;
 
-        $pdo = new PDO(
+        return new PDO(
             $driver->getDsn(),
             $driver->getUsername(),
             $driver->getPassword(),
         );
-
-        $container->singleton(PDO::class, fn () => $pdo);
-
-        return $pdo;
     }
 }

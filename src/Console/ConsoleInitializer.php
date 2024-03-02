@@ -6,18 +6,16 @@ namespace Tempest\Console;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 class ConsoleInitializer implements Initializer
 {
     public function initialize(Container $container): Console
     {
-        $console = new GenericConsole(
+        return new GenericConsole(
             $container->get(ConsoleInput::class),
             $container->get(ConsoleOutput::class),
         );
-
-        $container->singleton(Console::class, fn () => $console);
-
-        return $console;
     }
 }

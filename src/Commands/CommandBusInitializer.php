@@ -6,15 +6,13 @@ namespace Tempest\Commands;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class CommandBusInitializer implements Initializer
 {
     public function initialize(Container $container): CommandBus
     {
-        $commandBus = $container->get(GenericCommandBus::class);
-
-        $container->singleton(CommandBus::class, fn () => $commandBus);
-
-        return $commandBus;
+        return $container->get(GenericCommandBus::class);
     }
 }

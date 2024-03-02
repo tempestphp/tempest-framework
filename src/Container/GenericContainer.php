@@ -10,6 +10,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
+use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Throwable;
 
@@ -135,7 +136,15 @@ final class GenericContainer implements Container
                 $initializer->setClassName($className);
             }
 
-            return $initializer->initialize($this);
+            $object = $initializer->initialize($this);
+
+            // Check whether the initializer's result should be registered as a singleton
+            if (attribute(Singleton::class)->in($initializer::class)->first() !== null) {
+                $this->singleton($className, fn () => $object);
+                return $this->get($className);
+            }
+
+            return $object;
         }
 
         // Finally, autowire the class.

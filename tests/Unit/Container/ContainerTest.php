@@ -18,6 +18,7 @@ use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectEInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonClass;
+use Tests\Tempest\Unit\Container\Fixtures\SingletonInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\UnionTypesClass;
 
 class ContainerTest extends TestCase
@@ -162,5 +163,15 @@ class ContainerTest extends TestCase
 
         $this->assertInstanceOf(UnionTypesClass::class, $class);
         $this->assertInstanceOf(ContainerObjectA::class, $class->input);
+    }
+    
+    /** @test */
+    public function test_singleton_initializers() 
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(SingletonInitializer::class);
+
+        $container->get(ContainerObjectE::class);
+        $this->assertTrue(isset($container->singletons[ContainerObjectE::class]));
     }
 }

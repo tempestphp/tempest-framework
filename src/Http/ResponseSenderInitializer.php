@@ -6,15 +6,13 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final class ResponseSenderInitializer implements Initializer
 {
     public function initialize(Container $container): ResponseSender
     {
-        $responseSender = new GenericResponseSender();
-
-        $container->singleton(ResponseSender::class, fn () => $responseSender);
-
-        return $responseSender;
+        return new GenericResponseSender();
     }
 }
