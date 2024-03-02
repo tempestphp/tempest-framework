@@ -28,13 +28,12 @@ final class GenericContainer implements Container
         public array $initializers = [],
 
         /**
-         * @template T of \Tempest\Container\CanInitialize&\Tempest\Container\Initializer
+         * @template T of \Tempest\Container\DynamicInitializer
          * @var class-string<T> $dynamicInitializers
          */
         public array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
-    ) {
-    }
+    ) {}
 
     public function register(string $className, callable $definition): self
     {
@@ -89,7 +88,7 @@ final class GenericContainer implements Container
             ? $initializerClass
             : new ReflectionClass($initializerClass);
 
-        if ($initializerClass->implementsInterface(CanInitialize::class)) {
+        if ($initializerClass->implementsInterface(DynamicInitializer::class)) {
             $this->dynamicInitializers[] = $initializerClass->getName();
 
             return $this;
@@ -98,7 +97,7 @@ final class GenericContainer implements Container
         $returnTypes = $initializerClass->getMethod('initialize')->getReturnType();
 
         /** @var ReflectionNamedType[] $returnTypes */
-        $returnTypes = match($returnTypes::class) {
+        $returnTypes = match ($returnTypes::class) {
             ReflectionNamedType::class => [$returnTypes],
             ReflectionUnionType::class => $returnTypes,
         };
@@ -130,13 +129,10 @@ final class GenericContainer implements Container
         // If there's an initializer, we don't keep track of the log anymore,
         // since initializers are outside the container's responsibility.
         if ($initializer = $this->initializerFor($className)) {
-            // Provide the classname of the object we're trying to result
-            // if the initializer requires it.
-            if ($initializer instanceof RequiresClassName) {
-                $initializer->setClassName($className);
-            }
-
-            $object = $initializer->initialize($this);
+            $object = match (true) {
+                $initializer instanceof Initializer => $initializer->initialize($this),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($className, $this),
+            };
 
             // Check whether the initializer's result should be registered as a singleton
             if (attribute(Singleton::class)->in($initializer::class)->first() !== null) {
@@ -152,11 +148,14 @@ final class GenericContainer implements Container
         return $this->autowire($className, ...$params);
     }
 
-    private function initializerFor(string $className): ?Initializer
+    private function initializerFor(string $className): null|Initializer|DynamicInitializer
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
-        if (is_a($className, Initializer::class, true)) {
+        if (
+            is_a($className, Initializer::class, true)
+            || is_a($className, DynamicInitializer::class, true)
+        ) {
             return null;
         }
 

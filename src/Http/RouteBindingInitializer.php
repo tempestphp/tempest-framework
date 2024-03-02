@@ -5,32 +5,21 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use ReflectionClass;
-use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
-use Tempest\Container\RequiresClassName;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Database\Id;
 use Tempest\ORM\Model;
 
-final class RouteBindingInitializer implements Initializer, CanInitialize, RequiresClassName
+final class RouteBindingInitializer implements DynamicInitializer
 {
-    private string $className;
-
     public function canInitialize(string $className): bool
     {
         return is_a($className, Model::class, true);
     }
 
-    public function setClassName(string $className): void
-    {
-        $this->className = $className;
-    }
-
-    public function initialize(Container $container): object
+    public function initialize(string $className, Container $container): object
     {
         $matchedRoute = $container->get(MatchedRoute::class);
-
-        $className = $this->className;
 
         $paramName = lcfirst((new ReflectionClass($className))->getShortName());
 

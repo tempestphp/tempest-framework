@@ -24,8 +24,9 @@ interface Container
     public function call(object $object, string $methodName, mixed ...$params): mixed;
 
     /**
-     * @template T of \Tempest\Container\CanInitialize
-     * @param ReflectionClass|class-string<T> $initializerClass
+     * @template T of \Tempest\Container\Initializer
+     * @template U of \Tempest\Container\DynamicInitializer
+     * @param ReflectionClass|class-string<T>|class-string<U> $initializerClass
      * @return self
      */
     public function addInitializer(ReflectionClass|string $initializerClass): self;
