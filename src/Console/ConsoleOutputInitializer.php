@@ -11,7 +11,7 @@ use Tempest\Container\Initializer;
 
 final readonly class ConsoleOutputInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): ConsoleOutput
     {
         $app = $container->get(Application::class);
 

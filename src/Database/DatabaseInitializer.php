@@ -10,7 +10,7 @@ use Tempest\Container\Initializer;
 
 final readonly class DatabaseInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): Database
     {
         $database = new GenericDatabase($container->get(PDO::class));
 

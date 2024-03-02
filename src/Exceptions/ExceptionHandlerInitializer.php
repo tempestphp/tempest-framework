@@ -12,7 +12,7 @@ use Tempest\Container\Initializer;
 
 final readonly class ExceptionHandlerInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): ExceptionHandler
     {
         $application = $container->get(Application::class);
 

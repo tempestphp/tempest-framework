@@ -10,7 +10,7 @@ use Tempest\Container\Initializer;
 
 final readonly class ApplicationInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): Application
     {
         if (isset($_SERVER['argv'])) {
             $application = new ConsoleApplication(

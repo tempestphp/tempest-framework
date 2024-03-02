@@ -9,7 +9,7 @@ use Tempest\Container\Initializer;
 
 final readonly class RouterInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): Router
     {
         $router = $container->get(GenericRouter::class);
 

@@ -9,7 +9,7 @@ use Tempest\Container\Initializer;
 
 final readonly class CommandBusInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): CommandBus
     {
         $commandBus = $container->get(GenericCommandBus::class);
 

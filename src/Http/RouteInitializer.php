@@ -17,7 +17,7 @@ final readonly class RouteInitializer implements Initializer
     ) {
     }
 
-    public function initialize(Container $container): GenericRouter
+    public function initialize(Container $container): Router
     {
         $router = new GenericRouter(
             container: $this->container,

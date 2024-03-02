@@ -20,27 +20,24 @@ final class GenericContainer implements Container
     use HasInstance;
 
     public function __construct(
-        private array $definitions = [],
-        private array $singletons = [],
-        /** @var (Initializer&CanInitialize)[] */
-        private array $initializers = [],
-        private ContainerLog $log = new InMemoryContainerLog(),
+        private readonly ContainerConfig $config = new ContainerConfig(),
+        private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
     }
 
     public function register(string $className, callable $definition): self
     {
-        $this->definitions[$className] = $definition;
+        $this->config->definitions[$className] = $definition;
 
         return $this;
     }
 
     public function singleton(string $className, callable $definition): self
     {
-        $this->definitions[$className] = function () use ($definition, $className) {
+        $this->config->definitions[$className] = function () use ($definition, $className) {
             $instance = $definition($this);
 
-            $this->singletons[$className] = $instance;
+            $this->config->singletons[$className] = $instance;
 
             return $instance;
         };
@@ -77,7 +74,7 @@ final class GenericContainer implements Container
 
     public function addInitializer(CanInitialize $initializer): Container
     {
-        $this->initializers = [$initializer, ...$this->initializers];
+        $this->config->initializers = [$initializer, ...$this->config->initializers];
 
         return $this;
     }
@@ -85,14 +82,14 @@ final class GenericContainer implements Container
     private function resolve(string $className): object
     {
         // Check if the class has been registered as a singleton.
-        if ($instance = $this->singletons[$className] ?? null) {
+        if ($instance = $this->config->singletons[$className] ?? null) {
             $this->log->addContext(new Context(new ReflectionClass($className)));
 
             return $instance;
         }
 
         // Check if a callable has been registered to resolve this class.
-        if ($definition = $this->definitions[$className] ?? null) {
+        if ($definition = $this->config->definitions[$className] ?? null) {
             $this->log->addContext(new Context(new ReflectionFunction($definition)));
 
             return $definition($this);
@@ -119,7 +116,7 @@ final class GenericContainer implements Container
     {
         // Loop through the registered initializers to see if
         // we have something to handle this class.
-        foreach ($this->initializers as $initializer) {
+        foreach ($this->config->initializers as $initializer) {
             if (! $initializer->canInitialize($className)) {
                 continue;
             }

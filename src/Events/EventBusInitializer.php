@@ -9,7 +9,7 @@ use Tempest\Container\Initializer;
 
 final readonly class EventBusInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): EventBus
     {
         $eventBus = new GenericEventBus(
             $container,

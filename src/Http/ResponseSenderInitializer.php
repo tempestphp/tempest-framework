@@ -9,7 +9,7 @@ use Tempest\Container\Initializer;
 
 final class ResponseSenderInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): ResponseSender
     {
         $responseSender = new GenericResponseSender();
 
