@@ -141,6 +141,7 @@ final class GenericContainer implements Container
             // Check whether the initializer's result should be registered as a singleton
             if (attribute(Singleton::class)->in($initializer::class)->first() !== null) {
                 $this->singleton($className, fn () => $object);
+
                 return $this->get($className);
             }
 

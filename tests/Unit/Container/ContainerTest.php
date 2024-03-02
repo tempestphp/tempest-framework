@@ -164,9 +164,9 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(UnionTypesClass::class, $class);
         $this->assertInstanceOf(ContainerObjectA::class, $class->input);
     }
-    
+
     /** @test */
-    public function test_singleton_initializers() 
+    public function test_singleton_initializers()
     {
         $container = new GenericContainer();
         $container->addInitializer(SingletonInitializer::class);
