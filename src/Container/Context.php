@@ -32,41 +32,43 @@ final class Context
     public function getName(): string
     {
         return match($this->reflector::class) {
-            ReflectionClass::class, ReflectionFunction::class => $this->reflector->getName(),
+            ReflectionClass::class => $this->reflector->getName(),
             ReflectionMethod::class => $this->reflector->getDeclaringClass()->getName(),
+            ReflectionFunction::class => $this->reflector->getName() . ' in ' . $this->reflector->getFileName() . ':' . $this->reflector->getStartLine(),
         };
     }
 
     public function getShortName(): string
     {
         return match($this->reflector::class) {
-            ReflectionClass::class, ReflectionFunction::class => $this->reflector->getShortName(),
+            ReflectionClass::class => $this->reflector->getShortName(),
             ReflectionMethod::class => $this->reflector->getDeclaringClass()->getShortName(),
+            ReflectionFunction::class => $this->reflector->getShortName() . ' in ' . $this->reflector->getFileName() . ':' . $this->reflector->getStartLine(),
         };
     }
 
     public function __toString(): string
     {
         return match($this->reflector::class) {
-            ReflectionClass::class => $this->classToString($this->reflector),
-            ReflectionMethod::class => $this->methodToString($this->reflector),
-            ReflectionFunction::class => $this->functionToString($this->reflector),
+            ReflectionClass::class => $this->classToString(),
+            ReflectionMethod::class => $this->methodToString(),
+            ReflectionFunction::class => $this->functionToString(),
         };
     }
 
-    private function classToString(ReflectionClass $reflector): string
+    private function classToString(): string
     {
-        return $reflector->getShortName();
+        return $this->reflector->getShortName();
     }
 
-    private function methodToString(ReflectionMethod $reflector): string
+    private function methodToString(): string
     {
-        return $reflector->getDeclaringClass()->getShortName() . '::' . $reflector->getName() . '(' . $this->dependenciesToString() . ')';
+        return $this->reflector->getDeclaringClass()->getShortName() . '::' . $this->reflector->getName() . '(' . $this->dependenciesToString() . ')';
     }
 
-    private function functionToString(ReflectionFunction $reflector): string
+    private function functionToString(): string
     {
-        return $reflector->getShortName() . '(' . $this->dependenciesToString() . ')';
+        return $this->reflector->getShortName() . ' in ' . $this->reflector->getFileName() . ':' . $this->reflector->getStartLine() . '(' . $this->dependenciesToString() . ')';
     }
 
     private function dependenciesToString(): string

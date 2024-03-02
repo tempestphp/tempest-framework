@@ -10,9 +10,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
-use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -20,24 +18,36 @@ final class GenericContainer implements Container
     use HasInstance;
 
     public function __construct(
-        private readonly ContainerConfig $config = new ContainerConfig(),
+        public array $definitions = [],
+        public array $singletons = [],
+        /**
+         * @template T of \Tempest\Container\Initializer
+         * @var class-string<T> $initializers
+         */
+        public array $initializers = [],
+
+        /**
+         * @template T of \Tempest\Container\CanInitialize&\Tempest\Container\Initializer
+         * @var class-string<T> $dynamicInitializers
+         */
+        public array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
     }
 
     public function register(string $className, callable $definition): self
     {
-        $this->config->definitions[$className] = $definition;
+        $this->definitions[$className] = $definition;
 
         return $this;
     }
 
     public function singleton(string $className, callable $definition): self
     {
-        $this->config->definitions[$className] = function () use ($definition, $className) {
+        $this->definitions[$className] = function () use ($definition, $className) {
             $instance = $definition($this);
 
-            $this->config->singletons[$className] = $instance;
+            $this->singletons[$className] = $instance;
 
             return $instance;
         };
@@ -52,11 +62,11 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className): object
+    public function get(string $className, mixed ...$params): object
     {
         $this->log->startResolving();
 
-        return $this->resolve($className);
+        return $this->resolve($className, ...$params);
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed
@@ -72,24 +82,44 @@ final class GenericContainer implements Container
         return $reflectionMethod->invokeArgs($object, $parameters);
     }
 
-    public function addInitializer(CanInitialize $initializer): Container
+    public function addInitializer(ReflectionClass|string $initializerClass): Container
     {
-        $this->config->initializers = [$initializer, ...$this->config->initializers];
+        $initializerClass = $initializerClass instanceof ReflectionClass
+            ? $initializerClass
+            : new ReflectionClass($initializerClass);
+
+        if ($initializerClass->implementsInterface(CanInitialize::class)) {
+            $this->dynamicInitializers[] = $initializerClass->getName();
+
+            return $this;
+        }
+
+        $returnTypes = $initializerClass->getMethod('initialize')->getReturnType();
+
+        /** @var ReflectionNamedType[] $returnTypes */
+        $returnTypes = match($returnTypes::class) {
+            ReflectionNamedType::class => [$returnTypes],
+            ReflectionUnionType::class => $returnTypes,
+        };
+
+        foreach ($returnTypes as $returnType) {
+            $this->initializers[$returnType->getName()] = $initializerClass->getName();
+        }
 
         return $this;
     }
 
-    private function resolve(string $className): object
+    private function resolve(string $className, mixed ...$params): object
     {
         // Check if the class has been registered as a singleton.
-        if ($instance = $this->config->singletons[$className] ?? null) {
+        if ($instance = $this->singletons[$className] ?? null) {
             $this->log->addContext(new Context(new ReflectionClass($className)));
 
             return $instance;
         }
 
         // Check if a callable has been registered to resolve this class.
-        if ($definition = $this->config->definitions[$className] ?? null) {
+        if ($definition = $this->definitions[$className] ?? null) {
             $this->log->addContext(new Context(new ReflectionFunction($definition)));
 
             return $definition($this);
@@ -109,35 +139,28 @@ final class GenericContainer implements Container
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className);
+        return $this->autowire($className, ...$params);
     }
 
     private function initializerFor(string $className): ?Initializer
     {
-        // Loop through the registered initializers to see if
-        // we have something to handle this class.
-        foreach ($this->config->initializers as $initializer) {
-            if (! $initializer->canInitialize($className)) {
-                continue;
-            }
-
-            return $initializer;
+        // Initializers themselves can't be initialized,
+        // otherwise you'd end up with infinite loops
+        if (is_a($className, Initializer::class, true)) {
+            return null;
         }
 
-        // Next, check if the class specifically defines an initializer.
-        $reflectionClass = new ReflectionClass($className);
+        if ($initializerClass = $this->initializers[$className] ?? null) {
+            return $this->resolve($initializerClass);
+        }
 
-        $initializedBy = attribute(InitializedBy::class)
-            ->in($reflectionClass)
-            ->first();
+        // Loop through the registered initializers to see if
+        // we have something to handle this class.
+        foreach ($this->dynamicInitializers as $initializerClass) {
+            $initializer = $this->resolve($initializerClass);
 
-        if ($initializedBy) {
-            $initializerClassName = $initializedBy->className;
-
-            $initializer = $this->resolve($initializerClassName);
-
-            if (! $initializer instanceof Initializer) {
-                throw new InvalidInitializerException($initializerClassName);
+            if (! $initializer->canInitialize($className)) {
+                continue;
             }
 
             return $initializer;
@@ -146,7 +169,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className): object
+    private function autowire(string $className, mixed ...$params): object
     {
         $reflectionClass = new ReflectionClass($className);
 
@@ -160,7 +183,7 @@ final class GenericContainer implements Container
             // Otherwise, use our autowireDependencies helper to automagically
             // build up each parameter.
             : $reflectionClass->newInstanceArgs(
-                $this->autowireDependencies($constructor),
+                $this->autowireDependencies($constructor, $params),
             );
     }
 

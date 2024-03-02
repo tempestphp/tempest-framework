@@ -30,7 +30,6 @@ final class CircularDependencyException extends Exception
                 $prefix = '   ';
             }
 
-
             $message .= PHP_EOL . "\t{$prefix} " . $context;
         }
 

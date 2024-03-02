@@ -13,6 +13,7 @@ use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectA;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectB;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectC;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD;
+use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectDInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectEInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
@@ -50,7 +51,9 @@ class ContainerTest extends TestCase
     /** @test */
     public function get_with_initializer()
     {
-        $container = new GenericContainer();
+        $container = new GenericContainer(initializers: [
+            ContainerObjectD::class => ContainerObjectDInitializer::class,
+        ]);
 
         $d = $container->get(ContainerObjectD::class);
 
@@ -78,7 +81,7 @@ class ContainerTest extends TestCase
     {
         $container = new GenericContainer();
 
-        $container->addInitializer(new ContainerObjectEInitializer());
+        $container->addInitializer(ContainerObjectEInitializer::class);
 
         $object = $container->get(ContainerObjectE::class);
 
@@ -89,7 +92,7 @@ class ContainerTest extends TestCase
     public function call_tries_to_transform_unmatched_values()
     {
         $container = new GenericContainer();
-        $container->addInitializer(new ContainerObjectEInitializer());
+        $container->addInitializer(ContainerObjectEInitializer::class);
         $classToCall = new CallContainerObjectE();
 
         $return = $container->call($classToCall, 'method', input: '1');

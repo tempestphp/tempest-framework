@@ -14,7 +14,7 @@ use Tempest\Events\EventHandler;
 
 final readonly class EventBusDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/event-bus-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/event-bus-discovery.cache.php';
 
     public function __construct(
         private EventBusConfig $eventBusConfig,

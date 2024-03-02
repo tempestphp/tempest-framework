@@ -9,6 +9,7 @@ use Tempest\Bootstraps\ConfigBootstrap;
 use Tempest\Bootstraps\DiscoveryBootstrap;
 use Tempest\Bootstraps\DiscoveryLocationBootstrap;
 use Tempest\Container\Container;
+use Tempest\Container\ContainerConfig;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
 use Tempest\Http\RequestInitializer;
@@ -33,7 +34,11 @@ final readonly class Kernel
         ];
 
         foreach ($bootstraps as $bootstrap) {
-            $container->get($bootstrap)->boot();
+            $container->get(
+                $bootstrap,
+                kernel: $this,
+                appConfig: $this->appConfig
+            )->boot();
         }
 
         return $container;
@@ -47,11 +52,12 @@ final readonly class Kernel
 
         $container
             ->config($this->appConfig)
+            ->config(new ContainerConfig())
             ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
-            ->addInitializer(new RequestInitializer())
-            ->addInitializer(new RouteBindingInitializer())
-            ->addInitializer(new PDOInitializer());
+            ->addInitializer(RequestInitializer::class)
+            ->addInitializer(RouteBindingInitializer::class)
+            ->addInitializer(PDOInitializer::class);
 
         return $container;
     }
