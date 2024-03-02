@@ -31,8 +31,6 @@ final readonly class InitializerDiscovery implements Discovery
 
     public function hasCache(): bool
     {
-        return false;
-
         return file_exists(self::CACHE_PATH);
     }
 
