@@ -16,9 +16,14 @@ use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectDInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectEInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\IntersectionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\UnionImplementation;
+use Tests\Tempest\Unit\Container\Fixtures\UnionInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceA;
+use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceB;
 use Tests\Tempest\Unit\Container\Fixtures\UnionTypesClass;
 
 class ContainerTest extends TestCase
@@ -174,5 +179,31 @@ class ContainerTest extends TestCase
         $a = $container->get(ContainerObjectE::class);
         $b = $container->get(ContainerObjectE::class);
         $this->assertSame(spl_object_id($a), spl_object_id($b));
+    }
+
+    /** @test */
+    public function test_union_initializers()
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(UnionInitializer::class);
+
+        $a = $container->get(UnionInterfaceA::class);
+        $b = $container->get(UnionInterfaceB::class);
+
+        $this->assertInstanceOf(UnionImplementation::class, $a);
+        $this->assertInstanceOf(UnionImplementation::class, $b);
+    }
+
+    /** @test */
+    public function test_intersection_initializers()
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(IntersectionInitializer::class);
+
+        $a = $container->get(UnionInterfaceA::class);
+        $b = $container->get(UnionInterfaceB::class);
+        
+        $this->assertInstanceOf(UnionImplementation::class, $a);
+        $this->assertInstanceOf(UnionImplementation::class, $b);
     }
 }
