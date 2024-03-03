@@ -8,10 +8,12 @@ use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class ConsoleOutputInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): ConsoleOutput
     {
         $app = $container->get(Application::class);
 
@@ -20,8 +22,6 @@ final readonly class ConsoleOutputInitializer implements Initializer
         } else {
             $consoleOutput = new GenericConsoleOutput();
         }
-
-        $container->singleton(ConsoleOutput::class, fn () => $consoleOutput);
 
         return $consoleOutput;
     }

@@ -6,13 +6,13 @@ namespace Tempest\Container;
 
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
-use Tempest\Container\Exceptions\InvalidInitializerException;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -22,10 +22,30 @@ final class GenericContainer implements Container
     public function __construct(
         private array $definitions = [],
         private array $singletons = [],
-        /** @var (Initializer&CanInitialize)[] */
+
+        /**
+         * @template T of \Tempest\Container\Initializer
+         * @var class-string<T> $initializers
+         */
         private array $initializers = [],
-        private ContainerLog $log = new InMemoryContainerLog(),
+
+        /**
+         * @template T of \Tempest\Container\DynamicInitializer
+         * @var class-string<T> $dynamicInitializers
+         */
+        private array $dynamicInitializers = [],
+        private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
+    }
+
+    public function setInitializers(array $initializers): void
+    {
+        $this->initializers = $initializers;
+    }
+
+    public function getInitializers(): array
+    {
+        return $this->initializers;
     }
 
     public function register(string $className, callable $definition): self
@@ -55,11 +75,11 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className): object
+    public function get(string $className, mixed ...$params): object
     {
         $this->log->startResolving();
 
-        return $this->resolve($className);
+        return $this->resolve($className, ...$params);
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed
@@ -75,14 +95,38 @@ final class GenericContainer implements Container
         return $reflectionMethod->invokeArgs($object, $parameters);
     }
 
-    public function addInitializer(CanInitialize $initializer): Container
+    public function addInitializer(ReflectionClass|string $initializerClass): Container
     {
-        $this->initializers = [$initializer, ...$this->initializers];
+        $initializerClass = $initializerClass instanceof ReflectionClass
+            ? $initializerClass
+            : new ReflectionClass($initializerClass);
+
+        // First, we check whether this is a DynamicInitializer,
+        // which don't have a one-to-one mapping
+        if ($initializerClass->implementsInterface(DynamicInitializer::class)) {
+            $this->dynamicInitializers[] = $initializerClass->getName();
+
+            return $this;
+        }
+
+        // For normal Initializers, we'll use the return type
+        // to determine which dependency they resolve
+        $returnTypes = $initializerClass->getMethod('initialize')->getReturnType();
+
+        $returnTypes = match ($returnTypes::class) {
+            ReflectionNamedType::class => [$returnTypes],
+            ReflectionUnionType::class, ReflectionIntersectionType::class => $returnTypes->getTypes(),
+        };
+
+        /** @var ReflectionNamedType[] $returnTypes */
+        foreach ($returnTypes as $returnType) {
+            $this->initializers[$returnType->getName()] = $initializerClass->getName();
+        }
 
         return $this;
     }
 
-    private function resolve(string $className): object
+    private function resolve(string $className, mixed ...$params): object
     {
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$className] ?? null) {
@@ -102,45 +146,47 @@ final class GenericContainer implements Container
         // If there's an initializer, we don't keep track of the log anymore,
         // since initializers are outside the container's responsibility.
         if ($initializer = $this->initializerFor($className)) {
-            // Provide the classname of the object we're trying to result
-            // if the initializer requires it.
-            if ($initializer instanceof RequiresClassName) {
-                $initializer->setClassName($className);
+            $object = match (true) {
+                $initializer instanceof Initializer => $initializer->initialize($this),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($className, $this),
+            };
+
+            // Check whether the initializer's result should be registered as a singleton
+            if (attribute(Singleton::class)->in($initializer::class)->first() !== null) {
+                $this->singleton($className, fn () => $object);
+
+                return $this->get($className);
             }
 
-            return $initializer->initialize($this);
+            return $object;
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className);
+        return $this->autowire($className, ...$params);
     }
 
-    private function initializerFor(string $className): ?Initializer
+    private function initializerFor(string $className): null|Initializer|DynamicInitializer
     {
-        // Loop through the registered initializers to see if
-        // we have something to handle this class.
-        foreach ($this->initializers as $initializer) {
-            if (! $initializer->canInitialize($className)) {
-                continue;
-            }
-
-            return $initializer;
+        // Initializers themselves can't be initialized,
+        // otherwise you'd end up with infinite loops
+        if (
+            is_a($className, Initializer::class, true)
+            || is_a($className, DynamicInitializer::class, true)
+        ) {
+            return null;
         }
 
-        // Next, check if the class specifically defines an initializer.
-        $reflectionClass = new ReflectionClass($className);
+        if ($initializerClass = $this->initializers[$className] ?? null) {
+            return $this->resolve($initializerClass);
+        }
 
-        $initializedBy = attribute(InitializedBy::class)
-            ->in($reflectionClass)
-            ->first();
+        // Loop through the registered initializers to see if
+        // we have something to handle this class.
+        foreach ($this->dynamicInitializers as $initializerClass) {
+            $initializer = $this->resolve($initializerClass);
 
-        if ($initializedBy) {
-            $initializerClassName = $initializedBy->className;
-
-            $initializer = $this->resolve($initializerClassName);
-
-            if (! $initializer instanceof Initializer) {
-                throw new InvalidInitializerException($initializerClassName);
+            if (! $initializer->canInitialize($className)) {
+                continue;
             }
 
             return $initializer;
@@ -149,7 +195,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className): object
+    private function autowire(string $className, mixed ...$params): object
     {
         $reflectionClass = new ReflectionClass($className);
 
@@ -163,7 +209,7 @@ final class GenericContainer implements Container
             // Otherwise, use our autowireDependencies helper to automagically
             // build up each parameter.
             : $reflectionClass->newInstanceArgs(
-                $this->autowireDependencies($constructor),
+                $this->autowireDependencies($constructor, $params),
             );
     }
 
@@ -202,9 +248,10 @@ final class GenericContainer implements Container
 
         // Convert the types to an array regardless, so we can handle
         // union types and single types the same.
-        $types = ($parameterType instanceof ReflectionUnionType)
-            ? $parameterType->getTypes()
-            : [$parameterType];
+        $types = match($parameterType::class) {
+            ReflectionNamedType::class => [$parameterType],
+            ReflectionUnionType::class, ReflectionIntersectionType::class => $parameterType->getTypes(),
+        };
 
         // Loop through each type until we hit a match.
         foreach ($types as $type) {

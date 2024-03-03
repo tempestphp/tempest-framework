@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Container\InitializedBy;
-
-#[InitializedBy(ConsoleOutputInitializer::class)]
 interface ConsoleOutput
 {
     public function write(string $line): void;

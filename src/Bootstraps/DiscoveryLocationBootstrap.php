@@ -6,18 +6,15 @@ namespace Tempest\Bootstraps;
 
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
-use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
 use function Tempest\path;
 
 final readonly class DiscoveryLocationBootstrap implements Bootstrap
 {
-    private string $root;
-
     public function __construct(
-        private Container $container,
+        private AppConfig $appConfig,
+        private Kernel $kernel,
     ) {
-        $this->root = $this->container->get(Kernel::class)->root;
     }
 
     public function boot(): void
@@ -32,7 +29,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
     private function discoverInstalledPackageLocations(): array
     {
-        $composerPath = path($this->root, 'vendor/composer');
+        $composerPath = path($this->kernel->root, 'vendor/composer');
         $installed = $this->loadJsonFile(path($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 
@@ -61,13 +58,13 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
     private function discoverAppNamespaces(): array
     {
-        $composer = $this->loadJsonFile(path($this->root, 'composer.json'));
+        $composer = $this->loadJsonFile(path($this->kernel->root, 'composer.json'));
         $namespaceMap = $composer['autoload']['psr-4'] ?? [];
 
         $discoveredLocations = [];
 
         foreach ($namespaceMap as $namespace => $path) {
-            $path = path($this->root, $path);
+            $path = path($this->kernel->root, $path);
 
             $discoveredLocations[] = [
                 'namespace' => $namespace,
@@ -80,19 +77,15 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
     private function addDiscoveryLocations(array $discoveredLocations): void
     {
-        foreach ($discoveredLocations as &$location) {
-            $location = new DiscoveryLocation(...$location);
+        foreach ($discoveredLocations as $location) {
+            $this->appConfig->discoveryLocations[] = new DiscoveryLocation(...$location);
         }
-
-        unset($location);
-
-        $this->container->get(AppConfig::class)->discoveryLocations = $discoveredLocations;
     }
 
     private function loadJsonFile(string $path): array
     {
         if (! is_file($path)) {
-            $relativePath = str_replace($this->root, '.', $path);
+            $relativePath = str_replace($this->kernel->root, '.', $path);
 
             throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
         }

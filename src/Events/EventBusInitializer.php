@@ -6,18 +6,16 @@ namespace Tempest\Events;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class EventBusInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): EventBus
     {
-        $eventBus = new GenericEventBus(
+        return new GenericEventBus(
             $container,
             $container->get(EventBusConfig::class),
         );
-
-        $container->singleton(EventBus::class, fn () => $eventBus);
-
-        return $eventBus;
     }
 }

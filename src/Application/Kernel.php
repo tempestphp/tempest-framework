@@ -33,7 +33,11 @@ final readonly class Kernel
         ];
 
         foreach ($bootstraps as $bootstrap) {
-            $container->get($bootstrap)->boot();
+            $container->get(
+                $bootstrap,
+                kernel: $this,
+                appConfig: $this->appConfig,
+            )->boot();
         }
 
         return $container;
@@ -49,9 +53,9 @@ final readonly class Kernel
             ->config($this->appConfig)
             ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
-            ->addInitializer(new RequestInitializer())
-            ->addInitializer(new RouteBindingInitializer())
-            ->addInitializer(new PDOInitializer());
+            ->addInitializer(RequestInitializer::class)
+            ->addInitializer(RouteBindingInitializer::class)
+            ->addInitializer(PDOInitializer::class);
 
         return $container;
     }

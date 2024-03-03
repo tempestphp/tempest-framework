@@ -6,15 +6,13 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class RouterInitializer implements Initializer
 {
-    public function initialize(Container $container): object
+    public function initialize(Container $container): Router
     {
-        $router = $container->get(GenericRouter::class);
-
-        $container->singleton(Router::class, fn () => $router);
-
-        return $router;
+        return $container->get(GenericRouter::class);
     }
 }

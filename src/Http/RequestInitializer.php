@@ -4,32 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Container\CanInitialize;
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
-use Tempest\Container\RequiresClassName;
+use Tempest\Container\DynamicInitializer;
 use function Tempest\map;
 use Tempest\Support\ArrayHelper;
 
-final class RequestInitializer implements Initializer, CanInitialize, RequiresClassName
+final class RequestInitializer implements DynamicInitializer
 {
-    private string $className;
-
     public function canInitialize(string $className): bool
     {
         return is_a($className, Request::class, true);
     }
 
-    public function setClassName(string $className): void
+    public function initialize(string $className, Container $container): Request
     {
-        $this->className = $className;
-    }
-
-    public function initialize(Container $container): Request
-    {
-        $className = $this->className === Request::class
+        $className = $className === Request::class
             ? GenericRequest::class
-            : $this->className;
+            : $className;
 
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $method = Method::tryFrom($_SERVER['REQUEST_METHOD'] ?? '') ?? Method::GET;
