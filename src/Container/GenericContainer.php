@@ -101,20 +101,24 @@ final class GenericContainer implements Container
             ? $initializerClass
             : new ReflectionClass($initializerClass);
 
+        // First, we check whether this is a DynamicInitializer,
+        // which don't have a one-to-one mapping
         if ($initializerClass->implementsInterface(DynamicInitializer::class)) {
             $this->dynamicInitializers[] = $initializerClass->getName();
 
             return $this;
         }
 
+        // For normal Initializers, we'll use the return type
+        // to determine which dependency they resolve
         $returnTypes = $initializerClass->getMethod('initialize')->getReturnType();
 
-        /** @var ReflectionNamedType[] $returnTypes */
         $returnTypes = match ($returnTypes::class) {
             ReflectionNamedType::class => [$returnTypes],
-            ReflectionUnionType::class => $returnTypes,
+            ReflectionUnionType::class, ReflectionIntersectionType::class => $returnTypes->getTypes(),
         };
 
+        /** @var ReflectionNamedType[] $returnTypes */
         foreach ($returnTypes as $returnType) {
             $this->initializers[$returnType->getName()] = $initializerClass->getName();
         }
