@@ -202,7 +202,7 @@ class ContainerTest extends TestCase
 
         $a = $container->get(UnionInterfaceA::class);
         $b = $container->get(UnionInterfaceB::class);
-        
+
         $this->assertInstanceOf(UnionImplementation::class, $a);
         $this->assertInstanceOf(UnionImplementation::class, $b);
     }
