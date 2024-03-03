@@ -33,7 +33,8 @@ final class GenericContainer implements Container
          */
         public array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
-    ) {}
+    ) {
+    }
 
     public function register(string $className, callable $definition): self
     {

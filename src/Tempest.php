@@ -10,7 +10,8 @@ use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
-use Tempest\Exceptions\ExceptionHandler;
+use Tempest\Exceptions\ConsoleExceptionHandler;
+use Tempest\Exceptions\HttpExceptionHandler;
 
 final readonly class Tempest
 {
@@ -52,7 +53,7 @@ final readonly class Tempest
 
         $container->singleton(Application::class, fn () => $application);
 
-        $appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
+        $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
         return $application;
     }
@@ -69,7 +70,7 @@ final readonly class Tempest
 
         $container->singleton(Application::class, fn () => $application);
 
-        $appConfig->exceptionHandlers[] = $container->get(ExceptionHandler::class);
+        $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
 
         return $application;
     }
