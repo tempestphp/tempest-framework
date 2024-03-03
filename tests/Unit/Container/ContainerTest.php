@@ -171,7 +171,8 @@ class ContainerTest extends TestCase
         $container = new GenericContainer();
         $container->addInitializer(SingletonInitializer::class);
 
-        $container->get(ContainerObjectE::class);
-        $this->assertTrue(isset($container->singletons[ContainerObjectE::class]));
+        $a = $container->get(ContainerObjectE::class);
+        $b = $container->get(ContainerObjectE::class);
+        $this->assertSame(spl_object_id($a), spl_object_id($b));
     }
 }

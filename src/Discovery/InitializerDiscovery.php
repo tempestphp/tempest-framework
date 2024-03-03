@@ -6,6 +6,7 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
 use Tempest\Container\Initializer;
 
 final readonly class InitializerDiscovery implements Discovery
@@ -13,7 +14,7 @@ final readonly class InitializerDiscovery implements Discovery
     private const string CACHE_PATH = __DIR__ . '/initializer-discovery.cache.php';
 
     public function __construct(
-        private Container $container,
+        private Container&GenericContainer $container,
     ) {
     }
 
@@ -36,14 +37,14 @@ final readonly class InitializerDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->container->initializers));
+        file_put_contents(self::CACHE_PATH, serialize($this->container->getInitializers()));
     }
 
     public function restoreCache(Container $container): void
     {
         $initializers = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->container->initializers = $initializers;
+        $this->container->setInitializers($initializers);
     }
 
     public function destroyCache(): void

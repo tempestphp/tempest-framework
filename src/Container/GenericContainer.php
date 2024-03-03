@@ -6,6 +6,7 @@ namespace Tempest\Container;
 
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -19,21 +20,32 @@ final class GenericContainer implements Container
     use HasInstance;
 
     public function __construct(
-        public array $definitions = [],
-        public array $singletons = [],
+        private array $definitions = [],
+        private array $singletons = [],
+
         /**
          * @template T of \Tempest\Container\Initializer
          * @var class-string<T> $initializers
          */
-        public array $initializers = [],
+        private array $initializers = [],
 
         /**
          * @template T of \Tempest\Container\DynamicInitializer
          * @var class-string<T> $dynamicInitializers
          */
-        public array $dynamicInitializers = [],
+        private array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
+    }
+
+    public function setInitializers(array $initializers): void
+    {
+        $this->initializers = $initializers;
+    }
+
+    public function getInitializers(): array
+    {
+        return $this->initializers;
     }
 
     public function register(string $className, callable $definition): self
@@ -232,9 +244,10 @@ final class GenericContainer implements Container
 
         // Convert the types to an array regardless, so we can handle
         // union types and single types the same.
-        $types = ($parameterType instanceof ReflectionUnionType)
-            ? $parameterType->getTypes()
-            : [$parameterType];
+        $types = match($parameterType::class) {
+            ReflectionNamedType::class => [$parameterType],
+            ReflectionUnionType::class, ReflectionIntersectionType::class => $parameterType->getTypes(),
+        };
 
         // Loop through each type until we hit a match.
         foreach ($types as $type) {
