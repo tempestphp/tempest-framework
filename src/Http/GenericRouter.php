@@ -156,6 +156,10 @@ final readonly class GenericRouter implements Router
             return response($input->render($this->appConfig));
         }
 
+        if ($view = $input->getView()) {
+            $input->body($view->render($this->appConfig));
+        }
+
         return $input;
     }
 
