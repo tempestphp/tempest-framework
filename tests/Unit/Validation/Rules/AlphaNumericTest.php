@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\AlphaNumeric;
 
+/**
+ * @internal
+ * @small
+ */
 class AlphaNumericTest extends TestCase
 {
     public function test_alphanumeric()

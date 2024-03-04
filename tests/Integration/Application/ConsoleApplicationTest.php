@@ -6,9 +6,12 @@ namespace Tests\Tempest\Integration\Application;
 
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class ConsoleApplicationTest extends IntegrationTest
 {
-    /** @test */
     public function test_unhandled_command()
     {
         $this->console
@@ -16,7 +19,6 @@ class ConsoleApplicationTest extends IntegrationTest
             ->assertContains('Command `unknown` not found');
     }
 
-    /** @test */
     public function test_cli_application()
     {
         $this->console
@@ -25,7 +27,6 @@ class ConsoleApplicationTest extends IntegrationTest
             ->assertContains('input');
     }
 
-    /** @test */
     public function test_cli_application_flags()
     {
         $this->console
@@ -34,7 +35,6 @@ class ConsoleApplicationTest extends IntegrationTest
             ->assertContains('flag');
     }
 
-    /** @test */
     public function test_cli_application_flags_defaults()
     {
         $this->console
@@ -43,7 +43,6 @@ class ConsoleApplicationTest extends IntegrationTest
             ->assertContains('no-flag');
     }
 
-    /** @test */
     public function test_failing_command()
     {
         $this->console

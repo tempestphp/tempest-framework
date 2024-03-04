@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IPv4;
 
+/**
+ * @internal
+ * @small
+ */
 class IPv4Test extends TestCase
 {
     public function test_ipv4_address()

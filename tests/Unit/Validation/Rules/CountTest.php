@@ -8,10 +8,14 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Count;
 
+/**
+ * @internal
+ * @small
+ */
 class CountTest extends TestCase
 {
     /**
-     * @dataProvider dataSets
+     * @dataProvider provide_count_cases
      */
     public function test_count(Count $rule, array $stringToTest, bool $expected): void
     {
@@ -19,7 +23,7 @@ class CountTest extends TestCase
     }
 
     /**
-     * @dataProvider dataSetsMessage
+     * @dataProvider provide_returns_the_proper_message_based_on_min_and_max_arguments_cases
      */
     public function test_returns_the_proper_message_based_on_min_and_max_arguments(
         Count $rule,
@@ -35,7 +39,7 @@ class CountTest extends TestCase
         new Count();
     }
 
-    public static function dataSetsMessage(): array
+    public static function provide_returns_the_proper_message_based_on_min_and_max_arguments_cases(): iterable
     {
         return [
             'Should provide correct message when both min and max limits are defined (1, 5)' => [
@@ -53,7 +57,7 @@ class CountTest extends TestCase
         ];
     }
 
-    public static function dataSets(): array
+    public static function provide_count_cases(): iterable
     {
         return [
             'Should invalidate when array length is less than the minimum limit (1)' => [

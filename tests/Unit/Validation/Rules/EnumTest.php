@@ -10,6 +10,10 @@ use Tests\Tempest\Unit\Validation\Rules\Fixtures\SomeBackedEnum;
 use Tests\Tempest\Unit\Validation\Rules\Fixtures\SomeEnum;
 use UnexpectedValueException;
 
+/**
+ * @internal
+ * @small
+ */
 class EnumTest extends TestCase
 {
     public function test_validating_enums()

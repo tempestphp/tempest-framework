@@ -8,6 +8,10 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Http\Responses\CreatedResponse;
 use Tempest\Http\Status;
 
+/**
+ * @internal
+ * @small
+ */
 class CreatedResponseTest extends TestCase
 {
     public function test_created_response()

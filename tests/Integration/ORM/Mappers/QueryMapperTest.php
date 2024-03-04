@@ -11,10 +11,13 @@ use Tempest\Database\Query;
 use function Tempest\make;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class QueryMapperTest extends IntegrationTest
 {
-    /** @test */
-    public function create_query()
+    public function test_create_query()
     {
         $author = Author::new(name: 'test');
 
@@ -26,8 +29,7 @@ class QueryMapperTest extends IntegrationTest
         $this->assertSame(['name' => 'test'], $query->bindings);
     }
 
-    /** @test */
-    public function create_query_with_nested_relation()
+    public function test_create_query_with_nested_relation()
     {
         $book = Book::new(
             title: 'Book Title',
@@ -52,8 +54,7 @@ class QueryMapperTest extends IntegrationTest
         $this->assertSame('Author Name', $authorQuery->bindings['name']);
     }
 
-    /** @test */
-    public function update_query()
+    public function test_update_query()
     {
         $author = Author::new(id: new Id(1), name: 'other');
 

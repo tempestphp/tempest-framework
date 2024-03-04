@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Http;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Status;
 
+/**
+ * @internal
+ * @small
+ */
 class StatusTest extends TestCase
 {
     private function descriptionToStatus(string $description): Status
@@ -19,7 +23,7 @@ class StatusTest extends TestCase
     }
 
     /**
-     * @dataProvider statusCodes
+     * @dataProvider provide_status_code_cases
      */
     public function test_status_code(int $code, string $description)
     {
@@ -73,7 +77,7 @@ class StatusTest extends TestCase
         }
     }
 
-    public static function statusCodes(): array
+    public static function provide_status_code_cases(): iterable
     {
         return [
             [100, 'Continue'],

@@ -7,9 +7,12 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\EndsWith;
 
+/**
+ * @internal
+ * @small
+ */
 class EndsWithTest extends TestCase
 {
-    /** @test */
     public function test_ends_with()
     {
         $rule = new EndsWith(needle: 'ab');

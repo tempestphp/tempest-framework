@@ -17,10 +17,13 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 
+/**
+ * @internal
+ * @small
+ */
 class MapperTest extends IntegrationTest
 {
-    /** @test */
-    public function make_object_from_class_string()
+    public function test_make_object_from_class_string()
     {
         $author = make(Author::class)->from([
             'id' => 1,
@@ -31,8 +34,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame(1, $author->id->id);
     }
 
-    /** @test */
-    public function make_collection()
+    public function test_make_collection()
     {
         $authors = make(Author::class)->collection()->from([
             [
@@ -46,8 +48,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame(1, $authors[0]->id->id);
     }
 
-    /** @test */
-    public function make_object_from_existing_object()
+    public function test_make_object_from_existing_object()
     {
         $author = Author::new(
             name: 'original',
@@ -62,8 +63,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame(1, $author->id->id);
     }
 
-    /** @test */
-    public function make_object_with_map_to()
+    public function test_make_object_with_map_to()
     {
         $author = Author::new(
             name: 'original',
@@ -78,8 +78,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame(1, $author->id->id);
     }
 
-    /** @test */
-    public function make_object_with_has_many_relation()
+    public function test_make_object_with_has_many_relation()
     {
         $author = make(Author::class)->from([
             'name' => 'test',
@@ -96,8 +95,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame('test', $author->books[0]->author->name);
     }
 
-    /** @test */
-    public function make_object_with_one_to_one_relation()
+    public function test_make_object_with_one_to_one_relation()
     {
         $book = make(Book::class)->from([
             'title' => 'test',
@@ -111,8 +109,7 @@ class MapperTest extends IntegrationTest
         $this->assertSame('test', $book->author->books[0]->title);
     }
 
-    /** @test */
-    public function make_object_with_missing_values_throws_exception()
+    public function test_make_object_with_missing_values_throws_exception()
     {
         $this->expectException(MissingValuesException::class);
 
@@ -123,7 +120,6 @@ class MapperTest extends IntegrationTest
         ]);
     }
 
-    /** @test */
     public function test_caster_on_field()
     {
         $object = make(ObjectFactoryA::class)->from([
@@ -133,7 +129,6 @@ class MapperTest extends IntegrationTest
         $this->assertSame('casted', $object->prop);
     }
 
-    /** @test */
     public function test_single_with_query()
     {
         $this->migrate(
@@ -168,7 +163,6 @@ class MapperTest extends IntegrationTest
         $this->assertSame('casted', $collection[1]->prop);
     }
 
-    /** @test */
     public function test_validation()
     {
         $this->expectException(ValidationException::class);

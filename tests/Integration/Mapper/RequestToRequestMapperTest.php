@@ -12,9 +12,12 @@ use Tempest\ORM\Exceptions\MissingValuesException;
 use function Tempest\request;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class RequestToRequestMapperTest extends IntegrationTest
 {
-    /** @test */
     public function test_can_map()
     {
         $mapper = new RequestToRequestMapper();
@@ -23,7 +26,6 @@ class RequestToRequestMapperTest extends IntegrationTest
         $this->assertFalse($mapper->canMap(self::class, request('/')));
     }
 
-    /** @test */
     public function test_map_with()
     {
         $mapper = new RequestToRequestMapper();
@@ -33,7 +35,6 @@ class RequestToRequestMapperTest extends IntegrationTest
         $this->assertInstanceOf(PostRequest::class, $request);
     }
 
-    /** @test */
     public function test_map_with_with_missing_data()
     {
         $this->expectException(MissingValuesException::class);
@@ -50,8 +51,7 @@ class RequestToRequestMapperTest extends IntegrationTest
         }
     }
 
-    /** @test */
-    public function generic_request_is_used_when_interface_is_passed()
+    public function test_generic_request_is_used_when_interface_is_passed()
     {
         $mapper = new RequestToRequestMapper();
 

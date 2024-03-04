@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Timestamp;
 
+/**
+ * @internal
+ * @small
+ */
 class TimestampTest extends TestCase
 {
     public function test_timestamp()
