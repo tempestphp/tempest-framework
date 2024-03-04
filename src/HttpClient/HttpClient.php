@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient;
 
-use Tempest\Container\InitializedBy;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 
-#[InitializedBy(HttpClientInitializer::class)]
 interface HttpClient
 {
+    public function sendRequest(Request $request): Response;
+
     public function get(string $uri, array $headers = []): Response;
 
     public function head(string $uri, array $headers = []): Response;

@@ -6,12 +6,18 @@ namespace Tempest\HttpClient;
 
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Response;
 
 final class GenericHttpClient implements HttpClient
 {
     public function __construct(private HttpClientDriver $driver)
     {
+    }
+
+    public function sendRequest(Request $request): Response
+    {
+        return $this->driver->send($request);
     }
 
     public function get(string $uri, array $headers = []): Response
