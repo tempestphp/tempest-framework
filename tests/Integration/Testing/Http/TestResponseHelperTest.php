@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Testing\Http;
+namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
