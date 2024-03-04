@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use App\Controllers\TestController;
 use App\Views\ViewModel;
 use Tempest\AppConfig;
+use Tempest\Http\Status;
+use function Tempest\uri;
 use function Tempest\view;
 use Tempest\View\GenericView;
 use Tests\Tempest\Integration\TestCase;
@@ -143,5 +146,14 @@ HTML;
         HTML;
 
         $this->assertSame(trim($expected), trim($html));
+    }
+
+    /** @test */
+    public function view_model_with_response_data()
+    {
+        $this->http
+            ->get(uri([TestController::class, 'viewModelWithResponseData']))
+            ->assertHasHeader('x-from-viewmodel')
+            ->assertStatus(Status::CREATED);
     }
 }

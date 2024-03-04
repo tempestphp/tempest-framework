@@ -13,6 +13,7 @@ use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryDiscovery;
+use function Tempest\env;
 use function Tempest\get;
 use Tempest\Testing\Http\HttpRouterTester;
 
@@ -39,7 +40,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         copy($cleanDatabasePath, $databasePath);
 
         $this->appConfig = new AppConfig(
-            discoveryCache: true,
+            discoveryCache: env('DISCOVERY_CACHE', true),
             enableExceptionHandling: false,
         );
 

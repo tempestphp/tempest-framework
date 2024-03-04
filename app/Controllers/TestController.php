@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Views\ViewModelWithResponseData;
 use Tempest\Http\Get;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
@@ -44,7 +45,7 @@ final readonly class TestController
     {
         return response(
             body: 'Not Found Test',
-            status: Status::NOT_FOUND
+            status: Status::NOT_FOUND,
         );
     }
 
@@ -53,7 +54,7 @@ final readonly class TestController
     {
         return response(
             body: 'Server Error Test',
-            status: Status::INTERNAL_SERVER_ERROR
+            status: Status::INTERNAL_SERVER_ERROR,
         );
     }
 
@@ -63,5 +64,14 @@ final readonly class TestController
     public function withMiddleware(): Response
     {
         return response()->ok();
+    }
+
+    #[Get('/view-model-with-response-data')]
+    public function viewModelWithResponseData(): Response
+    {
+        return response()
+            ->header('x-from-viewmodel', 'true')
+            ->status(Status::CREATED)
+            ->view(new ViewModelWithResponseData());
     }
 }

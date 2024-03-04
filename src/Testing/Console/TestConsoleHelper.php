@@ -10,15 +10,18 @@ final readonly class TestConsoleHelper
 {
     public function __construct(
         private TestConsoleOutput $output,
-    ) {
-    }
+    ) {}
 
     public function assertContains(string $text): self
     {
         Assert::assertStringContainsString(
             $text,
             $this->output->getTextWithoutFormatting(),
-            sprintf('Failed to assert that console output included text: %s.', $text)
+            sprintf(
+                'Failed to assert that console output included text: %s. These lines were printed: %s',
+                $text,
+                PHP_EOL . $this->output->getTextWithoutFormatting(),
+            ),
         );
 
         return $this;
@@ -29,7 +32,11 @@ final readonly class TestConsoleHelper
         Assert::assertStringContainsString(
             $text,
             $this->output->getTextWithFormatting(),
-            sprintf('Failed to assert that console output included formatted text: %s.', $text)
+            sprintf(
+                'Failed to assert that console output included formatted text: %s. These lines were printed: %s',
+                $text,
+                PHP_EOL . $this->output->getTextWithFormatting(),
+            ),
         );
 
         return $this;
@@ -40,7 +47,11 @@ final readonly class TestConsoleHelper
         Assert::assertContainsEquals(
             $line,
             $this->output->getErrorLines(),
-            sprintf('Failed to assert that console output included error: %s.', $line)
+            sprintf(
+                'Failed to assert that console output included error: %s. These lines were printed: %s',
+                $line,
+                PHP_EOL . implode(PHP_EOL, $this->output->getErrorLines()),
+            ),
         );
 
         return $this;
@@ -51,7 +62,11 @@ final readonly class TestConsoleHelper
         Assert::assertContainsEquals(
             $line,
             $this->output->getInfoLines(),
-            sprintf('Failed to assert that console output included info: %s', $line)
+            sprintf(
+                'Failed to assert that console output included info: %s. These lines were printed: %s',
+                $line,
+                PHP_EOL . implode(PHP_EOL, $this->output->getInfoLines()),
+            ),
         );
 
         return $this;
@@ -62,7 +77,11 @@ final readonly class TestConsoleHelper
         Assert::assertContainsEquals(
             $line,
             $this->output->getSuccessLines(),
-            sprintf('Failed to assert that console output included success: %s', $line)
+            sprintf(
+                'Failed to assert that console output included success message: %s. These lines were printed: %s',
+                $line,
+                PHP_EOL . implode(PHP_EOL, $this->output->getSuccessLines()),
+            ),
         );
 
         return $this;

@@ -8,6 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
+use Tempest\Exceptions\ConsoleExceptionHandler;
 
 final readonly class ConsoleCommandTester
 {
@@ -21,10 +22,14 @@ final readonly class ConsoleCommandTester
 
     public function call(string $command): TestConsoleHelper
     {
+        $appConfig = $this->container->get(AppConfig::class);
+
+        $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);
+
         $application = new ConsoleApplication(
             args: ['tempest', ...explode(' ', $command)],
             container: $this->container,
-            appConfig: $this->container->get(AppConfig::class)
+            appConfig: $appConfig,
         );
 
         $application->run();

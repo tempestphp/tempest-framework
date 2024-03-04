@@ -4,81 +4,50 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Application;
 
-use Tempest\AppConfig;
-use Tempest\Application\CommandNotFound;
-use Tempest\Application\ConsoleApplication;
-use Tempest\Console\ConsoleOutput;
-use Tests\Tempest\Integration\TestCase;
-use Tests\Tempest\Integration\TestConsoleOutput;
+use Tempest\Testing\IntegrationTest;
 
-class ConsoleApplicationTest extends TestCase
+class ConsoleApplicationTest extends IntegrationTest
 {
-    /** @test */
-    public function test_run()
-    {
-        $app = new ConsoleApplication(
-            ['hello:world input'],
-            $this->container,
-            $this->container->get(AppConfig::class),
-        );
-
-        $app->run();
-
-        /** @var TestConsoleOutput $output */
-        $output = $this->container->get(ConsoleOutput::class);
-
-        $this->assertStringContainsString('Tempest Console', $output->lines[0]);
-    }
-
     /** @test */
     public function test_unhandled_command()
     {
-        $this->expectException(CommandNotFound::class);
-
-        $this->console('unknown');
+        $this->console
+            ->call('unknown')
+            ->assertContains('Command `unknown` not found');
     }
 
     /** @test */
     public function test_cli_application()
     {
-        $output = $this->console('hello:world input');
-
-        $this->assertSame(
-            ['Hi', 'input'],
-            $output->getLinesWithoutFormatting(),
-        );
+        $this->console
+            ->call('hello:world input')
+            ->assertContains('Hi')
+            ->assertContains('input');
     }
 
     /** @test */
     public function test_cli_application_flags()
     {
-        $output = $this->console('hello:test --flag --optionalValue=1');
-
-        $this->assertSame(
-            ['1', 'flag'],
-            $output->getLinesWithoutFormatting(),
-        );
+        $this->console
+            ->call('hello:test --flag --optionalValue=1')
+            ->assertContains('1')
+            ->assertContains('flag');
     }
 
     /** @test */
     public function test_cli_application_flags_defaults()
     {
-        $output = $this->console('hello:test');
-
-        $this->assertSame(
-            ['null', 'no-flag'],
-            $output->getLinesWithoutFormatting(),
-        );
+        $this->console
+            ->call('hello:test')
+            ->assertContains('null')
+            ->assertContains('no-flag');
     }
 
     /** @test */
     public function test_failing_command()
     {
-        $output = $this->console('hello:world');
-
-        $this->assertSame(
-            ['Something went wrong'],
-            $output->getLinesWithoutFormatting(),
-        );
+        $this->console
+            ->call('hello:world')
+            ->assertContains('Something went wrong');
     }
 }

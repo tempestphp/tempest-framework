@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\View\View;
+
 interface Response
 {
     public function getStatus(): Status;
@@ -15,6 +17,10 @@ interface Response
     public function body(string $body): self;
 
     public function header(string $key, string $value): self;
+
+    public function view(View $view): self;
+
+    public function getView(): ?View;
 
     public function ok(): self;
 

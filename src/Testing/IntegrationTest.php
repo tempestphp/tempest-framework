@@ -13,9 +13,9 @@ use Tempest\Testing\Http\HttpRouterTester;
 
 abstract class IntegrationTest extends TestCase
 {
-    private Kernel $kernel;
+    protected Kernel $kernel;
 
-    private Container $container;
+    protected Container $container;
 
     protected ConsoleCommandTester $console;
 

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\View\View;
+
 trait IsResponse
 {
     public function __construct(
         private Status $status,
         private string|array $body = '',
         private array $headers = [],
+        private ?View $view = null,
     ) {
     }
 
@@ -40,6 +43,18 @@ trait IsResponse
         $this->body = $body;
 
         return $this;
+    }
+
+    public function view(View $view): self
+    {
+        $this->view = $view;
+
+        return $this;
+    }
+
+    public function getView(): ?View
+    {
+        return $this->view;
     }
 
     public function ok(): self
