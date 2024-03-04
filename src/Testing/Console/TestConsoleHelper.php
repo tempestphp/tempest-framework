@@ -10,7 +10,8 @@ final readonly class TestConsoleHelper
 {
     public function __construct(
         private TestConsoleOutput $output,
-    ) {}
+    ) {
+    }
 
     public function assertContains(string $text): self
     {
