@@ -7,7 +7,7 @@ namespace Tests\Tempest\Unit\Validation\Fixtures;
 use Tempest\Validation\IsValidated;
 use Tempest\Validation\Rules\Length;
 
-class ObjectTobeValidated implements IsValidated
+class ObjectToBeValidated implements IsValidated
 {
     public function __construct(
         #[Length(min: 2, max: 3)]

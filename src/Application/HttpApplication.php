@@ -6,7 +6,7 @@ namespace Tempest\Application;
 
 use Tempest\AppConfig;
 use Tempest\Container\Container;
-use Tempest\Http\Request;
+use Tempest\Http\RequestFactory;
 use Tempest\Http\ResponseSender;
 use Tempest\Http\Router;
 use Throwable;
@@ -23,7 +23,11 @@ final readonly class HttpApplication implements Application
     {
         try {
             $router = $this->container->get(Router::class);
-            $request = $this->container->get(Request::class);
+
+            // TODO: in _theory_ we could refactor this to use… PSR
+            // Give me a minute to digest that though.
+            $request = (new RequestFactory())->make();
+
             $responseSender = $this->container->get(ResponseSender::class);
 
             $responseSender->send(

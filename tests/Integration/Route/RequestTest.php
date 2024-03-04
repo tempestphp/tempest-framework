@@ -12,7 +12,7 @@ use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
-use Tempest\Http\Request;
+use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
 use function Tempest\uri;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -20,14 +20,14 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 class RequestTest extends FrameworkIntegrationTestCase
 {
     /** @test */
-    public function from_container()
+    public function from_factory()
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
         $_POST = ['test'];
         $_SERVER['HTTP_X-TEST'] = 'test';
 
-        $request = $this->container->get(Request::class);
+        $request = (new RequestFactory())->make();
 
         $this->assertEquals(Method::POST, $request->getMethod());
         $this->assertEquals('/test', $request->getUri());

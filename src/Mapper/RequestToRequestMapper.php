@@ -8,6 +8,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Request;
 use function Tempest\map;
 use Tempest\Support\ArrayHelper;
+use Tempest\Validation\Validator;
 
 final readonly class RequestToRequestMapper implements Mapper
 {
@@ -30,7 +31,7 @@ final readonly class RequestToRequestMapper implements Mapper
             $requestClass = GenericRequest::class;
         }
 
-        return map([
+        $newRequest = map([
             'method' => $origin->getMethod(),
             'uri' => $origin->getUri(),
             'body' => $body,
@@ -39,5 +40,10 @@ final readonly class RequestToRequestMapper implements Mapper
             'query' => $origin->getQuery(),
             ...$body,
         ])->to($requestClass);
+
+        $validator = new Validator();
+        $validator->validate($newRequest);
+
+        return $newRequest;
     }
 }

@@ -11,6 +11,7 @@ use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
+use function Tempest\map;
 use function Tempest\response;
 use Tempest\View\View;
 
@@ -47,6 +48,8 @@ final readonly class GenericRouter implements Router
         );
 
         $callable = $this->getCallable($matchedRoute);
+
+        $request = $this->prepareRequest($request, $matchedRoute);
 
         $outputFromController = $callable($request);
 
@@ -225,5 +228,35 @@ final readonly class GenericRouter implements Router
         }
 
         return new MatchedRoute($route, $routeParams);
+    }
+
+    private function prepareRequest(Request $request, MatchedRoute $matchedRoute): Request
+    {
+        // Let's find out if our input request data matches what the route's action needs
+        $requestClass = $request::class;
+
+        // We'll loop over all the handler's parameters
+        foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
+            // TODO: support unions
+
+            // If the parameter's type is an instance of Request…
+            if (is_a($parameter->getType()->getName(), Request::class, true)) {
+                // We'll use that specific request class
+                $requestClass = $parameter->getType()->getName();
+
+                break;
+            }
+        }
+
+        // We map the original request we got into this method to the right request class
+        $request = map($request)->to($requestClass);
+
+        // Finally, we register this newly created request object in the container
+        // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
+        // Making it so that we don't need to set any $_SERVER variables and stuff like that
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton($request::class, fn () => $request);
+
+        return $request;
     }
 }

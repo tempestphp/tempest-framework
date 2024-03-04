@@ -31,6 +31,8 @@ class RequestToRequestMapperTest extends IntegrationTest
         $request = $mapper->map(PostRequest::class, request('/', ['title' => 'a', 'text' => 'b']));
 
         $this->assertInstanceOf(PostRequest::class, $request);
+        $this->assertEquals('a', $request->title);
+        $this->assertEquals('b', $request->text);
     }
 
     /** @test */
