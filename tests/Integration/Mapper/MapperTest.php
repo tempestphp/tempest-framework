@@ -11,13 +11,13 @@ use Tempest\Database\Query;
 use function Tempest\make;
 use function Tempest\map;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Testing\IntegrationTest;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
-use Tests\Tempest\Integration\TestCase;
 
-class MapperTest extends TestCase
+class MapperTest extends IntegrationTest
 {
     /** @test */
     public function make_object_from_class_string()

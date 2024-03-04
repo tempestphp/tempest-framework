@@ -9,10 +9,10 @@ use function Tempest\command;
 use Tempest\Commands\CommandBus;
 use Tempest\Commands\CommandBusConfig;
 use Tempest\Commands\CommandHandlerNotFound;
+use Tempest\Testing\IntegrationTest;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandBusMiddleware;
-use Tests\Tempest\Integration\TestCase;
 
-class CommandBusTest extends TestCase
+class CommandBusTest extends IntegrationTest
 {
     /** @test */
     public function command_handlers_are_auto_discovered()

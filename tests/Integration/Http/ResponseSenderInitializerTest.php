@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\GenericResponseSender;
 use Tempest\Http\ResponseSenderInitializer;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class ResponseSenderInitializerTest extends TestCase
+class ResponseSenderInitializerTest extends IntegrationTest
 {
     public function test_response_sender_initializer()
     {

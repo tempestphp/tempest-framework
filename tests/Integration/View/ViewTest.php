@@ -8,12 +8,12 @@ use App\Controllers\TestController;
 use App\Views\ViewModel;
 use Tempest\AppConfig;
 use Tempest\Http\Status;
+use Tempest\Testing\IntegrationTest;
 use function Tempest\uri;
 use function Tempest\view;
 use Tempest\View\GenericView;
-use Tests\Tempest\Integration\TestCase;
 
-class ViewTest extends TestCase
+class ViewTest extends IntegrationTest
 {
     /** @test */
     public function test_render()

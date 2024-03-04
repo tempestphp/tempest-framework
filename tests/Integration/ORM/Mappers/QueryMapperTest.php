@@ -9,9 +9,9 @@ use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use function Tempest\make;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class QueryMapperTest extends TestCase
+class QueryMapperTest extends IntegrationTest
 {
     /** @test */
     public function create_query()

@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\AppConfig;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class DiscoveryStatusCommandTest extends TestCase
+class DiscoveryStatusCommandTest extends IntegrationTest
 {
     /** @test */
     public function test_discovery_status_command()
     {
-        $output = $this->console('discovery:status')->asText();
+        $output = $this->console->call('discovery:status');
 
         $appConfig = $this->container->get(AppConfig::class);
 
         foreach ($appConfig->discoveryClasses as $discoveryClass) {
-            $this->assertStringContainsString($discoveryClass, $output);
+            $output->assertContains($discoveryClass);
         }
 
         foreach ($appConfig->discoveryLocations as $discoveryLocation) {
-            $this->assertStringContainsString($discoveryLocation->path, $output);
+            $output->assertContains($discoveryLocation->path);
         }
     }
 }

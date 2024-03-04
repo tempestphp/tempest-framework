@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Exceptions;
 
 use App\Console\FailCommand;
 use Tempest\Exceptions\ConsoleExceptionHandler;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class ConsoleExceptionHandlerTest extends TestCase
+class ConsoleExceptionHandlerTest extends IntegrationTest
 {
     /** @test */
     public function test_exception()
@@ -18,10 +18,9 @@ class ConsoleExceptionHandlerTest extends TestCase
             $this->container->get(ConsoleExceptionHandler::class),
         ];
 
-        $output = $this->console('fail output')->asText();
-
-        $this->assertStringContainsString(FailCommand::class, $output);
-        $this->assertStringContainsString('__invoke', $output);
-        //        $this->assertStringContainsString("'output'", $output);
+        $this->console
+            ->call('fail output')
+            ->assertContains(FailCommand::class)
+            ->assertContains('__invoke');
     }
 }

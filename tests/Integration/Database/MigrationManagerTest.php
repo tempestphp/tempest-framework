@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class MigrationManagerTest extends TestCase
+class MigrationManagerTest extends IntegrationTest
 {
     /** @test */
     public function test_migration()

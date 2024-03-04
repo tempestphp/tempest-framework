@@ -10,9 +10,9 @@ use Tempest\Http\Request;
 use Tempest\Mapper\RequestToRequestMapper;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use function Tempest\request;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class RequestToRequestMapperTest extends TestCase
+class RequestToRequestMapperTest extends IntegrationTest
 {
     /** @test */
     public function test_can_map()

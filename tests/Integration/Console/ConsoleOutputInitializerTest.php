@@ -7,9 +7,9 @@ namespace Tests\Tempest\Integration\Console;
 use Tempest\Console\ConsoleOutputInitializer;
 use Tempest\Console\GenericConsoleOutput;
 use Tempest\Console\NullConsoleOutput;
-use Tests\Tempest\Integration\TestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-class ConsoleOutputInitializerTest extends TestCase
+class ConsoleOutputInitializerTest extends FrameworkIntegrationTestCase
 {
     /** @test */
     public function test_in_console_application()

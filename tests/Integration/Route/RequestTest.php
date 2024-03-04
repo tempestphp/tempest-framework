@@ -15,9 +15,9 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Status;
 use function Tempest\uri;
-use Tests\Tempest\Integration\TestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-class RequestTest extends TestCase
+class RequestTest extends FrameworkIntegrationTestCase
 {
     /** @test */
     public function from_container()

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use App\Modules\Posts\PostController;
-use Tests\Tempest\Integration\TestCase;
+use Tempest\Testing\IntegrationTest;
 
-class RoutesCommandTest extends TestCase
+class RoutesCommandTest extends IntegrationTest
 {
     /** @test */
     public function test_migrate_command()
     {
-        $output = $this->console('routes')->asText();
-
-        $this->assertStringContainsString('/create-post', $output);
-        $this->assertStringContainsString(PostController::class, $output);
+        $this->console
+            ->call('routes')
+            ->assertContains('/create-post')
+            ->assertContains(PostController::class);
     }
 }

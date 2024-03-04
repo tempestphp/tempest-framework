@@ -14,9 +14,9 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
 use function Tempest\request;
-use Tests\Tempest\Integration\TestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-class RouterTest extends TestCase
+class RouterTest extends FrameworkIntegrationTestCase
 {
     /** @test */
     public function test_dispatch()
