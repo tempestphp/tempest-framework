@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\MACAddress;
 
+/**
+ * @internal
+ * @small
+ */
 class MACAddressTest extends TestCase
 {
     public function test_ip_address()

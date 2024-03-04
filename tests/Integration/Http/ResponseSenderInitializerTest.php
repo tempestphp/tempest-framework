@@ -8,6 +8,10 @@ use Tempest\Http\GenericResponseSender;
 use Tempest\Http\ResponseSenderInitializer;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class ResponseSenderInitializerTest extends IntegrationTest
 {
     public function test_response_sender_initializer()

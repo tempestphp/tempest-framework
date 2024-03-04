@@ -12,10 +12,13 @@ use Tempest\Events\EventBusConfig;
 use Tempest\Testing\IntegrationTest;
 use Tests\Tempest\Integration\Events\Fixtures\MyEventBusMiddleware;
 
+/**
+ * @internal
+ * @small
+ */
 class EventBusTest extends IntegrationTest
 {
-    /** @test */
-    public function it_works()
+    public function test_it_works()
     {
         $eventBus = $this->container->get(EventBus::class);
 
@@ -26,8 +29,7 @@ class EventBusTest extends IntegrationTest
         $this->assertTrue(MyEventHandler::$itHappened);
     }
 
-    /** @test */
-    public function event_bus_with_middleware()
+    public function test_event_bus_with_middleware()
     {
         MyEventBusMiddleware::$hit = false;
 

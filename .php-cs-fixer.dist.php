@@ -49,5 +49,37 @@ return (new PhpCsFixer\Config())
         ],
         'single_trait_insert_per_statement' => true,
         'declare_strict_types' => true,
+        'no_empty_comment' => true,
+        'no_empty_phpdoc' => true,
+
+        // Test styling
+        'php_unit_data_provider_name' => [
+            'prefix' => 'provide_',
+            'suffix' => '_cases',
+        ],
+        'php_unit_data_provider_return_type' => true,
+        'php_unit_data_provider_static' => [
+            'force' => true,
+        ],
+        'php_unit_dedicate_assert_internal_type' => true,
+        'php_unit_internal_class' => true,
+        'php_unit_method_casing' => [
+            'case' => 'snake_case',
+        ],
+        'php_unit_expectation' => [
+            'target' => 'newest',
+        ],
+        'php_unit_mock' => [
+            'target' => 'newest',
+        ],
+        'php_unit_mock_short_will_return' => true,
+        'php_unit_set_up_tear_down_visibility' => true,
+        'php_unit_size_class' => true,
+        'php_unit_test_annotation' => [
+            'style' => 'prefix',
+        ],
+        'php_unit_test_case_static_method_calls' => [
+            'call_type' => 'this',
+        ],
     ])
     ->setFinder($finder);

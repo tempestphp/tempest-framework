@@ -7,9 +7,12 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\StartsWith;
 
+/**
+ * @internal
+ * @small
+ */
 class StartsWithTest extends TestCase
 {
-    /** @test */
     public function test_starts_with()
     {
         $rule = new StartsWith(needle: 'ab');

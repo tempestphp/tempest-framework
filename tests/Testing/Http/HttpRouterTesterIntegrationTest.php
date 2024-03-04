@@ -7,6 +7,10 @@ namespace Tests\Tempest\Testing\Http;
 use Exception;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class HttpRouterTesterIntegrationTest extends IntegrationTest
 {
     public function test_get_requests()

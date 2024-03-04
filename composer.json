@@ -47,5 +47,10 @@
             "composer phpunit"
         ]
     },
-    "license": "MIT"
+    "license": "MIT",
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }

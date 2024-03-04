@@ -6,9 +6,12 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class MigrateCommandTest extends FrameworkIntegrationTestCase
 {
-    /** @test */
     public function test_migrate_command()
     {
         $this->console

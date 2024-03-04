@@ -7,9 +7,12 @@ namespace Tests\Tempest\Integration\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class DiscoveryStatusCommandTest extends IntegrationTest
 {
-    /** @test */
     public function test_discovery_status_command()
     {
         $output = $this->console->call('discovery:status');

@@ -8,9 +8,12 @@ use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class MigrationManagerTest extends IntegrationTest
 {
-    /** @test */
     public function test_migration()
     {
         $migrationManager = $this->container->get(MigrationManager::class);

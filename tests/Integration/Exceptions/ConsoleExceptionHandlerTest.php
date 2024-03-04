@@ -8,9 +8,12 @@ use App\Console\FailCommand;
 use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class ConsoleExceptionHandlerTest extends IntegrationTest
 {
-    /** @test */
     public function test_exception()
     {
         $this->appConfig->enableExceptionHandling = true;

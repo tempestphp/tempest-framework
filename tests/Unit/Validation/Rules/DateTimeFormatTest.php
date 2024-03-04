@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\DateTimeFormat;
 
+/**
+ * @internal
+ * @small
+ */
 class DateTimeFormatTest extends TestCase
 {
     public function test_datetime_format()

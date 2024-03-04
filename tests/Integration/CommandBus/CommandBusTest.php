@@ -12,10 +12,13 @@ use Tempest\Commands\CommandHandlerNotFound;
 use Tempest\Testing\IntegrationTest;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandBusMiddleware;
 
+/**
+ * @internal
+ * @small
+ */
 class CommandBusTest extends IntegrationTest
 {
-    /** @test */
-    public function command_handlers_are_auto_discovered()
+    public function test_command_handlers_are_auto_discovered()
     {
         $command = new MyCommand();
 
@@ -26,8 +29,7 @@ class CommandBusTest extends IntegrationTest
         $this->assertEquals([$command], $bus->getHistory());
     }
 
-    /** @test */
-    public function command_bus_with_middleware()
+    public function test_command_bus_with_middleware()
     {
         MyCommandBusMiddleware::$hit = false;
 
@@ -40,8 +42,7 @@ class CommandBusTest extends IntegrationTest
         $this->assertTrue(MyCommandBusMiddleware::$hit);
     }
 
-    /** @test */
-    public function unknown_handler_throws_exception()
+    public function test_unknown_handler_throws_exception()
     {
         $this->expectException(CommandHandlerNotFound::class);
 

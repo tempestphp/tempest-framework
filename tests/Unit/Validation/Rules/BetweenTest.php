@@ -7,9 +7,12 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Between;
 
+/**
+ * @internal
+ * @small
+ */
 class BetweenTest extends TestCase
 {
-    /** @test */
     public function test_between()
     {
         $rule = new Between(min: 0, max: 10);
