@@ -64,7 +64,7 @@ final readonly class GenericRouter implements Router
         return $this->createResponse($outputFromController);
     }
 
-    private function matchRoute(PsrRequest|Request $request): ?MatchedRoute
+    private function matchRoute(PsrRequest $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
         if ($staticRoute = $this->matchStaticRoute($request)) {
