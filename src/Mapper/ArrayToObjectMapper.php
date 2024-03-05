@@ -13,7 +13,6 @@ use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
-use Tempest\Validation\IsValidated;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
@@ -226,10 +225,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function validate(object|string $object): void
     {
-        if (! $object instanceof IsValidated) {
-            return;
-        }
-
         $validator = new Validator();
 
         $validator->validate($object);
