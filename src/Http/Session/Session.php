@@ -7,6 +7,7 @@ namespace Tempest\Http\Session;
 use const PHP_SESSION_ACTIVE;
 use RuntimeException;
 use SessionHandlerInterface;
+use Tempest\Support\ArrayHelper;
 
 final class Session
 {
@@ -89,7 +90,7 @@ final class Session
 
     public function has(string $key): bool
     {
-        return isset($_SESSION[$key]);
+        return ArrayHelper::has($_SESSION, $key);
     }
 
     public function missing(string $key): bool
@@ -99,12 +100,16 @@ final class Session
 
     public function get(string $key, mixed $default = null): mixed
     {
-        return $_SESSION[$key] ?? $default;
+        // We use an array helper here, so we can
+        // support dot notation.
+        return ArrayHelper::get($_SESSION, $key, $default);
     }
 
     public function set(string $key, mixed $value): void
     {
-        $_SESSION[$key] = $value;
+        // We use an array helper here, so we can
+        // support dot notation.
+        ArrayHelper::set($_SESSION, $key, $value);
     }
 
     public function all(): array

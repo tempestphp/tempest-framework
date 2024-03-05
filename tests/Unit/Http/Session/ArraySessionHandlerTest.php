@@ -8,6 +8,10 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 use Tempest\Http\Session\ArraySessionHandler;
 
+/**
+ * @internal
+ * @small
+ */
 class ArraySessionHandlerTest extends TestCase
 {
     private MockClock $clock;

@@ -10,6 +10,10 @@ use Tempest\Clock\MockClock;
 use Tempest\Http\Session\ArraySessionHandler;
 use Tempest\Http\Session\Session;
 
+/**
+ * @internal
+ * @small
+ */
 class SessionTest extends TestCase
 {
     private Session $session;
@@ -46,6 +50,19 @@ class SessionTest extends TestCase
         $this->assertSame('test-value-1', $this->session->get('test-key-1'));
     }
 
+    public function test_getting_and_setting_session_keys_with_dot_notation()
+    {
+        $this->assertFalse($this->session->has('user.id'));
+
+        $this->session->set('user.id', 1);
+
+        $this->assertTrue($this->session->has('user.id'));
+        $this->assertEqualsCanonicalizing(
+            ['user' => ['id' => 1]],
+            $this->session->all()
+        );
+    }
+
     public function test_getting_all_session_values()
     {
         $this->session->start();
@@ -70,6 +87,10 @@ class SessionTest extends TestCase
 
         session_abort();
 
-        $this->session = new Session(new ArraySessionHandler(new MockClock()));
+        $this->session = new Session(
+            new ArraySessionHandler(new MockClock())
+        );
+
+        $_SESSION = [];
     }
 }
