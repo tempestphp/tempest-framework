@@ -22,15 +22,18 @@ class RequestToRequestMapperTest extends IntegrationTest
     {
         $mapper = new PsrRequestToRequestMapper();
 
-        $this->assertTrue($mapper->canMap(PostRequest::class, request('/')));
-        $this->assertFalse($mapper->canMap(self::class, request('/')));
+        $this->assertTrue($mapper->canMap(from: request('/'), to: PostRequest::class));
+        $this->assertFalse($mapper->canMap(from: request('/'), to: self::class));
     }
 
     public function test_map_with()
     {
         $mapper = new PsrRequestToRequestMapper();
 
-        $request = $mapper->map(PostRequest::class, request('/', ['title' => 'a', 'text' => 'b']));
+        $request = $mapper->map(
+            from: request('/', ['title' => 'a', 'text' => 'b']),
+            to: PostRequest::class,
+        );
 
         $this->assertInstanceOf(PostRequest::class, $request);
         $this->assertEquals('a', $request->title);
@@ -44,7 +47,10 @@ class RequestToRequestMapperTest extends IntegrationTest
         $mapper = new PsrRequestToRequestMapper();
 
         try {
-            $mapper->map(PostRequest::class, request('/'));
+            $mapper->map(
+                from: request('/'),
+                to: PostRequest::class,
+            );
         } catch (MissingValuesException $exception) {
             $this->assertStringContainsString('title', $exception->getMessage());
             $this->assertStringContainsString('text', $exception->getMessage());
@@ -57,7 +63,10 @@ class RequestToRequestMapperTest extends IntegrationTest
     {
         $mapper = new PsrRequestToRequestMapper();
 
-        $request = $mapper->map(Request::class, request('/'));
+        $request = $mapper->map(
+            from: request('/'),
+            to: Request::class,
+        );
 
         $this->assertInstanceOf(GenericRequest::class, $request);
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
-use Psr\Http\Message\RequestInterface as PsrRequest;
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -48,7 +48,7 @@ final class HttpRouterTester
         $router = $this->container->get(Router::class);
 
         return new TestResponseHelper(
-            $router->dispatch(map($router)->to(PsrRequest::class))
+            $router->dispatch(map($request)->to(PsrRequest::class))
         );
     }
 }

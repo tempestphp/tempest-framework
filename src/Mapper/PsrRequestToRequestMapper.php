@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use Psr\Http\Message\RequestInterface as PsrRequest;
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
@@ -13,16 +13,14 @@ use Tempest\Validation\Validator;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
-    public function canMap(object|string $to, mixed $from): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
         return $from instanceof PsrRequest && is_a($to, Request::class, true);
     }
 
-    public function map(object|string $to, mixed $from): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
-        /** @var PsrRequest $origin */
-        $origin = $from;
-
+        /** @var PsrRequest $from */
         /** @var class-string<\Tempest\Http\Request> $requestClass */
         $requestClass = is_object($to) ? $to::class : $to;
 
@@ -30,16 +28,16 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             $requestClass = GenericRequest::class;
         }
 
-        $from = [];
+        $data = (array) $from->getParsedBody();
 
         $newRequest = map([
-            'method' => Method::from($origin->getMethod()),
-            'uri' => $origin->getUri(),
-            'body' => (string) $origin->getBody(),
-            'headers' => $origin->getHeaders(),
-            'path' => $origin->getUri()->getPath(),
-            'query' => $origin->getUri()->getQuery(),
-            ...$from,
+            'method' => Method::from($from->getMethod()),
+            'uri' => (string) $from->getUri(),
+            'body' => $data,
+            'headers' => $from->getHeaders(),
+            'path' => $from->getUri()->getPath(),
+            'query' => $from->getUri()->getQuery(),
+            ...$data,
         ])->to($requestClass);
 
         $validator = new Validator();

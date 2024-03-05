@@ -64,7 +64,11 @@ final class ObjectMapper
      */
     public function from(mixed $data): array|object
     {
-        return $this->map($this->objectOrClass, $data, $this->isCollection);
+        return $this->map(
+            from: $data,
+            to: $this->objectOrClass,
+            isCollection: $this->isCollection,
+        );
     }
 
     /**
@@ -74,31 +78,35 @@ final class ObjectMapper
      */
     public function to(object|string $objectOrClass): object
     {
-        return $this->map($objectOrClass, $this->data, $this->isCollection);
+        return $this->map(
+            from: $this->data,
+            to: $objectOrClass,
+            isCollection: $this->isCollection,
+        );
     }
 
     private function map(
-        object|string $to,
         mixed $from,
+        object|string $to,
         bool $isCollection,
     ): array|object {
         if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->map(
-                    to: $to,
                     from: $item,
-                    isCollection: false
+                    to: $to,
+                    isCollection: false,
                 ),
                 $from,
             );
         }
 
         foreach ($this->mappers as $mapper) {
-            if ($mapper->canMap($to, $from)) {
-                return $mapper->map($to, $from);
+            if ($mapper->canMap(from: $from, to: $to)) {
+                return $mapper->map(from: $from, to: $to);
             }
         }
 
-        throw new CannotMapDataException($to, $from);
+        throw new CannotMapDataException($from, $to);
     }
 }

@@ -10,12 +10,12 @@ use function Tempest\make;
 
 final readonly class QueryToModelMapper implements Mapper
 {
-    public function canMap(object|string $to, mixed $from): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
         return $from instanceof Query;
     }
 
-    public function map(object|string $to, mixed $from): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
         /** @var Query $from */
         if ($from->bindings['id'] ?? null) {

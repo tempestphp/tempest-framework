@@ -32,10 +32,10 @@ class RequestTest extends FrameworkIntegrationTestCase
 
         $request = (new RequestFactory())->make();
 
-        $this->assertEquals(Method::POST, $request->getMethod());
-        $this->assertEquals('/test', $request->getUri());
-        $this->assertEquals(['test'], $request->getBody());
-        $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
+        $this->assertEquals(Method::POST->value, $request->getMethod());
+        $this->assertEquals('/test', $request->getUri()->getPath());
+        $this->assertEquals(['test'], $request->getParsedBody());
+        $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
     }
 
     public function test_custom_request_test()

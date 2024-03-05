@@ -6,7 +6,7 @@ namespace Tempest\Mapper;
 
 interface Mapper
 {
-    public function canMap(object|string $to, mixed $from): bool;
+    public function canMap(mixed $from, object|string $to): bool;
 
     /**
      * @template ClassName of object
@@ -14,5 +14,5 @@ interface Mapper
      * @param mixed $from
      * @return ClassName[]|ClassName
      */
-    public function map(object|string $to, mixed $from): array|object;
+    public function map(mixed $from, object|string $to): array|object;
 }

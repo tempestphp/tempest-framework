@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest {
 
+    use Psr\Http\Message\ServerRequestInterface as PsrRequest;
     use Tempest\Commands\CommandBus;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
     use Tempest\Http\GenericRequest;
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Method;
-    use Tempest\Http\Request;
     use Tempest\Http\Response;
     use Tempest\Http\Router;
     use Tempest\Http\Status;
@@ -47,9 +47,9 @@ namespace Tempest {
         return new GenericView($path);
     }
 
-    function request(string $uri, array $body = [], array $headers = []): Request
+    function request(string $uri, array $body = [], array $headers = []): PsrRequest
     {
-        return new GenericRequest(Method::GET, $uri, $body, $headers);
+        return map(new GenericRequest(Method::GET, $uri, $body, $headers))->to(PsrRequest::class);
     }
 
     function response(string $body = '', Status $status = Status::OK): Response

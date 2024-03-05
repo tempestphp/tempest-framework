@@ -12,12 +12,12 @@ use Tempest\ORM\Model;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
-    public function canMap(object|string $to, mixed $from): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
         return $to === Query::class && $from instanceof Model;
     }
 
-    public function map(object|string $to, mixed $from): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
         /** @var Model $model */
         $model = $from;

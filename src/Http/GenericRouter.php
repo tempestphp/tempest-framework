@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Closure;
-use Psr\Http\Message\RequestInterface as PsrRequest;
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
 use Tempest\AppConfig;
 use function Tempest\attribute;

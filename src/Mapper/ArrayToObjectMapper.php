@@ -12,23 +12,26 @@ use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Support\ArrayHelper;
 use Tempest\Validation\IsValidated;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
-    public function canMap(object|string $to, mixed $from): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
         return is_array($from);
     }
 
-    public function map(object|string $to, mixed $from): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
         $object = $this->resolveObject($to);
 
         $class = new ReflectionClass($to);
 
         $missingValues = [];
+
+        $from = (new ArrayHelper())->unwrap($from);
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
@@ -132,7 +135,10 @@ final readonly class ArrayToObjectMapper implements Mapper
             ...$data,
         ];
 
-        return $this->map($type, $caster?->cast($input) ?? $input);
+        return $this->map(
+            from: $caster?->cast($input) ?? $input,
+            to: $type,
+        );
     }
 
     private function resolveValueFromArray(
@@ -166,8 +172,8 @@ final readonly class ArrayToObjectMapper implements Mapper
             ];
 
             $values[] = $this->map(
-                to: $type,
                 from: $caster?->cast($input) ?? $input,
+                to: $type,
             );
         }
 

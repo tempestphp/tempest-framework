@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Laminas\Diactoros\ServerRequestFactory;
-use Psr\Http\Message\RequestInterface as PsrRequest;
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 
 final readonly class RequestFactory
 {
