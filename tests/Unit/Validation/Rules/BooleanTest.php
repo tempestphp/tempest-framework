@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Boolean;
 
+/**
+ * @internal
+ * @small
+ */
 class BooleanTest extends TestCase
 {
     public function test_boolean()

@@ -11,9 +11,12 @@ use Tempest\Console\ConsoleStyle;
 use Tempest\Console\RenderConsoleCommand;
 use Tests\Tempest\Unit\Console\Fixtures\MyConsole;
 
+/**
+ * @internal
+ * @small
+ */
 class RenderConsoleCommandTest extends TestCase
 {
-    /** @test */
     public function test_render()
     {
         $handler = new ReflectionMethod(new MyConsole(), 'handle');

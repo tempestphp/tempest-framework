@@ -7,13 +7,13 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
-use Tempest\Http\Router;
+use Tempest\Http\RouteConfig;
 
 final readonly class RoutesCommand
 {
     public function __construct(
         private Console $console,
-        private Router $router,
+        private RouteConfig $routeConfig,
     ) {
     }
 
@@ -25,7 +25,7 @@ final readonly class RoutesCommand
     {
         $sortedRoutes = [];
 
-        foreach ($this->router->getRoutes() as $method => $routesForMethod) {
+        foreach ($this->routeConfig->routes as $method => $routesForMethod) {
             foreach ($routesForMethod as $route) {
                 $sortedRoutes["{$route->uri}:{$method}"] = $route;
             }

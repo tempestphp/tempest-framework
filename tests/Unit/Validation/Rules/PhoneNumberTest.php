@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\PhoneNumber;
 
+/**
+ * @internal
+ * @small
+ */
 class PhoneNumberTest extends TestCase
 {
     public function test_phone_number()

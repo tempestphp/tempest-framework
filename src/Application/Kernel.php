@@ -11,7 +11,6 @@ use Tempest\Bootstraps\DiscoveryLocationBootstrap;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Database\PDOInitializer;
-use Tempest\Http\RequestInitializer;
 use Tempest\Http\RouteBindingInitializer;
 
 final readonly class Kernel
@@ -53,7 +52,6 @@ final readonly class Kernel
             ->config($this->appConfig)
             ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container)
-            ->addInitializer(RequestInitializer::class)
             ->addInitializer(RouteBindingInitializer::class)
             ->addInitializer(PDOInitializer::class);
 

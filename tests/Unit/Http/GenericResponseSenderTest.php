@@ -9,6 +9,10 @@ use Tempest\Http\GenericResponse;
 use Tempest\Http\GenericResponseSender;
 use Tempest\Http\Status;
 
+/**
+ * @internal
+ * @small
+ */
 class GenericResponseSenderTest extends TestCase
 {
     public function test_sending()
@@ -28,7 +32,6 @@ class GenericResponseSenderTest extends TestCase
         ob_get_clean();
     }
 
-    /** @test */
     public function test_sending_of_array_to_json()
     {
         ob_start();

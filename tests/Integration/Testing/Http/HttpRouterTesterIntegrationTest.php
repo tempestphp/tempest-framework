@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Testing\Http;
+namespace Tests\Tempest\Integration\Testing\Http;
 
-use Exception;
+use PHPUnit\Framework\AssertionFailedError;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class HttpRouterTesterIntegrationTest extends IntegrationTest
 {
     public function test_get_requests()
@@ -19,8 +23,7 @@ class HttpRouterTesterIntegrationTest extends IntegrationTest
 
     public function test_get_requests_failure()
     {
-        // TODO: we need a NotFoundException
-        $this->expectException(Exception::class);
+        $this->expectException(AssertionFailedError::class);
 
         $this
             ->http

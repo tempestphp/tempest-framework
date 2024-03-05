@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Testing\Http;
+namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
@@ -10,6 +10,10 @@ use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 use Tempest\Testing\Http\TestResponseHelper;
 
+/**
+ * @internal
+ * @small
+ */
 class TestResponseHelperTest extends TestCase
 {
     public function test_get_response()
@@ -160,7 +164,7 @@ class TestResponseHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider assertStatusResponses
+     * @dataProvider provide_assert_status_cases
      */
     public function test_assert_status(Status $expectedStatus, GenericResponse $response)
     {
@@ -170,7 +174,7 @@ class TestResponseHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider assertStatusResponsesFailing
+     * @dataProvider provide_assert_status_fails_when_status_does_not_match_cases
      */
     public function test_assert_status_fails_when_status_does_not_match(Status $expectedStatus, GenericResponse $response)
     {
@@ -181,7 +185,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertStatus($expectedStatus);
     }
 
-    public static function assertStatusResponses(): array
+    public static function provide_assert_status_cases(): iterable
     {
         return [
             [Status::OK, new GenericResponse(status: Status::OK)],
@@ -190,7 +194,7 @@ class TestResponseHelperTest extends TestCase
         ];
     }
 
-    public static function assertStatusResponsesFailing(): array
+    public static function provide_assert_status_fails_when_status_does_not_match_cases(): iterable
     {
         return [
             [Status::CREATED, new GenericResponse(status: Status::OK)],

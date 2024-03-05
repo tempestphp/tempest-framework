@@ -9,9 +9,12 @@ use Tempest\Exceptions\HttpExceptionHandler;
 use function Tempest\uri;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 {
-    /** @test */
     public function test_exception()
     {
         $app = $this->actAsHttpApplication();

@@ -7,10 +7,13 @@ namespace Tests\Tempest\Unit\Support;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\ArrayHelper;
 
+/**
+ * @internal
+ * @small
+ */
 class ArrayHelperTest extends TestCase
 {
-    /** @test */
-    public function unwrap_single_key()
+    public function test_unwrap_single_key()
     {
         $this->assertSame(
             ['a' => 'a'],
@@ -18,8 +21,7 @@ class ArrayHelperTest extends TestCase
         );
     }
 
-    /** @test */
-    public function unwrap_nested_key()
+    public function test_unwrap_nested_key()
     {
         $this->assertSame(
             [
@@ -31,8 +33,7 @@ class ArrayHelperTest extends TestCase
         );
     }
 
-    /** @test */
-    public function unwrap_several_items()
+    public function test_unwrap_several_items()
     {
         $this->assertSame(
             ['a' => 'a', 'b' => 'b'],
@@ -40,8 +41,7 @@ class ArrayHelperTest extends TestCase
         );
     }
 
-    /** @test */
-    public function unwrap_nested_key_multiple_items()
+    public function test_unwrap_nested_key_multiple_items()
     {
         $this->assertSame(
             [
@@ -54,8 +54,7 @@ class ArrayHelperTest extends TestCase
         );
     }
 
-    /** @test */
-    public function unwrap_real()
+    public function test_unwrap_real()
     {
         $this->assertSame(
             [
@@ -75,8 +74,7 @@ class ArrayHelperTest extends TestCase
         );
     }
 
-    /** @test */
-    public function to_array_with_nested_property()
+    public function test_to_array_with_nested_property()
     {
         $this->assertSame(
             [

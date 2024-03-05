@@ -7,11 +7,15 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\DoesNotEndWith;
 
+/**
+ * @internal
+ * @small
+ */
 class DoesNotEndWithTest extends TestCase
 {
     /**
      *
-     * @dataProvider dataSets
+     * @dataProvider provide_rule_cases
      */
     public function test_rule(string $needle, string $stringToTest, bool $expected): void
     {
@@ -22,7 +26,7 @@ class DoesNotEndWithTest extends TestCase
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    public static function dataSets(): array
+    public static function provide_rule_cases(): iterable
     {
         return [
             'should return false if it ends with the given string' => ['test', 'this is a test', false],

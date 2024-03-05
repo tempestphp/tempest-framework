@@ -6,29 +6,18 @@ namespace Tempest\Http;
 
 trait IsRequest
 {
-    public Method $method;
-    public string $uri;
-    public array $body;
-    public array $headers;
     public string $path;
-    public ?string $query = null;
+    public array $query;
 
     public function __construct(
-        Method $method,
-        string $uri,
-        array $body = [],
-        array $headers = [],
+        public Method $method,
+        public string $uri,
+        public array $body,
+        public array $headers = [],
+        public array $cookies = [],
     ) {
-        $this->method = $method;
-        $this->uri = $uri;
-        $this->body = $body;
-        $this->headers = $headers;
-
-        $decodedUri = rawurldecode($uri);
-        $parsedUrl = parse_url($decodedUri);
-
-        $this->path = $parsedUrl['path'];
-        $this->query = $parsedUrl['query'] ?? null;
+        $this->path ??= $this->resolvePath();
+        $this->query ??= $this->resolveQuery();
     }
 
     public function get(): self
@@ -66,13 +55,37 @@ trait IsRequest
         return $this->headers;
     }
 
+    public function getCookies(): array
+    {
+        return $this->cookies;
+    }
+
     public function getPath(): string
     {
         return $this->path;
     }
 
-    public function getQuery(): ?string
+    public function getQuery(): array
     {
         return $this->query;
+    }
+
+    private function resolvePath(): string
+    {
+        $decodedUri = rawurldecode($this->uri);
+        $parsedUrl = parse_url($decodedUri);
+
+        return $parsedUrl['path'] ?? '';
+    }
+
+    private function resolveQuery(): array
+    {
+        $decodedUri = rawurldecode($this->uri);
+        $parsedUrl = parse_url($decodedUri);
+        $queryString = $parsedUrl['query'] ?? '';
+
+        parse_str($queryString, $query);
+
+        return $query;
     }
 }

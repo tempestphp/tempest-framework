@@ -14,7 +14,9 @@ interface Request
 
     public function getHeaders(): array;
 
+    public function getCookies(): array;
+
     public function getPath(): string;
 
-    public function getQuery(): ?string;
+    public function getQuery(): array;
 }

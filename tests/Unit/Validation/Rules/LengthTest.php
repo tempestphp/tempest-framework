@@ -8,10 +8,14 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Length;
 
+/**
+ * @internal
+ * @small
+ */
 class LengthTest extends TestCase
 {
     /**
-     * @dataProvider dataSets
+     * @dataProvider provide_length_cases
      */
     public function test_length(Length $rule, string $stringToTest, bool $expected): void
     {
@@ -19,7 +23,7 @@ class LengthTest extends TestCase
     }
 
     /**
-     * @dataProvider dataSetsMessage
+     * @dataProvider provide_returns_the_proper_message_based_on_min_and_max_arguments_cases
      */
     public function test_returns_the_proper_message_based_on_min_and_max_arguments(
         Length $rule,
@@ -35,7 +39,7 @@ class LengthTest extends TestCase
         new Length();
     }
 
-    public static function dataSetsMessage(): array
+    public static function provide_returns_the_proper_message_based_on_min_and_max_arguments_cases(): iterable
     {
         return [
             'Should provide correct message for string length validation with both minimum and maximum limits of 10 to 20' => [
@@ -53,7 +57,7 @@ class LengthTest extends TestCase
         ];
     }
 
-    public static function dataSets(): array
+    public static function provide_length_cases(): iterable
     {
         return [
             'Should return true when string meets minimum length requirement of 10' => [

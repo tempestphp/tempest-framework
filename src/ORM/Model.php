@@ -7,9 +7,8 @@ namespace Tempest\ORM;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
-use Tempest\Validation\IsValidated;
 
-interface Model extends IsValidated
+interface Model
 {
     public static function table(): TableName;
 

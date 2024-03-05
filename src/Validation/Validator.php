@@ -11,7 +11,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 
 final readonly class Validator
 {
-    public function validate(IsValidated $object): void
+    public function validate(object $object): void
     {
         $class = new ReflectionClass($object);
 

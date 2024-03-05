@@ -9,9 +9,12 @@ use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Unit\Container\Fixtures\AutowireA;
 
+/**
+ * @internal
+ * @small
+ */
 class CannotAutowireExceptionTest extends TestCase
 {
-    /** @test */
     public function test_autowire_without_exception()
     {
         $this->expectException(CannotAutowireException::class);
@@ -27,7 +30,7 @@ class CannotAutowireExceptionTest extends TestCase
             $this->assertStringContainsString("├── AutowireB::__construct(AutowireC \$c)", $exception->getMessage());
             $this->assertStringContainsString("└── AutowireC::__construct(ContainerObjectA \$other, string \$unknown)", $exception->getMessage());
             $this->assertStringContainsString("                                                ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒", $exception->getMessage());
-            $this->assertStringContainsString("CannotAutowireExceptionTest.php:22", $exception->getMessage());
+            $this->assertStringContainsString("CannotAutowireExceptionTest.php:25", $exception->getMessage());
 
             throw $exception;
         }

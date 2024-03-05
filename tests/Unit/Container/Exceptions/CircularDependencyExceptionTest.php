@@ -10,10 +10,13 @@ use Tempest\Container\GenericContainer;
 use Tests\Tempest\Unit\Container\Fixtures\CircularA;
 use Tests\Tempest\Unit\Container\Fixtures\CircularZ;
 
+/**
+ * @internal
+ * @small
+ */
 class CircularDependencyExceptionTest extends TestCase
 {
-    /** @test */
-    public function circular_dependency_test()
+    public function test_circular_dependency_test()
     {
         $this->expectException(CircularDependencyException::class);
 
@@ -34,8 +37,7 @@ class CircularDependencyExceptionTest extends TestCase
         }
     }
 
-    /** @test */
-    public function circular_dependency_as_a_child_test()
+    public function test_circular_dependency_as_a_child_test()
     {
         $this->expectException(CircularDependencyException::class);
 

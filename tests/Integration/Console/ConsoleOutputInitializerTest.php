@@ -9,9 +9,12 @@ use Tempest\Console\GenericConsoleOutput;
 use Tempest\Console\NullConsoleOutput;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class ConsoleOutputInitializerTest extends FrameworkIntegrationTestCase
 {
-    /** @test */
     public function test_in_console_application()
     {
         $initializer = new ConsoleOutputInitializer();
@@ -23,7 +26,6 @@ class ConsoleOutputInitializerTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(GenericConsoleOutput::class, $consoleOutput);
     }
 
-    /** @test */
     public function test_in_http_application()
     {
         $initializer = new ConsoleOutputInitializer();

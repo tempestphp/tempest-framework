@@ -7,10 +7,7 @@ namespace Tempest {
     use Tempest\Commands\CommandBus;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
-    use Tempest\Http\GenericRequest;
     use Tempest\Http\GenericResponse;
-    use Tempest\Http\Method;
-    use Tempest\Http\Request;
     use Tempest\Http\Response;
     use Tempest\Http\Router;
     use Tempest\Http\Status;
@@ -45,11 +42,6 @@ namespace Tempest {
     function view(string $path): View
     {
         return new GenericView($path);
-    }
-
-    function request(string $uri, array $body = [], array $headers = []): Request
-    {
-        return new GenericRequest(Method::GET, $uri, $body, $headers);
     }
 
     function response(string $body = '', Status $status = Status::OK): Response
