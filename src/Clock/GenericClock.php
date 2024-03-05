@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Clock;
 
 use DateTimeImmutable;
-use DateTimeInterface;
 
 final class GenericClock implements Clock
 {
-    public function now(): DateTimeInterface
+    public function now(): DateTimeImmutable
     {
         return new DateTimeImmutable('now');
     }

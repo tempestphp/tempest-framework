@@ -5,21 +5,21 @@ declare(strict_types=1);
 namespace Tempest\Clock;
 
 use DateInterval;
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 
 final class MockClock implements Clock
 {
-    private DateTimeInterface $now;
+    private DateTimeImmutable $now;
 
     public function __construct(DateTimeInterface|string $now = 'now')
     {
         $this->now = $now instanceof DateTimeInterface
-            ? $now
-            : new DateTime($now);
+            ? DateTimeImmutable::createFromInterface($now)
+            : new DateTimeImmutable($now);
     }
 
-    public function now(): DateTimeInterface
+    public function now(): DateTimeImmutable
     {
         return $this->now;
     }

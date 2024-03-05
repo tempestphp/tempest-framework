@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Clock;
 
-use DateTimeInterface;
+use DateTimeImmutable;
+use Psr\Clock\ClockInterface;
 
-interface Clock
+interface Clock extends ClockInterface
 {
-    public function now(): DateTimeInterface;
+    public function now(): DateTimeImmutable;
 
     public function time(): int;
 
