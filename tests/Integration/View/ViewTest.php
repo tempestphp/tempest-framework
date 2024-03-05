@@ -13,9 +13,12 @@ use function Tempest\uri;
 use function Tempest\view;
 use Tempest\View\GenericView;
 
+/**
+ * @internal
+ * @small
+ */
 class ViewTest extends IntegrationTest
 {
-    /** @test */
     public function test_render()
     {
         $appConfig = $this->container->get(AppConfig::class);
@@ -41,7 +44,6 @@ HTML;
         $this->assertEquals($expected, $html);
     }
 
-    /** @test */
     public function test_render_with_view_model()
     {
         $appConfig = $this->container->get(AppConfig::class);
@@ -58,7 +60,6 @@ HTML;
         $this->assertEquals($expected, $html);
     }
 
-    /** @test */
     public function test_with_view_function()
     {
         $appConfig = $this->container->get(AppConfig::class);
@@ -81,7 +82,6 @@ HTML;
         $this->assertEquals($expected, $html);
     }
 
-    /** @test */
     public function test_raw_and_escaping()
     {
         $html = view('Views/rawAndEscaping.php')->data(
@@ -95,7 +95,6 @@ HTML;
         $this->assertSame(trim($expected), trim($html));
     }
 
-    /** @test */
     public function test_extends_parameters()
     {
         $html = view('Views/extendsWithVariables.php')->render($this->container->get(AppConfig::class));
@@ -104,7 +103,6 @@ HTML;
         $this->assertStringContainsString('<h1>Hello</h1>', $html);
     }
 
-    /** @test */
     public function test_named_slots()
     {
         $html = view('Views/extendsWithNamedSlot.php')->render($this->container->get(AppConfig::class));
@@ -133,7 +131,6 @@ HTML;
         );
     }
 
-    /** @test */
     public function test_include_parameters()
     {
         $html = view('Views/include-parent.php')
@@ -148,8 +145,7 @@ HTML;
         $this->assertSame(trim($expected), trim($html));
     }
 
-    /** @test */
-    public function view_model_with_response_data()
+    public function test_view_model_with_response_data()
     {
         $this->http
             ->get(uri([TestController::class, 'viewModelWithResponseData']))

@@ -16,9 +16,12 @@ use Tempest\Http\Status;
 use function Tempest\request;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class RouterTest extends FrameworkIntegrationTestCase
 {
-    /** @test */
     public function test_dispatch()
     {
         $router = $this->container->get(GenericRouter::class);
@@ -29,7 +32,6 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test', $response->getBody());
     }
 
-    /** @test */
     public function test_dispatch_with_parameter()
     {
         $router = $this->container->get(GenericRouter::class);
@@ -40,7 +42,6 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1a', $response->getBody());
     }
 
-    /** @test */
     public function test_generate_uri()
     {
         $router = $this->container->get(GenericRouter::class);
@@ -49,7 +50,6 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $router->toUri(TestController::class));
     }
 
-    /** @test */
     public function test_with_view()
     {
         $router = $this->container->get(GenericRouter::class);
@@ -70,7 +70,6 @@ HTML;
         $this->assertEquals($expected, $response->getBody());
     }
 
-    /** @test */
     public function test_route_binding()
     {
         $this->migrate(
@@ -92,7 +91,6 @@ HTML;
         $this->assertSame('Test', $response->getBody());
     }
 
-    /** @test */
     public function test_middleware()
     {
         $router = $this->container->get(GenericRouter::class);

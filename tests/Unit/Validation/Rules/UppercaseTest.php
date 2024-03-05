@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Uppercase;
 
+/**
+ * @internal
+ * @small
+ */
 class UppercaseTest extends TestCase
 {
     public function test_uppercase()

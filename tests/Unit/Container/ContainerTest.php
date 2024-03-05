@@ -26,10 +26,13 @@ use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceA;
 use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceB;
 use Tests\Tempest\Unit\Container\Fixtures\UnionTypesClass;
 
+/**
+ * @internal
+ * @small
+ */
 class ContainerTest extends TestCase
 {
-    /** @test */
-    public function get_with_autowire()
+    public function test_get_with_autowire()
     {
         $container = new GenericContainer();
 
@@ -39,8 +42,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $b->a);
     }
 
-    /** @test */
-    public function get_with_definition()
+    public function test_get_with_definition()
     {
         $container = new GenericContainer();
 
@@ -54,8 +56,7 @@ class ContainerTest extends TestCase
         $this->assertEquals('test', $c->prop);
     }
 
-    /** @test */
-    public function get_with_initializer()
+    public function test_get_with_initializer()
     {
         $container = new GenericContainer(initializers: [
             ContainerObjectD::class => ContainerObjectDInitializer::class,
@@ -66,7 +67,6 @@ class ContainerTest extends TestCase
         $this->assertEquals('test', $d->prop);
     }
 
-    /** @test */
     public function test_singleton()
     {
         $container = new GenericContainer();
@@ -82,8 +82,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(1, $instance::$count);
     }
 
-    /** @test */
-    public function initialize_with_can_initializer()
+    public function test_initialize_with_can_initializer()
     {
         $container = new GenericContainer();
 
@@ -94,8 +93,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $object);
     }
 
-    /** @test */
-    public function call_tries_to_transform_unmatched_values()
+    public function test_call_tries_to_transform_unmatched_values()
     {
         $container = new GenericContainer();
         $container->addInitializer(ContainerObjectEInitializer::class);
@@ -110,10 +108,7 @@ class ContainerTest extends TestCase
         $this->assertSame('other', $return->id);
     }
 
-    /**
-     * @test
-     */
-    public function arrays_are_automatically_created()
+    public function test_arrays_are_automatically_created()
     {
         $container = new GenericContainer();
 
@@ -126,10 +121,7 @@ class ContainerTest extends TestCase
         $this->assertEmpty($class->anArray);
     }
 
-    /**
-     * @test
-     */
-    public function builtin_defaults_are_used()
+    public function test_builtin_defaults_are_used()
     {
         $container = new GenericContainer();
 
@@ -141,10 +133,7 @@ class ContainerTest extends TestCase
         $this->assertSame('This is a default value', $class->aString);
     }
 
-    /**
-     * @test
-     */
-    public function optional_types_resolve_to_null()
+    public function test_optional_types_resolve_to_null()
     {
         $container = new GenericContainer();
 
@@ -156,10 +145,7 @@ class ContainerTest extends TestCase
         $this->assertNull($class->aString);
     }
 
-    /**
-     * @test
-     */
-    public function union_types_iterate_to_resolution()
+    public function test_union_types_iterate_to_resolution()
     {
         $container = new GenericContainer();
 
@@ -170,7 +156,6 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $class->input);
     }
 
-    /** @test */
     public function test_singleton_initializers()
     {
         $container = new GenericContainer();
@@ -181,7 +166,6 @@ class ContainerTest extends TestCase
         $this->assertSame(spl_object_id($a), spl_object_id($b));
     }
 
-    /** @test */
     public function test_union_initializers()
     {
         $container = new GenericContainer();
@@ -194,7 +178,6 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(UnionImplementation::class, $b);
     }
 
-    /** @test */
     public function test_intersection_initializers()
     {
         $container = new GenericContainer();

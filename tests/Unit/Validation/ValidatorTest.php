@@ -9,9 +9,12 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
 
+/**
+ * @internal
+ * @small
+ */
 class ValidatorTest extends TestCase
 {
-    /** @test */
     public function test_validator()
     {
         $this->expectException(ValidationException::class);

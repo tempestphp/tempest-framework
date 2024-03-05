@@ -7,11 +7,15 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\DoesNotStartWith;
 
+/**
+ * @internal
+ * @small
+ */
 class DoesNotStartWithTest extends TestCase
 {
     /**
      *
-     * @dataProvider dataSets
+     * @dataProvider provide_rule_cases
      *
      */
     public function test_rule(string $needle, string $stringToTest, bool $expected): void
@@ -23,7 +27,7 @@ class DoesNotStartWithTest extends TestCase
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    public static function dataSets(): array
+    public static function provide_rule_cases(): iterable
     {
         return [
             'should return false if it starts with the given string' => ['test', 'test this is a test', false],

@@ -9,9 +9,12 @@ use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Http\RouteConfig;
 
+/**
+ * @internal
+ * @small
+ */
 class KernelTest extends TestCase
 {
-    /** @test */
     public function test_discovery()
     {
         $kernel = new Kernel(__DIR__ . '/../../', new AppConfig());

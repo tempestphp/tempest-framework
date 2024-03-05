@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Password;
 
+/**
+ * @internal
+ * @small
+ */
 class PasswordTest extends TestCase
 {
     public function test_defaults()

@@ -7,6 +7,10 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Ulid;
 
+/**
+ * @internal
+ * @small
+ */
 class UlidTest extends TestCase
 {
     public function test_ulid()

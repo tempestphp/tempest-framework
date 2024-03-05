@@ -8,6 +8,10 @@ use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Timezone;
 
+/**
+ * @internal
+ * @small
+ */
 class TimezoneTest extends TestCase
 {
     public function test_timezone()

@@ -12,10 +12,13 @@ use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class IsModelTest extends IntegrationTest
 {
-    /** @test */
-    public function create_and_update_model()
+    public function test_create_and_update_model()
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -43,8 +46,7 @@ class IsModelTest extends IntegrationTest
         $this->assertSame('boo', $foo->bar);
     }
 
-    /** @test */
-    public function complex_query()
+    public function test_complex_query()
     {
         $this->migrate(
             CreateMigrationsTable::class,

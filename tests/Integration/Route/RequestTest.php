@@ -17,6 +17,10 @@ use Tempest\Http\Status;
 use function Tempest\uri;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class RequestTest extends FrameworkIntegrationTestCase
 {
     /** @test */
@@ -35,8 +39,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
     }
 
-    /** @test */
-    public function custom_request_test()
+    public function test_custom_request_test()
     {
         $response = $this->http
             ->post(
@@ -51,8 +54,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
-    /** @test */
-    public function generic_request_can_map_to_custom_request()
+    public function test_generic_request_can_map_to_custom_request()
     {
         $response = $this->http
             ->post(
@@ -67,8 +69,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
-    /** @test */
-    public function custom_request_test_with_validation()
+    public function test_custom_request_test_with_validation()
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
 
@@ -86,8 +87,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $book->title);
     }
 
-    /** @test */
-    public function custom_request_test_with_nested_validation()
+    public function test_custom_request_test_with_nested_validation()
     {
         $this->migrate(
             CreateMigrationsTable::class,

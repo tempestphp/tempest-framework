@@ -8,10 +8,13 @@ use Tempest\AppConfig;
 use Tempest\Testing\IntegrationTest;
 use Tests\Tempest\Integration\Console\Fixtures\MyDiscovery;
 
+/**
+ * @internal
+ * @small
+ */
 class DiscoveryClearCommandTest extends IntegrationTest
 {
-    /** @test */
-    public function it_clears_discovery_cache()
+    public function test_it_clears_discovery_cache()
     {
         $appConfig = $this->container->get(AppConfig::class);
 
