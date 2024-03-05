@@ -13,6 +13,10 @@ use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
 
+/**
+ * @internal
+ * @small
+ */
 class GenericHttpClientTest extends TestCase
 {
     private HttpClient $client;
@@ -21,7 +25,7 @@ class GenericHttpClientTest extends TestCase
 
     public function test_send_request_proxies_to_http_client()
     {
-        $request = new GenericRequest(method: Method::PUT, uri: '/testing-put');
+        $request = new GenericRequest(method: Method::PUT, uri: '/testing-put', body: []);
 
         $this->client->sendRequest($request);
 

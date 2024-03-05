@@ -8,6 +8,10 @@ use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class HttpClientInitializerTest extends FrameworkIntegrationTestCase
 {
     public function test_container_can_initialize_http_client()

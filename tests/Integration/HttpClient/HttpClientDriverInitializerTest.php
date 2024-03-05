@@ -8,6 +8,10 @@ use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\HttpClientDriver;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class HttpClientDriverInitializerTest extends FrameworkIntegrationTestCase
 {
     public function test_container_can_initialize_http_client_driver()
