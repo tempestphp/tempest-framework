@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Closure;
+use Psr\Http\Message\RequestInterface as PsrRequest;
 use ReflectionClass;
 use Tempest\AppConfig;
 use function Tempest\attribute;
@@ -34,7 +35,7 @@ final readonly class GenericRouter implements Router
         return $this->routeConfig->routes;
     }
 
-    public function dispatch(Request $request): Response
+    public function dispatch(PsrRequest $request): Response
     {
         $matchedRoute = $this->matchRoute($request);
 
@@ -63,7 +64,7 @@ final readonly class GenericRouter implements Router
         return $this->createResponse($outputFromController);
     }
 
-    public function matchRoute(Request $request): ?MatchedRoute
+    private function matchRoute(PsrRequest|Request $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
         if ($staticRoute = $this->matchStaticRoute($request)) {
@@ -166,9 +167,9 @@ final readonly class GenericRouter implements Router
         return $input;
     }
 
-    private function matchStaticRoute(Request $request): ?MatchedRoute
+    private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
     {
-        $staticRoute = $this->getRoutes()[$request->method->value][$request->getPath()] ?? null;
+        $staticRoute = $this->getRoutes()[$request->getMethod()][$request->getUri()->getPath()] ?? null;
 
         if ($staticRoute === null) {
             return null;
@@ -182,10 +183,10 @@ final readonly class GenericRouter implements Router
         return new MatchedRoute($staticRoute, []);
     }
 
-    private function matchDynamicRoute(Request $request): ?MatchedRoute
+    private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
     {
         // If there are no routes for the given request method, we immediately stop
-        $routesForMethod = $this->getRoutes()[$request->method->value] ?? null;
+        $routesForMethod = $this->getRoutes()[$request->getMethod()] ?? null;
         if ($routesForMethod === null) {
             return null;
         }
@@ -209,7 +210,7 @@ final readonly class GenericRouter implements Router
         $combinedMatchingRegex .= ')$#x';
 
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = preg_match($combinedMatchingRegex, $request->getPath(), $matches);
+        $matchResult = preg_match($combinedMatchingRegex, $request->getUri()->getPath(), $matches);
 
         if (! $matchResult || ! array_key_exists(self::MARK_TOKEN, $matches)) {
             return null;
@@ -219,7 +220,7 @@ final readonly class GenericRouter implements Router
 
         // TODO: we could probably optimize resolveParams now,
         // because we already know for sure there's a match
-        $routeParams = $this->resolveParams($route, $request->getPath());
+        $routeParams = $this->resolveParams($route, $request->getUri()->getPath());
 
         // This check should _in theory_ not be needed,
         // since we're certain there's a match
@@ -230,10 +231,10 @@ final readonly class GenericRouter implements Router
         return new MatchedRoute($route, $routeParams);
     }
 
-    private function prepareRequest(Request $request, MatchedRoute $matchedRoute): Request
+    private function prepareRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
-        $requestClass = $request::class;
+        $requestClass = GenericRequest::class;
 
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
@@ -249,7 +250,7 @@ final readonly class GenericRouter implements Router
         }
 
         // We map the original request we got into this method to the right request class
-        $request = map($request)->to($requestClass);
+        $request = map($psrRequest)->to($requestClass);
 
         // Finally, we register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class

@@ -24,14 +24,12 @@ final readonly class HttpApplication implements Application
         try {
             $router = $this->container->get(Router::class);
 
-            // TODO: in _theory_ we could refactor this to use… PSR
-            // Give me a minute to digest that though.
-            $request = (new RequestFactory())->make();
+            $psrRequest = (new RequestFactory())->make();
 
             $responseSender = $this->container->get(ResponseSender::class);
 
             $responseSender->send(
-                $router->dispatch($request),
+                $router->dispatch($psrRequest),
             );
         } catch (Throwable $throwable) {
             if (! $this->appConfig->enableExceptionHandling) {

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
+use Psr\Http\Message\RequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Router;
+use function Tempest\map;
 
 final class HttpRouterTester
 {
@@ -45,6 +47,8 @@ final class HttpRouterTester
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
-        return new TestResponseHelper($router->dispatch($request));
+        return new TestResponseHelper(
+            $router->dispatch(map($router)->to(PsrRequest::class))
+        );
     }
 }
