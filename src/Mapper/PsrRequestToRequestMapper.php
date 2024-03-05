@@ -13,24 +13,24 @@ use Tempest\Validation\Validator;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
-    public function canMap(object|string $objectOrClass, mixed $data): bool
+    public function canMap(object|string $to, mixed $from): bool
     {
-        return $data instanceof PsrRequest && is_a($objectOrClass, Request::class, true);
+        return $from instanceof PsrRequest && is_a($to, Request::class, true);
     }
 
-    public function map(object|string $objectOrClass, mixed $data): array|object
+    public function map(object|string $to, mixed $from): array|object
     {
         /** @var PsrRequest $origin */
-        $origin = $data;
+        $origin = $from;
 
         /** @var class-string<\Tempest\Http\Request> $requestClass */
-        $requestClass = is_object($objectOrClass) ? $objectOrClass::class : $objectOrClass;
+        $requestClass = is_object($to) ? $to::class : $to;
 
         if ($requestClass === Request::class) {
             $requestClass = GenericRequest::class;
         }
 
-        $data = [];
+        $from = [];
 
         $newRequest = map([
             'method' => Method::from($origin->getMethod()),
@@ -39,7 +39,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             'headers' => $origin->getHeaders(),
             'path' => $origin->getUri()->getPath(),
             'query' => $origin->getUri()->getQuery(),
-            ...$data,
+            ...$from,
         ])->to($requestClass);
 
         $validator = new Validator();

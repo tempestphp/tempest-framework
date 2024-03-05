@@ -9,15 +9,15 @@ use Tempest\Http\Request;
 
 final readonly class RequestToPsrRequestMapper implements Mapper
 {
-    public function canMap(object|string $objectOrClass, mixed $data): bool
+    public function canMap(object|string $to, mixed $from): bool
     {
-        return $data instanceof Request && is_a($objectOrClass, PsrRequest::class, true);
+        return $from instanceof Request && is_a($to, PsrRequest::class, true);
     }
 
-    public function map(object|string $objectOrClass, mixed $data): array|object
+    public function map(object|string $to, mixed $from): array|object
     {
         /** @var Request $origin */
-        $origin = $data;
+        $origin = $from;
 
         return new \Laminas\Diactoros\Request(
             uri: $origin->getUri(),

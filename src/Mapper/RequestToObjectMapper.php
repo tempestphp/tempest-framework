@@ -9,14 +9,14 @@ use function Tempest\map;
 
 final readonly class RequestToObjectMapper implements Mapper
 {
-    public function canMap(object|string $objectOrClass, mixed $data): bool
+    public function canMap(object|string $to, mixed $from): bool
     {
-        return $data instanceof Request;
+        return $from instanceof Request;
     }
 
-    public function map(object|string $objectOrClass, mixed $data): array|object
+    public function map(object|string $to, mixed $from): array|object
     {
-        /** @var Request $data */
-        return map($data->getBody())->to($objectOrClass);
+        /** @var Request $from */
+        return map($from->getBody())->to($to);
     }
 }

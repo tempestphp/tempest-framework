@@ -78,27 +78,27 @@ final class ObjectMapper
     }
 
     private function map(
-        object|string $objectOrClass,
-        mixed $data,
+        object|string $to,
+        mixed $from,
         bool $isCollection,
     ): array|object {
-        if ($isCollection && is_array($data)) {
+        if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->map(
-                    objectOrClass: $objectOrClass,
-                    data: $item,
+                    to: $to,
+                    from: $item,
                     isCollection: false
                 ),
-                $data,
+                $from,
             );
         }
 
         foreach ($this->mappers as $mapper) {
-            if ($mapper->canMap($objectOrClass, $data)) {
-                return $mapper->map($objectOrClass, $data);
+            if ($mapper->canMap($to, $from)) {
+                return $mapper->map($to, $from);
             }
         }
 
-        throw new CannotMapDataException();
+        throw new CannotMapDataException($to, $from);
     }
 }
