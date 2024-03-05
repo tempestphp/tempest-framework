@@ -9,6 +9,10 @@
         "ext-mbstring": "*",
         "giggsey/libphonenumber-for-php": "^8.13",
         "egulias/email-validator": "^4.0",
+        "psr/http-message": "^2.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-client": "^1.0",
+        "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3"
     },
     "require-dev": {
@@ -17,7 +21,9 @@
         "phpstan/phpstan": "^1.10.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "phpat/phpat": "^0.10.14",
-        "spaze/phpstan-disallowed-calls": "^3.1"
+        "spaze/phpstan-disallowed-calls": "^3.1",
+        "php-http/mock-client": "^1.6",
+        "aidan-casey/mock-client": "dev-master"
     },
     "bin": [
         "tempest"
@@ -48,5 +54,10 @@
             "composer phpunit"
         ]
     },
-    "license": "MIT"
+    "license": "MIT",
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
