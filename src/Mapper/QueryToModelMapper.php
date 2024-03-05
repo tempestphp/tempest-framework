@@ -10,20 +10,20 @@ use function Tempest\make;
 
 final readonly class QueryToModelMapper implements Mapper
 {
-    public function canMap(object|string $objectOrClass, mixed $data): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
-        return $data instanceof Query;
+        return $from instanceof Query;
     }
 
-    public function map(object|string $objectOrClass, mixed $data): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
-        /** @var Query $data */
-        if ($data->bindings['id'] ?? null) {
-            return make($objectOrClass)->from($this->resolveData($objectOrClass, $data->fetchFirst()));
+        /** @var Query $from */
+        if ($from->bindings['id'] ?? null) {
+            return make($to)->from($this->resolveData($to, $from->fetchFirst()));
         } else {
             return array_map(
-                fn (array $item) => make($objectOrClass)->from($this->resolveData($objectOrClass, $item)),
-                $data->fetch(),
+                fn (array $item) => make($to)->from($this->resolveData($to, $item)),
+                $from->fetch(),
             );
         }
     }

@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Mapper;
+
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
+use function Tempest\map;
+use Tempest\Validation\Validator;
+
+final readonly class PsrRequestToRequestMapper implements Mapper
+{
+    public function canMap(mixed $from, object|string $to): bool
+    {
+        return $from instanceof PsrRequest && is_a($to, Request::class, true);
+    }
+
+    public function map(mixed $from, object|string $to): array|object
+    {
+        /** @var PsrRequest $from */
+        /** @var class-string<\Tempest\Http\Request> $requestClass */
+        $requestClass = is_object($to) ? $to::class : $to;
+
+        if ($requestClass === Request::class) {
+            $requestClass = GenericRequest::class;
+        }
+
+        $data = (array) $from->getParsedBody();
+
+        parse_str($from->getUri()->getQuery(), $query);
+
+        $newRequest = map([
+            'method' => Method::from($from->getMethod()),
+            'uri' => (string) $from->getUri(),
+            'body' => $data,
+            'headers' => $from->getHeaders(),
+            'path' => $from->getUri()->getPath(),
+            'query' => $query,
+            ...$data,
+        ])->to($requestClass);
+
+        $validator = new Validator();
+        $validator->validate($newRequest);
+
+        return $newRequest;
+    }
+}

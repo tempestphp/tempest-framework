@@ -6,9 +6,8 @@ namespace App\Modules\Books\Requests;
 
 use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
-use Tempest\Validation\IsValidated;
 
-final class CreateBookRequest implements Request, IsValidated
+final class CreateBookRequest implements Request
 {
     use IsRequest;
 

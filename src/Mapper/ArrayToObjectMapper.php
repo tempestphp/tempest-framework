@@ -12,28 +12,30 @@ use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
 use Tempest\ORM\Exceptions\MissingValuesException;
-use Tempest\Validation\IsValidated;
+use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
-    public function canMap(object|string $objectOrClass, mixed $data): bool
+    public function canMap(mixed $from, object|string $to): bool
     {
-        return is_array($data);
+        return is_array($from);
     }
 
-    public function map(object|string $objectOrClass, mixed $data): array|object
+    public function map(mixed $from, object|string $to): array|object
     {
-        $object = $this->resolveObject($objectOrClass);
+        $object = $this->resolveObject($to);
 
-        $class = new ReflectionClass($objectOrClass);
+        $class = new ReflectionClass($to);
 
         $missingValues = [];
+
+        $from = (new ArrayHelper())->unwrap($from);
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
 
-            if (! array_key_exists($propertyName, $data)) {
+            if (! array_key_exists($propertyName, $from)) {
                 if (! $this->hasDefaultValue($property)) {
                     $missingValues[] = $propertyName;
                 }
@@ -42,14 +44,14 @@ final readonly class ArrayToObjectMapper implements Mapper
             }
 
             $value = $this->resolveValueFromType(
-                data: $data[$propertyName],
+                data: $from[$propertyName],
                 property: $property,
                 parent: $object,
             );
 
             if ($value instanceof UnknownValue) {
                 $value = $this->resolveValueFromArray(
-                    data: $data[$propertyName],
+                    data: $from[$propertyName],
                     property: $property,
                     parent: $object,
                 );
@@ -58,14 +60,14 @@ final readonly class ArrayToObjectMapper implements Mapper
             if ($value instanceof UnknownValue) {
                 $caster = $this->getCaster($property);
 
-                $value = $caster?->cast($data[$propertyName]) ?? $data[$propertyName];
+                $value = $caster?->cast($from[$propertyName]) ?? $from[$propertyName];
             }
 
             $property->setValue($object, $value);
         }
 
         if ($missingValues !== []) {
-            throw new MissingValuesException($objectOrClass, $missingValues);
+            throw new MissingValuesException($to, $missingValues);
         }
 
         $this->validate($object);
@@ -132,7 +134,10 @@ final readonly class ArrayToObjectMapper implements Mapper
             ...$data,
         ];
 
-        return $this->map($type, $caster?->cast($input) ?? $input);
+        return $this->map(
+            from: $caster?->cast($input) ?? $input,
+            to: $type,
+        );
     }
 
     private function resolveValueFromArray(
@@ -166,8 +171,8 @@ final readonly class ArrayToObjectMapper implements Mapper
             ];
 
             $values[] = $this->map(
-                objectOrClass: $type,
-                data: $caster?->cast($input) ?? $input,
+                from: $caster?->cast($input) ?? $input,
+                to: $type,
             );
         }
 
@@ -220,10 +225,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function validate(object|string $object): void
     {
-        if (! $object instanceof IsValidated) {
-            return;
-        }
-
         $validator = new Validator();
 
         $validator->validate($object);

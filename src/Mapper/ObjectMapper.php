@@ -21,7 +21,8 @@ final class ObjectMapper
     public function __construct()
     {
         $this->mappers = [
-            new RequestToRequestMapper(),
+            new PsrRequestToRequestMapper(),
+            new RequestToPsrRequestMapper(),
             new ArrayToObjectMapper(),
             new QueryToModelMapper(),
             new ModelToQueryMapper(),
@@ -63,7 +64,11 @@ final class ObjectMapper
      */
     public function from(mixed $data): array|object
     {
-        return $this->map($this->objectOrClass, $data, $this->isCollection);
+        return $this->map(
+            from: $data,
+            to: $this->objectOrClass,
+            isCollection: $this->isCollection,
+        );
     }
 
     /**
@@ -73,31 +78,35 @@ final class ObjectMapper
      */
     public function to(object|string $objectOrClass): object
     {
-        return $this->map($objectOrClass, $this->data, $this->isCollection);
+        return $this->map(
+            from: $this->data,
+            to: $objectOrClass,
+            isCollection: $this->isCollection,
+        );
     }
 
     private function map(
-        object|string $objectOrClass,
-        mixed $data,
+        mixed $from,
+        object|string $to,
         bool $isCollection,
     ): array|object {
-        if ($isCollection && is_array($data)) {
+        if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->map(
-                    objectOrClass: $objectOrClass,
-                    data: $item,
-                    isCollection: false
+                    from: $item,
+                    to: $to,
+                    isCollection: false,
                 ),
-                $data,
+                $from,
             );
         }
 
         foreach ($this->mappers as $mapper) {
-            if ($mapper->canMap($objectOrClass, $data)) {
-                return $mapper->map($objectOrClass, $data);
+            if ($mapper->canMap(from: $from, to: $to)) {
+                return $mapper->map(from: $from, to: $to);
             }
         }
 
-        throw new CannotMapDataException();
+        throw new CannotMapDataException($from, $to);
     }
 }
