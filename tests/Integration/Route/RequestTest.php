@@ -29,6 +29,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $_SERVER['REQUEST_URI'] = '/test';
         $_POST = ['test'];
         $_SERVER['HTTP_X-TEST'] = 'test';
+        $_COOKIE['test'] = 'test';
 
         $request = (new RequestFactory())->make();
 
@@ -36,6 +37,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $request->getUri()->getPath());
         $this->assertEquals(['test'], $request->getParsedBody());
         $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
+        $this->assertEquals(['test' => 'test'], $request->getCookieParams());
     }
 
     public function test_custom_request_test()

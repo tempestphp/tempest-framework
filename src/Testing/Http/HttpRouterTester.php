@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
+use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\GenericRequest;
@@ -48,7 +49,29 @@ final class HttpRouterTester
         $router = $this->container->get(Router::class);
 
         return new TestResponseHelper(
-            $router->dispatch(map($request)->to(PsrRequest::class))
+            $router->dispatch(map($request)->to(PsrRequest::class)),
         );
+    }
+
+    public function makePsrRequest(
+        string $uri,
+        Method $method = Method::GET,
+        array $body = [],
+        array $headers = [],
+        array $cookies = [],
+    ): PsrRequest {
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['REQUEST_METHOD'] = $method->value;
+
+        foreach ($headers as $key => $value) {
+            $key = strtoupper($key);
+
+            $_SERVER["HTTP_{$key}"] = $value;
+        }
+
+        $_COOKIE = $cookies;
+        $_POST = $body;
+
+        return ServerRequestFactory::fromGlobals();
     }
 }

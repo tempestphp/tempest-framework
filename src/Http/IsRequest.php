@@ -13,7 +13,8 @@ trait IsRequest
         public Method $method,
         public string $uri,
         public array $body,
-        public array $headers,
+        public array $headers = [],
+        public array $cookies = [],
     ) {
         $this->path ??= $this->resolvePath();
         $this->query ??= $this->resolveQuery();
@@ -52,6 +53,11 @@ trait IsRequest
     public function getHeaders(): array
     {
         return $this->headers;
+    }
+
+    public function getCookies(): array
+    {
+        return $this->cookies;
     }
 
     public function getPath(): string

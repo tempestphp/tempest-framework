@@ -9,21 +9,20 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Request;
 use Tempest\Mapper\PsrRequestToRequestMapper;
 use Tempest\ORM\Exceptions\MissingValuesException;
-use function Tempest\request;
 use Tempest\Testing\IntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class RequestToRequestMapperTest extends IntegrationTest
+class PsrRequestToRequestMapperTest extends IntegrationTest
 {
     public function test_can_map()
     {
         $mapper = new PsrRequestToRequestMapper();
 
-        $this->assertTrue($mapper->canMap(from: request('/'), to: PostRequest::class));
-        $this->assertFalse($mapper->canMap(from: request('/'), to: self::class));
+        $this->assertTrue($mapper->canMap(from: $this->http->makePsrRequest('/'), to: PostRequest::class));
+        $this->assertFalse($mapper->canMap(from: $this->http->makePsrRequest('/'), to: self::class));
     }
 
     public function test_map_with()
@@ -31,13 +30,20 @@ class RequestToRequestMapperTest extends IntegrationTest
         $mapper = new PsrRequestToRequestMapper();
 
         $request = $mapper->map(
-            from: request('/', ['title' => 'a', 'text' => 'b']),
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                body: ['title' => 'a', 'text' => 'b'],
+                headers: ['x-test' => 'test'],
+                cookies: ['test' => 'test'],
+            ),
             to: PostRequest::class,
         );
 
         $this->assertInstanceOf(PostRequest::class, $request);
         $this->assertEquals('a', $request->title);
         $this->assertEquals('b', $request->text);
+        $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
+        $this->assertEquals(['test' => 'test'], $request->getCookies());
     }
 
     public function test_map_with_with_missing_data()
@@ -48,7 +54,7 @@ class RequestToRequestMapperTest extends IntegrationTest
 
         try {
             $mapper->map(
-                from: request('/'),
+                from: $this->http->makePsrRequest('/'),
                 to: PostRequest::class,
             );
         } catch (MissingValuesException $exception) {
@@ -64,7 +70,7 @@ class RequestToRequestMapperTest extends IntegrationTest
         $mapper = new PsrRequestToRequestMapper();
 
         $request = $mapper->map(
-            from: request('/'),
+            from: $this->http->makePsrRequest('/'),
             to: Request::class,
         );
 

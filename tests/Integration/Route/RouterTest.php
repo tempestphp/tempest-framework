@@ -13,7 +13,6 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use function Tempest\request;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -26,7 +25,7 @@ class RouterTest extends FrameworkIntegrationTestCase
     {
         $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(request('/test'));
+        $response = $router->dispatch($this->http->makePsrRequest('/test'));
 
         $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('test', $response->getBody());
@@ -36,7 +35,7 @@ class RouterTest extends FrameworkIntegrationTestCase
     {
         $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(request('/test/1/a'));
+        $response = $router->dispatch($this->http->makePsrRequest('/test/1/a'));
 
         $this->assertEquals(Status::OK, $response->getStatus());
         $this->assertEquals('1a', $response->getBody());
@@ -54,7 +53,7 @@ class RouterTest extends FrameworkIntegrationTestCase
     {
         $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(request('/view'));
+        $response = $router->dispatch($this->http->makePsrRequest('/view'));
 
         $this->assertEquals(Status::OK, $response->getStatus());
 
@@ -85,7 +84,7 @@ HTML;
 
         $router = $this->container->get(Router::class);
 
-        $response = $router->dispatch(request('/books/1'));
+        $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
 
         $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('Test', $response->getBody());
@@ -95,7 +94,7 @@ HTML;
     {
         $router = $this->container->get(GenericRouter::class);
 
-        $response = $router->dispatch(request('/with-middleware'));
+        $response = $router->dispatch($this->http->makePsrRequest('/with-middleware'));
 
         $this->assertEquals(['middleware' => 'from-dependency'], $response->getHeaders());
     }
