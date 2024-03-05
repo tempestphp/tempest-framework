@@ -30,13 +30,15 @@ final readonly class PsrRequestToRequestMapper implements Mapper
 
         $data = (array) $from->getParsedBody();
 
+        parse_str($from->getUri()->getQuery(), $query);
+
         $newRequest = map([
             'method' => Method::from($from->getMethod()),
             'uri' => (string) $from->getUri(),
             'body' => $data,
             'headers' => $from->getHeaders(),
             'path' => $from->getUri()->getPath(),
-            'query' => $from->getUri()->getQuery(),
+            'query' => $query,
             ...$data,
         ])->to($requestClass);
 

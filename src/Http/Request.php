@@ -16,5 +16,5 @@ interface Request
 
     public function getPath(): string;
 
-    public function getQuery(): ?string;
+    public function getQuery(): array;
 }
