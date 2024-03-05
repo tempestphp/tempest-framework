@@ -23,11 +23,6 @@ class HttpRouterTesterIntegrationTest extends IntegrationTest
 
     public function test_get_requests_failure()
     {
-        // TODO: Fix in #196.
-        $this->markTestSkipped(
-            "An assertion failed error is not getting thrown, because an exception is being thrown by the mock router [Tempest\Testing\Http\HttpRouterTester:55].\nThis should be fixed by #196."
-        );
-
         $this->expectException(AssertionFailedError::class);
 
         $this
