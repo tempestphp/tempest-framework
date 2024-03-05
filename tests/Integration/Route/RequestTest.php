@@ -23,8 +23,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RequestTest extends FrameworkIntegrationTestCase
 {
-    /** @test */
-    public function from_factory()
+    public function test_from_factory()
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
