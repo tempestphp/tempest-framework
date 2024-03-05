@@ -27,14 +27,6 @@ final readonly class GenericRouter implements Router
     ) {
     }
 
-    /**
-     * @return \Tempest\Http\Route[][]
-     */
-    public function getRoutes(): array
-    {
-        return $this->routeConfig->routes;
-    }
-
     public function dispatch(PsrRequest $request): Response
     {
         $matchedRoute = $this->matchRoute($request);
@@ -169,7 +161,7 @@ final readonly class GenericRouter implements Router
 
     private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
     {
-        $staticRoute = $this->getRoutes()[$request->getMethod()][$request->getUri()->getPath()] ?? null;
+        $staticRoute = $this->routeConfig->routes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
 
         if ($staticRoute === null) {
             return null;
@@ -186,7 +178,7 @@ final readonly class GenericRouter implements Router
     private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
     {
         // If there are no routes for the given request method, we immediately stop
-        $routesForMethod = $this->getRoutes()[$request->getMethod()] ?? null;
+        $routesForMethod = $this->routeConfig->routes[$request->getMethod()] ?? null;
         if ($routesForMethod === null) {
             return null;
         }
