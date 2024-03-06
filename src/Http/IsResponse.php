@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Session\Session;
-use Tempest\View\View;
 use function Tempest\get;
+use Tempest\Http\Session\Session;
 use function Tempest\view;
+use Tempest\View\View;
 
 trait IsResponse
 {

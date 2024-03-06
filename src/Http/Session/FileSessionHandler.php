@@ -15,7 +15,8 @@ final class FileSessionHandler implements SessionHandlerInterface
         private readonly Clock $clock,
         private readonly AppConfig $appConfig,
         private readonly int $validForMinutes = 60,
-    ) {}
+    ) {
+    }
 
     public function close(): bool
     {
@@ -32,20 +33,20 @@ final class FileSessionHandler implements SessionHandlerInterface
     public function gc(int $max_lifetime): int|false
     {
         return 0;
-//
-//        $expiration = $this->clock->time() - $max_lifetime;
-//        $sessionsDeleted = 0;
-//
-//        $files = glob($this->getPath('*'));
-//
-//        foreach ($files as $session) {
-//            if ($session['time'] < $expiration) {
-//                unset($this->storage[$id]);
-//                $sessionsDeleted++;
-//            }
-//        }
-//
-//        return $sessionsDeleted;
+        //
+        //        $expiration = $this->clock->time() - $max_lifetime;
+        //        $sessionsDeleted = 0;
+        //
+        //        $files = glob($this->getPath('*'));
+        //
+        //        foreach ($files as $session) {
+        //            if ($session['time'] < $expiration) {
+        //                unset($this->storage[$id]);
+        //                $sessionsDeleted++;
+        //            }
+        //        }
+        //
+        //        return $sessionsDeleted;
     }
 
     public function open(string $path, string $name): bool

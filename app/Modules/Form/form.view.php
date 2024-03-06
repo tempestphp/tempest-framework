@@ -1,8 +1,9 @@
 <?php
-/** @var \Tempest\View\GenericView $this */
+/** @var GenericView $this */
 
 use App\Modules\Form\FormController;
 use function Tempest\uri;
+use Tempest\View\GenericView;
 
 $this->extends('Views/base.php', title: 'Form');
 ?>

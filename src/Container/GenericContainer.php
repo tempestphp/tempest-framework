@@ -11,9 +11,9 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
+use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -36,7 +36,8 @@ final class GenericContainer implements Container
          */
         private array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
-    ) {}
+    ) {
+    }
 
     public function setInitializers(array $initializers): void
     {

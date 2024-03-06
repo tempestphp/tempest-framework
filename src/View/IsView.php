@@ -6,8 +6,8 @@ namespace Tempest\View;
 
 use Exception;
 use Tempest\AppConfig;
-use Tempest\Http\Session\Session;
 use function Tempest\get;
+use Tempest\Http\Session\Session;
 use function Tempest\path;
 use function Tempest\view;
 
@@ -23,8 +23,7 @@ trait IsView
     public function __construct(
         string $path,
         array $params = [],
-    )
-    {
+    ) {
         $this->path = $path;
         $this->params = $this->escape($params);
         $this->rawParams = $params;

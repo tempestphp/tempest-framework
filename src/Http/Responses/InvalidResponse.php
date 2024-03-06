@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Responses;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
@@ -11,7 +13,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 final class InvalidResponse implements Response
 {
     use IsResponse;
-    
+
     public function __construct(
         private PsrRequest $request,
         private ValidationException $exception,
