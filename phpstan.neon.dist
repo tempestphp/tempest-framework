@@ -1,4 +1,5 @@
 includes:
+	- phpstan-baseline.php
 	- vendor/phpat/phpat/extension.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
 services:
@@ -7,7 +8,7 @@ services:
 		tags:
 			- phpat.test
 parameters:
-	level: 0
+	level: 6
 	paths:
 		- app
 		- src
