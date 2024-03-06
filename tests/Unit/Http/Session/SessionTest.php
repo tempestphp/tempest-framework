@@ -7,8 +7,9 @@ namespace Tests\Tempest\Unit\Http\Session;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tempest\Clock\MockClock;
-use Tempest\Http\Session\ArraySessionHandler;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\oldArraySessionHandler;
+use Tempest\Http\Session\old_Session;
+use Tempest\Http\Session\SessionId;
 
 /**
  * @internal
@@ -16,7 +17,7 @@ use Tempest\Http\Session\Session;
  */
 class SessionTest extends TestCase
 {
-    private Session $session;
+    private old_Session $session;
 
     public function test_starting_session()
     {
@@ -88,7 +89,7 @@ class SessionTest extends TestCase
         session_abort();
 
         $this->session = new Session(
-            new ArraySessionHandler(new MockClock())
+            new oldArraySessionHandler(new MockClock())
         );
 
         $_SESSION = [];

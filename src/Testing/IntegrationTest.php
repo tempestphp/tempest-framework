@@ -9,6 +9,9 @@ use Tempest\AppConfig;
 use Tempest\Application\Kernel;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Testing\Console\ConsoleCommandTester;
 use Tempest\Testing\Http\HttpRouterTester;
 
@@ -42,6 +45,10 @@ abstract class IntegrationTest extends TestCase
 
         $this->console = $this->container->get(ConsoleCommandTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
+
+        $request = new GenericRequest(Method::GET, '/', []);
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 
     protected function migrate(string ...$migrationClasses): void

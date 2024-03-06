@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Http\Session;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
-use Tempest\Http\Session\ArraySessionHandler;
+use Tempest\Http\Session\oldArraySessionHandler;
 
 /**
  * @internal
@@ -16,7 +16,7 @@ class ArraySessionHandlerTest extends TestCase
 {
     private MockClock $clock;
 
-    private ArraySessionHandler $sessionHandler;
+    private oldArraySessionHandler $sessionHandler;
 
     public function test_open_and_close()
     {
@@ -91,7 +91,7 @@ class ArraySessionHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->sessionHandler = new ArraySessionHandler(
+        $this->sessionHandler = new oldArraySessionHandler(
             $this->clock = new MockClock()
         );
     }
