@@ -13,6 +13,81 @@ use Tempest\Support\ArrayHelper;
  */
 class ArrayHelperTest extends TestCase
 {
+    public function test_getting_array_value_with_single_key()
+    {
+        $array = ['firstName' => 'Jim'];
+
+        $value = ArrayHelper::get($array, 'firstName');
+
+        $this->assertSame('Jim', $value);
+    }
+
+    public function test_getting_array_value_with_dot_notation()
+    {
+        $array = [
+            'person' => [
+                'firstName' => 'Jim',
+            ],
+        ];
+
+        $value = ArrayHelper::get($array, 'person.firstName');
+
+        $this->assertSame('Jim', $value);
+    }
+
+    public function test_getting_non_existent_value_with_dot_notation()
+    {
+        $array = [];
+
+        $value = ArrayHelper::get($array, 'person.firstName', 'This is the default');
+
+        $this->assertSame('This is the default', $value);
+    }
+
+    public function test_has_key_with_single_key()
+    {
+        $array = ['firstName' => 'Jim'];
+
+        $this->assertTrue(ArrayHelper::has($array, 'firstName'));
+        $this->assertFalse(ArrayHelper::has($array, 'lastName'));
+    }
+
+    public function test_has_key_with_dot_notation()
+    {
+        $array = [
+            'person' => ['firstName' => 'Jim'],
+        ];
+
+        $this->assertTrue(ArrayHelper::has($array, 'person.firstName'));
+        $this->assertFalse(ArrayHelper::has($array, 'person.lastName'));
+    }
+
+    public function test_setting_array_value_with_single_key()
+    {
+        $array = [];
+
+        ArrayHelper::set($array, 'test', 'testing');
+
+        $this->assertSame(
+            ['test' => 'testing'],
+            $array
+        );
+    }
+
+    public function test_setting_array_value_with_dot_notation()
+    {
+        $array = [];
+
+        ArrayHelper::set($array, 'test.key', 'Bob');
+
+        $this->assertEqualsCanonicalizing(
+            [
+                'test' => ['key' => 'Bob'],
+            ],
+            $array
+        );
+    }
+
     public function test_unwrap_single_key()
     {
         $this->assertSame(
