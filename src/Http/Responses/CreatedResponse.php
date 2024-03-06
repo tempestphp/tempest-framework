@@ -13,9 +13,11 @@ final class CreatedResponse implements Response
     use IsResponse;
 
     public function __construct(
-        private string|array $body = '',
-        private array $headers = [],
+        string|array|null $body = null,
+        array $headers = [],
     ) {
         $this->status = Status::CREATED;
+        $this->body = $body;
+        $this->headers = $headers;
     }
 }

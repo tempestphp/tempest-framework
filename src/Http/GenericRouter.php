@@ -8,6 +8,8 @@ use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
 use Tempest\AppConfig;
+use Tempest\Http\Responses\InvalidResponse;
+use Tempest\Validation\Exceptions\ValidationException;
 use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
@@ -42,9 +44,12 @@ final readonly class GenericRouter implements Router
 
         $callable = $this->getCallable($matchedRoute);
 
-        $request = $this->prepareRequest($request, $matchedRoute);
-
-        $outputFromController = $callable($request);
+        try {
+            $request = $this->resolveRequest($request, $matchedRoute);
+            $outputFromController = $callable($request);
+        } catch (ValidationException $exception) {
+            return new InvalidResponse($request, $exception);
+        }
 
         if ($outputFromController === null) {
             throw new MissingControllerOutputException(
@@ -223,7 +228,7 @@ final readonly class GenericRouter implements Router
         return new MatchedRoute($route, $routeParams);
     }
 
-    private function prepareRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
+    private function resolveRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
         $requestClass = GenericRequest::class;

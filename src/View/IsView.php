@@ -6,6 +6,8 @@ namespace Tempest\View;
 
 use Exception;
 use Tempest\AppConfig;
+use Tempest\Http\Session\Session;
+use function Tempest\get;
 use function Tempest\path;
 use function Tempest\view;
 
@@ -21,7 +23,8 @@ trait IsView
     public function __construct(
         string $path,
         array $params = [],
-    ) {
+    )
+    {
         $this->path = $path;
         $this->params = $this->escape($params);
         $this->rawParams = $params;
@@ -148,5 +151,31 @@ trait IsView
         preg_match('/name=\"(\w+)\">/', $content, $matches);
 
         return $matches[1] ?? 'slot';
+    }
+
+    /**
+     * @param string $name
+     * @return \Tempest\Validation\Rule[]
+     */
+    public function getErrorsFor(string $name): array
+    {
+        return $this->getSession()->get('validation_errors')[$name] ?? [];
+    }
+
+    public function hasError(string $name): bool
+    {
+        return $this->getErrorsFor($name) !== [];
+    }
+
+    public function hasErrors(): bool
+    {
+        $errors = $this->getSession()->get('validation_errors', []);
+
+        return $errors !== [];
+    }
+
+    private function getSession(): Session
+    {
+        return get(Session::class);
     }
 }

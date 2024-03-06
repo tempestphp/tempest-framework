@@ -29,6 +29,7 @@ abstract class IntegrationTest extends TestCase
         parent::setUp();
 
         $this->appConfig = new AppConfig(
+            root: __DIR__ . '/../../',
             discoveryCache: true,
         );
 

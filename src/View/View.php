@@ -19,4 +19,8 @@ interface View
     public function raw(string $name): ?string;
 
     public function slot(string $name = 'slot'): ?string;
+
+    public function getErrorsFor(string $name): array;
+
+    public function hasErrors(): bool;
 }

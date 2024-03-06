@@ -17,7 +17,7 @@ class KernelTest extends TestCase
 {
     public function test_discovery()
     {
-        $kernel = new Kernel(__DIR__ . '/../../', new AppConfig());
+        $kernel = new Kernel(__DIR__ . '/../../', new AppConfig(__DIR__ . '/../../'));
 
         $container = $kernel->init();
 

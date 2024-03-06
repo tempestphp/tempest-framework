@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\Http\Session\Session;
 use Tempest\View\View;
+use function Tempest\get;
+use function Tempest\view;
 
 trait IsResponse
 {
-    public function __construct(
-        private Status $status,
-        private string|array $body = '',
-        private array $headers = [],
-        private ?View $view = null,
-    ) {
-    }
+    private Status $status;
+    private string|array|null $body = null;
+    private array $headers = [];
+    private ?View $view = null;
 
     public function getStatus(): Status
     {
         return $this->status;
     }
 
-    public function getBody(): string|array
+    public function getBody(): string|array|null
     {
         return $this->body;
     }
@@ -29,6 +29,11 @@ trait IsResponse
     public function getHeaders(): array
     {
         return $this->headers;
+    }
+
+    public function getSession(): Session
+    {
+        return get(Session::class);
     }
 
     public function header(string $key, string $value): self
@@ -45,8 +50,12 @@ trait IsResponse
         return $this;
     }
 
-    public function view(View $view): self
+    public function view(string|View $view, mixed ...$data): self
     {
+        if (is_string($view)) {
+            $view = view($view)->data(...$data);
+        }
+
         $this->view = $view;
 
         return $this;

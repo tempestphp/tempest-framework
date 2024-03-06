@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\Http\Session\Session;
 use Tempest\View\View;
 
 interface Response
@@ -12,7 +13,9 @@ interface Response
 
     public function getHeaders(): array;
 
-    public function getBody(): string|array;
+    public function getBody(): string|array|null;
+
+    public function getSession(): Session;
 
     public function body(string $body): self;
 

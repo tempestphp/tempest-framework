@@ -9,8 +9,12 @@ use Tempest\Validation\Rule;
 
 final class ValidationException extends Exception
 {
+    public readonly array $failingRules;
+
     public function __construct(object $object, array $failingRules)
     {
+        $this->failingRules = $failingRules;
+
         $messages = [];
 
         foreach ($failingRules as $field => $failingRulesForField) {

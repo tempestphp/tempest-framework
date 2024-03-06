@@ -1,29 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tempest\Container\Exceptions;
 
 use Exception;
+use ReflectionClass;
 use Tempest\Container\ContainerLog;
 
-final class CannotAutowireException extends Exception
+final class CannotInstantiateDependencyException extends Exception
 {
-    public function __construct(ContainerLog $containerLog)
+    public function __construct(ReflectionClass $class, ContainerLog $containerLog)
     {
+        $message = "Cannot resolve {$class->getName()} because it is not an instantiable class. Maybe it's missing an initializer class?" . PHP_EOL;
+
         $stack = $containerLog->getStack();
 
-        $firstContext = $stack[array_key_first($stack)];
         $lastContext = $stack[array_key_last($stack)];
-
-        $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstContext->getName()} because {$lastContext->getName()} cannot be resolved" . PHP_EOL;
 
         $i = 0;
 
         foreach ($stack as $currentContext) {
-            $pipe = match ($i) {
-                0 => '┌──',
-                count($stack) - 1 => '└──',
+            $pipe = match (true) {
+                count($stack) > 1 && $i === 0 => '┌──',
+                count($stack) > 1 && $i === count($stack) - 1 => '└──',
+                count($stack) === 1 => '   ',
                 default => '├──',
             };
 

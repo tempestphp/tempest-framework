@@ -11,6 +11,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
+use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Throwable;
@@ -35,8 +36,7 @@ final class GenericContainer implements Container
          */
         private array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
-    ) {
-    }
+    ) {}
 
     public function setInitializers(array $initializers): void
     {
@@ -201,6 +201,10 @@ final class GenericContainer implements Container
 
         $constructor = $reflectionClass->getConstructor();
 
+        if (! $reflectionClass->isInstantiable()) {
+            throw new CannotInstantiateDependencyException($reflectionClass, $this->log);
+        }
+
         return $constructor === null
             // If there isn't a constructor, don't waste time
             // trying to build it.
@@ -248,7 +252,7 @@ final class GenericContainer implements Container
 
         // Convert the types to an array regardless, so we can handle
         // union types and single types the same.
-        $types = match($parameterType::class) {
+        $types = match ($parameterType::class) {
             ReflectionNamedType::class => [$parameterType],
             ReflectionUnionType::class, ReflectionIntersectionType::class => $parameterType->getTypes(),
         };

@@ -10,6 +10,8 @@ use Tempest\Discovery\DiscoveryDiscovery;
 final class AppConfig
 {
     public function __construct(
+        public string $root,
+
         public Environment $environment = Environment::LOCAL,
         public bool $discoveryCache = false,
 

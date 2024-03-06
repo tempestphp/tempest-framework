@@ -2,6 +2,7 @@
 use Tempest\View\GenericView;
 
 /** @var GenericView $this */?>
+
 <html lang="en">
 <head>
     <title><?= $this->title ?? 'Home' ?></title>
