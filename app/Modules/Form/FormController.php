@@ -18,8 +18,7 @@ final readonly class FormController
     }
 
     #[Post('/form')]
-    public function store(FormRequest $request): Response
+    public function store(FormRequest $request): void
     {
-        dd($request);
     }
 }

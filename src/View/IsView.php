@@ -161,11 +161,6 @@ trait IsView
         return $this->getSession()->get('validation_errors')[$name] ?? [];
     }
 
-    public function hasError(string $name): bool
-    {
-        return $this->getErrorsFor($name) !== [];
-    }
-
     public function hasErrors(): bool
     {
         $errors = $this->getSession()->get('validation_errors', []);
