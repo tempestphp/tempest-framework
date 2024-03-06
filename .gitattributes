@@ -5,6 +5,7 @@ tests/                    export-ignore
 .gitignore                export-ignore
 .php-cs-fixer.dist.php    export-ignore
 phpstan.neon.dist         export-ignore
+phpstan-baseline.php      export-ignore
 phpunit.xml               export-ignore
 README.md                 export-ignore
 
