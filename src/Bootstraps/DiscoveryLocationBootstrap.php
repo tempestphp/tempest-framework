@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Bootstraps;
 
 use Tempest\AppConfig;
-use Tempest\Application\Kernel;
+use Tempest\Application\OldKernel;
 use Tempest\Discovery\DiscoveryLocation;
 use function Tempest\path;
 
@@ -13,7 +13,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 {
     public function __construct(
         private AppConfig $appConfig,
-        private Kernel $kernel,
+        private OldKernel $kernel,
     ) {
     }
 

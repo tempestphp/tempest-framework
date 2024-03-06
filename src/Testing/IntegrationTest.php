@@ -6,7 +6,7 @@ namespace Tempest\Testing;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
-use Tempest\Application\Kernel;
+use Tempest\Application\OldKernel;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Testing\Console\ConsoleCommandTester;
@@ -16,7 +16,7 @@ abstract class IntegrationTest extends TestCase
 {
     protected AppConfig $appConfig;
 
-    protected Kernel $kernel;
+    protected OldKernel $kernel;
 
     protected Container $container;
 
@@ -33,7 +33,7 @@ abstract class IntegrationTest extends TestCase
             discoveryCache: true,
         );
 
-        $this->kernel = new Kernel(
+        $this->kernel = new OldKernel(
             __DIR__ . '/../../',
             $this->appConfig
         );

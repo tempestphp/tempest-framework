@@ -18,7 +18,7 @@ use Throwable;
 
 final class GenericContainer implements Container
 {
-    use HasInstance;
+    private static self $instance;
 
     public function __construct(
         private array $definitions = [],
@@ -37,6 +37,11 @@ final class GenericContainer implements Container
         private array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
+    }
+
+    public static function getInstance(): self
+    {
+        return self::$instance ??= new self();
     }
 
     public function setInitializers(array $initializers): void

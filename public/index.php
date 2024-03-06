@@ -1,9 +1,12 @@
 <?php
 
+use Tempest\Container\GenericContainer;
 use Tempest\Tempest;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-Tempest::boot(__DIR__ . '/../')->http()->run();
+$container = GenericContainer::getInstance();
+
+Tempest::http(container: $container, rootDirectory: __DIR__ . '/../')->run();
 
 exit;
