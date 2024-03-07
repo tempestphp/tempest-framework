@@ -72,7 +72,7 @@ final class FileSessionTest extends IntegrationTest
     {
         $session = $this->container->get(Session::class);
 
-        $path = path($this->path, $session->id);
+        $path = path($this->path, (string) $session->id);
         $this->assertFileExists($path);
         $session->destroy();
         $this->assertFileDoesNotExist($path);

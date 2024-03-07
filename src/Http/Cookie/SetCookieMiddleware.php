@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Cookie;
 
-use DateTimeImmutable;
 use Tempest\Http\HttpMiddleware;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -21,7 +20,7 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        foreach ($this->cookieManager->cookies as $cookie) {
+        foreach ($this->cookieManager->cookies() as $cookie) {
             $response->header('set-cookie', (string) $cookie);
         }
 

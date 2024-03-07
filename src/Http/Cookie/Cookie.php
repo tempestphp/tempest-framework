@@ -15,20 +15,13 @@ final class Cookie
         public string $key,
         public string $value = '',
         public DateTimeImmutable|int|null $expiresAt = null,
+        public int|null $maxAge = null,
         public ?string $domain = null,
         public ?string $path = null,
         public ?bool $secure = null,
         public ?bool $httpOnly = null,
-        public ?string $sameSite = null,
+        public ?SameSite $sameSite = null,
     ) {
-    }
-
-    public function getMaxAge(): int
-    {
-        // TODO Refactor to CookieManager so that we can use the Clock
-        $maxAge = $this->getExpiresAtTime() - time();
-
-        return max($maxAge, 0);
     }
 
     public function __toString(): string
@@ -39,7 +32,7 @@ final class Cookie
 
         if ($expiresAt = $this->getExpiresAtTime()) {
             $parts[] = 'Expires=' . gmdate('D, d-M-Y H:i:s T', $expiresAt);
-            $parts[] = 'Max-Age=' . $this->getMaxAge();
+            $parts[] = 'Max-Age=' . $this->maxAge;
         }
 
         if ($this->domain !== null) {
@@ -59,13 +52,13 @@ final class Cookie
         }
 
         if ($this->sameSite !== null) {
-            $parts[] = 'SameSite=' . $this->sameSite;
+            $parts[] = 'SameSite=' . $this->sameSite->value;
         }
 
         return implode('; ', $parts);
     }
 
-    private function getExpiresAtTime(): ?int
+    public function getExpiresAtTime(): ?int
     {
         if ($this->expiresAt instanceof DateTimeImmutable) {
             return $this->expiresAt->getTimestamp();

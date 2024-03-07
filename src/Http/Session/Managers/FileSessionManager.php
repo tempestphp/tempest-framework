@@ -57,7 +57,7 @@ final readonly class FileSessionManager implements SessionManager
 
     private function getPath(SessionId $id): string
     {
-        return path($this->sessionConfig->path, $id);
+        return path($this->sessionConfig->path, (string) $id);
     }
 
     private function resolve(SessionId $id): ?Session

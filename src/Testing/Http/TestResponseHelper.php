@@ -45,14 +45,18 @@ final readonly class TestResponseHelper
         return $this;
     }
 
-    public function assertHeaderValueEquals(string $name, mixed $value): self
+    public function assertHeaderContains(string $name, mixed $value): self
     {
         $this->assertHasHeader($name);
 
-        Assert::assertEquals(
-            $this->response->getHeaders()[$name],
+        $header = $this->response->getHeaders()[$name];
+
+        $headerString = var_export($header, true);
+
+        Assert::assertContains(
             $value,
-            sprintf('Failed to assert that response header [%s] value equals %s.', $name, $value),
+            $header,
+            sprintf('Failed to assert that response header [%s] value contains %s. These header values were found: %s', $name, $value, $headerString),
         );
 
         return $this;
@@ -67,7 +71,7 @@ final readonly class TestResponseHelper
 
         return $to === null
             ? $this->assertHasHeader('Location')
-            : $this->assertHeaderValueEquals('Location', $to);
+            : $this->assertHeaderContains('Location', $to);
     }
 
     public function assertOk(): self

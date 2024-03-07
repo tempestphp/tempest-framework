@@ -54,11 +54,11 @@ class TestResponseHelperTest extends TestCase
         $helper = new TestResponseHelper(
             new GenericResponse(
                 status: Status::OK,
-                headers: ['Content-Type' => 'application/json']
+                headers: ['Content-Type' => ['application/json']]
             )
         );
 
-        $helper->assertHeaderValueEquals('Content-Type', 'application/json');
+        $helper->assertHeaderContains('Content-Type', 'application/json');
     }
 
     public function test_assert_header_value_equals_failure()
@@ -69,7 +69,7 @@ class TestResponseHelperTest extends TestCase
 
         $this->expectException(AssertionFailedError::class);
 
-        $helper->assertHeaderValueEquals('Content-Type', 'application/json');
+        $helper->assertHeaderContains('Content-Type', 'application/json');
     }
 
     public function test_assert_redirect()
@@ -78,7 +78,7 @@ class TestResponseHelperTest extends TestCase
             new GenericResponse(
                 status: Status::FOUND,
                 headers: [
-                    'Location' => '/other-location',
+                    'Location' => ['/other-location'],
                 ]
             )
         );
@@ -116,7 +116,7 @@ class TestResponseHelperTest extends TestCase
         $helper = new TestResponseHelper(
             new GenericResponse(
                 status: Status::FOUND,
-                headers: ['Location' => '/other-location']
+                headers: ['Location' => ['/other-location']]
             )
         );
 

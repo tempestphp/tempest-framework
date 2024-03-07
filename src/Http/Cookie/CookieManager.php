@@ -5,24 +5,22 @@ declare(strict_types=1);
 namespace Tempest\Http\Cookie;
 
 use DateTimeImmutable;
+use Tempest\Clock\Clock;
 
 final class CookieManager
 {
-    private function __construct(
-        /** @var \Tempest\Http\Cookie\Cookie[] $cookies */
-        public array $cookies = [],
+    /** @var \Tempest\Http\Cookie\Cookie[] */
+    private array $cookies = [];
+
+    public function __construct(
+        private Clock $clock,
     ) {
     }
 
-    public static function fromGlobals(): self
+    /** @return  \Tempest\Http\Cookie\Cookie[] */
+    public function cookies(): array
     {
-        $cookieManager = new self();
-
-        foreach ($_COOKIE as $key => $value) {
-            $cookieManager->add(new Cookie($key, $value));
-        }
-
-        return $cookieManager;
+        return $this->cookies;
     }
 
     public function get(string $key): ?Cookie
@@ -47,6 +45,12 @@ final class CookieManager
 
     public function add(Cookie $cookie): void
     {
+        if ($cookie->expiresAt) {
+            $maxAge = $cookie->getExpiresAtTime() - $this->clock->time();
+
+            $cookie->maxAge = max($maxAge, 0);
+        }
+
         $this->cookies[$cookie->key] = $cookie;
     }
 
