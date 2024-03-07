@@ -44,7 +44,6 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             'headers' => $headersAsString,
             'path' => $from->getUri()->getPath(),
             'query' => $query,
-            'cookies' => $from->getCookieParams(),
             ...$data,
         ])->to($requestClass);
 

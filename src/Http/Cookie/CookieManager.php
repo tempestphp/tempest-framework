@@ -18,7 +18,7 @@ final class CookieManager
     }
 
     /** @return  \Tempest\Http\Cookie\Cookie[] */
-    public function cookies(): array
+    public function all(): array
     {
         return $this->cookies;
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use function Tempest\get;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\SessionManager;
 use function Tempest\view;
 use Tempest\View\View;
@@ -32,9 +33,14 @@ trait IsResponse
         return $this->headers;
     }
 
-    public function getSession(): SessionManager
+    public function session(): SessionManager
     {
         return get(SessionManager::class);
+    }
+
+    public function cookies(): CookieManager
+    {
+        return get(CookieManager::class);
     }
 
     public function header(string $key, string $value): self

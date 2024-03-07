@@ -20,6 +20,6 @@ final class InvalidResponse implements Response
     ) {
         $this->status = Status::BAD_REQUEST;
         $this->redirect((string) $this->request->getUri());
-        $this->getSession()->set('validation_errors', $this->exception->failingRules);
+        $this->session()->set('validation_errors', $this->exception->failingRules);
     }
 }

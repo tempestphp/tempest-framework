@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\SessionManager;
 use Tempest\View\View;
 
@@ -15,8 +16,6 @@ interface Response
 
     public function getBody(): string|array|null;
 
-    public function getSession(): SessionManager;
-
     public function body(string $body): self;
 
     public function header(string $key, string $value): self;
@@ -24,6 +23,10 @@ interface Response
     public function view(View $view): self;
 
     public function getView(): ?View;
+
+    public function session(): SessionManager;
+
+    public function cookies(): CookieManager;
 
     public function ok(): self;
 

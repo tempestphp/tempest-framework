@@ -19,7 +19,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $id = $this->request->getCookies()[self::SESSION_ID] ?? null;
+        $id = $this->request->cookies()[self::SESSION_ID] ?? null;
 
         if (! $id) {
             // TODO generate new ID and store in a cookie
