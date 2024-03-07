@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Session;
 
 use DateTimeImmutable;
@@ -11,7 +13,8 @@ final class Session
         public SessionId $id,
         public DateTimeImmutable $createdAt,
         public array $data = [],
-    ) {}
+    ) {
+    }
 
     public function put(string $key, mixed $value): void
     {

@@ -28,8 +28,10 @@ final readonly class GenericResponseSender implements ResponseSender
             return;
         }
 
-        foreach ($response->getHeaders() as $key => $value) {
-            header("{$key}: {$value}");
+        foreach ($response->getHeaders() as $key => $values) {
+            foreach ($values as $value) {
+                header("{$key}: {$value}");
+            }
         }
 
         http_response_code($response->getStatus()->value);

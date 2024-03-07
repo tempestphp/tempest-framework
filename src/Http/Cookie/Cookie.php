@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Http\Cookie;
+
+use DateTimeImmutable;
+
+/**
+ * @see https://github.com/httpsoft/http-cookie/blob/master/src/Cookie.php
+ */
+final class Cookie
+{
+    public function __construct(
+        public string $key,
+        public string $value = '',
+        public DateTimeImmutable|int|null $expiresAt = null,
+        public ?string $domain = null,
+        public ?string $path = null,
+        public ?bool $secure = null,
+        public ?bool $httpOnly = null,
+        public ?string $sameSite = null,
+    ) {
+    }
+
+    public function getMaxAge(): int
+    {
+        // TODO Refactor to CookieManager so that we can use the Clock
+        $maxAge = $this->getExpiresAtTime() - time();
+
+        return max($maxAge, 0);
+    }
+
+    public function __toString(): string
+    {
+        $parts = [
+            $this->key . '=' . rawurlencode($this->value),
+        ];
+
+        if ($expiresAt = $this->getExpiresAtTime()) {
+            $parts[] = 'Expires=' . gmdate('D, d-M-Y H:i:s T', $expiresAt);
+            $parts[] = 'Max-Age=' . $this->getMaxAge();
+        }
+
+        if ($this->domain !== null) {
+            $parts[] = 'Domain=' . $this->domain;
+        }
+
+        if ($this->path !== null) {
+            $parts[] = 'Path=' . $this->path;
+        }
+
+        if ($this->secure === true) {
+            $parts[] = 'Secure';
+        }
+
+        if ($this->httpOnly === true) {
+            $parts[] = 'HttpOnly';
+        }
+
+        if ($this->sameSite !== null) {
+            $parts[] = 'SameSite=' . $this->sameSite;
+        }
+
+        return implode('; ', $parts);
+    }
+
+    private function getExpiresAtTime(): ?int
+    {
+        if ($this->expiresAt instanceof DateTimeImmutable) {
+            return $this->expiresAt->getTimestamp();
+        }
+
+        if (is_int($this->expiresAt)) {
+            return $this->expiresAt;
+        }
+
+        return null;
+    }
+}

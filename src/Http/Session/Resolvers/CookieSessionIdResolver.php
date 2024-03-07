@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Session\Resolvers;
 
 use Tempest\Http\Request;
@@ -12,7 +14,8 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 
     public function __construct(
         private Request $request,
-    ) {}
+    ) {
+    }
 
     public function resolve(): SessionId
     {

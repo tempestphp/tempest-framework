@@ -7,9 +7,8 @@ namespace Tests\Tempest\Unit\Http\Session;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tempest\Clock\MockClock;
-use Tempest\Http\Session\oldArraySessionHandler;
 use Tempest\Http\Session\old_Session;
-use Tempest\Http\Session\SessionId;
+use Tempest\Http\Session\oldArraySessionHandler;
 
 /**
  * @internal

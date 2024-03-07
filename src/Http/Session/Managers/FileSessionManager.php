@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Session\SessionId;
-use Throwable;
+use Tempest\Http\Session\SessionManager;
 use function Tempest\path;
+use Throwable;
 
 final readonly class FileSessionManager implements SessionManager
 {
     public function __construct(
         private Clock $clock,
         private SessionConfig $sessionConfig,
-    ) {}
+    ) {
+    }
 
     public function create(SessionId $id): Session
     {

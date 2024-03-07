@@ -18,6 +18,7 @@ final class CannotInstantiateDependencyException extends Exception
 
         if ($stack === []) {
             parent::__construct($message);
+
             return;
         }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Session\SessionManager;
 use function Tempest\get;
+use Tempest\Http\Session\SessionManager;
 use function Tempest\view;
 use Tempest\View\View;
 
@@ -13,6 +13,7 @@ trait IsResponse
 {
     private Status $status;
     private string|array|null $body = null;
+    /** @var array @var string[][] */
     private array $headers = [];
     private ?View $view = null;
 
@@ -38,7 +39,7 @@ trait IsResponse
 
     public function header(string $key, string $value): self
     {
-        $this->headers[$key] = $value;
+        $this->headers[$key][] = $value;
 
         return $this;
     }

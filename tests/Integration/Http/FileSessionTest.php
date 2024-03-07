@@ -1,15 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\MockClock;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Testing\IntegrationTest;
+use Tempest\Http\Session\SessionManager;
 use function Tempest\path;
+use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 final class FileSessionTest extends IntegrationTest
 {
     private string $path;
@@ -36,15 +42,13 @@ final class FileSessionTest extends IntegrationTest
         rmdir($this->path);
     }
 
-    /** @test */
-    public function create_session_from_container()
+    public function test_create_session_from_container()
     {
         $session = $this->container->get(Session::class);
 
         $this->assertInstanceOf(Session::class, $session);
     }
 
-    /** @test */
     public function test_put_get()
     {
         $session = $this->container->get(Session::class);
@@ -54,7 +58,6 @@ final class FileSessionTest extends IntegrationTest
         $this->assertEquals('value', $value);
     }
 
-    /** @test */
     public function test_remove()
     {
         $session = $this->container->get(Session::class);
@@ -65,7 +68,6 @@ final class FileSessionTest extends IntegrationTest
         $this->assertNull($value);
     }
 
-    /** @test */
     public function test_destroy()
     {
         $session = $this->container->get(Session::class);
