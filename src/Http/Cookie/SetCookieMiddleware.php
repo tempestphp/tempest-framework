@@ -18,8 +18,6 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
 
     public function __invoke(Request $request, callable $next): Response
     {
-        $this->cookieManager->set('test', 'new', new DateTimeImmutable('+1 day'));
-
         /** @var Response $response */
         $response = $next($request);
 
