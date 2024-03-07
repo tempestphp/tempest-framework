@@ -7,7 +7,6 @@ namespace Tempest\Container;
 use Exception;
 use ReflectionParameter;
 use Tempest\Container\Exceptions\CircularDependencyException;
-use Throwable;
 
 final class InMemoryContainerLog implements ContainerLog
 {
@@ -16,7 +15,8 @@ final class InMemoryContainerLog implements ContainerLog
     public function __construct(
         /** @var \Tempest\Container\Context[] $stack */
         public array $stack = [],
-    ) {}
+    ) {
+    }
 
     public function startResolving(): ContainerLog
     {

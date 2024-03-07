@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\Cookie\CookieManager;
@@ -8,10 +10,13 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Testing\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 final class SessionFromCookieTest extends IntegrationTest
 {
-    /** @test */
-    public function resolving_session_sets_cookie_id()
+    public function test_resolving_session_sets_cookie_id()
     {
         $this->container->config(new SessionConfig(
             idResolverClass: CookieSessionIdResolver::class,

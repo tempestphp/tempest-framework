@@ -11,7 +11,6 @@ final class SessionConfig
 {
     public function __construct(
         public string $path = __DIR__ . '/sessions',
-
         public int $expirationInSeconds = 60 * 60 * 24 * 30,
 
         /**

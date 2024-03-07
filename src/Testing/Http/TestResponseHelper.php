@@ -109,5 +109,7 @@ final readonly class TestResponseHelper
         }
 
         Assert::assertNotNull($cookie);
+
+        return $this;
     }
 }
