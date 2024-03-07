@@ -6,9 +6,7 @@ namespace Tempest\Http\Session;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
-use Tempest\Container\Singleton;
 
-#[Singleton]
 final readonly class SessionInitializer implements Initializer
 {
     public function initialize(Container $container): Session

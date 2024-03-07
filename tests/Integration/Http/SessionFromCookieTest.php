@@ -22,10 +22,10 @@ final class SessionFromCookieTest extends IntegrationTest
             idResolverClass: CookieSessionIdResolver::class,
         ));
 
-        $sessionA = $this->container->get(Session::class);
-
         $cookieManager = $this->container->get(CookieManager::class);
-        $cookieManager->set('tempest_session_id', 'b');
+
+        $cookieManager->set('tempest_session_id', 'a');
+        $sessionA = $this->container->get(Session::class);
         $sessionA->put('test', 'a');
 
         $cookieManager->set('tempest_session_id', 'b');

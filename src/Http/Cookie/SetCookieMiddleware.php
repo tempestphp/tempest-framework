@@ -10,6 +10,10 @@ use Tempest\Http\Response;
 
 final readonly class SetCookieMiddleware implements HttpMiddleware
 {
+    public function __construct()
+    {
+    }
+
     public function __invoke(Request $request, callable $next): Response
     {
         /** @var Response $response */
