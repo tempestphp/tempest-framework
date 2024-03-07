@@ -15,6 +15,6 @@ final readonly class SessionManagerInitializer implements Initializer
     {
         $config = $container->get(SessionConfig::class);
 
-        return $config->get($config->managerClass);
+        return $container->get($config->managerClass);
     }
 }

@@ -7,10 +7,12 @@ namespace Tempest\Http\Session;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
 
-final readonly class SessionConfig
+final class SessionConfig
 {
     public function __construct(
         public string $path = __DIR__ . '/sessions',
+
+        public int $expirationInSeconds = 60 * 60 * 24 * 30,
 
         /**
          * @template SessionManager of \Tempest\Http\Session\SessionManager

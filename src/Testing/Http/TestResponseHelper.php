@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
+use Closure;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
@@ -97,5 +98,16 @@ final readonly class TestResponseHelper
         );
 
         return $this;
+    }
+
+    public function assertHasCookie(string $key, ?Closure $test = null): self
+    {
+        $cookie = $this->response->cookies()->get($key);
+
+        if ($test) {
+            $test($cookie);
+        }
+
+        Assert::assertNotNull($cookie);
     }
 }

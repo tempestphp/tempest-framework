@@ -12,6 +12,7 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Http\Session\SessionConfig;
 use Tempest\Testing\Console\ConsoleCommandTester;
 use Tempest\Testing\Http\HttpRouterTester;
 
