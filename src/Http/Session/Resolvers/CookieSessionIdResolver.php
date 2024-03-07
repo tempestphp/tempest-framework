@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session\Resolvers;
 
-use Tempest\Http\Request;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionIdResolver;
 
@@ -13,16 +13,19 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
     private const string SESSION_ID = 'tempest_session_id';
 
     public function __construct(
-        private Request $request,
+        private CookieManager $cookies,
     ) {
     }
 
     public function resolve(): SessionId
     {
-        $id = $this->request->cookies()[self::SESSION_ID] ?? null;
+        $id = $this->cookies->get(self::SESSION_ID) ?? null;
 
         if (! $id) {
-            // TODO generate new ID and store in a cookie
+            $id = uniqid();
+
+            // TODO: session expiration time support
+            $this->cookies->set(self::SESSION_ID, $id);
         }
 
         return new SessionId($id);
