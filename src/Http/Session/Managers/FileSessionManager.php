@@ -19,9 +19,7 @@ final readonly class FileSessionManager implements SessionManager
 
     public function create(SessionId $id): Session
     {
-        $this->persist($id);
-
-        return new Session($id, $this->clock->now());
+        return $this->persist($id);
     }
 
     public function put(SessionId $id, string $key, mixed $value): void
@@ -77,9 +75,14 @@ final readonly class FileSessionManager implements SessionManager
         return $this->resolve($id)->data ?? [];
     }
 
-    private function persist(SessionId $id, array $data = []): void
+    private function persist(SessionId $id, array $data = []): Session
     {
-        $session = $this->resolve($id) ?? $this->create($id);
+        $session = $this->resolve($id) ?? new Session(
+            id: $id,
+            createdAt: $this->clock->now(),
+            data: $data,
+        );
+
         $path = $this->getPath($id);
         $dir = dirname($path);
 
@@ -90,6 +93,8 @@ final readonly class FileSessionManager implements SessionManager
         $session->data = $data;
 
         file_put_contents($path, serialize($session));
+
+        return $session;
     }
 
     public function cleanup(): void

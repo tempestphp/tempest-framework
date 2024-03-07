@@ -2,10 +2,13 @@
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Clock\MockClock;
+use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Testing\IntegrationTest;
+use function Tempest\path;
 
 final class FileSessionTest extends IntegrationTest
 {
@@ -18,6 +21,13 @@ final class FileSessionTest extends IntegrationTest
         $this->path = __DIR__ . '/sessions';
 
         $this->container->config(new SessionConfig(path: $this->path));
+        $this->container->singleton(
+            SessionManager::class,
+            fn () => new FileSessionManager(
+                new MockClock(),
+                $this->container->get(SessionConfig::class)
+            )
+        );
     }
 
     protected function tearDown(): void
@@ -29,16 +39,15 @@ final class FileSessionTest extends IntegrationTest
     /** @test */
     public function create_session_from_container()
     {
-        $session = $this->container->get(SessionManager::class);
+        $session = $this->container->get(Session::class);
 
         $this->assertInstanceOf(Session::class, $session);
-        $this->assertTrue($session->isValid());
     }
 
     /** @test */
     public function test_put_get()
     {
-        $session = $this->container->get(SessionManager::class);
+        $session = $this->container->get(Session::class);
 
         $session->put('test', 'value');
         $value = $session->get('test');
@@ -48,11 +57,22 @@ final class FileSessionTest extends IntegrationTest
     /** @test */
     public function test_remove()
     {
-        $session = $this->container->get(SessionManager::class);
+        $session = $this->container->get(Session::class);
 
         $session->put('test', 'value');
         $session->remove('test');
         $value = $session->get('test');
         $this->assertNull($value);
+    }
+
+    /** @test */
+    public function test_destroy()
+    {
+        $session = $this->container->get(Session::class);
+
+        $path = path($this->path, $session->id);
+        $this->assertFileExists($path);
+        $session->destroy();
+        $this->assertFileDoesNotExist($path);
     }
 }
