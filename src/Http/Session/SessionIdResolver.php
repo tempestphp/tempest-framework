@@ -2,7 +2,7 @@
 
 namespace Tempest\Http\Session;
 
-interface SessionResolver
+interface SessionIdResolver
 {
     public function resolve(): SessionId;
 }

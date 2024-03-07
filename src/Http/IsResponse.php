@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 use function Tempest\get;
 use function Tempest\view;
 use Tempest\View\View;
@@ -31,9 +31,9 @@ trait IsResponse
         return $this->headers;
     }
 
-    public function getSession(): Session
+    public function getSession(): SessionManager
     {
-        return get(Session::class);
+        return get(SessionManager::class);
     }
 
     public function header(string $key, string $value): self

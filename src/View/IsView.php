@@ -6,7 +6,7 @@ namespace Tempest\View;
 
 use Exception;
 use Tempest\AppConfig;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionManager;
 use function Tempest\get;
 use function Tempest\path;
 use function Tempest\view;
@@ -168,8 +168,8 @@ trait IsView
         return $errors !== [];
     }
 
-    private function getSession(): Session
+    private function getSession(): SessionManager
     {
-        return get(Session::class);
+        return get(SessionManager::class);
     }
 }
