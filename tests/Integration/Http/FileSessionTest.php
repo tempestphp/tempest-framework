@@ -79,11 +79,10 @@ final class FileSessionTest extends IntegrationTest
         $this->assertFileDoesNotExist($path);
     }
 
-    /** @test */
     public function test_is_valid()
     {
         $clock = $this->clock('2023-01-01 00:00:00');
-        
+
         $this->container->config(new SessionConfig(
             path: __DIR__ . '/sessions',
             expirationInSeconds: 1,
