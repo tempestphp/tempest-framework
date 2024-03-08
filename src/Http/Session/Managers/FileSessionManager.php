@@ -60,13 +60,17 @@ final readonly class FileSessionManager implements SessionManager
         return path($this->sessionConfig->path, (string) $id);
     }
 
-    private function resolve(SessionId $id): Session
+    private function resolve(SessionId $id): ?Session
     {
         $path = $this->getPath($id);
 
-        $content = file_get_contents($path);
+        try {
+            $content = @file_get_contents($path);
 
-        return unserialize($content);
+            return unserialize($content);
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     private function getData(SessionId $id): array
@@ -74,12 +78,11 @@ final readonly class FileSessionManager implements SessionManager
         return $this->resolve($id)->data ?? [];
     }
 
-    private function persist(SessionId $id, array $data = []): Session
+    private function persist(SessionId $id, ?array $data = null): Session
     {
         $session = $this->resolve($id) ?? new Session(
             id: $id,
             createdAt: $this->clock->now(),
-            data: $data,
         );
 
         $path = $this->getPath($id);
@@ -89,7 +92,9 @@ final readonly class FileSessionManager implements SessionManager
             mkdir($dir, recursive: true);
         }
 
-        $session->data = [...$session->data, ...$data];
+        if ($data !== null) {
+            $session->data = $data;
+        }
 
         file_put_contents($path, serialize($session));
 
