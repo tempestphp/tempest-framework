@@ -9,6 +9,8 @@ use function Tempest\get;
 
 final class Session
 {
+    public const string ID = 'tempest_session_id';
+
     public function __construct(
         public SessionId $id,
         public DateTimeImmutable $createdAt,
