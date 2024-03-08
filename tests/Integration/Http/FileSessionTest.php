@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Clock\MockClock;
+use Tempest\Clock\Clock;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
+use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use function Tempest\path;
 use Tempest\Testing\IntegrationTest;
@@ -30,7 +31,7 @@ final class FileSessionTest extends IntegrationTest
         $this->container->singleton(
             SessionManager::class,
             fn () => new FileSessionManager(
-                new MockClock(),
+                $this->container->get(Clock::class),
                 $this->container->get(SessionConfig::class)
             )
         );
@@ -76,5 +77,28 @@ final class FileSessionTest extends IntegrationTest
         $this->assertFileExists($path);
         $session->destroy();
         $this->assertFileDoesNotExist($path);
+    }
+
+    /** @test */
+    public function test_is_valid()
+    {
+        $clock = $this->clock('2023-01-01 00:00:00');
+        
+        $this->container->config(new SessionConfig(
+            path: __DIR__ . '/sessions',
+            expirationInSeconds: 1,
+        ));
+
+        $sessionManager = $this->container->get(SessionManager::class);
+
+        $this->assertFalse($sessionManager->isValid(new SessionId('unknown')));
+
+        $session = $sessionManager->create(new SessionId('new'));
+
+        $this->assertTrue($session->isValid());
+
+        $clock->changeTime(seconds: 1);
+
+        $this->assertFalse($session->isValid());
     }
 }

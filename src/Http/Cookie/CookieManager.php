@@ -52,7 +52,6 @@ final class CookieManager
         }
 
         $this->cookies[$cookie->key] = $cookie;
-
     }
 
     public function remove(string $key): void

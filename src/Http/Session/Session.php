@@ -36,6 +36,11 @@ final class Session
         $this->getSessionManager()->destroy($this->id);
     }
 
+    public function isValid(): bool
+    {
+        return $this->getSessionManager()->isValid($this->id);
+    }
+
     private function getSessionManager(): SessionManager
     {
         return get(SessionManager::class);

@@ -51,8 +51,18 @@ final readonly class FileSessionManager implements SessionManager
 
     public function isValid(SessionId $id): bool
     {
-        // TODO: add check for timeout
-        return $this->resolve($id) !== null;
+        $session = $this->resolve($id);
+
+        if ($session === null) {
+            return false;
+        }
+        $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
+
+        if ($validUntil - $this->clock->time() <= 0) {
+            return false;
+        }
+
+        return true;
     }
 
     private function getPath(SessionId $id): string

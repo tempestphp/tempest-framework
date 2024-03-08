@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Testing;
 
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
+use Tempest\Clock\Clock;
+use Tempest\Clock\MockClock;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\GenericRequest;
@@ -58,5 +61,12 @@ abstract class IntegrationTest extends TestCase
         foreach ($migrationClasses as $migrationClass) {
             $migrationManager->executeUp($this->container->get($migrationClass));
         }
+    }
+
+    protected function clock(DateTimeInterface|string $now): MockClock
+    {
+        $this->container->singleton(Clock::class, fn () => new MockClock($now));
+
+        return $this->container->get(Clock::class);
     }
 }
