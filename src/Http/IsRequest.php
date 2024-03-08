@@ -6,7 +6,7 @@ namespace Tempest\Http;
 
 use function Tempest\get;
 use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\Session;
 
 trait IsRequest
 {
@@ -68,9 +68,9 @@ trait IsRequest
         return $this->query;
     }
 
-    public function session(): SessionManager
+    public function session(): Session
     {
-        return get(SessionManager::class);
+        return get(Session::class);
     }
 
     public function cookies(): CookieManager

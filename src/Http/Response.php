@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\Session;
 use Tempest\View\View;
 
 interface Response
@@ -24,7 +24,7 @@ interface Response
 
     public function getView(): ?View;
 
-    public function session(): SessionManager;
+    public function session(): Session;
 
     public function cookies(): CookieManager;
 

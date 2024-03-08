@@ -17,7 +17,7 @@ use Tempest\Testing\IntegrationTest;
  */
 final class CookieManagerTest extends IntegrationTest
 {
-    public function test_existing_cookies()
+    public function test_existing_cookies(): void
     {
         $_COOKIE['existing'] = 'value';
 
@@ -26,7 +26,7 @@ final class CookieManagerTest extends IntegrationTest
         $this->assertEquals('value', $cookies->get('existing')->value);
     }
 
-    public function test_creating_a_cookie()
+    public function test_creating_a_cookie(): void
     {
         $cookies = $this->container->get(CookieManager::class);
 
@@ -38,7 +38,7 @@ final class CookieManagerTest extends IntegrationTest
             ->assertHeaderContains('set-cookie', 'new=value');
     }
 
-    public function test_removing_a_cookie()
+    public function test_removing_a_cookie(): void
     {
         $cookies = $this->container->get(CookieManager::class);
 
@@ -50,7 +50,7 @@ final class CookieManagerTest extends IntegrationTest
             ->assertHeaderContains('set-cookie', 'new=; Expires=Wed, 31-Dec-1969 23:59:59 GMT; Max-Age=0');
     }
 
-    public function test_manually_adding_a_cookie()
+    public function test_manually_adding_a_cookie(): void
     {
         $clock = new MockClock('2023-01-01 00:00:00');
         $this->container->singleton(Clock::class, fn () => $clock);

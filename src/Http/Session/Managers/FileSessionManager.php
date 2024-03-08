@@ -83,11 +83,20 @@ final readonly class FileSessionManager implements SessionManager
         }
     }
 
+    /**
+     * @param SessionId $id
+     * @return array<mixed>
+     */
     private function getData(SessionId $id): array
     {
         return $this->resolve($id)->data ?? [];
     }
 
+    /**
+     * @param SessionId $id
+     * @param array<mixed>|null $data
+     * @return Session
+     */
     private function persist(SessionId $id, ?array $data = null): Session
     {
         $session = $this->resolve($id) ?? new Session(

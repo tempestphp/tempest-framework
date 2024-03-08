@@ -22,6 +22,9 @@ final class GenericRouter implements Router
 {
     private const string MARK_TOKEN = 'MARK';
 
+    /**
+     * @var array<class-string>
+     */
     private array $middleware = [];
 
     public function __construct(

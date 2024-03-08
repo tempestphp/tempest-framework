@@ -6,6 +6,7 @@ namespace Tempest\Http;
 
 use function Tempest\get;
 use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionManager;
 use function Tempest\view;
 use Tempest\View\View;
@@ -33,7 +34,7 @@ trait IsResponse
         return $this->headers;
     }
 
-    public function session(): SessionManager
+    public function session(): Session
     {
         return get(SessionManager::class);
     }

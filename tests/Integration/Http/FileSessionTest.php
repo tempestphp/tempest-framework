@@ -43,14 +43,14 @@ final class FileSessionTest extends IntegrationTest
         rmdir($this->path);
     }
 
-    public function test_create_session_from_container()
+    public function test_create_session_from_container(): void
     {
         $session = $this->container->get(Session::class);
 
         $this->assertInstanceOf(Session::class, $session);
     }
 
-    public function test_put_get()
+    public function test_put_get(): void
     {
         $session = $this->container->get(Session::class);
 
@@ -59,7 +59,7 @@ final class FileSessionTest extends IntegrationTest
         $this->assertEquals('value', $value);
     }
 
-    public function test_remove()
+    public function test_remove(): void
     {
         $session = $this->container->get(Session::class);
 
@@ -69,7 +69,7 @@ final class FileSessionTest extends IntegrationTest
         $this->assertNull($value);
     }
 
-    public function test_destroy()
+    public function test_destroy(): void
     {
         $session = $this->container->get(Session::class);
 
@@ -79,7 +79,7 @@ final class FileSessionTest extends IntegrationTest
         $this->assertFileDoesNotExist($path);
     }
 
-    public function test_is_valid()
+    public function test_is_valid(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 

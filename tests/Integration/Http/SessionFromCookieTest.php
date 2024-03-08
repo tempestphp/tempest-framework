@@ -16,7 +16,7 @@ use Tempest\Testing\IntegrationTest;
  */
 final class SessionFromCookieTest extends IntegrationTest
 {
-    public function test_resolving_session_from_cookie()
+    public function test_resolving_session_from_cookie(): void
     {
         $this->container->config(new SessionConfig(
             path: __DIR__ . '/sessions',
@@ -38,7 +38,7 @@ final class SessionFromCookieTest extends IntegrationTest
         $this->assertEquals('a', $sessionA->get('test'));
     }
 
-    public function test_cookie_expiration()
+    public function test_cookie_expiration(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');
 

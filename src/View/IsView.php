@@ -7,7 +7,7 @@ namespace Tempest\View;
 use Exception;
 use Tempest\AppConfig;
 use function Tempest\get;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Http\Session\Session;
 use function Tempest\path;
 use function Tempest\view;
 
@@ -158,18 +158,18 @@ trait IsView
      */
     public function getErrorsFor(string $name): array
     {
-        return $this->getSession()->get('validation_errors')[$name] ?? [];
+        return $this->session()->get('validation_errors')[$name] ?? [];
     }
 
     public function hasErrors(): bool
     {
-        $errors = $this->getSession()->get('validation_errors', []);
+        $errors = $this->session()->get('validation_errors', []);
 
         return $errors !== [];
     }
 
-    private function getSession(): SessionManager
+    private function session(): Session
     {
-        return get(SessionManager::class);
+        return get(Session::class);
     }
 }
