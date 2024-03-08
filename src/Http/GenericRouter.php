@@ -23,7 +23,8 @@ final class GenericRouter implements Router
     private const string MARK_TOKEN = 'MARK';
 
     /**
-     * @var array<class-string>
+     * @template T of \Tempest\Http\HttpMiddleware
+     * @var array<array-key, class-string<T>>
      */
     private array $middleware = [];
 
