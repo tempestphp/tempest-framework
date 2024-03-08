@@ -32,7 +32,9 @@ final class CleanupSessionsCommandTest extends IntegrationTest
         $this->console
             ->call('session:clean')
             ->assertContains('session_a')
-            ->assertDoesNotContain('session_b')
-        ;
+            ->assertDoesNotContain('session_b');
+
+        $this->assertFileDoesNotExist(__DIR__ . '/sessions/session_a');
+        $this->assertFileExists(__DIR__ . '/sessions/session_b');
     }
 }
