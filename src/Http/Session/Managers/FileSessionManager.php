@@ -7,8 +7,10 @@ namespace Tempest\Http\Session\Managers;
 use Tempest\Clock\Clock;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
+use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
+use function Tempest\event;
 use function Tempest\path;
 use Throwable;
 
@@ -47,6 +49,8 @@ final readonly class FileSessionManager implements SessionManager
     public function destroy(SessionId $id): void
     {
         unlink($this->getPath($id));
+
+        event(new SessionDestroyed($id));
     }
 
     public function isValid(SessionId $id): bool
@@ -122,6 +126,21 @@ final readonly class FileSessionManager implements SessionManager
 
     public function cleanup(): void
     {
-        // TODO: Implement cleanup() method.
+        $sessionFiles = glob(path($this->sessionConfig->path, '/*'));
+
+        foreach ($sessionFiles as $sessionFile) {
+            $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));
+            $session = $this->resolve($id);
+
+            if (!$session) {
+                continue;
+            }
+
+            if ($session->isValid()) {
+                continue;
+            }
+
+            $session->destroy();
+        }
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Session;
 
 use DateTimeImmutable;
+use function Tempest\event;
 use function Tempest\get;
 
 final class Session
