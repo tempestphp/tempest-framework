@@ -27,7 +27,7 @@ final readonly class FileSessionManager implements SessionManager
 
     public function put(SessionId $id, string $key, mixed $value): void
     {
-        $this->persist($id, $this->getData($id) + [$key => $value]);
+        $this->persist($id, [...$this->getData($id), ...[$key => $value]]);
     }
 
     public function get(SessionId $id, string $key, mixed $default = null): mixed
@@ -51,8 +51,18 @@ final readonly class FileSessionManager implements SessionManager
 
     public function isValid(SessionId $id): bool
     {
-        // TODO: add check for timeout
-        return $this->resolve($id) !== null;
+        $session = $this->resolve($id);
+
+        if ($session === null) {
+            return false;
+        }
+        $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
+
+        if ($validUntil - $this->clock->time() <= 0) {
+            return false;
+        }
+
+        return true;
     }
 
     private function getPath(SessionId $id): string
@@ -64,9 +74,9 @@ final readonly class FileSessionManager implements SessionManager
     {
         $path = $this->getPath($id);
 
-        $content = @file_get_contents($path);
-
         try {
+            $content = @file_get_contents($path);
+
             return unserialize($content);
         } catch (Throwable) {
             return null;
@@ -78,12 +88,11 @@ final readonly class FileSessionManager implements SessionManager
         return $this->resolve($id)->data ?? [];
     }
 
-    private function persist(SessionId $id, array $data = []): Session
+    private function persist(SessionId $id, ?array $data = null): Session
     {
         $session = $this->resolve($id) ?? new Session(
             id: $id,
             createdAt: $this->clock->now(),
-            data: $data,
         );
 
         $path = $this->getPath($id);
@@ -93,7 +102,9 @@ final readonly class FileSessionManager implements SessionManager
             mkdir($dir, recursive: true);
         }
 
-        $session->data = $data;
+        if ($data !== null) {
+            $session->data = $data;
+        }
 
         file_put_contents($path, serialize($session));
 

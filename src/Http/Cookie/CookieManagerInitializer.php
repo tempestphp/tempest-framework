@@ -7,7 +7,9 @@ namespace Tempest\Http\Cookie;
 use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
+use Tempest\Container\Singleton;
 
+#[Singleton]
 final readonly class CookieManagerInitializer implements Initializer
 {
     public function initialize(Container $container): CookieManager
