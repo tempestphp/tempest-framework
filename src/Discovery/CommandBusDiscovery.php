@@ -10,12 +10,9 @@ use ReflectionNamedType;
 use function Tempest\attribute;
 use Tempest\Commands\CommandBusConfig;
 use Tempest\Commands\CommandHandler;
-use Tempest\Container\Container;
 
-final readonly class CommandBusDiscovery implements Discovery
+final readonly class CommandBusDiscovery implements Discoverer, CacheableDiscoverer
 {
-    private const CACHE_PATH = __DIR__ . '/command-bus-discovery.cache.php';
-
     public function __construct(
         private CommandBusConfig $commandBusConfig,
     ) {
@@ -54,25 +51,13 @@ final readonly class CommandBusDiscovery implements Discovery
         }
     }
 
-    public function hasCache(): bool
+    public function getResults(): array
     {
-        return file_exists(self::CACHE_PATH);
+        return $this->commandBusConfig->handlers;
     }
 
-    public function storeCache(): void
+    public function restoreResults(array $classes): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->commandBusConfig->handlers));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $handlers = unserialize(file_get_contents(self::CACHE_PATH));
-
-        $this->commandBusConfig->handlers = $handlers;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
+        $this->commandBusConfig->handlers = $classes;
     }
 }

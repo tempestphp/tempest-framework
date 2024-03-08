@@ -10,11 +10,11 @@ use Tempest\Container\Container;
 
 final readonly class Tempest
 {
-    public static function console(Container $container, string $rootDirectory): ConsoleKernel
+    public static function console(Container $container, string $basePath): ConsoleKernel
     {
         return new ConsoleKernel(
             container: $container,
-            rootDirectory: $rootDirectory
+            rootDirectory: $basePath
         );
     }
 

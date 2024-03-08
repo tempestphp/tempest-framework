@@ -24,7 +24,7 @@ final class HttpKernel implements Kernel
     public function __construct(Container $container, string $rootDirectory)
     {
         $this->setContainer($container);
-        $this->setRootDirectory($rootDirectory);
+        $this->setBasePath($rootDirectory);
     }
 
     public function getContainer(): Container
@@ -37,12 +37,12 @@ final class HttpKernel implements Kernel
         $this->container = $container;
     }
 
-    public function getRootDirectory(): string
+    public function getBasePath(): string
     {
         return $this->rootDirectory;
     }
 
-    public function setRootDirectory(string $path): void
+    public function setBasePath(string $path): void
     {
         if (! is_dir($path)) {
             // TODO: Make this more helpful.

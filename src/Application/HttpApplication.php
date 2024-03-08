@@ -11,7 +11,7 @@ use Tempest\Http\ResponseSender;
 use Tempest\Http\Router;
 use Throwable;
 
-final readonly class HttpApplication implements Application
+final readonly class HttpApplication
 {
     public function __construct(
         private Container $container,

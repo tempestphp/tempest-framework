@@ -16,7 +16,7 @@ final class LoadEnvironmentVariables implements BootstrapsKernel
 {
     public function bootstrap(Kernel $kernel): void
     {
-        $environment = Dotenv::createUnsafeImmutable($kernel->getRootDirectory());
+        $environment = Dotenv::createUnsafeImmutable($kernel->getBasePath());
 
         $environment->safeLoad();
     }

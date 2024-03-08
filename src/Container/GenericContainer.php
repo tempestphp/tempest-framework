@@ -88,6 +88,14 @@ final class GenericContainer implements Container
         return $this->resolve($className, ...$params);
     }
 
+    public function has(string $className): bool
+    {
+        return (
+            isset($this->singletons[$className]) ||
+            isset($this->definitions[$className])
+        );
+    }
+
     public function call(string|object $object, string $methodName, ...$params): mixed
     {
         $this->log->startResolving();

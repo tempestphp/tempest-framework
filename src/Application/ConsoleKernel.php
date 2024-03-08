@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use RuntimeException;
+use Tempest\Application\Bootstrap\LoadConfigurations;
 use Tempest\Application\Bootstrap\LoadEnvironmentVariables;
 use Tempest\Container\Container;
+use function Tempest\path;
 
 final class ConsoleKernel implements Kernel
 {
@@ -14,17 +16,20 @@ final class ConsoleKernel implements Kernel
 
     private string $rootDirectory;
 
+    private string $configPath;
+
     /**
      * @var array<array-key, class-string<BootstrapsKernel>>
      */
     private array $bootstrappers = [
         LoadEnvironmentVariables::class,
+        LoadConfigurations::class,
     ];
 
     public function __construct(Container $container, string $rootDirectory)
     {
         $this->setContainer($container);
-        $this->setRootDirectory($rootDirectory);
+        $this->setBasePath($rootDirectory);
     }
 
     public function getContainer(): Container
@@ -32,17 +37,19 @@ final class ConsoleKernel implements Kernel
         return $this->container;
     }
 
-    public function setContainer(Container $container): void
+    public function setContainer(Container $container): self
     {
         $this->container = $container;
+
+        return $this;
     }
 
-    public function getRootDirectory(): string
+    public function getBasePath(): string
     {
         return $this->rootDirectory;
     }
 
-    public function setRootDirectory(string $path): void
+    public function setBasePath(string $path): self
     {
         if (! is_dir($path)) {
             // TODO: Make this more helpful.
@@ -50,6 +57,27 @@ final class ConsoleKernel implements Kernel
         }
 
         $this->rootDirectory = realpath($path);
+
+        return $this;
+    }
+
+    public function getConfigPath(): string
+    {
+        return $this->configPath ??= path(
+            $this->rootDirectory, 'config'
+        );
+    }
+
+    public function setConfigPath(string $path): self
+    {
+        if (! is_dir($path)) {
+            // TODO: Make this more helpful.
+            throw new RuntimeException('The config path does not exist.');
+        }
+
+        $this->configPath = $path;
+
+        return $this;
     }
 
     public function boot(): void

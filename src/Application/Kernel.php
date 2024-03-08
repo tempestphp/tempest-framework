@@ -14,11 +14,15 @@ interface Kernel
 {
     public function getContainer(): Container;
 
-    public function setContainer(Container $container): void;
+    public function setContainer(Container $container): self;
 
-    public function getRootDirectory(): string;
+    public function getBasePath(): string;
 
-    public function setRootDirectory(string $path): void;
+    public function setBasePath(string $path): self;
+
+    public function getConfigPath(): string;
+
+    public function setConfigPath(string $path): self;
 
     public function boot(): void;
 

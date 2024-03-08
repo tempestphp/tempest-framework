@@ -22,6 +22,8 @@ interface Container
      */
     public function get(string $className, mixed ...$params);
 
+    public function has(string $className): bool;
+
     public function call(object $object, string $methodName, mixed ...$params): mixed;
 
     /**
