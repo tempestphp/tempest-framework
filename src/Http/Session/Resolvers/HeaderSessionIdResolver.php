@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session\Resolvers;
 
+use Ramsey\Uuid\Uuid;
 use Tempest\Http\Request;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionId;
@@ -20,6 +21,6 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
     {
         $id = $this->request->getHeaders()[Session::ID] ?? null;
 
-        return new SessionId($id ?? uniqid());
+        return new SessionId($id ?? (string) Uuid::uuid4());
     }
 }

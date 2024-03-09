@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session\Resolvers;
 
+use Ramsey\Uuid\Uuid;
 use Tempest\Clock\Clock;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
@@ -25,7 +26,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
         $id = $this->cookies->get(Session::ID)?->value ?? null;
 
         if (! $id) {
-            $id = uniqid();
+            $id = (string) Uuid::uuid4();
 
             $this->cookies->set(
                 key: Session::ID,
