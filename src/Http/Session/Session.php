@@ -14,6 +14,7 @@ final class Session
     public function __construct(
         public SessionId $id,
         public DateTimeImmutable $createdAt,
+        /** @var array<array-key, mixed> */
         public array $data = [],
     ) {
     }
