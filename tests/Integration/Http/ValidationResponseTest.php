@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use App\Controllers\ValidationController;
-use Tempest\Http\Status;
 use Tempest\Testing\IntegrationTest;
 use function Tempest\uri;
 
@@ -27,4 +26,6 @@ final class ValidationResponseTest extends IntegrationTest
             ->assertOk()
             ->assertHasNoValidationsErrors();
     }
+
+    // TODO: test with original values
 }

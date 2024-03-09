@@ -19,7 +19,9 @@ trait IsView
     public ?string $extendsPath = null;
     public array $extendsParams = [];
     private AppConfig $appConfig;
+    /** @var array<mixed>|null */
     private ?array $errors = null;
+    /** @var array<mixed>|null */
     private ?array $originalValues = null;
 
     public function __construct(
@@ -186,6 +188,7 @@ trait IsView
         return $originalValues[$name] ?? $default;
     }
 
+    /** @return array<mixed> */
     private function resolveValidationErrors(): ?array
     {
         $this->errors ??= $this->getSession()->get('validation_errors');
@@ -193,6 +196,7 @@ trait IsView
         return $this->errors;
     }
 
+    /** @return array<mixed> */
     private function resolveOriginalValues(): ?array
     {
         $this->originalValues ??= $this->getSession()->get('original_values');

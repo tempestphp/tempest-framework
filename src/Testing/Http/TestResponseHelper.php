@@ -6,14 +6,16 @@ namespace Tempest\Testing\Http;
 
 use Closure;
 use PHPUnit\Framework\Assert;
+use function Tempest\get;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use function Tempest\get;
 
 final readonly class TestResponseHelper
 {
-    public function __construct(private Response $response) {}
+    public function __construct(private Response $response)
+    {
+    }
 
     public function getResponse(): Response
     {
@@ -159,14 +161,15 @@ final readonly class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
-        $validationErrors = $session->get('validation_errors');
+        $validationErrors = $session->get('validation_errors') ?? [];
 
         Assert::assertEmpty(
             $validationErrors,
             sprintf(
                 "There should be no validation errors, but there were: %s",
                 implode(', ', array_keys($validationErrors)),
-            ));
+            )
+        );
 
         return $this;
     }
