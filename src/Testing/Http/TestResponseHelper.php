@@ -102,7 +102,7 @@ final readonly class TestResponseHelper
 
     public function assertHasCookie(string $key, ?Closure $test = null): self
     {
-        $cookie = $this->response->getCookies()->get($key);
+        $cookie = $this->response->getCookie($key);
 
         if ($test) {
             $test($cookie);

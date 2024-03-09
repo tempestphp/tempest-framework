@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use function Tempest\get;
+use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionManager;
 use function Tempest\view;
 use Tempest\View\View;
 
@@ -34,14 +34,39 @@ trait IsResponse
         return $this->headers;
     }
 
-    public function getSession(): Session
+    public function destroySession(): void
     {
-        return get(SessionManager::class);
+        $this->getSession()->destroy();
     }
 
-    public function getCookies(): CookieManager
+    public function addSession(string $name, mixed $value): void
     {
-        return get(CookieManager::class);
+        $this->getSession()->set($name, $value);
+    }
+
+    public function removeSession(string $name): void
+    {
+        $this->getSession()->remove($name);
+    }
+
+    public function addCookie(Cookie $cookie): void
+    {
+        $this->getCookieManager()->add($cookie);
+    }
+
+    public function getCookie(string $name): ?Cookie
+    {
+        return $this->getCookieManager()->get($name);
+    }
+
+    public function getCookies(): array
+    {
+        return $this->getCookieManager()->all();
+    }
+
+    public function removeCookie(string $key): void
+    {
+        $this->getCookieManager()->remove($key);
     }
 
     public function header(string $key, string $value): self
@@ -100,5 +125,15 @@ trait IsResponse
         return $this
             ->header('Location', $to)
             ->status(Status::FOUND);
+    }
+
+    private function getCookieManager(): CookieManager
+    {
+        return get(CookieManager::class);
+    }
+
+    private function getSession(): Session
+    {
+        return get(Session::class);
     }
 }
