@@ -18,7 +18,7 @@ use Throwable;
 
 final class GenericContainer implements Container
 {
-    use HasInstance;
+    private static self $instance;
 
     public function __construct(
         private array $definitions = [],
@@ -37,6 +37,11 @@ final class GenericContainer implements Container
         private array $dynamicInitializers = [],
         private readonly ContainerLog $log = new InMemoryContainerLog(),
     ) {
+    }
+
+    public static function getInstance(): self
+    {
+        return self::$instance ??= new self();
     }
 
     public function setInitializers(array $initializers): void
@@ -81,6 +86,14 @@ final class GenericContainer implements Container
         $this->log->startResolving();
 
         return $this->resolve($className, ...$params);
+    }
+
+    public function has(string $className): bool
+    {
+        return (
+            isset($this->singletons[$className]) ||
+            isset($this->definitions[$className])
+        );
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed

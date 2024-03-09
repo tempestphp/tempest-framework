@@ -13,7 +13,7 @@ use Tempest\Console\RenderConsoleCommandOverview;
 use Tempest\Container\Container;
 use Throwable;
 
-final readonly class ConsoleApplication implements Application
+final readonly class ConsoleApplication
 {
     public function __construct(
         private array $args,

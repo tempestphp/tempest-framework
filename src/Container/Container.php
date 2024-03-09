@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use ReflectionClass;
+use TClassName;
 
 interface Container
 {
@@ -15,11 +16,13 @@ interface Container
     public function config(object $config): self;
 
     /**
-     * @template TClassName
+     * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName
      */
-    public function get(string $className, mixed ...$params): object;
+    public function get(string $className, mixed ...$params);
+
+    public function has(string $className): bool;
 
     public function call(object $object, string $methodName, mixed ...$params): mixed;
 
