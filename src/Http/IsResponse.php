@@ -113,6 +113,11 @@ trait IsResponse
         return $this->getCookieManager()->all();
     }
 
+    public function flash(string $key, mixed $value): void
+    {
+        $this->getSession()->flash($key, $value);
+    }
+
     public function ok(): self
     {
         $this->status = Status::OK;

@@ -7,13 +7,13 @@ namespace Tempest\Testing\Http;
 use Closure;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Response;
+use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use function Tempest\get;
 
 final readonly class TestResponseHelper
 {
-    public function __construct(private Response $response)
-    {
-    }
+    public function __construct(private Response $response) {}
 
     public function getResponse(): Response
     {
@@ -104,11 +104,69 @@ final readonly class TestResponseHelper
     {
         $cookie = $this->response->getCookie($key);
 
+        Assert::assertNotNull($cookie);
+
         if ($test) {
             $test($cookie);
         }
 
-        Assert::assertNotNull($cookie);
+        return $this;
+    }
+
+    public function assertHasSession(string $key, ?Closure $test = null): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        Assert::assertNotNull(
+            $session->get($key),
+            sprintf(
+                "No session value was set for %s, available session keys: %s",
+                $key,
+                implode(', ', array_keys($session->data)),
+            ),
+        );
+
+        if ($test) {
+            $test($session);
+        }
+
+        return $this;
+    }
+
+    public function assertHasValidationError(string $key, ?Closure $test = null): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        $validationErrors = $session->get('validation_errors');
+
+        Assert::assertArrayHasKey(
+            $key,
+            $validationErrors,
+            sprintf(
+                "No validation error was set for %s, available validation errors: %s",
+                $key,
+                implode(', ', array_keys($validationErrors)),
+            ),
+        );
+
+        return $this;
+    }
+
+    public function assertHasNoValidationsErrors(): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        $validationErrors = $session->get('validation_errors');
+
+        Assert::assertEmpty(
+            $validationErrors,
+            sprintf(
+                "There should be no validation errors, but there were: %s",
+                implode(', ', array_keys($validationErrors)),
+            ));
 
         return $this;
     }

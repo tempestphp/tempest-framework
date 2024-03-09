@@ -48,4 +48,6 @@ interface Response
     public function notFound(): self;
 
     public function redirect(string $to): self;
+
+    public function flash(string $key, mixed $value): void;
 }

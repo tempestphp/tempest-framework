@@ -24,9 +24,21 @@ final class Session
         $this->getSessionManager()->set($this->id, $key, $value);
     }
 
+    public function flash(string $key, mixed $value): void
+    {
+        $this->getSessionManager()->set($this->id, $key, new FlashValue($value));
+    }
+
     public function get(string $key, mixed $default = null): mixed
     {
-        return $this->getSessionManager()->get($this->id, $key, $default);
+        $value = $this->getSessionManager()->get($this->id, $key, $default);
+
+        if ($value instanceof FlashValue) {
+            $value = $value->value;
+            $this->getSessionManager()->remove($this->id, $key);
+        }
+
+        return $value;
     }
 
     public function remove(string $key): void
