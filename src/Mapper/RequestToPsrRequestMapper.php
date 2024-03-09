@@ -23,7 +23,7 @@ final readonly class RequestToPsrRequestMapper implements Mapper
             uri: $from->getUri(),
             method: $from->getMethod()->value,
             headers: $from->getHeaders(),
-            cookieParams: $from->cookies()->all(),
+            cookieParams: $from->getCookies()->all(),
             queryParams: $from->getQuery(),
             parsedBody: $from->getBody(),
         );

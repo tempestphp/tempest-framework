@@ -34,12 +34,12 @@ trait IsResponse
         return $this->headers;
     }
 
-    public function session(): Session
+    public function getSession(): Session
     {
         return get(SessionManager::class);
     }
 
-    public function cookies(): CookieManager
+    public function getCookies(): CookieManager
     {
         return get(CookieManager::class);
     }

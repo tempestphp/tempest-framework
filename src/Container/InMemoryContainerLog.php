@@ -14,7 +14,7 @@ final class InMemoryContainerLog implements ContainerLog
 
     public function __construct(
         /** @var \Tempest\Container\Context[] $stack */
-        public array $stack = [],
+        private array $stack = [],
     ) {
     }
 

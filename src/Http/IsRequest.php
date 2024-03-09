@@ -68,12 +68,12 @@ trait IsRequest
         return $this->query;
     }
 
-    public function session(): Session
+    public function getSession(): Session
     {
         return get(Session::class);
     }
 
-    public function cookies(): CookieManager
+    public function getCookies(): CookieManager
     {
         return get(CookieManager::class);
     }

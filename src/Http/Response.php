@@ -24,9 +24,9 @@ interface Response
 
     public function getView(): ?View;
 
-    public function session(): Session;
+    public function getSession(): Session;
 
-    public function cookies(): CookieManager;
+    public function getCookies(): CookieManager;
 
     public function ok(): self;
 

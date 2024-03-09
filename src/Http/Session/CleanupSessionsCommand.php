@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Session;
 
 use Tempest\Console\Console;
@@ -11,7 +13,8 @@ final readonly class CleanupSessionsCommand
     public function __construct(
         private Console $console,
         private SessionManager $sessionManager,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'session:clean',

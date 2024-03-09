@@ -21,7 +21,7 @@ interface Request
 
     public function getQuery(): array;
 
-    public function session(): Session;
+    public function getSession(): Session;
 
-    public function cookies(): CookieManager;
+    public function getCookies(): CookieManager;
 }
