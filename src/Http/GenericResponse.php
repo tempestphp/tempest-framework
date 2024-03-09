@@ -26,7 +26,7 @@ final class GenericResponse implements Response
             }
 
             foreach ($values as $value) {
-                $this->header($key, $value);
+                $this->addHeader($key, $value);
             }
         }
     }

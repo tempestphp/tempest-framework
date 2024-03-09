@@ -18,11 +18,11 @@ interface Response
 
     public function getBody(): string|array|null;
 
-    public function body(string $body): self;
+    public function setBody(string $body): self;
 
-    public function header(string $key, string $value): self;
+    public function addHeader(string $key, string $value): self;
 
-    public function view(View $view): self;
+    public function setView(string|View $view): self;
 
     public function getView(): ?View;
 

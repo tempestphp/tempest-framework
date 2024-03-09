@@ -70,8 +70,8 @@ final readonly class TestController
     public function viewModelWithResponseData(): Response
     {
         return response()
-            ->header('x-from-viewmodel', 'true')
+            ->addHeader('x-from-viewmodel', 'true')
             ->status(Status::CREATED)
-            ->view(new ViewModelWithResponseData());
+            ->setView(new ViewModelWithResponseData());
     }
 }

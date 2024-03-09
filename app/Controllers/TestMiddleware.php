@@ -20,7 +20,7 @@ final readonly class TestMiddleware implements HttpMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        $response->header('middleware', $this->middlewareDependency->value);
+        $response->addHeader('middleware', $this->middlewareDependency->value);
 
         return $response;
     }

@@ -20,7 +20,7 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
         $response = $next($request);
 
         foreach ($response->getCookies() as $cookie) {
-            $response->header('set-cookie', (string) $cookie);
+            $response->addHeader('set-cookie', (string) $cookie);
         }
 
         return $response;

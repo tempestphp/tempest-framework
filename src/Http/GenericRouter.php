@@ -166,7 +166,7 @@ final class GenericRouter implements Router
         }
 
         if ($view = $input->getView()) {
-            $input->body($view->render($this->appConfig));
+            $input->setBody($view->render($this->appConfig));
         }
 
         return $input;

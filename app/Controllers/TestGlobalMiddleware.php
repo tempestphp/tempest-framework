@@ -15,7 +15,7 @@ final readonly class TestGlobalMiddleware implements HttpMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        $response->header('global-middleware', 'yes');
+        $response->addHeader('global-middleware', 'yes');
 
         return $response;
     }

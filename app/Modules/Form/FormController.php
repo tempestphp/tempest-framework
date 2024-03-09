@@ -14,7 +14,7 @@ final readonly class FormController
     #[Get('/form')]
     public function index(): Response
     {
-        return response()->view('Modules/Form/form.view.php');
+        return response()->setView('Modules/Form/form.view.php');
     }
 
     #[Post('/form')]

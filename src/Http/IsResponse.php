@@ -74,7 +74,7 @@ trait IsResponse
         $this->getCookieManager()->remove($key);
     }
 
-    public function header(string $key, string $value): self
+    public function addHeader(string $key, string $value): self
     {
         $this->headers[$key] ??= new Header($key);
 
@@ -83,14 +83,14 @@ trait IsResponse
         return $this;
     }
 
-    public function body(string $body): self
+    public function setBody(string $body): self
     {
         $this->body = $body;
 
         return $this;
     }
 
-    public function view(string|View $view, mixed ...$data): self
+    public function setView(string|View $view, mixed ...$data): self
     {
         if (is_string($view)) {
             $view = view($view)->data(...$data);
@@ -130,7 +130,7 @@ trait IsResponse
     public function redirect(string $to): self
     {
         return $this
-            ->header('Location', $to)
+            ->addHeader('Location', $to)
             ->status(Status::FOUND);
     }
 
