@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Session\Session;
+use Tempest\Http\Cookie\Cookie;
 
 interface Request
 {
@@ -21,7 +20,10 @@ interface Request
 
     public function getQuery(): array;
 
-    public function getSession(): Session;
+    public function getSessionValue(string $name): mixed;
 
-    public function getCookies(): CookieManager;
+    public function getCookie(string $name): ?Cookie;
+
+    /** @return Cookie[] */
+    public function getCookies(): array;
 }

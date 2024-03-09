@@ -18,14 +18,14 @@ use function Tempest\response;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
+/**
+ * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
+ */
 final class GenericRouter implements Router
 {
     private const string MARK_TOKEN = 'MARK';
 
-    /**
-     * @template T of \Tempest\Http\HttpMiddleware
-     * @var array<array-key, class-string<T>>
-     */
+    /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
 
     public function __construct(
