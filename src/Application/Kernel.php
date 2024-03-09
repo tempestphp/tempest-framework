@@ -20,9 +20,12 @@ interface Kernel
 
     public function setBasePath(string $path): self;
 
-    public function getConfigPath(): string;
+    /**
+     * @return array<array-key,string>
+     */
+    public function getConfigurationPaths(): array;
 
-    public function setConfigPath(string $path): self;
+    public function addConfigurationPath(string $path): self;
 
     public function boot(): void;
 

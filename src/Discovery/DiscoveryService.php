@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Discovery;
 
 class DiscoveryService
@@ -15,6 +17,6 @@ class DiscoveryService
 
     public function discover(): void
     {
-        //
+
     }
 }

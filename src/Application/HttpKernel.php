@@ -12,7 +12,9 @@ final class HttpKernel implements Kernel
 {
     private Container $container;
 
-    private string $rootDirectory;
+    private string $basePath;
+
+    private array $configPaths = [];
 
     /**
      * @var array<array-key, class-string<BootstrapsKernel>>
@@ -21,10 +23,10 @@ final class HttpKernel implements Kernel
         LoadEnvironmentVariables::class,
     ];
 
-    public function __construct(Container $container, string $rootDirectory)
+    public function __construct(Container $container, string $basePath)
     {
         $this->setContainer($container);
-        $this->setBasePath($rootDirectory);
+        $this->setBasePath($basePath);
     }
 
     public function getContainer(): Container
@@ -32,24 +34,45 @@ final class HttpKernel implements Kernel
         return $this->container;
     }
 
-    public function setContainer(Container $container): void
+    public function setContainer(Container $container): self
     {
         $this->container = $container;
+
+        return $this;
     }
 
     public function getBasePath(): string
     {
-        return $this->rootDirectory;
+        return $this->basePath;
     }
 
-    public function setBasePath(string $path): void
+    public function setBasePath(string $path): self
     {
         if (! is_dir($path)) {
             // TODO: Make this more helpful.
             throw new RuntimeException('The root directory does not exist.');
         }
 
-        $this->rootDirectory = realpath($path);
+        $this->basePath = realpath($path);
+
+        return $this;
+    }
+
+    public function getConfigurationPaths(): array
+    {
+        return $this->configPaths;
+    }
+
+    public function addConfigurationPath(string $path): self
+    {
+        if (! is_dir($path)) {
+            // TODO: Make this more helpful.
+            throw new RuntimeException('The config path does not exist.');
+        }
+
+        $this->configPaths[] = $path;
+
+        return $this;
     }
 
     public function boot(): void

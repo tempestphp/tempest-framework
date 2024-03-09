@@ -14,15 +14,15 @@ final readonly class Tempest
     {
         return new ConsoleKernel(
             container: $container,
-            rootDirectory: $basePath
+            basePath: $basePath
         );
     }
 
-    public static function http(Container $container, string $rootDirectory): HttpKernel
+    public static function http(Container $container, string $basePath): HttpKernel
     {
         return new HttpKernel(
             container: $container,
-            rootDirectory: $rootDirectory
+            basePath: $basePath
         );
     }
 }

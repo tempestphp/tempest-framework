@@ -8,15 +8,14 @@ use RuntimeException;
 use Tempest\Application\Bootstrap\LoadConfigurations;
 use Tempest\Application\Bootstrap\LoadEnvironmentVariables;
 use Tempest\Container\Container;
-use function Tempest\path;
 
 final class ConsoleKernel implements Kernel
 {
     private Container $container;
 
-    private string $rootDirectory;
+    private string $basePath;
 
-    private string $configPath;
+    private array $configPaths = [];
 
     /**
      * @var array<array-key, class-string<BootstrapsKernel>>
@@ -26,10 +25,10 @@ final class ConsoleKernel implements Kernel
         LoadConfigurations::class,
     ];
 
-    public function __construct(Container $container, string $rootDirectory)
+    public function __construct(Container $container, string $basePath)
     {
         $this->setContainer($container);
-        $this->setBasePath($rootDirectory);
+        $this->setBasePath($basePath);
     }
 
     public function getContainer(): Container
@@ -46,7 +45,7 @@ final class ConsoleKernel implements Kernel
 
     public function getBasePath(): string
     {
-        return $this->rootDirectory;
+        return $this->basePath;
     }
 
     public function setBasePath(string $path): self
@@ -56,26 +55,24 @@ final class ConsoleKernel implements Kernel
             throw new RuntimeException('The root directory does not exist.');
         }
 
-        $this->rootDirectory = realpath($path);
+        $this->basePath = realpath($path);
 
         return $this;
     }
 
-    public function getConfigPath(): string
+    public function getConfigurationPaths(): array
     {
-        return $this->configPath ??= path(
-            $this->rootDirectory, 'config'
-        );
+        return $this->configPaths;
     }
 
-    public function setConfigPath(string $path): self
+    public function addConfigurationPath(string $path): self
     {
         if (! is_dir($path)) {
             // TODO: Make this more helpful.
             throw new RuntimeException('The config path does not exist.');
         }
 
-        $this->configPath = $path;
+        $this->configPaths[] = $path;
 
         return $this;
     }

@@ -7,6 +7,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $container = GenericContainer::getInstance();
 
-Tempest::http(container: $container, rootDirectory: __DIR__ . '/../')->run();
+Tempest::http(container: $container, basePath: __DIR__ . '/../')->run();
 
 exit;
