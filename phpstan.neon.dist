@@ -9,6 +9,7 @@ services:
 			- phpat.test
 parameters:
 	level: 6
+	reportUnmatchedIgnoredErrors: false
 	paths:
 		- app
 		- src
