@@ -71,7 +71,7 @@ final readonly class TestController
     {
         return response()
             ->addHeader('x-from-viewmodel', 'true')
-            ->status(Status::CREATED)
+            ->setStatus(Status::CREATED)
             ->setView(new ViewModelWithResponseData());
     }
 }

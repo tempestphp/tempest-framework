@@ -24,9 +24,11 @@ trait IsResponse
         return $this->status;
     }
 
-    public function getBody(): string|array|null
+    public function setStatus(Status $status): self
     {
-        return $this->body;
+        $this->status = $status;
+
+        return $this;
     }
 
     public function getHeaders(): array
@@ -39,41 +41,6 @@ trait IsResponse
         return $this->headers[$name];
     }
 
-    public function destroySession(): void
-    {
-        $this->getSession()->destroy();
-    }
-
-    public function addSession(string $name, mixed $value): void
-    {
-        $this->getSession()->set($name, $value);
-    }
-
-    public function removeSession(string $name): void
-    {
-        $this->getSession()->remove($name);
-    }
-
-    public function addCookie(Cookie $cookie): void
-    {
-        $this->getCookieManager()->add($cookie);
-    }
-
-    public function getCookie(string $name): ?Cookie
-    {
-        return $this->getCookieManager()->get($name);
-    }
-
-    public function getCookies(): array
-    {
-        return $this->getCookieManager()->all();
-    }
-
-    public function removeCookie(string $key): void
-    {
-        $this->getCookieManager()->remove($key);
-    }
-
     public function addHeader(string $key, string $value): self
     {
         $this->headers[$key] ??= new Header($key);
@@ -83,11 +50,21 @@ trait IsResponse
         return $this;
     }
 
+    public function getBody(): string|array|null
+    {
+        return $this->body;
+    }
+
     public function setBody(string $body): self
     {
         $this->body = $body;
 
         return $this;
+    }
+
+    public function getView(): ?View
+    {
+        return $this->view;
     }
 
     public function setView(string|View $view, mixed ...$data): self
@@ -101,9 +78,39 @@ trait IsResponse
         return $this;
     }
 
-    public function getView(): ?View
+    public function addSession(string $name, mixed $value): void
     {
-        return $this->view;
+        $this->getSession()->set($name, $value);
+    }
+
+    public function removeSession(string $name): void
+    {
+        $this->getSession()->remove($name);
+    }
+
+    public function destroySession(): void
+    {
+        $this->getSession()->destroy();
+    }
+
+    public function addCookie(Cookie $cookie): void
+    {
+        $this->getCookieManager()->add($cookie);
+    }
+
+    public function removeCookie(string $key): void
+    {
+        $this->getCookieManager()->remove($key);
+    }
+
+    public function getCookie(string $name): ?Cookie
+    {
+        return $this->getCookieManager()->get($name);
+    }
+
+    public function getCookies(): array
+    {
+        return $this->getCookieManager()->all();
     }
 
     public function ok(): self
@@ -120,18 +127,11 @@ trait IsResponse
         return $this;
     }
 
-    public function status(Status $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function redirect(string $to): self
     {
         return $this
             ->addHeader('Location', $to)
-            ->status(Status::FOUND);
+            ->setStatus(Status::FOUND);
     }
 
     private function getCookieManager(): CookieManager
