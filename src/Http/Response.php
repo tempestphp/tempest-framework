@@ -11,7 +11,10 @@ interface Response
 {
     public function getStatus(): Status;
 
+    /** @return \Tempest\Http\Header[] */
     public function getHeaders(): array;
+
+    public function getHeader(string $name): ?Header;
 
     public function getBody(): string|array|null;
 

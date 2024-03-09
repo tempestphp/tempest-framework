@@ -15,7 +15,7 @@ trait IsResponse
 {
     private Status $status;
     private string|array|null $body = null;
-    /** @var array @var string[][] */
+    /** @var \Tempest\Http\Header[] */
     private array $headers = [];
     private ?View $view = null;
 
@@ -32,6 +32,11 @@ trait IsResponse
     public function getHeaders(): array
     {
         return $this->headers;
+    }
+
+    public function getHeader(string $name): ?Header
+    {
+        return $this->headers[$name];
     }
 
     public function destroySession(): void
@@ -71,7 +76,9 @@ trait IsResponse
 
     public function header(string $key, string $value): self
     {
-        $this->headers[$key][] = $value;
+        $this->headers[$key] ??= new Header($key);
+
+        $this->headers[$key]->add($value);
 
         return $this;
     }

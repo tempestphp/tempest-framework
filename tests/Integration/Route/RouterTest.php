@@ -99,9 +99,7 @@ HTML;
 
         $response = $router->dispatch($this->http->makePsrRequest('/with-middleware'));
 
-        $this->assertEquals([
-            'middleware' => ['from-dependency'],
-            'global-middleware' => ['yes'],
-        ], $response->getHeaders());
+        $this->assertEquals(['from-dependency'], $response->getHeader('middleware')->values);
+        $this->assertEquals(['yes'], $response->getHeader('global-middleware')->values);
     }
 }

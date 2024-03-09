@@ -18,7 +18,16 @@ final class GenericResponse implements Response
     ) {
         $this->status = $status;
         $this->body = $body;
-        $this->headers = $headers;
         $this->view = $view;
+
+        foreach ($headers as $key => $values) {
+            if (! is_array($values)) {
+                $values = [$values];
+            }
+
+            foreach ($values as $value) {
+                $this->header($key, $value);
+            }
+        }
     }
 }

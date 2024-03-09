@@ -50,13 +50,13 @@ final readonly class TestResponseHelper
     {
         $this->assertHasHeader($name);
 
-        $header = $this->response->getHeaders()[$name];
+        $header = $this->response->getHeader($name);
 
         $headerString = var_export($header, true);
 
         Assert::assertContains(
             $value,
-            $header,
+            $header->values,
             sprintf('Failed to assert that response header [%s] value contains %s. These header values were found: %s', $name, $value, $headerString),
         );
 
