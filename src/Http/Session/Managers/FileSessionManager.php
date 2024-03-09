@@ -27,7 +27,7 @@ final readonly class FileSessionManager implements SessionManager
         return $this->persist($id);
     }
 
-    public function put(SessionId $id, string $key, mixed $value): void
+    public function set(SessionId $id, string $key, mixed $value): void
     {
         $this->persist($id, [...$this->getData($id), ...[$key => $value]]);
     }

@@ -18,9 +18,9 @@ final class Session
     ) {
     }
 
-    public function put(string $key, mixed $value): void
+    public function set(string $key, mixed $value): void
     {
-        $this->getSessionManager()->put($this->id, $key, $value);
+        $this->getSessionManager()->set($this->id, $key, $value);
     }
 
     public function get(string $key, mixed $default = null): mixed

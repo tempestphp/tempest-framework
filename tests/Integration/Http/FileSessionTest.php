@@ -54,7 +54,7 @@ final class FileSessionTest extends IntegrationTest
     {
         $session = $this->container->get(Session::class);
 
-        $session->put('test', 'value');
+        $session->set('test', 'value');
         $value = $session->get('test');
         $this->assertEquals('value', $value);
     }
@@ -63,7 +63,7 @@ final class FileSessionTest extends IntegrationTest
     {
         $session = $this->container->get(Session::class);
 
-        $session->put('test', 'value');
+        $session->set('test', 'value');
         $session->remove('test');
         $value = $session->get('test');
         $this->assertNull($value);

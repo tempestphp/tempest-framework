@@ -8,7 +8,7 @@ interface SessionManager
 {
     public function create(SessionId $id): Session;
 
-    public function put(SessionId $id, string $key, mixed $value): void;
+    public function set(SessionId $id, string $key, mixed $value): void;
 
     public function get(SessionId $id, string $key, mixed $default = null): mixed;
 

@@ -27,7 +27,7 @@ final class SessionFromCookieTest extends IntegrationTest
 
         $cookieManager->set('tempest_session_id', 'session_a');
         $sessionA = $this->container->get(Session::class);
-        $sessionA->put('test', 'a');
+        $sessionA->set('test', 'a');
 
         $cookieManager->set('tempest_session_id', 'session_b');
         $sessionB = $this->container->get(Session::class);

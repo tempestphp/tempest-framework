@@ -29,11 +29,11 @@ final class CleanupSessionsCommandTest extends IntegrationTest
 
         $sessionManager = $this->container->get(SessionManager::class);
 
-        $sessionManager->put(new SessionId('session_a'), 'test', 'value');
+        $sessionManager->set(new SessionId('session_a'), 'test', 'value');
 
         $clock->changeTime(9);
 
-        $sessionManager->put(new SessionId('session_b'), 'test', 'value');
+        $sessionManager->set(new SessionId('session_b'), 'test', 'value');
 
         $clock->changeTime(2);
 
