@@ -23,6 +23,6 @@ class KernelTest extends TestCase
 
         $config = $container->get(RouteConfig::class);
 
-        $this->assertTrue(count($config->routes) > 1);
+        $this->assertTrue(count($config->staticRoutes) > 1);
     }
 }

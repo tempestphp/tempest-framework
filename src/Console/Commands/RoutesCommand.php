@@ -25,7 +25,13 @@ final readonly class RoutesCommand
     {
         $sortedRoutes = [];
 
-        foreach ($this->routeConfig->routes as $method => $routesForMethod) {
+        foreach ($this->routeConfig->dynamicRoutes as $method => $routesForMethod) {
+            foreach ($routesForMethod as $route) {
+                $sortedRoutes["{$route->uri}:{$method}"] = $route;
+            }
+        }
+
+        foreach ($this->routeConfig->staticRoutes as $method => $routesForMethod) {
             foreach ($routesForMethod as $route) {
                 $sortedRoutes["{$route->uri}:{$method}"] = $route;
             }

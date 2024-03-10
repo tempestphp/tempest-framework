@@ -8,9 +8,16 @@ use ReflectionMethod;
 
 final class RouteConfig
 {
+    /** @var string The mark to give the next route in the matching Regex */
+    private string $regexMark = 'a';
+
     public function __construct(
         /** @var array<string, array<string, \Tempest\Http\Route>> */
-        public array $routes = [],
+        public array  $staticRoutes = [],
+        /** @var array<string, array<string, \Tempest\Http\Route>> */
+        public array  $dynamicRoutes = [],
+        /** @var array<string, string> */
+        public array $matchingRegexes = []
     ) {
     }
 
@@ -18,8 +25,38 @@ final class RouteConfig
     {
         $route->setHandler($handler);
 
-        $this->routes[$route->method->value][$route->uri] = $route;
+        if ($route->isDynamic) {
+            $routeMark = $this->regexMark++;
+            $this->dynamicRoutes[$route->method->value][$routeMark] = $route;
+            $this->addToMatchingRegex($route, $routeMark);
+
+        } else {
+            $this->staticRoutes[$route->method->value][$route->uri] = $route;
+        }
+
 
         return $this;
+    }
+
+    /**
+     * Build one big regex for matching request URIs.
+     * See https://github.com/tempestphp/tempest-framework/pull/175 for the details
+     */
+    private function addToMatchingRegex(Route $route, string $routeMark): void
+    {
+        // Each route, say "/posts/{postId}", which would have the regex "/posts/[^/]+", is marked.
+        // e.g "/posts/[^/]+ (*MARK:a)".
+        // This mark can than be used to find the matched route via a hashmap-lookup.
+
+        $routeRegexPart = "$route->matchingRegex (*" . GenericRouter::REGEX_MARK_TOKEN . ":$routeMark)";
+        if (! array_key_exists($route->method->value, $this->matchingRegexes)) {
+            // initialize matching regex for method
+            $this->matchingRegexes[$route->method->value] = "#^(?|$routeRegexPart)$#x";
+
+            return;
+        }
+
+        // insert regex part of this route into the matching group of the regex for the method
+        $this->matchingRegexes[$route->method->value] = substr_replace($this->matchingRegexes[$route->method->value], "|$routeRegexPart", -4, 0);
     }
 }
