@@ -120,8 +120,10 @@ final readonly class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
+        $data = $session->get($key);
+
         Assert::assertNotNull(
-            $session->get($key),
+            $data,
             sprintf(
                 "No session value was set for %s, available session keys: %s",
                 $key,
@@ -130,7 +132,7 @@ final readonly class TestResponseHelper
         );
 
         if ($test) {
-            $test($session);
+            $test($session, $data);
         }
 
         return $this;

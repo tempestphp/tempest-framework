@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use App\Controllers\ValidationController;
+use Tempest\Http\Session\Session;
 use Tempest\Testing\IntegrationTest;
 use function Tempest\uri;
 
@@ -27,5 +28,16 @@ final class ValidationResponseTest extends IntegrationTest
             ->assertHasNoValidationsErrors();
     }
 
-    // TODO: test with original values
+    public function test_original_values()
+    {
+        $values = ['number' => 11, 'item.number' => 11];
+
+        $this->http
+            ->post(uri([ValidationController::class, 'store']), $values)
+            ->assertRedirect(uri([ValidationController::class, 'store']))
+            ->assertHasValidationError('number')
+            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $session, array $data) use ($values) {
+                $this->assertEquals($values, $data);
+            });
+    }
 }
