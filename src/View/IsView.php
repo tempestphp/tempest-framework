@@ -191,7 +191,7 @@ trait IsView
     /** @return array<mixed> */
     private function resolveValidationErrors(): ?array
     {
-        $this->errors ??= $this->getSession()->get('validation_errors');
+        $this->errors ??= $this->getSession()->get(Session::VALIDATION_ERRORS);
 
         return $this->errors;
     }
@@ -199,7 +199,7 @@ trait IsView
     /** @return array<mixed> */
     private function resolveOriginalValues(): ?array
     {
-        $this->originalValues ??= $this->getSession()->get('original_values');
+        $this->originalValues ??= $this->getSession()->get(Session::ORIGINAL_VALUES);
 
         return $this->originalValues;
     }

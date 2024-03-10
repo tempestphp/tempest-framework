@@ -141,7 +141,7 @@ final readonly class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
-        $validationErrors = $session->get('validation_errors');
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS);
 
         Assert::assertArrayHasKey(
             $key,
@@ -153,6 +153,10 @@ final readonly class TestResponseHelper
             ),
         );
 
+        if ($test) {
+            $test($validationErrors);
+        }
+
         return $this;
     }
 
@@ -161,7 +165,7 @@ final readonly class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
-        $validationErrors = $session->get('validation_errors') ?? [];
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
         Assert::assertEmpty(
             $validationErrors,
