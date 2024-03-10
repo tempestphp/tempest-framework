@@ -15,14 +15,14 @@ final class InvalidResponse implements Response
     use IsResponse;
 
     public function __construct(
-        private readonly PsrRequest $request,
+        PsrRequest $request,
         ValidationException $exception,
     ) {
         $this->status = Status::BAD_REQUEST;
-        $this->redirect((string) $this->request->getUri());
+        $this->redirect((string) $request->getUri());
         // TODO: add these names as constants somewhere
         // TODO: mapping empty field to number results in type/validation error
         $this->flash('validation_errors', $exception->failingRules);
-        $this->flash('original_values', $this->request->getParsedBody());
+        $this->flash('original_values', $request->getParsedBody());
     }
 }
