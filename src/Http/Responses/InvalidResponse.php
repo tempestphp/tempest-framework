@@ -21,8 +21,6 @@ final class InvalidResponse implements Response
     ) {
         $this->status = Status::BAD_REQUEST;
         $this->redirect((string) $request->getUri());
-        // TODO: add these names as constants somewhere
-        // TODO: mapping empty field to number results in type/validation error
         $this->flash(Session::VALIDATION_ERRORS, $exception->failingRules);
         $this->flash(Session::ORIGINAL_VALUES, $request->getParsedBody());
     }
