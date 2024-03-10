@@ -22,7 +22,7 @@ class GenericResponseSenderTest extends TestCase
         $response = new GenericResponse(
             status: Status::CREATED,
             body: '{"key": "value"}',
-            headers: ['Content-Type' => 'application/json']
+            headers: ['Content-Type' => ['application/json']]
         );
 
         $responseSender = new GenericResponseSender();
@@ -48,6 +48,6 @@ class GenericResponseSenderTest extends TestCase
         ob_get_clean();
 
         $this->assertSame('{"key":"value"}', $response->getBody());
-        $this->assertSame(['Content-Type' => 'application/json'], $response->getHeaders());
+        $this->assertSame(['application/json'], $response->getHeader('Content-Type')->values);
     }
 }

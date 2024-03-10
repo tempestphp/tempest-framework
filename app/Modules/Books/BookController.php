@@ -19,7 +19,7 @@ final readonly class BookController
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {
-        return response()->ok()->body($book->title);
+        return response()->ok()->setBody($book->title);
     }
 
     #[Post('/books')]

@@ -18,9 +18,15 @@ use function Tempest\response;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
-final readonly class GenericRouter implements Router
+/**
+ * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
+ */
+final class GenericRouter implements Router
 {
     private const string MARK_TOKEN = 'MARK';
+
+    /** @var class-string<MiddlewareClass>[] */
+    private array $middleware = [];
 
     public function __construct(
         private Container $container,
@@ -46,19 +52,19 @@ final readonly class GenericRouter implements Router
 
         try {
             $request = $this->resolveRequest($request, $matchedRoute);
-            $outputFromController = $callable($request);
+            $response = $callable($request);
         } catch (ValidationException $exception) {
             return new InvalidResponse($request, $exception);
         }
 
-        if ($outputFromController === null) {
+        if ($response === null) {
             throw new MissingControllerOutputException(
                 $matchedRoute->route->handler->getDeclaringClass()->getName(),
                 $matchedRoute->route->handler->getName(),
             );
         }
 
-        return $this->createResponse($outputFromController);
+        return $response;
     }
 
     private function matchRoute(PsrRequest $request): ?MatchedRoute
@@ -76,13 +82,15 @@ final readonly class GenericRouter implements Router
     {
         $route = $matchedRoute->route;
 
-        $callable = fn (Request $request) => $this->container->call(
+        $callControllerAction = fn (Request $request) => $this->container->call(
             $this->container->get($route->handler->getDeclaringClass()->getName()),
             $route->handler->getName(),
             ...$matchedRoute->params,
         );
 
-        $middlewareStack = $route->middleware;
+        $callable = fn (Request $request) => $this->createResponse($callControllerAction($request));
+
+        $middlewareStack = [...$this->middleware, ...$route->middleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
             $callable = fn (Request $request) => $this->container->get($middlewareClass)($request, $callable);
@@ -158,7 +166,7 @@ final readonly class GenericRouter implements Router
         }
 
         if ($view = $input->getView()) {
-            $input->body($view->render($this->appConfig));
+            $input->setBody($view->render($this->appConfig));
         }
 
         return $input;
@@ -256,5 +264,10 @@ final readonly class GenericRouter implements Router
         $this->container->singleton($request::class, fn () => $request);
 
         return $request;
+    }
+
+    public function addMiddleware(string $middlewareClass): void
+    {
+        $this->middleware[] = $middlewareClass;
     }
 }

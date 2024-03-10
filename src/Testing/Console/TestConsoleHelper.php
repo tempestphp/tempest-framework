@@ -21,7 +21,22 @@ final readonly class TestConsoleHelper
             sprintf(
                 'Failed to assert that console output included text: %s. These lines were printed: %s',
                 $text,
-                PHP_EOL . $this->output->getTextWithoutFormatting(),
+                PHP_EOL.PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
+            ),
+        );
+
+        return $this;
+    }
+
+    public function assertDoesNotContain(string $text): self
+    {
+        Assert::assertStringNotContainsString(
+            $text,
+            $this->output->getTextWithoutFormatting(),
+            sprintf(
+                'Failed to assert that console output did not include text: %s. These lines were printed: %s',
+                $text,
+                PHP_EOL.PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
             ),
         );
 

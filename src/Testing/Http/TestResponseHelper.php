@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\Http;
 
+use Closure;
 use PHPUnit\Framework\Assert;
+use function Tempest\get;
 use Tempest\Http\Response;
+use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 
 final readonly class TestResponseHelper
@@ -45,14 +48,18 @@ final readonly class TestResponseHelper
         return $this;
     }
 
-    public function assertHeaderValueEquals(string $name, mixed $value): self
+    public function assertHeaderContains(string $name, mixed $value): self
     {
         $this->assertHasHeader($name);
 
-        Assert::assertEquals(
-            $this->response->getHeaders()[$name],
+        $header = $this->response->getHeader($name);
+
+        $headerString = var_export($header, true);
+
+        Assert::assertContains(
             $value,
-            sprintf('Failed to assert that response header [%s] value equals %s.', $name, $value),
+            $header->values,
+            sprintf('Failed to assert that response header [%s] value contains %s. These header values were found: %s', $name, $value, $headerString),
         );
 
         return $this;
@@ -67,7 +74,7 @@ final readonly class TestResponseHelper
 
         return $to === null
             ? $this->assertHasHeader('Location')
-            : $this->assertHeaderValueEquals('Location', $to);
+            : $this->assertHeaderContains('Location', $to);
     }
 
     public function assertOk(): self
@@ -90,6 +97,84 @@ final readonly class TestResponseHelper
                 $expected->value,
                 $this->response->getStatus()->value,
             ),
+        );
+
+        return $this;
+    }
+
+    public function assertHasCookie(string $key, ?Closure $test = null): self
+    {
+        $cookie = $this->response->getCookie($key);
+
+        Assert::assertNotNull($cookie);
+
+        if ($test) {
+            $test($cookie);
+        }
+
+        return $this;
+    }
+
+    public function assertHasSession(string $key, ?Closure $test = null): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        $data = $session->get($key);
+
+        Assert::assertNotNull(
+            $data,
+            sprintf(
+                "No session value was set for %s, available session keys: %s",
+                $key,
+                implode(', ', array_keys($session->data)),
+            ),
+        );
+
+        if ($test) {
+            $test($session, $data);
+        }
+
+        return $this;
+    }
+
+    public function assertHasValidationError(string $key, ?Closure $test = null): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS);
+
+        Assert::assertArrayHasKey(
+            $key,
+            $validationErrors,
+            sprintf(
+                "No validation error was set for %s, available validation errors: %s",
+                $key,
+                implode(', ', array_keys($validationErrors)),
+            ),
+        );
+
+        if ($test) {
+            $test($validationErrors);
+        }
+
+        return $this;
+    }
+
+    public function assertHasNoValidationsErrors(): self
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
+
+        Assert::assertEmpty(
+            $validationErrors,
+            sprintf(
+                "There should be no validation errors, but there were: %s",
+                implode(', ', array_keys($validationErrors)),
+            )
         );
 
         return $this;

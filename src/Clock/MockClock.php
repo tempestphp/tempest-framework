@@ -35,4 +35,14 @@ final class MockClock implements Clock
             new DateInterval("PT{$seconds}S")
         );
     }
+
+    public function changeTime(int $seconds): void
+    {
+        if ($seconds < 0) {
+            $seconds = abs($seconds);
+            $this->now = $this->now->sub(new DateInterval("PT{$seconds}S"));
+        } else {
+            $this->now = $this->now->add(new DateInterval("PT{$seconds}S"));
+        }
+    }
 }

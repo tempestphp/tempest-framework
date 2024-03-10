@@ -7,12 +7,17 @@ namespace Tempest\Http;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Http\Cookie\SetCookieMiddleware;
 
 #[Singleton]
 final readonly class RouterInitializer implements Initializer
 {
     public function initialize(Container $container): Router
     {
-        return $container->get(GenericRouter::class);
+        $router = $container->get(GenericRouter::class);
+
+        $router->addMiddleware(SetCookieMiddleware::class);
+
+        return $router;
     }
 }

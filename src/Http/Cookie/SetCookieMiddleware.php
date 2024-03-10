@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace Tempest\Http\Cookie;
 
 use Tempest\Http\HttpMiddleware;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 
-final readonly class TestMiddleware implements HttpMiddleware
+final readonly class SetCookieMiddleware implements HttpMiddleware
 {
-    public function __construct(
-        private MiddlewareDependency $middlewareDependency,
-    ) {
+    public function __construct()
+    {
     }
 
     public function __invoke(Request $request, callable $next): Response
@@ -20,7 +19,9 @@ final readonly class TestMiddleware implements HttpMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        $response->addHeader('middleware', $this->middlewareDependency->value);
+        foreach ($response->getCookies() as $cookie) {
+            $response->addHeader('set-cookie', (string) $cookie);
+        }
 
         return $response;
     }

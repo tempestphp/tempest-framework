@@ -19,6 +19,10 @@ trait IsView
     public ?string $extendsPath = null;
     public array $extendsParams = [];
     private AppConfig $appConfig;
+    /** @var array<mixed>|null */
+    private ?array $errors = null;
+    /** @var array<mixed>|null */
+    private ?array $originalValues = null;
 
     public function __construct(
         string $path,
@@ -158,14 +162,46 @@ trait IsView
      */
     public function getErrorsFor(string $name): array
     {
-        return $this->getSession()->get('validation_errors')[$name] ?? [];
+        $errors = $this->resolveValidationErrors();
+
+        return $errors[$name] ?? [];
+    }
+
+    public function hasErrorsFor(string $name): bool
+    {
+        $errors = $this->resolveValidationErrors();
+
+        return array_key_exists($name, $errors);
     }
 
     public function hasErrors(): bool
     {
-        $errors = $this->getSession()->get('validation_errors', []);
+        $errors = $this->resolveValidationErrors();
 
-        return $errors !== [];
+        return $errors !== null;
+    }
+
+    public function original(string $name, mixed $default = ''): mixed
+    {
+        $originalValues = $this->resolveOriginalValues();
+
+        return $originalValues[$name] ?? $default;
+    }
+
+    /** @return array<mixed> */
+    private function resolveValidationErrors(): ?array
+    {
+        $this->errors ??= $this->getSession()->get(Session::VALIDATION_ERRORS);
+
+        return $this->errors;
+    }
+
+    /** @return array<mixed> */
+    private function resolveOriginalValues(): ?array
+    {
+        $this->originalValues ??= $this->getSession()->get(Session::ORIGINAL_VALUES);
+
+        return $this->originalValues;
     }
 
     private function getSession(): Session

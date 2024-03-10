@@ -8,19 +8,14 @@ use Tempest\Http\HttpMiddleware;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 
-final readonly class TestMiddleware implements HttpMiddleware
+final readonly class TestGlobalMiddleware implements HttpMiddleware
 {
-    public function __construct(
-        private MiddlewareDependency $middlewareDependency,
-    ) {
-    }
-
     public function __invoke(Request $request, callable $next): Response
     {
         /** @var Response $response */
         $response = $next($request);
 
-        $response->addHeader('middleware', $this->middlewareDependency->value);
+        $response->addHeader('global-middleware', 'yes');
 
         return $response;
     }

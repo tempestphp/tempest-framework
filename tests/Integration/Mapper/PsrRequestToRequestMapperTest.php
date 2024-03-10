@@ -34,7 +34,6 @@ class PsrRequestToRequestMapperTest extends IntegrationTest
                 uri: '/',
                 body: ['title' => 'a', 'text' => 'b'],
                 headers: ['x-test' => 'test'],
-                cookies: ['test' => 'test'],
             ),
             to: PostRequest::class,
         );
@@ -43,7 +42,6 @@ class PsrRequestToRequestMapperTest extends IntegrationTest
         $this->assertEquals('a', $request->title);
         $this->assertEquals('b', $request->text);
         $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
-        $this->assertEquals(['test' => 'test'], $request->getCookies());
     }
 
     public function test_map_with_with_missing_data()

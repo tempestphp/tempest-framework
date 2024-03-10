@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use function Tempest\get;
+use Tempest\Http\Cookie\Cookie;
+use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Session\Session;
+
 trait IsRequest
 {
     public string $path;
@@ -14,7 +19,6 @@ trait IsRequest
         public string $uri,
         public array $body,
         public array $headers = [],
-        public array $cookies = [],
     ) {
         $this->path ??= $this->resolvePath();
         $this->query ??= $this->resolveQuery();
@@ -55,11 +59,6 @@ trait IsRequest
         return $this->headers;
     }
 
-    public function getCookies(): array
-    {
-        return $this->cookies;
-    }
-
     public function getPath(): string
     {
         return $this->path;
@@ -68,6 +67,30 @@ trait IsRequest
     public function getQuery(): array
     {
         return $this->query;
+    }
+
+    public function getSessionValue(string $name): mixed
+    {
+        /** @var Session $session */
+        $session = get(Session::class);
+
+        return $session->get($name);
+    }
+
+    public function getCookie(string $name): ?Cookie
+    {
+        /** @var CookieManager $cookies */
+        $cookies = get(CookieManager::class);
+
+        return $cookies->get($name);
+    }
+
+    public function getCookies(): array
+    {
+        /** @var CookieManager $cookies */
+        $cookies = get(CookieManager::class);
+
+        return $cookies->all();
     }
 
     private function resolvePath(): string

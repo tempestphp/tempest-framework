@@ -28,8 +28,10 @@ final readonly class GenericResponseSender implements ResponseSender
             return;
         }
 
-        foreach ($response->getHeaders() as $key => $value) {
-            header("{$key}: {$value}");
+        foreach ($response->getHeaders() as $key => $header) {
+            foreach ($header->values as $value) {
+                header("{$key}: {$value}");
+            }
         }
 
         http_response_code($response->getStatus()->value);
@@ -45,8 +47,8 @@ final readonly class GenericResponseSender implements ResponseSender
         $body = $response->getBody();
 
         if (is_array($body)) {
-            $response->header('Content-Type', 'application/json');
-            $response->body(json_encode($body));
+            $response->addHeader('Content-Type', 'application/json');
+            $response->setBody(json_encode($body));
         }
 
         return $response;

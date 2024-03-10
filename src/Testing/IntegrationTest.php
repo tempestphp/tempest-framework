@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Testing;
 
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
+use Tempest\Clock\Clock;
+use Tempest\Clock\MockClock;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Testing\Console\ConsoleCommandTester;
 use Tempest\Testing\Http\HttpRouterTester;
 
@@ -42,6 +48,10 @@ abstract class IntegrationTest extends TestCase
 
         $this->console = $this->container->get(ConsoleCommandTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
+
+        $request = new GenericRequest(Method::GET, '/', []);
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 
     protected function migrate(string ...$migrationClasses): void
@@ -51,5 +61,12 @@ abstract class IntegrationTest extends TestCase
         foreach ($migrationClasses as $migrationClass) {
             $migrationManager->executeUp($this->container->get($migrationClass));
         }
+    }
+
+    protected function clock(DateTimeInterface|string $now): MockClock
+    {
+        $this->container->singleton(Clock::class, fn () => new MockClock($now));
+
+        return $this->container->get(Clock::class);
     }
 }

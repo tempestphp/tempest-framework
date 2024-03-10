@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Exception;
+use ReflectionParameter;
 use Tempest\Container\Exceptions\CircularDependencyException;
 
 final class InMemoryContainerLog implements ContainerLog
@@ -39,6 +40,16 @@ final class InMemoryContainerLog implements ContainerLog
 
     public function addDependency(Dependency $dependency): ContainerLog
     {
+        if ($this->stack === []) {
+            $reflector = $dependency->reflector;
+
+            if ($reflector instanceof ReflectionParameter) {
+                $reflector = $reflector->getDeclaringClass();
+            }
+
+            $this->addContext(new Context($reflector));
+        }
+
         $this->currentContext()->addDependency($dependency);
 
         return $this;
