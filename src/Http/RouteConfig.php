@@ -11,13 +11,14 @@ final class RouteConfig
     /** @var string The mark to give the next route in the matching Regex */
     private string $regexMark = 'a';
 
+    /** @var array<string, string> */
+    public array $matchingRegexes = [];
+
     public function __construct(
         /** @var array<string, array<string, \Tempest\Http\Route>> */
         public array  $staticRoutes = [],
         /** @var array<string, array<string, \Tempest\Http\Route>> */
         public array  $dynamicRoutes = [],
-        /** @var array<string, string> */
-        public array $matchingRegexes = []
     ) {
     }
 
