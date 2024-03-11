@@ -28,7 +28,7 @@ final class ValidationResponseTest extends IntegrationTest
             ->assertHasNoValidationsErrors();
     }
 
-    public function test_original_values()
+    public function test_original_values(): void
     {
         $values = ['number' => 11, 'item.number' => 11];
 

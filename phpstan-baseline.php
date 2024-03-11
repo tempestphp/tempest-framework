@@ -1348,7 +1348,7 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	'message' => '#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#',
-	'count' => 2,
+	'count' => 3,
 	'path' => __DIR__ . '/src/Mapper/ArrayToObjectMapper.php',
 ];
 $ignoreErrors[] = [

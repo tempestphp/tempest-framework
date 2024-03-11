@@ -7,10 +7,13 @@ namespace Tempest\Mapper;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use Tempest\ORM\Casters\BooleanCaster;
+use Tempest\ORM\Casters\FloatCaster;
 use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
+use Tempest\ORM\Casters\IntegerCaster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Validator;
@@ -87,12 +90,16 @@ final readonly class ArrayToObjectMapper implements Mapper
                     ->in($property->getType()->getName())
                     ->first();
             } catch (ReflectionException) {
-                return null;
             }
         }
 
         if (! $castWith) {
-            return null;
+            return match($property->getType()->getName()) {
+                'int' => new IntegerCaster(),
+                'float' => new FloatCaster(),
+                'bool' => new BooleanCaster(),
+                default => null,
+            };
         }
 
         return get($castWith->className);
