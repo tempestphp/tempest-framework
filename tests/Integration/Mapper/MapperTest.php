@@ -8,8 +8,6 @@ use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use function Tempest\make;
 use function Tempest\map;
 use Tempest\ORM\Exceptions\MissingValuesException;
@@ -18,6 +16,8 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
 
 /**
