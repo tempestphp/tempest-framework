@@ -27,9 +27,9 @@ final class RouteConfig
         $route->setHandler($handler);
 
         if ($route->isDynamic) {
-            $routeMark = $this->regexMark++;
-            $this->dynamicRoutes[$route->method->value][$routeMark] = $route;
-            $this->addToMatchingRegex($route, $routeMark);
+            $this->regexMark = str_increment($this->regexMark);
+            $this->dynamicRoutes[$route->method->value][$this->regexMark] = $route;
+            $this->addToMatchingRegex($route, $this->regexMark);
 
         } else {
             $this->staticRoutes[$route->method->value][$route->uri] = $route;
