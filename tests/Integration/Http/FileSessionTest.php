@@ -11,13 +11,13 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use function Tempest\path;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class FileSessionTest extends IntegrationTest
+final class FileSessionTest extends FrameworkIntegrationTestCase
 {
     private string $path;
 

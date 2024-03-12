@@ -9,13 +9,13 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Request;
 use Tempest\Mapper\PsrRequestToRequestMapper;
 use Tempest\ORM\Exceptions\MissingValuesException;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class PsrRequestToRequestMapperTest extends IntegrationTest
+class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_can_map()
     {

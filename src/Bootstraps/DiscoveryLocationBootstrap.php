@@ -78,7 +78,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
     private function addDiscoveryLocations(array $discoveredLocations): void
     {
         foreach ($discoveredLocations as $location) {
-            $this->appConfig->discoveryLocations[] = new DiscoveryLocation(...$location);
+            $this->appConfig->discoveryLocations = [new DiscoveryLocation(...$location), ...$this->appConfig->discoveryLocations];
         }
     }
 

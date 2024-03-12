@@ -9,13 +9,13 @@ use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use function Tempest\make;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class QueryMapperTest extends IntegrationTest
+class QueryMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_create_query()
     {

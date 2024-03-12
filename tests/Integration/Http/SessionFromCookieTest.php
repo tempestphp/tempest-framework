@@ -8,13 +8,13 @@ use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Resolvers\CookieSessionIdResolver;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class SessionFromCookieTest extends IntegrationTest
+final class SessionFromCookieTest extends FrameworkIntegrationTestCase
 {
     public function test_resolving_session_from_cookie(): void
     {

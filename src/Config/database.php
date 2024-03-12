@@ -7,6 +7,6 @@ use Tempest\Database\Drivers\SQLiteDriver;
 
 return new DatabaseConfig(
     driver: new SQLiteDriver(
-        path: __DIR__ . './database.sqlite',
+        path: __DIR__ . '/../database.sqlite',
     ),
 );

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\AppConfig;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class DiscoveryStatusCommandTest extends IntegrationTest
+class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_discovery_status_command()
     {

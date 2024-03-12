@@ -9,12 +9,24 @@ use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
 use Tempest\Discovery\DiscoveryDiscovery;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
+        $this->appConfig = new AppConfig(
+            root: __DIR__ . '/../../',
+            discoveryCache: true,
+            discoveryLocations: [
+                new DiscoveryLocation(
+                    'App\\',
+                    __DIR__ . '/../../app',
+                ),
+            ],
+        );
+
         parent::setUp();
 
         $databasePath = __DIR__ . '/../../app/database.sqlite';

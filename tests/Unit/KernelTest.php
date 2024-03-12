@@ -7,6 +7,7 @@ namespace Tests\Tempest\Unit;
 use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application\Kernel;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Http\RouteConfig;
 
 /**
@@ -17,7 +18,20 @@ class KernelTest extends TestCase
 {
     public function test_discovery()
     {
-        $kernel = new Kernel(__DIR__ . '/../../', new AppConfig(__DIR__ . '/../../'));
+        $root = __DIR__ . '/../../';
+
+        $kernel = new Kernel(
+            $root,
+            new AppConfig(
+                root: $root,
+                discoveryLocations: [
+                    new DiscoveryLocation(
+                        'App\\',
+                        __DIR__ . '/../../app',
+                    ),
+                ],
+            )
+        );
 
         $container = $kernel->init();
 

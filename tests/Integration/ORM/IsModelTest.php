@@ -10,13 +10,13 @@ use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class IsModelTest extends IntegrationTest
+class IsModelTest extends FrameworkIntegrationTestCase
 {
     public function test_create_and_update_model()
     {

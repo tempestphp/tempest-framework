@@ -34,12 +34,12 @@ abstract class IntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this->appConfig = new AppConfig(
+        $this->appConfig ??= new AppConfig(
             root: __DIR__ . '/../../',
             discoveryCache: true,
         );
 
-        $this->kernel = new Kernel(
+        $this->kernel ??= new Kernel(
             __DIR__ . '/../../',
             $this->appConfig
         );

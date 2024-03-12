@@ -9,14 +9,14 @@ use App\Events\MyEventHandler;
 use function Tempest\event;
 use Tempest\Events\EventBus;
 use Tempest\Events\EventBusConfig;
-use Tempest\Testing\IntegrationTest;
 use Tests\Tempest\Integration\Events\Fixtures\MyEventBusMiddleware;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class EventBusTest extends IntegrationTest
+class EventBusTest extends FrameworkIntegrationTestCase
 {
     public function test_it_works()
     {

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Application;
 
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class ConsoleApplicationTest extends IntegrationTest
+class ConsoleApplicationTest extends FrameworkIntegrationTestCase
 {
     public function test_unhandled_command()
     {

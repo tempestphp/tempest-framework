@@ -9,13 +9,13 @@ use Tempest\Clock\MockClock;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Cookie\SameSite;
-use Tempest\Testing\IntegrationTest;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class CookieManagerTest extends IntegrationTest
+final class CookieManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_existing_cookies(): void
     {
