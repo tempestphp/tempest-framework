@@ -91,12 +91,7 @@ jobs:
         run: composer show -D
 
       - name: List Discovered Locations
-        run: |
-          cp .env.example .env
-          php ./tempest discovery:status
-
-      - name: Dump Installed.json
-        run: cat ./vendor/composer/installed.json
+        run: php ./tempest discovery:status
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
