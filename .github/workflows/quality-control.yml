@@ -95,6 +95,9 @@ jobs:
           cp .env.example .env
           php ./tempest discovery:status
 
+      - name: Dump Installed.json
+        run: cat ./vendor/composer/installed.json
+
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
