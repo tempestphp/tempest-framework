@@ -86,6 +86,9 @@ jobs:
       - name: List Installed Dependencies
         run: composer show -D
 
+      - name: List Discovered Locations
+        run: php ./tempest discovery:status
+
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
