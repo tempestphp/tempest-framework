@@ -73,9 +73,9 @@ class ArchitectureTest
     {
         return PHPat::rule()
             ->classes(Selector::AND(
-				Selector::inNamespace('Tempest'),
-				Selector::NOT(Selector::isInterface()),
-			))
+                Selector::inNamespace('Tempest'),
+                Selector::NOT(Selector::isInterface()),
+            ))
             ->shouldBeFinal();
     }
 
@@ -85,8 +85,8 @@ class ArchitectureTest
             ->classes(Selector::AND(
                 Selector::inNamespace('Tempest'),
                 Selector::implements('/.*/', true),
-				Selector::NOT(Selector::isEnum()),
-				Selector::NOT(Selector::isInterface())
+                Selector::NOT(Selector::isEnum()),
+                Selector::NOT(Selector::isInterface())
             ))
             ->shouldBeReadonly();
     }
