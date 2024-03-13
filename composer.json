@@ -32,7 +32,6 @@
     ],
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
             "Tempest\\": "src/"
         },
         "files": [
@@ -41,6 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "App\\": "app/",
             "Tests\\Tempest\\": "tests/"
         }
     },
