@@ -3,6 +3,7 @@ name: Quality Control
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   validate-composer:
