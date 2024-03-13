@@ -72,7 +72,10 @@ class ArchitectureTest
     public function test_all_classes_should_be_final(): Rule
     {
         return PHPat::rule()
-            ->classes(Selector::inNamespace('Tempest'))
+            ->classes(Selector::AND(
+				Selector::inNamespace('Tempest'),
+				Selector::NOT(Selector::isInterface()),
+			))
             ->shouldBeFinal();
     }
 
@@ -81,7 +84,9 @@ class ArchitectureTest
         return PHPat::rule()
             ->classes(Selector::AND(
                 Selector::inNamespace('Tempest'),
-                Selector::implements('/.*/', true)
+                Selector::implements('/.*/', true),
+				Selector::NOT(Selector::isEnum()),
+				Selector::NOT(Selector::isInterface())
             ))
             ->shouldBeReadonly();
     }
