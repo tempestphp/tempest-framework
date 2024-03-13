@@ -64,7 +64,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
     private function outputFunctionLine(array $line): void
     {
         $this->console->write(ConsoleStyle::FG_DARK_GREEN($line['function']));
-        $this->formatArguments($line['args']);
+        $this->formatArguments($line['args'] ?? null);
         $this->console->writeln('');
     }
 
