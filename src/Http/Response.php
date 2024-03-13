@@ -26,7 +26,7 @@ interface Response
 
     public function getView(): ?View;
 
-    public function setView(string|View $view): self;
+    public function setView(string|View $view, mixed ...$data): self;
 
     public function addSession(string $name, mixed $value): void;
 

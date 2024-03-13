@@ -10,6 +10,7 @@ use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tempest\Exceptions\HttpExceptionHandler;
 
@@ -17,8 +18,7 @@ final readonly class Tempest
 {
     private function __construct(
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public static function boot(string $root): self
     {
@@ -26,14 +26,22 @@ final readonly class Tempest
 
         $dotenv->safeLoad();
 
+        $appConfig = new AppConfig(
+            root: $root,
+            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+            discoveryCache: env('DISCOVERY_CACHE', false),
+            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+        );
+
+        foreach (explode(',', env('DISCOVERY_LOCATIONS', '')) as $string) {
+            [$namespace, $path] = explode(':', $string);
+
+            $appConfig->discoveryLocations[] = new DiscoveryLocation($namespace, path($root, $path));
+        }
+
         $kernel = new Kernel(
             root: $root,
-            appConfig: new AppConfig(
-                root: $root,
-                environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-                discoveryCache: env('DISCOVERY_CACHE', false),
-                enableExceptionHandling: env('EXCEPTION_HANDLING', false),
-            ),
+            appConfig: $appConfig,
         );
 
         return new self(
