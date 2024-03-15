@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Tempest\Filesystem\Driver\LocalFilesystemDriver;
+use Tempest\Filesystem\Local\LocalDriver;
 
 /**
  * @internal
@@ -18,7 +18,7 @@ use Tempest\Filesystem\Driver\LocalFilesystemDriver;
  */
 class LocalFilesystemDriverTest extends TestCase
 {
-    private LocalFilesystemDriver $driver;
+    private LocalDriver $driver;
 
     private string $path;
 
@@ -72,7 +72,7 @@ class LocalFilesystemDriverTest extends TestCase
     {
         parent::setUp();
 
-        $this->driver = new LocalFilesystemDriver();
+        $this->driver = new LocalDriver();
 
         $this->path = __DIR__ . '/Playground';
 

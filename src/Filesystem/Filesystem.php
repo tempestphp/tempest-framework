@@ -4,31 +4,64 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem;
 
-use Tempest\Filesystem\Driver\LocalFilesystemDriver;
-
-final readonly class Filesystem
+final class Filesystem
 {
-    public function __construct(private LocalFilesystemDriver $driver)
+    private Driver $driver;
+
+    public function __construct(Driver $driver)
     {
+        $this->setDriver($driver);
     }
 
-    public function isFile(string $path): bool
+    public function getDriver(): Driver
     {
-        return $this->driver->isFile($path);
+        return $this->driver;
     }
 
-    public function isDirectory(string $path): bool
+    public function setDriver(Driver $driver): self
     {
-        return $this->driver->isDirectory($path);
+        $this->driver = $driver;
+
+        return $this;
     }
 
-    public function createDirectory(string $path, int $mode = 0777): void
+    public function read(string $location): string
     {
-        $this->driver->createDirectory($path, $mode);
+        return $this->driver->read($location);
     }
 
-    public function deleteDirectory(string $path): void
+    public function write(string $location, string $content, bool $overwrite = false): void
     {
-        $this->driver->deleteDirectory($path);
+        $this->driver->write($location, $content);
+    }
+
+    public function isFile(string $location): bool
+    {
+        return $this->driver->isFile($location);
+    }
+
+    public function isDirectory(string $location): bool
+    {
+        return $this->driver->isDirectory($location);
+    }
+
+    public function exists(string $location): bool
+    {
+        return $this->isFile($location) || $this->isDirectory($location);
+    }
+
+    public function createDirectory(string $location): void
+    {
+        $this->driver->createDirectory($location);
+    }
+
+    public function deleteDirectory(string $location): void
+    {
+        $this->driver->deleteDirectory($location);
+    }
+
+    public function createStream(string $location): Stream
+    {
+        return $this->driver->createStream($location);
     }
 }
