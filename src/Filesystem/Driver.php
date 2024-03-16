@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Filesystem;
 
 use Tempest\Filesystem\Exception\UnableToCreateDirectory;
+use Tempest\Filesystem\Exception\UnableToCreateStream;
 use Tempest\Filesystem\Exception\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exception\UnableToReadFile;
 use Tempest\Filesystem\Exception\UnableToWriteFile;
@@ -26,12 +27,12 @@ interface Driver
     public function write(string $location, string $content): void;
 
     /**
-     * Returns true if a file exists at the specified location.
+     * Returns true the specified location exists and is a file.
      */
     public function isFile(string $location): bool;
 
     /**
-     * Returns true if a directory exists at the specified location.
+     * Returns true the specified location exists and is a directory.
      */
     public function isDirectory(string $location): bool;
 
@@ -49,18 +50,10 @@ interface Driver
      */
     public function deleteDirectory(string $location): void;
 
+    /**
+     * Creates a stream object that can be utilized to read a file.
+     *
+     * @throws UnableToCreateStream
+     */
     public function createStream(string $location): Stream;
-
-    //    public function exists(string $path): bool;
-    //
-    //
-    //
-    //    public function isFile(string $path): bool;
-    //
-    //
-    //    public function isDirectory(string $path): bool;
-    //
-    //    public function createDirectory(string $path, int $mode): void;
-    //
-    //    public function deleteDirectory(string $path): void;
 }
