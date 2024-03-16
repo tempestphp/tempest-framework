@@ -27,12 +27,12 @@ interface Driver
     public function write(string $location, string $content): void;
 
     /**
-     * Returns true the specified location exists and is a file.
+     * Returns true if the specified location exists and is a file.
      */
     public function isFile(string $location): bool;
 
     /**
-     * Returns true the specified location exists and is a directory.
+     * Returns true if the specified location exists and is a directory.
      */
     public function isDirectory(string $location): bool;
 
