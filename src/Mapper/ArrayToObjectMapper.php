@@ -249,7 +249,7 @@ final readonly class ArrayToObjectMapper implements Mapper
      * @param class-string<DateTime|DateTimeImmutable|DateTimeInterface> $type
      * @param ReflectionProperty $property
      *
-     * @return DateTimeImmutableCaster
+     * @return Caster
      */
     private function createDateCaster(string $type, ReflectionProperty $property): Caster
     {
