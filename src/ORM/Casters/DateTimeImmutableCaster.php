@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\ORM\Casters;
 
 use DateTimeImmutable;
-use Tempest\ORM\Caster;
 use InvalidArgumentException;
+use Tempest\ORM\Caster;
 
 final readonly class DateTimeImmutableCaster implements Caster
 {
