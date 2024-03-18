@@ -12,4 +12,9 @@ enum Environment: string
     case CI = 'ci';
     case TESTING = 'testing';
     case OTHER = 'other';
+
+    public function isProduction(): bool
+    {
+        return $this === self::PRODUCTION;
+    }
 }

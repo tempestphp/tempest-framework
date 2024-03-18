@@ -8,23 +8,23 @@ use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationManager;
-use Tempest\Database\Migrations\MigrationMigrated;
+use Tempest\Database\Migrations\MigrationRolledBack;
 use Tempest\Events\EventHandler;
 
-final class MigrateCommand
+final class MigrateRollbackCommand
 {
     private static int $count = 0;
 
     public function __construct(
-        private readonly Console $console,
-        private readonly MigrationManager $migrationManager,
-        private readonly AppConfig $config,
+        readonly private Console $console,
+        readonly private MigrationManager $migrationManager,
+        readonly private AppConfig $config,
     ) {
     }
 
     #[ConsoleCommand(
-        name: 'migrate',
-        description: 'Run all new migrations',
+        name: 'migrate:rollback',
+        description: 'Rollbacks all executed migrations',
     )]
     public function __invoke(bool $force = false): void
     {
@@ -35,14 +35,14 @@ final class MigrateCommand
             return;
         }
 
-        $this->migrationManager->up();
+        $this->migrationManager->down();
 
         $this->console->success("Done");
-        $this->console->writeln(sprintf("Migrated %s migrations", self::$count));
+        $this->console->writeln(sprintf("Rolled back %s migrations", self::$count));
     }
 
     #[EventHandler]
-    public function onMigrationMigrated(MigrationMigrated $event): void
+    public function onMigrationRolledBack(MigrationRolledBack $event): void
     {
         $this->console->writeln("- {$event->name}");
         self::$count += 1;

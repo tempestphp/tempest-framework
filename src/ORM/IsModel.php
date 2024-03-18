@@ -124,6 +124,45 @@ trait IsModel
         return $this;
     }
 
+    public function delete(): void
+    {
+        if (! $this->id) {
+            return;
+        }
+
+        $statements[] = "DELETE FROM " . self::table();
+        $statements[] = 'WHERE ' . self::field('id') . ' = :id';
+
+        $query = new Query(
+            implode(PHP_EOL, $statements),
+            ['id' => $this->id->id],
+        );
+
+        $query->execute();
+    }
+
+    public static function firstWhere(string $column, Operator $operator, mixed $value): ?self
+    {
+        /** @var QueryValue $queryValue */
+        $queryValue = make(QueryValue::class)->from($value);
+
+        $fields = implode(', ', array_map(
+            fn (FieldName $fieldName) => $fieldName->asDefault(),
+            self::fieldNames(),
+        ));
+
+        $statements[] = "SELECT {$fields} FROM " . self::table();
+        $statements[] = 'WHERE ' . self::field($column) . ' ' . $operator->value . ' :value';
+        $statements[] = 'LIMIT 1';
+
+        $query = new Query(
+            implode(PHP_EOL, $statements),
+            ['value' => $queryValue->value],
+        );
+
+        return make(static::class)->from($query)[0] ?? null;
+    }
+
     public function update(...$params): self
     {
         foreach ($params as $key => $value) {

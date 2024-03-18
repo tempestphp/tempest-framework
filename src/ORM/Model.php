@@ -34,4 +34,8 @@ interface Model
     public function setId(Id $id): self;
 
     public function update(...$params): self;
+
+    public function delete(): void;
+
+    public static function firstWhere(string $column, Operator $operator, mixed $value): ?self;
 }

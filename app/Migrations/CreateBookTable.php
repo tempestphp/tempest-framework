@@ -25,6 +25,6 @@ final readonly class CreateBookTable implements Migration
 
     public function down(): Query|null
     {
-        return null;
+        return new Query("DROP TABLE Book");
     }
 }

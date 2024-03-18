@@ -27,6 +27,7 @@ final class ObjectMapper
             new QueryToModelMapper(),
             new ModelToQueryMapper(),
             new RequestToObjectMapper(),
+            new ValueToQueryValueMapper(),
         ];
     }
 

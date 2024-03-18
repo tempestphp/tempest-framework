@@ -10,6 +10,7 @@ use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migration as MigrationInterface;
 use function Tempest\event;
+use Tempest\ORM\Operator;
 
 final readonly class MigrationManager
 {
@@ -47,6 +48,35 @@ final readonly class MigrationManager
         }
     }
 
+    public function down(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
+            return;
+        }
+
+        $existingMigrations = array_map(
+            fn (Migration $migration) => $migration->name,
+            $existingMigrations,
+        );
+
+        foreach ($this->databaseConfig->migrations as $migrationClassName) {
+            /** @var MigrationInterface $migration */
+            $migration = $this->container->get($migrationClassName);
+
+            /**
+             * If the migration is not in the existing migrations, it means it has not been executed
+             */
+            if (! in_array($migration->getName(), $existingMigrations)) {
+                continue;
+            }
+
+            $this->executeDown($migration);
+        }
+    }
+
     public function executeUp(MigrationInterface $migration): void
     {
         $query = $migration->up();
@@ -62,5 +92,25 @@ final readonly class MigrationManager
         );
 
         event(new MigrationMigrated($migration->getName()));
+    }
+
+    public function executeDown(MigrationInterface $migration): void
+    {
+        $query = $migration->down();
+
+        if (! $query) {
+            return;
+        }
+
+        $this->database->execute($query);
+
+        try {
+            Migration::firstWhere('name', Operator::Equals, $migration->getName())
+                ->delete();
+        } catch (PDOException) {
+            // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
+        }
+
+        event(new MigrationRolledBack($migration->getName()));
     }
 }
