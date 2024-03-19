@@ -7,6 +7,7 @@ $finder = Symfony\Component\Finder\Finder::create()
         __DIR__ . '/tests',
     ])
     ->name('*.php')
+    ->notName('*.cache.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 

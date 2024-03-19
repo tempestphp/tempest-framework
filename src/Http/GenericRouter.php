@@ -23,7 +23,7 @@ use Tempest\View\View;
  */
 final class GenericRouter implements Router
 {
-    private const string MARK_TOKEN = 'MARK';
+    public const string REGEX_MARK_TOKEN = 'MARK';
 
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
@@ -174,14 +174,9 @@ final class GenericRouter implements Router
 
     private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
     {
-        $staticRoute = $this->routeConfig->routes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
+        $staticRoute = $this->routeConfig->staticRoutes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
 
         if ($staticRoute === null) {
-            return null;
-        }
-
-        // TODO: why do we need to check this?
-        if ($staticRoute->isDynamic) {
             return null;
         }
 
@@ -191,40 +186,24 @@ final class GenericRouter implements Router
     private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
     {
         // If there are no routes for the given request method, we immediately stop
-        $routesForMethod = $this->routeConfig->routes[$request->getMethod()] ?? null;
+        $routesForMethod = $this->routeConfig->dynamicRoutes[$request->getMethod()] ?? null;
         if ($routesForMethod === null) {
             return null;
         }
 
-        // Next, we'll build one big regex to match the correct route
-        // See https://github.com/tempestphp/tempest-framework/pull/175 for the details
-
-        /** @var \Tempest\Http\Route[] $routesForMethod */
-        $routesForMethod = array_values($routesForMethod);
-        $combinedMatchingRegex = "#^(?|";
-
-        foreach ($routesForMethod as $routeIndex => $route) {
-            if (! $route->isDynamic) {
-                continue; // TODO: why this check?
-            }
-
-            $combinedMatchingRegex .= "$route->matchingRegex (*" . self::MARK_TOKEN . ":$routeIndex) |";
-        }
-
-        $combinedMatchingRegex = rtrim($combinedMatchingRegex, '|');
-        $combinedMatchingRegex .= ')$#x';
-
+        // First we get the Routing-Regex for the request method
+        $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = preg_match($combinedMatchingRegex, $request->getUri()->getPath(), $matches);
+        $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $matches);
 
-        if (! $matchResult || ! array_key_exists(self::MARK_TOKEN, $matches)) {
+        if (! $matchResult || ! array_key_exists(self::REGEX_MARK_TOKEN, $matches)) {
             return null;
         }
 
-        $route = $routesForMethod[$matches[self::MARK_TOKEN]];
+        $route = $routesForMethod[$matches[self::REGEX_MARK_TOKEN]];
 
         // TODO: we could probably optimize resolveParams now,
-        // because we already know for sure there's a match
+        //  because we already know for sure there's a match
         $routeParams = $this->resolveParams($route, $request->getUri()->getPath());
 
         // This check should _in theory_ not be needed,
