@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Filesystem\Local;
+namespace Tempest\Filesystem\Driver\Local;
 
 use Tempest\Filesystem\Driver;
+use Tempest\Filesystem\Exception\UnableToCopyFile;
 use Tempest\Filesystem\Exception\UnableToCreateDirectory;
 use Tempest\Filesystem\Exception\UnableToDeleteDirectory;
+use Tempest\Filesystem\Exception\UnableToMoveFile;
 use Tempest\Filesystem\Exception\UnableToReadFile;
 use Tempest\Filesystem\Exception\UnableToWriteFile;
 use Tempest\Filesystem\Stream;
@@ -41,6 +43,32 @@ final class LocalDriver implements Driver
         }
     }
 
+    public function copy(string $source, string $destination): void
+    {
+        error_clear_last();
+
+        if (@copy($source, $destination) === false) {
+            throw UnableToCopyFile::fromSourceToDestination(
+                source: $source,
+                destination: $destination,
+                because: error_get_last()['message'] ?? ''
+            );
+        }
+    }
+
+    public function move(string $source, string $destination): void
+    {
+        error_clear_last();
+
+        if (@rename($source, $destination) === false) {
+            throw UnableToMoveFile::fromSourceToDestination(
+                source: $source,
+                destination: $destination,
+                because: error_get_last()['message'] ?? ''
+            );
+        }
+    }
+
     public function isFile(string $location): bool
     {
         return is_file($location);
@@ -61,14 +89,12 @@ final class LocalDriver implements Driver
             recursive: true
         );
 
-        if ($directoryWasCreated) {
-            return;
+        if ($directoryWasCreated === false) {
+            throw UnableToCreateDirectory::atLocation(
+                location: $location,
+                because: error_get_last()['message'] ?? ''
+            );
         }
-
-        throw UnableToCreateDirectory::atLocation(
-            location: $location,
-            because: error_get_last()['message'] ?? ''
-        );
     }
 
     public function deleteDirectory(string $location): void
@@ -77,14 +103,12 @@ final class LocalDriver implements Driver
 
         $directoryWasDeleted = @rmdir($location);
 
-        if ($directoryWasDeleted) {
-            return;
+        if ($directoryWasDeleted === false) {
+            throw UnableToDeleteDirectory::atLocation(
+                location: $location,
+                because: error_get_last()['message'] ?? ''
+            );
         }
-
-        throw UnableToDeleteDirectory::atLocation(
-            location: $location,
-            because: error_get_last()['message'] ?? ''
-        );
     }
 
     public function createStream(string $location): Stream

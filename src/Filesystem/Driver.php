@@ -10,6 +10,12 @@ use Tempest\Filesystem\Exception\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exception\UnableToReadFile;
 use Tempest\Filesystem\Exception\UnableToWriteFile;
 
+/**
+ * The filesystem driver assumes that we are working with a file unless
+ * explicitly defined as a directory. For example, "copy" will only
+ * copy a file, but "copyDirectory" will recursively copy the
+ * directory contents.
+ */
 interface Driver
 {
     /**
@@ -25,6 +31,16 @@ interface Driver
      * @throws UnableToWriteFile
      */
     public function write(string $location, string $content): void;
+
+    /**
+     * Copies the file from the source location to the destination location.
+     */
+    public function copy(string $source, string $destination): void;
+
+    /**
+     * Moves the file from the source location to the destination location.
+     */
+    public function move(string $source, string $destination): void;
 
     /**
      * Returns true if the specified location exists and is a file.

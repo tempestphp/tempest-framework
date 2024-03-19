@@ -6,7 +6,7 @@ namespace Tempest\Filesystem;
 
 interface Stream
 {
-    public function open(): void;
+    public function open(StreamMode $mode = StreamMode::OPEN_OR_CREATE, StreamAccess $access = StreamAccess::READ_WRITE): void;
 
     public function read(int $count): string;
 

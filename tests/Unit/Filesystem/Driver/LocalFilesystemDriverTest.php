@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Filesystem\Driver;
 
-use const DIRECTORY_SEPARATOR;
 use FilesystemIterator;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Tempest\Filesystem\Local\LocalDriver;
+use Tempest\Filesystem\Driver\Local\LocalDriver;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * @internal

@@ -35,6 +35,17 @@ final class Filesystem
         $this->driver->write($location, $content);
     }
 
+    public function move(string $location, string $destination): void
+    {
+        if ($this->driver->isFile($location)) {
+            $this->driver->move($location, $destination);
+
+            return;
+        }
+
+        $this->driver->move($location, $destination);
+    }
+
     public function isFile(string $location): bool
     {
         return $this->driver->isFile($location);
