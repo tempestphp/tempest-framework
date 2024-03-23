@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Exceptions;
 
-use Exception;
 use ReflectionClass;
 use Tempest\Container\ContainerLog;
 
-final class CannotInstantiateDependencyException extends Exception
+final class CannotInstantiateDependencyException extends DependencyNotFound
 {
     public function __construct(ReflectionClass $class, ContainerLog $containerLog)
     {

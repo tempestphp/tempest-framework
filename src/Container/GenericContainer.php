@@ -14,6 +14,7 @@ use ReflectionUnionType;
 use function Tempest\attribute;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
+use Tempest\Container\Exceptions\DependencyNotFound;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -81,6 +82,11 @@ final class GenericContainer implements Container
         $this->log->startResolving();
 
         return $this->resolve($className, ...$params);
+    }
+
+    public function has(string $className): bool
+    {
+        return isset($this->definitions[$className]) || isset($this->singletons[$className]);
     }
 
     public function call(string|object $object, string $methodName, ...$params): mixed
@@ -198,7 +204,11 @@ final class GenericContainer implements Container
 
     private function autowire(string $className, mixed ...$params): object
     {
-        $reflectionClass = new ReflectionClass($className);
+        try {
+            $reflectionClass = new ReflectionClass($className);
+        } catch (Throwable) {
+            throw new DependencyNotFound();
+        }
 
         $constructor = $reflectionClass->getConstructor();
 

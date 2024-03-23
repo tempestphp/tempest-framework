@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Exceptions;
 
-use Exception;
 use Tempest\Container\ContainerLog;
 
-final class CannotAutowireException extends Exception
+final class CannotAutowireException extends DependencyNotFound
 {
     public function __construct(ContainerLog $containerLog)
     {

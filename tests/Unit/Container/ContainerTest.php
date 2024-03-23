@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Container;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Container\NotFoundExceptionInterface;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinArrayClass;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinTypesWithDefaultsClass;
@@ -16,6 +17,7 @@ use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectDInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectEInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\InterfaceWithoutConcreteImplementation;
 use Tests\Tempest\Unit\Container\Fixtures\IntersectionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonClass;
@@ -25,6 +27,7 @@ use Tests\Tempest\Unit\Container\Fixtures\UnionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceA;
 use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceB;
 use Tests\Tempest\Unit\Container\Fixtures\UnionTypesClass;
+use Throwable;
 
 /**
  * @internal
@@ -188,5 +191,58 @@ class ContainerTest extends TestCase
 
         $this->assertInstanceOf(UnionImplementation::class, $a);
         $this->assertInstanceOf(UnionImplementation::class, $b);
+    }
+
+    public function test_has_method_works_with_regular_classes(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(ContainerObjectA::class));
+
+        $container->register(ContainerObjectA::class, fn () => new ContainerObjectA());
+
+        $this->assertTrue($container->has(ContainerObjectA::class));
+    }
+
+    public function test_has_method_work_with_singletons(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(ContainerObjectA::class));
+
+        $container->singleton(ContainerObjectA::class, fn () => new ContainerObjectA());
+
+        $this->assertTrue($container->has(ContainerObjectA::class));
+    }
+
+    public function test_get_throws_exception_when_accessing_undefined_string_key(): void
+    {
+        $container = new GenericContainer();
+
+        try {
+            /** @phpstan-ignore-next-line  */
+            $container->get('random-class-name');
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(NotFoundExceptionInterface::class, $e);
+
+            return;
+        }
+
+        $this->fail('Exception was not thrown');
+    }
+
+    public function test_get_throws_exception_when_accessing_undefined_key(): void
+    {
+        $container = new GenericContainer();
+
+        try {
+            $container->get(InterfaceWithoutConcreteImplementation::class);
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(NotFoundExceptionInterface::class, $e);
+
+            return;
+        }
+
+        $this->fail('Exception was not thrown');
     }
 }
