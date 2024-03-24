@@ -17,7 +17,7 @@ class MigrateCommandTest extends FrameworkIntegrationTestCase
     public function test_migrate_command(): void
     {
         $this->console
-            ->call('migrate')
+            ->call('migrate:up')
             ->assertContains('create_migrations_table')
             ->assertContains('Migrated 3 migrations');
 
@@ -27,7 +27,7 @@ class MigrateCommandTest extends FrameworkIntegrationTestCase
     public function test_migrate_command_inserts_new_records(): void
     {
         $this->console
-            ->call('migrate')
+            ->call('migrate:up')
             ->assertContains('create_migrations_table');
 
         Assert::assertCount(3, Migration::all());

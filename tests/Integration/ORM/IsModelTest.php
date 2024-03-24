@@ -12,7 +12,6 @@ use PHPUnit\Framework\Assert;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\ORM\Exceptions\ModelNotFoundException;
-use Tempest\ORM\Operator;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -70,30 +69,6 @@ class IsModelTest extends FrameworkIntegrationTestCase
         } catch (ModelNotFoundException) {
             Assert::assertTrue(true);
         }
-    }
-
-    public function test_first_where_model(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            FooMigration::class,
-        );
-
-        Foo::create(
-            bar: 'bazDupe',
-        );
-
-        Foo::create(
-            bar: 'baz',
-        );
-
-        $baz = Foo::firstWhere('bar', Operator::Equals, 'baz');
-
-        $this->assertInstanceOf(Foo::class, $baz);
-        $this->assertSame('baz', $baz->bar);
-
-        $notBaz = Foo::firstWhere('bar', Operator::NotEquals, 'baz');
-        $this->assertSame('bazDupe', $notBaz->bar);
     }
 
     public function test_complex_query()

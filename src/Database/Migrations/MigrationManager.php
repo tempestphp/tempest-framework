@@ -9,8 +9,8 @@ use Tempest\Container\Container;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migration as MigrationInterface;
+use Tempest\Database\Query;
 use function Tempest\event;
-use Tempest\ORM\Operator;
 
 final readonly class MigrationManager
 {
@@ -54,6 +54,8 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         } catch (PDOException) {
             // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
+            event(new MigrationFailed(null, MigrationException::noTable()));
+
             return;
         }
 
@@ -85,11 +87,17 @@ final readonly class MigrationManager
             return;
         }
 
-        $this->database->execute($query);
+        try {
+            $this->database->execute($query);
 
-        Migration::create(
-            name: $migration->getName(),
-        );
+            Migration::create(
+                name: $migration->getName(),
+            );
+        } catch (PDOException $e) {
+            event(new MigrationFailed($migration->getName(), $e));
+
+            throw $e;
+        }
 
         event(new MigrationMigrated($migration->getName()));
     }
@@ -102,13 +110,28 @@ final readonly class MigrationManager
             return;
         }
 
-        $this->database->execute($query);
+        try {
+            $this->database->execute($query);
+        } catch (PDOException $e) {
+            event(new MigrationFailed($migration->getName(), $e));
+
+            throw $e;
+        }
 
         try {
-            Migration::firstWhere('name', Operator::Equals, $migration->getName())
-                ->delete();
-        } catch (PDOException) {
-            // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
+            $this->database->execute(
+                new Query(
+                    "DELETE FROM migrations WHERE name = :name",
+                    ['name' => $migration->getName()],
+                )
+            );
+        } catch (PDOException $e) {
+            /**
+             * If the migration was executed successfully but the entry in the migrations table could not be deleted,
+             * we should not throw an exception as the migration was successfully rolled back.
+             *
+             * This covers the case where migration's query deleted the migration table itself
+             */
         }
 
         event(new MigrationRolledBack($migration->getName()));
