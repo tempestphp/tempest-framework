@@ -7,18 +7,18 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use DateTimeImmutable;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\Before;
+use Tempest\Validation\Rules\BeforeDate;
 
 /**
  * @internal
  * @small
  */
-class BeforeTest extends TestCase
+class BeforeDateTest extends TestCase
 {
     public function test_it_works_without_inclusive_param(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new Before($date);
+        $rule = new BeforeDate($date);
 
         $this->assertSame('Value must be a date before ' . $date->format("Y-m-d H:i:s"), $rule->message());
 
@@ -30,7 +30,7 @@ class BeforeTest extends TestCase
     public function test_it_works_with_inclusive_param(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new Before($date, inclusive: true);
+        $rule = new BeforeDate($date, inclusive: true);
 
         $this->assertSame('Value must be a date before or equal to ' . $date->format("Y-m-d H:i:s"), $rule->message());
 
@@ -43,7 +43,7 @@ class BeforeTest extends TestCase
     {
         // given we create a date in a specific timezone (UTC-5)
         $date = new DateTimeImmutable('now', new DateTimeZone('America/New_York'));
-        $rule = new Before($date, inclusive: false);
+        $rule = new BeforeDate($date, inclusive: false);
 
         $utcDate = new DateTimeImmutable();
 

@@ -11,7 +11,7 @@ use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]
-final readonly class After implements Rule
+final readonly class AfterDate implements Rule
 {
     private DateTimeImmutable $date;
 

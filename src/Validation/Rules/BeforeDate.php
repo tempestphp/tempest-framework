@@ -10,7 +10,7 @@ use DateTimeInterface;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Before implements Rule
+final readonly class BeforeDate implements Rule
 {
     private DateTimeImmutable $date;
 
@@ -25,7 +25,7 @@ final readonly class Before implements Rule
 
     public function isValid(mixed $value): bool
     {
-        return ! (new After($this->date, $this->inclusive))->isValid($value);
+        return ! (new AfterDate($this->date, $this->inclusive))->isValid($value);
     }
 
     public function message(): string

@@ -7,18 +7,18 @@ namespace Tests\Tempest\Unit\Validation\Rules;
 use DateTimeImmutable;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\After;
+use Tempest\Validation\Rules\AfterDate;
 
 /**
  * @internal
  * @small
  */
-class AfterTest extends TestCase
+class AfterDateTest extends TestCase
 {
     public function test_it_works_without_inclusive_param(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new After($date);
+        $rule = new AfterDate($date);
 
         $this->assertSame('Value must be a date after ' . $date->format("Y-m-d H:i:s"), $rule->message());
 
@@ -30,7 +30,7 @@ class AfterTest extends TestCase
     public function test_it_works_with_inclusive_param(): void
     {
         $date = new DateTimeImmutable();
-        $rule = new After($date, inclusive: true);
+        $rule = new AfterDate($date, inclusive: true);
 
         $this->assertSame('Value must be a date after or equal to ' . $date->format("Y-m-d H:i:s"), $rule->message());
 
@@ -43,7 +43,7 @@ class AfterTest extends TestCase
     {
         // given we create a date in a specific timezone (UTC-5)
         $date = new DateTimeImmutable('now', new DateTimeZone('America/New_York'));
-        $rule = new After($date, inclusive: false);
+        $rule = new AfterDate($date, inclusive: false);
 
         $utcDate = new DateTimeImmutable();
 
