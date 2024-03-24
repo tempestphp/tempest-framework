@@ -19,9 +19,7 @@ final readonly class QueryToModelMapper implements Mapper
     {
         /** @var Query $from */
         if ($from->bindings['id'] ?? null) {
-            $result = $from->fetchFirst();
-
-            return make($to)->from($this->resolveData($to, $result));
+            return make($to)->from($this->resolveData($to, $from->fetchFirst()));
         } else {
             return array_map(
                 fn (array $item) => make($to)->from($this->resolveData($to, $item)),
