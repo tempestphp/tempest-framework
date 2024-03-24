@@ -48,29 +48,6 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
-    public function test_delete_model(): void
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            FooMigration::class,
-        );
-
-        $foo = Foo::create(
-            bar: 'baz',
-        );
-
-        $this->assertSame('baz', $foo->bar);
-        $this->assertInstanceOf(Id::class, $foo->id);
-
-        $foo->delete();
-
-        try {
-            Foo::find($foo->id);
-        } catch (ModelNotFoundException) {
-            Assert::assertTrue(true);
-        }
-    }
-
     public function test_complex_query()
     {
         $this->migrate(

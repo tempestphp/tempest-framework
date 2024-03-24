@@ -124,23 +124,6 @@ trait IsModel
         return $this;
     }
 
-    public function delete(): void
-    {
-        if (! $this->id) {
-            return;
-        }
-
-        $statements[] = "DELETE FROM " . self::table();
-        $statements[] = 'WHERE ' . self::field('id') . ' = :id';
-
-        $query = new Query(
-            implode(PHP_EOL, $statements),
-            ['id' => $this->id->id],
-        );
-
-        $query->execute();
-    }
-
     public function update(...$params): self
     {
         foreach ($params as $key => $value) {

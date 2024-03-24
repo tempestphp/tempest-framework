@@ -34,6 +34,4 @@ interface Model
     public function setId(Id $id): self;
 
     public function update(...$params): self;
-
-    public function delete(): void;
 }
