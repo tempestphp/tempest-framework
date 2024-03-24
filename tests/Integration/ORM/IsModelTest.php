@@ -8,10 +8,8 @@ use App\Migrations\CreateAuthorTable;
 use App\Migrations\CreateBookTable;
 use App\Modules\Books\Models\Author;
 use App\Modules\Books\Models\Book;
-use PHPUnit\Framework\Assert;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\ORM\Exceptions\ModelNotFoundException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

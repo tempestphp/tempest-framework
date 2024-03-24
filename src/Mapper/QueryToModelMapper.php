@@ -7,7 +7,6 @@ namespace Tempest\Mapper;
 use ReflectionClass;
 use Tempest\Database\Query;
 use function Tempest\make;
-use Tempest\ORM\Exceptions\ModelNotFoundException;
 
 final readonly class QueryToModelMapper implements Mapper
 {
@@ -21,10 +20,6 @@ final readonly class QueryToModelMapper implements Mapper
         /** @var Query $from */
         if ($from->bindings['id'] ?? null) {
             $result = $from->fetchFirst();
-
-            if (! $result) {
-                throw ModelNotFoundException::new($from->bindings['id']);
-            }
 
             return make($to)->from($this->resolveData($to, $result));
         } else {
