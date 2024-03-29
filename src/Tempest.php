@@ -18,7 +18,8 @@ final readonly class Tempest
 {
     private function __construct(
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public static function boot(string $root): self
     {
