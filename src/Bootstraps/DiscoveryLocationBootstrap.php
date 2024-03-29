@@ -36,7 +36,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         $discoveredLocations = [];
 
         foreach ($packages as $package) {
-            $packagePath = path($composerPath, $package['install-path']);
+            $packagePath = path($composerPath, $package['install-path'] ?? '');
             $requiresTempest = isset($package['require']['tempest/framework']);
             $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
             $isTempest = ($package['name'] ?? null) === 'tempest/framework';

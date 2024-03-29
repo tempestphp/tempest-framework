@@ -24,7 +24,9 @@ final class HttpExceptionHandler implements ExceptionHandler
         $contents = ob_get_clean();
 
         ob_start();
-        http_response_code(500);
+        if (! headers_sent()) {
+            http_response_code(500);
+        }
         echo $contents;
         ob_end_flush();
     }

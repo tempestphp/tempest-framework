@@ -144,7 +144,9 @@ echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()',
         <div class="trace-item">
             <div>
                 <?php
-                echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
+                    if (isset($item['class'])) {
+                        echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
+                    }
         ?>
             </div>
 
