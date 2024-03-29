@@ -24,6 +24,6 @@ final readonly class CreateMigrationsTable implements Migration
 
     public function down(): Query|null
     {
-        return null;
+        return new Query('DROP TABLE IF EXISTS Migration');
     }
 }
