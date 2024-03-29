@@ -34,10 +34,12 @@ final readonly class Tempest
             enableExceptionHandling: env('EXCEPTION_HANDLING', false),
         );
 
-        foreach (explode(',', env('DISCOVERY_LOCATIONS', '')) as $string) {
-            [$namespace, $path] = explode(':', $string);
+        if ($discoveryLocationsFromEnv = env('DISCOVERY_LOCATIONS')) {
+            foreach (explode(',', $discoveryLocationsFromEnv) as $string) {
+                [$namespace, $path] = explode(':', $string);
 
-            $appConfig->discoveryLocations[] = new DiscoveryLocation($namespace, path($root, $path));
+                $appConfig->discoveryLocations[] = new DiscoveryLocation($namespace, path($root, $path));
+            }
         }
 
         $kernel = new Kernel(
