@@ -6,17 +6,23 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use DateTime;
+use DateTimeInterface;
 use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class DateTimeFormat implements Rule
 {
-    public function __construct(private string $format = 'Y-m-d')
+    public function __construct(public string $format = 'Y-m-d')
     {
     }
 
     public function isValid(mixed $value): bool
     {
+        $value = match ($value instanceof DateTimeInterface) {
+            true => $value->format($this->format),
+            default => $value
+        };
+
         if (! is_string($value) || empty($value)) {
             return false;
         }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
@@ -12,11 +15,15 @@ use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
 use Tempest\ORM\Casters\BooleanCaster;
+use Tempest\ORM\Casters\DateTimeCaster;
+use Tempest\ORM\Casters\DateTimeImmutableCaster;
 use Tempest\ORM\Casters\FloatCaster;
 use Tempest\ORM\Casters\IntegerCaster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
+use Tempest\Validation\Rules\DateTimeFormat;
 use Tempest\Validation\Validator;
+use Throwable;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
@@ -94,10 +101,11 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         if (! $castWith) {
-            return match($property->getType()->getName()) {
+            return match($type = $property->getType()->getName()) {
                 'int' => new IntegerCaster(),
                 'float' => new FloatCaster(),
                 'bool' => new BooleanCaster(),
+                DateTimeImmutable::class, DateTime::class, DateTimeInterface::class => $this->createDateCaster($type, $property),
                 default => null,
             };
         }
@@ -235,5 +243,29 @@ final readonly class ArrayToObjectMapper implements Mapper
         $validator = new Validator();
 
         $validator->validate($object);
+    }
+
+    /**
+     * @param class-string<DateTime|DateTimeImmutable|DateTimeInterface> $type
+     * @param ReflectionProperty $property
+     *
+     * @return Caster
+     */
+    private function createDateCaster(string $type, ReflectionProperty $property): Caster
+    {
+        $format = null;
+
+        try {
+            $format = attribute(DateTimeFormat::class)
+                ->in($property)
+                ->first();
+        } catch (Throwable) {
+
+        }
+
+        return match ($type) {
+            DateTime::class => new DateTimeCaster($format?->format),
+            default => new DateTimeImmutableCaster($format->format),
+        };
     }
 }
