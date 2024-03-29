@@ -29,6 +29,6 @@ class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
         $app->run();
         $contents = ob_get_clean();
 
-        $this->assertStringContainsString('Sfdump', $contents);
+        $this->assertStringContainsString('<title>Nope</title>', $contents);
     }
 }
