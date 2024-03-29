@@ -78,9 +78,9 @@ namespace Tempest {
 
     function map(mixed $data): ObjectMapper
     {
-        $factory = get(ObjectMapper::class);
+        $objectMapper = get(ObjectMapper::class);
 
-        return $factory->withData($data);
+        return $objectMapper->withData($data);
     }
 
     /**

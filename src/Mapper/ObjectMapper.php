@@ -15,20 +15,10 @@ final class ObjectMapper
 
     private bool $isCollection = false;
 
-    /** @var \Tempest\Mapper\Mapper[] */
-    private readonly array $mappers;
-
-    public function __construct()
-    {
-        $this->mappers = [
-            new PsrRequestToRequestMapper(),
-            new RequestToPsrRequestMapper(),
-            new ArrayToObjectMapper(),
-            new QueryToModelMapper(),
-            new ModelToQueryMapper(),
-            new RequestToObjectMapper(),
-        ];
-    }
+    public function __construct(
+        /** @var \Tempest\Mapper\Mapper[] */
+        private readonly array $mappers = [],
+    ) {}
 
     /**
      * @template T of object
@@ -106,7 +96,7 @@ final class ObjectMapper
                 return $mapper->map(from: $from, to: $to);
             }
         }
-
+dd($this->mappers);
         throw new CannotMapDataException($from, $to);
     }
 }
