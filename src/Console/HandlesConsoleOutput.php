@@ -33,7 +33,7 @@ trait HandlesConsoleOutput
     public function error(string $line): void
     {
         $this->writeln(
-            ConsoleStyle::BOLD(ConsoleStyle::FG_RED($line)),
+            ConsoleStyle::BOLD(ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE($line))),
         );
     }
 

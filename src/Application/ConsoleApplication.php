@@ -104,7 +104,7 @@ final readonly class ConsoleApplication implements Application
     {
         $output = $this->container->get(ConsoleOutput::class);
 
-        $output->error('Validation failed');
+        $output->error(' Validation failed ');
 
         [$command, $validation] = $this->container->get(RenderConsoleCommand::class)($command, true, errorParts: $e->failingRules);
 
@@ -113,11 +113,11 @@ final readonly class ConsoleApplication implements Application
         $output->writeln($validation);
         $output->writeln("");
 
-        $output->error(sprintf("Found %s errors", count($e->failingRules)));
+        $output->error(sprintf(" Found %s errors ", count($e->failingRules)));
         $output->writeln("");
 
         foreach ($e->failingRules as $property => $rules) {
-            $output->writeln(ConsoleStyle::FG_DARK_YELLOW($property) . ':');
+            $output->writeln(ConsoleStyle::FG_BLUE($property) . ':');
 
             foreach ($rules as $rule) {
                 $output->writeln(' - ' . $rule->message());
