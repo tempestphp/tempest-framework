@@ -67,7 +67,14 @@ final readonly class RenderConsoleCommand
         }
 
         foreach ($arguments->injectedArguments as $parameter) {
-            $parts[] = $this->renderInjected($parameter);
+            $part = $this->renderInjected($parameter);
+            $parts[] = $part;
+
+            if (isset($errorParts[$parameter->name])) {
+                $validations[] = ConsoleStyle::FG_RED(
+                    str_repeat("^", $sum([$part]))
+                );
+            }
         }
 
         if ($includeDescription && $consoleCommand->getDescription()) {

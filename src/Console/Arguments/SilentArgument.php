@@ -23,8 +23,10 @@ final readonly class SilentArgument extends InjectedArgument
         return new self(
             name: 'silent',
             value: false,
+            default: false,
             aliases: ['s'],
             description: 'Disable console output',
+            parameter: self::bool(),
         );
     }
 

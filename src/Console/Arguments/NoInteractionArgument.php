@@ -23,8 +23,10 @@ final readonly class NoInteractionArgument extends InjectedArgument
         return new self(
             name: 'no-interaction',
             value: false,
+            default: false,
             aliases: ['n'],
             description: 'Disable console input',
+            parameter: self::bool(),
         );
     }
 

@@ -31,8 +31,10 @@ final readonly class ForceArgument extends InjectedArgument
         return new self(
             name: 'force',
             value: false,
+            default: false,
             aliases: ['f'],
             description: 'Force the operation to run without asking for confirmation.',
+            parameter: self::bool(),
         );
     }
 

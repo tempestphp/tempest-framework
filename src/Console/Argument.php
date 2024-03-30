@@ -18,6 +18,7 @@ readonly class Argument
     public function __construct(
         public string $name,
         public mixed $value,
+        public mixed $default,
         public array $aliases = [],
         public ?string $description = null,
         public ?ReflectionParameter $parameter = null,
@@ -30,6 +31,7 @@ readonly class Argument
         return new static(
             $this->name,
             $value instanceof self ? $value->getValue() : $value,
+            $this->default,
             $this->aliases,
             $this->description,
             $this->parameter,
@@ -41,6 +43,7 @@ readonly class Argument
         return new static(
             name: $names[0],
             value: $value,
+            default: $value,
             aliases: array_slice($names, 1),
             description: $description,
             parameter: $parameter,
@@ -50,6 +53,11 @@ readonly class Argument
     public function getValue(): mixed
     {
         return $this->value;
+    }
+
+    public function getDefaultValue(): mixed
+    {
+        return $this->default;
     }
 
     // todo allow user to customize this via attribute

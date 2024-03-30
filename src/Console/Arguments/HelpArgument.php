@@ -39,8 +39,10 @@ final readonly class HelpArgument extends InjectedArgument
         return new self(
             name: 'help',
             value: false,
+            default: false,
             aliases: ['h'],
             description: 'Displays helpful information about the command.',
+            parameter: self::bool(),
         );
     }
 }

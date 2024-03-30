@@ -70,13 +70,13 @@ final readonly class ConsoleApplication implements Application
         $parameters = $this->args->resolveParameters($consoleCommandConfig);
 
         try {
+            $validator = new NestedValidator();
+            $validator->validate($parameters);
+
             array_map(
                 fn (InjectedArgument $argument) => $argument->handle($consoleCommandConfig),
                 array_filter($parameters->injectedArguments, fn (InjectedArgument $argument) => $argument->shouldInject()),
             );
-
-            $validator = new NestedValidator();
-            $validator->validate($parameters);
 
             $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 

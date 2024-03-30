@@ -66,7 +66,7 @@ final class GenericArgumentBag implements ArgumentBag
 
     public function set(string $name, mixed $value): Argument
     {
-        return $this->arguments[$name] = new Argument($name, $value);
+        return $this->arguments[$name] = new Argument($name, $value, $value);
     }
 
     public function hasAny(string ...$names): bool

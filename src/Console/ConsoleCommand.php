@@ -97,7 +97,7 @@ final class ConsoleCommand
         $injected = [];
         $arguments = [];
 
-        foreach ($this->flagList() as $flag) {
+        foreach ($this->injectableArguments() as $flag) {
             $availableParameters = $this->handler->getParameters();
 
             foreach ($availableParameters as $parameter) {
@@ -133,7 +133,7 @@ final class ConsoleCommand
     /**
      * @return InjectedArgument[]
      */
-    protected function flagList(): array
+    protected function injectableArguments(): array
     {
         $list = [
             SilentArgument::instance(),
