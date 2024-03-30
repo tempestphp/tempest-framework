@@ -12,9 +12,12 @@ use Tempest\Console\Arguments\SilentArgument;
 use Tempest\Console\Arguments\NoInteractionArgument;
 
 #[Attribute]
-final class ConsoleCommand
+final class ConsoleCommand implements HasHelpLines
 {
     public ReflectionMethod $handler;
+
+    /** @var string[] */
+    private readonly array $helpLines;
 
     public function __construct(
         private readonly ?string $name = null,
@@ -22,7 +25,9 @@ final class ConsoleCommand
         private readonly ?array $aliases = [],
         private readonly bool $isDangerous = false,
         private readonly bool $isHidden = false,
+        string|array $help = [],
     ) {
+        $this->helpLines = is_array($help) ? $help : [$help];
     }
 
     public function setHandler(ReflectionMethod $handler): self
@@ -63,6 +68,11 @@ final class ConsoleCommand
         return $this->isHidden;
     }
 
+    public function getHelpLines(): array
+    {
+        return $this->helpLines;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -73,6 +83,7 @@ final class ConsoleCommand
             'handler_method' => $this->handler->getName(),
             'aliases' => $this->aliases,
             'is_hidden' => $this->isHidden,
+            'help_lines' => $this->helpLines,
         ];
     }
 
@@ -87,6 +98,7 @@ final class ConsoleCommand
         );
         $this->aliases = $data['aliases'];
         $this->isHidden = $data['is_hidden'];
+        $this->helpLines = $data['help_lines'];
     }
 
     /**

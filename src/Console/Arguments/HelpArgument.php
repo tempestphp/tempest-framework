@@ -20,6 +20,15 @@ final readonly class HelpArgument extends InjectedArgument
 
         $output->writeln(ConsoleStyle::BG_DARK_BLUE(" " . ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD($command->getDescription() . " "))));
 
+        if ($lines = $command->getHelpLines()) {
+            $output->writeln(ConsoleStyle::FG_DARK_GREEN("/**"));
+            foreach ($lines as $line) {
+                $output->writeln(ConsoleStyle::FG_DARK_GREEN(" * " . $line));
+            }
+            $output->writeln(ConsoleStyle::FG_DARK_GREEN("**/"));
+            $output->writeln("");
+        }
+
         $output->writeln((new RenderConsoleCommand())($command, true, false)[0]);
         $output->writeln("");
 
@@ -28,7 +37,9 @@ final readonly class HelpArgument extends InjectedArgument
         }
 
         foreach ($command->getAvailableArguments()->all() as $key => $argument) {
-            $output->writeln(ConsoleStyle::FG_BLUE($key) . " - " . $argument->getHelp());
+            foreach ($argument->getHelpLines() as $line) {
+                $output->writeln(ConsoleStyle::FG_BLUE($key) . " - " . $line);
+            }
         }
 
         throw new ExitException();

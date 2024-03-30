@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use ReflectionParameter;
+use function Tempest\attribute;
 
-readonly class Argument
+readonly class Argument implements HasHelpLines
 {
     /**
      * @param string $name
@@ -61,8 +62,12 @@ readonly class Argument
     }
 
     // todo allow user to customize this via attribute
-    public function getHelp(): string
+    public function getHelpLines(): array
     {
-        return $this->description;
+        if ($this->parameter && $attribute = attribute(Parameter::class)->in($this->parameter)->first()) {
+            return $attribute->getHelpLines();
+        }
+
+        return [$this->description];
     }
 }

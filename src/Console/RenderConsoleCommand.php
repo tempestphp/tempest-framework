@@ -62,6 +62,8 @@ final readonly class RenderConsoleCommand
                     $validations[] = ConsoleStyle::FG_RED(
                         str_repeat("^", $sum([$part]))
                     );
+                } else {
+                    $validations[] = str_repeat(" ", $sum([$part]));
                 }
             }
         }
@@ -74,6 +76,8 @@ final readonly class RenderConsoleCommand
                 $validations[] = ConsoleStyle::FG_RED(
                     str_repeat("^", $sum([$part]))
                 );
+            } else {
+                $validations[] = str_repeat(" ", $sum([$part]));
             }
         }
 

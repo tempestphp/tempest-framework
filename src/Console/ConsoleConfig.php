@@ -31,6 +31,7 @@ final class ConsoleConfig
                 aliases: [],
                 isDangerous: $consoleCommand->isDangerous(),
                 isHidden: true,
+                help: $consoleCommand->getHelpLines(),
             );
 
             $alias->setHandler($handler);
