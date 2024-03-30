@@ -22,7 +22,7 @@ use Tempest\ORM\Casters\IntegerCaster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Rules\DateTimeFormat;
-use Tempest\Validation\Validator;
+use Tempest\Validation\GenericValidator;
 use Throwable;
 
 final readonly class ArrayToObjectMapper implements Mapper
@@ -240,7 +240,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function validate(object|string $object): void
     {
-        $validator = new Validator();
+        $validator = new GenericValidator();
 
         $validator->validate($object);
     }

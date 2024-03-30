@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use Tempest\AppConfig;
+use Tempest\Console\ArgumentBag;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
@@ -40,7 +41,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function actAsConsoleApplication(string $command = ''): Application
     {
         $application = new ConsoleApplication(
-            args: ['tempest', ...explode(' ', $command)],
+            args: $this->container->get(ArgumentBag::class, ['tempest', ...explode(' ', $command)]),
             container: $this->container,
             appConfig: $this->container->get(AppConfig::class),
         );

@@ -6,15 +6,20 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Console\Arguments\HelpArgument;
+use Tempest\Console\Arguments\ForceArgument;
 
 #[Attribute]
 final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 
+    public CommandArguments $availableArguments;
+
     public function __construct(
         private readonly ?string $name = null,
         private readonly ?string $description = null,
+        private readonly bool $isDangerous = false,
     ) {
     }
 
@@ -41,11 +46,17 @@ final class ConsoleCommand
         return $this->description;
     }
 
+    public function isDangerous(): bool
+    {
+        return $this->isDangerous;
+    }
+
     public function __serialize(): array
     {
         return [
             'name' => $this->name,
             'description' => $this->description,
+            'is_dangerous' => $this->isDangerous,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
         ];
@@ -55,9 +66,68 @@ final class ConsoleCommand
     {
         $this->name = $data['name'];
         $this->description = $data['description'];
+        $this->isDangerous = $data['is_dangerous'];
         $this->handler = new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
+    }
+
+    /**
+     * @return CommandArguments
+     */
+    public function getAvailableArguments(): CommandArguments
+    {
+        $injected = [];
+        $arguments = [];
+
+        foreach ($this->flagList() as $flag) {
+            $availableParameters = [];
+
+            if (! $availableParameters) {
+                $injected[$flag->name] = $flag;
+
+                continue;
+            }
+
+            foreach ($availableParameters as $parameter) {
+                /**
+                 * In case one of predefined flags matches a user-defined parameter, we skip it.
+                 */
+                if ($parameter->getName() !== $flag->name) {
+                    $injected[$flag->name] = $flag;
+                    continue 2;
+                }
+            }
+        }
+
+        foreach ($this->handler->getParameters() as $parameter) {
+            $arguments[$parameter->getName()] = Argument::new(
+                [$parameter->getName()],
+                $parameter->getName(),
+                parameter: $parameter,
+            );
+        }
+
+        return new CommandArguments(
+            arguments: $arguments,
+            injectedArguments: $injected,
+        );
+    }
+
+    /**
+     * @return InjectedArgument[]
+     */
+    protected function flagList(): array
+    {
+        $list = [
+            HelpArgument::instance(),
+        ];
+
+        if ($this->isDangerous()) {
+            $list[] = ForceArgument::instance();
+        }
+
+        return $list;
     }
 }

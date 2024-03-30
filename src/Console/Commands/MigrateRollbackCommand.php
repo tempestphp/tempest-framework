@@ -19,23 +19,16 @@ final class MigrateRollbackCommand
     public function __construct(
         readonly private Console $console,
         readonly private MigrationManager $migrationManager,
-        readonly private AppConfig $config,
     ) {
     }
 
     #[ConsoleCommand(
         name: 'migrate:down',
         description: 'Rollbacks all executed migrations',
+        isDangerous: true,
     )]
-    public function __invoke(bool $force = false): void
+    public function __invoke(): void
     {
-        if (! $force
-            && $this->config->environment->isProduction()
-            && ! $this->console->confirm("You are running in production. Are you sure you want to continue?")
-        ) {
-            return;
-        }
-
         $this->migrationManager->down();
 
         $this->console->success("Done");

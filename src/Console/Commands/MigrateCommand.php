@@ -19,23 +19,16 @@ final class MigrateCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
-        private readonly AppConfig $config,
     ) {
     }
 
     #[ConsoleCommand(
         name: 'migrate:up',
         description: 'Run all new migrations',
+        isDangerous: true,
     )]
-    public function __invoke(bool $force = false): void
+    public function __invoke(): void
     {
-        if (! $force
-            && $this->config->environment->isProduction()
-            && ! $this->console->confirm("You are running in production. Are you sure you want to continue?")
-        ) {
-            return;
-        }
-
         $this->migrationManager->up();
 
         $this->console->success("Done");

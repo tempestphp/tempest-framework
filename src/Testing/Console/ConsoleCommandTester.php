@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Testing\Console;
 
 use Tempest\AppConfig;
+use Tempest\Console\ArgumentBag;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
@@ -27,7 +28,7 @@ final readonly class ConsoleCommandTester
         $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);
 
         $application = new ConsoleApplication(
-            args: ['tempest', ...explode(' ', $command)],
+            args: $this->container->get(ArgumentBag::class, ['tempest', ...explode(' ', $command)]),
             container: $this->container,
             appConfig: $appConfig,
         );

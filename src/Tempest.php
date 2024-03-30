@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest;
 
 use Dotenv\Dotenv;
+use Tempest\Console\ArgumentBag;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
@@ -58,7 +59,7 @@ final readonly class Tempest
         $appConfig = $container->get(AppConfig::class);
 
         $application = new ConsoleApplication(
-            args: $_SERVER['argv'],
+            args: $container->get(ArgumentBag::class),
             container: $container,
             appConfig: $appConfig,
         );

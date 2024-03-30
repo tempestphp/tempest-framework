@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Validation;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Validation\Validator;
+use Tempest\Validation\GenericValidator;
 use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
 
 /**
@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase
     {
         $this->expectException(ValidationException::class);
 
-        $validator = new Validator();
+        $validator = new GenericValidator();
 
         $validator->validate(new ObjectToBeValidated(name: 'a'));
     }

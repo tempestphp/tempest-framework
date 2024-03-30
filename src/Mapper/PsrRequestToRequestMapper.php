@@ -9,7 +9,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use function Tempest\map;
-use Tempest\Validation\Validator;
+use Tempest\Validation\GenericValidator;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
@@ -47,7 +47,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             ...$data,
         ])->to($requestClass);
 
-        $validator = new Validator();
+        $validator = new GenericValidator();
         $validator->validate($newRequest);
 
         return $newRequest;
