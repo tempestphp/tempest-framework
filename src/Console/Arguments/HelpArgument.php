@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Arguments;
 
-use Tempest\Console\ArgumentBag;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ExitException;
-use Symfony\Component\Console\Color;
 use Tempest\Console\InjectedArgument;
 use Tempest\Console\RenderConsoleCommand;
 use function Tempest\get;

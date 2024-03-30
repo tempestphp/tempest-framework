@@ -8,6 +8,8 @@ use Attribute;
 use ReflectionMethod;
 use Tempest\Console\Arguments\ForceArgument;
 use Tempest\Console\Arguments\HelpArgument;
+use Tempest\Console\Arguments\SilentArgument;
+use Tempest\Console\Arguments\NoInteractionArgument;
 
 #[Attribute]
 final class ConsoleCommand
@@ -134,6 +136,8 @@ final class ConsoleCommand
     protected function flagList(): array
     {
         $list = [
+            SilentArgument::instance(),
+            NoInteractionArgument::instance(),
             HelpArgument::instance(),
         ];
 

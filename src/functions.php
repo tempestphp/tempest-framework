@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Tempest\Commands\CommandBus;
+    use Tempest\Container\Container;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
     use Tempest\Http\GenericResponse;
@@ -15,6 +16,7 @@ namespace Tempest {
     use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
     use Tempest\View\View;
+    use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 
     /**
      * @template TClassName
@@ -26,6 +28,21 @@ namespace Tempest {
         $container = GenericContainer::instance();
 
         return $container->get($className);
+    }
+
+    /**
+     * @template TClassName
+     * @param class-string<TClassName> $className
+     * @param callable $definition
+     *
+     * @return Container
+     * @throws CannotInstantiateDependencyException
+     */
+    function swap(string $className, callable $definition): object
+    {
+        $container = GenericContainer::instance();
+
+        return $container->swap($className, $definition);
     }
 
     function path(string ...$parts): string

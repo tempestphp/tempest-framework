@@ -96,6 +96,25 @@ final class GenericContainer implements Container
         return $reflectionMethod->invokeArgs($object, $parameters);
     }
 
+    public function swap(string $className, callable $definition): Container
+    {
+        if (isset($this->singletons[$className])) {
+            $this->definitions[$className] = null;
+            $this->singletons[$className] = null;
+
+            return $this->singleton($className, $definition);
+        }
+
+        if (isset($this->definitions[$className])) {
+            $this->definitions[$className] = null;
+            $this->singletons[$className] = null;
+
+            return $this->register($className, $definition);
+        }
+
+        throw new CannotInstantiateDependencyException(new ReflectionClass($className), $this->log);
+    }
+
     public function addInitializer(ReflectionClass|string $initializerClass): Container
     {
         $initializerClass = $initializerClass instanceof ReflectionClass
