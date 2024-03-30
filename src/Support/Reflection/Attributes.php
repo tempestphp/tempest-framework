@@ -7,8 +7,8 @@ namespace Tempest\Support\Reflection;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
-use ReflectionProperty;
 use ReflectionParameter;
+use ReflectionProperty;
 
 /** @template T */
 final class Attributes

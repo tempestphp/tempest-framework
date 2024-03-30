@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Testing\Console;
 
 use Tempest\AppConfig;
-use Tempest\Console\ArgumentBag;
 use Tempest\Application\ConsoleApplication;
+use Tempest\Console\ArgumentBag;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
 use Tempest\Exceptions\ConsoleExceptionHandler;

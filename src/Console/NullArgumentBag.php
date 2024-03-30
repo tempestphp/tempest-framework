@@ -8,7 +8,6 @@ use InvalidArgumentException;
 
 final class NullArgumentBag implements ArgumentBag
 {
-
     public function all(): array
     {
         return [];
@@ -42,5 +41,10 @@ final class NullArgumentBag implements ArgumentBag
     public function resolveParameters(ConsoleCommand $command): CommandArguments
     {
         return new CommandArguments();
+    }
+
+    public function getFullCommand(): ?string
+    {
+        return null;
     }
 }

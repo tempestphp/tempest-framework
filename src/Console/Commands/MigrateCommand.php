@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationFailed;
@@ -24,6 +23,7 @@ final class MigrateCommand
 
     #[ConsoleCommand(
         name: 'migrate:up',
+        aliases: ['haha'],
         description: 'Run all new migrations',
         isDangerous: true,
     )]

@@ -5,25 +5,21 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use ArgumentCountError;
-use ReflectionMethod;
 use Tempest\AppConfig;
 use Tempest\Console\Argument;
 use Tempest\Console\ArgumentBag;
-use Tempest\Console\ConsoleInput;
-use Tempest\Console\ConsoleStyle;
-use Tempest\Console\ExitException;
-use Tempest\Validation\GenericValidator;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\InjectedArgument;
-use Tempest\Console\GenericArgumentBag;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Validation\NestedValidator;
+use Tempest\Console\ConsoleStyle;
+use Tempest\Console\ExitException;
+use Tempest\Console\InjectedArgument;
 use Tempest\Console\RenderConsoleCommand;
 use Tempest\Console\RenderConsoleCommandOverview;
 use Tempest\Container\Container;
-use Throwable;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\NestedValidator;
+use Throwable;
 
 final readonly class ConsoleApplication implements Application
 {
@@ -104,7 +100,7 @@ final readonly class ConsoleApplication implements Application
         $output->error('Something went wrong');
     }
 
-    private function handleValidationFailed(ConsoleCommand $command, ValidationException $e)
+    private function handleValidationFailed(ConsoleCommand $command, ValidationException $e): void
     {
         $output = $this->container->get(ConsoleOutput::class);
 
@@ -126,7 +122,7 @@ final readonly class ConsoleApplication implements Application
         }
     }
 
-    private function exit(ExitException $e)
+    private function exit(ExitException $e): void
     {
         if ($e->getMessage()) {
             $output = $this->container->get(ConsoleOutput::class);

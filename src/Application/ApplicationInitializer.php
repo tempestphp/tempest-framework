@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use Tempest\AppConfig;
-use Tempest\Container\Container;
 use Tempest\Console\ArgumentBag;
+use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 

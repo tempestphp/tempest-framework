@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Arguments;
 
 use Tempest\AppConfig;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleInput;
 use Tempest\Console\ExitException;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\InjectedArgument;
 use function Tempest\get;
 

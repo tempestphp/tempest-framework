@@ -40,9 +40,17 @@ final readonly class RenderConsoleCommandOverview
         ksort($commands);
 
         foreach ($commands as $group => $commandsForGroup) {
+            if (! $commandsForGroup) {
+                continue;
+            }
+
             $lines[] = ConsoleStyle::BOLD(ConsoleStyle::BG_BLUE(' ' . ucfirst($group) . ' '));
 
             foreach ($commandsForGroup as $consoleCommand) {
+                if ($consoleCommand->isHidden()) {
+                    continue;
+                }
+
                 $renderedConsoleCommand = (new RenderConsoleCommand())($consoleCommand);
                 $lines[] = "  {$renderedConsoleCommand}";
             }

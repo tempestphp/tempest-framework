@@ -6,7 +6,14 @@ namespace Tempest\Console;
 
 final class GenericArgumentBag implements ArgumentBag
 {
+    /**
+     * @var Argument[]
+     */
     protected array $arguments = [];
+
+    /**
+     * @var string[]
+     */
     protected array $path = [];
 
     /**
@@ -28,6 +35,7 @@ final class GenericArgumentBag implements ArgumentBag
                 $key = $parts[0];
 
                 $this->set($key, $parts[1] ?? true);
+
                 continue;
             }
 
@@ -75,6 +83,11 @@ final class GenericArgumentBag implements ArgumentBag
     public function getCommandName(): ?string
     {
         return $this->path[1] ?? null;
+    }
+
+    public function getFullCommand(): ?string
+    {
+        return join(' ', $this->path);
     }
 
     /**

@@ -5,12 +5,32 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use ReflectionParameter;
+use function Tempest\get;
 
 final readonly class RenderConsoleCommand
 {
-    public function __invoke(ConsoleCommand $consoleCommand): string
+    public function __invoke(ConsoleCommand $consoleCommand, bool $fullPath = false, bool $includeDescription = true): string
     {
-        $parts = [ConsoleStyle::FG_DARK_BLUE($consoleCommand->getName())];
+        $commandName = $consoleCommand->getName();
+
+        if ($fullPath) {
+            $bag = get(ArgumentBag::class);
+
+            $commandName = join(' ', [
+                'php',
+                $bag->getFullCommand(),
+            ]);
+        }
+
+        $parts = [ConsoleStyle::FG_DARK_BLUE($commandName)];
+
+        if ($consoleCommand->getAliases()) {
+            $parts[] = ConsoleStyle::FG_LIGHT_GRAY('(' . implode(', ', $consoleCommand->getAliases()) . ')');
+        }
+
+        if ($consoleCommand->isDangerous()) {
+            $parts[] = ConsoleStyle::BG_RED(' !!! ');
+        }
 
         $arguments = $consoleCommand->getAvailableArguments();
 
@@ -24,7 +44,7 @@ final readonly class RenderConsoleCommand
             $parts[] = $this->renderInjected($parameter);
         }
 
-        if ($consoleCommand->getDescription()) {
+        if ($includeDescription && $consoleCommand->getDescription()) {
             $parts[] = "- {$consoleCommand->getDescription()}";
         }
 

@@ -21,11 +21,12 @@ interface ArgumentBag
 
     public function getCommandName(): ?string;
 
+    public function getFullCommand(): ?string;
+
     /**
      * @param ConsoleCommand $command
      *
      * @return CommandArguments
      */
     public function resolveParameters(ConsoleCommand $command): CommandArguments;
-
 }

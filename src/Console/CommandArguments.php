@@ -6,7 +6,6 @@ namespace Tempest\Console;
 
 final readonly class CommandArguments
 {
-
     /**
      * @param array<string|int, Argument> $arguments
      * @param array<string|int, InjectedArgument> $injectedArguments
@@ -14,7 +13,8 @@ final readonly class CommandArguments
     public function __construct(
         public array $arguments = [],
         public array $injectedArguments = []
-    ) {}
+    ) {
+    }
 
     /**
      * @return Argument[]|InjectedArgument[]
@@ -23,5 +23,4 @@ final readonly class CommandArguments
     {
         return $this->arguments + $this->injectedArguments;
     }
-
 }

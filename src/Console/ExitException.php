@@ -8,5 +8,4 @@ use Exception;
 
 final class ExitException extends Exception
 {
-
 }

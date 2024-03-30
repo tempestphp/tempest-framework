@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration;
 
 use Tempest\AppConfig;
-use Tempest\Console\ArgumentBag;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\HttpApplication;
+use Tempest\Console\ArgumentBag;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\Validation\Rules\IP;
-use Tempest\Validation\Rules\Url;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Validation\Rules\Url;
 
 final readonly class ServeCommand
 {
@@ -18,8 +17,7 @@ final readonly class ServeCommand
         #[Url]
         string $host = 'localhost:8000',
         string $publicDir = 'public/'
-    ): void
-    {
+    ): void {
         passthru("php -S {$host} -t {$publicDir}");
     }
 }

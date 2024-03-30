@@ -8,7 +8,6 @@ use Tempest\Validation\Exceptions\ValidationException;
 
 interface Validator
 {
-
     /**
      * @param mixed $value
      *
@@ -17,5 +16,4 @@ interface Validator
      * @return void
      */
     public function validate(mixed $value): void;
-
 }

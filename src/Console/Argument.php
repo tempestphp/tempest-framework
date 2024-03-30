@@ -8,6 +8,13 @@ use ReflectionParameter;
 
 readonly class Argument
 {
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @param string[] $aliases
+     * @param null|string $description
+     * @param null|ReflectionParameter $parameter
+     */
     public function __construct(
         public string $name,
         public mixed $value,
@@ -50,5 +57,4 @@ readonly class Argument
     {
         return $this->description;
     }
-
 }

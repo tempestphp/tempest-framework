@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest;
 
 use Dotenv\Dotenv;
-use Tempest\Console\ArgumentBag;
 use Tempest\Application\Application;
 use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
+use Tempest\Console\ArgumentBag;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tempest\Exceptions\HttpExceptionHandler;

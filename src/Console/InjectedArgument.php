@@ -6,7 +6,6 @@ namespace Tempest\Console;
 
 readonly class InjectedArgument extends Argument
 {
-
     /**
      * @throws ExitException
      */
@@ -17,6 +16,6 @@ readonly class InjectedArgument extends Argument
 
     public function shouldInject(): bool
     {
-        return !! $this->value;
+        return ! ! $this->value;
     }
 }

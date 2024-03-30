@@ -6,20 +6,20 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
-use Tempest\Console\Arguments\HelpArgument;
 use Tempest\Console\Arguments\ForceArgument;
+use Tempest\Console\Arguments\HelpArgument;
 
 #[Attribute]
 final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 
-    public CommandArguments $availableArguments;
-
     public function __construct(
         private readonly ?string $name = null,
         private readonly ?string $description = null,
+        private readonly ?array $aliases = [],
         private readonly bool $isDangerous = false,
+        private readonly bool $isHidden = false,
     ) {
     }
 
@@ -51,6 +51,16 @@ final class ConsoleCommand
         return $this->isDangerous;
     }
 
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -59,6 +69,8 @@ final class ConsoleCommand
             'is_dangerous' => $this->isDangerous,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
+            'aliases' => $this->aliases,
+            'is_hidden' => $this->isHidden,
         ];
     }
 
@@ -71,6 +83,8 @@ final class ConsoleCommand
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
+        $this->aliases = $data['aliases'];
+        $this->isHidden = $data['is_hidden'];
     }
 
     /**
@@ -82,13 +96,7 @@ final class ConsoleCommand
         $arguments = [];
 
         foreach ($this->flagList() as $flag) {
-            $availableParameters = [];
-
-            if (! $availableParameters) {
-                $injected[$flag->name] = $flag;
-
-                continue;
-            }
+            $availableParameters = $this->handler->getParameters();
 
             foreach ($availableParameters as $parameter) {
                 /**
@@ -96,8 +104,13 @@ final class ConsoleCommand
                  */
                 if ($parameter->getName() !== $flag->name) {
                     $injected[$flag->name] = $flag;
+
                     continue 2;
                 }
+            }
+
+            if (! $availableParameters) {
+                $injected[$flag->name] = $flag;
             }
         }
 
