@@ -20,7 +20,7 @@ final readonly class HelpArgument extends InjectedArgument
 
         $output->writeln(ConsoleStyle::BG_DARK_BLUE(" " . ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD($command->getDescription() . " "))));
 
-        $output->writeln((new RenderConsoleCommand())($command, true, false));
+        $output->writeln((new RenderConsoleCommand())($command, true, false)[0]);
         $output->writeln("");
 
         if ($command->getAliases()) {

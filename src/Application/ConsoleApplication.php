@@ -106,8 +106,11 @@ final readonly class ConsoleApplication implements Application
 
         $output->error('Validation failed');
 
+        [$command, $validation] = $this->container->get(RenderConsoleCommand::class)($command, true, errorParts: $e->failingRules);
+
         $output->writeln("");
-        $output->writeln((new RenderConsoleCommand())($command));
+        $output->writeln($command);
+        $output->writeln($validation);
         $output->writeln("");
 
         $output->error(sprintf("Found %s errors", count($e->failingRules)));

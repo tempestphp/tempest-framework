@@ -9,7 +9,7 @@ use function Tempest\get;
 
 final readonly class RenderConsoleCommand
 {
-    public function __invoke(ConsoleCommand $consoleCommand, bool $fullPath = false, bool $includeDescription = true): string
+    public function __invoke(ConsoleCommand $consoleCommand, bool $fullPath = false, bool $includeDescription = true, array $errorParts = []): array
     {
         $commandName = $consoleCommand->getName();
 
@@ -34,9 +34,35 @@ final readonly class RenderConsoleCommand
 
         $arguments = $consoleCommand->getAvailableArguments();
 
+        // todo: refactor this class after we decide we want to pursue this approach, a helper class for creating command outputs would be nice
+        $noAnsi = function (string $string) {
+            return preg_replace('/\x1b\[[0-9;]*m/', '', $string);
+        };
+
+        $sum = function ($parts) use ($noAnsi) {
+            $sum = 0;
+
+            foreach ($parts as $part) {
+                $sum += strlen($noAnsi($part));
+            }
+
+            return $sum;
+        };
+
+        $validations = [
+            str_repeat(" ", $sum($parts)),
+        ];
+
         foreach ($arguments->arguments as $parameter) {
             if ($reflectionParameter = $parameter->parameter) {
-                $parts[] = $this->renderParameter($reflectionParameter);
+                $part = $this->renderParameter($reflectionParameter);
+                $parts[] = $part;
+
+                if (isset($errorParts[$parameter->name])) {
+                    $validations[] = ConsoleStyle::FG_RED(
+                        str_repeat("^", $sum([$part]))
+                    );
+                }
             }
         }
 
@@ -48,7 +74,10 @@ final readonly class RenderConsoleCommand
             $parts[] = "- {$consoleCommand->getDescription()}";
         }
 
-        return implode(' ', $parts);
+        return [
+            implode(' ', $parts),
+            implode(' ', $validations),
+        ];
     }
 
     private function renderParameter(ReflectionParameter $parameter): string

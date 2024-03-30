@@ -16,6 +16,7 @@ final readonly class ServeCommand
     public function __invoke(
         #[Url]
         string $host = 'localhost:8000',
+        #[Url]
         string $publicDir = 'public/'
     ): void {
         passthru("php -S {$host} -t {$publicDir}");

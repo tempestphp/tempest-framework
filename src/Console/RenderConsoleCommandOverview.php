@@ -51,7 +51,7 @@ final readonly class RenderConsoleCommandOverview
                     continue;
                 }
 
-                $renderedConsoleCommand = (new RenderConsoleCommand())($consoleCommand);
+                $renderedConsoleCommand = (new RenderConsoleCommand())($consoleCommand)[0];
                 $lines[] = "  {$renderedConsoleCommand}";
             }
 
