@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\ORM\Casters;
 
-use ReflectionProperty;
 use ReflectionParameter;
+use ReflectionProperty;
+use Tempest\Mapper\UnknownValue;
 use Tempest\ORM\DynamicCaster;
 use Tempest\Validation\Inferrer;
-use Tempest\Mapper\UnknownValue;
 use Tempest\Validation\Rules\Boolean;
 
 final readonly class BooleanCaster implements DynamicCaster, Inferrer

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\ORM;
 
-use ReflectionProperty;
 use ReflectionParameter;
+use ReflectionProperty;
 
 interface DynamicCaster extends Caster
 {

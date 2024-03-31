@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Tempest\ORM\Exceptions\CannotMapDataException;
-use function Tempest\get;
 
 /* @template ClassType */
 final class ObjectMapper
@@ -104,6 +103,9 @@ final class ObjectMapper
         throw new CannotMapDataException($from, $to);
     }
 
+    /**
+     * @return Mapper[]
+     */
     protected function getMappers(): array
     {
         return [

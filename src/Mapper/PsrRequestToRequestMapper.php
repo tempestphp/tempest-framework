@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use function Tempest\get;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use function Tempest\map;
 use Tempest\Validation\Validator;
-use function Tempest\get;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {

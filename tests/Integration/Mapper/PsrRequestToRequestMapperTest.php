@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use App\Modules\Posts\PostRequest;
+use App\Modules\Posts\PostStatusRequest;
+use App\ValueObjects\ModelId;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Request;
-use App\Modules\Posts\PostStatusRequest;
 use Tempest\Mapper\PsrRequestToRequestMapper;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
-use Tests\Tempest\Unit\Validation\ObjectWithPrimitives;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\map;
 
 /**
  * @internal
@@ -79,11 +78,42 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(GenericRequest::class, $request);
     }
 
+    public function test_dynamic_casts_are_working(): void
+    {
+        $mapper = new PsrRequestToRequestMapper();
 
-    public function test_inferred_validations_work()
+        $request = $mapper->map(
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                body: ['id' => 5, 'published' => 'true'],
+            ),
+            to: PostStatusRequest::class,
+        );
+
+        $this->assertInstanceOf(PostStatusRequest::class, $request);
+        $this->assertInstanceOf(ModelId::class, $request->id);
+        $this->assertEquals(5, $request->id->value);
+        $this->assertEquals('bool', $request->published);
+    }
+
+    public function test_rule_inferrers_are_working(): void
     {
         $this->expectException(ValidationException::class);
 
-        $x = map(['boolean' => 'asd'])->to(ObjectWithPrimitives::class);
+        $mapper = new PsrRequestToRequestMapper();
+
+        try {
+            $mapper->map(
+                from: $this->http->makePsrRequest(
+                    uri: '/',
+                    body: ['id' => 10, 'published' => 'false'],
+                ),
+                to: PostStatusRequest::class,
+            );
+        } catch (ValidationException $e) {
+            $this->assertStringContainsString('start with', $e->getMessage());
+
+            throw $e;
+        }
     }
 }

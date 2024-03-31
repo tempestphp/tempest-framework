@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use ReflectionClass;
-use Tempest\ORM\DynamicCaster;
 use Tempest\Container\Container;
 use Tempest\Mapper\CasterConfig;
-use function Tempest\get;
+use Tempest\ORM\DynamicCaster;
 
 final readonly class DynamicCasterDiscovery implements Discovery
 {
@@ -29,7 +28,7 @@ final readonly class DynamicCasterDiscovery implements Discovery
         }
 
         $this->casterConfig->addCaster(
-            get($class->getName()),
+            $class->newInstanceWithoutConstructor(),
         );
     }
 

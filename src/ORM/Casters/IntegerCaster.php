@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\ORM\Casters;
 
-use ReflectionProperty;
 use ReflectionParameter;
+use ReflectionProperty;
 use Tempest\ORM\DynamicCaster;
 
 final readonly class IntegerCaster implements DynamicCaster

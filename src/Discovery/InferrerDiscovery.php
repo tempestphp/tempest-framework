@@ -6,11 +6,8 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
-use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapperConfig;
 use Tempest\Validation\Inferrer;
 use Tempest\Validation\InferrerConfig;
-use function Tempest\get;
 
 final readonly class InferrerDiscovery implements Discovery
 {
@@ -31,7 +28,7 @@ final readonly class InferrerDiscovery implements Discovery
         }
 
         $this->inferrerConfig->addInferrer(
-            get($class->getName()),
+            $class->newInstanceWithoutConstructor(),
         );
     }
 

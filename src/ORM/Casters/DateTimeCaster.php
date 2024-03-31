@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Tempest\ORM\Casters;
 
 use DateTime;
-use DateTimeInterface;
-use DateTimeImmutable;
-use ReflectionProperty;
-use ReflectionParameter;
 use InvalidArgumentException;
+use ReflectionParameter;
+use ReflectionProperty;
 use Tempest\ORM\DynamicCaster;
 
 final readonly class DateTimeCaster implements DynamicCaster

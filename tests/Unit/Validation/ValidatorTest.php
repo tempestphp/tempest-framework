@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Validation;
 
 use PHPUnit\Framework\TestCase;
+use function Tempest\get;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
-use function Tempest\get;
 
 /**
  * @internal

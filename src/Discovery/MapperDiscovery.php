@@ -6,9 +6,9 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
+use function Tempest\get;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapperConfig;
-use function Tempest\get;
 
 final readonly class MapperDiscovery implements Discovery
 {

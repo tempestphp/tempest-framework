@@ -6,13 +6,16 @@ namespace Tempest\Mapper;
 
 final class MapperConfig
 {
+    /**
+     * @param Mapper[] $mappers
+     */
     public function __construct(
         public array $mappers = []
     ) {
 
     }
 
-    public function addMapper($mapper): self
+    public function addMapper(Mapper $mapper): self
     {
         $this->mappers[] = $mapper;
 

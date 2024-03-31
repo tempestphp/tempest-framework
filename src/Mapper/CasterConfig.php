@@ -8,9 +8,13 @@ use Tempest\ORM\DynamicCaster;
 
 final class CasterConfig
 {
+    /**
+     * @param DynamicCaster[] $casters
+     */
     public function __construct(
         public array $casters = []
-    ) {}
+    ) {
+    }
 
     public function addCaster(DynamicCaster $caster): self
     {

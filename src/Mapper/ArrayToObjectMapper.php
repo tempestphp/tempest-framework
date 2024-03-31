@@ -4,30 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
-use Tempest\ORM\DynamicCaster;
-use Tempest\Validation\InferrerConfig;
-use _PHPStan_de1c07ea6\Nette\Schema\ValidationException;
 use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
 use Tempest\ORM\Caster;
-use Tempest\ORM\Casters\BooleanCaster;
-use Tempest\ORM\Casters\DateTimeCaster;
-use Tempest\ORM\Casters\DateTimeImmutableCaster;
-use Tempest\ORM\Casters\FloatCaster;
-use Tempest\ORM\Casters\IntegerCaster;
+use Tempest\ORM\DynamicCaster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
-use Tempest\Validation\Rules\DateTimeFormat;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\InferrerConfig;
 use Tempest\Validation\Validator;
-use Throwable;
-use function _PHPStan_de1c07ea6\React\Promise\resolve;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
@@ -75,19 +64,9 @@ final readonly class ArrayToObjectMapper implements Mapper
             if ($value instanceof UnknownValue) {
                 $caster = $this->getCaster($property, $value);
 
-                foreach (get(InferrerConfig::class)->inferrers as $inferrer) {
-                    foreach ($inferrer->infer($property, $value) as $rule) {
-                        if (! $rule->isValid($value)) {
-                            $failingRules[$property->getName()][] = $rule;
-                        }
-                    }
-                }
+                $this->validateInferredRules($property, $value);
 
                 $value = $caster?->cast($from[$propertyName]) ?? $from[$propertyName];
-            }
-
-            if ($failingRules) {
-                throw new \Tempest\Validation\Exceptions\ValidationException($object, $failingRules);
             }
 
             $property->setValue($object, $value);
@@ -148,6 +127,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         object $parent,
     ): mixed {
         $type = $this->resolveType($property);
+
+        $this->validateInferredRules($property, $data);
 
         if (! $type) {
             return new UnknownValue();
@@ -263,5 +244,22 @@ final readonly class ArrayToObjectMapper implements Mapper
         $validator = get(Validator::class);
 
         $validator->validate($object);
+    }
+
+    private function validateInferredRules(ReflectionProperty $property, mixed $value): void
+    {
+        $failingRules = [];
+
+        foreach (get(InferrerConfig::class)->inferrers as $inferrer) {
+            foreach ($inferrer->infer($property, $value) as $rule) {
+                if (! $rule->isValid($value)) {
+                    $failingRules[$property->getName()][] = $rule;
+                }
+            }
+        }
+
+        if ($failingRules) {
+            throw new ValidationException($property, $failingRules);
+        }
     }
 }
