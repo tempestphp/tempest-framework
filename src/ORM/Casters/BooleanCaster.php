@@ -15,10 +15,6 @@ final readonly class BooleanCaster implements DynamicCaster, Inferrer
 {
     public function cast(mixed $input): bool
     {
-        if ($input instanceof UnknownValue) {
-            return false;
-        }
-
         return boolval($input);
     }
 
@@ -26,10 +22,6 @@ final readonly class BooleanCaster implements DynamicCaster, Inferrer
     {
         if ($property->getType()?->getName() !== 'bool') {
             return false;
-        }
-
-        if ($value instanceof UnknownValue) {
-            return true;
         }
 
         foreach ($this->infer($property, $value) as $rule) {
