@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use function Tempest\get;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
@@ -48,7 +47,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             ...$data,
         ])->to($requestClass);
 
-        $validator = get(Validator::class);
+        $validator = new Validator();
         $validator->validate($newRequest);
 
         return $newRequest;

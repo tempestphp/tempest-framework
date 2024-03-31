@@ -241,7 +241,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function validate(object|string $object): void
     {
-        $validator = get(Validator::class);
+        $validator = new Validator();
 
         $validator->validate($object);
     }
