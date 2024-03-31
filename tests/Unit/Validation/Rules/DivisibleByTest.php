@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation\Rules;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\Even;
-use Tempest\Validation\Rules\AfterDate;
 use Tempest\Validation\Rules\DivisibleBy;
 
 /**
@@ -31,5 +27,4 @@ class DivisibleByTest extends TestCase
 
         $this->assertSame('Value should be divisible by 5', $rule->message());
     }
-
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Validation\Rules;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\In;
 use Tempest\Validation\Rules\NotIn;
 
 /**
@@ -27,5 +26,4 @@ class NotInTest extends TestCase
 
         $this->assertSame('Value cannot be any of: 4, 2, 0', $rule->message());
     }
-
 }

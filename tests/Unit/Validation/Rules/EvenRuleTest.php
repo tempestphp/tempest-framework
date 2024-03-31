@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation\Rules;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Even;
-use Tempest\Validation\Rules\AfterDate;
 
 /**
  * @internal
@@ -29,5 +26,4 @@ class EvenRuleTest extends TestCase
 
         $this->assertSame('Value should be an even number', $rule->message());
     }
-
 }

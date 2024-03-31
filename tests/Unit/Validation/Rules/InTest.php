@@ -26,5 +26,4 @@ class InTest extends TestCase
 
         $this->assertSame('Value should be one of: 4, 2, 0', $rule->message());
     }
-
 }

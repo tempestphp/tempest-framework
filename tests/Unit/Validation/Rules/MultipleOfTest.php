@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation\Rules;
 
-use DateTimeImmutable;
-use DateTimeZone;
 use PHPUnit\Framework\TestCase;
-use Tempest\Validation\Rules\Even;
-use Tempest\Validation\Rules\AfterDate;
 use Tempest\Validation\Rules\MultipleOf;
-use Tempest\Validation\Rules\DivisibleBy;
 
 /**
  * @internal
@@ -32,5 +27,4 @@ class MultipleOfTest extends TestCase
 
         $this->assertSame('Value should be a multiple of 5', $rule->message());
     }
-
 }
