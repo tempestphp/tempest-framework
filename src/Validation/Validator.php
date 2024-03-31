@@ -6,11 +6,15 @@ namespace Tempest\Validation;
 
 use ReflectionClass;
 use ReflectionProperty;
+use function Tempest\get;
 use function Tempest\attribute;
 use Tempest\Validation\Exceptions\ValidationException;
 
 final readonly class Validator
 {
+    public function __construct()
+    {}
+
     public function validate(object $object): void
     {
         $class = new ReflectionClass($object);

@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
+use function Tempest\get;
 
 /**
  * @internal
@@ -19,7 +20,7 @@ class ValidatorTest extends TestCase
     {
         $this->expectException(ValidationException::class);
 
-        $validator = new Validator();
+        $validator = get(Validator::class);
 
         $validator->validate(new ObjectToBeValidated(name: 'a'));
     }

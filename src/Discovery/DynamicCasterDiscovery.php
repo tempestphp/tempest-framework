@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use ReflectionClass;
+use Tempest\ORM\DynamicCaster;
 use Tempest\Container\Container;
-use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapperConfig;
+use Tempest\Mapper\CasterConfig;
 use function Tempest\get;
 
-final readonly class MapperDiscovery implements Discovery
+final readonly class DynamicCasterDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/mapper-discovery.cache.php';
+    private const CACHE_PATH = __DIR__ . '/dynamic-casters-discovery.cache.php';
 
-    public function __construct(private MapperConfig $mapperConfig)
+    public function __construct(private CasterConfig $casterConfig)
     {
     }
 
@@ -24,11 +24,11 @@ final readonly class MapperDiscovery implements Discovery
             return;
         }
 
-        if (! $class->implementsInterface(Mapper::class)) {
+        if (! $class->implementsInterface(DynamicCaster::class)) {
             return;
         }
 
-        $this->mapperConfig->addMapper(
+        $this->casterConfig->addCaster(
             get($class->getName()),
         );
     }
@@ -40,14 +40,14 @@ final readonly class MapperDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->mapperConfig->mappers));
+        file_put_contents(self::CACHE_PATH, serialize($this->casterConfig->casters));
     }
 
     public function restoreCache(Container $container): void
     {
-        $mappers = unserialize(file_get_contents(self::CACHE_PATH));
+        $casters = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->mapperConfig->mappers = $mappers;
+        $this->casterConfig->casters = $casters;
     }
 
     public function destroyCache(): void

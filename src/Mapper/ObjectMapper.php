@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Tempest\ORM\Exceptions\CannotMapDataException;
+use function Tempest\get;
 
 /* @template ClassType */
 final class ObjectMapper
@@ -23,6 +24,7 @@ final class ObjectMapper
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
+     *
      * @return self<T>
      */
     public function forClass(object|string $objectOrClass): self
@@ -64,6 +66,7 @@ final class ObjectMapper
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
+     *
      * @return T
      */
     public function to(object|string $objectOrClass): object
@@ -91,12 +94,26 @@ final class ObjectMapper
             );
         }
 
-        foreach ($this->config->mappers as $mapper) {
-            if ($mapper->canMap(from: $from, to: $to)) {
-                return $mapper->map(from: $from, to: $to);
+
+        foreach ($this->getMappers() as $mapperClass) {
+            if ($mapperClass->canMap(from: $from, to: $to)) {
+                return $mapperClass->map(from: $from, to: $to);
             }
         }
 
         throw new CannotMapDataException($from, $to);
+    }
+
+    protected function getMappers(): array
+    {
+        return [
+            new PsrRequestToRequestMapper(),
+            new RequestToPsrRequestMapper(),
+            new ArrayToObjectMapper(),
+            new QueryToModelMapper(),
+            new ModelToQueryMapper(),
+            new RequestToObjectMapper(),
+            ...$this->config->mappers,
+        ];
     }
 }

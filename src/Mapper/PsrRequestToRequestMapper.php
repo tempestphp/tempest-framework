@@ -10,6 +10,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use function Tempest\map;
 use Tempest\Validation\Validator;
+use function Tempest\get;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
@@ -47,7 +48,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             ...$data,
         ])->to($requestClass);
 
-        $validator = new Validator();
+        $validator = get(Validator::class);
         $validator->validate($newRequest);
 
         return $newRequest;

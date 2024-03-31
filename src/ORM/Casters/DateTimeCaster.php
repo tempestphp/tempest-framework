@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\ORM\Casters;
 
 use DateTime;
+use DateTimeInterface;
+use DateTimeImmutable;
+use ReflectionProperty;
+use ReflectionParameter;
 use InvalidArgumentException;
-use Tempest\ORM\Caster;
+use Tempest\ORM\DynamicCaster;
 
-final readonly class DateTimeCaster implements Caster
+final readonly class DateTimeCaster implements DynamicCaster
 {
     public function __construct(
         private string $format = 'Y-m-d H:i:s',
@@ -24,5 +28,12 @@ final readonly class DateTimeCaster implements Caster
         }
 
         return $date;
+    }
+
+    public function shouldCast(ReflectionParameter|ReflectionProperty $property, mixed $value): bool
+    {
+        return in_array($property->getType()?->getName(), [
+            DateTime::class,
+        ], true);
     }
 }

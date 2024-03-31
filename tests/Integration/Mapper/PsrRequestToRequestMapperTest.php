@@ -7,9 +7,13 @@ namespace Tests\Tempest\Integration\Mapper;
 use App\Modules\Posts\PostRequest;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Request;
+use App\Modules\Posts\PostStatusRequest;
 use Tempest\Mapper\PsrRequestToRequestMapper;
 use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\Unit\Validation\ObjectWithPrimitives;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\map;
 
 /**
  * @internal
@@ -73,5 +77,13 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertInstanceOf(GenericRequest::class, $request);
+    }
+
+
+    public function test_inferred_validations_work()
+    {
+        $this->expectException(ValidationException::class);
+
+        $x = map(['boolean' => 'asd'])->to(ObjectWithPrimitives::class);
     }
 }

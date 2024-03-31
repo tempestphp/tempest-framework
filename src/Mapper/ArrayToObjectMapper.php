@@ -10,6 +10,9 @@ use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use Tempest\ORM\DynamicCaster;
+use Tempest\Validation\InferrerConfig;
+use _PHPStan_de1c07ea6\Nette\Schema\ValidationException;
 use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\ORM\Attributes\CastWith;
@@ -24,6 +27,7 @@ use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Rules\DateTimeFormat;
 use Tempest\Validation\Validator;
 use Throwable;
+use function _PHPStan_de1c07ea6\React\Promise\resolve;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
@@ -42,6 +46,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $from = (new ArrayHelper())->unwrap($from);
 
+        $failingRules = [];
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
 
@@ -68,9 +73,21 @@ final readonly class ArrayToObjectMapper implements Mapper
             }
 
             if ($value instanceof UnknownValue) {
-                $caster = $this->getCaster($property);
+                $caster = $this->getCaster($property, $value);
+
+                foreach (get(InferrerConfig::class)->inferrers as $inferrer) {
+                    foreach ($inferrer->infer($property, $value) as $rule) {
+                        if (! $rule->isValid($value)) {
+                            $failingRules[$property->getName()][] = $rule;
+                        }
+                    }
+                }
 
                 $value = $caster?->cast($from[$propertyName]) ?? $from[$propertyName];
+            }
+
+            if ($failingRules) {
+                throw new \Tempest\Validation\Exceptions\ValidationException($object, $failingRules);
             }
 
             $property->setValue($object, $value);
@@ -85,7 +102,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    private function getCaster(ReflectionProperty $property): ?Caster
+    private function getCaster(ReflectionProperty $property, mixed $value): ?Caster
     {
         $castWith = attribute(CastWith::class)
             ->in($property)
@@ -101,13 +118,16 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         if (! $castWith) {
-            return match($type = $property->getType()->getName()) {
-                'int' => new IntegerCaster(),
-                'float' => new FloatCaster(),
-                'bool' => new BooleanCaster(),
-                DateTimeImmutable::class, DateTime::class, DateTimeInterface::class => $this->createDateCaster($type, $property),
-                default => null,
-            };
+            $config = get(CasterConfig::class);
+
+            /** @var DynamicCaster $caster */
+            foreach ($config->casters as $caster) {
+                if ($caster->shouldCast($property, $value)) {
+                    return $caster;
+                }
+            }
+
+            return null;
         }
 
         return get($castWith->className);
@@ -135,7 +155,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $item = $data;
 
-        $caster = $this->getCaster($property);
+        $caster = $this->getCaster($property, $item);
 
         if (! is_array($item)) {
             return $caster?->cast($item) ?? $item;
@@ -170,7 +190,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $class = $property->getDeclaringClass();
 
-        $caster = $this->getCaster($property);
+        $caster = $this->getCaster($property, $data);
 
         foreach ($data as $item) {
             if (! is_array($item)) {
@@ -240,32 +260,8 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function validate(object|string $object): void
     {
-        $validator = new Validator();
+        $validator = get(Validator::class);
 
         $validator->validate($object);
-    }
-
-    /**
-     * @param class-string<DateTime|DateTimeImmutable|DateTimeInterface> $type
-     * @param ReflectionProperty $property
-     *
-     * @return Caster
-     */
-    private function createDateCaster(string $type, ReflectionProperty $property): Caster
-    {
-        $format = null;
-
-        try {
-            $format = attribute(DateTimeFormat::class)
-                ->in($property)
-                ->first();
-        } catch (Throwable) {
-
-        }
-
-        return match ($type) {
-            DateTime::class => new DateTimeCaster($format?->format),
-            default => new DateTimeImmutableCaster($format->format),
-        };
     }
 }

@@ -8,13 +8,15 @@ use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapperConfig;
+use Tempest\Validation\Inferrer;
+use Tempest\Validation\InferrerConfig;
 use function Tempest\get;
 
-final readonly class MapperDiscovery implements Discovery
+final readonly class InferrerDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/mapper-discovery.cache.php';
+    private const CACHE_PATH = __DIR__ . '/inferrer-discovery.cache.php';
 
-    public function __construct(private MapperConfig $mapperConfig)
+    public function __construct(private InferrerConfig $inferrerConfig)
     {
     }
 
@@ -24,11 +26,11 @@ final readonly class MapperDiscovery implements Discovery
             return;
         }
 
-        if (! $class->implementsInterface(Mapper::class)) {
+        if (! $class->implementsInterface(Inferrer::class)) {
             return;
         }
 
-        $this->mapperConfig->addMapper(
+        $this->inferrerConfig->addInferrer(
             get($class->getName()),
         );
     }
@@ -40,14 +42,14 @@ final readonly class MapperDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->mapperConfig->mappers));
+        file_put_contents(self::CACHE_PATH, serialize($this->inferrerConfig->inferrers));
     }
 
     public function restoreCache(Container $container): void
     {
-        $mappers = unserialize(file_get_contents(self::CACHE_PATH));
+        $inferrers = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->mapperConfig->mappers = $mappers;
+        $this->inferrerConfig->inferrers = $inferrers;
     }
 
     public function destroyCache(): void
