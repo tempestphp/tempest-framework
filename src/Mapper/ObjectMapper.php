@@ -15,19 +15,9 @@ final class ObjectMapper
 
     private bool $isCollection = false;
 
-    /** @var \Tempest\Mapper\Mapper[] */
-    private readonly array $mappers;
-
-    public function __construct()
-    {
-        $this->mappers = [
-            new PsrRequestToRequestMapper(),
-            new RequestToPsrRequestMapper(),
-            new ArrayToObjectMapper(),
-            new QueryToModelMapper(),
-            new ModelToQueryMapper(),
-            new RequestToObjectMapper(),
-        ];
+    public function __construct(
+        protected MapperConfig $config,
+    ) {
     }
 
     /**
@@ -101,7 +91,7 @@ final class ObjectMapper
             );
         }
 
-        foreach ($this->mappers as $mapper) {
+        foreach ($this->config->mappers as $mapper) {
             if ($mapper->canMap(from: $from, to: $to)) {
                 return $mapper->map(from: $from, to: $to);
             }
