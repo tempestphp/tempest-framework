@@ -61,7 +61,6 @@ readonly class Argument implements HasHelpLines
         return $this->default;
     }
 
-    // todo allow user to customize this via attribute
     public function getHelpLines(): array
     {
         if ($this->parameter && $attribute = attribute(Parameter::class)->in($this->parameter)->first()) {
