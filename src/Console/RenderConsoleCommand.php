@@ -61,17 +61,17 @@ final readonly class RenderConsoleCommand
             )
             ->toString();
 
-        if ($errorParts) {
-            $validationLine = $this->buildValidationLine($line, $errorParts);
-
-            if (! $validationLine) {
-                return $line;
-            }
-
-            return $line . PHP_EOL . $validationLine;
+        if (! $errorParts) {
+            return $line;
         }
 
-        return $line;
+        $validationLine = $this->buildValidationLine($line, $errorParts);
+
+        if (! $validationLine) {
+            return $line;
+        }
+
+        return $line . PHP_EOL . $validationLine;
     }
 
     private function renderParameter(ReflectionParameter $parameter): string
@@ -86,7 +86,7 @@ final readonly class RenderConsoleCommand
         );
     }
 
-    private function renderArgument(?string $type, ?string $name, bool $optional, string $defaultValue)
+    private function renderArgument(?string $type, ?string $name, bool $optional, string $defaultValue): string
     {
         $name = ConsoleStyle::FG_BLUE($name ?? '');
 
@@ -101,10 +101,10 @@ final readonly class RenderConsoleCommand
         };
     }
 
-    private function renderInjected(InjectedArgument $parameter)
+    private function renderInjected(InjectedArgument $parameter): string
     {
         return self::renderArgument(
-            type: 'bool', // todo: we should actually pull the type from the argument, not assume bool.
+            type: $parameter->parameter?->getType()?->getName(),
             name: $parameter->name,
             optional: true,
             defaultValue: 'false',
@@ -143,7 +143,7 @@ final readonly class RenderConsoleCommand
             return $line;
         }
 
-        // Otherwise, return the validation line
+        // Otherwise, return the validation line with the error indicators
         return preg_replace('/(\^+)/', ConsoleStyle::FG_RED('$1'), $validationLine);
     }
 }

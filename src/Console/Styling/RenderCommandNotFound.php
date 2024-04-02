@@ -24,7 +24,7 @@ final readonly class RenderCommandNotFound
         return ConsoleOutputBuilder::new()
             ->error("Command `{$command}` not found")
             ->blank()
-            ->when(! ! $similarCommands, function ($response) use ($similarCommands) {
+            ->when(! ! $similarCommands, function (ConsoleOutputBuilder $response) use ($similarCommands) {
                 $response->warning('Did you mean one of these commands?')
                     ->blank();
 

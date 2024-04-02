@@ -31,32 +31,32 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
         return $this->add('', LineType::Brand);
     }
 
-    public function error(string $line)
+    public function error(string $line): self
     {
         return $this->add($line, LineType::Error);
     }
 
-    public function warning(string $line)
+    public function warning(string $line): self
     {
         return $this->add($line, LineType::Warning);
     }
 
-    public function success(string $line)
+    public function success(string $line): self
     {
         return $this->add($line, LineType::Success);
     }
 
-    public function info(string $line)
+    public function info(string $line): self
     {
         return $this->add($line, LineType::Info);
     }
 
-    public function comment(string $line)
+    public function comment(string $line): self
     {
         return $this->add($line, LineType::Comment);
     }
 
-    public function comments(array $lines)
+    public function comments(array $lines): self
     {
         if (! $lines) {
             return $this;
@@ -74,7 +74,7 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
         return $this;
     }
 
-    public function muted(string $line)
+    public function muted(string $line): self
     {
         return $this->add($line, LineType::Muted);
     }
@@ -123,8 +123,8 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
         return $this->add($group, LineType::Brand);
     }
 
-    public function formatted(string $renderCommand): self
+    public function formatted(string $message): self
     {
-        return $this->add($renderCommand, LineType::Formatted);
+        return $this->add($message, LineType::Formatted);
     }
 }

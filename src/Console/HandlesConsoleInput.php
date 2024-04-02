@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Tempest\Console\Styling\ConsoleOutputBuilder;
+
 trait HandlesConsoleInput
 {
     public function __construct(
@@ -27,22 +29,16 @@ trait HandlesConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        $questionString = ConsoleStyle::BG_YELLOW($question);
+        $message = ConsoleOutputBuilder::new(" ")
+            ->error(" $question ")
+            ->when(! ! $options, function (ConsoleOutputBuilder $builder) use ($options, $default) {
+                $builder->formatted("[" . ConsoleStyle::FG_BLUE(implode(', ', $options)) . "]")
+                    ->formatted($default ? ConsoleStyle::FG_GRAY(" (default: $default) ") : " ");
+            });
 
-        if ($options) {
-            $questionString .= ' [' . ConsoleStyle::FG_BLUE(
-                implode(
-                    ',',
-                    array_map(
-                        fn (string $option) => $option === $default ? strtoupper($option) : $option,
-                        $options,
-                    ),
-                ),
-            )
-                . '] ';
-        }
-
-        $this->output->write($questionString);
+        $this->output->write(
+            $message->toString(),
+        );
 
         $answer = trim($this->readln());
 
