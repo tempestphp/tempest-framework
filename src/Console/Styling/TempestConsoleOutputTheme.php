@@ -17,17 +17,17 @@ final class TempestConsoleOutputTheme implements ConsoleOutputTheme
         }
 
         return match ($format) {
-            LineType::Brand => ConsoleStyle::BG_DARK_BLUE(
+            OutputType::Brand => ConsoleStyle::BG_DARK_BLUE(
                 ConsoleStyle::FG_WHITE(
                     ConsoleStyle::BOLD(" $line->line ")
                 )
             ),
-            LineType::Error => ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD($line->line))),
-            LineType::Warning => ConsoleStyle::FG_DARK_YELLOW($line->line),
-            LineType::Success => ConsoleStyle::BG_GREEN(ConsoleStyle::FG_WHITE($line->line)),
-            LineType::Info => ConsoleStyle::FG_BLUE($line->line),
-            LineType::Comment => ConsoleStyle::FG_DARK_GREEN(($line->line)),
-            LineType::Muted => ConsoleStyle::FG_LIGHT_GRAY(($line->line)),
+            OutputType::Error => ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD($line->line))),
+            OutputType::Warning => ConsoleStyle::FG_DARK_YELLOW($line->line),
+            OutputType::Success => ConsoleStyle::BG_GREEN(ConsoleStyle::FG_WHITE($line->line)),
+            OutputType::Info => ConsoleStyle::FG_BLUE($line->line),
+            OutputType::Comment => ConsoleStyle::FG_DARK_GREEN(($line->line)),
+            OutputType::Muted => ConsoleStyle::FG_LIGHT_GRAY(($line->line)),
             default => $line->line,
         };
     }

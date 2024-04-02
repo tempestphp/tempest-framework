@@ -8,7 +8,7 @@ final class OutputLine
 {
     public function __construct(
         public readonly string $line,
-        public readonly LineType $type,
+        public readonly OutputType $type,
     ) {
 
     }

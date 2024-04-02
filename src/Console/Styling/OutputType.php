@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Styling;
 
-enum LineType
+enum OutputType
 {
     case Comment;
     case Brand;

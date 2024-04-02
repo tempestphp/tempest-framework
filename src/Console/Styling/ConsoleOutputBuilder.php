@@ -28,32 +28,32 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
 
     public function blank(): self
     {
-        return $this->add('', LineType::Brand);
+        return $this->add('', OutputType::Brand);
     }
 
     public function error(string $line): self
     {
-        return $this->add($line, LineType::Error);
+        return $this->add($line, OutputType::Error);
     }
 
     public function warning(string $line): self
     {
-        return $this->add($line, LineType::Warning);
+        return $this->add($line, OutputType::Warning);
     }
 
     public function success(string $line): self
     {
-        return $this->add($line, LineType::Success);
+        return $this->add($line, OutputType::Success);
     }
 
     public function info(string $line): self
     {
-        return $this->add($line, LineType::Info);
+        return $this->add($line, OutputType::Info);
     }
 
     public function comment(string $line): self
     {
-        return $this->add($line, LineType::Comment);
+        return $this->add($line, OutputType::Comment);
     }
 
     public function comments(array $lines): self
@@ -76,16 +76,16 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
 
     public function muted(string $line): self
     {
-        return $this->add($line, LineType::Muted);
+        return $this->add($line, OutputType::Muted);
     }
 
     /**
      * @param string|string[] $lines
-     * @param LineType $type
+     * @param OutputType $type
      *
      * @return $this
      */
-    public function add(string|array $lines, LineType $type): self
+    public function add(string|array $lines, OutputType $type): self
     {
         $lines = ArrayHelper::wrap($lines);
 
@@ -120,11 +120,11 @@ final class ConsoleOutputBuilder extends BaseBuilder implements Stringable
 
     public function brand(string $group): self
     {
-        return $this->add($group, LineType::Brand);
+        return $this->add($group, OutputType::Brand);
     }
 
     public function formatted(string $message): self
     {
-        return $this->add($message, LineType::Formatted);
+        return $this->add($message, OutputType::Formatted);
     }
 }
