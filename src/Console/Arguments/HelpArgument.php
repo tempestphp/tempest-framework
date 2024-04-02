@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Arguments;
 
-use Tempest\Console\ConsoleStyle;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ExitException;
 use Tempest\Console\InjectedArgument;
-use Tempest\Console\RenderConsoleCommand;
+use Tempest\Console\Styling\RenderDetailedCommand;
 use function Tempest\get;
 
 final readonly class HelpArgument extends InjectedArgument
@@ -18,29 +17,9 @@ final readonly class HelpArgument extends InjectedArgument
     {
         $output = get(ConsoleOutput::class);
 
-        $output->writeln(ConsoleStyle::BG_DARK_BLUE(" " . ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD($command->getDescription() . " "))));
-
-        if ($lines = $command->getHelpLines()) {
-            $output->writeln(ConsoleStyle::FG_DARK_GREEN("/**"));
-            foreach ($lines as $line) {
-                $output->writeln(ConsoleStyle::FG_DARK_GREEN(" * " . $line));
-            }
-            $output->writeln(ConsoleStyle::FG_DARK_GREEN("**/"));
-            $output->writeln("");
-        }
-
-        $output->writeln((new RenderConsoleCommand())($command, true, false)[0]);
-        $output->writeln("");
-
-        if ($command->getAliases()) {
-            $output->writeln(ConsoleStyle::FG_LIGHT_GRAY("Aliases: ") . implode(", ", $command->getAliases()));
-        }
-
-        foreach ($command->getAvailableArguments()->all() as $key => $argument) {
-            foreach ($argument->getHelpLines() as $line) {
-                $output->writeln(ConsoleStyle::FG_BLUE($key) . " - " . $line);
-            }
-        }
+        $output->writeln(
+            get(RenderDetailedCommand::class)($command)
+        );
 
         throw new ExitException();
     }

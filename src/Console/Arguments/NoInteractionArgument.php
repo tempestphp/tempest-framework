@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Arguments;
 
-use Tempest\Console\ConsoleInput;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleInput;
 use Tempest\Console\InjectedArgument;
 use Tempest\Console\NullConsoleInput;
 use function Tempest\get;
@@ -32,6 +32,6 @@ final readonly class NoInteractionArgument extends InjectedArgument
 
     public function shouldInject(): bool
     {
-        return !! $this->value;
+        return ! ! $this->value;
     }
 }

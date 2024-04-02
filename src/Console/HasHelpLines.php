@@ -6,10 +6,8 @@ namespace Tempest\Console;
 
 interface HasHelpLines
 {
-
     /**
      * @return string[]
      */
     public function getHelpLines(): array;
-
 }

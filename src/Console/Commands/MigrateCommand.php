@@ -26,6 +26,10 @@ final class MigrateCommand
         aliases: ['haha'],
         description: 'Run all new migrations',
         isDangerous: true,
+        help: [
+            'This command will run all new migrations.',
+            'This command is dangerous and can cause data loss.',
+        ]
     )]
     public function __invoke(): void
     {

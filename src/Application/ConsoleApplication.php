@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Application;
 
-use ArgumentCountError;
 use Tempest\AppConfig;
 use Tempest\Console\Argument;
 use Tempest\Console\ArgumentBag;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleStyle;
 use Tempest\Console\ExitException;
 use Tempest\Console\InjectedArgument;
-use Tempest\Console\RenderConsoleCommand;
-use Tempest\Console\RenderConsoleCommandOverview;
+use Tempest\Console\Styling\RenderCommandNotFound;
+use Tempest\Console\Styling\RenderConsoleCommandOverview;
+use Tempest\Console\Styling\RenderValidationFailed;
 use Tempest\Container\Container;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\NestedValidator;
@@ -32,18 +30,22 @@ final readonly class ConsoleApplication implements Application
 
     public function run(): void
     {
+        $output = $this->container->get(ConsoleOutput::class);
+
+        $commandName = $this->args->getCommandName();
+
+        if (! $commandName) {
+            $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
+
+            return;
+        }
+
         try {
-            $commandName = $this->args->getCommandName();
-
-            $output = $this->container->get(ConsoleOutput::class);
-
-            if (! $commandName) {
-                $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
-
-                return;
-            }
-
             $this->handleCommand($commandName);
+        } catch (CommandNotFound $e) {
+            $output->write(
+                $this->container->get(RenderCommandNotFound::class)($commandName),
+            );
         } catch (Throwable $throwable) {
             if (! $this->appConfig->enableExceptionHandling) {
                 throw $throwable;
@@ -77,19 +79,31 @@ final readonly class ConsoleApplication implements Application
                 fn (InjectedArgument $argument) => $argument->handle($consoleCommandConfig),
                 array_filter($parameters->injectedArguments, fn (InjectedArgument $argument) => $argument->shouldInject()),
             );
+        } catch (ExitException $e) {
+            $this->exit($e);
 
+            return;
+        } catch (ValidationException $e) {
+            $output = $this->container->get(ConsoleOutput::class);
+
+            $output->write(
+                $this->container->get(RenderValidationFailed::class)($consoleCommandConfig, $e),
+            );
+
+            return;
+        }
+
+        try {
             $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
             $handler->invoke(
                 $commandClass,
                 ...array_map(fn (Argument $el) => $el->getValue(), $parameters->arguments),
             );
-        } catch (ExitException $e) {
-            $this->exit($e);
-        } catch (ValidationException $e) {
-            $this->handleValidationFailed($consoleCommandConfig, $e);
-        } catch (ArgumentCountError $e) {
+        } catch (Throwable $e) {
             $this->handleFailingCommand();
+
+            throw $e;
         }
     }
 
@@ -98,31 +112,6 @@ final readonly class ConsoleApplication implements Application
         $output = $this->container->get(ConsoleOutput::class);
 
         $output->error('Something went wrong');
-    }
-
-    private function handleValidationFailed(ConsoleCommand $command, ValidationException $e): void
-    {
-        $output = $this->container->get(ConsoleOutput::class);
-
-        $output->error(' Validation failed ');
-
-        [$command, $validation] = $this->container->get(RenderConsoleCommand::class)($command, true, errorParts: $e->failingRules);
-
-        $output->writeln("");
-        $output->writeln($command);
-        $output->writeln($validation);
-        $output->writeln("");
-
-        $output->error(sprintf(" Found %s errors ", count($e->failingRules)));
-        $output->writeln("");
-
-        foreach ($e->failingRules as $property => $rules) {
-            $output->writeln(ConsoleStyle::FG_BLUE($property) . ':');
-
-            foreach ($rules as $rule) {
-                $output->writeln(' - ' . $rule->message());
-            }
-        }
     }
 
     private function exit(ExitException $e): void

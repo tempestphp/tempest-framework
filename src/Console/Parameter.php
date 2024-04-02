@@ -9,7 +9,6 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final class Parameter implements HasHelpLines
 {
-
     private array $helpMessages = [];
 
     /**
@@ -19,8 +18,7 @@ final class Parameter implements HasHelpLines
     public function __construct(
         array|string $help = [],
         public array $aliases = [],
-    )
-    {
+    ) {
         $this->helpMessages = is_array($help) ? $help : [$help];
     }
 

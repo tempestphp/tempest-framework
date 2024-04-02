@@ -8,8 +8,8 @@ use Attribute;
 use ReflectionMethod;
 use Tempest\Console\Arguments\ForceArgument;
 use Tempest\Console\Arguments\HelpArgument;
-use Tempest\Console\Arguments\SilentArgument;
 use Tempest\Console\Arguments\NoInteractionArgument;
+use Tempest\Console\Arguments\QuietArgument;
 
 #[Attribute]
 final class ConsoleCommand implements HasHelpLines
@@ -46,6 +46,13 @@ final class ConsoleCommand implements HasHelpLines
         return $this->handler->getName() === '__invoke'
             ? strtolower($this->handler->getDeclaringClass()->getShortName())
             : strtolower($this->handler->getDeclaringClass()->getShortName() . ':' . $this->handler->getName());
+    }
+
+    public function getGroup(): string
+    {
+        $parts = explode(':', $this->getName());
+
+        return $parts[0] ?? 'General';
     }
 
     public function getDescription(): ?string
@@ -102,12 +109,11 @@ final class ConsoleCommand implements HasHelpLines
     }
 
     /**
-     * @return CommandArguments
+     * @return InjectedArgument[]
      */
-    public function getAvailableArguments(): CommandArguments
+    public function injectedArguments(): array
     {
         $injected = [];
-        $arguments = [];
 
         foreach ($this->injectableArguments() as $flag) {
             $availableParameters = $this->handler->getParameters();
@@ -128,6 +134,16 @@ final class ConsoleCommand implements HasHelpLines
             }
         }
 
+        return $injected;
+    }
+
+    /**
+     * @return Argument[]
+     */
+    public function getRegularArguments(): array
+    {
+        $arguments = [];
+
         foreach ($this->handler->getParameters() as $parameter) {
             $arguments[$parameter->getName()] = Argument::new(
                 [$parameter->getName()],
@@ -136,9 +152,17 @@ final class ConsoleCommand implements HasHelpLines
             );
         }
 
+        return $arguments;
+    }
+
+    /**
+     * @return CommandArguments
+     */
+    public function getAvailableArguments(): CommandArguments
+    {
         return new CommandArguments(
-            arguments: $arguments,
-            injectedArguments: $injected,
+            arguments: $this->getRegularArguments(),
+            injectedArguments: $this->injectedArguments(),
         );
     }
 
@@ -148,7 +172,7 @@ final class ConsoleCommand implements HasHelpLines
     protected function injectableArguments(): array
     {
         $list = [
-            SilentArgument::instance(),
+            QuietArgument::instance(),
             NoInteractionArgument::instance(),
             HelpArgument::instance(),
         ];

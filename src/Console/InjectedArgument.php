@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use ReflectionProperty;
+use ReflectionParameter;
 
 readonly class InjectedArgument extends Argument
 {
@@ -27,6 +27,6 @@ readonly class InjectedArgument extends Argument
 
         };
 
-        return new \ReflectionParameter($func, 'x');
+        return new ReflectionParameter($func, 'x');
     }
 }

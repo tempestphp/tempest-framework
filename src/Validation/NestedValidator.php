@@ -88,11 +88,11 @@ final readonly class NestedValidator implements Validator
     private function getRuleByType(string $getName): ?Rule
     {
         return match ($getName) {
-//            'int' => new Rules\IntegerRule(),
-//            'string' => new Rules\StringRule(),
-//            'float' => new Rules\FloatRule(),
+            //            'int' => new Rules\IntegerRule(),
+            //            'string' => new Rules\StringRule(),
+            //            'float' => new Rules\FloatRule(),
             'bool' => new Rules\Boolean(),
-//            'array' => new Rules\ArrayRule(),
+            //            'array' => new Rules\ArrayRule(),
             default => null,
         };
     }

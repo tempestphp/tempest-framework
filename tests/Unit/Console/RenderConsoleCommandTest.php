@@ -9,6 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\RenderConsoleCommand;
+use function Tempest\get;
 use Tests\Tempest\Unit\Console\Fixtures\MyConsole;
 
 /**
@@ -33,7 +34,7 @@ class RenderConsoleCommandTest extends TestCase
                 ConsoleStyle::ESC->value,
             ],
             '',
-            (new RenderConsoleCommand())($consoleCommand)
+            get(RenderConsoleCommand::class)($consoleCommand)
         );
 
         $this->assertSame(

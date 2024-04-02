@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Arguments;
 
-use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\InjectedArgument;
 use Tempest\Console\NullConsoleOutput;
 use function Tempest\get;
 use function Tempest\swap;
 
-final readonly class SilentArgument extends InjectedArgument
+final readonly class QuietArgument extends InjectedArgument
 {
     public function handle(ConsoleCommand $command): void
     {
@@ -21,10 +21,10 @@ final readonly class SilentArgument extends InjectedArgument
     public static function instance(): self
     {
         return new self(
-            name: 'silent',
+            name: 'quiet',
             value: false,
             default: false,
-            aliases: ['s'],
+            aliases: ['q'],
             description: 'Disable console output',
             parameter: self::bool(),
         );
@@ -32,6 +32,6 @@ final readonly class SilentArgument extends InjectedArgument
 
     public function shouldInject(): bool
     {
-        return !! $this->value;
+        return ! ! $this->value;
     }
 }

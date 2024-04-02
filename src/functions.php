@@ -6,6 +6,7 @@ namespace Tempest {
 
     use Tempest\Commands\CommandBus;
     use Tempest\Container\Container;
+    use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
     use Tempest\Http\GenericResponse;
@@ -16,7 +17,6 @@ namespace Tempest {
     use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
     use Tempest\View\View;
-    use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 
     /**
      * @template TClassName
