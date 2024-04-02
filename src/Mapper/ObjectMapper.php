@@ -18,7 +18,8 @@ final class ObjectMapper
     public function __construct(
         /** @var \Tempest\Mapper\Mapper[] */
         private readonly array $mappers = [],
-    ) {}
+    ) {
+    }
 
     /**
      * @template T of object
@@ -96,7 +97,7 @@ final class ObjectMapper
                 return $mapper->map(from: $from, to: $to);
             }
         }
-dd($this->mappers);
+
         throw new CannotMapDataException($from, $to);
     }
 }
