@@ -60,4 +60,22 @@ final class ConsoleCommand
             method: $data['handler_method'],
         );
     }
+
+    public function getAvailableArguments(): ConsoleCommandInput
+    {
+        $arguments = [];
+
+        foreach ($this->handler->getParameters() as $parameter) {
+            $arguments[$parameter->getName()] = new ConsoleInputArgument(
+                name: $parameter->getName(),
+                value: null,
+                default: null,
+                aliases: [],
+                description: $parameter->getName(),
+                parameter: $parameter,
+            );
+        }
+
+        return new ConsoleCommandInput($arguments);
+    }
 }

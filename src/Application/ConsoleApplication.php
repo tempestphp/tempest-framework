@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use ArgumentCountError;
-use ReflectionMethod;
 use Tempest\AppConfig;
+use Tempest\Console\ArgumentBag;
 use Tempest\Console\ConsoleConfig;
+use Tempest\Console\ConsoleInputArgument;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\RenderConsoleCommandOverview;
 use Tempest\Container\Container;
@@ -16,7 +17,7 @@ use Throwable;
 final readonly class ConsoleApplication implements Application
 {
     public function __construct(
-        private array $args,
+        private ArgumentBag $args,
         private Container $container,
         private AppConfig $appConfig,
     ) {
@@ -25,7 +26,7 @@ final readonly class ConsoleApplication implements Application
     public function run(): void
     {
         try {
-            $commandName = $this->args[1] ?? null;
+            $commandName = $this->args->getCommandName();
 
             $output = $this->container->get(ConsoleOutput::class);
 
@@ -59,41 +60,18 @@ final readonly class ConsoleApplication implements Application
 
         $handler = $consoleCommandConfig->handler;
 
-        $params = $this->resolveParameters($handler);
+        $parameters = $this->args->resolveArguments($consoleCommandConfig);
 
         $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
         try {
-            $handler->invoke($commandClass, ...$params);
+            $handler->invoke(
+                $commandClass,
+                ...array_map(fn (ConsoleInputArgument $argument) => $argument->getValue(), $parameters->arguments),
+            );
         } catch (ArgumentCountError) {
             $this->handleFailingCommand();
         }
-    }
-
-    private function resolveParameters(ReflectionMethod $handler): array
-    {
-        $parameters = $handler->getParameters();
-        $inputArguments = $this->args;
-        unset($inputArguments[0], $inputArguments[1]);
-        $inputArguments = array_values($inputArguments);
-
-        $result = [];
-
-        foreach ($inputArguments as $i => $argument) {
-            if (str_starts_with($argument, '--')) {
-                $parts = explode('=', str_replace('--', '', $argument));
-
-                $key = $parts[0];
-
-                $result[$key] = $parts[1] ?? true;
-            } else {
-                $key = ($parameters[$i] ?? null)?->getName();
-
-                $result[$key ?? $i] = $argument;
-            }
-        }
-
-        return $result;
     }
 
     private function handleFailingCommand(): void

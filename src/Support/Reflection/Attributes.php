@@ -7,12 +7,13 @@ namespace Tempest\Support\Reflection;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionParameter;
 use ReflectionProperty;
 
 /** @template T */
 final class Attributes
 {
-    private ReflectionClass|ReflectionMethod|ReflectionProperty $reflector;
+    private ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter $reflector;
 
     public function __construct(
         private readonly string $attributeName,
@@ -30,10 +31,11 @@ final class Attributes
     }
 
     /**
-     * @param ReflectionClass|ReflectionMethod|ReflectionProperty $reflector
+     * @param ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter $reflector
+     *
      * @return $this<T>
      */
-    public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|string $reflector): self
+    public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|string|ReflectionParameter $reflector): self
     {
         if (is_string($reflector)) {
             $reflector = new ReflectionClass($reflector);
