@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
+use Tempest\Console\ConsoleOutputBuilder;
 
 final readonly class DiscoveryStatusCommand
 {
@@ -22,18 +23,16 @@ final readonly class DiscoveryStatusCommand
     )]
     public function __invoke(): void
     {
-        $this->output->info('Loaded Discovery classes');
-
-        foreach ($this->appConfig->discoveryClasses as $discoveryClass) {
-            $this->output->writeln('- ' . $discoveryClass);
-        }
-
-        $this->output->writeln('');
-
-        $this->output->info('Folders included in Tempest');
-
-        foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
-            $this->output->writeln('- '. $discoveryLocation->path);
-        }
+        ConsoleOutputBuilder::new()
+            ->withDefaultBranding()
+            ->warning('Discovery status')
+            ->blank()
+            ->info('Loaded discovery classes')
+            ->add($this->appConfig->discoveryClasses)
+            ->blank()
+            ->info('Folders included in Tempest')
+            ->add(array_column($this->appConfig->discoveryLocations, 'path'))
+            ->blank()
+            ->write($this->output);
     }
 }

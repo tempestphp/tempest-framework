@@ -6,21 +6,23 @@ namespace Tempest\Console;
 
 use ReflectionParameter;
 
-final readonly class RenderConsoleCommand
+final readonly class RenderConsoleCommandMessage
 {
     public function __invoke(ConsoleCommand $consoleCommand): string
     {
-        $parts = [ConsoleStyle::FG_DARK_BLUE($consoleCommand->getName())];
+        $description = $consoleCommand->getDescription();
 
-        foreach ($consoleCommand->handler->getParameters() as $parameter) {
-            $parts[] = $this->renderParameter($parameter);
-        }
-
-        if ($consoleCommand->getDescription()) {
-            $parts[] = "- {$consoleCommand->getDescription()}";
-        }
-
-        return implode(' ', $parts);
+        return ConsoleOutputBuilder::new(' ')
+            ->info($consoleCommand->getName())
+            ->when(count($consoleCommand->handler->getParameters()) > 0, function (ConsoleOutputBuilder $builder) use ($consoleCommand) {
+                foreach ($consoleCommand->handler->getParameters() as $parameter) {
+                    $builder->formatted(
+                        $this->renderParameter($parameter),
+                    );
+                }
+            })
+            ->when($consoleCommand->getDescription() !== '', fn (ConsoleOutputBuilder $builder) => $builder->muted("- " . $description))
+            ->toString();
     }
 
     private function renderParameter(ReflectionParameter $parameter): string

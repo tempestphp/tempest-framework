@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Http\RouteConfig;
 
@@ -39,14 +40,24 @@ final readonly class RoutesCommand
 
         ksort($sortedRoutes);
 
-        foreach ($sortedRoutes as $route) {
-            $this->console->writeln(implode(' ', [
-                ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
-                ConsoleStyle::FG_DARK_BLUE($route->uri),
-                PHP_EOL,
-                '   ',
-                $route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName() . '()',
-            ]));
-        }
+
+        ConsoleOutputBuilder::new()
+            ->withDefaultBranding()
+            ->warning('Registered routes')
+            ->when(empty($sortedRoutes), fn (ConsoleOutputBuilder $builder) => $builder->info('No routes registered'))
+            ->when(! empty($sortedRoutes), function (ConsoleOutputBuilder $builder) use ($sortedRoutes) {
+                foreach ($sortedRoutes as $route) {
+                    $builder->formatted(
+                        implode(' ', [
+                            ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
+                            ConsoleStyle::FG_DARK_BLUE($route->uri),
+                            PHP_EOL,
+                            '   ',
+                            $route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName() . '()',
+                        ])
+                    );
+                }
+            })
+            ->write($this->console);
     }
 }

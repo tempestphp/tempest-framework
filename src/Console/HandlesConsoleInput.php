@@ -27,22 +27,16 @@ trait HandlesConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        $questionString = ConsoleStyle::BG_YELLOW($question);
-
-        if ($options) {
-            $questionString .= ' [' . ConsoleStyle::FG_BLUE(
-                implode(
-                    ',',
-                    array_map(
-                        fn (string $option) => $option === $default ? strtoupper($option) : $option,
-                        $options,
-                    ),
-                ),
-            )
-                . '] ';
-        }
-
-        $this->output->write($questionString);
+        ConsoleOutputBuilder::new(" ")
+            ->brand("?")
+            ->warning($question)
+            ->when($options !== null, function (ConsoleOutputBuilder $builder) use ($options, $default) {
+                $builder->formatted("[")
+                    ->info(implode(', ', $options))
+                    ->formatted("]")
+                    ->muted($default ? " (default: $default) " : " ");
+            })
+            ->write($this->output);
 
         $answer = trim($this->readln());
 

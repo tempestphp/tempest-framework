@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
-use Tempest\Console\RenderConsoleCommand;
+use Tempest\Console\RenderConsoleCommandMessage;
 use Tests\Tempest\Unit\Console\Fixtures\MyConsole;
 
 /**
@@ -33,7 +33,7 @@ class RenderConsoleCommandTest extends TestCase
                 ConsoleStyle::ESC->value,
             ],
             '',
-            (new RenderConsoleCommand())($consoleCommand)
+            (new RenderConsoleCommandMessage())($consoleCommand)
         );
 
         $this->assertSame(
