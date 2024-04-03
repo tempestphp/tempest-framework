@@ -27,7 +27,8 @@ final readonly class RenderConsoleCommandMessage
 
     private function renderParameter(ReflectionParameter $parameter): string
     {
-        $type = $parameter->getType()?->getName();
+        $type = (string) $parameter->getType();
+
         $optional = $parameter->isOptional();
         $defaultValue = strtolower(var_export($optional ? $parameter->getDefaultValue() : null, true));
         $name = ConsoleStyle::FG_BLUE($parameter->getName());
