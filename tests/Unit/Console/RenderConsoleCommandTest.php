@@ -31,6 +31,7 @@ class RenderConsoleCommandTest extends TestCase
                 ConsoleStyle::FG_DARK_BLUE->value,
                 ConsoleStyle::RESET->value,
                 ConsoleStyle::ESC->value,
+                ConsoleStyle::FG_LIGHT_GRAY->value,
             ],
             '',
             (new RenderConsoleCommandMessage())($consoleCommand)

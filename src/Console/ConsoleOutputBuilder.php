@@ -108,8 +108,7 @@ final class ConsoleOutputBuilder implements Stringable
             $this->comment('* ' . $line);
         }
 
-        $this->comment("*/")
-            ->blank();
+        $this->comment("*/");
 
         return $this;
     }
@@ -137,10 +136,10 @@ final class ConsoleOutputBuilder implements Stringable
         return $this->toString();
     }
 
-    public function toString(): string
+    public function toString(bool $format = true): string
     {
         $formattedLines = array_map(
-            fn (ConsoleOutputLine $line) => $line->format(),
+            fn (ConsoleOutputLine $line) => $format ? $line->format() : $line->line,
             $this->lines,
         );
 
@@ -148,5 +147,13 @@ final class ConsoleOutputBuilder implements Stringable
             $this->glue,
             $formattedLines,
         );
+    }
+
+    /**
+     * @return ConsoleOutputLine[]
+     */
+    public function getLines(): array
+    {
+        return $this->lines;
     }
 }
