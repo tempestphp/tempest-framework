@@ -121,11 +121,15 @@ final class ConsoleOutputBuilder implements Stringable
             ->blank();
     }
 
-    public function write(ConsoleOutput $to): void
+    public function write(ConsoleOutput $to): self
     {
         $to->write(
             $this->toString()
         );
+
+        $this->lines = [];
+
+        return $this;
     }
 
     public function __toString(): string

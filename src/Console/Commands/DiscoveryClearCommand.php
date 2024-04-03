@@ -26,13 +26,12 @@ final readonly class DiscoveryClearCommand
     )]
     public function __invoke(): void
     {
-        ConsoleOutputBuilder::new()
+        $builder = ConsoleOutputBuilder::new()
             ->withDefaultBranding()
             ->warning('Clearing cached discovery files: ')
-            ->write($this->console);
-
-        $this->console->writeln('');
-        $this->console->writeln('');
+            ->write($this->console)
+            ->blank()
+            ->blank();
 
         foreach ($this->appConfig->discoveryClasses as $discoveryClass) {
             /** @var Discovery $discovery */
@@ -40,18 +39,19 @@ final readonly class DiscoveryClearCommand
 
             $discovery->destroyCache();
 
-            ConsoleOutputBuilder::new(" ")
-                ->info($discoveryClass)
-                ->add('cleared successful')
+            $builder->formatted(
+                ConsoleOutputBuilder::new(" ")
+                    ->info($discoveryClass)
+                    ->add('cleared successful')
+                    ->toString(),
+            )
+                ->blank()
                 ->write($this->console);
-
-            $this->console->writeln('');
         }
 
-        ConsoleOutputBuilder::new()
-            ->info('')
-            ->info('Discovery cache cleared')
-            ->info('')
+        $builder->blank()
+            ->success('Discovery cache cleared')
+            ->blank()
             ->write($this->console);
     }
 }
