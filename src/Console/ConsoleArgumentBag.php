@@ -101,6 +101,6 @@ final class ConsoleArgumentBag
             );
         }
 
-        return $argument->withValue($argument->value);
+        return $argument->withValue($argument->default);
     }
 }
