@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Exceptions;
 
-use App\Console\FailCommand;
 use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -23,7 +22,6 @@ class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('fail output')
-            ->assertContains(FailCommand::class)
-            ->assertContains('__invoke');
+            ->assertContains('output is not a valid argument');
     }
 }

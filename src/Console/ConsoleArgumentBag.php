@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-final class GenericArgumentBag implements ArgumentBag
+final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
     protected array $arguments = [];
@@ -65,16 +65,15 @@ final class GenericArgumentBag implements ArgumentBag
     public function resolveArguments(ConsoleCommand $command): ConsoleCommandInput
     {
         $availableArguments = [];
-
-        $remainingArguments = $this->arguments;
+        $unresolvedArguments = $this->arguments;
 
         foreach ($command->getAvailableArguments() as $argument) {
             $availableArguments[] = $this->resolveArgument($argument);
-            unset($remainingArguments[$argument->name]);
+            unset($unresolvedArguments[$argument->name]);
         }
 
-        if (count($remainingArguments) > 0) {
-            throw UnresolvedArgumentsException::fromArguments($remainingArguments);
+        if (count($unresolvedArguments) > 0) {
+            throw UnresolvedArgumentsException::fromArguments($unresolvedArguments);
         }
 
         return new ConsoleCommandInput($availableArguments);

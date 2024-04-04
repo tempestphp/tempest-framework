@@ -10,7 +10,7 @@ use Tempest\Application\ConsoleApplication;
 use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
 use Tempest\Application\Kernel;
-use Tempest\Console\ArgumentBag;
+use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tempest\Exceptions\HttpExceptionHandler;
@@ -59,7 +59,7 @@ final readonly class Tempest
         $appConfig = $container->get(AppConfig::class);
 
         $application = new ConsoleApplication(
-            args: $container->get(ArgumentBag::class),
+            args: new ConsoleArgumentBag($_SERVER['argv']),
             container: $container,
             appConfig: $appConfig,
         );
