@@ -59,6 +59,6 @@ final readonly class RoutesCommand
                     );
                 }
             })
-            ->write($this->console);
+            ->write();
     }
 }

@@ -44,7 +44,7 @@ final class MigrateRollbackCommand
             ->success("Done")
             ->raw(sprintf("Rolled back %s migrations", self::$count))
             ->blank()
-            ->write($this->console);
+            ->write();
     }
 
     #[EventHandler]
@@ -60,6 +60,6 @@ final class MigrateRollbackCommand
         $this->outputBuilder
             ->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'))
             ->error($event->exception->getMessage())
-            ->write($this->console);
+            ->write();
     }
 }

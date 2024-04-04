@@ -34,6 +34,6 @@ final readonly class DiscoveryStatusCommand
             ->info('Folders included in Tempest')
             ->add(array_column($this->appConfig->discoveryLocations, 'path'))
             ->blank()
-            ->write($this->output);
+            ->write();
     }
 }
