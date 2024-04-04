@@ -15,6 +15,8 @@ use Tempest\Console\ConsoleOutput;
 use Tempest\Console\RenderConsoleCommandOverview;
 use Tempest\Console\UnresolvedArgumentsException;
 use Tempest\Container\Container;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Validator;
 use Throwable;
 
 final readonly class ConsoleApplication implements Application
@@ -64,18 +66,29 @@ final readonly class ConsoleApplication implements Application
         $handler = $consoleCommandConfig->handler;
 
         try {
-            $parameters = $this->args->resolveArguments($consoleCommandConfig);
+            $input = $this->args->resolveArguments($consoleCommandConfig);
+
+            $validator = new Validator();
+            $validator->validate($input);
         } catch (UnresolvedArgumentsException $exception) {
             $output = $this->container->get(ConsoleOutput::class);
 
-            foreach ($exception->getArguments() as $x) {
-                $output->error($x->value . ' is not a valid argument');
+            foreach ($exception->getArguments() as $argument) {
+                $output->error((is_numeric($argument->name) ? $argument->value : $argument->name) . ' is not a valid argument');
+            }
+
+            return;
+        } catch (ValidationException $exception) {
+            $output = $this->container->get(ConsoleOutput::class);
+
+            foreach ($exception->failingRules as $error) {
+                $output->error($error);
             }
 
             return;
         }
 
-        $this->executeCommand($handler, $parameters);
+        $this->executeCommand($handler, $input);
     }
 
     public function executeCommand(ReflectionMethod $handler, ConsoleCommandInput $input): void

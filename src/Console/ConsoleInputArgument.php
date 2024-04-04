@@ -15,6 +15,7 @@ final class ConsoleInputArgument
      * @param mixed $default
      * @param string[] $aliases
      * @param null|string $description
+     * @param string[] $help
      * @param null|ReflectionParameter $parameter
      */
     public function __construct(
@@ -23,20 +24,50 @@ final class ConsoleInputArgument
         public mixed $default,
         public array $aliases = [],
         public ?string $description = null,
+        public array $help = [],
         public ?ReflectionParameter $parameter = null,
     ) {
+    }
+
+    public static function fromParameter(ReflectionParameter $parameter): self
+    {
+        return new ConsoleInputArgument(
+            name: $parameter->getName(),
+            value: $parameter->isDefaultValueAvailable()
+                ? $parameter->getDefaultValue()
+                : null,
+            default: $parameter->isDefaultValueAvailable()
+                ? $parameter->getDefaultValue()
+                : null,
+            aliases: self::getAliases($parameter),
+            description: $parameter->getName(),
+            help: self::getHelpLines($parameter),
+            parameter: $parameter,
+        );
     }
 
     /**
      * @return string[]
      */
-    public function getHelpLines(): array
+    public static function getHelpLines(ReflectionParameter $parameter): array
     {
-        if ($this->parameter && $attribute = attribute(ConsoleArgument::class)->in($this->parameter)->first()) {
-            return $attribute->getHelpLines();
+        if (! $attribute = attribute(ConsoleArgument::class)->in($parameter)->first()) {
+            return [];
         }
 
-        return [$this->description];
+        return $attribute->getHelpLines();
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getAliases(ReflectionParameter $parameter): array
+    {
+        if (! $attribute = attribute(ConsoleArgument::class)->in($parameter)->first()) {
+            return [];
+        }
+
+        return $attribute->getAliases();
     }
 
     public function withValue(mixed $value): ConsoleInputArgument
@@ -50,5 +81,13 @@ final class ConsoleInputArgument
     public function getValue(): mixed
     {
         return $this->value;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getAllNames(): array
+    {
+        return [$this->name, ...$this->aliases];
     }
 }

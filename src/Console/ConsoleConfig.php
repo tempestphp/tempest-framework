@@ -9,7 +9,7 @@ use ReflectionMethod;
 final class ConsoleConfig
 {
     public function __construct(
-        /** @var \Tempest\Console\ConsoleCommand[] $commands */
+        /** @var ConsoleCommand[] $commands */
         public array $commands = [],
     ) {
     }
@@ -19,6 +19,14 @@ final class ConsoleConfig
         $consoleCommand->setHandler($handler);
 
         $this->commands[$consoleCommand->getName()] = $consoleCommand;
+
+        foreach ($consoleCommand->getAliases() as $alias) {
+            if (isset($this->commands[$alias])) {
+                continue;
+            }
+
+            $this->commands[$alias] = $consoleCommand;
+        }
 
         return $this;
     }

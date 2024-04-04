@@ -69,7 +69,10 @@ final class ConsoleArgumentBag
 
         foreach ($command->getAvailableArguments() as $argument) {
             $availableArguments[] = $this->resolveArgument($argument);
-            unset($unresolvedArguments[$argument->name]);
+
+            foreach ($argument->getAllNames() as $name) {
+                unset($unresolvedArguments[$name]);
+            }
         }
 
         if (count($unresolvedArguments) > 0) {
@@ -86,18 +89,18 @@ final class ConsoleArgumentBag
 
     private function resolveArgument(ConsoleInputArgument $argument): ConsoleInputArgument
     {
-        foreach ([$argument->name, ...$argument->aliases] as $name) {
+        foreach ($argument->getAllNames() as $name) {
             $argumentValue = $this->get($name);
 
-            if ($argumentValue) {
-                return $argument->withValue(
-                    $argumentValue->getValue()
-                );
+            if (! $argumentValue) {
+                continue;
             }
+
+            return $argument->withValue(
+                $argumentValue->getValue()
+            );
         }
 
-        return $argument->parameter?->isDefaultValueAvailable()
-            ? $argument->withValue($argument->parameter->getDefaultValue())
-            : $argument;
+        return $argument->withValue($argument->value);
     }
 }

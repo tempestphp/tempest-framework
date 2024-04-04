@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
@@ -27,8 +28,13 @@ final class MigrateCommand
         name: 'migrate:up',
         description: 'Run all new migrations',
     )]
-    public function __invoke(bool $force = false): void
-    {
+    public function __invoke(
+        #[ConsoleArgument(
+            help: 'Force the command to run in production',
+            aliases: ['f'],
+        )]
+        bool $force = false
+    ): void {
         if (! $force
             && $this->config->environment->isProduction()
             && ! $this->console->confirm("You are running in production. Are you sure you want to continue?")

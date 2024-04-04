@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
@@ -27,7 +28,13 @@ final class MigrateRollbackCommand
         name: 'migrate:down',
         description: 'Rollbacks all executed migrations',
     )]
-    public function __invoke(bool $force = false): void
+    public function __invoke(
+        #[ConsoleArgument(
+            help: 'Force the command to run in production',
+            aliases: ['f'],
+        )]
+        bool $force = false
+    ): void
     {
         if (! $force
             && $this->config->environment->isProduction()

@@ -28,4 +28,10 @@ final class ConsoleArgument
     {
         return $this->helpMessages;
     }
+
+    /** @return string[] */
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
 }
