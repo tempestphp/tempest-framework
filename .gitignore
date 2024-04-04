@@ -1,0 +1,10 @@
+.idea/
+build/
+vendor/
+.env
+.php-cs-fixer.cache
+.phpunit.result.cache
+app/database.sqlite
+composer.lock
+*.cache.php
+sessions/
