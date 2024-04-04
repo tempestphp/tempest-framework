@@ -49,7 +49,7 @@ final class ConsoleInputArgument
     /**
      * @return string[]
      */
-    public static function getHelpLines(ReflectionParameter $parameter): array
+    private static function getHelpLines(ReflectionParameter $parameter): array
     {
         if (! $attribute = attribute(ConsoleArgument::class)->in($parameter)->first()) {
             return [];
@@ -61,7 +61,7 @@ final class ConsoleInputArgument
     /**
      * @return string[]
      */
-    public static function getAliases(ReflectionParameter $parameter): array
+    private static function getAliases(ReflectionParameter $parameter): array
     {
         if (! $attribute = attribute(ConsoleArgument::class)->in($parameter)->first()) {
             return [];
