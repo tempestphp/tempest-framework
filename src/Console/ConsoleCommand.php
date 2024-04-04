@@ -61,7 +61,10 @@ final class ConsoleCommand
         );
     }
 
-    public function getAvailableArguments(): ConsoleCommandInput
+    /**
+     * @return array<string, ConsoleInputArgument>
+     */
+    public function getAvailableArguments(): array
     {
         $arguments = [];
 
@@ -76,6 +79,6 @@ final class ConsoleCommand
             );
         }
 
-        return new ConsoleCommandInput($arguments);
+        return $arguments;
     }
 }

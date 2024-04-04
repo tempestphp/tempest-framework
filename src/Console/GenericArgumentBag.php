@@ -35,7 +35,7 @@ final class GenericArgumentBag implements ArgumentBag
                 continue;
             }
 
-            $this->set($name, $argument);
+            $this->set((string) $name, $argument);
         }
     }
 
@@ -66,10 +66,15 @@ final class GenericArgumentBag implements ArgumentBag
     {
         $availableArguments = [];
 
-        foreach ($command->getAvailableArguments()->arguments as $argument) {
-            $availableArguments[] = $argument->withValue(
-                $this->get($argument->name)?->value,
-            );
+        $remainingArguments = $this->arguments;
+
+        foreach ($command->getAvailableArguments() as $argument) {
+            $availableArguments[] = $this->resolveArgument($argument);
+            unset($remainingArguments[$argument->name]);
+        }
+
+        if (count($remainingArguments) > 0) {
+            throw UnresolvedArgumentsException::fromArguments($remainingArguments);
         }
 
         return new ConsoleCommandInput($availableArguments);
@@ -78,5 +83,22 @@ final class GenericArgumentBag implements ArgumentBag
     public function getCommandName(): string
     {
         return $this->path[1] ?? '';
+    }
+
+    private function resolveArgument(ConsoleInputArgument $argument): ConsoleInputArgument
+    {
+        foreach ([$argument->name, ...$argument->aliases] as $name) {
+            $argumentValue = $this->get($name);
+
+            if ($argumentValue) {
+                return $argument->withValue(
+                    $argumentValue->getValue()
+                );
+            }
+        }
+
+        return $argument->parameter?->isDefaultValueAvailable()
+            ? $argument->withValue($argument->parameter->getDefaultValue())
+            : $argument;
     }
 }
