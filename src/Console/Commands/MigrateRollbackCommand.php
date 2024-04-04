@@ -6,8 +6,8 @@ namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
@@ -34,8 +34,7 @@ final class MigrateRollbackCommand
             aliases: ['f'],
         )]
         bool $force = false
-    ): void
-    {
+    ): void {
         if (! $force
             && $this->config->environment->isProduction()
             && ! $this->console->confirm("You are running in production. Are you sure you want to continue?")
