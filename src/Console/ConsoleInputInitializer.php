@@ -20,7 +20,10 @@ final readonly class ConsoleInputInitializer implements Initializer
         if (! $app instanceof ConsoleApplication) {
             $consoleInput = new NullConsoleInput();
         } else {
-            $consoleInput = new GenericConsoleInput($container->get(ConsoleOutput::class));
+            $consoleInput = new GenericConsoleInput(
+                $container->get(ConsoleOutput::class),
+                $container->get(ConsoleOutputBuilder::class),
+            );
         }
 
         return $consoleInput;

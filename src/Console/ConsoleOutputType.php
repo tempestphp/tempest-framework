@@ -14,4 +14,5 @@ enum ConsoleOutputType
     case Error;
     case Muted;
     case Formatted;
+    case Label;
 }

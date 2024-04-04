@@ -12,6 +12,7 @@ final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -132,11 +133,11 @@ final readonly class InstallCommand
 
     private function writeCreated(string $path): void
     {
-        ConsoleOutputBuilder::new()->success("{$path} created.")->write($this->console);
+        $this->outputBuilder->success("{$path} created.")->write();
     }
 
     private function writeAlreadyExists(string $path): void
     {
-        ConsoleOutputBuilder::new()->warning("{$path} already exists, skipping.")->write($this->console);
+        $this->outputBuilder->warning("{$path} already exists, skipping.")->write();
     }
 }

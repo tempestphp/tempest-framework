@@ -21,6 +21,7 @@ final class MigrateRollbackCommand
         readonly private Console $console,
         readonly private MigrationManager $migrationManager,
         readonly private AppConfig $config,
+        readonly private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -39,9 +40,9 @@ final class MigrateRollbackCommand
 
         $this->migrationManager->down();
 
-        ConsoleOutputBuilder::new()
+        $this->outputBuilder
             ->success("Done")
-            ->formatted(sprintf("Rolled back %s migrations", self::$count))
+            ->raw(sprintf("Rolled back %s migrations", self::$count))
             ->blank()
             ->write($this->console);
     }
@@ -49,14 +50,14 @@ final class MigrateRollbackCommand
     #[EventHandler]
     public function onMigrationRolledBack(MigrationRolledBack $event): void
     {
-        ConsoleOutputBuilder::new()->add(" - {$event->name}")->write($this->console);
+        $this->outputBuilder->add(" - {$event->name}")->write();
         self::$count += 1;
     }
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void
     {
-        ConsoleOutputBuilder::new()
+        $this->outputBuilder
             ->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'))
             ->error($event->exception->getMessage())
             ->write($this->console);

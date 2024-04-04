@@ -14,6 +14,7 @@ final readonly class DiscoveryStatusCommand
     public function __construct(
         private ConsoleOutput $output,
         private AppConfig $appConfig,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -23,8 +24,8 @@ final readonly class DiscoveryStatusCommand
     )]
     public function __invoke(): void
     {
-        ConsoleOutputBuilder::new()
-            ->withDefaultBranding()
+        $this->outputBuilder
+            ->header("Tempest")
             ->warning('Discovery status')
             ->blank()
             ->info('Loaded discovery classes')

@@ -12,19 +12,32 @@ final class ConsoleOutputBuilder implements Stringable
 {
     use HasConditions;
 
+    /** @var ConsoleOutputLine[] */
+    private array $lines = [];
+    private string $glue = PHP_EOL;
+
     public function __construct(
-        /** @var ConsoleOutputLine[] */
-        protected array $lines = [],
-        protected string $glue = PHP_EOL,
+        private ConsoleOutput $output,
     ) {
+
     }
 
-    public static function new(string $glue = PHP_EOL): ConsoleOutputBuilder
+    public function nest(callable $callback): self
     {
-        return new self(
-            [],
-            $glue,
-        );
+        $clone = new self($this->output);
+
+        $callback($clone);
+
+        $this->add($clone->toString());
+
+        return $this;
+    }
+
+    public function glueWith(string $glue): self
+    {
+        $this->glue = $glue;
+
+        return $this;
     }
 
     /**
@@ -86,9 +99,14 @@ final class ConsoleOutputBuilder implements Stringable
         return $this->add($group, ConsoleOutputType::Brand);
     }
 
-    public function formatted(string $message): self
+    public function raw(string $message): self
     {
         return $this->add($message);
+    }
+
+    public function label(string $message): self
+    {
+        return $this->add($message, ConsoleOutputType::Label);
     }
 
     /**
@@ -113,16 +131,16 @@ final class ConsoleOutputBuilder implements Stringable
         return $this;
     }
 
-    public function withDefaultBranding(): self
+    public function header(string $message): self
     {
         return $this->blank()
-            ->brand('Tempest')
+            ->brand($message)
             ->blank();
     }
 
-    public function write(ConsoleOutput $to): self
+    public function write(?ConsoleOutput $to = null): self
     {
-        $to->write(
+        ($to ?? $this->output)->write(
             $this->toString()
         );
 

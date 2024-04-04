@@ -8,6 +8,7 @@ trait HandlesConsoleInput
 {
     public function __construct(
         private readonly ConsoleOutput $output,
+        private readonly ConsoleOutputBuilder $builder,
     ) {
     }
 
@@ -27,13 +28,12 @@ trait HandlesConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        ConsoleOutputBuilder::new(" ")
-            ->brand("?")
+        $this->builder->label("?")
             ->warning($question)
             ->when($options !== null, function (ConsoleOutputBuilder $builder) use ($options, $default) {
-                $builder->formatted("[")
+                $builder->raw("[")
                     ->info(implode(', ', $options))
-                    ->formatted("]")
+                    ->raw("]")
                     ->muted($default ? " (default: $default) " : " ");
             })
             ->write($this->output);

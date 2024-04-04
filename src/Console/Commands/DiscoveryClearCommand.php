@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Container\Container;
@@ -15,8 +14,8 @@ final readonly class DiscoveryClearCommand
 {
     public function __construct(
         private Container $container,
-        private Console $console,
         private AppConfig $appConfig,
+        private ConsoleOutputBuilder $builder,
     ) {
     }
 
@@ -26,10 +25,10 @@ final readonly class DiscoveryClearCommand
     )]
     public function __invoke(): void
     {
-        $builder = ConsoleOutputBuilder::new()
-            ->withDefaultBranding()
-            ->warning('Clearing cached discovery files: ')
-            ->write($this->console)
+        $this->builder
+            ->header("Tempest")
+            ->warning('Clearing cached discovery files:')
+            ->write()
             ->blank()
             ->blank();
 
@@ -39,19 +38,18 @@ final readonly class DiscoveryClearCommand
 
             $discovery->destroyCache();
 
-            $builder->formatted(
-                ConsoleOutputBuilder::new(" ")
+            $this->builder->nest(function (ConsoleOutputBuilder $builder) use ($discoveryClass) {
+                $builder->glueWith(" ")
                     ->info($discoveryClass)
-                    ->add('cleared successful')
-                    ->toString(),
-            )
+                    ->add('cleared successful');
+            })
                 ->blank()
-                ->write($this->console);
+                ->write();
         }
 
-        $builder->blank()
+        $this->builder->blank()
             ->success('Discovery cache cleared')
             ->blank()
-            ->write($this->console);
+            ->write();
     }
 }

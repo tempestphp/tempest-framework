@@ -11,16 +11,17 @@ final readonly class RenderConsoleCommandOverviewMessage
     public function __construct(
         private AppConfig $appConfig,
         private ConsoleConfig $consoleConfig,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
     public function __invoke(): string
     {
-        $builder = ConsoleOutputBuilder::new()
-            ->withDefaultBranding()
+        $builder = $this->outputBuilder
+            ->header("Tempest")
             ->when(
                 $this->appConfig->discoveryCache,
-                fn (ConsoleOutputBuilder $builder) => $builder->error(' Discovery cache is enabled! ')->blank()
+                fn (ConsoleOutputBuilder $builder) => $builder->info(' Discovery cache is enabled! ')->blank()
             );
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
@@ -37,11 +38,11 @@ final readonly class RenderConsoleCommandOverviewMessage
         ksort($commands);
 
         foreach ($commands as $group => $commandsForGroup) {
-            $builder->formatted(ConsoleStyle::BOLD(ConsoleStyle::BG_BLUE(' ' . ucfirst($group) . ' ')));
+            $builder->label($group);
 
             foreach ($commandsForGroup as $consoleCommand) {
                 $renderedConsoleCommand = (new RenderConsoleCommandMessage())($consoleCommand);
-                $builder->formatted("  $renderedConsoleCommand");
+                $builder->raw("  $renderedConsoleCommand");
             }
 
             $builder->blank();

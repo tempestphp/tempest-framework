@@ -15,6 +15,7 @@ final readonly class RoutesCommand
     public function __construct(
         private Console $console,
         private RouteConfig $routeConfig,
+        private ConsoleOutputBuilder $builder,
     ) {
     }
 
@@ -41,13 +42,13 @@ final readonly class RoutesCommand
         ksort($sortedRoutes);
 
 
-        ConsoleOutputBuilder::new()
-            ->withDefaultBranding()
+        $this->builder
+            ->header("Tempest")
             ->warning('Registered routes')
             ->when(empty($sortedRoutes), fn (ConsoleOutputBuilder $builder) => $builder->info('No routes registered'))
             ->when(! empty($sortedRoutes), function (ConsoleOutputBuilder $builder) use ($sortedRoutes) {
                 foreach ($sortedRoutes as $route) {
-                    $builder->formatted(
+                    $builder->raw(
                         implode(' ', [
                             ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
                             ConsoleStyle::FG_DARK_BLUE($route->uri),

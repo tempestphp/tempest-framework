@@ -21,6 +21,7 @@ final class MigrateCommand
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
         private readonly AppConfig $config,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -39,26 +40,26 @@ final class MigrateCommand
 
         $this->migrationManager->up();
 
-        ConsoleOutputBuilder::new()
+        $this->outputBuilder
             ->success("Done")
-            ->formatted(sprintf("Migrated %s migrations", self::$count))
+            ->raw(sprintf("Migrated %s migrations", self::$count))
             ->blank()
-            ->write($this->console);
+            ->write();
     }
 
     #[EventHandler]
     public function onMigrationMigrated(MigrationMigrated $event): void
     {
-        ConsoleOutputBuilder::new()->add(" - {$event->name}")->write($this->console);
+        $this->outputBuilder->add(" - {$event->name}")->write();
         self::$count += 1;
     }
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void
     {
-        ConsoleOutputBuilder::new()
+        $this->outputBuilder
             ->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'))
             ->error($event->exception->getMessage())
-            ->write($this->console);
+            ->write();
     }
 }
