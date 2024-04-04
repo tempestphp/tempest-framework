@@ -28,8 +28,9 @@ final class ConsoleOutputLine
             ConsoleOutputType::Warning => ConsoleStyle::FG_DARK_YELLOW($this->line),
             ConsoleOutputType::Success => ConsoleStyle::BG_GREEN(ConsoleStyle::FG_WHITE($this->line)),
             ConsoleOutputType::Info => ConsoleStyle::FG_BLUE($this->line),
-            ConsoleOutputType::Comment => ConsoleStyle::FG_DARK_GREEN(($this->line)),
-            ConsoleOutputType::Muted => ConsoleStyle::FG_LIGHT_GRAY(($this->line)),
+            ConsoleOutputType::Comment => ConsoleStyle::FG_DARK_GREEN($this->line),
+            ConsoleOutputType::Muted => ConsoleStyle::FG_LIGHT_GRAY($this->line),
+            ConsoleOutputType::Label => ConsoleStyle::BG_BLUE(ConsoleStyle::BOLD(ConsoleStyle::FG_WHITE(" $this->line "))),
             default => $this->line,
         };
     }

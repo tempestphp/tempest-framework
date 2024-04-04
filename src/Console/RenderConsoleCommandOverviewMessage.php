@@ -17,7 +17,7 @@ final readonly class RenderConsoleCommandOverviewMessage
 
     public function __invoke(): string
     {
-        $builder = $this->outputBuilder
+        $this->outputBuilder
             ->header("Tempest")
             ->when(
                 $this->appConfig->discoveryCache,
@@ -38,16 +38,16 @@ final readonly class RenderConsoleCommandOverviewMessage
         ksort($commands);
 
         foreach ($commands as $group => $commandsForGroup) {
-            $builder->label($group);
+            $this->outputBuilder->label($group);
 
             foreach ($commandsForGroup as $consoleCommand) {
                 $renderedConsoleCommand = (new RenderConsoleCommandMessage())($consoleCommand);
-                $builder->raw("  $renderedConsoleCommand");
+                $this->outputBuilder->raw("  $renderedConsoleCommand");
             }
 
-            $builder->blank();
+            $this->outputBuilder->blank();
         }
 
-        return $builder->toString();
+        return $this->outputBuilder->toString();
     }
 }
