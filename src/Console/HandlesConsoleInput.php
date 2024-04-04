@@ -28,7 +28,9 @@ trait HandlesConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        $this->builder->label("?")
+        $this->builder
+            ->glueWith(' ')
+            ->label("?")
             ->warning($question)
             ->when($options !== null, function (ConsoleOutputBuilder $builder) use ($options, $default) {
                 $builder->raw("[")

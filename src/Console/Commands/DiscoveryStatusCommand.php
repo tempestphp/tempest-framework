@@ -6,13 +6,11 @@ namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleOutputBuilder;
 
 final readonly class DiscoveryStatusCommand
 {
     public function __construct(
-        private ConsoleOutput $output,
         private AppConfig $appConfig,
         private ConsoleOutputBuilder $outputBuilder,
     ) {

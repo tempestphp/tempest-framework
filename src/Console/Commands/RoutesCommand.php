@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Console\ConsoleStyle;
@@ -13,7 +12,6 @@ use Tempest\Http\RouteConfig;
 final readonly class RoutesCommand
 {
     public function __construct(
-        private Console $console,
         private RouteConfig $routeConfig,
         private ConsoleOutputBuilder $builder,
     ) {
