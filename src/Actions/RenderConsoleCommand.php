@@ -23,7 +23,7 @@ final readonly class RenderConsoleCommand
             $parts[] = $this->renderParameter($parameter);
         }
 
-        if ($consoleCommand->getDescription()) {
+        if ($consoleCommand->getDescription() !== null && $consoleCommand->getDescription() !== '') {
             $parts[] = "- {$consoleCommand->getDescription()}";
         }
 
