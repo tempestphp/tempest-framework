@@ -15,7 +15,6 @@ use Tempest\ORM\DynamicCaster;
 use Tempest\ORM\Exceptions\MissingValuesException;
 use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Validation\InferrerConfig;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
@@ -254,7 +253,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     {
         $failingRules = [];
 
-        foreach (get(InferrerConfig::class)->inferrers as $inferrer) {
+        foreach ($this->mapperConfig->inferrers as $inferrer) {
             foreach ($inferrer->infer($property, $value) as $rule) {
                 if (! $rule->isValid($value)) {
                     $failingRules[$property->getName()][] = $rule;
