@@ -11,7 +11,9 @@ use Tempest\Console\ConsoleStyle;
 
 final readonly class RenderConsoleCommand
 {
-    public function __construct(private ConsoleOutput $output) {}
+    public function __construct(private ConsoleOutput $output)
+    {
+    }
 
     public function __invoke(ConsoleCommand $consoleCommand): void
     {

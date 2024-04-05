@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console;
 
 enum ConsoleOutputType
@@ -45,7 +47,7 @@ enum ConsoleOutputType
                     fn (string $line) => "* {$line}",
                     explode(PHP_EOL, $input),
                 ),
-                '*/'
+                '*/',
             ],
         );
     }
