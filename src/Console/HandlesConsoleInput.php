@@ -8,6 +8,7 @@ trait HandlesConsoleInput
 {
     public function __construct(
         private readonly ConsoleOutput $output,
+        private readonly ConsoleOutputBuilder $builder,
     ) {
     }
 
@@ -27,22 +28,17 @@ trait HandlesConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        $questionString = ConsoleStyle::BG_YELLOW($question);
-
-        if ($options) {
-            $questionString .= ' [' . ConsoleStyle::FG_BLUE(
-                implode(
-                    ',',
-                    array_map(
-                        fn (string $option) => $option === $default ? strtoupper($option) : $option,
-                        $options,
-                    ),
-                ),
-            )
-                . '] ';
-        }
-
-        $this->output->write($questionString);
+        $this->builder
+            ->glueWith(' ')
+            ->label("?")
+            ->warning($question)
+            ->when($options !== null, function (ConsoleOutputBuilder $builder) use ($options, $default) {
+                $builder->raw("[")
+                    ->info(implode(', ', $options))
+                    ->raw("]")
+                    ->muted($default ? " (default: $default) " : " ");
+            })
+            ->write($this->output);
 
         $answer = trim($this->readln());
 

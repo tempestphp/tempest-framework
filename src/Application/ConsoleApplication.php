@@ -9,7 +9,7 @@ use ReflectionMethod;
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\RenderConsoleCommandOverview;
+use Tempest\Console\RenderConsoleCommandOverviewMessage;
 use Tempest\Container\Container;
 use Throwable;
 
@@ -30,7 +30,9 @@ final readonly class ConsoleApplication implements Application
             $output = $this->container->get(ConsoleOutput::class);
 
             if (! $commandName) {
-                $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
+                $output->writeln(
+                    $this->container->get(RenderConsoleCommandOverviewMessage::class)()
+                );
 
                 return;
             }

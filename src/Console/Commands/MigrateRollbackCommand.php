@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
@@ -20,6 +21,7 @@ final class MigrateRollbackCommand
         readonly private Console $console,
         readonly private MigrationManager $migrationManager,
         readonly private AppConfig $config,
+        readonly private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -38,21 +40,26 @@ final class MigrateRollbackCommand
 
         $this->migrationManager->down();
 
-        $this->console->success("Done");
-        $this->console->writeln(sprintf("Rolled back %s migrations", self::$count));
+        $this->outputBuilder
+            ->success("Done")
+            ->raw(sprintf("Rolled back %s migrations", self::$count))
+            ->blank()
+            ->write();
     }
 
     #[EventHandler]
     public function onMigrationRolledBack(MigrationRolledBack $event): void
     {
-        $this->console->writeln("- {$event->name}");
+        $this->outputBuilder->add(" - {$event->name}")->write();
         self::$count += 1;
     }
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void
     {
-        $this->console->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'));
-        $this->console->error($event->exception->getMessage());
+        $this->outputBuilder
+            ->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'))
+            ->error($event->exception->getMessage())
+            ->write();
     }
 }

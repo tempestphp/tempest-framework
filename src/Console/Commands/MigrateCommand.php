@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
@@ -20,6 +21,7 @@ final class MigrateCommand
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
         private readonly AppConfig $config,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -38,21 +40,26 @@ final class MigrateCommand
 
         $this->migrationManager->up();
 
-        $this->console->success("Done");
-        $this->console->writeln(sprintf("Migrated %s migrations", self::$count));
+        $this->outputBuilder
+            ->success("Done")
+            ->raw(sprintf("Migrated %s migrations", self::$count))
+            ->blank()
+            ->write();
     }
 
     #[EventHandler]
     public function onMigrationMigrated(MigrationMigrated $event): void
     {
-        $this->console->writeln("- {$event->name}");
+        $this->outputBuilder->add(" - {$event->name}")->write();
         self::$count += 1;
     }
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void
     {
-        $this->console->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'));
-        $this->console->error($event->exception->getMessage());
+        $this->outputBuilder
+            ->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'))
+            ->error($event->exception->getMessage())
+            ->write();
     }
 }

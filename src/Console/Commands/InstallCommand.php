@@ -6,11 +6,13 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutputBuilder;
 
 final readonly class InstallCommand
 {
     public function __construct(
         private Console $console,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
@@ -42,7 +44,7 @@ final readonly class InstallCommand
         $path = $cwd . '/.env';
 
         if (file_exists($path)) {
-            $this->console->error("{$path} already exists, skipped.");
+            $this->writeAlreadyExists($path);
 
             return;
         }
@@ -56,7 +58,7 @@ final readonly class InstallCommand
 
         copy(__DIR__ . '/../../../.env.example', $path);
 
-        $this->console->success("{$path} created");
+        $this->writeCreated($path);
     }
 
     private function copyEnvExample(string $cwd, bool $force): void
@@ -64,7 +66,7 @@ final readonly class InstallCommand
         $path = $cwd . '/.env.example';
 
         if (file_exists($path)) {
-            $this->console->error("{$path} already exists, skipped.");
+            $this->writeAlreadyExists($path);
 
             return;
         }
@@ -86,7 +88,7 @@ final readonly class InstallCommand
         $path = $cwd . '/tempest';
 
         if (file_exists($path)) {
-            $this->console->error("{$path} already exists, skipped.");
+            $this->writeAlreadyExists($path);
 
             return;
         }
@@ -100,7 +102,7 @@ final readonly class InstallCommand
 
         copy(__DIR__ . '/../../../tempest', $path);
 
-        $this->console->success("{$path} created");
+        $this->writeCreated($path);
     }
 
     private function copyIndex(string $cwd, bool $force): void
@@ -108,7 +110,7 @@ final readonly class InstallCommand
         $path = $cwd . '/public/index.php';
 
         if (file_exists($path)) {
-            $this->console->error("{$path} already exists, skipped.");
+            $this->writeAlreadyExists($path);
 
             return;
         }
@@ -126,6 +128,16 @@ final readonly class InstallCommand
 
         copy(__DIR__ . '/../../../public/index.php', $path);
 
-        $this->console->success("{$path} created");
+        $this->writeCreated($path);
+    }
+
+    private function writeCreated(string $path): void
+    {
+        $this->outputBuilder->success("{$path} created.")->write();
+    }
+
+    private function writeAlreadyExists(string $path): void
+    {
+        $this->outputBuilder->warning("{$path} already exists, skipping.")->write();
     }
 }

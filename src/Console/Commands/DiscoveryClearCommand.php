@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
-use Tempest\Application\Kernel;
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleStyle;
+use Tempest\Console\ConsoleOutputBuilder;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 
@@ -16,9 +14,8 @@ final readonly class DiscoveryClearCommand
 {
     public function __construct(
         private Container $container,
-        private Kernel $kernel,
-        private Console $console,
         private AppConfig $appConfig,
+        private ConsoleOutputBuilder $builder,
     ) {
     }
 
@@ -28,18 +25,31 @@ final readonly class DiscoveryClearCommand
     )]
     public function __invoke(): void
     {
+        $this->builder
+            ->header("Tempest")
+            ->warning('Clearing cached discovery files:')
+            ->write()
+            ->blank()
+            ->blank();
+
         foreach ($this->appConfig->discoveryClasses as $discoveryClass) {
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
             $discovery->destroyCache();
 
-            $this->console->success(implode('', [
-                ConsoleStyle::FG_BLUE($discoveryClass),
-                ' cleared successful',
-            ]));
+            $this->builder->nest(function (ConsoleOutputBuilder $builder) use ($discoveryClass) {
+                $builder->glueWith(" ")
+                    ->info($discoveryClass)
+                    ->add('cleared successful');
+            })
+                ->blank()
+                ->write();
         }
 
-        $this->console->writeln('Done');
+        $this->builder->blank()
+            ->success('Discovery cache cleared')
+            ->blank()
+            ->write();
     }
 }

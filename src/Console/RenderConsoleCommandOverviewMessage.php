@@ -6,25 +6,23 @@ namespace Tempest\Console;
 
 use Tempest\AppConfig;
 
-final readonly class RenderConsoleCommandOverview
+final readonly class RenderConsoleCommandOverviewMessage
 {
     public function __construct(
         private AppConfig $appConfig,
         private ConsoleConfig $consoleConfig,
+        private ConsoleOutputBuilder $outputBuilder,
     ) {
     }
 
     public function __invoke(): string
     {
-        $lines = [
-            ConsoleStyle::BOLD(ConsoleStyle::BG_DARK_BLUE(" Tempest Console ")),
-        ];
-
-        if ($this->appConfig->discoveryCache) {
-            $lines[] = ConsoleStyle::BG_RED(' Discovery cache is enabled! ');
-        }
-
-        $lines[] = '';
+        $this->outputBuilder
+            ->header("Tempest")
+            ->when(
+                $this->appConfig->discoveryCache,
+                fn (ConsoleOutputBuilder $builder) => $builder->info(' Discovery cache is enabled! ')->blank()
+            );
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
@@ -40,16 +38,16 @@ final readonly class RenderConsoleCommandOverview
         ksort($commands);
 
         foreach ($commands as $group => $commandsForGroup) {
-            $lines[] = ConsoleStyle::BOLD(ConsoleStyle::BG_BLUE(' ' . ucfirst($group) . ' '));
+            $this->outputBuilder->label($group);
 
             foreach ($commandsForGroup as $consoleCommand) {
-                $renderedConsoleCommand = (new RenderConsoleCommand())($consoleCommand);
-                $lines[] = "  {$renderedConsoleCommand}";
+                $renderedConsoleCommand = (new RenderConsoleCommandMessage())($consoleCommand);
+                $this->outputBuilder->raw("  $renderedConsoleCommand");
             }
 
-            $lines[] = '';
+            $this->outputBuilder->blank();
         }
 
-        return implode(PHP_EOL, $lines);
+        return $this->outputBuilder->toString();
     }
 }

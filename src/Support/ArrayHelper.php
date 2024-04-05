@@ -79,6 +79,21 @@ final readonly class ArrayHelper
         return $result;
     }
 
+    /**
+     * @template T
+     * @param T[]|T $value
+     *
+     * @return array<T>
+     */
+    public static function wrap(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        return [$value];
+    }
+
     public function toArray(string|int $key, mixed $value): array
     {
         if (is_int($key)) {
