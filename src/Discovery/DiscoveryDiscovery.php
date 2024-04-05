@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use ReflectionClass;
-use Tempest\CoreConfig;
+use Tempest\AppConfig;
 use Tempest\Container\Container;
 
 final readonly class DiscoveryDiscovery implements Discovery
@@ -13,7 +13,7 @@ final readonly class DiscoveryDiscovery implements Discovery
     public const CACHE_PATH = __DIR__ . '/discovery-discovery.cache.php';
 
     public function __construct(
-        private CoreConfig $coreConfig,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -27,7 +27,7 @@ final readonly class DiscoveryDiscovery implements Discovery
             return;
         }
 
-        $this->coreConfig->discoveryClasses[] = $class->getName();
+        $this->appConfig->discoveryClasses[] = $class->getName();
     }
 
     public function hasCache(): bool
@@ -37,14 +37,14 @@ final readonly class DiscoveryDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->coreConfig->discoveryClasses));
+        file_put_contents(self::CACHE_PATH, serialize($this->appConfig->discoveryClasses));
     }
 
     public function restoreCache(Container $container): void
     {
         $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->coreConfig->discoveryClasses = $discoveryClasses;
+        $this->appConfig->discoveryClasses = $discoveryClasses;
     }
 
     public function destroyCache(): void

@@ -4,32 +4,34 @@ declare(strict_types=1);
 
 namespace Tempest\Bootstraps;
 
-use Tempest\CoreConfig;
+use Tempest\AppConfig;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Kernel;
 use Tempest\Support\PathHelper;
 
 final readonly class DiscoveryLocationBootstrap implements Bootstrap
 {
     public function __construct(
-        private CoreConfig $coreConfig,
-        private Kernel $kernel,
+        private AppConfig $appConfig,
     ) {
     }
 
     public function boot(): void
     {
         $discoveredLocations = [
+            ...$this->discoverCorePackages(),
             ...$this->discoverAppNamespaces(),
-            ...$this->discoverInstalledPackageLocations(),
+            ...$this->discoverVendorPackages(),
         ];
-        
+
         $this->addDiscoveryLocations($discoveredLocations);
     }
 
-    private function discoverInstalledPackageLocations(): array
+    /**
+     * @return DiscoveryLocation[]
+     */
+    private function discoverCorePackages(): array
     {
-        $composerPath = PathHelper::make($this->coreConfig->root, 'vendor/composer');
+        $composerPath = PathHelper::make($this->appConfig->root, 'vendor/composer');
         $installed = $this->loadJsonFile(PathHelper::make($composerPath, 'installed.json'));
         $packages = $installed['packages'] ?? [];
 
@@ -37,41 +39,67 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
         foreach ($packages as $package) {
             $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
-            $requiresTempest = isset($package['require']['tempest/framework']);
-            $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
             $packageName = ($package['name'] ?? null);
-            $isTempest = $packageName === 'tempest/framework'
-                || $packageName === 'tempest/core';
+            $isTempest = $packageName === 'tempest/framework' || $packageName === 'tempest/core';
 
-            if (($requiresTempest && $hasPsr4Namespaces) || $isTempest) {
-                foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
-                    $namespacePath = PathHelper::make($packagePath, $namespacePath);
+            if (! $isTempest) {
+                continue;
+            }
 
-                    $discoveredLocations[] = [
-                        'namespace' => $namespace,
-                        'path' => $namespacePath,
-                    ];
-                }
+            foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
+                $namespacePath = PathHelper::make($packagePath, $namespacePath);
+
+                $discoveredLocations[] = new DiscoveryLocation($namespace, $namespacePath);
             }
         }
 
         return $discoveredLocations;
     }
 
+    /**
+     * @return DiscoveryLocation[]
+     */
     private function discoverAppNamespaces(): array
     {
-        $composer = $this->loadJsonFile(PathHelper::make($this->coreConfig->root, 'composer.json'));
+        $composer = $this->loadJsonFile(PathHelper::make($this->appConfig->root, 'composer.json'));
         $namespaceMap = $composer['autoload']['psr-4'] ?? [];
 
         $discoveredLocations = [];
 
         foreach ($namespaceMap as $namespace => $path) {
-            $path = PathHelper::make($this->coreConfig->root, $path);
+            $path = PathHelper::make($this->appConfig->root, $path);
 
-            $discoveredLocations[] = [
-                'namespace' => $namespace,
-                'path' => $path,
-            ];
+            $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
+        }
+
+        return $discoveredLocations;
+    }
+
+    /**
+     * @return DiscoveryLocation[]
+     */
+    private function discoverVendorPackages(): array
+    {
+        $composerPath = PathHelper::make($this->appConfig->root, 'vendor/composer');
+        $installed = $this->loadJsonFile(PathHelper::make($composerPath, 'installed.json'));
+        $packages = $installed['packages'] ?? [];
+
+        $discoveredLocations = [];
+
+        foreach ($packages as $package) {
+            $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
+            $requiresTempest = isset($package['require']['tempest/framework']) || isset($package['require']['tempest/core']);
+            $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
+
+            if (! ($requiresTempest && $hasPsr4Namespaces)) {
+                continue;
+            }
+
+            foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
+                $path = PathHelper::make($packagePath, $namespacePath);
+
+                $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
+            }
         }
 
         return $discoveredLocations;
@@ -79,15 +107,16 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
     private function addDiscoveryLocations(array $discoveredLocations): void
     {
-        foreach ($discoveredLocations as $location) {
-            $this->coreConfig->discoveryLocations = [new DiscoveryLocation(...$location), ...$this->coreConfig->discoveryLocations];
-        }
+        $this->appConfig->discoveryLocations = [
+            ...$discoveredLocations,
+            ...$this->appConfig->discoveryLocations,
+        ];
     }
 
     private function loadJsonFile(string $path): array
     {
         if (! is_file($path)) {
-            $relativePath = str_replace($this->coreConfig->root, '.', $path);
+            $relativePath = str_replace($this->appConfig->root, '.', $path);
 
             throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
         }

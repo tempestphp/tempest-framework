@@ -13,7 +13,7 @@ use Tempest\Container\GenericContainer;
 final readonly class Kernel
 {
     public function __construct(
-        private CoreConfig $coreConfig,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -31,7 +31,7 @@ final readonly class Kernel
             $container->get(
                 $bootstrap,
                 kernel: $this,
-                coreConfig: $this->coreConfig,
+                appConfig: $this->appConfig,
             )->boot();
         }
 
@@ -45,7 +45,7 @@ final readonly class Kernel
         GenericContainer::setInstance($container);
 
         $container
-            ->config($this->coreConfig)
+            ->config($this->appConfig)
             ->singleton(self::class, fn () => $this)
             ->singleton(Container::class, fn () => $container);
 

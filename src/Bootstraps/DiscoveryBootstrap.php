@@ -8,7 +8,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use SplFileInfo;
-use Tempest\CoreConfig;
+use Tempest\AppConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Throwable;
@@ -16,27 +16,27 @@ use Throwable;
 final readonly class DiscoveryBootstrap implements Bootstrap
 {
     public function __construct(
-        private CoreConfig $coreConfig,
+        private AppConfig $appConfig,
         private Container $container,
     ) {
     }
 
     public function boot(): void
     {
-        reset($this->coreConfig->discoveryClasses);
+        reset($this->appConfig->discoveryClasses);
 
-        while ($discoveryClass = current($this->coreConfig->discoveryClasses)) {
+        while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
-            if ($this->coreConfig->discoveryCache && $discovery->hasCache()) {
+            if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
                 $discovery->restoreCache($this->container);
-                next($this->coreConfig->discoveryClasses);
+                next($this->appConfig->discoveryClasses);
 
                 continue;
             }
 
-            foreach ($this->coreConfig->discoveryLocations as $discoveryLocation) {
+            foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
                 $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
                 $files = new RecursiveIteratorIterator($directories);
 
@@ -69,7 +69,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                 }
             }
 
-            next($this->coreConfig->discoveryClasses);
+            next($this->appConfig->discoveryClasses);
 
             $discovery->storeCache();
         }

@@ -11,9 +11,9 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
-use Tempest\Support\Reflection\Attributes;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
+use Tempest\Support\Reflection\Attributes;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -176,7 +176,7 @@ final class GenericContainer implements Container
         ) {
             return null;
         }
-        
+
         if ($initializerClass = $this->initializers[$className] ?? null) {
             return $this->resolve($initializerClass);
         }
