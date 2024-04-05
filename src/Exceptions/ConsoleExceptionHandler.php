@@ -33,16 +33,6 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         }
     }
 
-    private function outputPath(array $line): void
-    {
-        if (! isset($line['file'])) {
-            return;
-        }
-
-        $this->console->write($line['file'] . ':' . $line['line']);
-        $this->console->writeln('');
-    }
-
     private function outputLine(array $line): void
     {
         $this->console->write(' - ');

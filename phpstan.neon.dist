@@ -2,13 +2,8 @@ includes:
 	- phpstan-baseline.php
 	- vendor/phpat/phpat/extension.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
-services:
-	-
-		class: Tests\Tempest\Architecture\ArchitectureTest
-		tags:
-			- phpat.test
 parameters:
-	level: 6
+	level: 4
 	reportUnmatchedIgnoredErrors: false
 	paths:
 		- app

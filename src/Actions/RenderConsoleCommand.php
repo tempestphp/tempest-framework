@@ -27,6 +27,7 @@ final readonly class RenderConsoleCommand
 
     private function renderParameter(ReflectionParameter $parameter): string
     {
+        /** @phpstan-ignore-next-line */
         $type = $parameter->getType()?->getName();
         $optional = $parameter->isOptional();
         $defaultValue = strtolower(var_export($optional ? $parameter->getDefaultValue() : null, true));

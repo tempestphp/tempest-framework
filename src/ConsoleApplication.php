@@ -6,23 +6,25 @@ namespace Tempest\Console;
 
 use ArgumentCountError;
 use ReflectionMethod;
+use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\Actions\RenderConsoleCommandOverview;
 use Tempest\Console\Exceptions\CommandNotFound;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
-use Tempest\CoreConfig;
 use Tempest\Kernel;
 use Throwable;
 
 final readonly class ConsoleApplication implements Application
 {
-    public static function boot(string $root): self
-    {
-        $coreConfig = new CoreConfig($root);
+    public static function boot(
+        string $name = 'Tempest',
+        ?AppConfig $appConfig = null,
+    ): self {
+        $appConfig ??= new AppConfig(root: getcwd());
 
         $kernel = new Kernel(
-            coreConfig: $coreConfig,
+            appConfig: $appConfig,
         );
 
         $container = $kernel->init();
@@ -30,12 +32,15 @@ final readonly class ConsoleApplication implements Application
         $application = new self(
             args: $_SERVER['argv'],
             container: $container,
-            coreConfig: $coreConfig,
+            appConfig: $appConfig,
         );
 
         $container->singleton(Application::class, fn () => $application);
 
-        $coreConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
+        $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
+
+        $consoleConfig = $container->get(ConsoleConfig::class);
+        $consoleConfig->name = $name;
 
         return $application;
     }
@@ -43,7 +48,7 @@ final readonly class ConsoleApplication implements Application
     public function __construct(
         private array $args,
         private Container $container,
-        private CoreConfig $coreConfig,
+        private AppConfig $appConfig,
     ) {
     }
 
@@ -62,11 +67,11 @@ final readonly class ConsoleApplication implements Application
 
             $this->handleCommand($commandName);
         } catch (Throwable $throwable) {
-            if (! $this->coreConfig->enableExceptionHandling) {
+            if (! $this->appConfig->enableExceptionHandling) {
                 throw $throwable;
             }
 
-            foreach ($this->coreConfig->exceptionHandlers as $exceptionHandler) {
+            foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }
         }

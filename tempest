@@ -2,9 +2,19 @@
 <?php
 
 use Tempest\Console\ConsoleApplication;
+use Tempest\AppConfig;
+use Tempest\Discovery\DiscoveryLocation;
 
 require_once getcwd() . '/vendor/autoload.php';
 
-ConsoleApplication::boot(getcwd())->run();
+ConsoleApplication::boot(
+    'Tempest Console',
+    new AppConfig(
+        getcwd(),
+        discoveryLocations: [
+            new DiscoveryLocation('App\\', __DIR__ . '/app/')
+        ],
+    ),
+)->run();
 
 exit;

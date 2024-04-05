@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
+use Tempest\AppConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleStyle;
-use Tempest\CoreConfig;
 
 final readonly class RenderConsoleCommandOverview
 {
     public function __construct(
-        private CoreConfig $coreConfig,
+        private AppConfig $appConfig,
         private ConsoleConfig $consoleConfig,
     ) {
     }
@@ -19,10 +19,10 @@ final readonly class RenderConsoleCommandOverview
     public function __invoke(): string
     {
         $lines = [
-            ConsoleStyle::BOLD(ConsoleStyle::BG_DARK_BLUE(" Tempest Console ")),
+            ConsoleStyle::BOLD(ConsoleStyle::BG_DARK_BLUE(" {$this->consoleConfig->name} ")),
         ];
 
-        if ($this->coreConfig->discoveryCache) {
+        if ($this->appConfig->discoveryCache) {
             $lines[] = ConsoleStyle::BG_RED(' Discovery cache is enabled! ');
         }
 
