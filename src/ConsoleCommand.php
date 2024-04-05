@@ -15,6 +15,10 @@ final class ConsoleCommand
     public function __construct(
         private readonly ?string $name = null,
         private readonly ?string $description = null,
+        /** @var string[] */
+        private readonly array $aliases = [],
+        /** @var string[] */
+        private readonly array $help = [],
     ) {
     }
 
@@ -41,6 +45,14 @@ final class ConsoleCommand
         return $this->description;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
+
     public function __serialize(): array
     {
         return [
@@ -48,6 +60,8 @@ final class ConsoleCommand
             'description' => $this->description,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
+            'aliases' => $this->aliases,
+            'help' => $this->help,
         ];
     }
 
@@ -59,5 +73,21 @@ final class ConsoleCommand
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
+        $this->aliases = $data['aliases'];
+        $this->help = $data['help'];
+    }
+
+    /**
+     * @return array<string, ConsoleInputArgument>
+     */
+    public function getAvailableArguments(): array
+    {
+        $arguments = [];
+
+        foreach ($this->handler->getParameters() as $parameter) {
+            $arguments[$parameter->getName()] = ConsoleInputArgument::fromParameter($parameter);
+        }
+
+        return $arguments;
     }
 }

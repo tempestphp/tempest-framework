@@ -6,6 +6,7 @@ namespace App\Console;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
+use Tempest\Console\ConsoleArgument;
 
 final readonly class Hello
 {
@@ -22,8 +23,15 @@ final readonly class Hello
         $this->output->error($input);
     }
 
-    #[ConsoleCommand]
-    public function test(?int $optionalValue = null, bool $flag = false)
+    #[ConsoleCommand(
+        aliases: ['t']
+    )]
+    public function test(
+        #[ConsoleArgument(
+            help: 'The path to the file',
+            aliases: ['ov']
+        )]
+        ?int $optionalValue = null, bool $flag = false)
     {
         $value = $optionalValue ?? 'null';
 
