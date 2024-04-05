@@ -4,30 +4,46 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-final readonly class NullConsoleOutput implements ConsoleOutput
+final class NullConsoleOutput implements ConsoleOutput
 {
-    public function write(string $line): void
+    public string $delimiter = PHP_EOL;
+
+    public function delimiter(string $delimiter): ConsoleOutput
     {
-        return;
+        $clone = clone $this;
+
+        $this->delimiter = $delimiter;
+
+        return $clone;
     }
 
-    public function writeln(string $line): void
+    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
-        return;
+        return $this;
     }
 
-    public function info(string $line): void
+    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
-        return;
+        return $this;
     }
 
-    public function error(string $line): void
+    public function info(string $line): ConsoleOutput
     {
-        return;
+        return $this;
     }
 
-    public function success(string $line): void
+    public function error(string $line): ConsoleOutput
     {
-        return;
+        return $this;
+    }
+
+    public function success(string $line): ConsoleOutput
+    {
+        return $this;
+    }
+
+    public function when(mixed $expression, callable $callback): ConsoleOutput
+    {
+        return $this;
     }
 }

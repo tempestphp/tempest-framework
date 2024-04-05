@@ -6,13 +6,17 @@ namespace Tempest\Console;
 
 interface ConsoleOutput
 {
-    public function write(string $line): void;
+    public function delimiter(string $delimiter): ConsoleOutput;
 
-    public function writeln(string $line): void;
+    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput;
 
-    public function info(string $line): void;
+    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput;
 
-    public function error(string $line): void;
+    public function info(string $line): ConsoleOutput;
 
-    public function success(string $line): void;
+    public function error(string $line): ConsoleOutput;
+
+    public function success(string $line): ConsoleOutput;
+
+    public function when(mixed $expression, callable $callback): ConsoleOutput;
 }

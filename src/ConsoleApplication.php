@@ -57,10 +57,8 @@ final readonly class ConsoleApplication implements Application
         try {
             $commandName = $this->args[1] ?? null;
 
-            $output = $this->container->get(ConsoleOutput::class);
-
             if (! $commandName) {
-                $output->writeln($this->container->get(RenderConsoleCommandOverview::class)());
+                $this->container->get(RenderConsoleCommandOverview::class)();
 
                 return;
             }

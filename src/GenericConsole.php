@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-readonly class GenericConsole implements Console
+final class GenericConsole implements Console
 {
+    private string $delimiter = PHP_EOL;
+
     public function __construct(
-        private ConsoleInput $input,
-        private ConsoleOutput $output,
+        private readonly ConsoleInput $input,
+        private readonly ConsoleOutput $output,
     ) {
+    }
+
+    public function delimiter(string $delimiter): ConsoleOutput
+    {
+        $clone = clone $this;
+
+        $this->delimiter = $delimiter;
+
+        return $clone;
     }
 
     public function readln(): string
@@ -27,28 +38,33 @@ readonly class GenericConsole implements Console
         return $this->input->confirm($question, $default);
     }
 
-    public function write(string $line): void
+    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
-        $this->output->write($line);
+        return $this->output->write($line, $type);
     }
 
-    public function writeln(string $line): void
+    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
-        $this->output->writeln($line);
+        return $this->output->writeln($line, $type);
     }
 
-    public function info(string $line): void
+    public function info(string $line): ConsoleOutput
     {
-        $this->output->info($line);
+        return $this->output->info($line);
     }
 
-    public function error(string $line): void
+    public function error(string $line): ConsoleOutput
     {
-        $this->output->error($line);
+        return $this->output->error($line);
     }
 
-    public function success(string $line): void
+    public function success(string $line): ConsoleOutput
     {
-        $this->output->success($line);
+        return $this->output->success($line);
+    }
+
+    public function when(mixed $expression, callable $callback): ConsoleOutput
+    {
+        return $this->output->when($expression, $callback);
     }
 }

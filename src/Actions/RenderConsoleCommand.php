@@ -6,11 +6,14 @@ namespace Tempest\Console\Actions;
 
 use ReflectionParameter;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleStyle;
 
 final readonly class RenderConsoleCommand
 {
-    public function __invoke(ConsoleCommand $consoleCommand): string
+    public function __construct(private ConsoleOutput $output) {}
+
+    public function __invoke(ConsoleCommand $consoleCommand): void
     {
         $parts = [ConsoleStyle::FG_DARK_BLUE($consoleCommand->getName())];
 
@@ -22,7 +25,7 @@ final readonly class RenderConsoleCommand
             $parts[] = "- {$consoleCommand->getDescription()}";
         }
 
-        return implode(' ', $parts);
+        $this->output->writeln(' ' . implode(' ', $parts));
     }
 
     private function renderParameter(ReflectionParameter $parameter): string

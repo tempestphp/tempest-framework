@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing\Console;
 
 use Tempest\Console\ConsoleOutput;
+use Tempest\Console\ConsoleOutputType;
 use Tempest\Console\ConsoleStyle;
 
 final class TestConsoleOutput implements ConsoleOutput
@@ -13,30 +14,40 @@ final class TestConsoleOutput implements ConsoleOutput
     private array $errorLines = [];
     private array $infoLines = [];
     private array $successLines = [];
+    public string $delimiter = PHP_EOL;
 
-    public function write(string $line): void
+    public function delimiter(string $delimiter): ConsoleOutput
+    {
+        $clone = clone $this;
+
+        $this->delimiter = $delimiter;
+
+        return $clone;
+    }
+
+    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
         $this->lines[] = $line;
     }
 
-    public function writeln(string $line): void
+    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
         $this->lines[] = $line;
     }
 
-    public function info(string $line): void
+    public function info(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->infoLines[] = $line;
     }
 
-    public function error(string $line): void
+    public function error(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->errorLines[] = $line;
     }
 
-    public function success(string $line): void
+    public function success(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->successLines[] = $line;
@@ -62,12 +73,12 @@ final class TestConsoleOutput implements ConsoleOutput
 
     public function getTextWithFormatting(): string
     {
-        return implode(PHP_EOL, $this->getLinesWithFormatting());
+        return implode($this->delimiter, $this->getLinesWithFormatting());
     }
 
     public function getTextWithoutFormatting(): string
     {
-        return implode(PHP_EOL, $this->getLinesWithoutFormatting());
+        return implode($this->delimiter, $this->getLinesWithoutFormatting());
     }
 
     public function getInfoLines(): array
@@ -83,5 +94,12 @@ final class TestConsoleOutput implements ConsoleOutput
     public function getSuccessLines(): array
     {
         return $this->successLines;
+    }
+
+    public function when(mixed $expression, callable $callback): ConsoleOutput
+    {
+        if ($expression) {
+            return $callback($this);
+        }
     }
 }
