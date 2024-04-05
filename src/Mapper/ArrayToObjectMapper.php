@@ -20,6 +20,12 @@ use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
+    public function __construct(
+        protected MapperConfig $mapperConfig,
+    ) {
+
+    }
+
     public function canMap(mixed $from, object|string $to): bool
     {
         return is_array($from);
@@ -97,10 +103,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         if (! $castWith) {
-            $config = get(CasterConfig::class);
-
             /** @var DynamicCaster $caster */
-            foreach ($config->casters as $caster) {
+            foreach ($this->mapperConfig->casters as $caster) {
                 if ($caster->shouldCast($property, $value)) {
                     return $caster;
                 }

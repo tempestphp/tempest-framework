@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
+use function Tempest\get;
 use Tempest\ORM\Exceptions\CannotMapDataException;
 
 /* @template ClassType */
@@ -111,7 +112,7 @@ final class ObjectMapper
         return [
             new PsrRequestToRequestMapper(),
             new RequestToPsrRequestMapper(),
-            new ArrayToObjectMapper(),
+            get(ArrayToObjectMapper::class),
             new QueryToModelMapper(),
             new ModelToQueryMapper(),
             new RequestToObjectMapper(),

@@ -6,14 +6,14 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
-use Tempest\Mapper\CasterConfig;
+use Tempest\Mapper\MapperConfig;
 use Tempest\ORM\DynamicCaster;
 
 final readonly class DynamicCasterDiscovery implements Discovery
 {
     private const CACHE_PATH = __DIR__ . '/dynamic-casters-discovery.cache.php';
 
-    public function __construct(private CasterConfig $casterConfig)
+    public function __construct(private MapperConfig $mapperConfig)
     {
     }
 
@@ -27,7 +27,7 @@ final readonly class DynamicCasterDiscovery implements Discovery
             return;
         }
 
-        $this->casterConfig->addCaster(
+        $this->mapperConfig->addCaster(
             $class->newInstanceWithoutConstructor(),
         );
     }
@@ -39,14 +39,14 @@ final readonly class DynamicCasterDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->casterConfig->casters));
+        file_put_contents(self::CACHE_PATH, serialize($this->mapperConfig->casters));
     }
 
     public function restoreCache(Container $container): void
     {
         $casters = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->casterConfig->casters = $casters;
+        $this->mapperConfig->casters = $casters;
     }
 
     public function destroyCache(): void
