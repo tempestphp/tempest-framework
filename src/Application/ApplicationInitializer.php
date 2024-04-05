@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use Tempest\AppConfig;
+use Tempest\Application;
+use Tempest\Console\ConsoleApplication;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;

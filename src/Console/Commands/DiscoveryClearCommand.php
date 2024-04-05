@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
-use Tempest\Application\Kernel;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Kernel;
 
 final readonly class DiscoveryClearCommand
 {

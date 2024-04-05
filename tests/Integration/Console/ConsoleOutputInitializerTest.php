@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
-use Tempest\Console\ConsoleOutputInitializer;
 use Tempest\Console\GenericConsoleOutput;
+use Tempest\Console\Inititalizers\ConsoleOutputInitializer;
 use Tempest\Console\NullConsoleOutput;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

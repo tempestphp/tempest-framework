@@ -3,6 +3,8 @@
     "description": "The PHP framework that gets out of your way.",
     "require": {
         "php": "^8.3",
+        "tempest/core": "dev-main",
+        "tempest/console": "dev-main",
         "ext-pdo": "*",
         "vlucas/phpdotenv": "^5.6",
         "ext-dom": "*",
@@ -16,7 +18,6 @@
         "laminas/laminas-diactoros": "^3.3",
         "psr/clock": "^1.0",
         "ramsey/uuid": "^4.7",
-        "symfony/var-exporter": "^7.0",
         "tempest/highlight": "^1.0"
     },
     "require-dev": {
@@ -63,5 +64,17 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url" : "../tempest-core",
+            "symlink": true
+        },
+        {
+            "type": "path",
+            "url" : "../tempest-console",
+            "symlink": true
+        }
+    ]
 }

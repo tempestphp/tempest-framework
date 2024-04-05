@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Application;
 
 use Tempest\AppConfig;
+use Tempest\Application;
 use Tempest\Container\Container;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\ResponseSender;

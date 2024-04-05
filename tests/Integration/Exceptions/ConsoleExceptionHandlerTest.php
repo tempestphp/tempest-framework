@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Exceptions;
 
 use App\Console\FailCommand;
-use Tempest\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

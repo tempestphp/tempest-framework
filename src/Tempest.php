@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Tempest;
 
 use Dotenv\Dotenv;
-use Tempest\Application\Application;
-use Tempest\Application\ConsoleApplication;
-use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
-use Tempest\Application\Kernel;
+use Tempest\Console\ConsoleApplication;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Exceptions\ConsoleExceptionHandler;
 use Tempest\Exceptions\HttpExceptionHandler;
 
 final readonly class Tempest
@@ -30,8 +27,8 @@ final readonly class Tempest
         $appConfig = new AppConfig(
             root: $root,
             environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            discoveryCache: env('DISCOVERY_CACHE', false),
             enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+            discoveryCache: env('DISCOVERY_CACHE', false),
         );
 
         if ($discoveryLocationsFromEnv = env('DISCOVERY_LOCATIONS')) {
@@ -43,7 +40,6 @@ final readonly class Tempest
         }
 
         $kernel = new Kernel(
-            root: $root,
             appConfig: $appConfig,
         );
 

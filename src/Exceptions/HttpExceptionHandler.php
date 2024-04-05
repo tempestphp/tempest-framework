@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Exceptions;
 
+use Tempest\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Throwable;
 

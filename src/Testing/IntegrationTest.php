@@ -7,15 +7,15 @@ namespace Tempest\Testing;
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
-use Tempest\Application\Kernel;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
+use Tempest\Console\Testing\Console\ConsoleCommandTester;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Testing\Console\ConsoleCommandTester;
+use Tempest\Kernel;
 use Tempest\Testing\Http\HttpRouterTester;
 
 abstract class IntegrationTest extends TestCase
@@ -39,10 +39,7 @@ abstract class IntegrationTest extends TestCase
             discoveryCache: true,
         );
 
-        $this->kernel ??= new Kernel(
-            __DIR__ . '/../../',
-            $this->appConfig
-        );
+        $this->kernel ??= new Kernel($this->appConfig);
 
         $this->container = $this->kernel->init();
 
