@@ -31,13 +31,6 @@
             "Tests\\Tempest\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../tempest-core",
-            "symlink": true
-        }
-    ],
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
