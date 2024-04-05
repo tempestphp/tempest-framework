@@ -75,7 +75,7 @@ final readonly class ConsoleApplication implements Application
             ) {
                 throw $throwable;
             }
-            
+
             foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }

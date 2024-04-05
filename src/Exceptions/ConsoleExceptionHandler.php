@@ -16,7 +16,8 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
         private Console $console,
-    ) {}
+    ) {
+    }
 
     public function handle(Throwable $throwable): void
     {
@@ -48,7 +49,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         $lines = explode(PHP_EOL, $code);
 
         $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] . ' ' . ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD(' < ')));
-        
+
         $excerptSize = 5;
         $start = max(0, $throwable->getLine() - $excerptSize);
         $lines = array_slice($lines, $start, $excerptSize * 2);

@@ -10,7 +10,8 @@ final class CommandNotFoundException extends ConsoleException
 {
     public function __construct(
         private readonly string $commandName
-    ) {}
+    ) {
+    }
 
     public function render(ConsoleOutput $output): void
     {
