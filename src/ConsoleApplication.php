@@ -9,8 +9,10 @@ use ReflectionMethod;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\Actions\RenderConsoleCommandOverview;
-use Tempest\Console\Exceptions\CommandNotFound;
+use Tempest\Console\Exceptions\CommandNotFoundException;
+use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Container\Container;
 use Tempest\Kernel;
 use Throwable;
@@ -64,11 +66,16 @@ final readonly class ConsoleApplication implements Application
             }
 
             $this->handleCommand($commandName);
+        } catch (ConsoleException $consoleException) {
+            $consoleException->render($this->container->get(ConsoleOutput::class));
         } catch (Throwable $throwable) {
-            if (! $this->appConfig->enableExceptionHandling) {
+            if (
+                ! $this->appConfig->enableExceptionHandling
+                || $this->appConfig->exceptionHandlers === []
+            ) {
                 throw $throwable;
             }
-
+            
             foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }
@@ -79,13 +86,13 @@ final readonly class ConsoleApplication implements Application
     {
         $config = $this->container->get(ConsoleConfig::class);
 
-        $consoleCommandConfig = $config->commands[$commandName] ?? null;
+        $consoleCommand = $config->commands[$commandName] ?? null;
 
-        if (! $consoleCommandConfig) {
-            throw new CommandNotFound($commandName);
+        if (! $consoleCommand) {
+            throw new CommandNotFoundException($commandName);
         }
 
-        $handler = $consoleCommandConfig->handler;
+        $handler = $consoleCommand->handler;
 
         $params = $this->resolveParameters($handler);
 
@@ -94,7 +101,7 @@ final readonly class ConsoleApplication implements Application
         try {
             $handler->invoke($commandClass, ...$params);
         } catch (ArgumentCountError) {
-            $this->handleFailingCommand();
+            throw new InvalidCommandException($commandName, $consoleCommand);
         }
     }
 
@@ -122,12 +129,5 @@ final readonly class ConsoleApplication implements Application
         }
 
         return $result;
-    }
-
-    private function handleFailingCommand(): void
-    {
-        $output = $this->container->get(ConsoleOutput::class);
-
-        $output->error('Something went wrong');
     }
 }

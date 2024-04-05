@@ -10,7 +10,8 @@ require_once getcwd() . '/vendor/autoload.php';
 ConsoleApplication::boot(
     'Tempest Console',
     new AppConfig(
-        getcwd(),
+        root: getcwd(),
+        enableExceptionHandling: true,
         discoveryLocations: [
             new DiscoveryLocation('App\\', __DIR__ . '/app/')
         ],

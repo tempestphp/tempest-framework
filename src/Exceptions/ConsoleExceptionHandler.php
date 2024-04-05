@@ -5,61 +5,54 @@ declare(strict_types=1);
 namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleStyle;
 use Tempest\ExceptionHandler;
+use Tempest\Highlight\Highlighter;
+use Tempest\Highlight\Themes\LightTerminalTheme;
 use Throwable;
 
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     public function handle(Throwable $throwable): void
     {
-        $this->console->writeln(ConsoleStyle::BOLD(ConsoleStyle::FG_RED($throwable::class)));
+        $this->console
+            ->error($throwable::class)
+            ->when(
+                expression: $throwable->getMessage(),
+                callback: fn (ConsoleOutput $output) => $output->writeln($throwable->getMessage()),
+            )
+            ->writeln();
 
-        if ($message = $throwable->getMessage()) {
-            $this->console->writeln(ConsoleStyle::BOLD(ConsoleStyle::FG_RED($message)));
-        }
+        $this->writeSnippet($throwable);
 
-        $this->console->writeln($throwable->getFile() . ':' . $throwable->getLine());
-
-        foreach ($throwable->getTrace() as $line) {
-            //            $this->console->writeln('');
-
-            $this->outputLine($line);
-            //            $this->outputPath($line);
-        }
+        $this->console
+            ->writeln()
+            ->writeln($throwable->getFile() . ':' . $throwable->getLine())
+            ->writeln();
     }
 
-    private function outputLine(array $line): void
+    private function writeSnippet(Throwable $throwable): void
     {
-        $this->console->write(' - ');
-        match (true) {
-            isset($line['class']) => $this->outputClassLine($line),
-            isset($line['function']) => $this->outputFunctionLine($line),
-            default => $this->outputDefaultLine($line),
-        };
+        $this->console->writeln($this->getCodeSample($throwable));
     }
 
-    private function outputClassLine(array $line): void
+    private function getCodeSample(Throwable $throwable): string
     {
-        $this->console->write(ConsoleStyle::FG_RED($line['class']));
-        $this->console->write($line['type']);
-        $this->console->write(ConsoleStyle::FG_DARK_GREEN($line['function']));
-        $this->console->writeln('');
-    }
+        $highlighter = (new Highlighter(new LightTerminalTheme()))->withGutter();
+        $code = $highlighter->parse(file_get_contents($throwable->getFile()), 'php');
+        $lines = explode(PHP_EOL, $code);
 
-    private function outputFunctionLine(array $line): void
-    {
-        $this->console->write(ConsoleStyle::FG_DARK_GREEN($line['function']));
-        $this->console->writeln('');
-    }
+        $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] . ' ' . ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD(' < ')));
+        
+        $excerptSize = 5;
+        $start = max(0, $throwable->getLine() - $excerptSize);
+        $lines = array_slice($lines, $start, $excerptSize * 2);
 
-    private function outputDefaultLine(array $line): void
-    {
-        $this->console->write($line['file'] . ':' . $line['line']);
-        $this->console->writeln('');
+        return implode(PHP_EOL, $lines);
     }
 }
