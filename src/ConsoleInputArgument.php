@@ -12,6 +12,7 @@ final class ConsoleInputArgument
      * @param string|int $name
      * @param mixed $value
      * @param mixed $default
+     * @param int $position
      * @param string[] $aliases
      * @param null|string $description
      * @param string[] $help
