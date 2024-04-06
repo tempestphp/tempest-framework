@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleCommand;
 final readonly class FailCommand
 {
     #[ConsoleCommand('fail')]
-    public function __invoke(string $input)
+    public function __invoke(string $input = 'default')
     {
         failingFunction($input);
     }

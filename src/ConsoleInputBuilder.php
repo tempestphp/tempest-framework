@@ -27,8 +27,12 @@ final class ConsoleInputBuilder
         $definitionArguments = $this->argumentDefinitions;
         $validArguments = [];
 
-        foreach ($passedArguments as $idx => $argument) {
-            foreach ($definitionArguments as $definitionIdx => $definitionArgument) {
+        if (! $definitionArguments && $passedArguments) {
+            throw UnresolvedArgumentsException::fromArguments($passedArguments);
+        }
+
+        foreach ($definitionArguments as $definitionIdx => $definitionArgument) {
+            foreach ($passedArguments as $idx => $argument) {
                 if ($this->matchesDefinition($argument, $definitionArgument)) {
                     $validArguments[] = $argument;
 
@@ -40,7 +44,22 @@ final class ConsoleInputBuilder
                      */
                     unset($passedArguments[$idx]);
                     unset($definitionArguments[$definitionIdx]);
+                    continue 2;
                 }
+            }
+
+            /**
+             * In case there was no passed argument that matches this definition argument,
+             * we'll check if the definition argument has a default value.
+             */
+            if ($definitionArgument->default) {
+                $validArguments[] = new ConsoleInputArgument(
+                    name: $definitionArgument->name,
+                    value: $definitionArgument->default,
+                    position: $definitionArgument->position,
+                );
+
+                unset($definitionArguments[$definitionIdx]);
             }
         }
 
