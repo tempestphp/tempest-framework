@@ -18,7 +18,7 @@ final class ConsoleArgument
      * @param string[] $aliases
      */
     public function __construct(
-        public readonly string $description,
+        public readonly ?string $description = null,
         array|string $help = [],
         public readonly array $aliases = [],
     ) {

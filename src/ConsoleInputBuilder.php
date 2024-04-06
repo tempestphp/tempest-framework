@@ -52,7 +52,7 @@ final class ConsoleInputBuilder
              * In case there was no passed argument that matches this definition argument,
              * we'll check if the definition argument has a default value.
              */
-            if ($definitionArgument->default) {
+            if ($definitionArgument->hasDefault) {
                 $validArguments[] = new ConsoleInputArgument(
                     name: $definitionArgument->name,
                     value: $definitionArgument->default,
