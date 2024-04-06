@@ -11,7 +11,7 @@ use Tempest\Support\ArrayHelper;
 final class ConsoleArgument
 {
     /** @var string[] */
-    private array $helpMessages;
+    private array $help;
 
     /**
      * @param string|string[] $help
@@ -21,18 +21,6 @@ final class ConsoleArgument
         array|string $help = [],
         public array $aliases = [],
     ) {
-        $this->helpMessages = ArrayHelper::wrap($help);
-    }
-
-    /** @return string[] */
-    public function getHelpLines(): array
-    {
-        return $this->helpMessages;
-    }
-
-    /** @return string[] */
-    public function getAliases(): array
-    {
-        return $this->aliases;
+        $this->help = ArrayHelper::wrap($help);
     }
 }

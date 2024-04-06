@@ -14,11 +14,11 @@ final class ConsoleCommand
 
     public function __construct(
         private readonly ?string $name = null,
-        private readonly ?string $description = null,
+        public readonly ?string $description = null,
         /** @var string[] */
-        private readonly array $aliases = [],
+        public readonly array $aliases = [],
         /** @var string[] */
-        private readonly array $help = [],
+        public readonly array $help = [],
     ) {
     }
 
@@ -38,19 +38,6 @@ final class ConsoleCommand
         return $this->handler->getName() === '__invoke'
             ? strtolower($this->handler->getDeclaringClass()->getShortName())
             : strtolower($this->handler->getDeclaringClass()->getShortName() . ':' . $this->handler->getName());
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAliases(): array
-    {
-        return $this->aliases;
     }
 
     public function __serialize(): array
