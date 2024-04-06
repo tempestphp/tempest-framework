@@ -6,20 +6,25 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Support\ArrayHelper;
 
 #[Attribute]
 final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 
+    /** @var string[] */
+    public readonly array $help;
+
     public function __construct(
         private readonly ?string $name = null,
         public readonly ?string $description = null,
         /** @var string[] */
         public readonly array $aliases = [],
-        /** @var string[] */
-        public readonly array $help = [],
+        /** @var string|string[] $help */
+        string|array $help = [],
     ) {
+        $this->help = ArrayHelper::wrap($help);
     }
 
     public function setHandler(ReflectionMethod $handler): self
@@ -65,14 +70,14 @@ final class ConsoleCommand
     }
 
     /**
-     * @return array<string, ConsoleInputArgument>
+     * @return ConsoleArgumentDefinition[]
      */
-    public function getAvailableArguments(): array
+    public function getDefinition(): array
     {
         $arguments = [];
 
         foreach ($this->handler->getParameters() as $parameter) {
-            $arguments[$parameter->getName()] = ConsoleInputArgument::fromParameter($parameter);
+            $arguments[$parameter->getName()] = ConsoleArgumentDefinition::fromParameter($parameter);
         }
 
         return $arguments;

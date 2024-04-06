@@ -11,15 +11,16 @@ use Tempest\Support\ArrayHelper;
 final class ConsoleArgument
 {
     /** @var string[] */
-    private array $help;
+    public readonly array $help;
 
     /**
      * @param string|string[] $help
      * @param string[] $aliases
      */
     public function __construct(
+        public readonly string $description,
         array|string $help = [],
-        public array $aliases = [],
+        public readonly array $aliases = [],
     ) {
         $this->help = ArrayHelper::wrap($help);
     }

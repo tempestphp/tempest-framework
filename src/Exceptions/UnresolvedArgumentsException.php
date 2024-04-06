@@ -53,7 +53,7 @@ final class UnresolvedArgumentsException extends ConsoleException
             $output->writeln(
                 sprintf(
                     'Argument %s is invalid',
-                    $argument->getName(),
+                    $argument->name ?? "#$argument->position",
                 ),
             );
         }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Console\Exceptions\UnresolvedArgumentsException;
-
 final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
@@ -28,16 +26,26 @@ final class ConsoleArgumentBag
 
         foreach (array_values($arguments) as $position => $argument) {
             if (str_starts_with($argument, '--')) {
-                $parts = explode('=', str_replace('--', '', $argument));
+                [$key, $value] = $this->parseNamedArgument($argument);
 
-                $key = $parts[0];
-
-                $this->set($key, $parts[1] ?? true);
+                $this->add(
+                    new ConsoleInputArgument(
+                        name: $key,
+                        value: $value,
+                        position: $position,
+                    )
+                );
 
                 continue;
             }
 
-            $this->set($position, $argument);
+            $this->add(
+                new ConsoleInputArgument(
+                    name: null,
+                    value: $argument,
+                    position: $position,
+                )
+            );
         }
     }
 
@@ -49,44 +57,11 @@ final class ConsoleArgumentBag
         return $this->arguments;
     }
 
-    public function get(string|int $name): ?ConsoleInputArgument
+    private function add(ConsoleInputArgument $argument): self
     {
-        return $this->arguments[$name] ?? null;
-    }
+        $this->arguments[] = $argument;
 
-    public function has(string $name): bool
-    {
-        return array_key_exists($name, $this->arguments);
-    }
-
-    public function set(string|int $name, mixed $value): ConsoleInputArgument
-    {
-        return $this->arguments[$name] = new ConsoleInputArgument(
-            $name,
-            $value,
-            $value,
-            position: count($this->arguments),
-        );
-    }
-
-    public function resolveInput(ConsoleCommand $command): ConsoleCommandInput
-    {
-        $availableArguments = [];
-        $unresolvedArguments = $this->arguments;
-
-        foreach ($command->getAvailableArguments() as $argument) {
-            $availableArguments[] = $this->resolveArgument($argument);
-
-            foreach ([...$argument->getAllNames(), (string) $argument->position] as $name) {
-                unset($unresolvedArguments[$name]);
-            }
-        }
-
-        if (count($unresolvedArguments) > 0) {
-            throw UnresolvedArgumentsException::fromArguments($unresolvedArguments);
-        }
-
-        return new ConsoleCommandInput($availableArguments);
+        return $this;
     }
 
     public function getCommandName(): string
@@ -94,20 +69,25 @@ final class ConsoleArgumentBag
         return $this->path[1] ?? '';
     }
 
-    private function resolveArgument(ConsoleInputArgument $argument): ConsoleInputArgument
+    /**
+     * @param string $argument
+     *
+     * @return array{0: string, 1: mixed}
+     */
+    private function parseNamedArgument(string $argument): array
     {
-        foreach ([...$argument->getAllNames(), (string) $argument->position] as $name) {
-            $argumentValue = $this->get($name);
+        $parts = explode('=', str_replace('--', '', $argument));
 
-            if ($argumentValue === null) {
-                continue;
-            }
+        $key = $parts[0];
 
-            return $argument->withValue(
-                $argumentValue->getValue()
-            );
-        }
+        $value = $parts[1] ?? true;
 
-        return $argument->withValue($argument->default);
+        $value = match ($value) {
+            'true' => true,
+            'false' => false,
+            default => $value,
+        };
+
+        return [$key, $value];
     }
 }

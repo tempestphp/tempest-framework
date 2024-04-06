@@ -92,20 +92,31 @@ final readonly class ConsoleApplication implements Application
         }
 
         $handler = $consoleCommand->handler;
-        $input = $this->argumentBag->resolveInput($consoleCommand);
 
         $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
         try {
             $handler->invoke(
                 $commandClass,
-                ...array_map(
-                    callback: fn (ConsoleInputArgument $argument) => $argument->getValue(),
-                    array: $input->arguments,
-                )
+                ...$this->buildInput($consoleCommand),
             );
         } catch (ArgumentCountError) {
             throw new InvalidCommandException($commandName, $consoleCommand);
         }
+    }
+
+    /**
+     * Returns resolved key-value pair of parameters.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildInput(ConsoleCommand $command): array
+    {
+        $builder = new ConsoleInputBuilder(
+            $command->getDefinition(),
+            $this->argumentBag,
+        );
+
+        return $builder->build();
     }
 }
