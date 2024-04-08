@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleArgument;
 
 final readonly class Hello
 {
@@ -31,8 +31,9 @@ final readonly class Hello
             help: 'The path to the file',
             aliases: ['ov']
         )]
-        ?int $optionalValue = null, bool $flag = false)
-    {
+        ?int $optionalValue = null,
+        bool $flag = false
+    ) {
         $value = $optionalValue ?? 'null';
 
         $this->output->info("{$value}");

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Console\Fixtures;
 
-use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgumentBag;
-use Tests\Tempest\Unit\Console\Fixtures\ListFrameworks;
-use Tempest\Console\Exceptions\UnresolvedArgumentsException;
 
+/**
+ * @internal
+ * @small
+ */
 final class CommandAliasesWork extends TestCase
 {
-
     public function test_aliases_work()
     {
         $handler = new ReflectionMethod(new ListFrameworks(), 'handle');
@@ -38,5 +38,4 @@ final class CommandAliasesWork extends TestCase
             $string
         );
     }
-
 }

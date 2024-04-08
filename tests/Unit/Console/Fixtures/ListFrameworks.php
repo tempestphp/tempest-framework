@@ -8,7 +8,6 @@ use Tempest\Console\ConsoleCommand;
 
 final class ListFrameworks
 {
-
     #[ConsoleCommand(
         name: 'frameworks:list',
         description: 'List all available frameworks.',

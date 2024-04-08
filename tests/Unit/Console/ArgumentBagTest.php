@@ -7,9 +7,12 @@ namespace Tests\Tempest\Unit\Console;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\ConsoleArgumentBag;
 
+/**
+ * @internal
+ * @small
+ */
 final class ArgumentBagTest extends TestCase
 {
-
     public function test_argument_bag_works(): void
     {
         $argv = [

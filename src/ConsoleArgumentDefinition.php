@@ -8,9 +8,6 @@ use ReflectionParameter;
 
 final class ConsoleArgumentDefinition
 {
-
-    public readonly array $help;
-
     public function __construct(
         public readonly string $name,
         public readonly string $type,
@@ -19,10 +16,8 @@ final class ConsoleArgumentDefinition
         public readonly int $position,
         public readonly ?string $description = null,
         public readonly array $aliases = [],
-        string|array $help = [],
-    )
-    {
-        $this->help = $help;
+        public readonly string $help = '',
+    ) {
     }
 
     public static function fromParameter(ReflectionParameter $parameter): ConsoleArgumentDefinition
@@ -40,8 +35,26 @@ final class ConsoleArgumentDefinition
             position: $parameter->getPosition(),
             description: $attribute?->description,
             aliases: $attribute->aliases ?? [],
-            help: $attribute?->help ?? [],
+            help: $attribute?->help,
         );
     }
 
+    public function matchesArgument(ConsoleInputArgument $argument): bool
+    {
+        if ($argument->position === $this->position) {
+            return true;
+        }
+
+        if (! $argument->name) {
+            return false;
+        }
+
+        foreach ([$argument->name, ...$this->aliases] as $alias) {
+            if ($alias === $argument->name) {
+                return true;
+            }
+
+            return false;
+        }
+    }
 }

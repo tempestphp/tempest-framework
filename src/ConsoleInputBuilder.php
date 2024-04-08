@@ -8,10 +8,8 @@ use Tempest\Console\Exceptions\UnresolvedArgumentsException;
 
 final class ConsoleInputBuilder
 {
-
     public function __construct(
-        /** @var ConsoleArgumentDefinition[] */
-        protected array $argumentDefinitions,
+        protected ConsoleCommandDefinition $commandDefinition,
         protected ConsoleArgumentBag $argumentBag,
     ) {
 
@@ -23,50 +21,24 @@ final class ConsoleInputBuilder
      */
     public function build(): array
     {
-        $passedArguments = $this->argumentBag->all();
-        $definitionArguments = $this->argumentDefinitions;
         $validArguments = [];
 
-        if (! $definitionArguments && $passedArguments) {
+        $passedArguments = $this->argumentBag->all();
+        $argumentDefinitionList = $this->commandDefinition->argumentDefinitionList;
+
+        if (! $argumentDefinitionList && $passedArguments) {
             throw UnresolvedArgumentsException::fromArguments($passedArguments);
         }
 
-        foreach ($definitionArguments as $definitionIdx => $definitionArgument) {
-            foreach ($passedArguments as $idx => $argument) {
-                if ($this->matchesDefinition($argument, $definitionArgument)) {
-                    $validArguments[] = $argument;
-
-                    /**
-                     * In case of an input that uses both named and positional arguments,
-                     * we'll remove the named argument from the passed arguments array.
-                     *
-                     * This is to prevent the named argument from being resolved twice.
-                     */
-                    unset($passedArguments[$idx]);
-                    unset($definitionArguments[$definitionIdx]);
-                    continue 2;
-                }
-            }
-
-            /**
-             * In case there was no passed argument that matches this definition argument,
-             * we'll check if the definition argument has a default value.
-             */
-            if ($definitionArgument->hasDefault) {
-                $validArguments[] = new ConsoleInputArgument(
-                    name: $definitionArgument->name,
-                    value: $definitionArgument->default,
-                    position: $definitionArgument->position,
-                );
-
-                unset($definitionArguments[$definitionIdx]);
-            }
+        foreach ($argumentDefinitionList as $definitionKey => $definitionArgument) {
+            $validArguments[] = $this->resolveArgument($definitionArgument, $passedArguments);
+            unset($argumentDefinitionList[$definitionKey]);
         }
 
-        if (count($passedArguments) > 0 || count($definitionArguments) > 0) {
+        if (count($passedArguments) > 0 || count($argumentDefinitionList) > 0) {
             throw UnresolvedArgumentsException::fromArguments([
                 ...$passedArguments,
-                ...$definitionArguments,
+                ...$argumentDefinitionList,
             ]);
         }
 
@@ -86,31 +58,27 @@ final class ConsoleInputBuilder
         );
     }
 
-    /**
-     * Determines whether the passed argument matches the definition argument.
-     *
-     * @param ConsoleInputArgument $argument
-     * @param ConsoleArgumentDefinition $definitionArgument
-     *
-     * @return bool
-     */
-    private function matchesDefinition(ConsoleInputArgument $argument, ConsoleArgumentDefinition $definitionArgument): bool
+    private function resolveArgument(ConsoleArgumentDefinition $argumentDefinition, array &$passedArguments): ?ConsoleInputArgument
     {
-        if ($argument->position === $definitionArgument->position) {
-            return true;
-        }
-
-        if (! $argument->name) {
-            return false;
-        }
-
-        foreach ([$argument->name, ...$definitionArgument->aliases] as $alias) {
-            if ($alias === $argument->name) {
-                return true;
+        foreach ($passedArguments as $key => $argument) {
+            if ($argumentDefinition->matchesArgument($argument)) {
+                unset($passedArguments[$key]);
+                return $argument;
             }
-
-            return false;
         }
-    }
 
+        /**
+         * In case there was no passed argument that matches this definition argument,
+         * we'll check if the definition argument has a default value.
+         */
+        if (! $argumentDefinition->hasDefault) {
+            return null;
+        }
+
+        return new ConsoleInputArgument(
+            name: $argumentDefinition->name,
+            value: $argumentDefinition->default,
+            position: $argumentDefinition->position,
+        );
+    }
 }

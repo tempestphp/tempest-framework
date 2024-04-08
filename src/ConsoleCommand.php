@@ -69,10 +69,7 @@ final class ConsoleCommand
         $this->help = $data['help'];
     }
 
-    /**
-     * @return ConsoleArgumentDefinition[]
-     */
-    public function getDefinition(): array
+    public function getDefinition(): ConsoleCommandDefinition
     {
         $arguments = [];
 
@@ -80,6 +77,6 @@ final class ConsoleCommand
             $arguments[$parameter->getName()] = ConsoleArgumentDefinition::fromParameter($parameter);
         }
 
-        return $arguments;
+        return new ConsoleCommandDefinition($arguments);
     }
 }
