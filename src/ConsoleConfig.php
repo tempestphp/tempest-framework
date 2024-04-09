@@ -22,6 +22,14 @@ final class ConsoleConfig
 
         $this->commands[$consoleCommand->getName()] = $consoleCommand;
 
+        foreach ($consoleCommand->aliases as $alias) {
+            if (array_key_exists($alias, $this->commands)) {
+                continue;
+            }
+
+            $this->commands[$alias] = $consoleCommand;
+        }
+
         return $this;
     }
 }

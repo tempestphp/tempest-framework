@@ -6,16 +6,25 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Support\ArrayHelper;
 
 #[Attribute]
 final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 
+    /** @var string[] */
+    public readonly array $help;
+
     public function __construct(
         private readonly ?string $name = null,
-        private readonly ?string $description = null,
+        public readonly ?string $description = null,
+        /** @var string[] */
+        public readonly array $aliases = [],
+        /** @var string|string[] $help */
+        string|array $help = [],
     ) {
+        $this->help = ArrayHelper::wrap($help);
     }
 
     public function setHandler(ReflectionMethod $handler): self
@@ -36,11 +45,6 @@ final class ConsoleCommand
             : strtolower($this->handler->getDeclaringClass()->getShortName() . ':' . $this->handler->getName());
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
     public function __serialize(): array
     {
         return [
@@ -48,6 +52,8 @@ final class ConsoleCommand
             'description' => $this->description,
             'handler_class' => $this->handler->getDeclaringClass()->getName(),
             'handler_method' => $this->handler->getName(),
+            'aliases' => $this->aliases,
+            'help' => $this->help,
         ];
     }
 
@@ -59,5 +65,18 @@ final class ConsoleCommand
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
         );
+        $this->aliases = $data['aliases'];
+        $this->help = $data['help'];
+    }
+
+    public function getDefinition(): ConsoleCommandDefinition
+    {
+        $arguments = [];
+
+        foreach ($this->handler->getParameters() as $parameter) {
+            $arguments[$parameter->getName()] = ConsoleArgumentDefinition::fromParameter($parameter);
+        }
+
+        return new ConsoleCommandDefinition($arguments);
     }
 }
