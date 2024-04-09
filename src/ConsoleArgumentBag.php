@@ -26,7 +26,7 @@ final class ConsoleArgumentBag
 
         foreach (array_values($arguments) as $position => $argument) {
             $this->add(
-                ConsoleInputArgument::fromString($argument, $position)
+                ConsoleInputArgument::fromString($argument, $position),
             );
         }
     }
@@ -37,6 +37,25 @@ final class ConsoleArgumentBag
     public function all(): array
     {
         return $this->arguments;
+    }
+
+    public function findFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
+    {
+        foreach ($this->arguments as $argument) {
+            if ($argumentDefinition->matchesArgument($argument)) {
+                return $argument;
+            }
+        }
+
+        if ($argumentDefinition->hasDefault) {
+            return new ConsoleInputArgument(
+                name: $argumentDefinition->name,
+                value: $argumentDefinition->default,
+                position: $argumentDefinition->position,
+            );
+        }
+
+        return null;
     }
 
     private function add(ConsoleInputArgument $argument): self

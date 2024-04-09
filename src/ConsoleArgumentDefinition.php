@@ -17,7 +17,7 @@ final class ConsoleArgumentDefinition
         public readonly int $position,
         public readonly ?string $description = null,
         public readonly array $aliases = [],
-        public readonly string $help = '',
+        public readonly ?string $help = null,
     ) {
     }
 

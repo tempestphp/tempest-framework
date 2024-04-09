@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Console;
+namespace Tests\Tempest\Console;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\ConsoleArgumentBag;

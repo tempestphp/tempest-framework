@@ -2,23 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Console\Fixtures;
+namespace Tests\Tempest\Console;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Testing\Console\TestConsoleOutput;
+use Tests\Tempest\Console\Fixtures\MyConsole;
 
 /**
  * @internal
  * @small
  */
-final class CommandAliasesWork extends TestCase
+class RenderConsoleCommandTest extends TestCase
 {
-    public function test_aliases_work()
+    public function test_render()
     {
-        $handler = new ReflectionMethod(new ListFrameworks(), 'handle');
+        $handler = new ReflectionMethod(new MyConsole(), 'handle');
 
         $consoleCommand = $handler->getAttributes(ConsoleCommand::class)[0]->newInstance();
 
@@ -29,7 +30,7 @@ final class CommandAliasesWork extends TestCase
         (new RenderConsoleCommand($output))($consoleCommand);
 
         $this->assertSame(
-            'frameworks:list [--sortByBest=false] - List all available frameworks.',
+            'test <path> [times=1] [--force=false] - description',
             trim($output->getLinesWithoutFormatting()[0]),
         );
     }

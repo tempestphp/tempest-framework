@@ -15,15 +15,16 @@ final readonly class ConsoleCommandTester
 {
     public function __construct(private Container $container)
     {
-        $this->container->singleton(
-            ConsoleOutput::class,
-            fn () => $this->container->get(TestConsoleOutput::class)
-        );
     }
 
     public function call(string $command): TestConsoleHelper
     {
         $appConfig = $this->container->get(AppConfig::class);
+
+        $this->container->singleton(
+            ConsoleOutput::class,
+            fn () => $this->container->get(TestConsoleOutput::class)
+        );
 
         $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);
 

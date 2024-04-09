@@ -13,6 +13,20 @@ final readonly class TestConsoleHelper
     ) {
     }
 
+    public function print(): self
+    {
+        echo $this->output->getTextWithoutFormatting();
+
+        return $this;
+    }
+
+    public function printFormatted(): self
+    {
+        echo $this->output->getTextWithFormatting();
+
+        return $this;
+    }
+
     public function assertContains(string $text): self
     {
         Assert::assertStringContainsString(

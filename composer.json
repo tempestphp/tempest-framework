@@ -28,7 +28,7 @@
     "autoload-dev": {
         "psr-4": {
             "App\\": "app/",
-            "Tests\\Tempest\\": "tests/"
+            "Tests\\Tempest\\Console\\": "tests/"
         }
     },
     "scripts": {

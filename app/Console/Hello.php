@@ -24,7 +24,8 @@ final readonly class Hello
     }
 
     #[ConsoleCommand(
-        aliases: ['t']
+        description: 'description',
+        aliases: ['t'],
     )]
     public function test(
         #[ConsoleArgument(
