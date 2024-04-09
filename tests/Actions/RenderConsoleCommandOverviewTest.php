@@ -1,9 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Actions;
 
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class RenderConsoleCommandOverviewTest extends TestCase
 {
     public function test_overview(): void

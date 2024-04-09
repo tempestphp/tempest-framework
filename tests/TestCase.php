@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console;
 
 use Tempest\AppConfig;
@@ -11,6 +13,10 @@ use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Kernel;
 
+/**
+ * @internal
+ * @small
+ */
 class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected Container $container;
@@ -24,7 +30,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
             root: getcwd(),
             enableExceptionHandling: true,
             discoveryLocations: [
-                new DiscoveryLocation('App\\', __DIR__ . '/../app/')
+                new DiscoveryLocation('App\\', __DIR__ . '/../app/'),
             ],
         );
 

@@ -11,7 +11,8 @@ final class ConsoleInputBuilder
     public function __construct(
         protected ConsoleCommandDefinition $commandDefinition,
         protected ConsoleArgumentBag $argumentBag,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<ConsoleInputArgument>

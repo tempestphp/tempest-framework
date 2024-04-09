@@ -11,7 +11,8 @@ final class UnresolvedArgumentsException extends ConsoleException
     public function __construct(
         /** @var \Tempest\Console\ConsoleArgumentDefinition[] $invalidDefinitions */
         private array $invalidDefinitions,
-    ) {}
+    ) {
+    }
 
     public function render(ConsoleOutput $output): void
     {

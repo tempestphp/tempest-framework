@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Exceptions;
 
 use Exception;
@@ -8,6 +10,10 @@ use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Testing\Console\TestConsoleHelper;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class ConsoleExceptionHandlerTest extends TestCase
 {
     public function test_render_console_exception(): void

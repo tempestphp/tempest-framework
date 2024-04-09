@@ -9,5 +9,6 @@ final readonly class ConsoleCommandDefinition
     public function __construct(
         /** @var ConsoleArgumentDefinition[] */
         public array $argumentDefinitions,
-    ) {}
+    ) {
+    }
 }
