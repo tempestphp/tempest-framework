@@ -7,17 +7,17 @@ namespace Tempest\Console;
 use ReflectionNamedType;
 use ReflectionParameter;
 
-final class ConsoleArgumentDefinition
+final readonly class ConsoleArgumentDefinition
 {
     public function __construct(
-        public readonly string $name,
-        public readonly string $type,
-        public readonly mixed $default,
-        public readonly bool $hasDefault,
-        public readonly int $position,
-        public readonly ?string $description = null,
-        public readonly array $aliases = [],
-        public readonly ?string $help = null,
+        public string $name,
+        public string $type,
+        public mixed $default,
+        public bool $hasDefault,
+        public int $position,
+        public ?string $description = null,
+        public array $aliases = [],
+        public ?string $help = null,
     ) {
     }
 
@@ -58,7 +58,7 @@ final class ConsoleArgumentDefinition
             return false;
         }
 
-        foreach ([$argument->name, ...$this->aliases] as $alias) {
+        foreach ([$this->name, ...$this->aliases] as $alias) {
             if ($alias === $argument->name) {
                 return true;
             }

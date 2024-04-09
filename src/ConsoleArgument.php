@@ -7,12 +7,12 @@ namespace Tempest\Console;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final class ConsoleArgument
+final readonly class ConsoleArgument
 {
     public function __construct(
-        public readonly ?string $description = null,
-        public readonly string $help = '',
-        public readonly array $aliases = [],
+        public ?string $description = null,
+        public string $help = '',
+        public array $aliases = [],
     ) {
     }
 }

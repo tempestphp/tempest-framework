@@ -8,8 +8,9 @@ final class ConsoleInputArgument
 {
     public function __construct(
         public ?string $name,
+        public ?int $position,
         public mixed $value,
-        public int $position,
+        public bool $isPositional = false,
     ) {
     }
 
@@ -20,14 +21,15 @@ final class ConsoleInputArgument
 
             return new ConsoleInputArgument(
                 name: $key,
+                position: null,
                 value: $value,
-                position: $position,
             );
         } else {
             return new ConsoleInputArgument(
                 name: null,
-                value: $argument,
                 position: $position,
+                value: $argument,
+                isPositional: true,
             );
         }
     }

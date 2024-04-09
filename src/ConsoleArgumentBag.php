@@ -50,8 +50,8 @@ final class ConsoleArgumentBag
         if ($argumentDefinition->hasDefault) {
             return new ConsoleInputArgument(
                 name: $argumentDefinition->name,
-                value: $argumentDefinition->default,
                 position: $argumentDefinition->position,
+                value: $argumentDefinition->default,
             );
         }
 

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Console\ConsoleArgumentBag;
 
 /**
  * @internal
  * @small
  */
-final class ArgumentBagTest extends TestCase
+final class ConsoleArgumentBagTest extends TestCase
 {
     public function test_argument_bag_works(): void
     {
@@ -34,17 +33,26 @@ final class ArgumentBagTest extends TestCase
 
         $forceFlag = $bag->all()[1];
         $this->assertSame(true, $forceFlag->value);
-        $this->assertSame(1, $forceFlag->position);
+        $this->assertSame(null, $forceFlag->position);
         $this->assertSame('force', $forceFlag->name);
 
         $timesFlag = $bag->all()[2];
         $this->assertSame('2', $timesFlag->value);
-        $this->assertSame(2, $timesFlag->position);
+        $this->assertSame(null, $timesFlag->position);
         $this->assertSame('times', $timesFlag->name);
 
         $this->assertSame(
             'hello:world',
             $bag->getCommandName(),
         );
+    }
+
+    public function test_positional_vs_named_input(): void
+    {
+        $this->console
+            ->call('complex a --c=c --b=b --flag')
+            ->assertContains('abc')
+            ->assertContains('true')
+        ;
     }
 }
