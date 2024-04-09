@@ -8,6 +8,7 @@ use Exception;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Testing\Console\TestConsoleHelper;
+use Tempest\Console\Testing\Console\TestConsoleOutput;
 use Tests\Tempest\Console\TestCase;
 
 /**
@@ -18,6 +19,11 @@ class ConsoleExceptionHandlerTest extends TestCase
 {
     public function test_render_console_exception(): void
     {
+        $this->container->singleton(
+            ConsoleOutput::class,
+            fn () => $this->container->get(TestConsoleOutput::class)
+        );
+
         $handler = $this->container->get(ConsoleExceptionHandler::class);
         $handler->handle(new Exception('test message'));
 
