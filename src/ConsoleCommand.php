@@ -69,7 +69,10 @@ final class ConsoleCommand
         $this->help = $data['help'];
     }
 
-    public function getDefinition(): ConsoleCommandDefinition
+    /**
+     * @return \Tempest\Console\ConsoleArgumentDefinition[]
+     */
+    public function getArgumentDefinitions(): array
     {
         $arguments = [];
 
@@ -77,6 +80,6 @@ final class ConsoleCommand
             $arguments[$parameter->getName()] = ConsoleArgumentDefinition::fromParameter($parameter);
         }
 
-        return new ConsoleCommandDefinition($arguments);
+        return $arguments;
     }
 }

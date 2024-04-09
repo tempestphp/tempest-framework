@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use ArgumentCountError;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\Actions\RenderConsoleCommandOverview;
 use Tempest\Console\Exceptions\CommandNotFoundException;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
-use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Container\Container;
 use Tempest\Kernel;
 use Throwable;
@@ -95,14 +93,10 @@ final readonly class ConsoleApplication implements Application
 
         $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
-        try {
-            $handler->invoke(
-                $commandClass,
-                ...$this->buildInput($consoleCommand),
-            );
-        } catch (ArgumentCountError) {
-            throw new InvalidCommandException($commandName, $consoleCommand);
-        }
+        $handler->invoke(
+            $commandClass,
+            ...$this->buildInput($consoleCommand),
+        );
     }
 
     /**
@@ -112,10 +106,7 @@ final readonly class ConsoleApplication implements Application
      */
     private function buildInput(ConsoleCommand $command): array
     {
-        $builder = new ConsoleInputBuilder(
-            $command->getDefinition(),
-            $this->argumentBag,
-        );
+        $builder = new ConsoleInputBuilder($command, $this->argumentBag);
 
         return $builder->build();
     }

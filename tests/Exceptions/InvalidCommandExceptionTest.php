@@ -16,24 +16,17 @@ class InvalidCommandExceptionTest extends TestCase
     {
         $this->console
             ->call('complex')
-            ->assertContains('Invalid command')
-            ->assertContains('Argument a is missing')
-            ->assertContains('Argument b is missing')
-            ->assertContains('Argument c is missing');
+            ->assertContains('Invalid command usage:')
+            ->assertContains('complex <a> <b> <c>')
+            ->assertContains('Missing arguments: a, b, c');
 
         $this->console
             ->call('complex a')
-            ->assertDoesNotContain('Argument a is missing')
-            ->assertDoesNotContain('Argument #0 is missing')
-            ->assertContains('Invalid command')
-            ->assertContains('Argument b is missing')
-            ->assertContains('Argument c is missing');
+            ->assertContains('Missing arguments: b, c');
 
         $this->console
             ->call('complex a b c')
-            ->assertDoesNotContain('Invalid command')
-            ->assertDoesNotContain('Argument a is missing')
-            ->assertDoesNotContain('Argument b is missing')
-            ->assertDoesNotContain('Argument c is missing');
+            ->assertDoesNotContain('Invalid command usage')
+            ->assertDoesNotContain('Missing');
     }
 }

@@ -4,26 +4,25 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Console\Exceptions\UnresolvedArgumentsException;
+use Tempest\Console\Exceptions\InvalidCommandException;
 
 final class ConsoleInputBuilder
 {
     public function __construct(
-        protected ConsoleCommandDefinition $commandDefinition,
+        protected ConsoleCommand $command,
         protected ConsoleArgumentBag $argumentBag,
     ) {
     }
 
     /**
      * @return array<ConsoleInputArgument>
-     * @throws UnresolvedArgumentsException
      */
     public function build(): array
     {
         $validArguments = [];
         $invalidDefinitions = [];
 
-        $argumentDefinitions = $this->commandDefinition->argumentDefinitions;
+        $argumentDefinitions = $this->command->getArgumentDefinitions();
 
         foreach ($argumentDefinitions as $argumentDefinition) {
             $value = $this->argumentBag->findFor($argumentDefinition);
@@ -38,7 +37,10 @@ final class ConsoleInputBuilder
         }
 
         if (count($invalidDefinitions)) {
-            throw new UnresolvedArgumentsException($invalidDefinitions);
+            throw new InvalidCommandException(
+                $this->command,
+                $invalidDefinitions
+            );
         }
 
         return array_map(
