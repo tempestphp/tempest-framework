@@ -24,7 +24,7 @@ final class ConsoleInputBuilder
         $validArguments = [];
 
         $passedArguments = $this->argumentBag->all();
-        $argumentDefinitionList = $this->commandDefinition->argumentDefinitionList;
+        $argumentDefinitionList = $this->commandDefinition->argumentDefinitions;
 
         if (! $argumentDefinitionList && $passedArguments) {
             throw UnresolvedArgumentsException::fromArguments($passedArguments);

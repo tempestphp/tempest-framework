@@ -28,29 +28,39 @@ final class TestConsoleOutput implements ConsoleOutput
     public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
         $this->lines[] = $line;
+
+        return $this;
     }
 
     public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
     {
         $this->lines[] = $line;
+
+        return $this;
     }
 
     public function info(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->infoLines[] = $line;
+
+        return $this;
     }
 
     public function error(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->errorLines[] = $line;
+
+        return $this;
     }
 
     public function success(string $line): ConsoleOutput
     {
         $this->writeln($line);
         $this->successLines[] = $line;
+
+        return $this;
     }
 
     public function getLinesWithFormatting(): array
@@ -99,7 +109,9 @@ final class TestConsoleOutput implements ConsoleOutput
     public function when(mixed $expression, callable $callback): ConsoleOutput
     {
         if ($expression) {
-            return $callback($this);
+            $callback($this);
         }
+
+        return $this;
     }
 }

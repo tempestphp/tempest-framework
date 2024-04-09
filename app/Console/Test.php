@@ -6,12 +6,10 @@ namespace App\Console;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleInput;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class Test
 {
     public function __construct(
-        private ConsoleOutput $output,
         private ConsoleInput $input,
     ) {
     }

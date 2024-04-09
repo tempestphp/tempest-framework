@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use ReflectionNamedType;
 use ReflectionParameter;
 
 final class ConsoleArgumentDefinition
@@ -27,9 +28,17 @@ final class ConsoleArgumentDefinition
         /** @var ?ConsoleArgument $attribute */
         $attribute = ($attributes[0] ?? null)?->newInstance();
 
+        $type = $parameter->getType();
+
+        if ($type instanceof ReflectionNamedType) {
+            $typeName = $type->getName();
+        } else {
+            $typeName = '';
+        }
+
         return new ConsoleArgumentDefinition(
             name: $parameter->getName(),
-            type: $parameter->getType()->getName(),
+            type: $typeName,
             default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
             hasDefault: $parameter->isDefaultValueAvailable(),
             position: $parameter->getPosition(),

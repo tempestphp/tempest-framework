@@ -6,7 +6,9 @@ namespace Tests\Tempest\Unit\Console\Fixtures;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Testing\Console\TestConsoleOutput;
 
 /**
  * @internal
@@ -22,20 +24,13 @@ final class CommandAliasesWork extends TestCase
 
         $consoleCommand->setHandler($handler);
 
-        $string = str_replace(
-            [
-                ConsoleStyle::FG_BLUE->value,
-                ConsoleStyle::FG_DARK_BLUE->value,
-                ConsoleStyle::RESET->value,
-                ConsoleStyle::ESC->value,
-            ],
-            '',
-            (new RenderConsoleCommand())($consoleCommand)
-        );
+        $output = new TestConsoleOutput();
+
+        (new RenderConsoleCommand($output))($consoleCommand);
 
         $this->assertSame(
-            'frameworks:list [sortByBest=false] - List all available frameworks.',
-            $string
+            'frameworks:list [--sortByBest=false] - List all available frameworks.',
+            trim($output->getLinesWithoutFormatting()[0]),
         );
     }
 }

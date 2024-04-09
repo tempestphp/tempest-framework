@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-final class ConsoleCommandDefinition
+final readonly class ConsoleCommandDefinition
 {
     public function __construct(
         /** @var ConsoleArgumentDefinition[] */
-        public readonly array $argumentDefinitionList,
+        public array $argumentDefinitions,
     ) {
-
     }
 }

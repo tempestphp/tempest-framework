@@ -6,8 +6,6 @@ namespace Tempest\Console;
 
 final class GenericConsole implements Console
 {
-    private string $delimiter = PHP_EOL;
-
     public function __construct(
         private readonly ConsoleInput $input,
         private readonly ConsoleOutput $output,
@@ -16,11 +14,7 @@ final class GenericConsole implements Console
 
     public function delimiter(string $delimiter): ConsoleOutput
     {
-        $clone = clone $this;
-
-        $this->delimiter = $delimiter;
-
-        return $clone;
+        return $this->output->delimiter($delimiter);
     }
 
     public function readln(): string
