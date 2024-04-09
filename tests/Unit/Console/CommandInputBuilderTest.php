@@ -6,8 +6,8 @@ namespace Tests\Tempest\Unit\Console;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\ConsoleCommandDefinition;
 use Tempest\Console\ConsoleArgumentDefinition;
+use Tempest\Console\ConsoleCommandDefinition;
 use Tempest\Console\ConsoleInputBuilder;
 use Tempest\Console\Exceptions\UnresolvedArgumentsException;
 

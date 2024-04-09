@@ -63,6 +63,7 @@ final class ConsoleInputBuilder
         foreach ($passedArguments as $key => $argument) {
             if ($argumentDefinition->matchesArgument($argument)) {
                 unset($passedArguments[$key]);
+
                 return $argument;
             }
         }
