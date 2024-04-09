@@ -66,6 +66,8 @@ final class GenericContainer implements Container
             return $instance;
         };
 
+        unset($this->singletons[$className]);
+
         return $this;
     }
 
