@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Tempest\Console\Highlight\ConsoleComponentLanguage;
+use Tempest\Highlight\Highlighter;
+use Tempest\Highlight\Themes\LightTerminalTheme;
+
 final class GenericConsoleOutput implements ConsoleOutput
 {
     public string $delimiter = PHP_EOL;
@@ -63,6 +67,10 @@ final class GenericConsoleOutput implements ConsoleOutput
 
     private function writeToStdOut(string $content): void
     {
+        $highlighter = new Highlighter(new LightTerminalTheme());
+
+        $content = $highlighter->parse($content, new  ConsoleComponentLanguage());
+
         $stdout = fopen('php://stdout', 'w');
 
         fwrite(

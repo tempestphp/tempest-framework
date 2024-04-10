@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use ReflectionClass;
+use ReflectionMethod;
+use Tempest\Support\Reflection\Attributes;
+
 final class GenericConsole implements Console
 {
     public function __construct(
@@ -60,5 +64,66 @@ final class GenericConsole implements Console
     public function when(mixed $expression, callable $callback): ConsoleOutput
     {
         return $this->output->when($expression, $callback);
+    }
+
+    public function component(Component $component): mixed
+    {
+        /** @var ReflectionMethod[][] $keyBindings */
+        $keyBindings = [];
+
+        foreach ((new ReflectionClass($component))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            foreach (Attributes::find(HandlesKey::class)->in($method)->all() as $handlesKey) {
+                $keyBindings[$handlesKey->key->value][] = $method;
+            }
+        }
+
+        $this->switchToInteractiveMode();
+
+        $this->clear()->write($component->render());
+
+        while ($key = fread(STDIN, 16)) {
+            $key = preg_replace(
+                pattern: '/[^[:print:]\n]/u',
+                replacement: '',
+                subject: mb_convert_encoding($key, 'UTF-8', 'UTF-8'),
+            );
+
+            $handlersForKey = $keyBindings[$key] ?? [];
+
+            foreach ($handlersForKey as $handler) {
+                $return = $handler->invoke($component, $this);
+
+                if ($return) {
+                    $this->switchToNormalMode();
+
+                    return $return;
+                }
+            }
+
+            $this->clear()->write($component->render());
+        }
+    }
+
+    private function clear(): self
+    {
+        system("clear");
+
+        return $this;
+    }
+
+    private function switchToInteractiveMode(): self
+    {
+        system("stty -echo");
+        system("stty -icanon");
+
+        return $this;
+    }
+
+    private function switchToNormalMode(): self
+    {
+        system("stty echo");
+        system("stty icanon");
+
+        return $this;
     }
 }
