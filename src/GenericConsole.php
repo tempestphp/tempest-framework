@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use ReflectionClass;
 use ReflectionMethod;
+use Tempest\Console\Components\QuestionComponent;
 use Tempest\Support\Reflection\Attributes;
 
 final class GenericConsole implements Console
@@ -26,9 +27,9 @@ final class GenericConsole implements Console
         return $this->input->readln();
     }
 
-    public function ask(string $question, ?array $options = null, ?string $default = null): string
+    public function ask(string $question, ?array $options = null): string
     {
-        return $this->input->ask($question, $options, $default);
+        return $this->component(new QuestionComponent($question, $options));
     }
 
     public function confirm(string $question, bool $default = false): bool
@@ -71,9 +72,16 @@ final class GenericConsole implements Console
         /** @var ReflectionMethod[][] $keyBindings */
         $keyBindings = [];
 
+        /** @var ReflectionMethod[][] $keyBindings */
+        $inputHandlers = [];
+
         foreach ((new ReflectionClass($component))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             foreach (Attributes::find(HandlesKey::class)->in($method)->all() as $handlesKey) {
-                $keyBindings[$handlesKey->key->value][] = $method;
+                if ($handlesKey->key === null) {
+                    $inputHandlers[] = $method;
+                } else {
+                    $keyBindings[$handlesKey->key->value][] = $method;
+                }
             }
         }
 
@@ -88,16 +96,22 @@ final class GenericConsole implements Console
                 subject: mb_convert_encoding($key, 'UTF-8', 'UTF-8'),
             );
 
-            $handlersForKey = $keyBindings[$key] ?? [];
+            $return = null;
 
-            foreach ($handlersForKey as $handler) {
-                $return = $handler->invoke($component, $this);
-
-                if ($return) {
-                    $this->switchToNormalMode();
-
-                    return $return;
+            if ($handlersForKey = $keyBindings[$key] ?? null) {
+                foreach ($handlersForKey as $handler) {
+                    $return ??= $handler->invoke($component, $this);
                 }
+            } else {
+                foreach ($inputHandlers as $handler) {
+                    $return ??= $handler->invoke($component, $key, $this);
+                }
+            }
+
+            if ($return) {
+                $this->switchToNormalMode()->writeln();
+
+                return $return;
             }
 
             $this->clear()->write($component->render());

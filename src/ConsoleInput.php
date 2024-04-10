@@ -11,7 +11,6 @@ interface ConsoleInput
     public function ask(
         string $question,
         ?array $options = null,
-        ?string $default = null,
     ): string;
 
     public function confirm(

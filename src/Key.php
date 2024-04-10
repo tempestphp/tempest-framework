@@ -11,4 +11,5 @@ enum Key: string
     case LEFT = '[D';
     case RIGHT = '[C';
     case ENTER = "\n";
+    case SPACE = " ";
 }
