@@ -26,6 +26,6 @@ final readonly class InteractiveCommand
             ],
         ));
 
-        $this->console->writeln("You picked <u>{$result}</u>");
+        $this->console->writeln("You picked <em>{$result}</em>");
     }
 }

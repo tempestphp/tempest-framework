@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components;
 
-use Tempest\Console\Component;
+use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Highlight\IsComponent;
 use Tempest\Console\Key;
 
-final class QuestionComponent implements Component
+final class QuestionComponent implements ConsoleComponent
 {
     use IsComponent;
 

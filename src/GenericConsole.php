@@ -66,7 +66,7 @@ final class GenericConsole implements Console
         return $this->output->when($expression, $callback);
     }
 
-    public function component(Component $component): mixed
+    public function component(ConsoleComponent $component): mixed
     {
         /** @var ReflectionMethod[][] $keyBindings */
         $keyBindings = [];

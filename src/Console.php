@@ -6,5 +6,5 @@ namespace Tempest\Console;
 
 interface Console extends ConsoleInput, ConsoleOutput
 {
-    public function component(Component $component): mixed;
+    public function component(ConsoleComponent $component): mixed;
 }
