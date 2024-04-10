@@ -41,12 +41,12 @@ final class CommandNotFoundException extends ConsoleException
                             ->writeln();
                     }
 
-                    $intendedIdx = $this->input->ask(
+                    $intendedCommandKey = $this->input->ask(
                         'Select intended command:',
                         options: array_keys($similarCommands),
                     );
 
-                    $intendedCommand = $similarCommands[$intendedIdx];
+                    $intendedCommand = $similarCommands[$intendedCommandKey];
 
                     throw MistypedCommandException::for($intendedCommand);
                 }
