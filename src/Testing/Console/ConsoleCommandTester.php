@@ -7,6 +7,7 @@ namespace Tempest\Console\Testing\Console;
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\ConsoleComponent;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;

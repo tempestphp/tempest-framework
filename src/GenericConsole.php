@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Components\QuestionComponent;
+use Tempest\Console\Components\TextBoxComponent;
 use Tempest\Support\Reflection\Attributes;
 
 final class GenericConsole implements Console
@@ -14,8 +15,7 @@ final class GenericConsole implements Console
     public function __construct(
         private readonly ConsoleInput $input,
         private readonly ConsoleOutput $output,
-    ) {
-    }
+    ) {}
 
     public function delimiter(string $delimiter): ConsoleOutput
     {
@@ -29,6 +29,10 @@ final class GenericConsole implements Console
 
     public function ask(string $question, ?array $options = null): string
     {
+        if ($options === null) {
+            return $this->component(new TextBoxComponent($question));
+        }
+
         return $this->component(new QuestionComponent($question, $options));
     }
 
@@ -37,14 +41,18 @@ final class GenericConsole implements Console
         return $this->input->confirm($question, $default);
     }
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): self
     {
-        return $this->output->write($line, $type);
+        $this->output->write($line, $type);
+
+        return $this;
     }
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): self
     {
-        return $this->output->writeln($line, $type);
+        $this->output->writeln($line, $type);
+
+        return $this;
     }
 
     public function info(string $line): ConsoleOutput
@@ -87,15 +95,12 @@ final class GenericConsole implements Console
 
         $this->switchToInteractiveMode();
 
-        $this->clear()->write($component->render());
+        $this
+            ->clear()
+            ->write($component->render())
+            ->placeCursor($component);
 
         while ($key = fread(STDIN, 16)) {
-            $key = preg_replace(
-                pattern: '/[^[:print:]\n]/u',
-                replacement: '',
-                subject: mb_convert_encoding($key, 'UTF-8', 'UTF-8'),
-            );
-
             $return = null;
 
             if ($handlersForKey = $keyBindings[$key] ?? null) {
@@ -114,7 +119,10 @@ final class GenericConsole implements Console
                 return $return;
             }
 
-            $this->clear()->write($component->render());
+            $this
+                ->clear()
+                ->write($component->render())
+                ->placeCursor($component);
         }
     }
 
@@ -137,6 +145,30 @@ final class GenericConsole implements Console
     {
         system("stty echo");
         system("stty icanon");
+
+        return $this;
+    }
+
+    private function placeCursor(ConsoleComponent $component): self
+    {
+        if (! $component instanceof HasCursor) {
+            return $this;
+        }
+
+        // Move cursor to 0,0
+        $this->write("\e[f");
+
+        $position = $component->getCursorPosition();
+
+        for ($x = 0; $x < $position->x; $x++) {
+            // Move right
+            $this->write("\e[C");
+        }
+
+        for ($y = 0; $y < $position->y; $y++) {
+            // Move down
+            $this->write("\e[B");
+        }
 
         return $this;
     }
