@@ -30,16 +30,17 @@ final class CommandNotFoundException extends ConsoleException
             ->when(
                 expression: count($similarCommands) > 0,
                 callback: function (ConsoleOutput $output) use ($similarCommands) {
+                    if (
+                        count($similarCommands) === 1
+                        && $this->input->ask("Did you mean {$similarCommands[0]->getName()}?", options: ['y', 'n'])
+                    ) {
+                        throw MistypedCommandException::for($similarCommands[0]);
+                    }
+
                     $output->writeln('Did you mean one of these?', ConsoleOutputType::INFO)
                         ->writeln();
 
-                    foreach ($similarCommands as $index => $similarCommand) {
-                        $output->delimiter(' ')
-                            ->write("[$index] ", ConsoleOutputType::INFO)
-                            ->write($similarCommand->getName())
-                            ->writeln()
-                            ->writeln();
-                    }
+                    $this->listCommands($output, $similarCommands);
 
                     $intendedCommandKey = $this->input->ask(
                         'Select intended command:',
@@ -67,5 +68,19 @@ final class CommandNotFoundException extends ConsoleException
         }
 
         return $similarCommands;
+    }
+
+    private function listCommands(ConsoleOutput $output, array $similarCommands): void
+    {
+        foreach ($similarCommands as $index => $similarCommand) {
+            $output->delimiter(' ')
+                ->write("[$index] ", ConsoleOutputType::INFO)
+                ->write($similarCommand->getName())
+                ->writeln();
+        }
+
+        $output->delimiter(PHP_EOL)
+            ->writeln()
+            ->writeln();
     }
 }
