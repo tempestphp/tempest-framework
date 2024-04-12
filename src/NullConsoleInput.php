@@ -11,13 +11,8 @@ final readonly class NullConsoleInput implements ConsoleInput
         return '';
     }
 
-    public function ask(string $question, ?array $options = null, ?string $default = null): string
+    public function read(int $bytes): string
     {
         return '';
-    }
-
-    public function confirm(string $question, bool $default = false): bool
-    {
-        return $default;
     }
 }

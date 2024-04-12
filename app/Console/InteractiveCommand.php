@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Tempest\Console\Components\MultipleChoiceComponent;
-use Tempest\Console\Components\QuestionComponent;
-use Tempest\Console\Components\TextBoxComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
@@ -24,16 +22,20 @@ final readonly class InteractiveCommand
 //            [
 //                'interfaces + final',
 //                'abstract classes + extend',
-//                'I don\'t really care…',
-//                'interfaces + final',
-//                'abstract classes + extend',
+////                'I don\'t really care…',
+////                'interfaces + final',
+////                'abstract classes + extend',
 //            ],
 //        ));
+//
+//        $result = json_encode($result);
+//
+//        $this->console->writeln("You picked <em>{$result}</em>");
 
-        $result = $this->console->ask('Hi?');
+        $result = $this->console->writeln()->ask('Next question:');
+//
+        $this->console->writeln("You wrote <em>{$result}</em>");
 
-        $result = json_encode($result);
-
-        $this->console->writeln("You picked <em>{$result}</em>");
+//        $this->console->component(new TestComponent());
     }
 }

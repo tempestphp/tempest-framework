@@ -22,6 +22,11 @@ final readonly class GenericConsoleInput implements ConsoleInput
         return $line;
     }
 
+    public function read(int $bytes): string
+    {
+        return fread(STDIN, $bytes);
+    }
+
     public function ask(
         string $question,
         ?array $options = null,

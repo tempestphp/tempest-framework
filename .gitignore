@@ -8,3 +8,4 @@ app/database.sqlite
 composer.lock
 *.cache.php
 sessions/
+console.log

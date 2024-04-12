@@ -8,13 +8,5 @@ interface ConsoleInput
 {
     public function readln(): string;
 
-    public function ask(
-        string $question,
-        ?array $options = null,
-    ): string;
-
-    public function confirm(
-        string $question,
-        bool $default = false,
-    ): bool;
+    public function read(int $bytes): string;
 }
