@@ -41,7 +41,7 @@ final readonly class InteractiveCommand
                 handler: function ($i) {
                     usleep(100000);
                     return $i;
-                }
+                },
             ),
         );
 

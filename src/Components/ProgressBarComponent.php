@@ -11,6 +11,7 @@ final readonly class ProgressBarComponent implements ConsoleComponent
     public function __construct(
         private iterable $data,
         private Closure $handler,
+        /** @var callable(int $step, int $count): string $format */
         private ?Closure $format = null,
     ) {}
 
@@ -50,8 +51,8 @@ final readonly class ProgressBarComponent implements ConsoleComponent
         foreach ($this->data as $item) {
             yield $format($step, $count);
 
-            $processed = ($this->handler)($item);
-            $result[] = $processed;
+            $result[] = ($this->handler)($item);
+
             $step += 1;
         }
 
