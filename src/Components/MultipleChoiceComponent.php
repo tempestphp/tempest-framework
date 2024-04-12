@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Key;
@@ -59,8 +58,7 @@ final class MultipleChoiceComponent implements ConsoleComponent
     {
         $result = [];
 
-        foreach ($this->options as $key => $option)
-        {
+        foreach ($this->options as $key => $option) {
             if ($this->isSelected($key)) {
                 $result[] = $option;
             }

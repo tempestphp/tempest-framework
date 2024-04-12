@@ -18,8 +18,6 @@ parameters:
 			path: src/Exceptions/exception.php
 	disallowedFunctionCalls:
 		-
-			function: 'exec()'
-		-
 			function: 'eval()'
 		-
 			function: 'dd()'

@@ -1,24 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Terminal;
 
 use Tempest\Console\Console;
+use Tempest\Console\Cursor;
 use Tempest\Console\Point;
 
-final class Cursor
+final class TerminalCursor implements Cursor
 {
     public Point $position;
 
     public function __construct(
         private readonly Console $console,
         private readonly InteractiveTerminal $terminal,
-    )
-    {
+    ) {
         $this->console->write("\033[6n");
 
         preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', fread(STDIN, 1024), $matches);
 
         $this->position = new Point((int)($matches['x'] ?? 1), (int)($matches['y'] ?? 1));
+    }
+
+    public function getPosition(): Point
+    {
+        return $this->position;
     }
 
     public function moveUp(int $amount): self

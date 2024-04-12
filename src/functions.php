@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 function ld(mixed ...$input): void
 {
     file_put_contents(__DIR__ . '/../console.log', '---' . PHP_EOL, FILE_APPEND);

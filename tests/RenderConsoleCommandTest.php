@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Testing\Console\TestConsoleOutput;
+use Tempest\Console\Testing\TestConsoleOutput;
 use Tests\Tempest\Console\Fixtures\MyConsole;
 
 /**

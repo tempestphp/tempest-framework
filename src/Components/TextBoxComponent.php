@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Tempest\Console\ConsoleComponent;
-use Tempest\Console\HasCursor;
+use Tempest\Console\Cursor;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\HasCursor;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tempest\Console\Terminal\Cursor;
 
 final class TextBoxComponent implements ConsoleComponent, HasCursor
 {
@@ -100,8 +100,8 @@ final class TextBoxComponent implements ConsoleComponent, HasCursor
     public function placeCursor(Cursor $cursor): void
     {
         $cursor->place(new Point(
-            x: $cursor->position->x + $this->componentCursorPosition->x,
-            y: $cursor->position->y - 3,
+            x: $cursor->getPosition()->x + $this->componentCursorPosition->x,
+            y: $cursor->getPosition()->y - 3,
         ));
     }
 }

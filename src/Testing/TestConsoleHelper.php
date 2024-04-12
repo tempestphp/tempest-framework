@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Testing\Console;
+namespace Tempest\Console\Testing;
 
 use PHPUnit\Framework\Assert;
 

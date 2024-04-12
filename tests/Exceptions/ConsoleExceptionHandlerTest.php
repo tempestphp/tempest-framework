@@ -7,8 +7,8 @@ namespace Tests\Tempest\Console\Exceptions;
 use Exception;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
-use Tempest\Console\Testing\Console\TestConsoleHelper;
-use Tempest\Console\Testing\Console\TestConsoleOutput;
+use Tempest\Console\Testing\TestConsoleHelper;
+use Tempest\Console\Testing\TestConsoleOutput;
 use Tests\Tempest\Console\TestCase;
 
 /**

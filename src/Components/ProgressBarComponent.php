@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components;
 
 use Closure;
@@ -11,9 +13,10 @@ final readonly class ProgressBarComponent implements ConsoleComponent
     public function __construct(
         private iterable $data,
         private Closure $handler,
-        /** @var callable(int $step, int $count): string $format */
+        /** @var null|Closure(int $step, int $count): string $format */
         private ?Closure $format = null,
-    ) {}
+    ) {
+    }
 
     public function render(): Generator
     {
@@ -41,11 +44,11 @@ final readonly class ProgressBarComponent implements ConsoleComponent
             }
 
             return sprintf(
-                    '%s (%s/%s)',
-                    $bar,
-                    $step,
-                    $count,
-                ) . PHP_EOL;
+                '%s (%s/%s)',
+                $bar,
+                $step,
+                $count,
+            ) . PHP_EOL;
         };
 
         foreach ($this->data as $item) {

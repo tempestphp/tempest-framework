@@ -8,7 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\Testing\Console\ConsoleCommandTester;
+use Tempest\Console\Testing\ConsoleCommandTester;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Kernel;

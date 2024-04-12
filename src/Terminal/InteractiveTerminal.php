@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Terminal;
 
 use Generator;
@@ -14,7 +16,7 @@ final class InteractiveTerminal
 
     public int $height;
 
-    public Cursor $cursor;
+    public TerminalCursor $cursor;
 
     private ?string $previousRender = null;
 
@@ -26,17 +28,17 @@ final class InteractiveTerminal
         $this->switchToInteractiveMode();
         $this->width = (int)exec('tput cols');
         $this->height = (int)exec('tput lines');
-        $this->cursor = new Cursor($this->console, $this);
+        $this->cursor = new TerminalCursor($this->console, $this);
     }
 
     public function render(ConsoleComponent $component): mixed
     {
         $rendered = $component->render();
-        
+
         if (is_string($rendered)) {
             $rendered = [$rendered];
         }
-        
+
         foreach ($rendered as $content) {
             $this->restoreCurrentCursorPosition();
 
@@ -53,10 +55,12 @@ final class InteractiveTerminal
                 $component->placeCursor($this->cursor);
             }
         }
-        
+
         if ($rendered instanceof Generator) {
             return $rendered->getReturn();
         }
+
+        return null;
     }
 
     private function clear(): void

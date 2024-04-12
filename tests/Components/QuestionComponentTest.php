@@ -1,10 +1,16 @@
 <?php
 
-namespace Components;
+declare(strict_types=1);
+
+namespace Tests\Tempest\Console\Components;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\QuestionComponent;
 
+/**
+ * @internal
+ * @small
+ */
 class QuestionComponentTest extends TestCase
 {
     public function test_question_component(): void

@@ -13,7 +13,8 @@ final class GenericConsole implements Console
     public function __construct(
         private readonly ConsoleInput $input,
         private readonly ConsoleOutput $output,
-    ) {}
+    ) {
+    }
 
     public function delimiter(string $delimiter): ConsoleOutput
     {
@@ -45,7 +46,7 @@ final class GenericConsole implements Console
 
         return match($result) {
             'yes' => true,
-            'no' => false,
+            default => false,
         };
     }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Tempest\Console;
+declare(strict_types=1);
 
-use Tempest\Console\Terminal\Cursor;
+namespace Tempest\Console;
 
 interface HasCursor
 {

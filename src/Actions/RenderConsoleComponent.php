@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Actions;
 
 use ReflectionClass;
@@ -12,7 +14,9 @@ use Tempest\Support\Reflection\Attributes;
 
 final readonly class RenderConsoleComponent
 {
-    public function __construct(private Console $console) {}
+    public function __construct(private Console $console)
+    {
+    }
 
     public function __invoke(ConsoleComponent $component): mixed
     {
@@ -51,6 +55,8 @@ final readonly class RenderConsoleComponent
             // Rerender the component
             $terminal->render($component);
         }
+
+        return null;
     }
 
     private function resolveHandlers(ConsoleComponent $component): array
