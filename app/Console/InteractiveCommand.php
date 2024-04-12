@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Tempest\Console\Components\MultipleChoiceComponent;
+use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
 final readonly class InteractiveCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(private Console $console) {}
 
     #[ConsoleCommand('interactive')]
     public function __invoke(): void
@@ -32,10 +31,20 @@ final readonly class InteractiveCommand
 //
 //        $this->console->writeln("You picked <em>{$result}</em>");
 
-        $result = $this->console->writeln()->ask('Next question:');
+//        $result = $this->console->writeln()->ask('Next question:');
 //
-        $this->console->writeln("You wrote <em>{$result}</em>");
+//        $this->console->writeln("You wrote <em>{$result}</em>");
 
-//        $this->console->component(new TestComponent());
+        $result = $this->console->component(
+            new ProgressBarComponent(
+                data: array_fill(0, 10, 'a'),
+                handler: function ($i) {
+                    usleep(100000);
+                    return $i;
+                }
+            ),
+        );
+
+        $this->console->writeln('Done!');
     }
 }

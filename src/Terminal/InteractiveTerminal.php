@@ -2,6 +2,7 @@
 
 namespace Tempest\Console\Terminal;
 
+use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HasCursor;
@@ -28,26 +29,34 @@ final class InteractiveTerminal
         $this->cursor = new Cursor($this->console, $this);
     }
 
-    public function render(ConsoleComponent $component): self
+    public function render(ConsoleComponent $component): mixed
     {
-        $this->restoreCurrentCursorPosition();
-
-        if ($this->previousRender) {
-            $this->clear();
+        $rendered = $component->render();
+        
+        if (is_string($rendered)) {
+            $rendered = [$rendered];
         }
+        
+        foreach ($rendered as $content) {
+            $this->restoreCurrentCursorPosition();
 
-        $contents = $component->render();
+            if ($this->previousRender) {
+                $this->clear();
+            }
 
-        $this->console->write($contents);
-        $this->previousRender = $contents;
-        $this->cursor->moveDown(substr_count($contents, PHP_EOL));
+            $this->console->write($content);
+            $this->previousRender = $content;
+            $this->cursor->moveDown(substr_count($content, PHP_EOL));
 
-        if ($component instanceof HasCursor) {
-            $this->storeCurrentCursorPosition();
-            $component->placeCursor($this->cursor);
+            if ($component instanceof HasCursor) {
+                $this->storeCurrentCursorPosition();
+                $component->placeCursor($this->cursor);
+            }
         }
-
-        return $this;
+        
+        if ($rendered instanceof Generator) {
+            return $rendered->getReturn();
+        }
     }
 
     private function clear(): void

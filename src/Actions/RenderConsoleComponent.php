@@ -20,7 +20,11 @@ final readonly class RenderConsoleComponent
 
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
-        $terminal->render($component);
+        $result = $terminal->render($component);
+
+        if ($result) {
+            return $result;
+        }
 
         while ($key = $this->console->read(16)) {
             $return = null;
