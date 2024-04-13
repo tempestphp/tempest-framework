@@ -28,7 +28,7 @@ final readonly class ProgressBarComponent implements ConsoleComponent
         $format = $this->format ?? function (int $step, int $count): string {
             $width = 30;
 
-            $progress = round(($step / $count) * $width);
+            $progress = (int) round(($step / $count) * $width);
 
             if ($step === $count) {
                 $bar = sprintf(

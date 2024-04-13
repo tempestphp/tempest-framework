@@ -69,9 +69,13 @@ final class InteractiveTerminal
             return;
         }
 
+        $this->cursor->hide();
+
         for ($i = 0; $i < substr_count($this->previousRender, PHP_EOL); $i++) {
             $this->cursor->clearLine()->moveUp(1);
         }
+
+        $this->cursor->show();
     }
 
     public function switchToInteractiveMode(): self

@@ -24,10 +24,12 @@ final readonly class RenderConsoleComponent
 
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
-        $result = $terminal->render($component);
+        $terminal->cursor->clearLine();
 
-        if ($result) {
-            return $result;
+        $return = $terminal->render($component);
+
+        if ($return !== null) {
+            return $return;
         }
 
         while ($key = $this->console->read(16)) {
@@ -46,7 +48,7 @@ final readonly class RenderConsoleComponent
             }
 
             // If a handler returned a result, we'll return
-            if ($return) {
+            if ($return !== null) {
                 $terminal->switchToNormalMode();
 
                 return $return;

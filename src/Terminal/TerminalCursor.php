@@ -28,7 +28,7 @@ final class TerminalCursor implements Cursor
         return $this->position;
     }
 
-    public function moveUp(int $amount): self
+    public function moveUp(int $amount = 1): self
     {
         $this->place(new Point(
             x: $this->position->x,
@@ -38,7 +38,7 @@ final class TerminalCursor implements Cursor
         return $this;
     }
 
-    public function moveDown(int $amount): self
+    public function moveDown(int $amount = 1): self
     {
         $this->place(new Point(
             x: $this->position->x,
@@ -48,7 +48,7 @@ final class TerminalCursor implements Cursor
         return $this;
     }
 
-    public function moveLeft(int $amount): self
+    public function moveLeft(int $amount = 1): self
     {
         $this->place(new Point(
             x: $this->position->x - $amount,
@@ -58,7 +58,7 @@ final class TerminalCursor implements Cursor
         return $this;
     }
 
-    public function moveRight(int $amount): self
+    public function moveRight(int $amount = 1): self
     {
         $this->place(new Point(
             x: $this->position->x + $amount,
@@ -105,6 +105,20 @@ final class TerminalCursor implements Cursor
     public function startOfLine(): self
     {
         $this->console->writeln("\r");
+
+        return $this;
+    }
+
+    public function hide(): self
+    {
+        $this->console->write("\e[?25l");
+
+        return $this;
+    }
+
+    public function show(): self
+    {
+        $this->console->write("\e[?25h");
 
         return $this;
     }

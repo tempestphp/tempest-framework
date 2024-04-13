@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Tempest\Console\Actions\RenderConsoleComponent;
+use Tempest\Console\Components\ConfirmComponent;
 use Tempest\Console\Components\QuestionComponent;
 use Tempest\Console\Components\TextBoxComponent;
 
@@ -42,7 +43,7 @@ final class GenericConsole implements Console
 
     public function confirm(string $question, bool $default = false): bool
     {
-        $result = $this->component(new QuestionComponent($question, ['yes', 'no']));
+        $result = $this->component(new ConfirmComponent($question));
 
         return match($result) {
             'yes' => true,

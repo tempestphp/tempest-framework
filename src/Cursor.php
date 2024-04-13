@@ -8,13 +8,13 @@ interface Cursor
 {
     public function getPosition(): Point;
 
-    public function moveUp(int $amount): self;
+    public function moveUp(int $amount = 1): self;
 
-    public function moveDown(int $amount): self;
+    public function moveDown(int $amount = 1): self;
 
-    public function moveLeft(int $amount): self;
+    public function moveLeft(int $amount = 1): self;
 
-    public function moveRight(int $amount): self;
+    public function moveRight(int $amount = 1): self;
 
     public function place(Point $position): self;
 
@@ -23,4 +23,8 @@ interface Cursor
     public function clearAfter(): self;
 
     public function startOfLine(): self;
+
+    public function hide(): self;
+
+    public function show(): self;
 }

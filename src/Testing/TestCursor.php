@@ -20,28 +20,28 @@ final class TestCursor implements Cursor
         return new Point($this->x, $this->y);
     }
 
-    public function moveUp(int $amount): Cursor
+    public function moveUp(int $amount = 1): Cursor
     {
         $this->y = max(1, $this->y - 1);
 
         return $this;
     }
 
-    public function moveDown(int $amount): Cursor
+    public function moveDown(int $amount = 1): Cursor
     {
         $this->y += 1;
 
         return $this;
     }
 
-    public function moveLeft(int $amount): Cursor
+    public function moveLeft(int $amount = 1): Cursor
     {
         $this->x = max(1, $this->x - 1);
 
         return $this;
     }
 
-    public function moveRight(int $amount): Cursor
+    public function moveRight(int $amount = 1): Cursor
     {
         $this->x += 1;
 
@@ -67,6 +67,16 @@ final class TestCursor implements Cursor
     }
 
     public function startOfLine(): Cursor
+    {
+        return $this;
+    }
+
+    public function hide(): Cursor
+    {
+        return $this;
+    }
+
+    public function show(): Cursor
     {
         return $this;
     }
