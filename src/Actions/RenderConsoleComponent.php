@@ -24,7 +24,7 @@ final readonly class RenderConsoleComponent
 
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
-        $terminal->cursor->clearLine();
+        $terminal->cursor->clearAfter();
 
         $return = $terminal->render($component);
 

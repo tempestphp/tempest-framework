@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Tempest\Console\Components\MultipleChoiceComponent;
+use Tempest\Console\Components\PasswordComponent;
 use Tempest\Console\Components\ProgressBarComponent;
+use Tempest\Console\Components\TextBoxComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tests\Tempest\Console\Components\TextBoxComponentTest;
 
 final readonly class InteractiveCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(private Console $console) {}
 
     #[ConsoleCommand('interactive')]
     public function __invoke(): void
@@ -38,19 +38,16 @@ final readonly class InteractiveCommand
         //
         //        $this->console->writeln("You wrote <em>{$result}</em>");
 
-//        $result = $this->console->component(
-//            new ProgressBarComponent(
-//                data: array_fill(0, 10, 'a'),
-//                handler: function ($i) {
-//                    usleep(100000);
+//        $result = $this->console->progressBar(
+//            data: array_fill(0, 10, 'a'),
+//            handler: function ($i) {
+//                usleep(100000);
 //
-//                    return $i;
-//                },
-//            ),
+//                return $i;
+//            },
 //        );
 
-        $this->console->confirm("hello?");
-        $this->console->confirm("hello?");
-        $this->console->confirm("hello?");
+
+        $password = $this->console->ask('hello?');
     }
 }

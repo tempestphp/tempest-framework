@@ -17,17 +17,14 @@ final class TextBoxComponent implements ConsoleComponent, HasCursor
     public string $answer = '';
 
     public function __construct(
-        public string $question,
+        public string $label,
     ) {
         $this->componentCursorPosition = new Point(2, 1);
     }
 
     public function render(): string
     {
-        $output = "<question> {$this->question} </question>";
-
-        $output .= PHP_EOL;
-        $output .= '> ' . $this->answer;
+        $output = "<question> {$this->label} </question> {$this->answer}";
 
         return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
     }
@@ -100,7 +97,7 @@ final class TextBoxComponent implements ConsoleComponent, HasCursor
     public function placeCursor(Cursor $cursor): void
     {
         $cursor->place(new Point(
-            x: $cursor->getPosition()->x + $this->componentCursorPosition->x,
+            x: $cursor->getPosition()->x + $this->componentCursorPosition->x + strlen($this->label) + 1,
             y: $cursor->getPosition()->y - 3,
         ));
     }

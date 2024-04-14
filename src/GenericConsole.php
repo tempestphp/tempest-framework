@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use Closure;
 use Tempest\Console\Actions\RenderConsoleComponent;
 use Tempest\Console\Components\ConfirmComponent;
+use Tempest\Console\Components\PasswordComponent;
+use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
 use Tempest\Console\Components\TextBoxComponent;
 
@@ -14,8 +17,7 @@ final class GenericConsole implements Console
     public function __construct(
         private readonly ConsoleInput $input,
         private readonly ConsoleOutput $output,
-    ) {
-    }
+    ) {}
 
     public function delimiter(string $delimiter): ConsoleOutput
     {
@@ -30,25 +32,6 @@ final class GenericConsole implements Console
     public function read(int $bytes): string
     {
         return $this->input->read($bytes);
-    }
-
-    public function ask(string $question, ?array $options = null): string
-    {
-        if ($options === null) {
-            return $this->component(new TextBoxComponent($question));
-        }
-
-        return $this->component(new QuestionComponent($question, $options));
-    }
-
-    public function confirm(string $question, bool $default = false): bool
-    {
-        $result = $this->component(new ConfirmComponent($question));
-
-        return match($result) {
-            'yes' => true,
-            default => false,
-        };
     }
 
     public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): self
@@ -88,5 +71,50 @@ final class GenericConsole implements Console
     public function component(ConsoleComponent $component): mixed
     {
         return (new RenderConsoleComponent($this))($component);
+    }
+
+    public function ask(string $question, ?array $options = null): string
+    {
+        if ($options === null) {
+            return $this->component(new TextBoxComponent($question));
+        }
+
+        return $this->component(new QuestionComponent($question, $options));
+    }
+
+    public function confirm(string $question, bool $default = false): bool
+    {
+        $result = $this->component(new ConfirmComponent($question));
+
+        return match ($result) {
+            'yes' => true,
+            default => false,
+        };
+    }
+
+    public function password(string $label = 'Password', bool $confirm = false): string
+    {
+        if (! $confirm) {
+            return $this->component(new PasswordComponent($label));
+        }
+
+        $password = null;
+        $passwordConfirm = null;
+
+        while ($password === null || $password !== $passwordConfirm) {
+            if ($password !== null) {
+                $this->error("Passwords don't match");
+            }
+
+            $password = $this->component(new PasswordComponent($label));
+            $passwordConfirm = $this->component(new PasswordComponent('Please confirm'));
+        }
+
+        return $password;
+    }
+
+    public function progressBar(iterable $data, Closure $handler): array
+    {
+        return $this->component(new ProgressBarComponent($data, $handler));
     }
 }

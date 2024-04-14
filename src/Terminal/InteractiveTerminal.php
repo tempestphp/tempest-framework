@@ -72,7 +72,7 @@ final class InteractiveTerminal
         $this->cursor->hide();
 
         for ($i = 0; $i < substr_count($this->previousRender, PHP_EOL); $i++) {
-            $this->cursor->clearLine()->moveUp(1);
+            $this->cursor->moveUp()->clearLine();
         }
 
         $this->cursor->show();
