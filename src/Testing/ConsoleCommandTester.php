@@ -23,7 +23,7 @@ final readonly class ConsoleCommandTester
 
         $this->container->singleton(
             ConsoleOutput::class,
-            fn () => $this->container->get(TestConsoleOutput::class)
+            fn () => new TestConsoleOutput(),
         );
 
         $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);

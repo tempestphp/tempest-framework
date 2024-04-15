@@ -76,7 +76,7 @@ final class GenericConsole implements Console
 
     public function ask(string $question, ?array $options = null): string
     {
-        if ($options === null) {
+        if ($options === null || $options === []) {
             return $this->component(new TextBoxComponent($question));
         }
 

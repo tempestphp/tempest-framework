@@ -17,6 +17,5 @@ class CommandNotFoundExceptionTest extends TestCase
         $this->console
             ->call('foo:bar')
             ->assertContains('Command foo:bar not found');
-        ;
     }
 }

@@ -26,6 +26,10 @@ final class CommandNotFoundException extends ConsoleException
             ConsoleOutputType::ERROR,
         );
 
+        if ($similarCommands === []) {
+            return;
+        }
+
         if (count($similarCommands) === 1) {
             if ($console->confirm("Did you mean {$similarCommands[0]}?")) {
                 throw new MistypedCommandException($similarCommands[0]);
