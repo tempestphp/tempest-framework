@@ -12,9 +12,4 @@ final class MistypedCommandException extends Exception
         public readonly string $intendedCommand,
     ) {
     }
-
-    public static function for(string $intendedCommand): MistypedCommandException
-    {
-        return new self($intendedCommand);
-    }
 }

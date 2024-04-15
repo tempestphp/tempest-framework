@@ -85,12 +85,7 @@ final class GenericConsole implements Console
 
     public function confirm(string $question, bool $default = false): bool
     {
-        $result = $this->component(new ConfirmComponent($question));
-
-        return match ($result) {
-            'yes' => true,
-            default => false,
-        };
+        return $this->component(new ConfirmComponent($question));
     }
 
     public function password(string $label = 'Password', bool $confirm = false): string

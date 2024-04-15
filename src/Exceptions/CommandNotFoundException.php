@@ -39,7 +39,7 @@ final class CommandNotFoundException extends ConsoleException
             options: $similarCommands,
         );
 
-        throw MistypedCommandException::for($intendedCommand);
+        throw new MistypedCommandException($intendedCommand);
     }
 
     private function getSimilarCommands(): array
