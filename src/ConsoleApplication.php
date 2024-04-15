@@ -66,7 +66,7 @@ final readonly class ConsoleApplication implements Application
             $this->executeCommand($commandName);
         } catch (MistypedCommandException $e) {
             $this->executeCommand(
-                $e->intendedCommand->getName(),
+                $e->intendedCommand,
             );
         }
     }
@@ -76,7 +76,7 @@ final readonly class ConsoleApplication implements Application
         try {
             $this->handleCommand($commandName);
         } catch (ConsoleException $consoleException) {
-            $consoleException->render($this->container->get(ConsoleOutput::class));
+            $consoleException->render($this->container->get(Console::class));
         } catch (Throwable $throwable) {
             if (
                 ! $this->appConfig->enableExceptionHandling
@@ -101,7 +101,6 @@ final readonly class ConsoleApplication implements Application
             throw new CommandNotFoundException(
                 commandName: $commandName,
                 consoleConfig: $config,
-                input: $this->container->get(ConsoleInput::class),
             );
         }
 

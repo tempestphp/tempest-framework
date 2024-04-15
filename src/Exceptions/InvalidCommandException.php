@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Actions\RenderConsoleCommand;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgumentDefinition;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 
 final class InvalidCommandException extends ConsoleException
 {
@@ -18,11 +18,11 @@ final class InvalidCommandException extends ConsoleException
     ) {
     }
 
-    public function render(ConsoleOutput $output): void
+    public function render(Console $console): void
     {
-        $output->error("Invalid command usage:");
+        $console->error("Invalid command usage:");
 
-        (new RenderConsoleCommand($output))($this->consoleCommand);
+        (new RenderConsoleCommand($console))($this->consoleCommand);
 
         $missingArguments = implode(', ', array_map(
             fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
@@ -30,7 +30,7 @@ final class InvalidCommandException extends ConsoleException
         ));
 
         if ($missingArguments) {
-            $output->writeln("Missing arguments: {$missingArguments}");
+            $console->writeln("Missing arguments: {$missingArguments}");
         }
     }
 }

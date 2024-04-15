@@ -17,7 +17,8 @@ final class GenericConsole implements Console
     public function __construct(
         private readonly ConsoleInput $input,
         private readonly ConsoleOutput $output,
-    ) {}
+    ) {
+    }
 
     public function delimiter(string $delimiter): ConsoleOutput
     {

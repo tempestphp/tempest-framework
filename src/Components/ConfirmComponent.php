@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components;
 
 use Tempest\Console\ConsoleComponent;
@@ -16,8 +18,7 @@ final class ConfirmComponent implements ConsoleComponent, HasCursor
     public function __construct(
         private string $question,
         bool $default = false,
-    )
-    {
+    ) {
         $this->answer = $default;
     }
 
