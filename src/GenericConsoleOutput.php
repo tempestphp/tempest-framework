@@ -16,7 +16,7 @@ final class GenericConsoleOutput implements ConsoleOutput
     {
         $clone = clone $this;
 
-        $this->delimiter = $delimiter;
+        $clone->delimiter = $delimiter;
 
         return $clone;
     }

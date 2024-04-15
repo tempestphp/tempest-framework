@@ -10,6 +10,7 @@ use Tempest\Console\Actions\RenderConsoleCommandOverview;
 use Tempest\Console\Exceptions\CommandNotFoundException;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Exceptions\MistypedCommandException;
 use Tempest\Container\Container;
 use Tempest\Kernel;
 use Throwable;
@@ -53,15 +54,26 @@ final readonly class ConsoleApplication implements Application
 
     public function run(): void
     {
+        $commandName = $this->argumentBag->getCommandName();
+
+        if (! $commandName) {
+            $this->container->get(RenderConsoleCommandOverview::class)();
+
+            return;
+        }
+
         try {
-            $commandName = $this->argumentBag->getCommandName();
+            $this->executeCommand($commandName);
+        } catch (MistypedCommandException $e) {
+            $this->executeCommand(
+                $e->intendedCommand->getName(),
+            );
+        }
+    }
 
-            if (! $commandName) {
-                $this->container->get(RenderConsoleCommandOverview::class)();
-
-                return;
-            }
-
+    private function executeCommand(string $commandName): void
+    {
+        try {
             $this->handleCommand($commandName);
         } catch (ConsoleException $consoleException) {
             $consoleException->render($this->container->get(ConsoleOutput::class));
@@ -86,7 +98,11 @@ final readonly class ConsoleApplication implements Application
         $consoleCommand = $config->commands[$commandName] ?? null;
 
         if (! $consoleCommand) {
-            throw new CommandNotFoundException($commandName);
+            throw new CommandNotFoundException(
+                commandName: $commandName,
+                consoleConfig: $config,
+                input: $this->container->get(ConsoleInput::class),
+            );
         }
 
         $handler = $consoleCommand->handler;

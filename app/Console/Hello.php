@@ -23,6 +23,14 @@ final readonly class Hello
         $this->output->error($input);
     }
 
+    // hello:werld {input} --flag
+    #[ConsoleCommand]
+    public function werdl(string $input)
+    {
+        $this->output->info('Hi');
+        $this->output->error($input);
+    }
+
     #[ConsoleCommand(
         description: 'description',
         aliases: ['t'],
