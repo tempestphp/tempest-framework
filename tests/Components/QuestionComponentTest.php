@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Components;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\QuestionComponent;
+use Tests\Tempest\Console\TestCase;
 
 /**
  * @internal

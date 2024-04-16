@@ -14,7 +14,7 @@ class InteractiveCommandTest extends TestCase
     {
         $this
             ->console
-            ->call('interactive')
+            ->call('interactive:ask')
             ->write('abc')
             ->left()
             ->enter()

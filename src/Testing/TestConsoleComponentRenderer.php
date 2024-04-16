@@ -24,6 +24,10 @@ final class TestConsoleComponentRenderer implements ConsoleComponentRenderer
 
     public function renderCurrentComponent(): mixed
     {
+        if (! $this->component) {
+            return '';
+        }
+
         return $this->render($this->component);
     }
 
@@ -114,7 +118,11 @@ final class TestConsoleComponentRenderer implements ConsoleComponentRenderer
 
         /** @phpstan-ignore-next-line */
         foreach ($handlersForKey as $handler) {
-            $handler->invoke($this->component, $key->value);
+            $return = $handler->invoke($this->component, $key->value);
+
+            if ($return !== null) {
+                // TODO: we need a way to return
+            }
         }
     }
 

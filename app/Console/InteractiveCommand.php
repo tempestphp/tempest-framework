@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
@@ -14,23 +13,27 @@ final readonly class InteractiveCommand
     {
     }
 
-    #[ConsoleCommand('interactive')]
-    public function __invoke(): void
+    #[ConsoleCommand('interactive:password')]
+    public function password(): void
     {
-        //                $result = $this->console->component(new MultipleChoiceComponent(
-        //                    'Pick multiple options, which is best?',
-        //                    [
-        //                        'interfaces + final',
-        //                        'abstract classes + extend',
-        //                        'I don\'t really care',
-        //                        'interfaces + final',
-        //                        'abstract classes + extend',
-        //                    ],
-        //                ));
-        //
-        //                $result = json_encode($result);
-        //
-        //                $this->console->writeln("You picked <em>{$result}</em>");
+        $password = $this->console->password(confirm: true);
+
+        $this->console->writeln($password);
+    }
+
+    #[ConsoleCommand('interactive:option')]
+    public function option(): void
+    {
+        $result = $this->console->ask(
+            'Pick one option',
+            [
+                'a', 'b', 'c',
+            ],
+        );
+
+        $result = json_encode($result);
+
+        $this->console->writeln("You picked <em>{$result}</em>");
 
         //        $result = $this->console->writeln()->ask('Next question:');
         //
@@ -44,8 +47,11 @@ final readonly class InteractiveCommand
         //                return $i;
         //            },
         //        );
+    }
 
-
-        $password = $this->console->ask('hello?');
+    #[ConsoleCommand('interactive:ask')]
+    public function ask()
+    {
+        $this->console->ask('Hello?');
     }
 }

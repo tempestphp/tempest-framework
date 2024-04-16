@@ -125,4 +125,11 @@ final class TestConsoleOutput implements ConsoleOutput
 
         return $this;
     }
+
+    public function clearLast(): self
+    {
+        unset($this->lines[array_key_last($this->lines)]);
+
+        return $this;
+    }
 }

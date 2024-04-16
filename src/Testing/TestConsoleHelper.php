@@ -6,11 +6,13 @@ namespace Tempest\Console\Testing;
 
 use PHPUnit\Framework\Assert;
 
-final readonly class TestConsoleHelper
+final class TestConsoleHelper
 {
+    private ?string $previousRender = null;
+
     public function __construct(
-        private TestConsoleOutput $output,
-        private TestConsoleComponentRenderer $componentRenderer,
+        private readonly TestConsoleOutput $output,
+        private readonly TestConsoleComponentRenderer $componentRenderer,
     ) {
     }
 
@@ -183,7 +185,15 @@ final readonly class TestConsoleHelper
 
     private function renderCurrentComponent(): self
     {
-        $this->output->write($this->componentRenderer->renderCurrentComponent());
+        $render = $this->componentRenderer->renderCurrentComponent();
+
+        if ($this->previousRender) {
+            $this->output->clearLast();
+        }
+
+        $this->output->write($render);
+
+        $this->previousRender = $render;
 
         return $this;
     }
