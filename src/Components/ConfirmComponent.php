@@ -26,7 +26,7 @@ final class ConfirmComponent implements ConsoleComponent, HasCursor
     {
         return sprintf(
             '%s [%s/%s] %s',
-            "<question> {$this->question} </question>",
+            "<question>{$this->question}</question>",
             $this->answer ? '<em><u>yes</u></em>' : 'yes',
             $this->answer ? 'no' : '<em><u>no</u></em>',
             $this->textualAnswer,

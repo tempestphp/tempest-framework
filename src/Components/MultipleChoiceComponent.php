@@ -22,7 +22,7 @@ final class MultipleChoiceComponent implements ConsoleComponent
 
     public function render(): string
     {
-        $output = "<question> {$this->question} </question>";
+        $output = "<question>{$this->question}</question>";
 
         foreach ($this->options as $key => $option) {
             $output .= PHP_EOL;

@@ -24,7 +24,7 @@ final class TextBoxComponent implements ConsoleComponent, HasCursor
 
     public function render(): string
     {
-        $output = "<question> {$this->label} </question> {$this->answer}";
+        $output = "<question>{$this->label}</question> {$this->answer}";
 
         return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
     }

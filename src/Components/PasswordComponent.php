@@ -22,7 +22,7 @@ final class PasswordComponent implements ConsoleComponent, HasCursor
 
     public function render(): string
     {
-        $output = "<question> {$this->label} </question> ";
+        $output = "<question>{$this->label}</question> ";
         $output .= str_repeat('*', strlen($this->password));
 
         return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;

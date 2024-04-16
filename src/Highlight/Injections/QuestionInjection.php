@@ -19,6 +19,6 @@ final readonly class QuestionInjection implements Injection
 
     public function style(string $content): string
     {
-        return ConsoleStyle::BG_BLUE($content);
+        return ConsoleStyle::BG_BLUE(" {$content} ");
     }
 }
