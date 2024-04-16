@@ -6,7 +6,6 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Console\ConsoleOutputType;
 
 final class CommandNotFoundException extends ConsoleException
 {
@@ -22,8 +21,7 @@ final class CommandNotFoundException extends ConsoleException
         $similarCommands = $this->getSimilarCommands();
 
         $console->writeln(
-            sprintf('Command %s not found', $this->commandName),
-            ConsoleOutputType::ERROR,
+            sprintf('<error>Command %s not found</error>', $this->commandName),
         );
 
         if ($similarCommands === []) {

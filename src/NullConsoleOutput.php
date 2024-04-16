@@ -17,12 +17,12 @@ final class NullConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function write(string $line): ConsoleOutput
     {
         return $this;
     }
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function writeln(string $line = ''): ConsoleOutput
     {
         return $this;
     }

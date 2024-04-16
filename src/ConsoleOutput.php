@@ -8,9 +8,9 @@ interface ConsoleOutput
 {
     public function delimiter(string $delimiter): ConsoleOutput;
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput;
+    public function write(string $line): ConsoleOutput;
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput;
+    public function writeln(string $line = ''): ConsoleOutput;
 
     public function info(string $line): ConsoleOutput;
 

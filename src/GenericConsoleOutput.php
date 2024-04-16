@@ -21,37 +21,37 @@ final class GenericConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function write(string $line): ConsoleOutput
     {
-        $this->writeToStdOut($type->style($line));
+        $this->writeToStdOut($line);
 
         return $this;
     }
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function writeln(string $line = ''): ConsoleOutput
     {
-        $this->writeToStdOut($type->style($line) . $this->delimiter);
+        $this->writeToStdOut($line . $this->delimiter);
 
         return $this;
     }
 
     public function info(string $line): ConsoleOutput
     {
-        $this->writeln($line, ConsoleOutputType::INFO);
+        $this->writeln("<em>{$line}</em>");
 
         return $this;
     }
 
     public function error(string $line): ConsoleOutput
     {
-        $this->writeln($line, ConsoleOutputType::ERROR);
+        $this->writeln("<error>{$line}</error>");
 
         return $this;
     }
 
     public function success(string $line): ConsoleOutput
     {
-        $this->writeln($line, ConsoleOutputType::SUCCESS);
+        $this->writeln("<success>{$line}</success>");
 
         return $this;
     }
@@ -69,13 +69,11 @@ final class GenericConsoleOutput implements ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 
-        $content = $highlighter->parse($content, new  ConsoleComponentLanguage());
-
         $stdout = fopen('php://stdout', 'w');
 
         fwrite(
             $stdout,
-            ConsoleStyle::RESET($content),
+            $highlighter->parse($content, new  ConsoleComponentLanguage()),
         );
 
         fclose($stdout);

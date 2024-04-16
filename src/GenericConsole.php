@@ -35,16 +35,16 @@ final class GenericConsole implements Console
         return $this->input->read($bytes);
     }
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): self
+    public function write(string $line): self
     {
-        $this->output->write($line, $type);
+        $this->output->write($line);
 
         return $this;
     }
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): self
+    public function writeln(string $line = ''): self
     {
-        $this->output->writeln($line, $type);
+        $this->output->writeln($line);
 
         return $this;
     }

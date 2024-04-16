@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleOutputType;
 use Tempest\Console\ConsoleStyle;
 use Tempest\Console\Highlight\ConsoleComponentLanguage;
 use Tempest\Highlight\Highlighter;
@@ -28,7 +27,7 @@ final class TestConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line, ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function write(string $line): ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 
@@ -39,7 +38,7 @@ final class TestConsoleOutput implements ConsoleOutput
         return $this;
     }
 
-    public function writeln(string $line = '', ConsoleOutputType $type = ConsoleOutputType::DEFAULT): ConsoleOutput
+    public function writeln(string $line = ''): ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 

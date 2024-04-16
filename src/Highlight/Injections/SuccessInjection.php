@@ -8,17 +8,17 @@ use Tempest\Console\ConsoleStyle;
 use Tempest\Console\Highlight\IsTagInjection;
 use Tempest\Highlight\Injection;
 
-final readonly class ErrorInjection implements Injection
+final readonly class SuccessInjection implements Injection
 {
     use IsTagInjection;
 
     public function getTag(): string
     {
-        return 'error';
+        return 'success';
     }
 
     public function style(string $content): string
     {
-        return ConsoleStyle::BOLD(ConsoleStyle::FG_WHITE(ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(" {$content} "))));
+        return ConsoleStyle::BOLD(ConsoleStyle::FG_DARK_GREEN(" {$content} "));
     }
 }
