@@ -7,6 +7,7 @@ namespace Tests\Tempest\Console\Exceptions;
 use Exception;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Testing\TestConsoleComponentRenderer;
 use Tempest\Console\Testing\TestConsoleHelper;
 use Tempest\Console\Testing\TestConsoleOutput;
 use Tests\Tempest\Console\TestCase;
@@ -29,6 +30,7 @@ class ConsoleExceptionHandlerTest extends TestCase
 
         $output = new TestConsoleHelper(
             $this->container->get(ConsoleOutput::class),
+            $this->container->get(TestConsoleComponentRenderer::class),
         );
 
         $output

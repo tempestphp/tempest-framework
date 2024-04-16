@@ -10,6 +10,7 @@ final readonly class TestConsoleHelper
 {
     public function __construct(
         private TestConsoleOutput $output,
+        private TestConsoleComponentRenderer $componentRenderer,
     ) {
     }
 
@@ -35,7 +36,7 @@ final readonly class TestConsoleHelper
             sprintf(
                 'Failed to assert that console output included text: %s. These lines were printed: %s',
                 $text,
-                PHP_EOL.PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
+                PHP_EOL . PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
             ),
         );
 
@@ -50,7 +51,7 @@ final readonly class TestConsoleHelper
             sprintf(
                 'Failed to assert that console output did not include text: %s. These lines were printed: %s',
                 $text,
-                PHP_EOL.PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
+                PHP_EOL . PHP_EOL . $this->output->getTextWithoutFormatting() . PHP_EOL,
             ),
         );
 
@@ -113,6 +114,76 @@ final readonly class TestConsoleHelper
                 PHP_EOL . implode(PHP_EOL, $this->output->getSuccessLines()),
             ),
         );
+
+        return $this;
+    }
+
+    public function write(string $text): self
+    {
+        $this->componentRenderer->write($text);
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function up(): self
+    {
+        $this->componentRenderer->up();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function down(): self
+    {
+        $this->componentRenderer->down();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function left(): self
+    {
+        $this->componentRenderer->left();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function right(): self
+    {
+        $this->componentRenderer->right();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function enter(): self
+    {
+        $this->componentRenderer->enter();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function backspace(): self
+    {
+        $this->componentRenderer->backspace();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function delete(): self
+    {
+        $this->componentRenderer->delete();
+
+        return $this->renderCurrentComponent();
+    }
+
+    public function space(): self
+    {
+        $this->componentRenderer->space();
+
+        return $this->renderCurrentComponent();
+    }
+
+    private function renderCurrentComponent(): self
+    {
+        $this->output->write($this->componentRenderer->renderCurrentComponent());
 
         return $this;
     }

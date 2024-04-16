@@ -13,6 +13,16 @@ use Tempest\Highlight\Language;
 
 final readonly class ConsoleComponentLanguage implements Language
 {
+    public function getName(): string
+    {
+        return 'console';
+    }
+
+    public function getAliases(): array
+    {
+        return [];
+    }
+
     public function getInjections(): array
     {
         return [

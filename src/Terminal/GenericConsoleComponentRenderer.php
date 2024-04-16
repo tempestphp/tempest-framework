@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Actions;
+namespace Tempest\Console\Terminal;
 
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
+use Tempest\Console\ConsoleComponentRenderer;
 use Tempest\Console\HandlesKey;
-use Tempest\Console\Terminal\InteractiveTerminal;
 use Tempest\Support\Reflection\Attributes;
 
-final readonly class RenderConsoleComponent
+final readonly class GenericConsoleComponentRenderer implements ConsoleComponentRenderer
 {
     public function __construct(private Console $console)
     {
     }
 
-    public function __invoke(ConsoleComponent $component): mixed
+    public function render(ConsoleComponent $component): mixed
     {
         $terminal = new InteractiveTerminal($this->console);
 
@@ -38,12 +38,12 @@ final readonly class RenderConsoleComponent
             if ($handlersForKey = $keyBindings[$key] ?? null) {
                 // Specific key handlers
                 foreach ($handlersForKey as $handler) {
-                    $return ??= $handler->invoke($component, $this);
+                    $return ??= $handler->invoke($component);
                 }
             } else {
                 // Catch-all key handlers
                 foreach ($inputHandlers as $handler) {
-                    $return ??= $handler->invoke($component, $key, $this);
+                    $return ??= $handler->invoke($component, $key);
                 }
             }
 
