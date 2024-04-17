@@ -7,7 +7,6 @@ namespace Tempest\Console\Actions;
 use ReflectionParameter;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleStyle;
 
 final readonly class RenderConsoleCommand
 {
@@ -17,7 +16,7 @@ final readonly class RenderConsoleCommand
 
     public function __invoke(ConsoleCommand $consoleCommand): void
     {
-        $parts = [ConsoleStyle::FG_DARK_BLUE($consoleCommand->getName())];
+        $parts = ["<em><strong>{$consoleCommand->getName()}</strong></em>"];
 
         foreach ($consoleCommand->handler->getParameters() as $parameter) {
             $parts[] = $this->renderParameter($parameter);
@@ -36,10 +35,10 @@ final readonly class RenderConsoleCommand
         $type = $parameter->getType()?->getName();
         $optional = $parameter->isOptional();
         $defaultValue = strtolower(var_export($optional ? $parameter->getDefaultValue() : null, true));
-        $name = ConsoleStyle::FG_BLUE($parameter->getName());
+        $name = "<em>{$parameter->getName()}</em>";
 
         $asString = match($type) {
-            'bool' => ConsoleStyle::FG_BLUE("--{$name}"),
+            'bool' => "<em>--</em>{$name}",
             default => $name,
         };
 

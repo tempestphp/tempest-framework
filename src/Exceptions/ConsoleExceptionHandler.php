@@ -6,7 +6,6 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleStyle;
 use Tempest\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\LightTerminalTheme;
@@ -48,7 +47,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         $code = $highlighter->parse(file_get_contents($throwable->getFile()), 'php');
         $lines = explode(PHP_EOL, $code);
 
-        $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] . ' ' . ConsoleStyle::BG_RED(ConsoleStyle::FG_WHITE(ConsoleStyle::BOLD(' < ')));
+        $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] .  ' <error><</error>';
 
         $excerptSize = 5;
         $start = max(0, $throwable->getLine() - $excerptSize);

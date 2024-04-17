@@ -32,19 +32,18 @@ final readonly class GenericConsoleInput implements ConsoleInput
         ?array $options = null,
         ?string $default = null,
     ): string {
-        $questionString = ConsoleStyle::BG_YELLOW($question);
+        $questionString = "<question>{$question}</question>";
 
         if ($options) {
-            $questionString .= ' [' . ConsoleStyle::FG_BLUE(
+            $questionString .= ' [<em>' .
                 implode(
                     ',',
                     array_map(
                         fn (string $option) => $option === $default ? strtoupper($option) : $option,
                         $options,
                     ),
-                ),
-            )
-                . '] ';
+                )
+                . '</em>] ';
         }
 
         $this->output->write($questionString);

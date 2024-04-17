@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\ConsoleStyle;
 use Tempest\Console\Highlight\ConsoleComponentLanguage;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\LightTerminalTheme;
+use Tempest\Highlight\Themes\TerminalStyle;
 
 final class TestConsoleOutput implements ConsoleOutput
 {
@@ -81,8 +81,8 @@ final class TestConsoleOutput implements ConsoleOutput
     public function getLinesWithoutFormatting(): array
     {
         $pattern = array_map(
-            fn (ConsoleStyle $consoleStyle) => ConsoleStyle::ESC->value . $consoleStyle->value,
-            ConsoleStyle::cases(),
+            fn (TerminalStyle $consoleStyle) => TerminalStyle::ESC->value . $consoleStyle->value,
+            TerminalStyle::cases(),
         );
 
         return array_map(

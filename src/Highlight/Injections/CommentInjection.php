@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Highlight\Injections;
 
-use Tempest\Console\ConsoleStyle;
 use Tempest\Console\Highlight\IsTagInjection;
 use Tempest\Highlight\Injection;
+use Tempest\Highlight\Themes\TerminalStyle;
 
 final readonly class CommentInjection implements Injection
 {
@@ -31,6 +31,6 @@ final readonly class CommentInjection implements Injection
             ],
         );
 
-        return ConsoleStyle::FG_GRAY($comment);
+        return TerminalStyle::FG_GRAY($comment);
     }
 }
