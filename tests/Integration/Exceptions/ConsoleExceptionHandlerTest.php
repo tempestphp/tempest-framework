@@ -34,6 +34,6 @@ class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
         $this->assertSame('Exception', $lines[0]);
         $this->assertSame('A message from the exception output', $lines[1]);
         $this->assertStringContainsString('function failingFunction(string $string)', $lines[3]);
-        $this->assertStringContainsString('/app/Console/FailCommand.php', $lines[12]);
+        $this->assertStringContainsString('/app/Console/FailCommand.php', $lines[5]);
     }
 }

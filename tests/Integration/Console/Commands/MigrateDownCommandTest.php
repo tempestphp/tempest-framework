@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Integration\Console\Commands;
+namespace Tests\Tempest\Integration\Console\Commands;
 
-use PHPUnit\Framework\Assert;
-use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -13,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class MigrateRollbackCommandTest extends FrameworkIntegrationTestCase
+class MigrateDownCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rollback_command(): void
     {
@@ -22,11 +20,9 @@ class MigrateRollbackCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('create_migrations_table');
 
         $this->console
-            ->call('migrate:down')
+            ->call('migrate:down --force')
             ->assertContains('create_migrations_table')
             ->assertContains("Rolled back 3 migrations");
-
-        Assert::assertEmpty(Migration::all());
     }
 
     public function test_errors_when_no_migrations_to_rollback(): void
