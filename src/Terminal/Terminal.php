@@ -91,7 +91,7 @@ final class Terminal
         system("stty echo");
         system("stty icanon");
 
-        $this->console->writeln();
+        $this->console->writeln()->writeln();
 
         return $this;
     }
