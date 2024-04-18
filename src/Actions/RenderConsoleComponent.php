@@ -9,7 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HandlesKey;
-use Tempest\Console\Terminal\InteractiveTerminal;
+use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Reflection\Attributes;
 
 final readonly class RenderConsoleComponent
@@ -20,7 +20,7 @@ final readonly class RenderConsoleComponent
 
     public function __invoke(ConsoleComponent $component): mixed
     {
-        $terminal = new InteractiveTerminal($this->console);
+        $terminal = new Terminal($this->console);
 
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 

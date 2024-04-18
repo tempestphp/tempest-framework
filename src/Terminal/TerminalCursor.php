@@ -14,7 +14,7 @@ final class TerminalCursor implements Cursor
 
     public function __construct(
         private readonly Console $console,
-        private readonly InteractiveTerminal $terminal,
+        private readonly Terminal $terminal,
     ) {
         $this->console->write("\033[6n");
 

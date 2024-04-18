@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HasCursor;
 use Tempest\Console\Point;
 
-final class InteractiveTerminal
+final class Terminal
 {
     public int $width;
 
