@@ -63,17 +63,5 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url" : "../tempest-core",
-            "symlink": true
-        },
-        {
-            "type": "path",
-            "url" : "../tempest-console",
-            "symlink": true
-        }
-    ]
+    }
 }
