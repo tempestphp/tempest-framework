@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Tempest\AppConfig;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\ConsoleInput;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\GenericConsole;
 use Tempest\Container\Container;
 
 final readonly class ConsoleCommandTester
@@ -24,6 +27,14 @@ final readonly class ConsoleCommandTester
         $this->container->singleton(
             ConsoleOutput::class,
             fn () => new TestConsoleOutput(),
+        );
+
+        $this->container->singleton(
+            Console::class,
+            fn () => new GenericConsole(
+                $this->container->get(ConsoleInput::class),
+                $this->container->get(ConsoleOutput::class),
+            ),
         );
 
         $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);

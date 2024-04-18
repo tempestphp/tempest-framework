@@ -15,6 +15,7 @@ final class TestConsoleHelper
 
     public function print(): self
     {
+        echo "OUTPUT:\n";
         echo $this->output->getTextWithoutFormatting();
 
         return $this;
