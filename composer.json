@@ -24,16 +24,16 @@
     "autoload": {
         "psr-4": {
             "Tempest\\Console\\": "src/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\": "app/",
             "Tests\\Tempest\\Console\\": "tests/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
