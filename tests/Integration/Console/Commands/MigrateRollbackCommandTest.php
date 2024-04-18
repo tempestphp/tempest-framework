@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Integration\Console\Commands;
 
-use PDOException;
 use PHPUnit\Framework\Assert;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationException;
@@ -18,7 +17,8 @@ class MigrateRollbackCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rollback_command(): void
     {
-        $this->console->call('migrate:up')
+        $this->console
+            ->call('migrate:up')
             ->assertContains('create_migrations_table');
 
         $this->console
@@ -26,11 +26,7 @@ class MigrateRollbackCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('create_migrations_table')
             ->assertContains("Rolled back 3 migrations");
 
-        try {
-            Assert::assertEmpty(Migration::all());
-        } catch (PDOException $e) {
-            Assert::assertStringContainsString('no such table: Migration', $e->getMessage());
-        }
+        Assert::assertEmpty(Migration::all());
     }
 
     public function test_errors_when_no_migrations_to_rollback(): void

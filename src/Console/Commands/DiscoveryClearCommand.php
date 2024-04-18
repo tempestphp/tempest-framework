@@ -7,7 +7,6 @@ namespace Tempest\Console\Commands;
 use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleStyle;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Kernel;
@@ -35,7 +34,7 @@ final readonly class DiscoveryClearCommand
             $discovery->destroyCache();
 
             $this->console->success(implode('', [
-                ConsoleStyle::FG_BLUE($discoveryClass),
+                "<em>{$discoveryClass}</em>",
                 ' cleared successful',
             ]));
         }

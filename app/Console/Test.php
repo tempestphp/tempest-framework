@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleInput;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class Test
 {
     public function __construct(
-        private ConsoleOutput $output,
-        private ConsoleInput $input,
+        private Console $console,
     ) {
     }
 
     #[ConsoleCommand]
     public function test()
     {
-        $this->input->confirm('yes or no?');
+        $this->console->confirm('yes or no?');
     }
 }

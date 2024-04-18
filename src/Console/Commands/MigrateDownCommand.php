@@ -12,7 +12,7 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
 use Tempest\Events\EventHandler;
 
-final class MigrateRollbackCommand
+final class MigrateDownCommand
 {
     private static int $count = 0;
 

@@ -6,7 +6,6 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleStyle;
 use Tempest\Http\RouteConfig;
 
 final readonly class RoutesCommand
@@ -41,8 +40,8 @@ final readonly class RoutesCommand
 
         foreach ($sortedRoutes as $route) {
             $this->console->writeln(implode(' ', [
-                ConsoleStyle::FG_BLUE(str_pad($route->method->value, 4)),
-                ConsoleStyle::FG_DARK_BLUE($route->uri),
+                '<strong>' . str_pad($route->method->value, 4) . '</strong>',
+                '<em>' . $route->uri . '</em>',
                 PHP_EOL,
                 '   ',
                 $route->handler->getDeclaringClass()->getName() . '::' . $route->handler->getName() . '()',

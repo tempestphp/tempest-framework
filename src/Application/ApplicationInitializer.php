@@ -7,6 +7,7 @@ namespace Tempest\Application;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
+use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
@@ -18,7 +19,7 @@ final readonly class ApplicationInitializer implements Initializer
     {
         if (isset($_SERVER['argv'])) {
             $application = new ConsoleApplication(
-                $_SERVER['argv'],
+                new ConsoleArgumentBag(['argv']),
                 $container,
                 $container->get(AppConfig::class),
             );

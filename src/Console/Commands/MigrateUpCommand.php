@@ -12,7 +12,7 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\Events\EventHandler;
 
-final class MigrateCommand
+final class MigrateUpCommand
 {
     private static int $count = 0;
 

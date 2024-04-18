@@ -8,6 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
+use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
@@ -40,7 +41,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function actAsConsoleApplication(string $command = ''): Application
     {
         $application = new ConsoleApplication(
-            args: ['tempest', ...explode(' ', $command)],
+            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
             container: $this->container,
             appConfig: $this->container->get(AppConfig::class),
         );
