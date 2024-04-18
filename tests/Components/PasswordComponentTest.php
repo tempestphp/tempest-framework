@@ -22,11 +22,11 @@ class PasswordComponentTest extends TestCase
 
         $this->assertSame(
             <<<'TXT'
-<question>Label</question> 
-
-Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel
-
-TXT,
+            <question>Label</question> 
+            
+            Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel
+            
+            TXT,
             $component->render(),
         );
 
