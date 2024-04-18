@@ -34,24 +34,24 @@ final readonly class InteractiveCommand
         $result = json_encode($result);
 
         $this->console->writeln("You picked <em>{$result}</em>");
-
-        //        $result = $this->console->writeln()->ask('Next question:');
-        //
-        //        $this->console->writeln("You wrote <em>{$result}</em>");
-
-        //        $result = $this->console->progressBar(
-        //            data: array_fill(0, 10, 'a'),
-        //            handler: function ($i) {
-        //                usleep(100000);
-        //
-        //                return $i;
-        //            },
-        //        );
     }
 
     #[ConsoleCommand('interactive:ask')]
-    public function ask()
+    public function ask(): void
     {
         $this->console->ask('Hello?');
+    }
+
+    #[ConsoleCommand('interactive:progress')]
+    public function progress(): void
+    {
+        $this->console->progressBar(
+            data: array_fill(0, 10, 'a'),
+            handler: function ($i) {
+                usleep(100000);
+
+                return $i;
+            },
+        );
     }
 }

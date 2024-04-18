@@ -17,10 +17,15 @@ use Throwable;
 
 final readonly class ConsoleApplication implements Application
 {
-    public static function boot(
-        string $name = 'Tempest',
-        ?AppConfig $appConfig = null,
-    ): self {
+    public function __construct(
+        private ConsoleArgumentBag $argumentBag,
+        private Container $container,
+        private AppConfig $appConfig,
+    ) {
+    }
+
+    public static function boot(string $name = 'Tempest', ?AppConfig $appConfig = null): self
+    {
         $appConfig ??= new AppConfig(root: getcwd());
 
         $kernel = new Kernel(
@@ -39,17 +44,9 @@ final readonly class ConsoleApplication implements Application
 
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
-        $consoleConfig = $container->get(ConsoleConfig::class);
-        $consoleConfig->name = $name;
+        $container->get(ConsoleConfig::class)->name = $name;
 
         return $application;
-    }
-
-    public function __construct(
-        private ConsoleArgumentBag $argumentBag,
-        private Container $container,
-        private AppConfig $appConfig,
-    ) {
     }
 
     public function run(): void
@@ -74,7 +71,27 @@ final readonly class ConsoleApplication implements Application
     private function executeCommand(string $commandName): void
     {
         try {
-            $this->handleCommand($commandName);
+            $config = $this->container->get(ConsoleConfig::class);
+
+            $consoleCommand = $config->commands[$commandName] ?? null;
+
+            if (! $consoleCommand) {
+                throw new CommandNotFoundException(
+                    commandName: $commandName,
+                    consoleConfig: $config,
+                );
+            }
+
+            $handler = $consoleCommand->handler;
+
+            $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
+
+            $inputBuilder = new ConsoleInputBuilder($consoleCommand, $this->argumentBag);
+
+            $handler->invoke(
+                $commandClass,
+                ...$inputBuilder->build(),
+            );
         } catch (ConsoleException $consoleException) {
             $consoleException->render($this->container->get(Console::class));
         } catch (Throwable $throwable) {
@@ -89,40 +106,5 @@ final readonly class ConsoleApplication implements Application
                 $exceptionHandler->handle($throwable);
             }
         }
-    }
-
-    private function handleCommand(string $commandName): void
-    {
-        $config = $this->container->get(ConsoleConfig::class);
-
-        $consoleCommand = $config->commands[$commandName] ?? null;
-
-        if (! $consoleCommand) {
-            throw new CommandNotFoundException(
-                commandName: $commandName,
-                consoleConfig: $config,
-            );
-        }
-
-        $handler = $consoleCommand->handler;
-
-        $commandClass = $this->container->get($handler->getDeclaringClass()->getName());
-
-        $handler->invoke(
-            $commandClass,
-            ...$this->buildInput($consoleCommand),
-        );
-    }
-
-    /**
-     * Returns resolved key-value pair of parameters.
-     *
-     * @return array<string, mixed>
-     */
-    private function buildInput(ConsoleCommand $command): array
-    {
-        $builder = new ConsoleInputBuilder($command, $this->argumentBag);
-
-        return $builder->build();
     }
 }
