@@ -7,7 +7,6 @@ namespace Tempest\Console\Testing;
 use Tempest\AppConfig;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\ConsoleComponentRenderer;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
@@ -27,11 +26,6 @@ final readonly class ConsoleCommandTester
             fn () => new TestConsoleOutput(),
         );
 
-        $this->container->singleton(
-            ConsoleComponentRenderer::class,
-            fn () => new TestConsoleComponentRenderer(),
-        );
-
         $appConfig->exceptionHandlers[] = $this->container->get(ConsoleExceptionHandler::class);
 
         $application = new ConsoleApplication(
@@ -44,7 +38,6 @@ final readonly class ConsoleCommandTester
 
         return new TestConsoleHelper(
             $this->container->get(ConsoleOutput::class),
-            $this->container->get(ConsoleComponentRenderer::class),
         );
     }
 }

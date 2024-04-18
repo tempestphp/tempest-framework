@@ -28,6 +28,11 @@ final class PasswordComponent implements ConsoleComponent, HasCursor
         return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
     }
 
+    public function foo()
+    {
+
+    }
+
     #[HandlesKey(Key::BACKSPACE)]
     public function backspace(): void
     {

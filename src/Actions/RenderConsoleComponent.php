@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Terminal;
+namespace Tempest\Console\Actions;
 
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
-use Tempest\Console\ConsoleComponentRenderer;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\Terminal\InteractiveTerminal;
 use Tempest\Support\Reflection\Attributes;
 
-final readonly class GenericConsoleComponentRenderer implements ConsoleComponentRenderer
+final readonly class RenderConsoleComponent
 {
     public function __construct(private Console $console)
     {
     }
 
-    public function render(ConsoleComponent $component): mixed
+    public function __invoke(ConsoleComponent $component): mixed
     {
         $terminal = new InteractiveTerminal($this->console);
 

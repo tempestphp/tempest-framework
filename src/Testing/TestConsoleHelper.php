@@ -8,11 +8,8 @@ use PHPUnit\Framework\Assert;
 
 final class TestConsoleHelper
 {
-    private ?string $previousRender = null;
-
     public function __construct(
         private readonly TestConsoleOutput $output,
-        private readonly TestConsoleComponentRenderer $componentRenderer,
     ) {
     }
 
@@ -116,84 +113,6 @@ final class TestConsoleHelper
                 PHP_EOL . implode(PHP_EOL, $this->output->getSuccessLines()),
             ),
         );
-
-        return $this;
-    }
-
-    public function write(string $text): self
-    {
-        $this->componentRenderer->write($text);
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function up(): self
-    {
-        $this->componentRenderer->up();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function down(): self
-    {
-        $this->componentRenderer->down();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function left(): self
-    {
-        $this->componentRenderer->left();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function right(): self
-    {
-        $this->componentRenderer->right();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function enter(): self
-    {
-        $this->componentRenderer->enter();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function backspace(): self
-    {
-        $this->componentRenderer->backspace();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function delete(): self
-    {
-        $this->componentRenderer->delete();
-
-        return $this->renderCurrentComponent();
-    }
-
-    public function space(): self
-    {
-        $this->componentRenderer->space();
-
-        return $this->renderCurrentComponent();
-    }
-
-    private function renderCurrentComponent(): self
-    {
-        $render = $this->componentRenderer->renderCurrentComponent();
-
-        if ($this->previousRender) {
-            $this->output->clearLast();
-        }
-
-        $this->output->write($render);
-
-        $this->previousRender = $render;
 
         return $this;
     }

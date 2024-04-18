@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Tempest\Console\Actions\RenderConsoleComponent;
 use Tempest\Console\Components\ConfirmComponent;
 use Tempest\Console\Components\PasswordComponent;
 use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
 use Tempest\Console\Components\TextBoxComponent;
-use Tempest\Container\GenericContainer;
 
 final class GenericConsole implements Console
 {
@@ -71,7 +71,7 @@ final class GenericConsole implements Console
 
     public function component(ConsoleComponent $component): mixed
     {
-        return GenericContainer::instance()->get(ConsoleComponentRenderer::class)->render($component);
+        return (new RenderConsoleComponent($this))($component);
     }
 
     public function ask(string $question, ?array $options = null): string
