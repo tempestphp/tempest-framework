@@ -1,17 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Components;
 
-use Tempest\Console\Components\MultipleChoiceComponent;
 use PHPUnit\Framework\TestCase;
+use Tempest\Console\Components\MultipleChoiceComponent;
 
+/**
+ * @internal
+ * @small
+ */
 class MultipleChoiceComponentTest extends TestCase
 {
     public function test_multiple_choice_component(): void
     {
         $component = new MultipleChoiceComponent('Label', ['a', 'b', 'c']);
 
-        $this->assertSame(<<<'TXT'
+        $this->assertSame(
+            <<<'TXT'
             <question>Label</question>
             > [ ]<em> a</em>
               [ ] b
@@ -19,7 +26,8 @@ class MultipleChoiceComponentTest extends TestCase
             
             Press <em>space</em> to select, press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel
             
-            TXT, $component->render(),
+            TXT,
+            $component->render(),
         );
 
         $component->down();
