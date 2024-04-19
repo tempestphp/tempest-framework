@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\PasswordComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tempest\Console\Testing\TestCursor;
 
 /**
  * @internal
@@ -23,9 +22,6 @@ class PasswordComponentTest extends TestCase
         $this->assertSame(
             <<<'TXT'
             <question>Label</question> 
-            
-            Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel
-            
             TXT,
             $component->render(),
         );
@@ -34,17 +30,15 @@ class PasswordComponentTest extends TestCase
         $component->input('b');
         $component->input('c');
 
-        $this->assertStringContainsString("<question>Label</question> ***\n", $component->render());
+        $this->assertSame("<question>Label</question> ***", $component->render());
 
         $component->input(Key::UP->value);
-        $this->assertStringContainsString("<question>Label</question> ***\n", $component->render());
+        $this->assertSame("<question>Label</question> ***", $component->render());
 
         $component->backspace();
-        $this->assertStringContainsString("<question>Label</question> **\n", $component->render());
+        $this->assertSame("<question>Label</question> **", $component->render());
 
-        $cursor = new TestCursor(1, 1);
-        $component->placeCursor($cursor);
-        $this->assertTrue($cursor->getPosition()->equals(new Point(11, 1)));
+        $this->assertTrue($component->getCursorPosition()->equals(new Point(10, 0)));
 
         $password = $component->enter();
         $this->assertSame('ab', $password);

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Tempest\Console\ConsoleComponent;
-use Tempest\Console\Cursor;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
+use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class PasswordComponent implements ConsoleComponent, HasCursor
+final class PasswordComponent implements ConsoleComponent, HasCursor, HasFooter
 {
     public string $password = '';
 
@@ -25,7 +25,12 @@ final class PasswordComponent implements ConsoleComponent, HasCursor
         $output = "<question>{$this->label}</question> ";
         $output .= str_repeat('*', strlen($this->password));
 
-        return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
+        return $output;
+    }
+
+    public function renderFooter(): string
+    {
+        return "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel";
     }
 
     #[HandlesKey(Key::BACKSPACE)]
@@ -52,11 +57,11 @@ final class PasswordComponent implements ConsoleComponent, HasCursor
         $this->password .= $key;
     }
 
-    public function placeCursor(Cursor $cursor): void
+    public function getCursorPosition(): Point
     {
-        $cursor->place(new Point(
-            x: $cursor->getPosition()->x + strlen($this->password) + strlen($this->label) + 3,
-            y: $cursor->getPosition()->y - 3,
-        ));
+        return new Point(
+            x: strlen($this->password) + strlen($this->label) + 3,
+            y: 0,
+        );
     }
 }

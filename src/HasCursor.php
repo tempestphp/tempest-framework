@@ -6,5 +6,5 @@ namespace Tempest\Console;
 
 interface HasCursor
 {
-    public function placeCursor(Cursor $cursor): void;
+    public function getCursorPosition(): Point;
 }

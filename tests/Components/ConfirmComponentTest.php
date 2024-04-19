@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\ConfirmComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tempest\Console\Testing\TestCursor;
 
 /**
  * @internal
@@ -21,10 +20,7 @@ class ConfirmComponentTest extends TestCase
         $component = new ConfirmComponent('Label', default: true);
 
         $this->assertSame(
-            <<<'TXT'
-            <question>Label</question> [<em><u>yes</u></em>/no] 
-            Press <em>enter</em> to confirm
-            TXT,
+            '<question>Label</question> [<em><u>yes</u></em>/no] ',
             $component->render(),
         );
 
@@ -47,8 +43,6 @@ class ConfirmComponentTest extends TestCase
 
         $this->assertFalse($component->enter());
 
-        $cursor = new TestCursor(1, 1);
-        $component->placeCursor($cursor);
-        $this->assertTrue($cursor->getPosition()->equals(new Point(2, 1)));
+        $this->assertTrue($component->getCursorPosition()->equals(new Point(20, 0)));
     }
 }

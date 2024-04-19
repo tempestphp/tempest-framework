@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Tempest\Console\ConsoleComponent;
-use Tempest\Console\Cursor;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
+use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
+use Tempest\Console\Point;
 
-final class ConfirmComponent implements ConsoleComponent, HasCursor
+final class ConfirmComponent implements ConsoleComponent, HasFooter, HasCursor
 {
     private bool $answer;
     private string $textualAnswer = '';
 
     public function __construct(
-        private string $question,
+        private readonly string $question,
         bool $default = false,
     ) {
         $this->answer = $default;
@@ -30,7 +31,12 @@ final class ConfirmComponent implements ConsoleComponent, HasCursor
             $this->answer ? '<em><u>yes</u></em>' : 'yes',
             $this->answer ? 'no' : '<em><u>no</u></em>',
             $this->textualAnswer,
-        ) . PHP_EOL . 'Press <em>enter</em> to confirm';
+        );
+    }
+
+    public function renderFooter(): string
+    {
+        return 'Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel';
     }
 
     #[HandlesKey(Key::DOWN)]
@@ -68,8 +74,11 @@ final class ConfirmComponent implements ConsoleComponent, HasCursor
         $this->answer = $this->textualAnswer === 'y';
     }
 
-    public function placeCursor(Cursor $cursor): void
+    public function getCursorPosition(): Point
     {
-        $cursor->moveUp()->moveRight(strlen($this->question) + 12 + strlen($this->textualAnswer));
+        return new Point(
+            x: strlen($this->question) + 15,
+            y: 0,
+        );
     }
 }

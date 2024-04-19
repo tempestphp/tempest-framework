@@ -4,13 +4,32 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Validation\Rules\Count;
+use Tempest\Validation\Rules\Email;
+use Tempest\Validation\Rules\Length;
 
 final readonly class InteractiveCommand
 {
     public function __construct(private Console $console)
     {
+    }
+
+    #[ConsoleCommand('interactive:validation')]
+    public function validation(): void
+    {
+        $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max:2)]);
+        $b = $this->console->ask('b',  validation: [new Email()]);
+
+        $this->console->success("$a $b");
+    }
+
+    #[ConsoleCommand('interactive:confirm')]
+    public function confirm(): void
+    {
+        $this->console->confirm('abc');
     }
 
     #[ConsoleCommand('interactive:password')]
@@ -30,6 +49,19 @@ final readonly class InteractiveCommand
                 'a', 'b', 'c',
             ],
         );
+
+        $result = json_encode($result);
+
+        $this->console->writeln("You picked <em>{$result}</em>");
+    }
+
+    #[ConsoleCommand('interactive:multiple')]
+    public function multiple(): void
+    {
+        $result = $this->console->component(new MultipleChoiceComponent(
+            'Pick several',
+            ['a', 'b', 'c'],
+        ), validation: [new Count(min: 1)]);
 
         $result = json_encode($result);
 

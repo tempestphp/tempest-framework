@@ -16,4 +16,9 @@ final class Point
     {
         return $this->x === $other->x && $this->y === $other->y;
     }
+
+    public function __toString(): string
+    {
+        return "[{$this->x},{$this->y}]";
+    }
 }

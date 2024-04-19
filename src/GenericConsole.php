@@ -69,18 +69,18 @@ final class GenericConsole implements Console
         return $this->output->when($expression, $callback);
     }
 
-    public function component(ConsoleComponent $component): mixed
+    public function component(ConsoleComponent $component, array $validation = []): mixed
     {
-        return (new RenderConsoleComponent($this))($component);
+        return (new RenderConsoleComponent($this))($component, $validation);
     }
 
-    public function ask(string $question, ?array $options = null): string
+    public function ask(string $question, ?array $options = null, array $validation = []): string
     {
-        if ($options === null || $options === []) {
-            return $this->component(new TextBoxComponent($question));
-        }
+        $component = ($options === null || $options === [])
+            ? new TextBoxComponent($question)
+            : new QuestionComponent($question, $options);
 
-        return $this->component(new QuestionComponent($question, $options));
+        return $this->component($component, $validation);
     }
 
     public function confirm(string $question, bool $default = false): bool

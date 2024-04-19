@@ -16,11 +16,11 @@ final class TerminalCursor implements Cursor
         private readonly Console $console,
         private readonly Terminal $terminal,
     ) {
-        $this->console->write("\033[6n");
+        $this->console->write("\e[6n");
 
-        preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', fread(STDIN, 1024), $matches);
+        preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', $this->console->read(1024), $matches);
 
-        $this->position = new Point((int)($matches['x'] ?? 1), (int)($matches['y'] ?? 1));
+        $this->position = new Point((int)($matches['x']), (int)($matches['y']));
     }
 
     public function getPosition(): Point

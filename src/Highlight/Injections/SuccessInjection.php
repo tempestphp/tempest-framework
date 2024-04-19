@@ -19,6 +19,6 @@ final readonly class SuccessInjection implements Injection
 
     public function style(string $content): string
     {
-        return TerminalStyle::BOLD(TerminalStyle::FG_DARK_GREEN(" {$content} "));
+        return TerminalStyle::BOLD(TerminalStyle::FG_DARK_GREEN($content));
     }
 }

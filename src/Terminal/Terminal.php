@@ -7,20 +7,19 @@ namespace Tempest\Console\Terminal;
 use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
+use Tempest\Console\HasFooter;
 use Tempest\Console\Point;
 
 final class Terminal
 {
     public int $width;
-
     public int $height;
-
-    public TerminalCursor $cursor;
-
+    public Cursor $cursor;
+    private Cursor $initialCursor;
     private ?string $previousRender = null;
-
-    private ?Point $currentCursorPosition = null;
+    private ?string $tty = null;
 
     public function __construct(
         private readonly Console $console,
@@ -28,31 +27,48 @@ final class Terminal
         $this->switchToInteractiveMode();
         $this->width = (int)exec('tput cols');
         $this->height = (int)exec('tput lines');
-        $this->cursor = new TerminalCursor($this->console, $this);
+        $this->initialCursor = new TerminalCursor($this->console, $this);
+        $this->cursor = clone $this->initialCursor;
     }
 
-    public function render(ConsoleComponent $component): mixed
-    {
+    public function render(
+        ConsoleComponent $component,
+        array $footerLines = [],
+        bool $renderFooter = true,
+    ): mixed {
         $rendered = $component->render();
+
+        if ($renderFooter) {
+            if ($component instanceof HasFooter) {
+                $footerLines = [...$footerLines, $component->renderFooter()];
+            }
+
+            if ($footerLines !== []) {
+                $rendered .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
+            }
+        }
 
         if (is_string($rendered)) {
             $rendered = [$rendered];
         }
 
         foreach ($rendered as $content) {
-            $this->restoreCurrentCursorPosition();
-
-            if ($this->previousRender) {
-                $this->clear();
-            }
-
+            $this->clear();
             $this->console->write($content);
             $this->previousRender = $content;
-            $this->cursor->moveDown(substr_count($content, PHP_EOL));
 
+            $initialCursorPosition = $this->initialCursor->getPosition();
             if ($component instanceof HasCursor) {
-                $this->storeCurrentCursorPosition();
-                $component->placeCursor($this->cursor);
+                $this->cursor->show();
+
+                $componentCursorPosition = $component->getCursorPosition();
+
+                $this->cursor->place(new Point(
+                    x: $initialCursorPosition->x + $componentCursorPosition->x,
+                    y: $initialCursorPosition->y + $componentCursorPosition->y,
+                ));
+            } else {
+                $this->cursor->hide();
             }
         }
 
@@ -69,17 +85,13 @@ final class Terminal
             return;
         }
 
-        $this->cursor->hide();
-
-        for ($i = 0; $i < substr_count($this->previousRender, PHP_EOL); $i++) {
-            $this->cursor->moveUp()->clearLine();
-        }
-
-        $this->cursor->show();
+        $this->cursor->place($this->initialCursor->getPosition());
+        $this->cursor->clearAfter();
     }
 
     public function switchToInteractiveMode(): self
     {
+        $this->tty = exec('stty -g');
         system("stty -echo");
         system("stty -icanon");
 
@@ -88,28 +100,13 @@ final class Terminal
 
     public function switchToNormalMode(): self
     {
+        $this->cursor->show();
+        system("stty {$this->tty}");
         system("stty echo");
         system("stty icanon");
+        $this->tty = null;
 
-        $this->console->writeln()->writeln();
-
-        return $this;
-    }
-
-    private function storeCurrentCursorPosition(): self
-    {
-        $this->currentCursorPosition = clone $this->cursor->position;
-
-        return $this;
-    }
-
-    private function restoreCurrentCursorPosition(): self
-    {
-        if ($this->currentCursorPosition === null) {
-            return $this;
-        }
-
-        $this->cursor->place($this->currentCursorPosition);
+        $this->console->writeln();
 
         return $this;
     }

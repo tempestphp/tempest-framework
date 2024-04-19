@@ -11,14 +11,24 @@ use Tempest\Console\ConsoleComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Reflection\Attributes;
+use Tempest\Validation\Exceptions\InvalidValueException;
+use Tempest\Validation\Rule;
+use Tempest\Validation\Validator;
 
-final readonly class RenderConsoleComponent
+final class RenderConsoleComponent
 {
-    public function __construct(private Console $console)
+    private array $validationErrors = [];
+
+    public function __construct(private readonly Console $console)
     {
     }
 
-    public function __invoke(ConsoleComponent $component): mixed
+    /**
+     * @param ConsoleComponent $component
+     * @param \Tempest\Validation\Rule[] $validation
+     * @return mixed
+     */
+    public function __invoke(ConsoleComponent $component, array $validation = []): mixed
     {
         $terminal = new Terminal($this->console);
 
@@ -47,15 +57,26 @@ final readonly class RenderConsoleComponent
                 }
             }
 
-            // If a handler returned a result, we'll return
-            if ($return !== null) {
-                $terminal->switchToNormalMode();
+            if ($return === null) {
+                $terminal->render($component, footerLines: $this->validationErrors);
+            } else {
+                $this->validationErrors = [];
 
-                return $return;
+                $failingRule = $this->validate($return, $validation);
+
+                if ($failingRule) {
+                    $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
+                }
+
+                if ($this->validationErrors) {
+                    $terminal->render($component, footerLines: $this->validationErrors);
+                } else {
+                    $terminal->render($component, renderFooter: false);
+                    $terminal->switchToNormalMode();
+
+                    return $return;
+                }
             }
-
-            // Rerender the component
-            $terminal->render($component);
         }
 
         return null;
@@ -80,5 +101,23 @@ final readonly class RenderConsoleComponent
         }
 
         return [$keyBindings, $inputHandlers];
+    }
+
+    /**
+     * @param mixed $value
+     * @param \Tempest\Validation\Rule[] $validation
+     * @return Rule|null
+     */
+    private function validate(mixed $value, array $validation): ?Rule
+    {
+        $validator = new Validator();
+
+        try {
+            $validator->validateValue($value, $validation);
+        } catch (InvalidValueException $e) {
+            return $e->failingRules[0];
+        }
+
+        return null;
     }
 }
