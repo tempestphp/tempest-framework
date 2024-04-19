@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Console\Highlight\ConsoleComponentLanguage;
+use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\LightTerminalTheme;
 
@@ -73,7 +73,7 @@ final class GenericConsoleOutput implements ConsoleOutput
 
         fwrite(
             $stdout,
-            $highlighter->parse($content, new  ConsoleComponentLanguage()),
+            $highlighter->parse($content, new  TempestConsoleLanguage()),
         );
 
         fclose($stdout);

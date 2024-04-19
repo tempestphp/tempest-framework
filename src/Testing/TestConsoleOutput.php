@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Tempest\Console\ConsoleOutput;
-use Tempest\Console\Highlight\ConsoleComponentLanguage;
+use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\LightTerminalTheme;
 use Tempest\Highlight\Themes\TerminalStyle;
@@ -31,7 +31,7 @@ final class TestConsoleOutput implements ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 
-        $line = $highlighter->parse($line, new  ConsoleComponentLanguage());
+        $line = $highlighter->parse($line, new  TempestConsoleLanguage());
 
         $this->lines[] = $line;
 
@@ -42,7 +42,7 @@ final class TestConsoleOutput implements ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 
-        $line = $highlighter->parse($line, new  ConsoleComponentLanguage());
+        $line = $highlighter->parse($line, new  TempestConsoleLanguage());
 
         $this->lines[] = $line;
 

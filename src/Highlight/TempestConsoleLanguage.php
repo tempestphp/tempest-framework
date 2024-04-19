@@ -15,7 +15,7 @@ use Tempest\Console\Highlight\Injections\SuccessInjection;
 use Tempest\Console\Highlight\Injections\UnderlineInjection;
 use Tempest\Highlight\Language;
 
-final readonly class ConsoleComponentLanguage implements Language
+final readonly class TempestConsoleLanguage implements Language
 {
     public function getName(): string
     {
