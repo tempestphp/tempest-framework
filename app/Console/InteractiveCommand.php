@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console;
 
-use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Validation\Rules\Count;
@@ -13,7 +12,9 @@ use Tempest\Validation\Rules\Length;
 
 final readonly class InteractiveCommand
 {
-    public function __construct(private Console $console) {}
+    public function __construct(private Console $console)
+    {
+    }
 
     #[ConsoleCommand('interactive:validation')]
     public function validation(): void
