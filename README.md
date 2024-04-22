@@ -1,4 +1,4 @@
-# tempest/console
+# Frictionless command line interfaces with PHP
 
 ```
 composer require tempest/console
