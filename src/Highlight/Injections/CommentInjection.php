@@ -31,7 +31,7 @@ final readonly class CommentInjection implements Injection
             ],
         );
 
-        $comment = str_replace('/* * ', '/*', $comment);
+        $comment = str_replace('/* *', '/*', $comment);
 
         return TerminalStyle::FG_GRAY($comment);
     }
