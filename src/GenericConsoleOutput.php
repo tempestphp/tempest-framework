@@ -21,9 +21,9 @@ final class GenericConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line): ConsoleOutput
+    public function write(string $contents): ConsoleOutput
     {
-        $this->writeToStdOut($line);
+        $this->writeToStdOut($contents);
 
         return $this;
     }

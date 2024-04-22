@@ -27,13 +27,13 @@ final class TestConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line): ConsoleOutput
+    public function write(string $contents): ConsoleOutput
     {
         $highlighter = new Highlighter(new LightTerminalTheme());
 
-        $line = $highlighter->parse($line, new  TempestConsoleLanguage());
+        $contents = $highlighter->parse($contents, new  TempestConsoleLanguage());
 
-        $this->lines[] = $line;
+        $this->lines[] = $contents;
 
         return $this;
     }

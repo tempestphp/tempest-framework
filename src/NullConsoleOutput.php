@@ -17,7 +17,7 @@ final class NullConsoleOutput implements ConsoleOutput
         return $clone;
     }
 
-    public function write(string $line): ConsoleOutput
+    public function write(string $contents): ConsoleOutput
     {
         return $this;
     }

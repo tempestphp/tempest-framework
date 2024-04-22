@@ -35,9 +35,9 @@ final class GenericConsole implements Console
         return $this->input->read($bytes);
     }
 
-    public function write(string $line): self
+    public function write(string $contents): self
     {
-        $this->output->write($line);
+        $this->output->write($contents);
 
         return $this;
     }
