@@ -28,7 +28,7 @@ final readonly class CommentInjection implements Injection
                     '/*',
                     ...array_map(
                         fn (string $line) => " * {$line}",
-                        explode(PHP_EOL, $content),
+                        $lines,
                     ),
                     ' */',
                 ],

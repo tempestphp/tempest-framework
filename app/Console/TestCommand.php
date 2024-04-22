@@ -24,7 +24,7 @@ final readonly class TestCommand
         //        $name = $this->console->ask("What's your name?");
 
         $this->console->writeln('<comment>Comment
-helwo</comment>');
+asd</comment>');
         //        $email = $this->console->ask("What's your email?", validation: [new Email()]);
         //
         //        $this->console->writeln()->writeln("Welcome, <{$email}>");
