@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use Closure;
 use Tempest\Console\Actions\RenderConsoleComponent;
 use Tempest\Console\Components\ConfirmComponent;
+use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Components\PasswordComponent;
 use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
@@ -74,11 +75,15 @@ final class GenericConsole implements Console
         return (new RenderConsoleComponent($this))($component, $validation);
     }
 
-    public function ask(string $question, ?array $options = null, array $validation = []): string
+    public function ask(string $question, ?array $options = null, bool $multiple = false, array $validation = []): string|array
     {
-        $component = ($options === null || $options === [])
-            ? new TextBoxComponent($question)
-            : new QuestionComponent($question, $options);
+        if ($options === null || $options === []) {
+            $component = new TextBoxComponent($question);
+        } elseif ($multiple) {
+            $component = new MultipleChoiceComponent($question, $options);
+        } else {
+            $component = new QuestionComponent($question, $options);
+        }
 
         return $this->component($component, $validation);
     }

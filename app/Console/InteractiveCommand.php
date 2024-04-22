@@ -13,15 +13,13 @@ use Tempest\Validation\Rules\Length;
 
 final readonly class InteractiveCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(private Console $console) {}
 
     #[ConsoleCommand('interactive:validation')]
     public function validation(): void
     {
-        $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max:2)]);
-        $b = $this->console->ask('b',  validation: [new Email()]);
+        $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max: 2)]);
+        $b = $this->console->ask('b', validation: [new Email()]);
 
         $this->console->success("$a $b");
     }
@@ -58,10 +56,12 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:multiple')]
     public function multiple(): void
     {
-        $result = $this->console->component(new MultipleChoiceComponent(
-            'Pick several',
-            ['a', 'b', 'c'],
-        ), validation: [new Count(min: 1)]);
+        $result = $this->console->ask(
+            question: 'Pick several',
+            options: ['a', 'b', 'c'],
+            multiple: true,
+            validation: [new Count(min: 1)],
+        );
 
         $result = json_encode($result);
 

@@ -16,10 +16,12 @@ interface Console extends ConsoleInput, ConsoleOutput
 
     /**
      * @param string $question
-     * @param array $options
+     * @param array|null $options
+     * @param bool $multiple
      * @param \Tempest\Validation\Rule[] $validation
+     * @return string
      */
-    public function ask(string $question, ?array $options = null, array $validation = []): string;
+    public function ask(string $question, ?array $options = null, bool $multiple = false, array $validation = []): string|array;
 
     public function confirm(string $question, bool $default = false): bool;
 
