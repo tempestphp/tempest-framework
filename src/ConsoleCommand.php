@@ -6,25 +6,19 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
-use Tempest\Support\ArrayHelper;
 
 #[Attribute]
 final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 
-    /** @var string[] */
-    public readonly array $help;
-
     public function __construct(
         private readonly ?string $name = null,
         public readonly ?string $description = null,
         /** @var string[] */
         public readonly array $aliases = [],
-        /** @var string|string[] $help */
-        string|array $help = [],
+        public readonly ?string $help = null,
     ) {
-        $this->help = ArrayHelper::wrap($help);
     }
 
     public function setHandler(ReflectionMethod $handler): self

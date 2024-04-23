@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use Tempest\AppConfig;
 use Tempest\Application;
+use Tempest\Console\Actions\RenderConsoleCommandHelp;
 use Tempest\Console\Actions\RenderConsoleCommandOverview;
 use Tempest\Console\Exceptions\CommandNotFoundException;
 use Tempest\Console\Exceptions\ConsoleException;
@@ -80,6 +81,12 @@ final readonly class ConsoleApplication implements Application
                     commandName: $commandName,
                     consoleConfig: $config,
                 );
+            }
+
+            if ($this->argumentBag->get('-h')) {
+                $this->container->get(RenderConsoleCommandHelp::class)($consoleCommand);
+
+                return;
             }
 
             $handler = $consoleCommand->handler;

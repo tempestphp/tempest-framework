@@ -14,11 +14,12 @@ final readonly class Package
     {
     }
 
-    #[ConsoleCommand]
+    #[ConsoleCommand(help: 'help text')]
     public function info(
         #[ConsoleArgument(
             description: 'The name of the package',
-            help: 'Extended help text for this argument',
+            help: 'Extended help text for this argument
+            with a new line',
             aliases: ['n'],
         )]
         string $name

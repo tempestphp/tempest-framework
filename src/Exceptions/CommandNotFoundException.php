@@ -18,7 +18,7 @@ final class CommandNotFoundException extends ConsoleException
 
     public function render(Console $console): void
     {
-        $similarCommands = $this->getSimilarCommands();
+        $similarCommands = $this->getSimilarCommands($this->commandName);
 
         $console->writeln(
             sprintf('<error>Command %s not found</error>', $this->commandName),
@@ -44,12 +44,17 @@ final class CommandNotFoundException extends ConsoleException
         throw new MistypedCommandException($intendedCommand);
     }
 
-    private function getSimilarCommands(): array
+    private function getSimilarCommands(string $name): array
     {
         $similarCommands = [];
 
         foreach ($this->consoleConfig->commands as $consoleCommand) {
-            $levenshtein = levenshtein($this->commandName, $consoleCommand->getName());
+            if (str_starts_with($consoleCommand->getName(), $name)) {
+                $similarCommands[] = $consoleCommand->getName();
+                continue;
+            }
+
+            $levenshtein = levenshtein($name, $consoleCommand->getName());
 
             if ($levenshtein <= 3) {
                 $similarCommands[] = $consoleCommand->getName();
