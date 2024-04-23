@@ -51,6 +51,7 @@ final class CommandNotFoundException extends ConsoleException
         foreach ($this->consoleConfig->commands as $consoleCommand) {
             if (str_starts_with($consoleCommand->getName(), $name)) {
                 $similarCommands[] = $consoleCommand->getName();
+
                 continue;
             }
 

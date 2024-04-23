@@ -10,7 +10,9 @@ use Tempest\Console\ConsoleOutput;
 
 final readonly class RenderConsoleCommandHelp
 {
-    public function __construct(private Console $console) {}
+    public function __construct(private Console $console)
+    {
+    }
 
     public function __invoke(ConsoleCommand $consoleCommand): void
     {
