@@ -24,6 +24,12 @@ final class ConsoleInputArgument
                 position: null,
                 value: $value,
             );
+        } elseif(str_starts_with($argument, '-')) {
+            return new ConsoleInputArgument(
+                name: $argument,
+                position: null,
+                value: true,
+            );
         } else {
             return new ConsoleInputArgument(
                 name: null,

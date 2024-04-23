@@ -58,12 +58,6 @@ final readonly class ConsoleArgumentDefinition
             return false;
         }
 
-        foreach ([$this->name, ...$this->aliases] as $alias) {
-            if ($alias === $argument->name) {
-                return true;
-            }
-
-            return false;
-        }
+        return in_array($argument->name, [$this->name, ...$this->aliases]);
     }
 }

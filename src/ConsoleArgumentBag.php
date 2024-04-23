@@ -39,6 +39,17 @@ final class ConsoleArgumentBag
         return $this->arguments;
     }
 
+    public function get(string $name): ?ConsoleInputArgument
+    {
+        foreach ($this->arguments as $argument) {
+            if ($argument->name === $name) {
+                return $argument;
+            }
+        }
+
+        return null;
+    }
+
     public function findFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
     {
         foreach ($this->arguments as $argument) {

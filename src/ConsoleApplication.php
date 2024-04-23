@@ -18,7 +18,7 @@ use Throwable;
 final readonly class ConsoleApplication implements Application
 {
     public function __construct(
-        private ConsoleArgumentBag $argumentBag,
+        public ConsoleArgumentBag $argumentBag,
         private Container $container,
         private AppConfig $appConfig,
     ) {

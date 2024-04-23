@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Console;
 
 use Exception;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 
 final readonly class FailCommand
 {
     #[ConsoleCommand('fail')]
-    public function __invoke(string $input = 'default')
+    public function __invoke(string $input = 'default', #[ConsoleArgument(aliases: ['-v'])] bool $verbose = false): void
     {
         failingFunction($input);
     }

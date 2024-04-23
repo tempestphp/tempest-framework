@@ -36,10 +36,7 @@ final readonly class Hello
         aliases: ['t'],
     )]
     public function test(
-        #[ConsoleArgument(
-            help: 'The path to the file',
-            aliases: ['ov']
-        )]
+        #[ConsoleArgument]
         ?int $optionalValue = null,
         bool $flag = false
     ) {
