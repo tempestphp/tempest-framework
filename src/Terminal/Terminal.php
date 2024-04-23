@@ -23,8 +23,7 @@ final class Terminal
 
     public function __construct(
         private readonly Console $console,
-    )
-    {
+    ) {
         $this->switchToInteractiveMode();
         $this->width = (int)exec('tput cols');
         $this->height = (int)exec('tput lines');
@@ -59,8 +58,7 @@ final class Terminal
         ConsoleComponent $component,
         array $footerLines = [],
         bool $renderFooter = true,
-    ): mixed
-    {
+    ): mixed {
         $rendered = $component->render();
 
         if ($renderFooter) {
