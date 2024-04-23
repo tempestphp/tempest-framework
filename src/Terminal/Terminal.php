@@ -23,7 +23,8 @@ final class Terminal
 
     public function __construct(
         private readonly Console $console,
-    ) {
+    )
+    {
         $this->switchToInteractiveMode();
         $this->width = (int)exec('tput cols');
         $this->height = (int)exec('tput lines');
@@ -31,11 +32,35 @@ final class Terminal
         $this->cursor = clone $this->initialCursor;
     }
 
+    public function switchToInteractiveMode(): self
+    {
+        $this->tty = exec('stty -g');
+        system("stty -echo");
+        system("stty -icanon");
+
+        return $this;
+    }
+
+    public function switchToNormalMode(): self
+    {
+        $this->cursor->show();
+
+        system("stty {$this->tty}");
+        system("stty echo");
+        system("stty icanon");
+        $this->tty = null;
+
+        $this->console->writeln();
+
+        return $this;
+    }
+
     public function render(
         ConsoleComponent $component,
         array $footerLines = [],
         bool $renderFooter = true,
-    ): mixed {
+    ): mixed
+    {
         $rendered = $component->render();
 
         if ($renderFooter) {
@@ -53,20 +78,13 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
-            $this->clear();
-            $this->console->write($content);
-            $this->previousRender = $content;
+            $this
+                ->clear()
+                ->write($content)
+                ->resetInitialCursor();
 
-            $initialCursorPosition = $this->initialCursor->getPosition();
             if ($component instanceof HasCursor) {
-                $this->cursor->show();
-
-                $componentCursorPosition = $component->getCursorPosition();
-
-                $this->cursor->place(new Point(
-                    x: $initialCursorPosition->x + $componentCursorPosition->x,
-                    y: $initialCursorPosition->y + $componentCursorPosition->y,
-                ));
+                $this->placeComponentCursor($component);
             } else {
                 $this->cursor->hide();
             }
@@ -79,34 +97,53 @@ final class Terminal
         return null;
     }
 
-    private function clear(): void
+    private function clear(): self
     {
         if ($this->previousRender === null) {
-            return;
+            return $this;
         }
 
-        $this->cursor->place($this->initialCursor->getPosition());
-        $this->cursor->clearAfter();
-    }
-
-    public function switchToInteractiveMode(): self
-    {
-        $this->tty = exec('stty -g');
-        system("stty -echo");
-        system("stty -icanon");
+        $this->cursor
+            ->place($this->initialCursor->getPosition())
+            ->clearAfter();
 
         return $this;
     }
 
-    public function switchToNormalMode(): self
+    private function resetInitialCursor(): void
     {
-        $this->cursor->show();
-        system("stty {$this->tty}");
-        system("stty echo");
-        system("stty icanon");
-        $this->tty = null;
+        $requiredHeight = substr_count($this->previousRender, PHP_EOL);
+        $availableHeight = $this->height - $this->initialCursor->getPosition()->y;
 
-        $this->console->writeln();
+        if ($requiredHeight > $availableHeight) {
+            $this->initialCursor->position = new Point(
+                x: $this->initialCursor->position->x,
+                y: $this->height - $requiredHeight,
+            );
+        }
+    }
+
+    private function write(string $content): self
+    {
+        $this->console->write($content);
+
+        $this->previousRender = $content;
+
+        return $this;
+    }
+
+    private function placeComponentCursor(HasCursor $component): self
+    {
+        $initialCursorPosition = $this->initialCursor->getPosition();
+
+        $componentCursorPosition = $component->getCursorPosition();
+
+        $this->cursor->place(new Point(
+            x: $initialCursorPosition->x + $componentCursorPosition->x,
+            y: $initialCursorPosition->y + $componentCursorPosition->y,
+        ));
+
+        $this->cursor->show();
 
         return $this;
     }

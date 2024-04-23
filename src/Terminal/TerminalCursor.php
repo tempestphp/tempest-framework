@@ -111,7 +111,7 @@ final class TerminalCursor implements Cursor
 
     public function hide(): self
     {
-        $this->console->write("\e[?25l");
+//        $this->console->write("\e[?25l");
 
         return $this;
     }
