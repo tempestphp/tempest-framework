@@ -83,7 +83,7 @@ final readonly class ConsoleApplication implements Application
                 );
             }
 
-            if ($this->argumentBag->get('-h')) {
+            if ($this->argumentBag->get('-h') || $this->argumentBag->get('help')) {
                 $this->container->get(RenderConsoleCommandHelp::class)($consoleCommand);
 
                 return;
