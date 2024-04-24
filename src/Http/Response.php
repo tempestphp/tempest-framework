@@ -28,15 +28,15 @@ interface Response
 
     public function setView(string|View $view, mixed ...$data): self;
 
-    public function addSession(string $name, mixed $value): void;
+    public function addSession(string $name, mixed $value): self;
 
-    public function removeSession(string $name): void;
+    public function removeSession(string $name): self;
 
-    public function destroySession(): void;
+    public function destroySession(): self;
 
-    public function addCookie(Cookie $cookie): void;
+    public function addCookie(Cookie $cookie): self;
 
-    public function removeCookie(string $key): void;
+    public function removeCookie(string $key): self;
 
     public function getCookie(string $name): ?Cookie;
 
@@ -49,5 +49,5 @@ interface Response
 
     public function redirect(string $to): self;
 
-    public function flash(string $key, mixed $value): void;
+    public function flash(string $key, mixed $value): self;
 }

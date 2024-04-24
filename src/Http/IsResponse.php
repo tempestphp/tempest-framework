@@ -78,29 +78,39 @@ trait IsResponse
         return $this;
     }
 
-    public function addSession(string $name, mixed $value): void
+    public function addSession(string $name, mixed $value): self
     {
         $this->getSession()->set($name, $value);
+
+        return $this;
     }
 
-    public function removeSession(string $name): void
+    public function removeSession(string $name): self
     {
         $this->getSession()->remove($name);
+
+        return $this;
     }
 
-    public function destroySession(): void
+    public function destroySession(): self
     {
         $this->getSession()->destroy();
+
+        return $this;
     }
 
-    public function addCookie(Cookie $cookie): void
+    public function addCookie(Cookie $cookie): self
     {
         $this->getCookieManager()->add($cookie);
+
+        return $this;
     }
 
-    public function removeCookie(string $key): void
+    public function removeCookie(string $key): self
     {
         $this->getCookieManager()->remove($key);
+
+        return $this;
     }
 
     public function getCookie(string $name): ?Cookie
@@ -113,9 +123,11 @@ trait IsResponse
         return $this->getCookieManager()->all();
     }
 
-    public function flash(string $key, mixed $value): void
+    public function flash(string $key, mixed $value): self
     {
         $this->getSession()->flash($key, $value);
+
+        return $this;
     }
 
     public function ok(): self
