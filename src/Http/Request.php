@@ -12,6 +12,8 @@ interface Request
 
     public function getUri(): string;
 
+    public function get(string $key): mixed;
+
     public function getBody(): array;
 
     public function getHeaders(): array;

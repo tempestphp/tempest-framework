@@ -24,19 +24,11 @@ trait IsRequest
         $this->query ??= $this->resolveQuery();
     }
 
-    public function get(): self
+    public function get(string $key): mixed
     {
-        $this->method = Method::GET;
-
-        return $this;
-    }
-
-    public function post(?array $body = null): self
-    {
-        $this->method = Method::POST;
-        $this->body = $body ?? $this->body;
-
-        return $this;
+        return $this->query[$key]
+            ?? $this->body[$key]
+            ?? null;
     }
 
     public function getMethod(): Method
