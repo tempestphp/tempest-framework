@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use PDO;
+use Tempest\Database\Transactions\TransactionManager;
 
 final readonly class GenericDatabase implements Database
 {
     public function __construct(
         private PDO $pdo,
+        private TransactionManager $transactionManager,
     ) {
     }
 
@@ -37,6 +39,11 @@ final readonly class GenericDatabase implements Database
     public function fetchFirst(Query $query): ?array
     {
         return $this->fetch($query)[0] ?? null;
+    }
+
+    public function transaction(): TransactionManager
+    {
+        return $this->transactionManager;
     }
 
     private function resolveBindings(Query $query): array

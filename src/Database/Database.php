@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Transactions\TransactionManager;
+
 interface Database
 {
     public function execute(Query $query): void;
@@ -13,4 +15,6 @@ interface Database
     public function fetch(Query $query): array;
 
     public function fetchFirst(Query $query): ?array;
+
+    public function transaction(): TransactionManager;
 }
