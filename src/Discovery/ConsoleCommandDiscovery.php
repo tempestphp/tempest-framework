@@ -40,14 +40,18 @@ final readonly class ConsoleCommandDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->consoleConfig->commands));
+        file_put_contents(self::CACHE_PATH, serialize([
+            'commands' => $this->consoleConfig->commands,
+            'scheduled_commands' => $this->consoleConfig->scheduledCommands,
+        ]));
     }
 
     public function restoreCache(Container $container): void
     {
-        $commands = unserialize(file_get_contents(self::CACHE_PATH));
+        ['commands' => $commands, 'scheduled_commands' => $scheduledCommands] = unserialize(file_get_contents(self::CACHE_PATH));
 
         $this->consoleConfig->commands = $commands;
+        $this->consoleConfig->scheduledCommands = $scheduledCommands;
     }
 
     public function destroyCache(): void

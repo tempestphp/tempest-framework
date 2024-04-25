@@ -13,6 +13,9 @@ final class ConsoleConfig
 
         /** @var \Tempest\Console\ConsoleCommand[] $commands */
         public array $commands = [],
+
+        /** @var \Tempest\Console\ConsoleCommand[] $commands */
+        public array $scheduledCommands = [],
     ) {
     }
 
@@ -21,6 +24,14 @@ final class ConsoleConfig
         $consoleCommand->setHandler($handler);
 
         $this->commands[$consoleCommand->getName()] = $consoleCommand;
+
+        if ($consoleCommand->cron !== null) {
+            $this->scheduledCommands[] = $consoleCommand;
+
+            usort($this->scheduledCommands, function (ConsoleCommand $a, ConsoleCommand $b) {
+                return $a->cron->runInBackground <=> $b->cron->runInBackground;
+            });
+        }
 
         foreach ($consoleCommand->aliases as $alias) {
             if (array_key_exists($alias, $this->commands)) {
