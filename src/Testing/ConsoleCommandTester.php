@@ -13,6 +13,7 @@ use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
 use Tempest\Container\Container;
+use Tempest\Highlight\Highlighter;
 
 final readonly class ConsoleCommandTester
 {
@@ -26,7 +27,7 @@ final readonly class ConsoleCommandTester
 
         $this->container->singleton(
             ConsoleOutput::class,
-            fn () => new TestConsoleOutput(),
+            fn () => new TestConsoleOutput($this->container->get(Highlighter::class)),
         );
 
         $this->container->singleton(

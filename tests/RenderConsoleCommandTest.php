@@ -8,7 +8,9 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Highlight\TempestTerminalTheme;
 use Tempest\Console\Testing\TestConsoleOutput;
+use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Console\Fixtures\MyConsole;
 
 /**
@@ -25,7 +27,7 @@ class RenderConsoleCommandTest extends TestCase
 
         $consoleCommand->setHandler($handler);
 
-        $output = new TestConsoleOutput();
+        $output = new TestConsoleOutput(new Highlighter(new TempestTerminalTheme()));
 
         (new RenderConsoleCommand($output))($consoleCommand);
 

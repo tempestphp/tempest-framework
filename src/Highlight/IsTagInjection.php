@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Highlight;
 
-use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\ParsedInjection;
 
@@ -40,8 +39,8 @@ trait IsTagInjection
                     replace: str_replace(
                         ["<{$tag}>", "</{$tag}>"],
                         [
-                            Escape::tokens($theme->before($this->getTokenType())),
-                            Escape::tokens($theme->after($this->getTokenType())),
+                            $theme->before($this->getTokenType()),
+                            $theme->after($this->getTokenType()),
                         ],
                         $content
                     ),

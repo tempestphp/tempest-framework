@@ -7,41 +7,45 @@ namespace Tempest\Console\Testing;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Highlight\Highlighter;
-use Tempest\Highlight\Themes\LightTerminalTheme;
 use Tempest\Highlight\Themes\TerminalStyle;
 
 final class TestConsoleOutput implements ConsoleOutput
 {
-    private array $lines = [];
+    private array $formattedLines = [];
+    private array $rawLines = [];
+
     private array $errorLines = [];
     private array $infoLines = [];
     private array $successLines = [];
 
+    public function __construct(
+        private readonly Highlighter $highlighter,
+    ) {
+    }
+
     public function write(string $contents): static
     {
-        $highlighter = new Highlighter(new LightTerminalTheme());
+        $rawHighlighter = new Highlighter(new RawTerminalTheme());
+        $this->rawLines[] = $rawHighlighter->parse($contents, new TempestConsoleLanguage());
 
-        $contents = $highlighter->parse($contents, new  TempestConsoleLanguage());
-
-        $this->lines[] = $contents;
+        $this->formattedLines[] = $this->highlighter->parse($contents, new TempestConsoleLanguage());
 
         return $this;
     }
 
     public function writeln(string $line = ''): static
     {
-        $highlighter = new Highlighter(new LightTerminalTheme());
+        $rawHighlighter = new Highlighter(new RawTerminalTheme());
+        $this->rawLines[] = $rawHighlighter->parse($line, new TempestConsoleLanguage());
 
-        $line = $highlighter->parse($line, new  TempestConsoleLanguage());
-
-        $this->lines[] = $line;
+        $this->formattedLines[] = $this->highlighter->parse($line, new TempestConsoleLanguage());
 
         return $this;
     }
 
     public function getLinesWithFormatting(): array
     {
-        return $this->lines;
+        return $this->formattedLines;
     }
 
     public function getLinesWithoutFormatting(): array
@@ -53,7 +57,7 @@ final class TestConsoleOutput implements ConsoleOutput
 
         return array_map(
             fn (string $line) => str_replace($pattern, '', $line),
-            $this->getLinesWithFormatting(),
+            $this->rawLines,
         );
     }
 
@@ -84,7 +88,7 @@ final class TestConsoleOutput implements ConsoleOutput
 
     public function clearLast(): self
     {
-        unset($this->lines[array_key_last($this->lines)]);
+        unset($this->formattedLines[array_key_last($this->formattedLines)]);
 
         return $this;
     }
