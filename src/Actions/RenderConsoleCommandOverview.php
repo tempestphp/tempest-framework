@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Actions;
 
 use Tempest\AppConfig;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class RenderConsoleCommandOverview
 {
     public function __construct(
-        private ConsoleOutput $output,
+        private Console $console,
         private AppConfig $appConfig,
         private ConsoleConfig $consoleConfig,
     ) {
@@ -19,11 +19,11 @@ final readonly class RenderConsoleCommandOverview
 
     public function __invoke(): void
     {
-        $this->output
+        $this->console
             ->writeln("<h1>{$this->consoleConfig->name}</h1>")
             ->when(
                 expression: $this->appConfig->discoveryCache,
-                callback: fn (ConsoleOutput $output) => $output->error('Discovery cache is enabled!')
+                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
             );
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
@@ -40,12 +40,12 @@ final readonly class RenderConsoleCommandOverview
         ksort($commands);
 
         foreach ($commands as $group => $commandsForGroup) {
-            $this->output
+            $this->console
                 ->writeln()
                 ->writeln('<h2>' . ucfirst($group) . '</h2>');
 
             foreach ($commandsForGroup as $consoleCommand) {
-                (new RenderConsoleCommand($this->output))($consoleCommand);
+                (new RenderConsoleCommand($this->console))($consoleCommand);
             }
         }
     }

@@ -7,7 +7,6 @@ namespace Tempest\Console\Exceptions;
 use Tempest\Application;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleOutput;
 use Tempest\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\LightTerminalTheme;
@@ -27,7 +26,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
             ->error($throwable::class)
             ->when(
                 expression: $throwable->getMessage(),
-                callback: fn (ConsoleOutput $output) => $output->error($throwable->getMessage()),
+                callback: fn (Console $console) => $console->error($throwable->getMessage()),
             )
             ->writeln();
 

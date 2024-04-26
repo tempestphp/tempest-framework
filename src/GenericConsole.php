@@ -21,11 +21,6 @@ final readonly class GenericConsole implements Console
     ) {
     }
 
-    public function delimiter(string $delimiter): ConsoleOutput
-    {
-        return $this->output->delimiter($delimiter);
-    }
-
     public function readln(): string
     {
         return $this->input->readln();
@@ -36,38 +31,48 @@ final readonly class GenericConsole implements Console
         return $this->input->read($bytes);
     }
 
-    public function write(string $contents): self
+    public function write(string $contents): static
     {
         $this->output->write($contents);
 
         return $this;
     }
 
-    public function writeln(string $line = ''): self
+    public function writeln(string $line = ''): static
     {
         $this->output->writeln($line);
 
         return $this;
     }
 
-    public function info(string $line): ConsoleOutput
+    public function info(string $line): self
     {
-        return $this->output->info($line);
+        $this->writeln("<em>{$line}</em>");
+
+        return $this;
     }
 
-    public function error(string $line): ConsoleOutput
+    public function error(string $line): self
     {
-        return $this->output->error($line);
+        $this->writeln("<error>{$line}</error>");
+
+        return $this;
     }
 
-    public function success(string $line): ConsoleOutput
+    public function success(string $line): self
     {
-        return $this->output->success($line);
+        $this->writeln("<success>{$line}</success>");
+
+        return $this;
     }
 
-    public function when(mixed $expression, callable $callback): ConsoleOutput
+    public function when(mixed $expression, callable $callback): self
     {
-        return $this->output->when($expression, $callback);
+        if ($expression) {
+            $callback($this);
+        }
+
+        return $this;
     }
 
     public function component(ConsoleComponent $component, array $validation = []): mixed
