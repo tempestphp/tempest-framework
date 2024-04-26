@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Scheduler;
 
 use DateInterval;
-use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Scheduler\CronDefinition;
 
 class PeriodicCommand
@@ -20,7 +20,7 @@ class PeriodicCommand
     #[ConsoleCommand(
         name: 'periodic:dummy',
         cron: new CronDefinition(
-            interval: new DateInterval('PT1S'),
+            interval: new DateInterval('PT1M'),
             runInBackground: true,
         )
     )]
@@ -33,7 +33,7 @@ class PeriodicCommand
         name: 'periodic:every-five',
         description: 'Run every five minutes.',
         cron: new CronDefinition(
-            interval: new DateInterval('PT1S'),
+            interval: new DateInterval('PT5M'),
             runInBackground: true,
         )
     )]
