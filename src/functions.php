@@ -12,6 +12,7 @@ namespace Tempest {
     use Tempest\Http\Router;
     use Tempest\Http\Status;
     use Tempest\Mapper\ObjectMapper;
+    use Tempest\Support\Path;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
     use Tempest\View\View;
@@ -30,13 +31,7 @@ namespace Tempest {
 
     function path(string ...$parts): string
     {
-        $path = implode('/', $parts);
-
-        return str_replace(
-            ['//', '\\', '\\\\'],
-            ['/', '/', '/'],
-            $path,
-        );
+        return Path::join(...$parts);
     }
 
     function view(string $path): View
