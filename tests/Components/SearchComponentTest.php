@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Components;
 
 use Tempest\Console\Components\SearchComponent;
@@ -7,12 +9,16 @@ use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class SearchComponentTest extends TestCase
 {
     public function test_search_component(): void
     {
         $component = new SearchComponent('Search', $this->search(...));
-        
+
         $rendered = $component->render();
         $this->assertSame('<question>Search</question> ', $rendered);
         $this->assertSame('Press <em>up</em>/<em>down</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel', $component->renderFooter());
@@ -85,7 +91,7 @@ class SearchComponentTest extends TestCase
         }
 
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
-        
+
         return array_filter(
             $data,
             fn (string $name) => str_contains(strtolower($name), strtolower($query)),
