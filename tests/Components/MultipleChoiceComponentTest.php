@@ -24,7 +24,7 @@ class MultipleChoiceComponentTest extends TestCase
               [ ] b
               [ ] c
             
-            Press <em>space</em> to select, press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel
+            Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel
             
             TXT,
             $component->render(),

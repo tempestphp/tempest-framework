@@ -95,7 +95,7 @@ final readonly class InteractiveCommand
 
         $result = $this->console->search(
             'Search',
-            function (string $query) use ($data) {
+            function (string $query) use ($data): array {
                 if ($query === '') {
                     return [];
                 }

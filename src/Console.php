@@ -29,6 +29,11 @@ interface Console extends ConsoleInput, ConsoleOutput
 
     public function progressBar(iterable $data, Closure $handler): array;
 
+    /**
+     * @param string $label
+     * @param Closure(string $search): array $search
+     * @return mixed
+     */
     public function search(string $label, Closure $search): mixed;
 
     public function info(string $line): self;
