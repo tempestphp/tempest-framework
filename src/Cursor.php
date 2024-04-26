@@ -8,6 +8,8 @@ interface Cursor
 {
     public function getPosition(): Point;
 
+    public function setPosition(Point $position): self;
+
     public function moveUp(int $amount = 1): self;
 
     public function moveDown(int $amount = 1): self;

@@ -12,6 +12,7 @@ use Tempest\Console\NullConsoleOutput;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Highlight\Highlighter;
 
 #[Singleton]
 final readonly class ConsoleOutputInitializer implements Initializer
@@ -23,7 +24,7 @@ final readonly class ConsoleOutputInitializer implements Initializer
         if (! $app instanceof ConsoleApplication) {
             $consoleOutput = new NullConsoleOutput();
         } else {
-            $consoleOutput = new GenericConsoleOutput();
+            $consoleOutput = new GenericConsoleOutput($container->get(Highlighter::class));
         }
 
         return $consoleOutput;

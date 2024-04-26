@@ -28,6 +28,13 @@ final class TerminalCursor implements Cursor
         return $this->position;
     }
 
+    public function setPosition(Point $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
     public function moveUp(int $amount = 1): self
     {
         $this->place(new Point(

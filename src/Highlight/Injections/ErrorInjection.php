@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Highlight\Injections;
 
+use Tempest\Console\Highlight\ConsoleTokenType;
 use Tempest\Console\Highlight\IsTagInjection;
 use Tempest\Highlight\Injection;
-use Tempest\Highlight\Themes\TerminalStyle;
 
 final readonly class ErrorInjection implements Injection
 {
@@ -17,8 +17,8 @@ final readonly class ErrorInjection implements Injection
         return 'error';
     }
 
-    public function style(string $content): string
+    public function getTokenType(): ConsoleTokenType
     {
-        return TerminalStyle::BOLD(TerminalStyle::FG_WHITE(TerminalStyle::BG_RED(TerminalStyle::FG_WHITE(" {$content} "))));
+        return ConsoleTokenType::ERROR;
     }
 }

@@ -35,6 +35,6 @@ class ConsoleExceptionHandlerTest extends TestCase
             ->assertContains('Exception')
             ->assertContains('test message')
             ->assertContains(__FILE__)
-            ->assertContains('$handler->handle(new Exception(\'test message\'));  < ');
+            ->assertContains('$handler->handle(new Exception(\'test message\')); <');
     }
 }

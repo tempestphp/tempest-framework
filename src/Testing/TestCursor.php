@@ -20,6 +20,14 @@ final class TestCursor implements Cursor
         return new Point($this->x, $this->y);
     }
 
+    public function setPosition(Point $position): self
+    {
+        $this->x = $position->x;
+        $this->y = $position->y;
+
+        return $this;
+    }
+
     public function moveUp(int $amount = 1): Cursor
     {
         $this->y = max(1, $this->y - 1);

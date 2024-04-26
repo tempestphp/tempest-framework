@@ -13,11 +13,11 @@ use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
 use Tempest\Console\Components\TextBoxComponent;
 
-final class GenericConsole implements Console
+final readonly class GenericConsole implements Console
 {
     public function __construct(
-        private readonly ConsoleInput $input,
-        private readonly ConsoleOutput $output,
+        private ConsoleInput $input,
+        private ConsoleOutput $output,
     ) {
     }
 
