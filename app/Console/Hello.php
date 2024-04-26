@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class Hello
 {
     public function __construct(
-        private ConsoleOutput $output,
+        private Console $console,
     ) {
     }
 
@@ -18,8 +18,8 @@ final readonly class Hello
     #[ConsoleCommand]
     public function world(string $input)
     {
-        $this->output->info('Hi');
-        $this->output->error($input);
+        $this->console->info('Hi');
+        $this->console->error($input);
     }
 
     #[ConsoleCommand]
@@ -27,12 +27,12 @@ final readonly class Hello
     {
         $value = $optionalValue ?? 'null';
 
-        $this->output->info("{$value}");
+        $this->console->info("{$value}");
 
         if ($flag) {
-            $this->output->info('flag');
+            $this->console->info('flag');
         } else {
-            $this->output->info('no-flag');
+            $this->console->info('no-flag');
         }
     }
 }

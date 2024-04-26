@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Exceptions;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Testing\TestConsoleOutput;
+use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,7 +20,7 @@ class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->appConfig->enableExceptionHandling = true;
 
-        $output = new TestConsoleOutput();
+        $output = new TestConsoleOutput($this->container->get(Highlighter::class));
 
         $this->container->singleton(ConsoleOutput::class, fn () => $output);
 

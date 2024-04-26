@@ -33,7 +33,7 @@ final readonly class DiscoveryClearCommand
 
             $discovery->destroyCache();
 
-            $this->console->success(implode('', [
+            $this->console->info(implode('', [
                 "<em>{$discoveryClass}</em>",
                 ' cleared successful',
             ]));

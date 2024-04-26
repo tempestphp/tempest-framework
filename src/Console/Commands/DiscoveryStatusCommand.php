@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Tempest\AppConfig;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class DiscoveryStatusCommand
 {
     public function __construct(
-        private ConsoleOutput $output,
+        private Console $console,
         private AppConfig $appConfig,
     ) {
     }
@@ -22,18 +22,18 @@ final readonly class DiscoveryStatusCommand
     )]
     public function __invoke(): void
     {
-        $this->output->info('Loaded Discovery classes');
+        $this->console->info('Loaded Discovery classes');
 
         foreach ($this->appConfig->discoveryClasses as $discoveryClass) {
-            $this->output->writeln('- ' . $discoveryClass);
+            $this->console->writeln('- ' . $discoveryClass);
         }
 
-        $this->output->writeln('');
+        $this->console->writeln();
 
-        $this->output->info('Folders included in Tempest');
+        $this->console->info('Folders included in Tempest');
 
         foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
-            $this->output->writeln('- '. $discoveryLocation->path);
+            $this->console->writeln('- '. $discoveryLocation->path);
         }
     }
 }
