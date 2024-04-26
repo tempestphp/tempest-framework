@@ -87,4 +87,26 @@ final readonly class InteractiveCommand
             },
         );
     }
+
+    #[ConsoleCommand('interactive:search')]
+    public function search(): void
+    {
+        $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
+
+        $result = $this->console->search(
+            'Search',
+            function (string $query) use ($data) {
+                if ($query === '') {
+                    return [];
+                }
+
+                return array_filter(
+                    $data,
+                    fn (string $name) => str_contains(strtolower($name), strtolower($query)),
+                );
+            }
+        );
+
+        $this->console->success("Hello {$result}");
+    }
 }

@@ -11,6 +11,7 @@ use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Components\PasswordComponent;
 use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
+use Tempest\Console\Components\SearchComponent;
 use Tempest\Console\Components\TextBoxComponent;
 
 final readonly class GenericConsole implements Console
@@ -122,5 +123,10 @@ final readonly class GenericConsole implements Console
     public function progressBar(iterable $data, Closure $handler): array
     {
         return $this->component(new ProgressBarComponent($data, $handler));
+    }
+
+    public function search(string $label, Closure $search): mixed
+    {
+        return $this->component(new SearchComponent($label, $search));
     }
 }

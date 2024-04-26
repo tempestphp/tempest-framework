@@ -29,7 +29,7 @@ final class TextBoxComponent implements ConsoleComponent, HasFooter, HasCursor
 
     public function renderFooter(): string
     {
-        return "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel";
+        return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }
 
     #[HandlesKey(Key::BACKSPACE)]
@@ -91,8 +91,11 @@ final class TextBoxComponent implements ConsoleComponent, HasFooter, HasCursor
             return;
         }
 
-        $this->cursorPosition->x += 1;
-        $this->answer .= $key;
+        $offset = $this->cursorPosition->x - 2;
+
+        $this->answer = substr($this->answer, 0, $offset) . $key . substr($this->answer, $offset);
+
+        $this->right();
     }
 
     public function getCursorPosition(): Point

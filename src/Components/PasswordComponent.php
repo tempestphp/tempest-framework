@@ -30,7 +30,7 @@ final class PasswordComponent implements ConsoleComponent, HasCursor, HasFooter
 
     public function renderFooter(): string
     {
-        return "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel";
+        return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }
 
     #[HandlesKey(Key::BACKSPACE)]

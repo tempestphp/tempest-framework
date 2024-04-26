@@ -34,7 +34,7 @@ final class MultipleChoiceComponent implements ConsoleComponent
             $output .= $this->isActive($key) ? '</em>' : '';
         }
 
-        return $output . PHP_EOL . PHP_EOL . "Press <em>space</em> to select, press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
+        return $output . PHP_EOL . PHP_EOL . "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel" . PHP_EOL;
     }
 
     public function isActive(int $key): bool

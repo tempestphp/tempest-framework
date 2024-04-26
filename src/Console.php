@@ -29,6 +29,8 @@ interface Console extends ConsoleInput, ConsoleOutput
 
     public function progressBar(iterable $data, Closure $handler): array;
 
+    public function search(string $label, Closure $search): mixed;
+
     public function info(string $line): self;
 
     public function error(string $line): self;

@@ -28,7 +28,7 @@ final class QuestionComponent implements ConsoleComponent
             $output .= $this->isSelected($key) ? "[x] <em>{$option}</em>" : "[ ] {$option}";
         }
 
-        return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, press <em>ctrl+c</em> to cancel" . PHP_EOL;
+        return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel" . PHP_EOL;
     }
 
     public function isSelected(int $key): bool

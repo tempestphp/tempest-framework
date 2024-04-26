@@ -49,6 +49,14 @@ class TextBoxComponentTest extends TestCase
         $this->assertSame('ab', $component->answer);
 
         $component->left();
+        $component->input('_');
+        $rendered = $component->render();
+        $this->assertStringContainsString('a_b', $rendered);
+
+        $component->backspace();
+        $component->right();
+
+        $component->left();
         $component->delete();
         $this->assertSame('a', $component->answer);
         $this->assertTrue($component->cursorPosition->equals(new Point(3, 1)));
