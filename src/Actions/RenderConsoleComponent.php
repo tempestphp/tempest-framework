@@ -8,7 +8,9 @@ use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Reflection\Attributes;
 use Tempest\Validation\Exceptions\InvalidValueException;
@@ -43,6 +45,12 @@ final class RenderConsoleComponent
         }
 
         while ($key = $this->console->read(16)) {
+            if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
+                $terminal->switchToNormalMode();
+
+                throw new InterruptException();
+            }
+
             $return = null;
 
             if ($handlersForKey = $keyBindings[$key] ?? null) {

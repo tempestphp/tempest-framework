@@ -14,4 +14,9 @@ enum Key: string
     case BACKSPACE = "\x7F";
     case DELETE = "\e[3~";
     case SPACE = " ";
+    case CTRL_C = "\x03";
+    case CTRL_D = "\x04";
+    case HOME = "\x01";
+    case END = "\x05";
+
 }

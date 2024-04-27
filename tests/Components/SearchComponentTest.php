@@ -62,6 +62,12 @@ class SearchComponentTest extends TestCase
         $rendered = $component->render();
         $this->assertStringContainsString('<question>Search</question> a_u-', $rendered);
 
+        $component->home();
+        $this->assertTrue($component->getCursorPosition()->equals(new Point(9, 0)));
+
+        $component->end();
+        $this->assertTrue($component->getCursorPosition()->equals(new Point(13, 0)));
+
         $component->left();
         $component->left();
         $component->delete();

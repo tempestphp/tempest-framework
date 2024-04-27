@@ -61,13 +61,15 @@ final class TextBoxComponent implements ConsoleComponent, HasFooter, HasCursor
     }
 
     #[HandlesKey(Key::UP)]
-    public function up(): void
+    #[HandlesKey(Key::HOME)]
+    public function home(): void
     {
         $this->cursorPosition->x = 2;
     }
 
     #[HandlesKey(Key::DOWN)]
-    public function down(): void
+    #[HandlesKey(Key::END)]
+    public function end(): void
     {
         $this->cursorPosition->x = strlen($this->answer) + 2;
     }

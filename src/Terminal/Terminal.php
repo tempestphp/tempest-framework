@@ -36,6 +36,7 @@ final class Terminal
         $this->tty = exec('stty -g');
         system("stty -echo");
         system("stty -icanon");
+        system("stty -isig");
 
         return $this;
     }
@@ -47,6 +48,7 @@ final class Terminal
         system("stty {$this->tty}");
         system("stty echo");
         system("stty icanon");
+        system("stty isig");
         $this->tty = null;
 
         $this->console->writeln();

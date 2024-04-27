@@ -38,10 +38,10 @@ class TextBoxComponentTest extends TestCase
         $component->right();
         $this->assertTrue($component->cursorPosition->equals(new Point(5, 1)));
 
-        $component->up();
+        $component->home();
         $this->assertTrue($component->cursorPosition->equals(new Point(2, 1)));
 
-        $component->down();
+        $component->end();
         $this->assertTrue($component->cursorPosition->equals(new Point(5, 1)));
 
         $component->backspace();

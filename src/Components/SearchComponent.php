@@ -94,6 +94,18 @@ final class SearchComponent implements ConsoleComponent, HasFooter, HasCursor
         $this->updateQuery(substr($this->query, 0, $offset) . substr($this->query, $offset + 1));
     }
 
+    #[HandlesKey(Key::HOME)]
+    public function home(): void
+    {
+        $this->cursorPosition->x = 2;
+    }
+
+    #[HandlesKey(Key::END)]
+    public function end(): void
+    {
+        $this->cursorPosition->x = strlen($this->query) + 2;
+    }
+
     #[HandlesKey(Key::LEFT)]
     public function left(): void
     {
