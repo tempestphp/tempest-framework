@@ -29,15 +29,7 @@ final class SchedulerConfig
         $command->setHandler($handler);
 
         $this->schedules[] = $command;
-
-        /**
-         * Sort the schedules by the interval in ascending order.
-         * This allows us to prioritize the schedules that run more frequently.
-         */
-        usort($this->schedules, function (ConsoleCommand $a, ConsoleCommand $b) {
-            return $a->schedule->interval->format('s') <=> $b->schedule->interval->format('s');
-        });
-
+        
         return $this;
     }
 }
