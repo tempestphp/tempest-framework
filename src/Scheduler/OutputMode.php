@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Scheduler;
 
-enum OutputType: string
+enum OutputMode: string
 {
     case Overwrite = ">";
     case Append = ">>";

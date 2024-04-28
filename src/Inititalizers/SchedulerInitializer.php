@@ -10,6 +10,7 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullScheduler;
+use Tempest\Console\Scheduler\ScheduledCommandsResolver;
 use Tempest\Console\Scheduler\Scheduler;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
@@ -28,6 +29,7 @@ final readonly class SchedulerInitializer implements Initializer
             $consoleInput = new GenericScheduler(
                 $container->get(ConsoleConfig::class),
                 $container->get(ConsoleOutput::class),
+                $container->get(ScheduledCommandsResolver::class),
             );
         }
 

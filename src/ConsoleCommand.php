@@ -6,7 +6,7 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
-use Tempest\Console\Scheduler\CronDefinition;
+use Tempest\Console\Scheduler\Schedule;
 
 #[Attribute]
 final class ConsoleCommand
@@ -19,7 +19,7 @@ final class ConsoleCommand
         /** @var string[] */
         public readonly array $aliases = [],
         public readonly ?string $help = null,
-        public readonly ?CronDefinition $cron = null,
+        public readonly ?Schedule $schedule = null,
     ) {
     }
 
@@ -50,7 +50,7 @@ final class ConsoleCommand
             'handler_method' => $this->handler->getName(),
             'aliases' => $this->aliases,
             'help' => $this->help,
-            'cron' => $this->cron,
+            'schedule' => $this->schedule,
         ];
     }
 
@@ -64,7 +64,7 @@ final class ConsoleCommand
         );
         $this->aliases = $data['aliases'];
         $this->help = $data['help'];
-        $this->cron = $data['cron'];
+        $this->schedule = $data['schedule'];
     }
 
     /**
