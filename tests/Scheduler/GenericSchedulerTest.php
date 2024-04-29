@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Scheduler;
 
 use DateTime;
-use ReflectionMethod;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Scheduler\GenericScheduler;
-use Tempest\Console\Testing\TestConsoleOutput;
 use Tests\Tempest\Console\TestCase;
 
 /**

@@ -11,7 +11,6 @@ use Tempest\Console\ConsoleCommand;
 final class SchedulerConfig
 {
     public function __construct(
-        public ScheduledCommandsResolver $resolver,
         public string $path = "php tempest",
         public string $output = "/dev/null",
         public OutputMode $outputMode = OutputMode::Append,

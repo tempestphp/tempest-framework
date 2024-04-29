@@ -9,6 +9,8 @@ use Tempest\Console\ConsoleCommand;
 
 final class GenericScheduler implements Scheduler
 {
+    public const string CACHE_PATH = __DIR__ . '/last-schedule-run.cache.php';
+
     public function __construct(
         private SchedulerConfig $config,
     ) {
@@ -17,21 +19,11 @@ final class GenericScheduler implements Scheduler
     public function run(?DateTime $date = null): void
     {
         $date ??= new DateTime();
-        $startTime = $date->getTimestamp();  // Get the timestamp at the start of script execution
-        $secondsToNextMinute = 60 - (int) $date->format("s");  // Calculate the seconds until the start of the next minute
-        $endTime = $startTime + $secondsToNextMinute;  // Calculate the end time at the start of the next minute
 
-        while (time() < $endTime) {  // Run until the start of the next minute
-            $currentDate = new DateTime();  // Update current time for each loop iteration
+        $commands = $this->getCommandsToRunAt($date);
 
-            $commands = $this->config->resolver->resolve($currentDate);
-
-            foreach ($commands as $command) {
-                $this->execute($command);
-            }
-
-            // Sleep until the start of the next second to maintain second-level precision
-            time_sleep_until(time() + 1);
+        foreach ($commands as $command) {
+            $this->execute($command);
         }
     }
 
@@ -53,5 +45,73 @@ final class GenericScheduler implements Scheduler
             $this->config->output,
             ($this->config->runInBackground ? '&' : ''),
         ]);
+    }
+
+    /**
+     * @param DateTime $date
+     *
+     * @return array
+     */
+    public function getCommandsToRunAt(DateTime $date): array
+    {
+        $previousRuns = $this->getPreviousRuns();
+
+        $eligibleToRun = array_filter(
+            $this->config->schedules,
+            fn (ConsoleCommand $command) => $this->canCommandRunAt(
+                command: $command,
+                now: $date,
+                lastRunTimestamp: $previousRuns[$command->getName()] ?? null,
+            )
+        );
+
+        $this->markCommandsAsRan($eligibleToRun, $date);
+
+        return $eligibleToRun;
+    }
+
+    /**
+     * Returns a key value array of the last run time of each command.
+     * The key is the command name and the value is the last run time in unix timestamp.
+     *
+     * @return array<string, int>
+     */
+    public function getPreviousRuns(): array
+    {
+        if (! file_exists(self::CACHE_PATH)) {
+            return [];
+        }
+
+        return unserialize(file_get_contents(self::CACHE_PATH));
+    }
+
+    /**
+     * @param ConsoleCommand[] $eligibleToRun
+     * @param DateTime $ranAt
+     *
+     * @return void
+     */
+    public function markCommandsAsRan(array $eligibleToRun, DateTime $ranAt): void
+    {
+        $lastRuns = $this->getPreviousRuns();
+
+        foreach ($eligibleToRun as $command) {
+            $lastRuns[$command->getName()] = $ranAt->getTimestamp();
+        }
+
+        file_put_contents(self::CACHE_PATH, serialize($lastRuns));
+    }
+
+    private function canCommandRunAt(ConsoleCommand $command, DateTime $now, ?int $lastRunTimestamp): bool
+    {
+        if ($lastRunTimestamp === null) {
+            return true;
+        }
+
+        $interval = $command->schedule->interval;
+
+        $secondsInterval = (int) $interval->format('s');
+
+        return $now->getTimestamp() - $lastRunTimestamp >= $secondsInterval;
     }
 }

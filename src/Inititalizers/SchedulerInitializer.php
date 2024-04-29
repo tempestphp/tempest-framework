@@ -6,13 +6,10 @@ namespace Tempest\Console\Inititalizers;
 
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleConfig;
-use Tempest\Console\ConsoleOutput;
-use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullScheduler;
-use Tempest\Console\Scheduler\ScheduledCommandsResolver;
 use Tempest\Console\Scheduler\Scheduler;
+use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
