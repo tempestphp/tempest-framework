@@ -52,7 +52,7 @@ final class GenericScheduler implements Scheduler
      *
      * @return array
      */
-    public function getCommandsToRunAt(DateTime $date): array
+    private function getCommandsToRunAt(DateTime $date): array
     {
         $previousRuns = $this->getPreviousRuns();
 
@@ -76,7 +76,7 @@ final class GenericScheduler implements Scheduler
      *
      * @return array<string, int>
      */
-    public function getPreviousRuns(): array
+    private function getPreviousRuns(): array
     {
         if (! file_exists(self::CACHE_PATH)) {
             return [];
@@ -91,7 +91,7 @@ final class GenericScheduler implements Scheduler
      *
      * @return void
      */
-    public function markCommandsAsRan(array $eligibleToRun, DateTime $ranAt): void
+    private function markCommandsAsRan(array $eligibleToRun, DateTime $ranAt): void
     {
         $lastRuns = $this->getPreviousRuns();
 
