@@ -6,44 +6,52 @@ namespace Tempest\Console\Scheduler;
 
 use DateTime;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 
 final class GenericScheduler implements Scheduler
 {
     public function __construct(
         private SchedulerConfig $config,
-        private ConsoleOutput $output,
-        private ScheduledCommandsResolver $resolver,
     ) {
     }
 
     public function run(?DateTime $date = null): void
     {
         $date ??= new DateTime();
+        $startTime = $date->getTimestamp();  // Get the timestamp at the start of script execution
+        $secondsToNextMinute = 60 - (int) $date->format("s");  // Calculate the seconds until the start of the next minute
+        $endTime = $startTime + $secondsToNextMinute;  // Calculate the end time at the start of the next minute
 
-        $commands = $this->resolver->resolve($date);
+        while (time() < $endTime) {  // Run until the start of the next minute
+            $currentDate = new DateTime();  // Update current time for each loop iteration
 
-        foreach ($commands as $command) {
-            $this->execute($command);
+            $commands = $this->config->resolver->resolve($currentDate);
+
+            foreach ($commands as $command) {
+                $this->execute($command);
+            }
+
+            // Sleep until the start of the next second to maintain second-level precision
+            time_sleep_until(time() + 1);
         }
     }
 
     private function execute(ConsoleCommand $scheduledCommand): void
     {
-        $name = $scheduledCommand->getName();
-        $this->output->writeln("Running command: $name");
-
         $command = $this->compileCommand($scheduledCommand);
 
         exec($command);
-
-        $this->output->writeln("Command finished: $name");
     }
 
     private function compileCommand(ConsoleCommand $commandDefinition): string
     {
-        $name = $commandDefinition->getName();
-
-        return '(' . $this->config->path . ' ' . $name . ')' . ' ' . $this->config->outputMode->value .  ' ' . $this->config->output . ' 2>&1 &';
+        return join(' ', [
+            '(',
+            $this->config->path,
+            $commandDefinition->getName(),
+            ')',
+            $this->config->outputMode->value,
+            $this->config->output,
+            ($this->config->runInBackground ? '&' : ''),
+        ]);
     }
 }
