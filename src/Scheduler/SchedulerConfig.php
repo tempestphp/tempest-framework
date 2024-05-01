@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Scheduler;
 
-use InvalidArgumentException;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 
@@ -12,24 +11,24 @@ final class SchedulerConfig
 {
     public function __construct(
         public string $path = "php tempest",
-        public string $output = "/dev/null",
-        public OutputMode $outputMode = OutputMode::Append,
-        public bool $runInBackground = true,
 
-        /** @var ConsoleCommand[] $schedules */
-        public array $schedules = [],
+        /** @var ScheduledInvocation[] $scheduledInvocations */
+        public array $scheduledInvocations = [],
     ) {
     }
 
-    public function addSchedule(ReflectionMethod $handler, ConsoleCommand $command): self
+    public function addHandlerInvocation(ReflectionMethod $handler, Schedule $schedule): self
     {
-        if (! $command->schedule) {
-            throw new InvalidArgumentException('Command does not have a schedule');
-        }
+        $this->scheduledInvocations[] = new ScheduledInvocation($schedule, new HandlerInvocation($handler));
 
+        return $this;
+    }
+
+    public function addCommandInvocation(ReflectionMethod $handler, ConsoleCommand $command, Schedule $schedule): self
+    {
         $command->setHandler($handler);
 
-        $this->schedules[] = $command;
+        $this->scheduledInvocations[] = new ScheduledInvocation($schedule, $command);
 
         return $this;
     }

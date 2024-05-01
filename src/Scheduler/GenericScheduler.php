@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
-use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Commands\SchedulerRunInvocation;
 
 final class GenericScheduler implements Scheduler
 {
@@ -20,30 +20,34 @@ final class GenericScheduler implements Scheduler
     {
         $date ??= new DateTime();
 
-        $commands = $this->getCommandsToRunAt($date);
+        $commands = $this->getInvocationsToRun($date);
 
         foreach ($commands as $command) {
             $this->execute($command);
         }
     }
 
-    private function execute(ConsoleCommand $scheduledCommand): void
+    private function execute(ScheduledInvocation $invocation): void
     {
-        $command = $this->compileCommand($scheduledCommand);
+        $command = $this->compileInvocation($invocation);
 
         exec($command);
     }
 
-    private function compileCommand(ConsoleCommand $commandDefinition): string
+    private function compileInvocation(ScheduledInvocation $invocation): string
     {
+        $commandName = $invocation->invocation instanceof HandlerInvocation ?
+            SchedulerRunInvocation::NAME . ' ' . $invocation->invocation->getName()
+            : $invocation->invocation->getName();
+
         return join(' ', [
             '(',
             $this->config->path,
-            $commandDefinition->getName(),
+            $commandName,
             ')',
-            $this->config->outputMode->value,
-            $this->config->output,
-            ($this->config->runInBackground ? '&' : ''),
+            $invocation->schedule->outputMode->value,
+            $invocation->schedule->output,
+            ($invocation->schedule->runInBackground ? '&' : ''),
         ]);
     }
 
@@ -52,27 +56,26 @@ final class GenericScheduler implements Scheduler
      *
      * @return array
      */
-    private function getCommandsToRunAt(DateTime $date): array
+    private function getInvocationsToRun(DateTime $date): array
     {
         $previousRuns = $this->getPreviousRuns();
 
         $eligibleToRun = array_filter(
-            $this->config->schedules,
-            fn (ConsoleCommand $command) => $this->canCommandRunAt(
-                command: $command,
-                now: $date,
-                lastRunTimestamp: $previousRuns[$command->getName()] ?? null,
+            $this->config->scheduledInvocations,
+            fn (ScheduledInvocation $invocation) => $invocation->canRunAt(
+                date: $date,
+                lastRunTimestamp: $previousRuns[$invocation->invocation->getName()] ?? null,
             )
         );
 
-        $this->markCommandsAsRan($eligibleToRun, $date);
+        $this->markInvocationsAsRun($eligibleToRun, $date);
 
         return $eligibleToRun;
     }
 
     /**
-     * Returns a key value array of the last run time of each command.
-     * The key is the command name and the value is the last run time in unix timestamp.
+     * Returns a key value array of the last run time of each invocation.
+     * The key is the invocation name and the value is the last run time in unix timestamp.
      *
      * @return array<string, int>
      */
@@ -86,32 +89,19 @@ final class GenericScheduler implements Scheduler
     }
 
     /**
-     * @param ConsoleCommand[] $eligibleToRun
+     * @param ScheduledInvocation[] $ranInvocations
      * @param DateTime $ranAt
      *
      * @return void
      */
-    private function markCommandsAsRan(array $eligibleToRun, DateTime $ranAt): void
+    private function markInvocationsAsRun(array $ranInvocations, DateTime $ranAt): void
     {
         $lastRuns = $this->getPreviousRuns();
 
-        foreach ($eligibleToRun as $command) {
-            $lastRuns[$command->getName()] = $ranAt->getTimestamp();
+        foreach ($ranInvocations as $invocation) {
+            $lastRuns[$invocation->invocation->getName()] = $ranAt->getTimestamp();
         }
 
         file_put_contents(self::CACHE_PATH, serialize($lastRuns));
-    }
-
-    private function canCommandRunAt(ConsoleCommand $command, DateTime $now, ?int $lastRunTimestamp): bool
-    {
-        if ($lastRunTimestamp === null) {
-            return true;
-        }
-
-        $interval = $command->schedule->interval;
-
-        $secondsInterval = (int) $interval->format('s');
-
-        return $now->getTimestamp() - $lastRunTimestamp >= $secondsInterval;
     }
 }

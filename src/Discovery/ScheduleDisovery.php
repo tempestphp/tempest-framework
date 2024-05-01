@@ -7,6 +7,7 @@ namespace Tempest\Console\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Scheduler\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
@@ -23,13 +24,19 @@ final class ScheduleDisovery implements Discovery
     public function discover(ReflectionClass $class): void
     {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $command = Attributes::find(ConsoleCommand::class)->in($method)->first();
+            $schedule = Attributes::find(Schedule::class)->in($method)->first();
 
-            if (! $command || ! $command->schedule) {
+            if ($schedule === null) {
                 continue;
             }
 
-            $this->schedulerConfig->addSchedule($method, $command);
+            $command = Attributes::find(ConsoleCommand::class)->in($method)->first();
+
+            if ($command) {
+                $this->schedulerConfig->addCommandInvocation($method, $command, $schedule);
+            } else {
+                $this->schedulerConfig->addHandlerInvocation($method, $schedule);
+            }
         }
     }
 
@@ -40,14 +47,14 @@ final class ScheduleDisovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->schedulerConfig->schedules));
+        file_put_contents(self::CACHE_PATH, serialize($this->schedulerConfig->scheduledInvocations));
     }
 
     public function restoreCache(Container $container): void
     {
         $schedules = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->schedulerConfig->schedules = $schedules;
+        $this->schedulerConfig->scheduledInvocations = $schedules;
     }
 
     public function destroyCache(): void

@@ -6,10 +6,10 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
-use Tempest\Console\Scheduler\Schedule;
+use Tempest\Console\Scheduler\Invocation;
 
 #[Attribute]
-final class ConsoleCommand
+final class ConsoleCommand implements Invocation
 {
     public ReflectionMethod $handler;
 
@@ -19,7 +19,6 @@ final class ConsoleCommand
         /** @var string[] */
         public readonly array $aliases = [],
         public readonly ?string $help = null,
-        public readonly ?Schedule $schedule = null,
     ) {
     }
 
@@ -50,7 +49,6 @@ final class ConsoleCommand
             'handler_method' => $this->handler->getName(),
             'aliases' => $this->aliases,
             'help' => $this->help,
-            'schedule' => $this->schedule,
         ];
     }
 
@@ -64,7 +62,6 @@ final class ConsoleCommand
         );
         $this->aliases = $data['aliases'];
         $this->help = $data['help'];
-        $this->schedule = $data['schedule'];
     }
 
     /**
