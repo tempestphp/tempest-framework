@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration;
 
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;
-use Tests\Tempest\IntegrationTest;
 use function Tempest\event;
+use Tests\Tempest\IntegrationTest;
 
+/**
+ * @internal
+ * @small
+ */
 class EventIntegrationTest extends IntegrationTest
 {
     public function test_event(): void
