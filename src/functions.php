@@ -6,6 +6,7 @@ namespace Tempest
 {
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
+    use Tempest\Support\Reflection\Attributes;
 
     /**
      * @template TClassName
@@ -24,5 +25,15 @@ namespace Tempest
         $eventBus = get(EventBus::class);
 
         $eventBus->dispatch($event);
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $attributeName
+     * @return \Tempest\Support\Reflection\Attributes<T>
+     */
+    function attribute(string $attributeName): Attributes
+    {
+        return Attributes::find($attributeName);
     }
 }
