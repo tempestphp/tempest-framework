@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
-use Tempest\Console\Commands\SchedulerRunInvocation;
+use Tempest\Console\Commands\SchedulerRunInvocationCommand;
 
 final class GenericScheduler implements Scheduler
 {
@@ -38,7 +38,7 @@ final class GenericScheduler implements Scheduler
     private function compileInvocation(ScheduledInvocation $invocation): string
     {
         $commandName = $invocation->invocation instanceof HandlerInvocation ?
-            SchedulerRunInvocation::NAME . ' ' . $invocation->invocation->getName()
+            SchedulerRunInvocationCommand::NAME . ' ' . $invocation->invocation->getName()
             : $invocation->invocation->getName();
 
         return join(' ', [

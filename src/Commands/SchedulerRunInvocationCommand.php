@@ -9,7 +9,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
 
-final class SchedulerRunInvocation
+final class SchedulerRunInvocationCommand
 {
     public const string NAME = 'scheduler:invoke';
 

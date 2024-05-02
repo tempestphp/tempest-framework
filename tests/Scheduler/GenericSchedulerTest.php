@@ -20,7 +20,7 @@ use Tests\Tempest\Console\TestCase;
  */
 final class GenericSchedulerTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -89,6 +89,8 @@ final class GenericSchedulerTest extends TestCase
         // command won't run twice in a row
         $scheduler->run($at);
 
+        // nor when it's called before the next minute
+        $scheduler->run($at->modify('+30 seconds'));
 
         $executor = $this->createMock(NullInvocationExecutor::class);
 
@@ -101,13 +103,13 @@ final class GenericSchedulerTest extends TestCase
         $scheduler->run($at->modify('+1 minute'));
     }
 
-    public function handler()
+    // dummy handler for testing
+    public function handler(): void
     {
-
     }
 
-    public function command()
+    // dummy command for testing
+    public function command(): void
     {
-
     }
 }
