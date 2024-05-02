@@ -6,7 +6,6 @@ namespace Tempest\Console\Scheduler;
 
 final readonly class Interval
 {
-
     public function __construct(
         public int $years = 0,
         public int $months = 0,
@@ -15,8 +14,7 @@ final readonly class Interval
         public int $hours = 0,
         public int $minutes = 0,
         public int $seconds = 0,
-    )
-    {
+    ) {
 
     }
 
@@ -30,5 +28,4 @@ final readonly class Interval
             + $this->minutes * 60
             + $this->seconds;
     }
-
 }

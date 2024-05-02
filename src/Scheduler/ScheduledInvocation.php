@@ -8,12 +8,10 @@ use DateTime;
 
 final readonly class ScheduledInvocation
 {
-
     public function __construct(
         public Schedule $schedule,
         public Invocation $invocation,
-    )
-    {
+    ) {
 
     }
 

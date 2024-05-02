@@ -8,13 +8,10 @@ use ReflectionMethod;
 
 final readonly class HandlerInvocation implements Invocation
 {
-
     public function __construct(
         public ReflectionMethod $handler,
-    )
-    {
+    ) {
     }
-
 
     public function __serialize(): array
     {
@@ -34,6 +31,8 @@ final readonly class HandlerInvocation implements Invocation
 
     public function getName(): string
     {
-        return $this->handler->getDeclaringClass()->getName() . '::' . $this->handler->getName();
+        $handlerDeclaration = $this->handler->getDeclaringClass()->getName() . '::' . $this->handler->getName();
+
+        return str_replace("\\", "\\\\", $handlerDeclaration);
     }
 }

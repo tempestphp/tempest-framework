@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use ReflectionMethod;
-use Tempest\Container\Container;
-use Tempest\Console\ConsoleOutput;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleOutput;
+use Tempest\Container\Container;
 
 final class SchedulerRunInvocation
 {

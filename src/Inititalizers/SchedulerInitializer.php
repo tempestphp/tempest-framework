@@ -8,6 +8,7 @@ use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullScheduler;
+use Tempest\Console\Scheduler\ScheduledInvocationExecutor;
 use Tempest\Console\Scheduler\Scheduler;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
@@ -26,6 +27,7 @@ final readonly class SchedulerInitializer implements Initializer
         } else {
             $consoleInput = new GenericScheduler(
                 $container->get(SchedulerConfig::class),
+                $container->get(ScheduledInvocationExecutor::class),
             );
         }
 

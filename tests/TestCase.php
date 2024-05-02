@@ -8,6 +8,8 @@ use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\Scheduler\NullInvocationExecutor;
+use Tempest\Console\Scheduler\ScheduledInvocationExecutor;
 use Tempest\Console\Testing\ConsoleCommandTester;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
@@ -43,6 +45,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
             container: $this->container,
             appConfig: $appConfig,
         );
+
+        $this->container->singleton(ScheduledInvocationExecutor::class, fn () => new NullInvocationExecutor());
 
         $this->container->singleton(Application::class, fn () => $application);
         $this->console = new ConsoleCommandTester($this->container);

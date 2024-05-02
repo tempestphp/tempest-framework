@@ -52,9 +52,9 @@ final class ScheduleDisovery implements Discovery
 
     public function restoreCache(Container $container): void
     {
-        $schedules = unserialize(file_get_contents(self::CACHE_PATH));
+        $scheduledInvocations = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->schedulerConfig->scheduledInvocations = $schedules;
+        $this->schedulerConfig->scheduledInvocations = $scheduledInvocations;
     }
 
     public function destroyCache(): void

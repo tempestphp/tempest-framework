@@ -13,6 +13,7 @@ final class GenericScheduler implements Scheduler
 
     public function __construct(
         private SchedulerConfig $config,
+        private ScheduledInvocationExecutor $executor,
     ) {
     }
 
@@ -31,7 +32,7 @@ final class GenericScheduler implements Scheduler
     {
         $command = $this->compileInvocation($invocation);
 
-        exec($command);
+        $this->executor->execute($command);
     }
 
     private function compileInvocation(ScheduledInvocation $invocation): string
@@ -41,10 +42,8 @@ final class GenericScheduler implements Scheduler
             : $invocation->invocation->getName();
 
         return join(' ', [
-            '(',
-            $this->config->path,
-            $commandName,
-            ')',
+            '(' . $this->config->path,
+            $commandName . ')',
             $invocation->schedule->outputMode->value,
             $invocation->schedule->output,
             ($invocation->schedule->runInBackground ? '&' : ''),
