@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Tempest\Commands\CommandBus;
-    use Tempest\Container\GenericContainer;
-    use Tempest\Events\EventBus;
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Response;
     use Tempest\Http\Router;
@@ -15,18 +13,6 @@ namespace Tempest {
     use Tempest\Support\Reflection\Attributes;
     use Tempest\View\GenericView;
     use Tempest\View\View;
-
-    /**
-     * @template TClassName
-     * @param class-string<TClassName> $className
-     * @return TClassName
-     */
-    function get(string $className): object
-    {
-        $container = GenericContainer::instance();
-
-        return $container->get($className);
-    }
 
     function path(string ...$parts): string
     {
@@ -98,13 +84,6 @@ namespace Tempest {
         $commandBus = get(CommandBus::class);
 
         $commandBus->dispatch($command);
-    }
-
-    function event(object $event): void
-    {
-        $eventBus = get(EventBus::class);
-
-        $eventBus->dispatch($event);
     }
 
     function env(string $key, mixed $default = null): mixed
