@@ -17,14 +17,14 @@ final class ScheduledCommand
 
     }
 
-    #[Schedule(Every::Second)]
+    #[Schedule(Every::SECOND)]
     #[ConsoleCommand('scheduled')]
     public function command(): void
     {
         $this->output->writeln('A command got scheduled');
     }
 
-    #[Schedule(Every::Second)]
+    #[Schedule(Every::SECOND)]
     public function method(): void
     {
         $this->output->writeln('A method got scheduled');

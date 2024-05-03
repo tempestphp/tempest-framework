@@ -15,7 +15,7 @@ final class EveryTest extends TestCase
 {
     public function test_every_second_gets_transformed_to_interval()
     {
-        $every = Every::Second;
+        $every = Every::SECOND;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->seconds);
@@ -24,7 +24,7 @@ final class EveryTest extends TestCase
 
     public function test_every_minute_gets_transformed_to_interval()
     {
-        $every = Every::Minute;
+        $every = Every::MINUTE;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->minutes);
@@ -33,7 +33,7 @@ final class EveryTest extends TestCase
 
     public function test_every_quarter_hour_gets_transformed_to_interval()
     {
-        $every = Every::QuarterHour;
+        $every = Every::QUARTER;
         $interval = $every->toInterval();
 
         $this->assertSame(15, $interval->minutes);
@@ -42,7 +42,7 @@ final class EveryTest extends TestCase
 
     public function test_every_half_hour_gets_transformed_to_interval()
     {
-        $every = Every::HalfHour;
+        $every = Every::HALF_HOUR;
         $interval = $every->toInterval();
 
         $this->assertSame(30, $interval->minutes);
@@ -51,7 +51,7 @@ final class EveryTest extends TestCase
 
     public function test_every_hour_gets_transformed_to_interval()
     {
-        $every = Every::Hour;
+        $every = Every::HOUR;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->hours);
@@ -60,7 +60,7 @@ final class EveryTest extends TestCase
 
     public function test_every_half_day_gets_transformed_to_interval()
     {
-        $every = Every::HalfDay;
+        $every = Every::HALF_DAY;
         $interval = $every->toInterval();
 
         $this->assertSame(12, $interval->hours);
@@ -69,7 +69,7 @@ final class EveryTest extends TestCase
 
     public function test_every_day_gets_transformed_to_interval()
     {
-        $every = Every::Day;
+        $every = Every::DAY;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->days);
@@ -78,7 +78,7 @@ final class EveryTest extends TestCase
 
     public function test_every_week_gets_transformed_to_interval()
     {
-        $every = Every::Week;
+        $every = Every::WEEK;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->weeks);
@@ -87,7 +87,7 @@ final class EveryTest extends TestCase
 
     public function test_every_month_gets_transformed_to_interval()
     {
-        $every = Every::Month;
+        $every = Every::MONTH;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->months);
@@ -96,7 +96,7 @@ final class EveryTest extends TestCase
 
     public function test_every_year_gets_transformed_to_interval()
     {
-        $every = Every::Year;
+        $every = Every::YEAR;
         $interval = $every->toInterval();
 
         $this->assertSame(1, $interval->years);

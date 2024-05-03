@@ -41,7 +41,7 @@ final class GenericSchedulerTest extends TestCase
         $config = new SchedulerConfig();
         $config->addHandlerInvocation(
             new ReflectionMethod($this, 'handler'),
-            new Schedule(Every::Second)
+            new Schedule(Every::SECOND)
         );
 
         $scheduler = new GenericScheduler($config, $executor);
@@ -60,7 +60,7 @@ final class GenericSchedulerTest extends TestCase
         $config->addCommandInvocation(
             new ReflectionMethod($this, 'command'),
             new ConsoleCommand('command'),
-            new Schedule(Every::Second)
+            new Schedule(Every::SECOND)
         );
 
         $scheduler = new GenericScheduler($config, $executor);
@@ -80,7 +80,7 @@ final class GenericSchedulerTest extends TestCase
         $config = new SchedulerConfig();
         $config->addHandlerInvocation(
             new ReflectionMethod($this, 'handler'),
-            new Schedule(Every::Minute)
+            new Schedule(Every::MINUTE)
         );
 
         $scheduler = new GenericScheduler($config, $executor);
