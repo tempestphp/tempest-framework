@@ -13,6 +13,7 @@ final class ConsoleConfig
 
         /** @var ConsoleCommand[] $commands */
         public array $commands = [],
+        public ?string $logPath = null,
     ) {
     }
 

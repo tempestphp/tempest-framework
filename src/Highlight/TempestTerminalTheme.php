@@ -8,6 +8,7 @@ use Tempest\Highlight\TerminalTheme;
 use Tempest\Highlight\Themes\EscapesTerminalTheme;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Highlight\Tokens\TokenType;
+use Tempest\Highlight\Tokens\TokenTypeEnum;
 
 final readonly class TempestTerminalTheme implements TerminalTheme
 {
@@ -16,12 +17,17 @@ final readonly class TempestTerminalTheme implements TerminalTheme
     public function before(TokenType $tokenType): string
     {
         return match ($tokenType) {
+            TokenTypeEnum::KEYWORD => $this->style(TerminalStyle::FG_DARK_BLUE),
+            TokenTypeEnum::PROPERTY => $this->style(TerminalStyle::FG_DARK_GREEN),
+            TokenTypeEnum::TYPE => $this->style(TerminalStyle::FG_DARK_RED),
+            TokenTypeEnum::GENERIC => $this->style(TerminalStyle::FG_DARK_CYAN),
+            TokenTypeEnum::VALUE => $this->style(TerminalStyle::FG_BLACK),
+            TokenTypeEnum::COMMENT, ConsoleTokenType::COMMENT => $this->style(TerminalStyle::FG_GRAY),
             ConsoleTokenType::H1 => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_DARK_BLUE) . ' ',
             ConsoleTokenType::H2 => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE) . ' ',
             ConsoleTokenType::ERROR => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_RED) . ' ',
             ConsoleTokenType::QUESTION => $this->style(TerminalStyle::BG_BLUE) . ' ',
             ConsoleTokenType::SUCCESS => $this->style(TerminalStyle::BG_DARK_GREEN) . ' ',
-            ConsoleTokenType::COMMENT => $this->style(TerminalStyle::FG_GRAY),
             ConsoleTokenType::EM => $this->style(TerminalStyle::FG_BLUE),
             ConsoleTokenType::STRONG => $this->style(TerminalStyle::BOLD),
             ConsoleTokenType::UNDERLINE => $this->style(TerminalStyle::UNDERLINE),

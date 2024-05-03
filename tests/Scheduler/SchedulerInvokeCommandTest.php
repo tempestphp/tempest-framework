@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Scheduler;
 
 use App\Console\ScheduledCommand;
-use Tempest\Console\Commands\SchedulerRunInvocationCommand;
+use Tempest\Console\Commands\ScheduleTaskCommand;
 use Tests\Tempest\Console\TestCase;
 
 /**
@@ -16,7 +16,8 @@ final class SchedulerInvokeCommandTest extends TestCase
 {
     public function test_scheduler_invoke_command_executes_handler()
     {
-        $this->console->call(SchedulerRunInvocationCommand::NAME . ' ' . (ScheduledCommand::class . '::method'))
+        $this->console
+            ->call(ScheduleTaskCommand::NAME . ' ' . (ScheduledCommand::class . '::method'))
             ->assertContains('method got scheduled');
     }
 }

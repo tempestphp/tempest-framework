@@ -7,9 +7,12 @@ namespace Tests\Tempest\Console;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
+use Tempest\Console\Components\UnsupportedComponentRenderer;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Highlight\TempestTerminalTheme;
-use Tempest\Console\Testing\TestConsoleOutput;
+use Tempest\Console\GenericConsole;
+use Tempest\Console\Highlight\TextTerminalTheme;
+use Tempest\Console\Input\UnsupportedInputBuffer;
+use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Console\Fixtures\MyConsole;
 
@@ -27,13 +30,22 @@ class RenderConsoleCommandTest extends TestCase
 
         $consoleCommand->setHandler($handler);
 
-        $output = new TestConsoleOutput(new Highlighter(new TempestTerminalTheme()));
+        $output = new MemoryOutputBuffer();
 
-        (new RenderConsoleCommand($output))($consoleCommand);
+        $highlighter = new Highlighter(new TextTerminalTheme());
+
+        $console = new GenericConsole(
+            output: $output,
+            input: new UnsupportedInputBuffer(),
+            componentRenderer: new UnsupportedComponentRenderer(),
+            highlighter: $highlighter
+        );
+
+        (new RenderConsoleCommand($console))($consoleCommand);
 
         $this->assertSame(
             'test <path> [times=1] [--force=false] - description',
-            trim($output->getLinesWithoutFormatting()[0]),
+            trim($output->getBufferWithoutFormatting()[0]),
         );
     }
 }

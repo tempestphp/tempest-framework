@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Testing;
+namespace Tempest\Console\Highlight;
 
 use Tempest\Highlight\TerminalTheme;
 use Tempest\Highlight\Tokens\TokenType;
 
-final readonly class RawTerminalTheme implements TerminalTheme
+final readonly class TextTerminalTheme implements TerminalTheme
 {
     public function before(TokenType $tokenType): string
     {

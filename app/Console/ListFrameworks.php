@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Console\Fixtures;
+namespace App\Console;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 
 final class ListFrameworks
 {
+    public function __construct(private Console $console)
+    {
+    }
+
     #[ConsoleCommand(
         name: 'frameworks:list',
         description: 'List all available frameworks.',
@@ -16,5 +21,6 @@ final class ListFrameworks
     public function handle(
         bool $sortByBest = false,
     ) {
+        $this->console->write('list');
     }
 }

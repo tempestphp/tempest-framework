@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Actions;
+namespace Tempest\Console\Components;
 
 use ReflectionClass;
 use ReflectionMethod;
@@ -17,22 +17,16 @@ use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 
-final class RenderConsoleComponent
+final class GenericComponentRenderer implements ComponentRenderer
 {
     private array $validationErrors = [];
 
-    public function __construct(private readonly Console $console)
-    {
-    }
-
-    /**
-     * @param ConsoleComponent $component
-     * @param \Tempest\Validation\Rule[] $validation
-     * @return mixed
-     */
-    public function __invoke(ConsoleComponent $component, array $validation = []): mixed
-    {
-        $terminal = new Terminal($this->console);
+    public function render(
+        Console $console,
+        ConsoleComponent $component,
+        array $validation = []
+    ): mixed {
+        $terminal = new Terminal($console);
 
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
@@ -44,7 +38,7 @@ final class RenderConsoleComponent
             return $return;
         }
 
-        while ($key = $this->console->read(16)) {
+        while ($key = $console->read(16)) {
             if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
                 $terminal->switchToNormalMode();
 
