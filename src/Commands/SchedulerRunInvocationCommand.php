@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use ReflectionMethod;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 use Tempest\Container\Container;
 
 final class SchedulerRunInvocationCommand
@@ -15,14 +15,14 @@ final class SchedulerRunInvocationCommand
 
     public function __construct(
         private Container $container,
-        private ConsoleOutput $output,
+        private Console $console,
     ) {
     }
 
     #[ConsoleCommand(self::NAME)]
     public function __invoke(string $invocation): void
     {
-        $this->output->info("Invoking $invocation");
+        $this->console->info("Invoking $invocation");
 
         [$class, $method] = explode('::', $invocation);
 
