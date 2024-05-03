@@ -7,14 +7,14 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Scheduler\Scheduler;
 
-final class SchedulerRunCommand
+final readonly class SchedulerRunCommand
 {
     public function __construct(
         private Scheduler $scheduler,
     ) {
     }
 
-    #[ConsoleCommand('scheduler:run')]
+    #[ConsoleCommand('schedule:run')]
     public function __invoke(): void
     {
         $this->scheduler->run();

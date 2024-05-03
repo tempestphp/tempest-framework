@@ -20,17 +20,15 @@ final readonly class SchedulerInitializer implements Initializer
 {
     public function initialize(Container $container): Scheduler
     {
-        $app = $container->get(Application::class);
+        $application = $container->get(Application::class);
 
-        if (! $app instanceof ConsoleApplication) {
-            $consoleInput = new NullScheduler();
-        } else {
-            $consoleInput = new GenericScheduler(
-                $container->get(SchedulerConfig::class),
-                $container->get(ScheduledInvocationExecutor::class),
-            );
+        if (! $application instanceof ConsoleApplication) {
+            return new NullScheduler();
         }
 
-        return $consoleInput;
+        return new GenericScheduler(
+            $container->get(SchedulerConfig::class),
+            $container->get(ScheduledInvocationExecutor::class),
+        );
     }
 }
