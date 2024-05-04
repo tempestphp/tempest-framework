@@ -18,3 +18,5 @@ final readonly class Hello
 ```
 
 Read the docs: [https://tempest.stitcher.io/console/01-getting-started](https://tempest.stitcher.io/console/01-getting-started).
+
+[Join the Tempest Discord](https://discord.gg/pPhpTGUMPQ)
