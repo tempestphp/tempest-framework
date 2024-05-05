@@ -8,20 +8,36 @@ use DateInterval;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Tempest\Clock\GenericTimebox;
+use Tempest\Clock\Timebox;
 use Tempest\Clock\MockClock;
 
 /**
  * @internal
  * @small
  */
-final class GenericTimeboxTest extends TestCase
+final class TimeboxTest extends TestCase
 {
     public function test_it_runs_callbacks(): void
     {
-        $timebox = new GenericTimebox(new MockClock());
+        $timebox = new Timebox(new MockClock());
 
         $timebox->run(fn () => $this->assertTrue(true), 0);
+    }
+
+    public function test_it_returns_early_when_return_early_is_true(): void
+    {
+        $now = new DateTime();
+
+        $clock = new MockClock($now);
+
+        $timebox = new Timebox($clock);
+
+        $this->assertTrue($timebox->run(fn () => true, 1_000_000_000, true));
+
+        $this->assertSame(
+            $this->dateTimeToMicroseconds($now),
+            $clock->utime(),
+        );
     }
 
     public function test_it_waits_for_the_given_time(): void
@@ -30,7 +46,7 @@ final class GenericTimeboxTest extends TestCase
 
         $clock = new MockClock($now);
 
-        $timebox = new GenericTimebox($clock);
+        $timebox = new Timebox($clock);
 
         $timebox->run(fn () => $this->assertTrue(true), 10);
 
@@ -46,7 +62,7 @@ final class GenericTimeboxTest extends TestCase
 
         $clock = new MockClock($now);
 
-        $timebox = new GenericTimebox($clock);
+        $timebox = new Timebox($clock);
 
         try {
             $timebox->run(fn () => throw new Exception("abc"), 100);
