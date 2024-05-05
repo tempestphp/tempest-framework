@@ -8,5 +8,8 @@ interface Rule
 {
     public function isValid(mixed $value): bool;
 
-    public function message(): string;
+    /**
+     * @return string|string[]
+     */
+    public function message(): string|array;
 }
