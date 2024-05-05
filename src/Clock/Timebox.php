@@ -6,7 +6,7 @@ namespace Tempest\Clock;
 
 use Throwable;
 
-final class Timebox
+final readonly class Timebox
 {
     public function __construct(
         protected Clock $clock,
