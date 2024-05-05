@@ -48,11 +48,12 @@ final class GenericTimeboxTest extends TestCase
 
         $timebox = new GenericTimebox($clock);
 
-        $this->expectException(Exception::class);
+        try {
+            $timebox->run(fn () => throw new Exception("abc"), 100);
+        } catch (Exception $exception) {
+            $this->assertSame("abc", $exception->getMessage());
+        }
 
-        $timebox->run(fn () => throw new Exception("abc"), 100);
-
-        // @phpstan-ignore-next-line
         $this->assertSame(
             $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('100 microseconds'))),
             $clock->utime(),
