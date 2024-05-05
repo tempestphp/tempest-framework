@@ -45,4 +45,16 @@ final class MockClock implements Clock
             $this->now = $this->now->add(new DateInterval("PT{$seconds}S"));
         }
     }
+
+    public function utime(): int
+    {
+        return $this->time() * 1_000_000 + ((int) $this->now->format('u'));
+    }
+
+    public function usleep(int $microseconds): void
+    {
+        $this->now = $this->now->add(
+            DateInterval::createFromDateString("$microseconds microseconds")
+        );
+    }
 }

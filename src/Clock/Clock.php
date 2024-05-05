@@ -14,4 +14,8 @@ interface Clock extends ClockInterface
     public function time(): int;
 
     public function sleep(int $seconds): void;
+
+    public function utime(): int;
+
+    public function usleep(int $microseconds): void;
 }

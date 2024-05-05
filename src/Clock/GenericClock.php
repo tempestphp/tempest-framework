@@ -22,4 +22,14 @@ final class GenericClock implements Clock
     {
         sleep($seconds);
     }
+
+    public function utime(): int
+    {
+        return (int) (microtime(true) * 1_000_000);
+    }
+
+    public function usleep(int $microseconds): void
+    {
+        usleep($microseconds);
+    }
 }
