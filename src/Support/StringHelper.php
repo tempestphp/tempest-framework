@@ -7,7 +7,7 @@ namespace Tempest\Support;
 final class StringHelper
 {
 
-    public static function join(array $strings): string
+    public static function naturalLangJoin(array $strings): string
     {
         $last = array_pop($strings);
 
