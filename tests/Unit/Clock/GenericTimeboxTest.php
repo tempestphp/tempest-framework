@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Clock;
 
-use DateTime;
 use DateInterval;
-use Tempest\Clock\MockClock;
+use DateTime;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\GenericTimebox;
+use Tempest\Clock\MockClock;
 
+/**
+ * @internal
+ * @small
+ */
 final class GenericTimeboxTest extends TestCase
 {
-
     public function test_it_runs_callbacks(): void
     {
         $timebox = new GenericTimebox(new MockClock());
@@ -44,10 +48,11 @@ final class GenericTimeboxTest extends TestCase
 
         $timebox = new GenericTimebox($clock);
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
 
-        $timebox->run(fn () => throw new \Exception("abc"), 100);
+        $timebox->run(fn () => throw new Exception("abc"), 100);
 
+        // @phpstan-ignore-next-line
         $this->assertSame(
             $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('100 microseconds'))),
             $clock->utime(),

@@ -8,10 +8,10 @@ use Throwable;
 
 final class GenericTimebox implements Timebox
 {
-
     public function __construct(
         protected Clock $clock,
-    ) {}
+    ) {
+    }
 
     public function run(callable $callable, int $microseconds): mixed
     {
