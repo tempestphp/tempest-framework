@@ -8,8 +8,8 @@ use DateInterval;
 use DateTime;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Tempest\Clock\Timebox;
 use Tempest\Clock\MockClock;
+use Tempest\Clock\Timebox;
 
 /**
  * @internal
