@@ -22,7 +22,7 @@ final class ValidationException extends Exception
         foreach ($failingRules as $field => $failingRulesForField) {
             /** @var Rule $failingRuleForField */
             foreach ($failingRulesForField as $failingRuleForField) {
-                $messages[$field][] = "Value should " . StringHelper::join(ArrayHelper::wrap($failingRuleForField->message()));
+                $messages[$field][] = StringHelper::join(ArrayHelper::wrap($failingRuleForField->message()));
             }
         }
 

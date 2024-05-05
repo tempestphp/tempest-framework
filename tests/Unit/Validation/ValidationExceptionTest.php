@@ -54,7 +54,7 @@ final class ValidationExceptionTest extends TestCase
 
                     public function message(): string|array
                     {
-                        return 'be a valid email address';
+                        return 'Value should be a valid email address';
                     }
                 },
                 new class implements Rule {
@@ -67,7 +67,7 @@ final class ValidationExceptionTest extends TestCase
                     public function message(): string|array
                     {
                         return [
-                            'praise tempest',
+                            'Value should praise tempest',
                             'old gods from the past',
                             'the new gods from the future',
                         ];

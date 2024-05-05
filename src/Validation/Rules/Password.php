@@ -54,7 +54,7 @@ final readonly class Password implements Rule
 
     public function message(): array
     {
-        $messages = ["contain at least {$this->min} characters"];
+        $messages = ["Value should contain at least {$this->min} characters"];
 
         if ($this->mixedCase) {
             $messages[] = 'at least one uppercase and one lowercase letter';
