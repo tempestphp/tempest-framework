@@ -62,8 +62,8 @@ class ConsoleInitializer implements Initializer
         $terminalHighlighter = new Highlighter(new TempestTerminalTheme());
 
         $console = new GenericConsole(
-            output: new StdoutOutputBuffer(),
-            input: new StdinInputBuffer(),
+            output: $container->get(StdoutOutputBuffer::class),
+            input: $container->get(StdinInputBuffer::class),
             componentRenderer: new GenericComponentRenderer(),
             highlighter: $terminalHighlighter,
         );
