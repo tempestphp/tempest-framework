@@ -26,7 +26,7 @@ final readonly class Timebox
             $throwable = $exception;
         }
 
-        if ($returnEarly) {
+        if ($returnEarly && $throwable === null) {
             return $result;
         }
 
