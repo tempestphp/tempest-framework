@@ -9,6 +9,9 @@ use Tempest\Application;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Console\Output\OutputBuffer;
+use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
@@ -29,6 +32,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         );
 
         parent::setUp();
+
+
+        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
+        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
 
         $databasePath = __DIR__ . '/../../app/database.sqlite';
         $cleanDatabasePath = __DIR__ . '/../../app/database-clean.sqlite';

@@ -9,9 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
-use Tempest\Console\ConsoleOutput;
-use Tempest\Console\NullConsoleOutput;
-use Tempest\Console\Testing\ConsoleCommandTester;
+use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\GenericRequest;
@@ -28,7 +26,7 @@ abstract class IntegrationTest extends TestCase
 
     protected Container $container;
 
-    protected ConsoleCommandTester $console;
+    protected ConsoleTester $console;
 
     protected HttpRouterTester $http;
 
@@ -45,13 +43,12 @@ abstract class IntegrationTest extends TestCase
 
         $this->container = $this->kernel->init();
 
-        $this->console = $this->container->get(ConsoleCommandTester::class);
+        $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
 
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton(GenericRequest::class, fn () => $request);
-        $this->container->singleton(ConsoleOutput::class, fn () => new NullConsoleOutput());
     }
 
     protected function migrate(string ...$migrationClasses): void
