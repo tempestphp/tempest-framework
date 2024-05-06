@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Console\Actions;
 
 use ReflectionParameter;
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 
 final readonly class RenderConsoleCommand
 {
-    public function __construct(private ConsoleOutput $output)
+    public function __construct(private Console $console)
     {
     }
 
@@ -26,7 +26,7 @@ final readonly class RenderConsoleCommand
             $parts[] = "- {$consoleCommand->description}";
         }
 
-        $this->output->writeln(' ' . implode(' ', $parts));
+        $this->console->writeln(' ' . implode(' ', $parts));
     }
 
     private function renderParameter(ReflectionParameter $parameter): string

@@ -4,29 +4,28 @@ declare(strict_types=1);
 
 namespace App\Console;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleOutput;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\Schedule;
 
-final class ScheduledCommand
+final readonly class ScheduledCommand
 {
     public function __construct(
-        protected ConsoleOutput $output,
+        private Console $console,
     ) {
-
     }
 
     #[Schedule(Every::SECOND)]
     #[ConsoleCommand('scheduled')]
     public function command(): void
     {
-        $this->output->writeln('A command got scheduled');
+        $this->console->writeln('A command got scheduled');
     }
 
     #[Schedule(Every::SECOND)]
     public function method(): void
     {
-        $this->output->writeln('A method got scheduled');
+        $this->console->writeln('A method got scheduled');
     }
 }

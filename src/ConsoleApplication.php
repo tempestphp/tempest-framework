@@ -35,17 +35,22 @@ final readonly class ConsoleApplication implements Application
 
         $container = $kernel->init();
 
+        $argumentBag = new ConsoleArgumentBag($_SERVER['argv']);
+
+        $container->singleton(ConsoleArgumentBag::class, fn () => $argumentBag);
+
         $application = new self(
-            argumentBag: new ConsoleArgumentBag($_SERVER['argv']),
+            argumentBag: $argumentBag,
             container: $container,
             appConfig: $appConfig,
         );
 
         $container->singleton(Application::class, fn () => $application);
 
-        $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
+        $consoleConfig = $container->get(ConsoleConfig::class);
+        $consoleConfig->name = $name;
 
-        $container->get(ConsoleConfig::class)->name = $name;
+        $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
         return $application;
     }

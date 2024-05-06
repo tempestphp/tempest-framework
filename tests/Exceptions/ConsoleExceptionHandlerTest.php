@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Exceptions;
 
 use Exception;
-use Tempest\Console\ConsoleOutput;
+use Tempest\Application;
+use Tempest\Console\Components\UnsupportedComponentRenderer;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
-use Tempest\Console\Testing\TestConsoleHelper;
-use Tempest\Console\Testing\TestConsoleOutput;
+use Tempest\Console\GenericConsole;
+use Tempest\Console\Highlight\TextTerminalTheme;
+use Tempest\Console\Input\UnsupportedInputBuffer;
+use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Console\TestCase;
 
 /**
@@ -19,22 +23,28 @@ class ConsoleExceptionHandlerTest extends TestCase
 {
     public function test_render_console_exception(): void
     {
-        $this->container->singleton(
-            ConsoleOutput::class,
-            fn () => $this->container->get(TestConsoleOutput::class)
+        $output = new MemoryOutputBuffer();
+
+        $highlighter = new Highlighter(new TextTerminalTheme());
+
+        $handler = new ConsoleExceptionHandler(
+            new GenericConsole(
+                output: $output,
+                input: new UnsupportedInputBuffer(),
+                componentRenderer: new UnsupportedComponentRenderer(),
+                highlighter: $highlighter
+            ),
+            application: $this->container->get(Application::class),
+            highlighter: $highlighter,
         );
 
-        $handler = $this->container->get(ConsoleExceptionHandler::class);
         $handler->handle(new Exception('test message'));
 
-        $output = new TestConsoleHelper(
-            $this->container->get(ConsoleOutput::class),
-        );
+        $output = $output->asUnformattedString();
 
-        $output
-            ->assertContains('Exception')
-            ->assertContains('test message')
-            ->assertContains(__FILE__)
-            ->assertContains('$handler->handle(new Exception(\'test message\')); <');
+        $this->assertStringContainsString('Exception', $output);
+        $this->assertStringContainsString('test message', $output);
+        $this->assertStringContainsString(__FILE__, $output);
+        $this->assertStringContainsString('$handler->handle(new Exception(\'test message\')); <', $output);
     }
 }

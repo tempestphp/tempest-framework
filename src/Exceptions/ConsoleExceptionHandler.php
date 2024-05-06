@@ -8,8 +8,8 @@ use Tempest\Application;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\ExceptionHandler;
+use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
-use Tempest\Highlight\Themes\LightTerminalTheme;
 use Throwable;
 
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
@@ -17,6 +17,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
     public function __construct(
         private Console $console,
         private Application&ConsoleApplication $application,
+        private Highlighter $highlighter,
     ) {
     }
 
@@ -55,8 +56,8 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
     private function getCodeSample(Throwable $throwable): string
     {
-        $highlighter = (new Highlighter(new LightTerminalTheme()))->withGutter();
-        $code = $highlighter->parse(file_get_contents($throwable->getFile()), 'php');
+        $highlighter = $this->highlighter->withGutter();
+        $code = Escape::terminal($highlighter->parse(file_get_contents($throwable->getFile()), 'php'));
         $lines = explode(PHP_EOL, $code);
 
         $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] . ' <error><</error>';
@@ -65,7 +66,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         $start = max(0, $throwable->getLine() - $excerptSize);
         $lines = array_slice($lines, $start, $excerptSize * 2);
 
-        return implode(PHP_EOL, $lines);
+        return PHP_EOL . implode(PHP_EOL, $lines);
     }
 
     /**

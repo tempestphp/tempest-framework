@@ -36,7 +36,7 @@ final class GenericSchedulerTest extends TestCase
 
         $executor->expects($this->once())
             ->method('execute')
-            ->with($this->equalTo('(php tempest scheduler:invoke Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
 
         $config = new SchedulerConfig();
         $config->addHandlerInvocation(
@@ -75,7 +75,7 @@ final class GenericSchedulerTest extends TestCase
 
         $executor->expects($this->once())
             ->method('execute')
-            ->with($this->equalTo('(php tempest scheduler:invoke Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
 
         $config = new SchedulerConfig();
         $config->addHandlerInvocation(
@@ -96,7 +96,7 @@ final class GenericSchedulerTest extends TestCase
 
         $executor->expects($this->once())
             ->method('execute')
-            ->with($this->equalTo('(php tempest scheduler:invoke Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
 
         $scheduler = new GenericScheduler($config, $executor);
 

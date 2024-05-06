@@ -6,8 +6,16 @@ namespace Tempest\Console;
 
 use Closure;
 
-interface Console extends ConsoleInput, ConsoleOutput
+interface Console
 {
+    public function readln(): string;
+
+    public function read(int $bytes): string;
+
+    public function write(string $contents): self;
+
+    public function writeln(string $line = ''): self;
+
     /**
      * @param ConsoleComponent $component
      * @param \Tempest\Validation\Rule[] $validation
@@ -43,4 +51,6 @@ interface Console extends ConsoleInput, ConsoleOutput
     public function success(string $line): self;
 
     public function when(mixed $expression, callable $callback): self;
+
+    public function withLabel(string $label): self;
 }

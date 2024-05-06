@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Inititalizers;
+namespace Tempest\Console\Initializers;
 
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;

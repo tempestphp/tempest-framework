@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
-use Tempest\Console\Actions\RenderConsoleComponent;
+use Tempest\Console\Components\ComponentRenderer;
 use Tempest\Console\Components\ConfirmComponent;
 use Tempest\Console\Components\MultipleChoiceComponent;
 use Tempest\Console\Components\PasswordComponent;
@@ -13,18 +13,21 @@ use Tempest\Console\Components\ProgressBarComponent;
 use Tempest\Console\Components\QuestionComponent;
 use Tempest\Console\Components\SearchComponent;
 use Tempest\Console\Components\TextBoxComponent;
+use Tempest\Console\Highlight\TempestConsoleLanguage;
+use Tempest\Console\Input\InputBuffer;
+use Tempest\Console\Output\OutputBuffer;
+use Tempest\Highlight\Highlighter;
 
-final readonly class GenericConsole implements Console
+final class GenericConsole implements Console
 {
-    public function __construct(
-        private ConsoleInput $input,
-        private ConsoleOutput $output,
-    ) {
-    }
+    private ?string $label = null;
 
-    public function readln(): string
-    {
-        return $this->input->readln();
+    public function __construct(
+        private readonly OutputBuffer $output,
+        private readonly InputBuffer $input,
+        private readonly ComponentRenderer $componentRenderer,
+        private readonly Highlighter $highlighter,
+    ) {
     }
 
     public function read(int $bytes): string
@@ -32,16 +35,25 @@ final readonly class GenericConsole implements Console
         return $this->input->read($bytes);
     }
 
+    public function readln(): string
+    {
+        return $this->input->readln();
+    }
+
     public function write(string $contents): static
     {
-        $this->output->write($contents);
+        if ($this->label) {
+            $contents = "<h2>{$this->label}</h2> {$contents}";
+        }
+
+        $this->output->write($this->highlighter->parse($contents, new TempestConsoleLanguage()));
 
         return $this;
     }
 
     public function writeln(string $line = ''): static
     {
-        $this->output->writeln($line);
+        $this->write($line . PHP_EOL);
 
         return $this;
     }
@@ -67,6 +79,15 @@ final readonly class GenericConsole implements Console
         return $this;
     }
 
+    public function withLabel(string $label): self
+    {
+        $clone = clone $this;
+
+        $clone->label = $label;
+
+        return $clone;
+    }
+
     public function when(mixed $expression, callable $callback): self
     {
         if ($expression) {
@@ -78,7 +99,7 @@ final readonly class GenericConsole implements Console
 
     public function component(ConsoleComponent $component, array $validation = []): mixed
     {
-        return (new RenderConsoleComponent($this))($component, $validation);
+        return $this->componentRenderer->render($this, $component, $validation);
     }
 
     public function ask(string $question, ?array $options = null, bool $multiple = false, array $validation = []): string|array
