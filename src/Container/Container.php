@@ -10,7 +10,7 @@ interface Container
 {
     public function register(string $className, callable $definition): self;
 
-    public function singleton(string $className, callable $definition): self;
+    public function singleton(string $className, object|callable $definition): self;
 
     public function config(object $config): self;
 

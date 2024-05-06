@@ -4,62 +4,72 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use Closure;
 use ReflectionClass;
+use ReflectionFunction;
 use ReflectionIntersectionType;
+use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionType;
 use ReflectionUnionType;
+use Reflector;
 
 final readonly class Dependency
 {
     public function __construct(
-        public ReflectionParameter|ReflectionClass $reflector,
+        public Reflector|ReflectionType|Closure|string $dependency,
     ) {
     }
 
-    public function getId(): string
+    public function getName(): string
     {
-        return $this->typeToString($this->getType());
+        return $this->resolveName($this->dependency);
     }
 
-    public function __toString(): string
+    public function getShortName(): string
     {
-        $typeToString = $this->typeToString($this->getType());
-        $parts = explode('\\', $typeToString);
-        $typeToString = $parts[array_key_last($parts)];
-
-        return implode(
-            ' ',
-            array_filter([
-                $typeToString,
-                '$' . $this->reflector->getName(),
-            ]),
-        );
+        return $this->resolveShortName($this->dependency);
     }
 
-    private function getType(): string|ReflectionType
+    public function equals(self $other): bool
     {
-        return match($this->reflector::class) {
-            ReflectionParameter::class => $this->reflector->getType(),
-            ReflectionClass::class => $this->reflector->getName(),
+        return $this->getName() === $other->getName();
+    }
+
+    private function resolveName(ReflectionType|Reflector|string|Closure $dependency): string
+    {
+        if (is_string($dependency)) {
+            return $dependency;
+        }
+
+        return match($dependency::class) {
+            ReflectionFunction::class => $dependency->getName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
+            ReflectionClass::class => $dependency->getName(),
+            ReflectionMethod::class => $dependency->getDeclaringClass()->getName() . '::' . $dependency->getName(),
+            ReflectionParameter::class => $this->resolveName($dependency->getType()),
+            ReflectionNamedType::class => $dependency->getName(),
+            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
+            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            default => 'unknown',
         };
     }
 
-    private function typeToString(string|ReflectionType|null $type): ?string
+    private function resolveShortName(ReflectionType|Reflector|string|Closure $dependency): string
     {
-        if ($type === null) {
-            return null;
+        if (is_string($dependency)) {
+            return $dependency;
         }
 
-        if (is_string($type)) {
-            return $type;
-        }
-
-        return match($type::class) {
-            ReflectionIntersectionType::class => $this->intersectionTypeToString($type),
-            ReflectionNamedType::class => $type->getName(),
-            ReflectionUnionType::class => $this->unionTypeToString($type),
+        return match($dependency::class) {
+            ReflectionFunction::class => $dependency->getShortName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
+            ReflectionClass::class => $dependency->getShortName(),
+            ReflectionMethod::class => $this->reflectionMethodToShortString($dependency),
+            ReflectionParameter::class => $this->resolveShortName($dependency->getType()),
+            ReflectionNamedType::class => $this->reflectionNameTypeToShortString($dependency),
+            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
+            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            default => 'unknown',
         };
     }
 
@@ -68,7 +78,7 @@ final readonly class Dependency
         return implode(
             '&',
             array_map(
-                fn (ReflectionType $subType) => $this->typeToString($subType),
+                fn (ReflectionType $subType) => $this->resolveName($subType),
                 $type->getTypes(),
             ),
         );
@@ -79,9 +89,33 @@ final readonly class Dependency
         return implode(
             '|',
             array_map(
-                fn (ReflectionType $subType) => $this->typeToString($subType),
+                fn (ReflectionType $subType) => $this->resolveName($subType),
                 $type->getTypes(),
             ),
         );
+    }
+
+    private function reflectionMethodToShortString(ReflectionMethod $method): string
+    {
+        $string = $method->getDeclaringClass()->getShortName() . '::' . $method->getName() . '(';
+
+        $parameters = [];
+
+        foreach ($method->getParameters() as $parameter) {
+            $parameters[] = $this->resolveShortName($parameter) . ' $' . $parameter->getName();
+        }
+
+        $string .= implode(', ', $parameters);
+
+        $string .= ')';
+
+        return $string;
+    }
+
+    private function reflectionNameTypeToShortString(ReflectionNamedType $type): string
+    {
+        $parts = explode('\\', $type->getName());
+
+        return $parts[array_key_last($parts)] ?? $type->getName();
     }
 }

@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Container;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\Exceptions\CircularDependencyException;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinArrayClass;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinTypesWithDefaultsClass;
 use Tests\Tempest\Unit\Container\Fixtures\CallContainerObjectE;
+use Tests\Tempest\Unit\Container\Fixtures\CircularWithInitializerA;
+use Tests\Tempest\Unit\Container\Fixtures\CircularWithInitializerBInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectA;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectB;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectC;
@@ -188,5 +191,21 @@ class ContainerTest extends TestCase
 
         $this->assertInstanceOf(UnionImplementation::class, $a);
         $this->assertInstanceOf(UnionImplementation::class, $b);
+    }
+
+    public function test_circular_with_initializer_log(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(CircularWithInitializerBInitializer::class);
+
+        try {
+            $container->get(CircularWithInitializerA::class);
+        } catch (CircularDependencyException $e) {
+            $this->assertStringContainsString('CircularWithInitializerA', $e->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerB', $e->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerBInitializer', $e->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerC', $e->getMessage());
+            $this->assertStringContainsString(__FILE__, $e->getMessage());
+        }
     }
 }
