@@ -33,7 +33,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         parent::setUp();
 
-
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
 
