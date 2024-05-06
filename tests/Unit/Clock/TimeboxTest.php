@@ -40,6 +40,26 @@ final class TimeboxTest extends TestCase
         );
     }
 
+    public function test_it_doesnt_return_early_when_exception_is_thrown(): void
+    {
+        $now = new DateTime();
+
+        $clock = new MockClock($now);
+
+        $timebox = new Timebox($clock);
+
+        try {
+            $this->assertTrue($timebox->run(fn () => throw new Exception("Exception"), 5000, true));
+        } catch (Exception $exception) {
+            $this->assertSame("Exception", $exception->getMessage());
+        }
+
+        $this->assertSame(
+            $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('5000 microseconds'))),
+            $clock->utime(),
+        );
+    }
+
     public function test_it_waits_for_the_given_time(): void
     {
         $now = new DateTime();
