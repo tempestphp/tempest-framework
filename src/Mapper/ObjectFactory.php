@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
 
-/* @template ClassType */
+/** @template ClassType */
 final class ObjectFactory
 {
     private object|string $objectOrClass;
@@ -54,7 +54,7 @@ final class ObjectFactory
     /**
      * @return ClassType
      */
-    public function from(mixed $data): array|object
+    public function from(mixed $data)
     {
         return $this->mapObject(
             from: $data,
@@ -80,7 +80,7 @@ final class ObjectFactory
     /**
      * @template T of object
      * @param mixed $from
-     * @param T|class-string<T> $objectOrClass
+     * @param T|class-string<T> $to
      * @return T
      */
     public function map(mixed $from, object|string $to): array|object

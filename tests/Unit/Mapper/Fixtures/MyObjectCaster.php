@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Mapper\Fixtures;
 
 use Tempest\Mapper\Caster;
 
-final readonly class MyObjectCaster implements Caster
+final class MyObjectCaster implements Caster
 {
     public function cast(mixed $input): MyObject
     {

@@ -8,7 +8,7 @@ use DateTime;
 use DateTimeImmutable;
 use Tempest\Validation\Rules\DateTimeFormat;
 
-final readonly class ObjectWithBuiltInCasters
+final class ObjectWithBuiltInCasters
 {
     public DateTimeImmutable $dateTimeImmutable;
     public DateTime $dateTime;

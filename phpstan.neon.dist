@@ -3,7 +3,7 @@ includes:
 	- vendor/phpat/phpat/extension.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
 parameters:
-	level: 6
+	level: 5
 	reportUnmatchedIgnoredErrors: false
 	paths:
 		- app

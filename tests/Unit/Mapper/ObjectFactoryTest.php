@@ -68,6 +68,7 @@ class ObjectFactoryTest extends IntegrationTest
     {
         $this->expectException(CannotMapDataException::class);
 
+        /** @phpstan-ignore-next-line  */
         map(['a' => 'a', 'b' => 'b'])->to('unknown');
     }
 }

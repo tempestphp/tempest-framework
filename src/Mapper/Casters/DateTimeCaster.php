@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use ReflectionProperty;
 use function Tempest\attribute;
 use Tempest\Mapper\Caster;
+use function Tempest\type;
 use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class DateTimeCaster implements Caster
@@ -28,7 +29,7 @@ final readonly class DateTimeCaster implements Caster
             ->first()
             ?->format ?? 'Y-m-d H:i:s';
 
-        return match ($property->getType()->getName()) {
+        return match (type($property)) {
             DateTime::class => new DateTimeCaster($format, immutable: false),
             default => new DateTimeCaster($format, immutable: true),
         };

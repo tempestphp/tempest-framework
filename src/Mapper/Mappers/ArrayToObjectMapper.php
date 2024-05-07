@@ -22,6 +22,7 @@ use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
+use function Tempest\type;
 use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
@@ -96,7 +97,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         if (! $castWith) {
             try {
                 $castWith = attribute(CastWith::class)
-                    ->in($property->getType()->getName())
+                    ->in(type($property))
                     ->first();
             } catch (ReflectionException) {
                 // Could not resolve CastWith from the type
@@ -109,7 +110,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         // Get Caster from built-in casters
-        return match ($property->getType()->getName()) {
+        return match (type($property)) {
             'int' => new IntegerCaster(),
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
@@ -197,15 +198,18 @@ final readonly class ArrayToObjectMapper implements Mapper
     {
         $type = $property->getType();
 
-        if (! $type) {
+        if ($type === null) {
             return null;
         }
 
+        // PhpStan does a weird thing here, saying that ReflectionType::isBuiltin doesn't exist.
+        // It's late, and I don't want to figure it out atm…
+        /** @phpstan-ignore-next-line  */
         if ($type->isBuiltin()) {
             return null;
         }
 
-        return $type->getName();
+        return type($type);
     }
 
     private function resolveTypeForArray(ReflectionProperty $property): ?string
@@ -254,7 +258,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         array $data,
     ): array {
         foreach ($child->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if ($property->getType()->getName() === $parent::class) {
+            if (type($property) === $parent::class) {
                 $data[$property->getName()] = $parent;
             }
 

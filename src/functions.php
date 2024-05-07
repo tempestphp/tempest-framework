@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tempest
-{
+namespace Tempest {
+
+    use ReflectionType;
+    use Reflector;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
+    use Tempest\Support\Reflection\TypeName;
 
     /**
      * @template TClassName
@@ -55,5 +58,10 @@ namespace Tempest
         $factory = get(ObjectFactory::class);
 
         return $factory->withData($data);
+    }
+
+    function type(Reflector|ReflectionType $reflector): string
+    {
+        return (new TypeName())->resolve($reflector);
     }
 }
