@@ -98,8 +98,8 @@ class ArrayToObjectMapperTest extends IntegrationTest
 
         $this->assertSame('a', $parent->name);
         $this->assertSame('b', $parent->child->name);
-        $this->assertSame('a', $parent->child->parentObject->name);
-        $this->assertSame('a', $parent->child->parentObjects[0]->name);
+        $this->assertSame('a', $parent->child->parent->name);
+        $this->assertSame('a', $parent->child->parentCollection[0]->name);
     }
 
     public function test_parent_children(): void
@@ -113,11 +113,11 @@ class ArrayToObjectMapperTest extends IntegrationTest
         $this->assertSame('a', $parent->name);
 
         $this->assertSame('b', $parent->children[0]->name);
-        $this->assertSame('a', $parent->children[0]->parentWithChildrenObject->name);
-        $this->assertSame('a', $parent->children[0]->parentWithChildrenObjects[0]->name);
+        $this->assertSame('a', $parent->children[0]->parent->name);
+        $this->assertSame('a', $parent->children[0]->parentCollection[0]->name);
 
         $this->assertSame('c', $parent->children[1]->name);
-        $this->assertSame('a', $parent->children[1]->parentWithChildrenObject->name);
-        $this->assertSame('a', $parent->children[1]->parentWithChildrenObjects[0]->name);
+        $this->assertSame('a', $parent->children[1]->parent->name);
+        $this->assertSame('a', $parent->children[1]->parentCollection[0]->name);
     }
 }

@@ -144,25 +144,14 @@ final readonly class ArrayToObjectMapper implements Mapper
             return $caster?->cast($data) ?? $data;
         }
 
-        $class = $property->getDeclaringClass();
-
-        // TODO: map based on matched property type instead of name
-        // foreach ($class->properties as $property)
-        //
-        //      if ($property accepts $parent)
-        //      then set [property->getName => $parent]
-        //
-        //      if (property accepts array of $parent)
-        //      then set [property->getName => [$parent]]
-
-        $input = [
-            lcfirst($class->getShortName()) => $parent, // Inverse 1:1 relation, if present
-            lcfirst($class->getShortName()) . 's' => [$parent], // Inverse 1:n relation, if present
-            ...$data,
-        ];
+        $data = $this->withParentRelations(
+            new ReflectionClass($type),
+            $parent,
+            $data
+        );
 
         return $this->map(
-            from: $caster?->cast($input) ?? $input,
+            from: $caster?->cast($data) ?? $data,
             to: $type,
         );
     }
@@ -171,7 +160,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         ReflectionProperty $property,
         object $parent,
-    ): mixed {
+    ): UnknownValue|array {
         $type = $this->resolveTypeForArray($property);
 
         if (! $type) {
@@ -179,8 +168,6 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         $values = [];
-
-        $class = $property->getDeclaringClass();
 
         $caster = $this->getCaster($property);
 
@@ -191,23 +178,14 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            // TODO: map based on matched property type instead of name
-            // foreach ($class->properties as $property)
-            //
-            //      if ($property accepts $parent)
-            //      then set [property->getName => $parent]
-            //
-            //      if (property accepts array of $parent)
-            //      then set [property->getName => [$parent]]
-
-            $input = [
-                lcfirst($class->getShortName()) => $parent, // Inverse 1:1 relation, if present
-                lcfirst($class->getShortName()) . 's' => [$parent], // Inverse 1:n relation, if present
-                ...$item,
-            ];
+            $item = $this->withParentRelations(
+                new ReflectionClass($type),
+                $parent,
+                $item
+            );
 
             $values[] = $this->map(
-                from: $caster?->cast($input) ?? $input,
+                from: $caster?->cast($item) ?? $item,
                 to: $type,
             );
         }
@@ -240,7 +218,11 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         preg_match('/@var ([\\\\\w]+)\[]/', $doc, $match);
 
-        return $match[1] ?? null;
+        if (! isset($match[1])) {
+            return null;
+        }
+
+        return ltrim($match[1], '\\');
     }
 
     private function hasDefaultValue(ReflectionProperty $property): bool
@@ -264,5 +246,23 @@ final readonly class ArrayToObjectMapper implements Mapper
         $validator = new Validator();
 
         $validator->validate($object);
+    }
+
+    private function withParentRelations(
+        ReflectionClass $child,
+        object $parent,
+        array $data,
+    ): array {
+        foreach ($child->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            if ($property->getType()->getName() === $parent::class) {
+                $data[$property->getName()] = $parent;
+            }
+
+            if ($this->resolveTypeForArray($property) === $parent::class) {
+                $data[$property->getName()] = [$parent];
+            }
+        }
+
+        return $data;
     }
 }

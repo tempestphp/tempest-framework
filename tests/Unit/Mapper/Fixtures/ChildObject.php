@@ -7,7 +7,7 @@ namespace Tests\Tempest\Unit\Mapper\Fixtures;
 final readonly class ChildObject
 {
     public string $name;
-    public ParentObject $parentObject;
+    public ParentObject $parent;
     /** @var \Tests\Tempest\Unit\Mapper\Fixtures\ParentObject[] */
-    public array $parentObjects;
+    public array $parentCollection;
 }
