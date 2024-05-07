@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Closure;
+use ArrayIterator;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionIntersectionType;
@@ -22,32 +22,31 @@ final class GenericContainer implements Container
     use HasInstance;
 
     public function __construct(
-        private array $definitions = [],
-        private array $singletons = [],
+        /** @var ArrayIterator<array-key, mixed> $definitions */
+        private ArrayIterator $definitions = new ArrayIterator(),
 
-        /**
-         * @template T of \Tempest\Container\Initializer
-         * @var class-string<T> $initializers
-         */
-        private array $initializers = [],
+        /** @var ArrayIterator<array-key, mixed> $singletons */
+        private ArrayIterator $singletons = new ArrayIterator(),
 
-        /**
-         * @template T of \Tempest\Container\DynamicInitializer
-         * @var class-string<T> $dynamicInitializers
-         */
-        private array $dynamicInitializers = [],
+        /** @var ArrayIterator<array-key, class-string> $initializers */
+        private ArrayIterator $initializers = new ArrayIterator(),
+
+        /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
+        private ArrayIterator $dynamicInitializers = new ArrayIterator(),
         private ?DependencyChain $chain = null,
     ) {
     }
 
-    public function setInitializers(array $initializers): void
+    public function setInitializers(array $initializers): self
     {
-        $this->initializers = $initializers;
+        $this->initializers = new ArrayIterator($initializers);
+
+        return $this;
     }
 
     public function getInitializers(): array
     {
-        return $this->initializers;
+        return $this->initializers->getArrayCopy();
     }
 
     public function register(string $className, callable $definition): self
@@ -132,7 +131,7 @@ final class GenericContainer implements Container
     {
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$className] ?? null) {
-            if ($instance instanceof Closure) {
+            if (is_callable($instance)) {
                 $instance = $instance($this);
                 $this->singletons[$className] = $instance;
             }
@@ -160,9 +159,7 @@ final class GenericContainer implements Container
 
             // Check whether the initializer's result should be registered as a singleton
             if (Attributes::find(Singleton::class)->in($initializer::class)->first() !== null) {
-                $this->singleton($className, fn () => $object);
-
-                return $this->get($className);
+                $this->singleton($className, $object);
             }
 
             return $object;
