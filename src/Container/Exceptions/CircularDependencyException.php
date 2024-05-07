@@ -33,21 +33,19 @@ final class CircularDependencyException extends Exception
             $message .= PHP_EOL . "\t{$prefix} " . $currentDependency->getShortName();
         }
 
-        $circularDependencyName = $circularDependency->getShortName();
-        $lastDependencyName = $chain->last()->getShortName();
+        $selectionLine = preg_replace_callback(
+            pattern: '/(?<prefix>(.*))(?<selection>'. $circularDependency->getTypeName() .'\s\$\w+)(.*)/',
+            callback: function ($matches) {
+                return "└"
+                    . str_repeat('─', strlen($matches['prefix']) + 3)
+                    . str_repeat('▒', strlen($matches['selection']));
+            },
+            subject: $chain->last()->getShortName(),
+        );
 
-        $firstPart = explode($circularDependencyName, $lastDependencyName)[0] ?? null;
-
-        if ($lastDependencyName === $firstPart) {
-            $fillerLines = str_repeat('─', 3);
-        } else {
-            $fillerLines = str_repeat('─', strlen($firstPart) + 3);
-        }
-
-        $fillerArrows = str_repeat('▒', strlen($circularDependencyName));
-        $message .= PHP_EOL . "\t└{$fillerLines}{$fillerArrows}";
-        $message .= PHP_EOL . PHP_EOL;
-
+        $message .= PHP_EOL;
+        $message .= "\t{$selectionLine}";
+        $message .= PHP_EOL;
         $message .= "Originally called in {$chain->getOrigin()}";
         $message .= PHP_EOL;
 

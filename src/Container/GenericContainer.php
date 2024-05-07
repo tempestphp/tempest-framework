@@ -244,8 +244,6 @@ final class GenericContainer implements Container
 
     private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
     {
-        //        $this->resolveChain()->add($parameter);
-
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, immediately skip reflection
@@ -281,7 +279,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw $lastThrowable ?? new CannotAutowireException($this->chain);
+        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
     private function autowireObjectDependency(ReflectionNamedType $type, mixed $providedValue): mixed
@@ -300,7 +298,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain);
+        throw new CannotAutowireException($this->chain, new Dependency($type));
     }
 
     private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
@@ -335,7 +333,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain);
+        throw new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
     private function clone(): self
