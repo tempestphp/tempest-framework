@@ -15,7 +15,6 @@ final class CannotAutowireException extends Exception
         $stack = $chain->all();
 
         $firstDependency = $chain->first();
-        $lastDependency = $chain->last();
 
         $message = PHP_EOL . PHP_EOL . "Cannot autowire {$firstDependency->getName()} because {$brokenDependency->getName()} cannot be resolved" . PHP_EOL;
 
