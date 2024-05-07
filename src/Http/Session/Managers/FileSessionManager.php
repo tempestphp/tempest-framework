@@ -131,7 +131,9 @@ final readonly class FileSessionManager implements SessionManager
 
         foreach ($sessionFiles as $sessionFile) {
             $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));
+
             $session = $this->resolve($id);
+
             if (! $session) {
                 continue;
             }
