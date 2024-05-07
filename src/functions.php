@@ -6,6 +6,7 @@ namespace Tempest
 {
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
+    use Tempest\Mapper\ObjectMapper;
     use Tempest\Support\Reflection\Attributes;
 
     /**
@@ -35,5 +36,24 @@ namespace Tempest
     function attribute(string $attributeName): Attributes
     {
         return Attributes::find($attributeName);
+    }
+
+    /**
+     * @template T of object
+     * @param T|class-string<T> $objectOrClass
+     * @return ObjectMapper<T>
+     */
+    function make(object|string $objectOrClass): ObjectMapper
+    {
+        $factory = get(ObjectMapper::class);
+
+        return $factory->forClass($objectOrClass);
+    }
+
+    function map(mixed $data): ObjectMapper
+    {
+        $factory = get(ObjectMapper::class);
+
+        return $factory->withData($data);
     }
 }
