@@ -12,6 +12,7 @@ use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\EventBusDiscovery;
 use Tempest\Discovery\InitializerDiscovery;
+use Tempest\Discovery\MapperDiscovery;
 use Tempest\Kernel;
 
 /**
@@ -37,10 +38,11 @@ class KernelTest extends TestCase
 
         $appConfig = $container->get(AppConfig::class);
 
-        $this->assertCount(3, $appConfig->discoveryClasses);
+        $this->assertCount(4, $appConfig->discoveryClasses);
         $this->assertSame(DiscoveryDiscovery::class, $appConfig->discoveryClasses[0]);
         $this->assertSame(EventBusDiscovery::class, $appConfig->discoveryClasses[1]);
-        $this->assertSame(InitializerDiscovery::class, $appConfig->discoveryClasses[2]);
+        $this->assertSame(MapperDiscovery::class, $appConfig->discoveryClasses[2]);
+        $this->assertSame(InitializerDiscovery::class, $appConfig->discoveryClasses[3]);
 
         $this->assertCount(2, $appConfig->discoveryLocations);
         $this->assertSame('Tempest\\', $appConfig->discoveryLocations[0]->namespace);

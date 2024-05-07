@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
 
 /* @template ClassType */
-final class ObjectMapper
+final class ObjectFactory
 {
     private object|string $objectOrClass;
 
@@ -19,7 +19,8 @@ final class ObjectMapper
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     /**
      * @template T of object
@@ -55,7 +56,7 @@ final class ObjectMapper
      */
     public function from(mixed $data): array|object
     {
-        return $this->map(
+        return $this->mapObject(
             from: $data,
             to: $this->objectOrClass,
             isCollection: $this->isCollection,
@@ -65,25 +66,40 @@ final class ObjectMapper
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
-     * @return T
+     * @return T|T[]
      */
-    public function to(object|string $objectOrClass): object
+    public function to(object|string $objectOrClass): array|object
     {
-        return $this->map(
+        return $this->mapObject(
             from: $this->data,
             to: $objectOrClass,
             isCollection: $this->isCollection,
         );
     }
 
-    private function map(
+    /**
+     * @template T of object
+     * @param mixed $from
+     * @param T|class-string<T> $objectOrClass
+     * @return T
+     */
+    public function map(mixed $from, object|string $to): array|object
+    {
+        return $this->mapObject(
+            from: $from,
+            to: $to,
+            isCollection: $this->isCollection,
+        );
+    }
+
+    private function mapObject(
         mixed $from,
         object|string $to,
         bool $isCollection,
     ): array|object {
         if ($isCollection && is_array($from)) {
             return array_map(
-                fn (mixed $item) => $this->map(
+                fn (mixed $item) => $this->mapObject(
                     from: $item,
                     to: $to,
                     isCollection: false,
@@ -93,7 +109,7 @@ final class ObjectMapper
         }
 
         foreach ($this->config->mappers as $mapperClass) {
-            /** @var \Tempest\Mapper\Mapper $mapper */
+            /** @var Mapper $mapper */
             $mapper = $this->container->get($mapperClass);
 
             if ($mapper->canMap(from: $from, to: $to)) {

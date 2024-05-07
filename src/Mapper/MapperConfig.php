@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper;
 
 final class MapperConfig
@@ -10,11 +12,6 @@ final class MapperConfig
          * @var class-string<T>[] $mappers
          */
         public array $mappers = [],
-
-        /**
-         * @template T of \Tempest\Mapper\Caster
-         * @var class-string<T>[] $mappers
-         */
-        public array $casters = [],
-    ) {}
+    ) {
+    }
 }

@@ -6,7 +6,7 @@ namespace Tempest
 {
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
-    use Tempest\Mapper\ObjectMapper;
+    use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
 
     /**
@@ -41,18 +41,18 @@ namespace Tempest
     /**
      * @template T of object
      * @param T|class-string<T> $objectOrClass
-     * @return ObjectMapper<T>
+     * @return ObjectFactory<T>
      */
-    function make(object|string $objectOrClass): ObjectMapper
+    function make(object|string $objectOrClass): ObjectFactory
     {
-        $factory = get(ObjectMapper::class);
+        $factory = get(ObjectFactory::class);
 
         return $factory->forClass($objectOrClass);
     }
 
-    function map(mixed $data): ObjectMapper
+    function map(mixed $data): ObjectFactory
     {
-        $factory = get(ObjectMapper::class);
+        $factory = get(ObjectFactory::class);
 
         return $factory->withData($data);
     }

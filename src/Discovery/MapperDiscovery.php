@@ -6,7 +6,6 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
-use Tempest\Mapper\Caster;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapperConfig;
 
@@ -16,7 +15,8 @@ final readonly class MapperDiscovery implements Discovery
 
     public function __construct(
         private MapperConfig $config,
-    ) {}
+    ) {
+    }
 
     public function discover(ReflectionClass $class): void
     {
@@ -26,8 +26,6 @@ final readonly class MapperDiscovery implements Discovery
 
         if ($class->implementsInterface(Mapper::class)) {
             $this->config->mappers[] = $class->getName();
-        } elseif ($class->implementsInterface(Caster::class)) {
-            $this->config->casters[] = $class->getName();
         }
     }
 
@@ -38,21 +36,14 @@ final readonly class MapperDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize([
-            'mappers' => $this->config->mappers,
-            'casters' => $this->config->casters,
-        ]));
+        file_put_contents(self::CACHE_PATH, serialize($this->config->mappers));
     }
 
     public function restoreCache(Container $container): void
     {
-        [
-            'mappers' => $mappers,
-            'casters' => $casters,
-        ] = unserialize(file_get_contents(self::CACHE_PATH));
+        $mappers = unserialize(file_get_contents(self::CACHE_PATH));
 
         $this->config->mappers = $mappers;
-        $this->config->casters = $casters;
     }
 
     public function destroyCache(): void

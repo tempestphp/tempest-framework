@@ -10,23 +10,26 @@ use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use function Tempest\attribute;
+use function Tempest\get;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Casters\BooleanCaster;
+use Tempest\Mapper\Casters\DateTimeCaster;
+use Tempest\Mapper\Casters\FloatCaster;
+use Tempest\Mapper\Casters\IntegerCaster;
 use Tempest\Mapper\CastWith;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
-use Tempest\Validation\Rules\DateTimeFormat;
 use Tempest\Validation\Validator;
-use Throwable;
-use function Tempest\attribute;
-use function Tempest\get;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
     public function canMap(mixed $from, object|string $to): bool
     {
-        return is_array($from);
+        return is_array($from)
+            && (is_object($to) || class_exists($to));
     }
 
     public function map(mixed $from, object|string $to): array|object
@@ -84,30 +87,35 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function getCaster(ReflectionProperty $property): ?Caster
     {
+        // Get CastWith from the property
         $castWith = attribute(CastWith::class)
             ->in($property)
             ->first();
 
+        // Get CastWith from the property's type
         if (! $castWith) {
             try {
                 $castWith = attribute(CastWith::class)
                     ->in($property->getType()->getName())
                     ->first();
             } catch (ReflectionException) {
+                // Could not resolve CastWith from the type
             }
         }
 
-        if (! $castWith) {
-            return match($type = $property->getType()->getName()) {
-                'int' => new IntegerCaster(),
-                'float' => new FloatCaster(),
-                'bool' => new BooleanCaster(),
-                DateTimeImmutable::class, DateTime::class, DateTimeInterface::class => $this->createDateCaster($type, $property),
-                default => null,
-            };
+        if ($castWith) {
+            // Resolve the caster from the container
+            return get($castWith->className);
         }
 
-        return get($castWith->className);
+        // Get Caster from built-in casters
+        return match ($property->getType()->getName()) {
+            'int' => new IntegerCaster(),
+            'float' => new FloatCaster(),
+            'bool' => new BooleanCaster(),
+            DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
+            default => null,
+        };
     }
 
     private function resolveObject(object|string $objectOrClass): object
@@ -130,15 +138,22 @@ final readonly class ArrayToObjectMapper implements Mapper
             return new UnknownValue();
         }
 
-        $item = $data;
-
         $caster = $this->getCaster($property);
 
-        if (! is_array($item)) {
-            return $caster?->cast($item) ?? $item;
+        if (! is_array($data)) {
+            return $caster?->cast($data) ?? $data;
         }
 
         $class = $property->getDeclaringClass();
+
+        // TODO: map based on matched property type instead of name
+        // foreach ($class->properties as $property)
+        //
+        //      if ($property accepts $parent)
+        //      then set [property->getName => $parent]
+        //
+        //      if (property accepts array of $parent)
+        //      then set [property->getName => [$parent]]
 
         $input = [
             lcfirst($class->getShortName()) => $parent, // Inverse 1:1 relation, if present
@@ -175,6 +190,15 @@ final readonly class ArrayToObjectMapper implements Mapper
 
                 continue;
             }
+
+            // TODO: map based on matched property type instead of name
+            // foreach ($class->properties as $property)
+            //
+            //      if ($property accepts $parent)
+            //      then set [property->getName => $parent]
+            //
+            //      if (property accepts array of $parent)
+            //      then set [property->getName => [$parent]]
 
             $input = [
                 lcfirst($class->getShortName()) => $parent, // Inverse 1:1 relation, if present
@@ -240,29 +264,5 @@ final readonly class ArrayToObjectMapper implements Mapper
         $validator = new Validator();
 
         $validator->validate($object);
-    }
-
-    /**
-     * @param class-string<DateTime|DateTimeImmutable|DateTimeInterface> $type
-     * @param ReflectionProperty $property
-     *
-     * @return Caster
-     */
-    private function createDateCaster(string $type, ReflectionProperty $property): Caster
-    {
-        $format = null;
-
-        try {
-            $format = attribute(DateTimeFormat::class)
-                ->in($property)
-                ->first();
-        } catch (Throwable) {
-
-        }
-
-        return match ($type) {
-            DateTime::class => new DateTimeCaster($format?->format),
-            default => new DateTimeImmutableCaster($format->format),
-        };
     }
 }

@@ -1389,37 +1389,37 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Mapper\\\\ObjectMapper\\:\\:collection\\(\\) has invalid return type Tempest\\\\Mapper\\\\ClassType\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Mapper\\\\ObjectMapper\\:\\:from\\(\\) has invalid return type Tempest\\\\Mapper\\\\ClassType\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Mapper\\\\ObjectMapper\\:\\:from\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Mapper\\\\ObjectMapper\\:\\:map\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^PHPDoc tag @return contains generic type Tempest\\\\Mapper\\\\ObjectMapper\\<array\\<Tempest\\\\Mapper\\\\ClassType\\>\\> but class Tempest\\\\Mapper\\\\ObjectMapper is not generic\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^PHPDoc tag @return contains generic type Tempest\\\\Mapper\\\\ObjectMapper\\<object\\> but class Tempest\\\\Mapper\\\\ObjectMapper is not generic\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Unable to resolve the template type ClassName in call to method Tempest\\\\Mapper\\\\Mapper\\:\\:map\\(\\)$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Mapper/ObjectMapper.php',
+	'path' => __DIR__ . '/src/Mapper/ObjectFactory.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Mapper\\\\QueryToModelMapper\\:\\:resolveData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
