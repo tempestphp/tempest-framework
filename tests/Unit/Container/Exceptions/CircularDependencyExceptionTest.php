@@ -16,7 +16,7 @@ use Tests\Tempest\Unit\Container\Fixtures\CircularZ;
  */
 class CircularDependencyExceptionTest extends TestCase
 {
-    public function test_circular_dependency_test()
+    public function test_circular_dependency_test(): void
     {
         $this->expectException(CircularDependencyException::class);
 
@@ -31,7 +31,7 @@ class CircularDependencyExceptionTest extends TestCase
 	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
 	│   CircularB::__construct(CircularC $c)
 	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-	└───▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
             $this->assertStringContainsString($expected, $exception->getMessage());
@@ -42,7 +42,7 @@ TXT;
         }
     }
 
-    public function test_circular_dependency_as_a_child_test()
+    public function test_circular_dependency_as_a_child_test(): void
     {
         $this->expectException(CircularDependencyException::class);
 
@@ -58,7 +58,7 @@ TXT;
 	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
 	│   CircularB::__construct(CircularC $c)
 	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-	└───▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
             $this->assertStringContainsString($expected, $exception->getMessage());

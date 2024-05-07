@@ -37,6 +37,21 @@ final readonly class Dependency
         return $this->getName() === $other->getName();
     }
 
+    public function getTypeName(): string
+    {
+        $dependency = $this->dependency;
+
+        return match($dependency::class) {
+            ReflectionClass::class => $dependency->getShortName(),
+            ReflectionMethod::class => $dependency->getDeclaringClass()->getShortName(),
+            ReflectionParameter::class => $this->resolveName($dependency->getType()),
+            ReflectionNamedType::class => $dependency->getName(),
+            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
+            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            default => 'unknown',
+        };
+    }
+
     private function resolveName(ReflectionType|Reflector|string|Closure $dependency): string
     {
         if (is_string($dependency)) {
