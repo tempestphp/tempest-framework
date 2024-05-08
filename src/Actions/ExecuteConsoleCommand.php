@@ -9,8 +9,6 @@ use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
-use Tempest\Console\Middleware\ConsoleExceptionMiddleware;
-use Tempest\Console\Middleware\HelpMiddleware;
 use Tempest\Container\Container;
 use function Tempest\type;
 
@@ -61,11 +59,7 @@ final readonly class ExecuteConsoleCommand
             );
         };
 
-        // TODO: move to config
-        $middlewareStack = [
-            ConsoleExceptionMiddleware::class,
-            HelpMiddleware::class,
-        ];
+        $middlewareStack = $this->consoleConfig->middleware;
 
         while ($middlewareClass = array_pop($middlewareStack)) {
             $callable = fn (ConsoleCommand $consoleCommand, ConsoleArgumentBag $argumentBag) => $this->container->get($middlewareClass)($consoleCommand, $argumentBag, $callable);
