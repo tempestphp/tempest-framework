@@ -7,6 +7,8 @@ namespace Tempest\Console;
 use ReflectionMethod;
 use Tempest\Console\Middleware\ConsoleExceptionMiddleware;
 use Tempest\Console\Middleware\HelpMiddleware;
+use Tempest\Console\Middleware\OverviewMiddleware;
+use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
 
 final class ConsoleConfig
 {
@@ -19,6 +21,8 @@ final class ConsoleConfig
 
         /** @var array<array-key, class-string<\Tempest\Console\Middleware\ConsoleMiddleware>> */
         public array $middleware = [
+            OverviewMiddleware::class,
+            ResolveOrRescueMiddleware::class,
             ConsoleExceptionMiddleware::class,
             HelpMiddleware::class,
         ],

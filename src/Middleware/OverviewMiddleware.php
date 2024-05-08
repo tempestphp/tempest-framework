@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Actions;
+namespace Tempest\Console\Middleware;
 
 use Tempest\AppConfig;
+use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
+use Tempest\Console\Invocation;
 
-final readonly class RenderConsoleCommandOverview
+final readonly class OverviewMiddleware implements ConsoleMiddleware
 {
     public function __construct(
         private Console $console,
@@ -17,7 +19,18 @@ final readonly class RenderConsoleCommandOverview
     ) {
     }
 
-    public function __invoke(): void
+    public function __invoke(Invocation $invocation, callable $next): void
+    {
+        if (! $invocation->commandName) {
+            $this->renderOverview();
+
+            return;
+        }
+
+        $next($invocation);
+    }
+
+    private function renderOverview(): void
     {
         $this->console
             ->writeln("<h1>{$this->consoleConfig->name}</h1>")

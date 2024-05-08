@@ -6,9 +6,8 @@ namespace Tempest\Console\Middleware;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleException;
+use Tempest\Console\Invocation;
 use Throwable;
 
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
@@ -19,10 +18,10 @@ final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(ConsoleCommand $consoleCommand, ConsoleArgumentBag $argumentBag, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): void
     {
         try {
-            $next($consoleCommand, $argumentBag);
+            $next($invocation);
         } catch (ConsoleException $consoleException) {
             $consoleException->render($this->console);
         } catch (Throwable $throwable) {

@@ -2,22 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Actions;
+namespace Tempest\Console\Middleware;
 
+use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Container\Container;
+use Tempest\Console\Invocation;
 
-final readonly class RenderConsoleRescueScreen
+final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 {
     public function __construct(
-        private Container $container,
         private ConsoleConfig $consoleConfig,
         private Console $console,
+        private ExecuteConsoleCommand $executeConsoleCommand,
     ) {
     }
 
-    public function __invoke(string $commandName): void
+    public function __invoke(Invocation $invocation, callable $next): void
+    {
+        $consoleCommand = $this->consoleConfig->commands[$invocation->commandName] ?? null;
+
+        if (! $consoleCommand) {
+            $this->rescue($invocation->commandName);
+
+            return;
+        }
+
+        $next(new Invocation(
+            commandName: $invocation->commandName,
+            argumentBag: $invocation->argumentBag,
+            consoleCommand: $consoleCommand,
+        ));
+    }
+
+    private function rescue(string $commandName): void
     {
         $this->console->writeln("<error>Command {$commandName} not found</error>");
 
@@ -64,6 +82,6 @@ final readonly class RenderConsoleRescueScreen
 
     private function runIntendedCommand(string $commandName): void
     {
-        ($this->container->get(ExecuteConsoleCommand::class))($commandName);
+        ($this->executeConsoleCommand)($commandName);
     }
 }

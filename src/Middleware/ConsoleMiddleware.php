@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
-use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Invocation;
 
 interface ConsoleMiddleware
 {
     public function __invoke(
-        ConsoleCommand $consoleCommand,
-        ConsoleArgumentBag $argumentBag,
+        Invocation $invocation,
         callable $next
     ): void;
 }
