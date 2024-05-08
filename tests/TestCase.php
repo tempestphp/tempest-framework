@@ -41,9 +41,8 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->container = $kernel->init();
 
         $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag($_SERVER['argv']),
             container: $this->container,
-            appConfig: $appConfig,
+            argumentBag: new ConsoleArgumentBag($_SERVER['argv']),
         );
 
         $this->container->singleton(Application::class, fn () => $application);

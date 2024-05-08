@@ -46,10 +46,12 @@ final class ConsoleTester
 
         $appConfig->exceptionHandlers[] = $clone->container->get(ConsoleExceptionHandler::class);
 
+        $argumentBag = new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]);
+        $clone->container->singleton(ConsoleArgumentBag::class, $argumentBag);
+
         $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
             container: $clone->container,
-            appConfig: $appConfig,
+            argumentBag: $clone->container->get(ConsoleArgumentBag::class),
         );
 
         $application->run();

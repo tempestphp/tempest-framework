@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Exceptions;
 
-use Tempest\Application;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleApplication;
+use Tempest\Console\ConsoleArgumentBag;
 use Tempest\ExceptionHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
@@ -16,8 +15,8 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
         private Console $console,
-        private Application&ConsoleApplication $application,
         private Highlighter $highlighter,
+        private ConsoleArgumentBag $argumentBag,
     ) {
     }
 
@@ -33,7 +32,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 
         $this->writeSnippet($throwable);
 
-        if ($this->application->argumentBag->get('-v')) {
+        if ($this->argumentBag->get('-v')) {
             $this->console->writeln();
 
             foreach ($throwable->getTrace() as $i => $trace) {

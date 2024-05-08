@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Initializers;
 
-use Tempest\Application;
 use Tempest\Console\Commands\ScheduleTaskCommand;
 use Tempest\Console\Components\GenericComponentRenderer;
 use Tempest\Console\Components\UnsupportedComponentRenderer;
@@ -39,13 +38,12 @@ class ConsoleInitializer implements Initializer
 
     public function backgroundTaskConsole(Container $container): GenericConsole
     {
-        $application = $container->get(Application::class);
         $textHighlighter = new Highlighter(new TextTerminalTheme());
 
         $container->singleton(ConsoleExceptionHandler::class, fn () => new ConsoleExceptionHandler(
             console: $container->get(Console::class),
-            application: $application,
             highlighter: $textHighlighter,
+            argumentBag: $container->get(ConsoleArgumentBag::class),
         ));
 
         return new GenericConsole(
@@ -58,7 +56,6 @@ class ConsoleInitializer implements Initializer
 
     public function cliConsole(Container $container): GenericConsole
     {
-        $application = $container->get(Application::class);
         $terminalHighlighter = new Highlighter(new TempestTerminalTheme());
 
         $console = new GenericConsole(
@@ -70,8 +67,8 @@ class ConsoleInitializer implements Initializer
 
         $container->singleton(ConsoleExceptionHandler::class, fn () => new ConsoleExceptionHandler(
             console: $console,
-            application: $application,
             highlighter: $terminalHighlighter,
+            argumentBag: $container->get(ConsoleArgumentBag::class),
         ));
 
         return $console;
