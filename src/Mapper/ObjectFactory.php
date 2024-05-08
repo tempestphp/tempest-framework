@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
+use Closure;
+use ReflectionException;
+use ReflectionFunction;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
+use function Tempest\type;
 
 /** @template ClassType */
 final class ObjectFactory
@@ -93,6 +97,40 @@ final class ObjectFactory
             to: $to,
             isCollection: $this->isCollection,
         );
+    }
+
+    /**
+     * @template MapperType of \Tempest\Mapper\Mapper
+     * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
+     * @return mixed
+     * @throws ReflectionException
+     */
+    public function with(Closure|string ...$mappers): mixed
+    {
+        $result = $this->from;
+
+        foreach ($mappers as $mapper) {
+            if ($mapper instanceof Closure) {
+                $closure = new ReflectionFunction($mapper);
+
+                $data = [
+                    'from' => $result,
+                ];
+
+                foreach ($closure->getParameters() as $parameter) {
+                    $data[$parameter->getName()] ??= $this->container->get(type($parameter->getType()));
+                }
+
+                $result = $mapper(...$data);
+            } else {
+                $mapper = $this->container->get($mapper);
+
+                /** @var Mapper $mapper */
+                $result = $mapper->map($result, null);
+            }
+        }
+
+        return $result;
     }
 
     private function mapObject(

@@ -10,7 +10,7 @@ interface Mapper
 
     /**
      * @template ClassName of object
-     * @param ClassName|class-string<ClassName> $to
+     * @param ClassName|class-string<ClassName>|null $to
      * @param mixed $from
      * @return ClassName[]|ClassName|mixed
      */
