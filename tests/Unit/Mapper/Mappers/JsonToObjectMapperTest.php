@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Mapper\Mappers;
 
+use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use function Tempest\map;
 use Tests\Tempest\IntegrationTest;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
@@ -20,5 +21,19 @@ class JsonToObjectMapperTest extends IntegrationTest
 
         $this->assertSame('a', $object->a);
         $this->assertSame('b', $object->b);
+    }
+
+    public function test_invalid_json(): void
+    {
+        $mapper = new JsonToObjectMapper();
+
+        $this->assertFalse($mapper->canMap('invalid', ObjectA::class));
+    }
+
+    public function test_invalid_object(): void
+    {
+        $mapper = new JsonToObjectMapper();
+
+        $this->assertFalse($mapper->canMap('{}', 'unknown'));
     }
 }
