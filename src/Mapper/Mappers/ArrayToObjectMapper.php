@@ -10,6 +10,7 @@ use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use Throwable;
 use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\Mapper\Caster;
@@ -27,13 +28,22 @@ use Tempest\Validation\Validator;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
-    public function canMap(mixed $from, object|string $to): bool
+    public function canMap(mixed $from, mixed $to): bool
     {
-        return is_array($from)
-            && (is_object($to) || class_exists($to));
+        if (!is_array($from)) {
+            return false;
+        }
+
+        try {
+            $class = new ReflectionClass($to);
+
+            return $class->isInstantiable();
+        } catch (Throwable) {
+            return false;
+        }
     }
 
-    public function map(mixed $from, object|string $to): array|object
+    public function map(mixed $from, mixed $to): object
     {
         $object = $this->resolveObject($to);
 
@@ -119,7 +129,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         };
     }
 
-    private function resolveObject(object|string $objectOrClass): object
+    private function resolveObject(mixed $objectOrClass): object
     {
         if (is_object($objectOrClass)) {
             return $objectOrClass;
@@ -245,7 +255,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }
 
-    private function validate(object|string $object): void
+    private function validate(mixed $object): void
     {
         $validator = new Validator();
 

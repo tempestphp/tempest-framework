@@ -10,9 +10,9 @@ use Tempest\Mapper\Exceptions\CannotMapDataException;
 /** @template ClassType */
 final class ObjectFactory
 {
-    private object|string $objectOrClass;
+    private mixed $from;
 
-    private mixed $data;
+    private mixed $to;
 
     private bool $isCollection = false;
 
@@ -27,16 +27,16 @@ final class ObjectFactory
      * @param T|class-string<T> $objectOrClass
      * @return self<T>
      */
-    public function forClass(object|string $objectOrClass): self
+    public function forClass(mixed $objectOrClass): self
     {
-        $this->objectOrClass = $objectOrClass;
+        $this->to = $objectOrClass;
 
         return $this;
     }
 
     public function withData(mixed $data): self
     {
-        $this->data = $data;
+        $this->from = $data;
 
         return $this;
     }
@@ -58,21 +58,21 @@ final class ObjectFactory
     {
         return $this->mapObject(
             from: $data,
-            to: $this->objectOrClass,
+            to: $this->to,
             isCollection: $this->isCollection,
         );
     }
 
     /**
      * @template T of object
-     * @param T|class-string<T> $objectOrClass
-     * @return T|T[]
+     * @param T|class-string<T> $to
+     * @return T|T[]|mixed
      */
-    public function to(object|string $objectOrClass): array|object
+    public function to(mixed $to): mixed
     {
         return $this->mapObject(
-            from: $this->data,
-            to: $objectOrClass,
+            from: $this->from,
+            to: $to,
             isCollection: $this->isCollection,
         );
     }
@@ -81,9 +81,9 @@ final class ObjectFactory
      * @template T of object
      * @param mixed $from
      * @param T|class-string<T> $to
-     * @return T
+     * @return T|mixed
      */
-    public function map(mixed $from, object|string $to): array|object
+    public function map(mixed $from, mixed $to): mixed
     {
         return $this->mapObject(
             from: $from,
@@ -94,9 +94,9 @@ final class ObjectFactory
 
     private function mapObject(
         mixed $from,
-        object|string $to,
+        mixed $to,
         bool $isCollection,
-    ): array|object {
+    ): mixed {
         if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->mapObject(
