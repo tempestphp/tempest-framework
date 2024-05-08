@@ -7,15 +7,15 @@ namespace Tempest\Mapper\Mappers;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
 
-final readonly class ArrayToJsonMapper implements Mapper
+final readonly class ObjectToArrayMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === MapTo::JSON && is_array($from);
+        return $to === MapTo::ARRAY && is_object($from);
     }
 
-    public function map(mixed $from, mixed $to): string
+    public function map(mixed $from, mixed $to): array
     {
-        return json_encode($from);
+        return (array) $from;
     }
 }

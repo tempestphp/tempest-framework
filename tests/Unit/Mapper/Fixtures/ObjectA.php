@@ -6,6 +6,9 @@ namespace Tests\Tempest\Unit\Mapper\Fixtures;
 
 final class ObjectA
 {
-    public string $a;
-    public string $b;
+    public function __construct(
+        public string $a,
+        public string $b,
+    ) {
+    }
 }

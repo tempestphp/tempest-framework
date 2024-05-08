@@ -31,7 +31,7 @@ class ArrayToObjectMapperTest extends IntegrationTest
 
     public function test_map_to_existing_object(): void
     {
-        $object = map(['a' => 'a', 'b' => 'b'])->to(new ObjectA());
+        $object = map(['a' => 'a', 'b' => 'b'])->to(new ObjectA('', ''));
 
         $this->assertSame('a', $object->a);
         $this->assertSame('b', $object->b);

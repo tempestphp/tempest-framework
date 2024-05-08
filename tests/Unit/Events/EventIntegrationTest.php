@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration;
+namespace Tests\Tempest\Unit\Events;
 
 use App\Events\ItHappened;
 use App\Events\MyEventHandler;

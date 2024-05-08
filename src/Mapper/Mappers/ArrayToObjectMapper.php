@@ -10,7 +10,6 @@ use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
-use Throwable;
 use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\Mapper\Caster;
@@ -25,12 +24,13 @@ use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
 use function Tempest\type;
 use Tempest\Validation\Validator;
+use Throwable;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        if (!is_array($from)) {
+        if (! is_array($from)) {
             return false;
         }
 
@@ -158,7 +158,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $data = $this->withParentRelations(
             new ReflectionClass($type),
             $parent,
-            $data
+            $data,
         );
 
         return $this->map(
@@ -192,7 +192,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             $item = $this->withParentRelations(
                 new ReflectionClass($type),
                 $parent,
-                $item
+                $item,
             );
 
             $values[] = $this->map(
@@ -214,7 +214,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         // PhpStan does a weird thing here, saying that ReflectionType::isBuiltin doesn't exist.
         // It's late, and I don't want to figure it out atm…
-        /** @phpstan-ignore-next-line  */
+        /** @phpstan-ignore-next-line */
         if ($type->isBuiltin()) {
             return null;
         }

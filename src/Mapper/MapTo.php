@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper;
 
-enum To
+enum MapTo
 {
     case JSON;
     case ARRAY;
