@@ -12,7 +12,7 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use function Tempest\make;
-use Tempest\ORM\Attributes\CastWith;
+use Tempest\Mapper\CastWith;
 
 trait IsModel
 {

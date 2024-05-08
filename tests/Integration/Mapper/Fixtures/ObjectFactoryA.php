@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\ORM\Attributes\CastWith;
+use Tempest\Mapper\CastWith;
 use Tempest\ORM\IsModel;
 use Tempest\ORM\Model;
 

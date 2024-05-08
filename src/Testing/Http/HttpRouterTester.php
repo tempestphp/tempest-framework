@@ -12,6 +12,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Router;
 use function Tempest\map;
+use Tempest\ORM\Mappers\RequestToPsrRequestMapper;
 
 final class HttpRouterTester
 {
@@ -49,7 +50,7 @@ final class HttpRouterTester
         $router = $this->container->get(Router::class);
 
         return new TestResponseHelper(
-            $router->dispatch(map($request)->to(PsrRequest::class)),
+            $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)),
         );
     }
 

@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper;
+namespace Tempest\ORM\Mappers;
 
 use ReflectionClass;
 use Tempest\Database\Query;
 use function Tempest\make;
+use Tempest\Mapper\Mapper;
 
 final readonly class QueryToModelMapper implements Mapper
 {
-    public function canMap(mixed $from, object|string $to): bool
+    public function canMap(mixed $from, mixed $to): bool
     {
         return $from instanceof Query;
     }
 
-    public function map(mixed $from, object|string $to): array|object
+    public function map(mixed $from, mixed $to): array|object
     {
         /** @var Query $from */
         if ($from->bindings['id'] ?? null) {
@@ -28,7 +29,7 @@ final readonly class QueryToModelMapper implements Mapper
         }
     }
 
-    private function resolveData(object|string $objectOrClass, array $data): array
+    private function resolveData(mixed $objectOrClass, array $data): array
     {
         $className = (new ReflectionClass($objectOrClass))->getShortName();
 

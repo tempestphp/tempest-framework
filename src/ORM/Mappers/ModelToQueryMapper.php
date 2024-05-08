@@ -2,22 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper;
+namespace Tempest\ORM\Mappers;
 
 use ReflectionClass;
 use ReflectionProperty;
 use Tempest\Database\Query;
 use function Tempest\map;
+use Tempest\Mapper\Mapper;
 use Tempest\ORM\Model;
+use function Tempest\type;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
-    public function canMap(mixed $from, object|string $to): bool
+    public function canMap(mixed $from, mixed $to): bool
     {
         return $to === Query::class && $from instanceof Model;
     }
 
-    public function map(mixed $from, object|string $to): array|object
+    public function map(mixed $from, mixed $to): array|object
     {
         /** @var Model $model */
         $model = $from;
@@ -76,7 +78,7 @@ final readonly class ModelToQueryMapper implements Mapper
         $table = $model::table();
 
         return new Query(
-            "UPDATE {$table} SET {$values} WHERE id = {$model->id};",
+            "UPDATE {$table} SET {$values} WHERE id = {$model->getId()};",
             $fields,
         );
     }
@@ -116,7 +118,7 @@ final readonly class ModelToQueryMapper implements Mapper
                 continue;
             }
 
-            $type = $property->getType()->getName();
+            $type = type($property);
 
             // 1:1 or n:1 relations
             if (is_a($type, Model::class, true)) {

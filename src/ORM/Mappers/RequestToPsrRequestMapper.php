@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper;
+namespace Tempest\ORM\Mappers;
 
 use Laminas\Diactoros\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\Request;
+use Tempest\Mapper\Mapper;
 
 final readonly class RequestToPsrRequestMapper implements Mapper
 {
-    public function canMap(mixed $from, object|string $to): bool
+    public function canMap(mixed $from, mixed $to): bool
     {
         return $from instanceof Request && is_a($to, PsrRequest::class, true);
     }
 
-    public function map(mixed $from, object|string $to): PsrRequest
+    public function map(mixed $from, mixed $to): PsrRequest
     {
         /** @var Request $from */
 

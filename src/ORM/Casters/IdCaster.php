@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\ORM\Casters;
 
 use Tempest\Database\Id;
-use Tempest\ORM\Caster;
+use Tempest\Mapper\Caster;
 
 final readonly class IdCaster implements Caster
 {

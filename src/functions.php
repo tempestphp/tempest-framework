@@ -9,7 +9,6 @@ namespace Tempest {
     use Tempest\Http\Response;
     use Tempest\Http\Router;
     use Tempest\Http\Status;
-    use Tempest\Mapper\ObjectMapper;
     use Tempest\View\GenericView;
     use Tempest\View\View;
 
@@ -47,25 +46,6 @@ namespace Tempest {
     function redirect(string|array $action, ...$params): Response
     {
         return response()->redirect(uri($action, ...$params));
-    }
-
-    /**
-     * @template T of object
-     * @param T|class-string<T> $objectOrClass
-     * @return ObjectMapper<T>
-     */
-    function make(object|string $objectOrClass): ObjectMapper
-    {
-        $factory = get(ObjectMapper::class);
-
-        return $factory->forClass($objectOrClass);
-    }
-
-    function map(mixed $data): ObjectMapper
-    {
-        $factory = get(ObjectMapper::class);
-
-        return $factory->withData($data);
     }
 
     function command(object $command): void

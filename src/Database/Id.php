@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\ORM\Attributes\CastWith;
+use Tempest\Mapper\CastWith;
 use Tempest\ORM\Casters\IdCaster;
 
 #[CastWith(IdCaster::class)]

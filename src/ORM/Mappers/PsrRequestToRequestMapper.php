@@ -2,23 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper;
+namespace Tempest\ORM\Mappers;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use function Tempest\map;
+use Tempest\Mapper\Mapper;
 use Tempest\Validation\Validator;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
-    public function canMap(mixed $from, object|string $to): bool
+    public function canMap(mixed $from, mixed $to): bool
     {
         return $from instanceof PsrRequest && is_a($to, Request::class, true);
     }
 
-    public function map(mixed $from, object|string $to): array|object
+    public function map(mixed $from, mixed $to): array|object
     {
         /** @var PsrRequest $from */
         /** @var class-string<\Tempest\Http\Request> $requestClass */

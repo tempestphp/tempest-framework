@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\ORM\Caster;
+use Tempest\Mapper\Caster;
 
 class ObjectFactoryACaster implements Caster
 {
