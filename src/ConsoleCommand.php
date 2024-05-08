@@ -6,10 +6,9 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
-use Tempest\Console\Scheduler\Invocation;
 
 #[Attribute]
-final class ConsoleCommand implements Invocation
+final class ConsoleCommand
 {
     public ReflectionMethod $handler;
 

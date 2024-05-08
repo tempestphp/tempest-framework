@@ -35,7 +35,7 @@ final class ScheduleDisovery implements Discovery
             if ($command) {
                 $this->schedulerConfig->addCommandInvocation($method, $command, $schedule);
             } else {
-                $this->schedulerConfig->addHandlerInvocation($method, $schedule);
+                $this->schedulerConfig->addMethodInvocation($method, $schedule);
             }
         }
     }

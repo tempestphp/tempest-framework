@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
-use Tempest\Console\Commands\ScheduleTaskCommand;
 
-final class GenericScheduler implements Scheduler
+final readonly class GenericScheduler implements Scheduler
 {
     public const string CACHE_PATH = __DIR__ . '/last-schedule-run.cache.php';
 
     public function __construct(
         private SchedulerConfig $config,
-        private ScheduledInvocationExecutor $executor,
+        private ScheduledInvocationExecutor $executor
     ) {
     }
 
@@ -37,13 +36,9 @@ final class GenericScheduler implements Scheduler
 
     private function compileInvocation(ScheduledInvocation $invocation): string
     {
-        $commandName = $invocation->invocation instanceof HandlerInvocation ?
-            ScheduleTaskCommand::NAME . ' ' . $invocation->invocation->getName()
-            : $invocation->invocation->getName();
-
         return join(' ', [
             '(' . $this->config->path,
-            $commandName . ')',
+            $invocation->getCommandName() . ')',
             $invocation->schedule->outputMode->value,
             $invocation->schedule->output,
             ($invocation->schedule->runInBackground ? '&' : ''),
@@ -63,7 +58,7 @@ final class GenericScheduler implements Scheduler
             $this->config->scheduledInvocations,
             fn (ScheduledInvocation $invocation) => $invocation->canRunAt(
                 date: $date,
-                lastRunTimestamp: $previousRuns[$invocation->invocation->getName()] ?? null,
+                lastRunTimestamp: $previousRuns[$invocation->handler->getName()] ?? null,
             )
         );
 
@@ -98,7 +93,7 @@ final class GenericScheduler implements Scheduler
         $lastRuns = $this->getPreviousRuns();
 
         foreach ($ranInvocations as $invocation) {
-            $lastRuns[$invocation->invocation->getName()] = $ranAt->getTimestamp();
+            $lastRuns[$invocation->handler->getName()] = $ranAt->getTimestamp();
         }
 
         file_put_contents(self::CACHE_PATH, serialize($lastRuns));

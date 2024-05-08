@@ -6,7 +6,9 @@ namespace Tests\Tempest\Console\Scheduler;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
-use Tempest\Console\Scheduler\HandlerInvocation;
+use Tempest\Console\Scheduler\Every;
+use Tempest\Console\Scheduler\Schedule;
+use Tempest\Console\Scheduler\ScheduledInvocation;
 
 /**
  * @internal
@@ -16,19 +18,19 @@ final class HandlerInvocationTest extends TestCase
 {
     public function test_name_gets_constructed_properly(): void
     {
-        $invocation = new HandlerInvocation(
-            new ReflectionMethod(
+        $invocation = new ScheduledInvocation(
+            schedule: new Schedule(Every::DAY),
+            handler: new ReflectionMethod(
                 objectOrMethod: $this,
                 method: 'handler',
-            ),
+            )
         );
 
-        $this->assertSame('Tests\\\Tempest\\\Console\\\Scheduler\\\HandlerInvocationTest::handler', $invocation->getName());
+        $this->assertSame('schedule:task Tests\\\\Tempest\\\\Console\\\\Scheduler\\\\HandlerInvocationTest::handler', $invocation->getCommandName());
     }
 
     // dummy handler method
     public function handler()
     {
-
     }
 }

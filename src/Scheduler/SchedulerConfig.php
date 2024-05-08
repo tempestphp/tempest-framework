@@ -17,9 +17,9 @@ final class SchedulerConfig
     ) {
     }
 
-    public function addHandlerInvocation(ReflectionMethod $handler, Schedule $schedule): self
+    public function addMethodInvocation(ReflectionMethod $handler, Schedule $schedule): self
     {
-        $this->scheduledInvocations[] = new ScheduledInvocation($schedule, new HandlerInvocation($handler));
+        $this->scheduledInvocations[] = new ScheduledInvocation($schedule, $handler);
 
         return $this;
     }

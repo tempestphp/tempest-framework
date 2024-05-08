@@ -39,7 +39,7 @@ final class GenericSchedulerTest extends TestCase
             ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
 
         $config = new SchedulerConfig();
-        $config->addHandlerInvocation(
+        $config->addMethodInvocation(
             new ReflectionMethod($this, 'handler'),
             new Schedule(Every::SECOND)
         );
@@ -78,7 +78,7 @@ final class GenericSchedulerTest extends TestCase
             ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
 
         $config = new SchedulerConfig();
-        $config->addHandlerInvocation(
+        $config->addMethodInvocation(
             new ReflectionMethod($this, 'handler'),
             new Schedule(Every::MINUTE)
         );
