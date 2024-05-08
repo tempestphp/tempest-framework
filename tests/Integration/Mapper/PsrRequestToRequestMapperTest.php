@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use App\Modules\Posts\PostRequest;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use Tempest\ORM\Mappers\PsrRequestToRequestMapper;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

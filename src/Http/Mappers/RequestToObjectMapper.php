@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM\Mappers;
+namespace Tempest\Http\Mappers;
 
 use Tempest\Http\Request;
 use function Tempest\map;

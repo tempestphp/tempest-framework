@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM\Casters;
+namespace Tempest\Database\Casters;
 
 use Tempest\Database\Id;
 use Tempest\Mapper\Caster;

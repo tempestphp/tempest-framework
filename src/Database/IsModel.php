@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\Database;
 
 use ReflectionClass;
 use ReflectionProperty;
 use function Tempest\attribute;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\Id;
-use Tempest\Database\Query;
 use function Tempest\make;
 use Tempest\Mapper\CastWith;
 
@@ -77,7 +75,7 @@ trait IsModel
 
         $fields = self::fieldNames();
 
-        /** @var class-string<\Tempest\ORM\Model> $relation */
+        /** @var class-string<\Tempest\Database\Model> $relation */
         foreach ($relations as $relation) {
             $fields = [...$fields, ...$relation::fieldNames()];
         }

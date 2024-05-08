@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM\Mappers;
+namespace Tempest\Http\Mappers;
 
 use Laminas\Diactoros\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;

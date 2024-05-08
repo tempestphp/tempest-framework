@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM;
+namespace Tempest\Database;
 
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\Id;
 
 interface Model
 {

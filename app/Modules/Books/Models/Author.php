@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Books\Models;
 
-use Tempest\ORM\IsModel;
-use Tempest\ORM\Model;
+use Tempest\Database\IsModel;
+use Tempest\Database\Model;
 
 class Author implements Model
 {

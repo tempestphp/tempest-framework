@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tempest\ORM\Mappers;
+namespace Tempest\Database\Mappers;
 
 use ReflectionClass;
 use ReflectionProperty;
+use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
-use Tempest\ORM\Model;
 use function Tempest\type;
 
 final readonly class ModelToQueryMapper implements Mapper
