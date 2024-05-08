@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Mapper\Mappers;
 
-use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use function Tempest\map;
+use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tests\Tempest\IntegrationTest;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
 
