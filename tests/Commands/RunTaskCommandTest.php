@@ -16,8 +16,8 @@ class RunTaskCommandTest extends TestCase
     {
         $this
             ->console
-            ->call('schedule:task \App\Console\ScheduledCommand::command')
-            ->assertContains('\App\Console\ScheduledCommand::command')
+            ->call('schedule:task \Tests\Tempest\Console\Fixtures\ScheduledCommand::command')
+            ->assertContains('\Tests\Tempest\Console\Fixtures\ScheduledCommand::command')
             ->assertContains('Starting')
             ->assertContains('Done');
     }
@@ -34,7 +34,7 @@ class RunTaskCommandTest extends TestCase
     {
         $this
             ->console
-            ->call('schedule:task \App\Console\ScheduledCommand::unknown')
-            ->assertContains('App\Console\ScheduledCommand::unknown() does not exist');
+            ->call('schedule:task \Tests\Tempest\Console\Fixtures\ScheduledCommand::unknown')
+            ->assertContains('Tests\Tempest\Console\Fixtures\ScheduledCommand::unknown() does not exist');
     }
 }

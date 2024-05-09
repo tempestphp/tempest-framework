@@ -15,9 +15,13 @@ final class ConsoleCommand
     public function __construct(
         private readonly ?string $name = null,
         public readonly ?string $description = null,
+
         /** @var string[] */
         public readonly array $aliases = [],
         public readonly ?string $help = null,
+
+        /** @var array<array-key, class-string<\Tempest\Console\Middleware\ConsoleMiddleware>> */
+        public readonly array $middleware = [],
     ) {
     }
 

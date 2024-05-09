@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheduler;
+namespace Tests\Tempest\Console\Scheduler;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Scheduler\Every;

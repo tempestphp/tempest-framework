@@ -28,7 +28,6 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "app/",
             "Tests\\Tempest\\Console\\": "tests/"
         },
         "files": [
@@ -39,7 +38,7 @@
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "csfixer": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "phpstan": "vendor/bin/phpstan analyse src tests app",
+        "phpstan": "vendor/bin/phpstan analyse src tests",
         "qa": [
             "composer csfixer",
             "composer phpstan",

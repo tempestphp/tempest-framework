@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Scheduler;
 
-use App\Console\ScheduledCommand;
 use Tempest\Console\Commands\ScheduleTaskCommand;
+use Tests\Tempest\Console\Fixtures\ScheduledCommand;
 use Tests\Tempest\Console\TestCase;
 
 /**

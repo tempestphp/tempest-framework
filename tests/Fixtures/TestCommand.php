@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Console;
+namespace Tests\Tempest\Console\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Validation\Rules\Email;
 
 final readonly class TestCommand
 {
@@ -28,5 +27,11 @@ asd</comment>');
         //        $email = $this->console->ask("What's your email?", validation: [new Email()]);
         //
         //        $this->console->writeln()->writeln("Welcome, <{$email}>");
+    }
+
+    #[ConsoleCommand]
+    public function test(): void
+    {
+        $this->console->confirm('yes or no?');
     }
 }

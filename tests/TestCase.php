@@ -32,7 +32,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
             root: getcwd(),
             enableExceptionHandling: true,
             discoveryLocations: [
-                new DiscoveryLocation('App\\', __DIR__ . '/../app/'),
+                new DiscoveryLocation('Tests\\Tempest\\Console\\', __DIR__),
             ],
         );
 

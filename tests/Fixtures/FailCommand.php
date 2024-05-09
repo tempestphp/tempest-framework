@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Console;
+namespace Tests\Tempest\Console\Fixtures;
 
 use Exception;
 use Tempest\Console\ConsoleArgument;

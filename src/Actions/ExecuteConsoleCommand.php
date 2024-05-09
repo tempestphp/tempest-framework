@@ -23,7 +23,7 @@ final readonly class ExecuteConsoleCommand
 
     public function __invoke(string $commandName): void
     {
-        $callable = $this->getCallable();
+        $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
 
         $callable(new Invocation(
             commandName: $commandName,
@@ -31,7 +31,7 @@ final readonly class ExecuteConsoleCommand
         ));
     }
 
-    private function getCallable(): Closure
+    private function getCallable(array $commandMiddleware): Closure
     {
         $callable = function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
@@ -48,12 +48,19 @@ final readonly class ExecuteConsoleCommand
             );
         };
 
-        $middlewareStack = $this->consoleConfig->middleware;
+        $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
             $callable = fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable);
         }
 
         return $callable;
+    }
+
+    private function resolveCommandMiddleware(string $commandName): array
+    {
+        $consoleCommand = $this->consoleConfig->commands[$commandName] ?? null;
+
+        return $consoleCommand->middleware ?? [];
     }
 }

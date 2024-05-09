@@ -21,6 +21,6 @@ class RenderConsoleCommandOverviewTest extends TestCase
             ->assertContains('Hello')
             ->assertContains('hello:world <input>')
             ->assertContains('hello:test [optionalValue=null] [--flag=false] - description')
-            ->assertContains('test:test');
+            ->assertContains('testcommand:test');
     }
 }
