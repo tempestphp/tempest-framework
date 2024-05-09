@@ -6,7 +6,6 @@ parameters:
 	level: 4
 	reportUnmatchedIgnoredErrors: false
 	paths:
-		- app
 		- src
 		- tests
 	ignoreErrors:
