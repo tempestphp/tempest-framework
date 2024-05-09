@@ -21,6 +21,7 @@ use Tempest\Highlight\Highlighter;
 final class GenericConsole implements Console
 {
     private ?string $label = null;
+    private bool $isForced = false;
 
     public function __construct(
         private readonly OutputBuffer $output,
@@ -28,6 +29,13 @@ final class GenericConsole implements Console
         private readonly ComponentRenderer $componentRenderer,
         private readonly Highlighter $highlighter,
     ) {
+    }
+
+    public function setForced(): self
+    {
+        $this->isForced = true;
+
+        return $this;
     }
 
     public function read(int $bytes): string
@@ -117,6 +125,10 @@ final class GenericConsole implements Console
 
     public function confirm(string $question, bool $default = false): bool
     {
+        if ($this->isForced) {
+            return true;
+        }
+
         return $this->component(new ConfirmComponent($question));
     }
 
