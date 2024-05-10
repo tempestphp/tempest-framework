@@ -47,9 +47,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function actAsConsoleApplication(string $command = ''): Application
     {
         $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
             container: $this->container,
-            appConfig: $this->container->get(AppConfig::class),
+            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
         );
 
         $this->container->singleton(Application::class, fn () => $application);

@@ -7,7 +7,7 @@ namespace Tempest;
 use Dotenv\Dotenv;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\HttpExceptionHandler;
@@ -54,13 +54,11 @@ final readonly class Tempest
         $container = $this->kernel->init();
         $appConfig = $container->get(AppConfig::class);
 
-        $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag($_SERVER['argv']),
-            container: $container,
-            appConfig: $appConfig,
-        );
+        $application = $container->get(ConsoleApplication::class);
 
-        $container->singleton(Application::class, fn () => $application);
+        // Application-specific config
+        $consoleConfig = $container->get(ConsoleConfig::class);
+        $consoleConfig->name = 'Tempest';
 
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
