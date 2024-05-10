@@ -7,15 +7,6 @@ use Tempest\Discovery\DiscoveryLocation;
 
 require_once getcwd() . '/vendor/autoload.php';
 
-ConsoleApplication::boot(
-    'Tempest Console',
-    new AppConfig(
-        root: getcwd(),
-        enableExceptionHandling: true,
-        discoveryLocations: [
-            new DiscoveryLocation('Tests\\Tempest\\Console\\', __DIR__ . '/tests/'),
-        ],
-    ),
-)->run();
+ConsoleApplication::boot('Tempest Console')->run();
 
 exit;

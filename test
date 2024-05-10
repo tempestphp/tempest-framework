@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+use Tempest\Console\ConsoleApplication;
+use Tempest\AppConfig;
+use Tempest\Discovery\DiscoveryLocation;
+
+require_once getcwd() . '/vendor/autoload.php';
+
+ConsoleApplication::boot(
+    'Tempest Console',
+    new AppConfig(
+        root: getcwd(),
+        enableExceptionHandling: true,
+        discoveryLocations: [
+            new DiscoveryLocation('Tests\\Tempest\\Console\\', __DIR__ . '/tests/'),
+        ],
+    ),
+)->run();
+
+exit;
