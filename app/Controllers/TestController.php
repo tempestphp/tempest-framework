@@ -8,9 +8,9 @@ use App\Views\ViewModelWithResponseData;
 use Tempest\Http\Get;
 use Tempest\Http\Response;
 use Tempest\Http\Status;
+use Tempest\View\View;
 use function Tempest\response;
 use function Tempest\view;
-use Tempest\View\View;
 
 final readonly class TestController
 {

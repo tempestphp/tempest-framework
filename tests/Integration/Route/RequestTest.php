@@ -14,8 +14,8 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
-use function Tempest\uri;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 
 /**
  * @internal

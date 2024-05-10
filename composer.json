@@ -27,17 +27,18 @@
         "phpat/phpat": "^0.10.14",
         "spaze/phpstan-disallowed-calls": "^3.1",
         "php-http/mock-client": "^1.6",
-        "aidan-casey/mock-client": "dev-master"
+        "aidan-casey/mock-client": "dev-master",
+        "symplify/monorepo-builder": "^11.2"
     },
     "bin": [
         "tempest"
     ],
     "autoload": {
         "psr-4": {
-            "Tempest\\": "src/"
+            "Tempest\\": "src/Tempest"
         },
         "files": [
-            "src/functions.php"
+            "src/Tempest/functions.php"
         ]
     },
     "autoload-dev": {

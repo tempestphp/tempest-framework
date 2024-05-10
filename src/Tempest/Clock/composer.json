@@ -1,0 +1,20 @@
+{
+    "name": "tempest/clock",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/tempestphp/tempest-framework/issues",
+        "source": "https://github.com/tempestphp/tempest-framework"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Clock\\": ""
+        }
+    },
+    "provide": {
+        "psr/clock": "1.0.0"
+    },
+    "require": {
+        "php": "^8.3",
+        "psr/clock": "^1.0"
+    }
+}

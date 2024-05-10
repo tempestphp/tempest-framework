@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Posts;
 
 use Tempest\Http\Post;
-
 use Tempest\Http\Response;
 use function Tempest\response;
 

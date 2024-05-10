@@ -1,0 +1,17 @@
+{
+    "name": "tempest/database",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/tempestphp/tempest-framework/issues",
+        "source": "https://github.com/tempestphp/tempest-framework"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Database\\": ""
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*"
+    }
+}
