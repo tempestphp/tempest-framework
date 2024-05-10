@@ -3,7 +3,7 @@
 
 use Tempest\Console\ConsoleApplication;
 use Tempest\AppConfig;
-use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Discovery\DiscoveryLocation;use Tempest\Environment;
 
 require_once getcwd() . '/vendor/autoload.php';
 
@@ -11,6 +11,7 @@ ConsoleApplication::boot(
     'Tempest Console',
     new AppConfig(
         root: getcwd(),
+//        environment: Environment::PRODUCTION,
         enableExceptionHandling: true,
         discoveryLocations: [
             new DiscoveryLocation('Tests\\Tempest\\Console\\', __DIR__ . '/tests/'),
