@@ -21,7 +21,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, callable $next): void
     {
-        if (! $invocation->commandName) {
+        if (! $invocation->argumentBag->getCommandName()) {
             $this->renderOverview();
 
             return;

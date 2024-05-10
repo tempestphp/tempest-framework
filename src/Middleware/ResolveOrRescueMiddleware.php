@@ -20,16 +20,15 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, callable $next): void
     {
-        $consoleCommand = $this->consoleConfig->commands[$invocation->commandName] ?? null;
+        $consoleCommand = $this->consoleConfig->commands[$invocation->argumentBag->getCommandName()] ?? null;
 
         if (! $consoleCommand) {
-            $this->rescue($invocation->commandName);
+            $this->rescue($invocation->argumentBag->getCommandName());
 
             return;
         }
 
         $next(new Invocation(
-            commandName: $invocation->commandName,
             argumentBag: $invocation->argumentBag,
             consoleCommand: $consoleCommand,
         ));
