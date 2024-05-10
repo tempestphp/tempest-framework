@@ -80,4 +80,11 @@ final class ConsoleArgumentBag
     {
         return $this->path[1] ?? '';
     }
+
+    public function setCommandName(string $commandName): self
+    {
+        $this->path[1] = $commandName;
+
+        return $this;
+    }
 }
