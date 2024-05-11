@@ -25,14 +25,6 @@ final class GenericClock implements Clock
         return (int) floor((microtime(true) * 1_000_000) / $unit->toMicroseconds());
     }
 
-    /**
-     * Sleeps for the given time in the given unit.
-     *
-     * @param int $time
-     * @param TimeUnit $unit
-     *
-     * @return void
-     */
     public function sleep(int $time, TimeUnit $unit = TimeUnit::SECOND): void
     {
         usleep($time * $unit->toMicroseconds());
