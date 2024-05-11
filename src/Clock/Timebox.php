@@ -18,7 +18,7 @@ final readonly class Timebox
         $throwable = null;
         $result = null;
 
-        $start = $this->clock->utime();
+        $start = $this->clock->time(unit: TimeUnit::MICROSECOND);
 
         try {
             $result = $callable();
@@ -30,9 +30,9 @@ final readonly class Timebox
             return $result;
         }
 
-        $remaining = $microseconds - ($this->clock->utime() - $start);
+        $remaining = $microseconds - ($this->clock->time(unit: TimeUnit::MICROSECOND) - $start);
 
-        $this->clock->usleep($remaining);
+        $this->clock->sleep($remaining, unit: TimeUnit::MICROSECOND);
 
         if ($throwable) {
             throw $throwable;

@@ -13,23 +13,28 @@ final class GenericClock implements Clock
         return new DateTimeImmutable('now');
     }
 
-    public function time(): int
+    /**
+     * Returns the unix timestamp of the current time in the given unit.
+     *
+     * @param TimeUnit $unit
+     *
+     * @return int
+     */
+    public function time(TimeUnit $unit = TimeUnit::SECOND): int
     {
-        return time();
+        return (int) floor((microtime(true) * 1_000_000) / $unit->toMicroseconds());
     }
 
-    public function sleep(int $seconds): void
+    /**
+     * Sleeps for the given time in the given unit.
+     *
+     * @param int $time
+     * @param TimeUnit $unit
+     *
+     * @return void
+     */
+    public function sleep(int $time, TimeUnit $unit = TimeUnit::SECOND): void
     {
-        sleep($seconds);
-    }
-
-    public function utime(): int
-    {
-        return (int) (microtime(true) * 1_000_000);
-    }
-
-    public function usleep(int $microseconds): void
-    {
-        usleep($microseconds);
+        usleep($time * $unit->toMicroseconds());
     }
 }

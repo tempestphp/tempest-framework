@@ -10,6 +10,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 use Tempest\Clock\Timebox;
+use Tempest\Clock\TimeUnit;
 
 /**
  * @internal
@@ -36,7 +37,7 @@ final class TimeboxTest extends TestCase
 
         $this->assertSame(
             $this->dateTimeToMicroseconds($now),
-            $clock->utime(),
+            $clock->time(TimeUnit::MICROSECOND),
         );
     }
 
@@ -56,7 +57,7 @@ final class TimeboxTest extends TestCase
 
         $this->assertSame(
             $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('5000 microseconds'))),
-            $clock->utime(),
+            $clock->time(TimeUnit::MICROSECOND),
         );
     }
 
@@ -72,7 +73,7 @@ final class TimeboxTest extends TestCase
 
         $this->assertSame(
             $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('10 microseconds'))),
-            $clock->utime(),
+            $clock->time(unit: TimeUnit::MICROSECOND),
         );
     }
 
@@ -92,7 +93,7 @@ final class TimeboxTest extends TestCase
 
         $this->assertSame(
             $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('100 microseconds'))),
-            $clock->utime(),
+            $clock->time(unit: TimeUnit::MICROSECOND),
         );
     }
 

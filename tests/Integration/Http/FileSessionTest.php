@@ -96,7 +96,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $this->assertTrue($session->isValid());
 
-        $clock->changeTime(seconds: 1);
+        $clock->changeTime(time: 1);
 
         $this->assertFalse($session->isValid());
     }

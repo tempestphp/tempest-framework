@@ -11,11 +11,7 @@ interface Clock extends ClockInterface
 {
     public function now(): DateTimeImmutable;
 
-    public function time(): int;
+    public function time(TimeUnit $unit = TimeUnit::SECOND): int;
 
-    public function sleep(int $seconds): void;
-
-    public function utime(): int;
-
-    public function usleep(int $microseconds): void;
+    public function sleep(int $time, TimeUnit $unit = TimeUnit::SECOND): void;
 }

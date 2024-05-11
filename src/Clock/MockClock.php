@@ -24,37 +24,25 @@ final class MockClock implements Clock
         return $this->now;
     }
 
-    public function time(): int
+    public function time(TimeUnit $unit = TimeUnit::SECOND): int
     {
-        return $this->now->getTimestamp();
+        return (int) floor((($this->now->getTimestamp() * 1_000_000 + (int) $this->now->format('u')) / $unit->toMicroseconds()));
     }
 
-    public function sleep(int $seconds): void
+    public function sleep(int $time, TimeUnit $unit = TimeUnit::SECOND): void
     {
         $this->now = $this->now->add(
-            new DateInterval("PT{$seconds}S")
+            DateInterval::createFromDateString("$time $unit->value")
         );
     }
 
-    public function changeTime(int $seconds): void
+    public function changeTime(int $time, TimeUnit $unit = TimeUnit::SECOND): void
     {
-        if ($seconds < 0) {
-            $seconds = abs($seconds);
-            $this->now = $this->now->sub(new DateInterval("PT{$seconds}S"));
+        if ($time < 0) {
+            $time = abs($time);
+            $this->now = $this->now->sub(DateInterval::createFromDateString("$time $unit->value"));
         } else {
-            $this->now = $this->now->add(new DateInterval("PT{$seconds}S"));
+            $this->now = $this->now->add(DateInterval::createFromDateString("$time $unit->value"));
         }
-    }
-
-    public function utime(): int
-    {
-        return $this->time() * 1_000_000 + ((int) $this->now->format('u'));
-    }
-
-    public function usleep(int $microseconds): void
-    {
-        $this->now = $this->now->add(
-            DateInterval::createFromDateString("$microseconds microseconds")
-        );
     }
 }
