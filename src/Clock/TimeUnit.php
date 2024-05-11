@@ -22,12 +22,12 @@ enum TimeUnit: string
             self::MICROSECOND => 1,
             self::MILLISECOND => 1_000,
             self::SECOND => 1_000_000,
-            self::MINUTE => 60_000_000,
-            self::HOUR => 3_600_000_000,
-            self::DAY => 86_400_000_000,
-            self::WEEK => 604_800_000_000,
-            self::MONTH => 2_592_000_000_000,
-            self::YEAR => 31_536_000_000_000,
+            self::MINUTE => 60 * 1_000_000,
+            self::HOUR => 60 * 60 * 1_000_000,
+            self::DAY => 24 * 60 * 60 * 1_000_000,
+            self::WEEK => 7 * 24 * 60 * 60 * 1_000_000,
+            self::MONTH => 30 * 24 * 60 * 60 * 1_000_000,
+            self::YEAR => 365 * 24 * 60 * 60 * 1_000_000,
         };
     }
 }
