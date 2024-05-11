@@ -33,7 +33,7 @@ final class TimeboxTest extends TestCase
 
         $timebox = new Timebox($clock);
 
-        $this->assertTrue($timebox->run(fn () => true, 1_000_000_000, true));
+        $this->assertTrue($timebox->run(fn () => true, 1_000_000_000, returnEarly: true));
 
         $this->assertSame(
             $this->dateTimeToMicroseconds($now),
@@ -50,7 +50,7 @@ final class TimeboxTest extends TestCase
         $timebox = new Timebox($clock);
 
         try {
-            $this->assertTrue($timebox->run(fn () => throw new Exception("Exception"), 5000, true));
+            $this->assertTrue($timebox->run(fn () => throw new Exception("Exception"), 5_000, unit: TimeUnit::MICROSECOND, returnEarly: true));
         } catch (Exception $exception) {
             $this->assertSame("Exception", $exception->getMessage());
         }
@@ -69,10 +69,10 @@ final class TimeboxTest extends TestCase
 
         $timebox = new Timebox($clock);
 
-        $timebox->run(fn () => $this->assertTrue(true), 10);
+        $timebox->run(fn () => $this->assertTrue(true), 10, unit: TimeUnit::MILLISECOND);
 
         $this->assertSame(
-            $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('10 microseconds'))),
+            $this->dateTimeToMicroseconds($now->add(DateInterval::createFromDateString('10000 microseconds'))),
             $clock->time(unit: TimeUnit::MICROSECOND),
         );
     }
@@ -86,7 +86,7 @@ final class TimeboxTest extends TestCase
         $timebox = new Timebox($clock);
 
         try {
-            $timebox->run(fn () => throw new Exception("abc"), 100);
+            $timebox->run(fn () => throw new Exception("abc"), 100, unit: TimeUnit::MICROSECOND);
         } catch (Exception $exception) {
             $this->assertSame("abc", $exception->getMessage());
         }

@@ -13,7 +13,7 @@ final readonly class Timebox
     ) {
     }
 
-    public function run(callable $callable, int $microseconds, bool $returnEarly = false): mixed
+    public function run(callable $callable, int $time, TimeUnit $unit = TimeUnit::SECOND, bool $returnEarly = false): mixed
     {
         $throwable = null;
         $result = null;
@@ -30,7 +30,7 @@ final readonly class Timebox
             return $result;
         }
 
-        $remaining = $microseconds - ($this->clock->time(unit: TimeUnit::MICROSECOND) - $start);
+        $remaining = ($time * $unit->toMicroseconds()) - ($this->clock->time(unit: TimeUnit::MICROSECOND) - $start);
 
         $this->clock->sleep($remaining, unit: TimeUnit::MICROSECOND);
 
