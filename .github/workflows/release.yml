@@ -44,6 +44,7 @@ jobs:
 
           # ↓ the user signed under the split commit
           user_name: "aidan-casey"
+          user_email: "aidan@caseyhouse.net"
 
       # with tag
       -
