@@ -31,6 +31,8 @@ jobs:
       -
         if: "!startsWith(github.ref, 'refs/tags/')"
         uses: "danharrin/monorepo-split-github-action@v2.3.0"
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
           # ↓ split "src/Tempest/{local_path}" directory
           package_directory: 'src/Tempest/${{ matrix.package.local_path }}'
