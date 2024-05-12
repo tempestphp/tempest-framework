@@ -8,10 +8,10 @@ use App\Controllers\TestController;
 use App\Views\ViewModel;
 use Tempest\AppConfig;
 use Tempest\Http\Status;
-use Tempest\View\GenericView;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\uri;
 use function Tempest\view;
+use Tempest\View\GenericView;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

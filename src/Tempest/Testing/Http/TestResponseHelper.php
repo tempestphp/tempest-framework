@@ -6,10 +6,10 @@ namespace Tempest\Testing\Http;
 
 use Closure;
 use PHPUnit\Framework\Assert;
+use function Tempest\get;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use function Tempest\get;
 
 final readonly class TestResponseHelper
 {

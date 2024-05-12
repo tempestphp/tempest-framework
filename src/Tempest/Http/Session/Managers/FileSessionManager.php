@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Http\Session\Managers;
 
 use Tempest\Clock\Clock;
+use function Tempest\event;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
-use Throwable;
-use function Tempest\event;
 use function Tempest\path;
+use Throwable;
 
 final readonly class FileSessionManager implements SessionManager
 {

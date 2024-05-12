@@ -6,8 +6,8 @@ namespace Tempest\View;
 
 use Exception;
 use Tempest\AppConfig;
-use Tempest\Http\Session\Session;
 use function Tempest\get;
+use Tempest\Http\Session\Session;
 use function Tempest\path;
 use function Tempest\view;
 

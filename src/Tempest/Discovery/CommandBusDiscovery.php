@@ -7,10 +7,10 @@ namespace Tempest\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use function Tempest\attribute;
 use Tempest\Commands\CommandBusConfig;
 use Tempest\Commands\CommandHandler;
 use Tempest\Container\Container;
-use function Tempest\attribute;
 
 final readonly class CommandBusDiscovery implements Discovery
 {

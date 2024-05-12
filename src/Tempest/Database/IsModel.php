@@ -6,11 +6,11 @@ namespace Tempest\Database;
 
 use ReflectionClass;
 use ReflectionProperty;
+use function Tempest\attribute;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
-use Tempest\Mapper\CastWith;
-use function Tempest\attribute;
 use function Tempest\make;
+use Tempest\Mapper\CastWith;
 
 trait IsModel
 {

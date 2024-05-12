@@ -8,15 +8,15 @@ use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
 use Tempest\AppConfig;
+use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Responses\InvalidResponse;
-use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\View\View;
-use function Tempest\attribute;
 use function Tempest\map;
 use function Tempest\response;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\View\View;
 
 /**
  * @template MiddlewareClass of \Tempest\Http\HttpMiddleware

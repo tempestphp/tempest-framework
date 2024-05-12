@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use function Tempest\get;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
-use function Tempest\get;
 
 trait IsRequest
 {

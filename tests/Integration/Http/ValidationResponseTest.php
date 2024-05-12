@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Http;
 
 use App\Controllers\ValidationController;
 use Tempest\Http\Session\Session;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\uri;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

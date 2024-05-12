@@ -11,10 +11,10 @@ use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
+use function Tempest\env;
 use Tempest\Environment;
 use Tempest\Exceptions\HttpExceptionHandler;
 use Tempest\Kernel;
-use function Tempest\env;
 use function Tempest\path;
 
 final readonly class Tempest

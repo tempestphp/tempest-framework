@@ -6,11 +6,11 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use ReflectionMethod;
+use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Support\VarExport\VarExportPhpFile;
-use function Tempest\attribute;
 
 final readonly class RouteDiscovery implements Discovery
 {
