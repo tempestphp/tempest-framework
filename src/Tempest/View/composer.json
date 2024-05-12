@@ -1,0 +1,16 @@
+{
+    "name": "tempest/view",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/tempestphp/tempest-framework/issues",
+        "source": "https://github.com/tempestphp/tempest-framework"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\View\\": ""
+        }
+    },
+    "require": {
+        "php": "^8.3"
+    }
+}

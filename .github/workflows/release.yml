@@ -1,0 +1,66 @@
+name: 'Packages Split'
+
+on:
+  # This will be removed in the final version,
+  # but exists here for testing purposes.
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+    tags:
+      - '*'
+
+jobs:
+  packages_split:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          # This map will be organized with something a little more
+          # automated in the final version.
+          -
+            local_path: 'View'
+            split_repository: 'view'
+
+    steps:
+      -   uses: actions/checkout@v2
+
+      # no tag
+      -
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: "danharrin/monorepo-split-github-action@v2.3.0"
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          # ↓ split "src/Tempest/{local_path}" directory
+          package_directory: 'src/Tempest/${{ matrix.package.local_path }}'
+
+          # ↓ into https://github.com/tempestphp/{split_repository} repository
+          repository_organization: 'tempestphp'
+          repository_name: '${{ matrix.package.split_repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "aidan-casey"
+          user_email: "aidan@caseyhouse.net"
+
+      # with tag
+      -
+        if: "startsWith(github.ref, 'refs/tags/')"
+        uses: "danharrin/monorepo-split-github-action@v2.3.0"
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          tag: ${GITHUB_REF#refs/tags/}
+
+          # ↓ split "src/Tempest/{local_path}" directory
+          package_directory: 'src/Tempest/${{ matrix.package.local_path }}'
+
+          # ↓ into https://github.com/tempestphp/{split_repository} repository
+          repository_organization: 'tempestphp'
+          repository_name: '${{ matrix.package.split_repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "aidan-casey"
+          user_email: "aidan@caseyhouse.net"

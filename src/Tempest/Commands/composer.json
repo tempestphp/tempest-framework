@@ -1,0 +1,16 @@
+{
+    "name": "tempest/command-bus",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/tempestphp/tempest-framework/issues",
+        "source": "https://github.com/tempestphp/tempest-framework"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\CommandBus\\": ""
+        }
+    },
+    "require": {
+        "php": "^8.3"
+    }
+}

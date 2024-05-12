@@ -6,13 +6,7 @@ namespace Tests\Tempest\Integration\Route;
 
 use App\Controllers\TestController;
 use App\Controllers\TestGlobalMiddleware;
-use App\Migrations\CreateAuthorTable;
-use App\Migrations\CreateBookTable;
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
-use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
-use Tempest\Http\Router;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

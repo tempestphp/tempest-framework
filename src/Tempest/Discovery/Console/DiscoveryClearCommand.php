@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Commands;
+namespace Tempest\Discovery\Console;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
