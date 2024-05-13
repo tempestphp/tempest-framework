@@ -115,7 +115,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
 
     private function loadJsonFile(string $path): array
     {
-        if (! is_file($path)) {
+        if (! file_exists($path)) {
             $relativePath = str_replace($this->appConfig->root, '.', $path);
 
             throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
