@@ -62,7 +62,7 @@ final class Terminal
     ): mixed {
         $rendered = $component->render();
 
-        if ($renderFooter) {
+        if ($renderFooter && is_string($rendered)) {
             if ($footer = $component->renderFooter()) {
                 $footerLines = [...$footerLines, $footer];
             }

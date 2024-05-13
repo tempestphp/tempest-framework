@@ -45,7 +45,12 @@ final class SingleChoiceComponent implements InteractiveComponent, HasStaticComp
             $output .= $this->isSelected($key) ? "[x] <em>{$option}</em>" : "[ ] {$option}";
         }
 
-        return $output . PHP_EOL . PHP_EOL . "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel" . PHP_EOL;
+        return $output;
+    }
+
+    public function renderFooter(): string
+    {
+        return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }
 
     public function isSelected(int $key): bool

@@ -65,6 +65,11 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
         return $result;
     }
 
+    public function renderFooter(): string
+    {
+        return "";
+    }
+
     public function getStaticComponent(): StaticComponent
     {
         return new StaticProgressBarComponent(

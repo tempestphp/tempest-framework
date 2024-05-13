@@ -37,7 +37,12 @@ final class MultipleChoiceComponent implements InteractiveComponent, HasStaticCo
             $output .= $this->isActive($key) ? '</em>' : '';
         }
 
-        return $output . PHP_EOL . PHP_EOL . "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel" . PHP_EOL;
+        return $output;
+    }
+
+    public function renderFooter(): string
+    {
+        return "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }
 
     public function isActive(int $key): bool
