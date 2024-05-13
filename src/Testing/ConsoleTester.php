@@ -15,7 +15,6 @@ use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Input\InputBuffer;
 use Tempest\Console\Input\MemoryInputBuffer;
-use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\OutputBuffer;
@@ -33,7 +32,6 @@ final class ConsoleTester
 
     /**
      * @param string|Closure $command
-     * @param Key[]|string[] $input
      * @return $this
      */
     public function call(string|Closure $command): self
@@ -79,7 +77,7 @@ final class ConsoleTester
         return $clone;
     }
 
-    public function input(string|Key ...$input): self
+    public function input(int|string|Key ...$input): self
     {
         $this->output->clear();
 
@@ -88,9 +86,9 @@ final class ConsoleTester
         return $this;
     }
 
-    public function submit(string $input): self
+    public function submit(int|string $input): self
     {
-        return $this->input($input, Key::ENTER);
+        return $this->input((string) $input, Key::ENTER);
     }
 
     public function print(): self

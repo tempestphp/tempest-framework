@@ -197,7 +197,6 @@ final class GenericConsole implements Console
 
     private function interactiveSupported(): bool
     {
-        return false;
         if (! $this->componentRenderer) {
             return false;
         }

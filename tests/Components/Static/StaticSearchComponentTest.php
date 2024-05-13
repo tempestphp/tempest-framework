@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class StaticSearchComponentTest extends TestCase
 {
     public function test_search_component(): void
@@ -19,7 +25,8 @@ class StaticSearchComponentTest extends TestCase
                 $console->success("Hello {$result}");
             })
             ->submit('a')
-            ->assertContains(<<<TXT
+            ->assertContains(
+                <<<TXT
 - [0] Search again
 - [1] Paul
 - [2] Aidan
@@ -28,7 +35,8 @@ TXT,
             )
             ->submit(0)
             ->submit('b')
-            ->assertContains(<<<TXT
+            ->assertContains(
+                <<<TXT
 - [0] Search again
 - [1] Brent
 TXT,

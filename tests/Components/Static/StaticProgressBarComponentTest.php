@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class StaticProgressBarComponentTest extends TestCase
 {
     public function test_progress_bar(): void
@@ -18,7 +24,8 @@ class StaticProgressBarComponentTest extends TestCase
 
                 $console->write(json_encode($output));
             })
-            ->assertContains(<<<TXT
+            ->assertContains(
+                <<<TXT
 [==========>                    ] (1/3)
 [====================>          ] (2/3)
 [===============================] (3/3)

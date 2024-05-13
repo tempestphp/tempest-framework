@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class StaticConfirmComponentTest extends TestCase
 {
     public function test_confirm(): void

@@ -13,14 +13,16 @@ final class MemoryInputBuffer implements InputBuffer
     private ?string $buffer = null;
     private ?Fiber $fiber = null;
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
-    public function add(string|Key ...$input): void
+    public function add(int|string|Key ...$input): void
     {
         foreach ($input as $line) {
             $this->buffer .= $line instanceof Key
                 ? $line->value
-                : $line;
+                : (string) $line;
         }
 
         $this->fiber->resume();
@@ -51,7 +53,7 @@ final class MemoryInputBuffer implements InputBuffer
         if ($buffer === null) {
             throw new Exception('Empty buffer');
         }
-        
+
         $this->buffer = null;
 
         return $buffer;
