@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Console\Terminal;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
 use Tests\Tempest\Console\TestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class TerminalTest extends TestCase
 {
     public function test_terminal_rendering(): void
@@ -19,7 +25,8 @@ class TerminalTest extends TestCase
                     ),
                 );
             })
-            ->assertContains(<<<TXT
+            ->assertContains(
+                <<<TXT
 > [ ] a
   [ ] b
   [ ] c
@@ -30,7 +37,8 @@ TXT,
             ->input(Key::SPACE)
             ->input(Key::DOWN)
             ->input(Key::SPACE)
-            ->assertContains(<<<TXT
+            ->assertContains(
+                <<<TXT
   [ ] a
   [x] b
 > [x] c
