@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Components;
 
-use Tempest\Console\Components\QuestionComponent;
+use Tempest\Console\Components\Interactive\OptionComponent;
 use Tests\Tempest\Console\TestCase;
 
 /**
@@ -15,7 +15,7 @@ class QuestionComponentTest extends TestCase
 {
     public function test_question_component(): void
     {
-        $component = new QuestionComponent('hello', ['a', 'b', 'c']);
+        $component = new OptionComponent('hello', ['a', 'b', 'c']);
 
         $this->assertSame(0, $component->selectedOption);
         $rendered = $component->render();

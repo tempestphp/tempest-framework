@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\InteractiveComponent;
 
-final readonly class ProgressBarComponent implements ConsoleComponent
+final readonly class ProgressBarComponent implements InteractiveComponent
 {
     public function __construct(
         private iterable $data,

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Renderers;
 
 use ReflectionClass;
 use ReflectionMethod;
+use Tempest\Console\Components\ComponentRenderer;
+use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleComponent;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Key;
@@ -17,13 +18,13 @@ use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 
-final class GenericComponentRenderer implements ComponentRenderer
+final class InteractiveComponentRenderer implements ComponentRenderer
 {
     private array $validationErrors = [];
 
     public function render(
         Console $console,
-        ConsoleComponent $component,
+        InteractiveComponent $component,
         array $validation = []
     ): mixed {
         $terminal = new Terminal($console);
@@ -84,7 +85,7 @@ final class GenericComponentRenderer implements ComponentRenderer
         return null;
     }
 
-    private function resolveHandlers(ConsoleComponent $component): array
+    private function resolveHandlers(InteractiveComponent $component): array
     {
         /** @var ReflectionMethod[][] $keyBindings */
         $keyBindings = [];

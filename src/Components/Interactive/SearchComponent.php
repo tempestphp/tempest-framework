@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\HasStaticComponent;
+use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Components\Static\StaticSearchComponent;
+use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class SearchComponent implements ConsoleComponent, HasFooter, HasCursor
+final class SearchComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
     public string $query = '';
@@ -156,5 +159,13 @@ final class SearchComponent implements ConsoleComponent, HasFooter, HasCursor
     private function isSelected(int $key): bool
     {
         return $this->selectedOption === $key;
+    }
+
+    public function getStaticComponent(): StaticComponent
+    {
+        return new StaticSearchComponent(
+            label: $this->label,
+            search: $this->search,
+        );
     }
 }

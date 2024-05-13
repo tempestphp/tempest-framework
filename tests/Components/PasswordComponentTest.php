@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Components;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Console\Components\PasswordComponent;
+use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 

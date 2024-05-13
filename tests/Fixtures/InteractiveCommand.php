@@ -28,7 +28,7 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:confirm')]
     public function confirm(): void
     {
-        $this->console->confirm('abc');
+        $this->console->confirm('abc', true);
     }
 
     #[ConsoleCommand('interactive:password')]
@@ -47,6 +47,7 @@ final readonly class InteractiveCommand
             [
                 'a', 'b', 'c',
             ],
+            default: 'b',
         );
 
         $result = json_encode($result);
@@ -72,7 +73,9 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:ask')]
     public function ask(): void
     {
-        $this->console->ask('Hello?');
+        $answer = $this->console->ask('Hello?');
+
+        $this->console->writeln($answer);
     }
 
     #[ConsoleCommand('interactive:progress')]

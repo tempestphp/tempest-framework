@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Exceptions;
 
 use Exception;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
+use Tempest\Console\Components\Renderers\UnsupportedComponentRenderer;
 use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;

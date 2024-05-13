@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Initializers;
 
 use Tempest\Console\Commands\ScheduleTaskCommand;
-use Tempest\Console\Components\GenericComponentRenderer;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
+use Tempest\Console\Components\Renderers\InteractiveComponentRenderer;
+use Tempest\Console\Components\Renderers\UnsupportedComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
@@ -61,7 +61,7 @@ class ConsoleInitializer implements Initializer
         $console = new GenericConsole(
             output: $container->get(StdoutOutputBuffer::class),
             input: $container->get(StdinInputBuffer::class),
-            componentRenderer: new GenericComponentRenderer(),
+            componentRenderer: new InteractiveComponentRenderer(),
             highlighter: $terminalHighlighter,
         );
 

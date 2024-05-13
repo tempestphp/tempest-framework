@@ -6,7 +6,7 @@ namespace Tempest\Console\Testing;
 
 use PHPUnit\Framework\Assert;
 use Tempest\AppConfig;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
+use Tempest\Console\Components\Renderers\UnsupportedComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;

@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\HasStaticComponent;
+use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Components\Static\StaticTextBoxComponent;
+use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class TextBoxComponent implements ConsoleComponent, HasFooter, HasCursor
+final class TextBoxComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
     public string $answer = '';
@@ -106,5 +109,10 @@ final class TextBoxComponent implements ConsoleComponent, HasFooter, HasCursor
             x: $this->cursorPosition->x + strlen($this->label) + 1,
             y: $this->cursorPosition->y - 1,
         );
+    }
+
+    public function getStaticComponent(): StaticComponent
+    {
+        return new StaticTextBoxComponent($this->label);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Components;
 
-use Tempest\Console\Components\SearchComponent;
+use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tests\Tempest\Console\TestCase;

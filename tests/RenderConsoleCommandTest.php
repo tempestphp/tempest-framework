@@ -7,7 +7,7 @@ namespace Tests\Tempest\Console;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
+use Tempest\Console\Components\Renderers\UnsupportedComponentRenderer;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Highlight\TextTerminalTheme;
