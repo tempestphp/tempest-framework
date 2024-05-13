@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Initializers;
 
 use Tempest\Console\Commands\ScheduleTaskCommand;
-use Tempest\Console\Components\GenericComponentRenderer;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
+use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
@@ -49,7 +48,6 @@ class ConsoleInitializer implements Initializer
         return new GenericConsole(
             output: $container->get(LogOutputBuffer::class),
             input: new UnsupportedInputBuffer(),
-            componentRenderer: new UnsupportedComponentRenderer(),
             highlighter: $textHighlighter,
         );
     }
@@ -58,12 +56,11 @@ class ConsoleInitializer implements Initializer
     {
         $terminalHighlighter = new Highlighter(new TempestTerminalTheme());
 
-        $console = new GenericConsole(
+        $console = (new GenericConsole(
             output: $container->get(StdoutOutputBuffer::class),
             input: $container->get(StdinInputBuffer::class),
-            componentRenderer: new GenericComponentRenderer(),
             highlighter: $terminalHighlighter,
-        );
+        ))->setComponentRenderer($container->get(InteractiveComponentRenderer::class));
 
         $container->singleton(ConsoleExceptionHandler::class, fn () => new ConsoleExceptionHandler(
             console: $console,

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Static;
 
 use Closure;
-use Generator;
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\StaticComponent;
+use Tempest\Console\Console;
 
-final readonly class ProgressBarComponent implements ConsoleComponent
+final readonly class StaticProgressBarComponent implements StaticComponent
 {
     public function __construct(
         private iterable $data,
@@ -18,7 +18,7 @@ final readonly class ProgressBarComponent implements ConsoleComponent
     ) {
     }
 
-    public function render(): Generator
+    public function render(Console $console): array
     {
         $result = [];
 
@@ -28,12 +28,12 @@ final readonly class ProgressBarComponent implements ConsoleComponent
         $format = $this->format ?? function (int $step, int $count): string {
             $width = 30;
 
-            $progress = (int) round(($step / $count) * $width);
+            $progress = (int)round(($step / $count) * $width);
 
             if ($step === $count) {
                 $bar = sprintf(
                     '[%s]',
-                    str_repeat('=', $width),
+                    str_repeat('=', $width + 1),
                 );
             } else {
                 $bar = sprintf(
@@ -52,7 +52,7 @@ final readonly class ProgressBarComponent implements ConsoleComponent
         };
 
         foreach ($this->data as $item) {
-            yield $format($step, $count);
+            $console->write($format($step, $count));
 
             $result[] = ($this->handler)($item);
 

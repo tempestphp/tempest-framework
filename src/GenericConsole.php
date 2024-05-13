@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
-use Tempest\Console\Components\ComponentRenderer;
-use Tempest\Console\Components\ConfirmComponent;
-use Tempest\Console\Components\MultipleChoiceComponent;
-use Tempest\Console\Components\PasswordComponent;
-use Tempest\Console\Components\ProgressBarComponent;
-use Tempest\Console\Components\QuestionComponent;
-use Tempest\Console\Components\SearchComponent;
-use Tempest\Console\Components\TextBoxComponent;
+use Tempest\Console\Components\HasStaticComponent;
+use Tempest\Console\Components\Interactive\ConfirmComponent;
+use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
+use Tempest\Console\Components\Interactive\PasswordComponent;
+use Tempest\Console\Components\Interactive\ProgressBarComponent;
+use Tempest\Console\Components\Interactive\SearchComponent;
+use Tempest\Console\Components\Interactive\SingleChoiceComponent;
+use Tempest\Console\Components\Interactive\TextBoxComponent;
+use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Console\Input\InputBuffer;
 use Tempest\Console\Output\OutputBuffer;
@@ -22,13 +25,20 @@ final class GenericConsole implements Console
 {
     private ?string $label = null;
     private bool $isForced = false;
+    private ?InteractiveComponentRenderer $componentRenderer = null;
 
     public function __construct(
         private readonly OutputBuffer $output,
         private readonly InputBuffer $input,
-        private readonly ComponentRenderer $componentRenderer,
         private readonly Highlighter $highlighter,
     ) {
+    }
+
+    public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self
+    {
+        $this->componentRenderer = $componentRenderer;
+
+        return $this;
     }
 
     public function setForced(): self
@@ -105,19 +115,41 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function component(ConsoleComponent $component, array $validation = []): mixed
+    public function component(InteractiveComponent $component, array $validation = []): mixed
     {
-        return $this->componentRenderer->render($this, $component, $validation);
+        if ($this->interactiveSupported()) {
+            return $this->componentRenderer->render($this, $component, $validation);
+        }
+
+        if ($component instanceof HasStaticComponent) {
+            return $component->getStaticComponent()->render($this);
+        }
+
+        throw new UnsupportedComponent($component);
     }
 
-    public function ask(string $question, ?array $options = null, bool $multiple = false, array $validation = []): string|array
-    {
+    public function ask(
+        string $question,
+        ?array $options = null,
+        mixed $default = null,
+        bool $multiple = false,
+        bool $asList = false,
+        array $validation = [],
+    ): string|array {
         if ($options === null || $options === []) {
             $component = new TextBoxComponent($question);
         } elseif ($multiple) {
-            $component = new MultipleChoiceComponent($question, $options);
+            $component = new MultipleChoiceComponent(
+                question: $question,
+                options: $options,
+            );
         } else {
-            $component = new QuestionComponent($question, $options);
+            $component = new SingleChoiceComponent(
+                question: $question,
+                options: $options,
+                default: $default,
+                asList: $asList,
+            );
         }
 
         return $this->component($component, $validation);
@@ -129,7 +161,7 @@ final class GenericConsole implements Console
             return true;
         }
 
-        return $this->component(new ConfirmComponent($question));
+        return $this->component(new ConfirmComponent($question, $default));
     }
 
     public function password(string $label = 'Password', bool $confirm = false): string
@@ -161,5 +193,14 @@ final class GenericConsole implements Console
     public function search(string $label, Closure $search): mixed
     {
         return $this->component(new SearchComponent($label, $search));
+    }
+
+    private function interactiveSupported(): bool
+    {
+        if (! $this->componentRenderer) {
+            return false;
+        }
+
+        return (bool) shell_exec('which tput && which stty');
     }
 }

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console;
 
-use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Actions\RenderConsoleCommand;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Highlight\TextTerminalTheme;
@@ -37,8 +35,7 @@ class RenderConsoleCommandTest extends TestCase
         $console = new GenericConsole(
             output: $output,
             input: new UnsupportedInputBuffer(),
-            componentRenderer: new UnsupportedComponentRenderer(),
-            highlighter: $highlighter
+            highlighter: $highlighter,
         );
 
         (new RenderConsoleCommand($console))($consoleCommand);

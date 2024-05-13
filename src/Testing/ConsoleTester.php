@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Testing;
 
+use Closure;
+use Fiber;
 use PHPUnit\Framework\Assert;
 use Tempest\AppConfig;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
-use Tempest\Console\Input\UnsupportedInputBuffer;
+use Tempest\Console\Input\InputBuffer;
+use Tempest\Console\Input\MemoryInputBuffer;
+use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\OutputBuffer;
 use Tempest\Container\Container;
@@ -21,44 +24,71 @@ use Tempest\Highlight\Highlighter;
 final class ConsoleTester
 {
     private ?MemoryOutputBuffer $output = null;
+    private ?MemoryInputBuffer $input = null;
 
     public function __construct(private Container $container)
     {
     }
 
-    public function call(string $command): self
+    /**
+     * @param string|Closure $command
+     * @return $this
+     */
+    public function call(string|Closure $command): self
     {
         $clone = clone $this;
 
-        $appConfig = $this->container->get(AppConfig::class);
+        $clone->container->singleton(OutputBuffer::class, new MemoryOutputBuffer());
+        $clone->container->singleton(InputBuffer::class, new MemoryInputBuffer());
 
-        $clone->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
-
-        $clone->container->singleton(
-            Console::class,
-            fn () => new GenericConsole(
-                output: $clone->container->get(OutputBuffer::class),
-                input: new UnsupportedInputBuffer(),
-                componentRenderer: new UnsupportedComponentRenderer(),
-                highlighter: $clone->container->get(Highlighter::class)
-            ),
+        $console = new GenericConsole(
+            output: $clone->container->get(OutputBuffer::class),
+            input: $clone->container->get(InputBuffer::class),
+            highlighter: $clone->container->get(Highlighter::class),
         );
 
+        $clone->container->singleton(Console::class, $console);
+
+        $appConfig = $this->container->get(AppConfig::class);
         $appConfig->exceptionHandlers[] = $clone->container->get(ConsoleExceptionHandler::class);
 
-        $argumentBag = new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]);
-        $clone->container->singleton(ConsoleArgumentBag::class, $argumentBag);
-
-        $application = new ConsoleApplication(
-            container: $clone->container,
-            argumentBag: $clone->container->get(ConsoleArgumentBag::class),
-        );
-
-        $application->run();
-
         $clone->output = $clone->container->get(OutputBuffer::class);
+        $clone->input = $clone->container->get(InputBuffer::class);
+
+        if ($command instanceof Closure) {
+            $fiber = new Fiber(function () use ($command, $console) {
+                $command($console);
+            });
+        } else {
+            $fiber = new Fiber(function () use ($command, $clone) {
+                $clone->container->singleton(ConsoleArgumentBag::class, new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]));
+
+                $application = new ConsoleApplication(
+                    container: $clone->container,
+                    argumentBag: $clone->container->get(ConsoleArgumentBag::class),
+                );
+
+                $application->run();
+            });
+        }
+
+        $fiber->start();
 
         return $clone;
+    }
+
+    public function input(int|string|Key ...$input): self
+    {
+        $this->output->clear();
+
+        $this->input->add(...$input);
+
+        return $this;
+    }
+
+    public function submit(int|string $input): self
+    {
+        return $this->input((string) $input, Key::ENTER);
     }
 
     public function print(): self

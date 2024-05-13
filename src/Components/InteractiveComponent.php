@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console;
+namespace Tempest\Console\Components;
 
 use Generator;
 
-interface ConsoleComponent
+interface InteractiveComponent
 {
     public function render(): Generator|string;
 }

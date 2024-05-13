@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Components;
 
-use Tempest\Console\Components\TextBoxComponent;
+use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Point;
 use Tests\Tempest\Console\TestCase;
 

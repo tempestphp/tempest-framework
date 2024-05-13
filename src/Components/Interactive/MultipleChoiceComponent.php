@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\HasStaticComponent;
+use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Components\Static\StaticMultipleChoiceComponent;
+use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Key;
 
-final class MultipleChoiceComponent implements ConsoleComponent
+final class MultipleChoiceComponent implements InteractiveComponent, HasStaticComponent
 {
     public array $selectedOptions = [];
     public int $activeOption;
@@ -87,5 +90,13 @@ final class MultipleChoiceComponent implements ConsoleComponent
         if ($this->activeOption > count($this->options) - 1) {
             $this->activeOption = 0;
         }
+    }
+
+    public function getStaticComponent(): StaticComponent
+    {
+        return new StaticMultipleChoiceComponent(
+            $this->question,
+            $this->options,
+        );
     }
 }

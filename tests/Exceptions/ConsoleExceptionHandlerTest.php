@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Exceptions;
 
 use Exception;
-use Tempest\Console\Components\UnsupportedComponentRenderer;
 use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
@@ -31,8 +30,7 @@ class ConsoleExceptionHandlerTest extends TestCase
             new GenericConsole(
                 output: $output,
                 input: new UnsupportedInputBuffer(),
-                componentRenderer: new UnsupportedComponentRenderer(),
-                highlighter: $highlighter
+                highlighter: $highlighter,
             ),
             highlighter: $highlighter,
             argumentBag: $this->container->get(ConsoleArgumentBag::class),

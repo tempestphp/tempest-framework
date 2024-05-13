@@ -2,23 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
+namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\ConsoleComponent;
+use Tempest\Console\Components\HasStaticComponent;
+use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Components\Static\StaticConfirmComponent;
+use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class ConfirmComponent implements ConsoleComponent, HasFooter, HasCursor
+final class ConfirmComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
 {
     private bool $answer;
     private string $textualAnswer = '';
 
     public function __construct(
         private readonly string $question,
-        bool $default = false,
+        private readonly bool $default = false,
     ) {
         $this->answer = $default;
     }
@@ -79,6 +82,14 @@ final class ConfirmComponent implements ConsoleComponent, HasFooter, HasCursor
         return new Point(
             x: strlen($this->question) + 15,
             y: 0,
+        );
+    }
+
+    public function getStaticComponent(): StaticComponent
+    {
+        return new StaticConfirmComponent(
+            $this->question,
+            $this->default,
         );
     }
 }

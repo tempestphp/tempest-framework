@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Terminal;
 
 use Generator;
+use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleComponent;
 use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasFooter;
@@ -57,7 +57,7 @@ final class Terminal
     }
 
     public function render(
-        ConsoleComponent $component,
+        InteractiveComponent $component,
         array $footerLines = [],
         bool $renderFooter = true,
     ): mixed {
