@@ -19,7 +19,6 @@ final class TerminalCursor implements Cursor
         $this->console->write("\e[6n");
 
         preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', $this->console->read(1024), $matches);
-
         $this->position = new Point((int)($matches['x']), (int)($matches['y']));
     }
 

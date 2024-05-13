@@ -8,6 +8,7 @@ use Closure;
 use Fiber;
 use PHPUnit\Framework\Assert;
 use Tempest\AppConfig;
+use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
@@ -25,6 +26,7 @@ final class ConsoleTester
 {
     private ?MemoryOutputBuffer $output = null;
     private ?MemoryInputBuffer $input = null;
+    private ?InteractiveComponentRenderer $componentRenderer = null;
 
     public function __construct(private Container $container)
     {
@@ -46,6 +48,10 @@ final class ConsoleTester
             input: $clone->container->get(InputBuffer::class),
             highlighter: $clone->container->get(Highlighter::class),
         );
+
+        if ($this->componentRenderer) {
+            $console->setComponentRenderer($this->componentRenderer);
+        }
 
         $clone->container->singleton(Console::class, $console);
 
@@ -74,21 +80,29 @@ final class ConsoleTester
 
         $fiber->start();
 
+        if ($clone->componentRenderer) {
+            $clone->input("\e[1;1R"); // Set cursor for interactive testing
+        }
+
         return $clone;
     }
 
-    public function input(int|string|Key ...$input): self
+    public function input(int|string|Key $input): self
     {
         $this->output->clear();
 
-        $this->input->add(...$input);
+        $this->input->add($input);
 
         return $this;
     }
 
-    public function submit(int|string $input): self
+    public function submit(int|string $input = ''): self
     {
-        return $this->input((string) $input, Key::ENTER);
+        $input = (string) $input;
+
+        $this->input($input . Key::ENTER->value);
+
+        return $this;
     }
 
     public function print(): self
@@ -102,6 +116,13 @@ final class ConsoleTester
     public function printFormatted(): self
     {
         echo $this->output->asFormattedString();
+
+        return $this;
+    }
+
+    public function useInteractiveTerminal(): self
+    {
+        $this->componentRenderer = new InteractiveComponentRenderer();
 
         return $this;
     }

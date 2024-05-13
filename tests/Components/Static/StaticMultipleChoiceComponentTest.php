@@ -20,7 +20,7 @@ class StaticMultipleChoiceComponentTest extends TestCase
             ->call(function (Console $console) {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
-            ->input('0,1', Key::ENTER)
+            ->submit('0,1')
             ->assertContains("You picked a, b;");
     }
 
@@ -30,7 +30,7 @@ class StaticMultipleChoiceComponentTest extends TestCase
             ->call(function (Console $console) {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
-            ->input('0,4,c,2', Key::ENTER)
+            ->submit('0,4,c,2')
             ->assertContains("You picked a, c;");
     }
 

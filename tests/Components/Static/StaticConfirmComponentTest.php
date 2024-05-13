@@ -24,7 +24,7 @@ class StaticConfirmComponentTest extends TestCase
                     $console->writeln('not continued');
                 }
             })
-            ->input('yes', Key::ENTER)
+            ->submit('yes')
             ->assertContains('continued');
     }
 
@@ -38,7 +38,7 @@ class StaticConfirmComponentTest extends TestCase
                     $console->writeln('not continued');
                 }
             })
-            ->input('no', Key::ENTER)
+            ->submit('no')
             ->assertContains('continued');
     }
 

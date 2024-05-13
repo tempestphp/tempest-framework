@@ -24,7 +24,7 @@ class StaticSingleChoiceComponentTest extends TestCase
             })
             ->input(Key::ENTER)
             ->assertDoesNotContain('picked a')
-            ->input('a', Key::ENTER)
+            ->submit('a')
             ->assertContains('picked a');
     }
 
@@ -48,7 +48,7 @@ class StaticSingleChoiceComponentTest extends TestCase
 
                 $console->writeln("picked {$answer}");
             })
-            ->input(1, Key::ENTER)
+            ->submit(1)
             ->assertContains('picked b');
     }
 
