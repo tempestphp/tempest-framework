@@ -12,11 +12,10 @@ use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
-use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class SearchComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
+final class SearchComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
     public string $query = '';

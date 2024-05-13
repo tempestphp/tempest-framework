@@ -9,7 +9,6 @@ use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
-use Tempest\Console\HasFooter;
 use Tempest\Console\Point;
 
 final class Terminal
@@ -64,8 +63,8 @@ final class Terminal
         $rendered = $component->render();
 
         if ($renderFooter) {
-            if ($component instanceof HasFooter) {
-                $footerLines = [...$footerLines, $component->renderFooter()];
+            if ($footer = $component->renderFooter()) {
+                $footerLines = [...$footerLines, $footer];
             }
 
             if ($footerLines !== []) {

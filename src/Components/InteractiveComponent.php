@@ -9,4 +9,6 @@ use Generator;
 interface InteractiveComponent
 {
     public function render(): Generator|string;
+
+    public function renderFooter(): string;
 }

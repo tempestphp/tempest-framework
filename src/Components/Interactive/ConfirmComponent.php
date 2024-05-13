@@ -10,11 +10,10 @@ use Tempest\Console\Components\Static\StaticConfirmComponent;
 use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
-use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class ConfirmComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
+final class ConfirmComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     private bool $answer;
     private string $textualAnswer = '';

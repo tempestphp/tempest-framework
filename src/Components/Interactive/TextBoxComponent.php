@@ -10,11 +10,10 @@ use Tempest\Console\Components\Static\StaticTextBoxComponent;
 use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
-use Tempest\Console\HasFooter;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
-final class TextBoxComponent implements InteractiveComponent, HasFooter, HasCursor, HasStaticComponent
+final class TextBoxComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
     public string $answer = '';
