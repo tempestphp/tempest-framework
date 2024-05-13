@@ -6,7 +6,6 @@ namespace Tempest\Console\Scheduler;
 
 enum Every
 {
-    case SECOND;
     case MINUTE;
     case QUARTER;
     case HALF_HOUR;
@@ -20,7 +19,6 @@ enum Every
     public function toInterval(): Interval
     {
         return match ($this) {
-            self::SECOND => new Interval(seconds: 1),
             self::MINUTE => new Interval(minutes: 1),
             self::QUARTER => new Interval(minutes: 15),
             self::HALF_HOUR => new Interval(minutes: 30),

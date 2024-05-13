@@ -13,15 +13,6 @@ use Tempest\Console\Scheduler\Every;
  */
 final class EveryTest extends TestCase
 {
-    public function test_every_second_gets_transformed_to_interval()
-    {
-        $every = Every::SECOND;
-        $interval = $every->toInterval();
-
-        $this->assertSame(1, $interval->seconds);
-        $this->assertSame(1, $interval->inSeconds());
-    }
-
     public function test_every_minute_gets_transformed_to_interval()
     {
         $every = Every::MINUTE;
