@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
 
-final class UnsupportedInteractiveTerminal extends ConsoleException
+final class UnsupportedComponent extends ConsoleException
 {
     public function __construct(InteractiveComponent $component)
     {

@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
-use Exception;
-use Tempest\AppConfig;
-use Tempest\Console\Components\ComponentRenderer;
 use Tempest\Console\Components\HasStaticComponent;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
@@ -17,7 +14,8 @@ use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponent;
-use Tempest\Console\Exceptions\UnsupportedInteractiveTerminal;
+use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Console\Input\InputBuffer;
 use Tempest\Console\Output\OutputBuffer;
@@ -27,14 +25,20 @@ final class GenericConsole implements Console
 {
     private ?string $label = null;
     private bool $isForced = false;
+    private ?InteractiveComponentRenderer $componentRenderer = null;
 
     public function __construct(
         private readonly OutputBuffer $output,
         private readonly InputBuffer $input,
-        private readonly ComponentRenderer $componentRenderer,
         private readonly Highlighter $highlighter,
-        private readonly AppConfig $appConfig,
     ) {
+    }
+
+    public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self
+    {
+        $this->componentRenderer = $componentRenderer;
+
+        return $this;
     }
 
     public function setForced(): self
@@ -121,7 +125,7 @@ final class GenericConsole implements Console
             return $component->getStaticComponent()->render($this);
         }
 
-        throw new UnsupportedInteractiveTerminal($component);
+        throw new UnsupportedComponent($component);
     }
 
     public function ask(
@@ -193,11 +197,7 @@ final class GenericConsole implements Console
 
     private function interactiveSupported(): bool
     {
-        return false;
-        if (
-            $this->appConfig->environment->isCI()
-            || $this->appConfig->environment->isTesting()
-        ) {
+        if (! $this->componentRenderer) {
             return false;
         }
 

@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components\Renderers;
+namespace Tempest\Console\Components;
 
 use ReflectionClass;
 use ReflectionMethod;
-use Tempest\Console\Components\ComponentRenderer;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
@@ -18,7 +16,7 @@ use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
 
-final class InteractiveComponentRenderer implements ComponentRenderer
+final class InteractiveComponentRenderer
 {
     private array $validationErrors = [];
 

@@ -6,7 +6,6 @@ namespace Tempest\Console\Testing;
 
 use PHPUnit\Framework\Assert;
 use Tempest\AppConfig;
-use Tempest\Console\Components\Renderers\UnsupportedComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
@@ -36,13 +35,11 @@ final class ConsoleTester
 
         $clone->container->singleton(
             Console::class,
-            fn () => new GenericConsole(
+            fn () => (new GenericConsole(
                 output: $clone->container->get(OutputBuffer::class),
                 input: new UnsupportedInputBuffer(),
-                componentRenderer: new UnsupportedComponentRenderer(),
                 highlighter: $clone->container->get(Highlighter::class),
-                appConfig: $clone->container->get(AppConfig::class),
-            ),
+            )),
         );
 
         $appConfig->exceptionHandlers[] = $clone->container->get(ConsoleExceptionHandler::class);
