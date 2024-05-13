@@ -46,4 +46,11 @@ final class MemoryOutputBuffer implements OutputBuffer
     {
         return implode('', $this->getBufferWithFormatting());
     }
+
+    public function clear(): self
+    {
+        $this->buffer = [];
+
+        return $this;
+    }
 }

@@ -33,7 +33,7 @@ final readonly class StaticProgressBarComponent implements StaticComponent
             if ($step === $count) {
                 $bar = sprintf(
                     '[%s]',
-                    str_repeat('=', $width),
+                    str_repeat('=', $width + 1),
                 );
             } else {
                 $bar = sprintf(

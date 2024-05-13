@@ -40,7 +40,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:single')]
-    public function option(): void
+    public function single(): void
     {
         $result = $this->console->ask(
             'Pick one option',
@@ -48,6 +48,22 @@ final readonly class InteractiveCommand
                 'a', 'b', 'c',
             ],
             default: 1,
+            asList: true,
+        );
+
+        $result = json_encode($result);
+
+        $this->console->writeln("You picked <em>{$result}</em>");
+    }
+
+    #[ConsoleCommand('interactive:single_without_default')]
+    public function single_without_default(): void
+    {
+        $result = $this->console->ask(
+            'Pick one option',
+            [
+                'a', 'b', 'c',
+            ],
             asList: true,
         );
 
