@@ -25,6 +25,8 @@ final readonly class ExecuteConsoleCommand
     {
         $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
 
+        $this->argumentBag->setCommandName($commandName);
+
         $callable(new Invocation(
             argumentBag: $this->argumentBag,
         ));
