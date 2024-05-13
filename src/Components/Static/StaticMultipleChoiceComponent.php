@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components\Static;
 
 use Tempest\Console\Components\StaticComponent;
@@ -10,7 +12,8 @@ final readonly class StaticMultipleChoiceComponent implements StaticComponent
     public function __construct(
         public string $question,
         public array $options,
-    ) {}
+    ) {
+    }
 
     public function render(Console $console): array
     {
@@ -34,8 +37,8 @@ final readonly class StaticMultipleChoiceComponent implements StaticComponent
 
         $parsedOptions = [];
 
-        foreach ($this->options as $option) {
-            $parsedOptions[] = "- {$option}";
+        foreach ($this->options as $key => $option) {
+            $parsedOptions[$key] = "- [{$key}] {$option}";
         }
 
         $console->write(PHP_EOL . implode(PHP_EOL, $parsedOptions) . PHP_EOL);
@@ -47,11 +50,11 @@ final readonly class StaticMultipleChoiceComponent implements StaticComponent
         foreach ($answers as $answer) {
             $answer = trim($answer);
 
-            if (! in_array($answer, $this->options)) {
+            if (! array_key_exists($answer, $this->options)) {
                 continue;
             }
 
-            $validAnswers[] = $answer;
+            $validAnswers[] = $this->options[$answer];
         }
 
         return $validAnswers;

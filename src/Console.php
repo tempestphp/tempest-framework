@@ -28,6 +28,7 @@ interface Console
      * @param array|null $options
      * @param mixed|null $default
      * @param bool $multiple
+     * @param bool $asList
      * @param \Tempest\Validation\Rule[] $validation
      * @return string|array
      */
@@ -36,6 +37,7 @@ interface Console
         ?array $options = null,
         mixed $default = null,
         bool $multiple = false,
+        bool $asList = false,
         array $validation = [],
     ): string|array;
 

@@ -19,8 +19,7 @@ final class MultipleChoiceComponent implements InteractiveComponent, HasStaticCo
     public function __construct(
         public string $question,
         public array $options,
-    )
-    {
+    ) {
         $this->activeOption = array_key_first($this->options);
     }
 

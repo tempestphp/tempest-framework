@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components\Static;
 
 use Closure;
@@ -8,13 +10,15 @@ use Tempest\Console\Console;
 
 final readonly class StaticSearchComponent implements StaticComponent
 {
+    public const string SEARCH_AGAIN = 'Search again';
+
     public function __construct(
         public string $label,
         public Closure $search,
     ) {
     }
 
-    public function render(Console $console): mixed
+    public function render(Console $console): string
     {
         $answer = null;
 
@@ -23,13 +27,19 @@ final readonly class StaticSearchComponent implements StaticComponent
 
             $options = ($this->search)($query);
 
-            $options = ['Search again', ...$options];
+            $options = [self::SEARCH_AGAIN, ...$options];
 
-            $answer = $console->ask('Please select a result', options: $options);
+            $answer = $console->ask(
+                question: 'Please select a result',
+                options: $options,
+                asList: true,
+            );
 
-            if ($answer === 'Search again') {
+            if ($answer === self::SEARCH_AGAIN) {
                 $answer = null;
             }
         }
+
+        return $answer;
     }
 }

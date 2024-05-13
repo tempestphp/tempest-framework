@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components\Static;
 
 use Tempest\Console\Components\StaticComponent;

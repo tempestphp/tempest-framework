@@ -40,7 +40,8 @@ final class ConsoleTester
                 output: $clone->container->get(OutputBuffer::class),
                 input: new UnsupportedInputBuffer(),
                 componentRenderer: new UnsupportedComponentRenderer(),
-                highlighter: $clone->container->get(Highlighter::class)
+                highlighter: $clone->container->get(Highlighter::class),
+                appConfig: $clone->container->get(AppConfig::class),
             ),
         );
 

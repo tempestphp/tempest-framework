@@ -39,7 +39,7 @@ final readonly class InteractiveCommand
         $this->console->writeln($password);
     }
 
-    #[ConsoleCommand('interactive:option')]
+    #[ConsoleCommand('interactive:single')]
     public function option(): void
     {
         $result = $this->console->ask(
@@ -47,7 +47,8 @@ final readonly class InteractiveCommand
             [
                 'a', 'b', 'c',
             ],
-            default: 'b',
+            default: 1,
+            asList: true,
         );
 
         $result = json_encode($result);

@@ -8,6 +8,7 @@ use Exception;
 use Tempest\Console\Components\ComponentRenderer;
 use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
+use Tempest\Console\Exceptions\UnsupportedInteractiveTerminal;
 
 final class UnsupportedComponentRenderer implements ComponentRenderer
 {
@@ -16,6 +17,6 @@ final class UnsupportedComponentRenderer implements ComponentRenderer
         InteractiveComponent $component,
         array $validation = []
     ): mixed {
-        throw new Exception('Unsupported');
+        throw new UnsupportedInteractiveTerminal($component);
     }
 }

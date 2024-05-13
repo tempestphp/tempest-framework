@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Components\Static;
 
 use Tempest\Console\Components\StaticComponent;
@@ -10,7 +12,8 @@ final readonly class StaticConfirmComponent implements StaticComponent
     public function __construct(
         private string $question,
         private bool $default = false,
-    ) {}
+    ) {
+    }
 
     public function render(Console $console): bool
     {

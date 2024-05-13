@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components\Interactive;
+namespace Tempest\Console\Components\Static;
 
 use Closure;
-use Generator;
-use Tempest\Console\Components\HasStaticComponent;
-use Tempest\Console\Components\InteractiveComponent;
-use Tempest\Console\Components\Static\StaticProgressBarComponent;
 use Tempest\Console\Components\StaticComponent;
+use Tempest\Console\Console;
 
-final readonly class ProgressBarComponent implements InteractiveComponent, HasStaticComponent
+final readonly class StaticProgressBarComponent implements StaticComponent
 {
     public function __construct(
         private iterable $data,
@@ -21,7 +18,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
     ) {
     }
 
-    public function render(): Generator
+    public function render(Console $console): array
     {
         $result = [];
 
@@ -31,7 +28,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
         $format = $this->format ?? function (int $step, int $count): string {
             $width = 30;
 
-            $progress = (int) round(($step / $count) * $width);
+            $progress = (int)round(($step / $count) * $width);
 
             if ($step === $count) {
                 $bar = sprintf(
@@ -55,7 +52,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
         };
 
         foreach ($this->data as $item) {
-            yield $format($step, $count);
+            $console->write($format($step, $count));
 
             $result[] = ($this->handler)($item);
 
@@ -63,14 +60,5 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
         }
 
         return $result;
-    }
-
-    public function getStaticComponent(): StaticComponent
-    {
-        return new StaticProgressBarComponent(
-            data: $this->data,
-            handler: $this->handler,
-            format: $this->format,
-        );
     }
 }

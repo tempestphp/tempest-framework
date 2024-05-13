@@ -6,16 +6,18 @@ namespace Tempest\Console;
 
 use Closure;
 use Exception;
+use Tempest\AppConfig;
 use Tempest\Console\Components\ComponentRenderer;
 use Tempest\Console\Components\HasStaticComponent;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
-use Tempest\Console\Components\Interactive\OptionComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
+use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponent;
+use Tempest\Console\Exceptions\UnsupportedInteractiveTerminal;
 use Tempest\Console\Highlight\TempestConsoleLanguage;
 use Tempest\Console\Input\InputBuffer;
 use Tempest\Console\Output\OutputBuffer;
@@ -31,7 +33,9 @@ final class GenericConsole implements Console
         private readonly InputBuffer $input,
         private readonly ComponentRenderer $componentRenderer,
         private readonly Highlighter $highlighter,
-    ) {}
+        private readonly AppConfig $appConfig,
+    ) {
+    }
 
     public function setForced(): self
     {
@@ -117,7 +121,7 @@ final class GenericConsole implements Console
             return $component->getStaticComponent()->render($this);
         }
 
-        throw new Exception('Not supported');
+        throw new UnsupportedInteractiveTerminal($component);
     }
 
     public function ask(
@@ -125,14 +129,23 @@ final class GenericConsole implements Console
         ?array $options = null,
         mixed $default = null,
         bool $multiple = false,
-        array $validation = []
+        bool $asList = false,
+        array $validation = [],
     ): string|array {
         if ($options === null || $options === []) {
             $component = new TextBoxComponent($question);
         } elseif ($multiple) {
-            $component = new MultipleChoiceComponent($question, $options);
+            $component = new MultipleChoiceComponent(
+                question: $question,
+                options: $options,
+            );
         } else {
-            $component = new OptionComponent($question, $options, $default);
+            $component = new SingleChoiceComponent(
+                question: $question,
+                options: $options,
+                default: $default,
+                asList: $asList,
+            );
         }
 
         return $this->component($component, $validation);
@@ -181,6 +194,13 @@ final class GenericConsole implements Console
     private function interactiveSupported(): bool
     {
         return false;
-    }
+        if (
+            $this->appConfig->environment->isCI()
+            || $this->appConfig->environment->isTesting()
+        ) {
+            return false;
+        }
 
+        return (bool) shell_exec('which tput && which stty');
+    }
 }
