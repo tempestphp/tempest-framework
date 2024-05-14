@@ -18,5 +18,3 @@ ConsoleApplication::boot(
         ],
     ),
 )->run();
-
-exit;

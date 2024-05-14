@@ -8,5 +8,3 @@ use Tempest\Discovery\DiscoveryLocation;
 require_once getcwd() . '/vendor/autoload.php';
 
 ConsoleApplication::boot('Tempest Console')->run();
-
-exit;

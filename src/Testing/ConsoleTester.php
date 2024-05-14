@@ -10,11 +10,12 @@ use Fiber;
 use PHPUnit\Framework\Assert;
 use ReflectionMethod;
 use Tempest\AppConfig;
+use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\ExitCode;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\MemoryInputBuffer;
@@ -31,6 +32,7 @@ final class ConsoleTester
     private ?MemoryOutputBuffer $output = null;
     private ?MemoryInputBuffer $input = null;
     private ?InteractiveComponentRenderer $componentRenderer = null;
+    private ?ExitCode $exitCode = null;
 
     public function __construct(
         private readonly Container $container,
@@ -63,8 +65,8 @@ final class ConsoleTester
         $clone->input = $clone->container->get(InputBuffer::class);
 
         if ($command instanceof Closure) {
-            $fiber = new Fiber(function () use ($command, $console) {
-                $command($console);
+            $fiber = new Fiber(function () use ($clone, $command, $console) {
+                $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
             });
         } else {
             if (is_string($command) && class_exists($command)) {
@@ -72,26 +74,27 @@ final class ConsoleTester
             }
 
             if (is_array($command) || class_exists($command)) {
+                $handler = new ReflectionMethod(...$command);
+
                 $attribute = Attributes::find(ConsoleCommand::class)
-                    ->in(new ReflectionMethod(...$command))
+                    ->in($handler)
                     ->first();
 
                 if (! $attribute) {
                     throw new Exception("Could not resolve console command from {$command[0]}::{$command[1]}");
                 }
 
+                $attribute->setHandler($handler);
+
                 $command = $attribute->getName();
             }
 
             $fiber = new Fiber(function () use ($command, $clone) {
-                $clone->container->singleton(ConsoleArgumentBag::class, new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]));
+                $argumentBag = new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]);
 
-                $application = new ConsoleApplication(
-                    container: $clone->container,
-                    argumentBag: $clone->container->get(ConsoleArgumentBag::class),
-                );
+                $clone->container->singleton(ConsoleArgumentBag::class, $argumentBag);
 
-                $application->run();
+                $clone->exitCode = ($this->container->get(ExecuteConsoleCommand::class))($argumentBag->getCommandName());
             });
         }
 
@@ -185,6 +188,43 @@ final class ConsoleTester
                 PHP_EOL . $this->output->asFormattedString(),
             ),
         );
+
+        return $this;
+    }
+
+    public function assertExitCode(ExitCode $exitCode): self
+    {
+        Assert::assertNotNull($this->exitCode, "Expected {$exitCode->name}, but instead no exit code was set — maybe you missed providing some input?");
+
+        Assert::assertSame($exitCode, $this->exitCode, "Expected the exit code to be {$exitCode->name}, instead got {$this->exitCode->name}");
+
+        return $this;
+    }
+
+    public function assertSuccess(): self
+    {
+        $this->assertExitCode(ExitCode::SUCCESS);
+
+        return $this;
+    }
+
+    public function assertError(): self
+    {
+        $this->assertExitCode(ExitCode::ERROR);
+
+        return $this;
+    }
+
+    public function assertCancelled(): self
+    {
+        $this->assertExitCode(ExitCode::CANCELLED);
+
+        return $this;
+    }
+
+    public function assertInvalid(): self
+    {
+        $this->assertExitCode(ExitCode::INVALID);
 
         return $this;
     }

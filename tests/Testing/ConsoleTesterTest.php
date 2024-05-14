@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Testing;
 
 use Tempest\Console\Console;
+use Tempest\Console\ExitCode;
 use Tests\Tempest\Console\Fixtures\ComplexCommand;
+use Tests\Tempest\Console\Fixtures\Hello;
 use Tests\Tempest\Console\Fixtures\InteractiveCommand;
 use Tests\Tempest\Console\TestCase;
 
@@ -43,5 +45,47 @@ class ConsoleTesterTest extends TestCase
         $this->console
             ->call('interactive:validation')
             ->assertContains('a');
+    }
+
+    public function test_exit_code_success(): void
+    {
+        $this->console
+            ->call(fn () => ExitCode::SUCCESS)
+            ->assertSuccess();
+    }
+
+    public function test_exit_code_invalid(): void
+    {
+        $this->console
+            ->call(fn () => ExitCode::INVALID)
+            ->assertInvalid();
+    }
+
+    public function test_exit_code_error(): void
+    {
+        $this->console
+            ->call(fn () => ExitCode::ERROR)
+            ->assertError();
+    }
+
+    public function test_exit_code_cancelled(): void
+    {
+        $this->console
+            ->call(fn () => ExitCode::CANCELLED)
+            ->assertCancelled();
+    }
+
+    public function test_exit_code_success_default(): void
+    {
+        $this->console
+            ->call(fn () => null)
+            ->assertSuccess();
+    }
+
+    public function test_exit_code_from_command(): void
+    {
+        $this->console
+            ->call([Hello::class, 'test'])
+            ->assertSuccess();
     }
 }

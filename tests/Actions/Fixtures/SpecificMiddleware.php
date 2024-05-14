@@ -6,6 +6,7 @@ namespace Tests\Tempest\Console\Actions\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 
 final readonly class SpecificMiddleware implements ConsoleMiddleware
@@ -14,10 +15,10 @@ final readonly class SpecificMiddleware implements ConsoleMiddleware
     {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         $this->console->writeln('from middleware');
 
-        $next($invocation);
+        return $next($invocation);
     }
 }

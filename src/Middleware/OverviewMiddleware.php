@@ -9,6 +9,7 @@ use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 
 final readonly class OverviewMiddleware implements ConsoleMiddleware
@@ -20,15 +21,15 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         if (! $invocation->argumentBag->getCommandName()) {
             $this->renderOverview();
 
-            return;
+            return ExitCode::SUCCESS;
         }
 
-        $next($invocation);
+        return $next($invocation);
     }
 
     private function renderOverview(): void

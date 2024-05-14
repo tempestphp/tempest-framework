@@ -8,6 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\Exceptions\ConsoleException;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Throwable;
 
@@ -19,10 +20,10 @@ final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         try {
-            $next($invocation);
+            return $next($invocation);
         } catch (ConsoleException $consoleException) {
             $consoleException->render($this->console);
         } catch (Throwable $throwable) {
@@ -37,5 +38,7 @@ final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
                 $exceptionHandler->handle($throwable);
             }
         }
+
+        return ExitCode::ERROR;
     }
 }

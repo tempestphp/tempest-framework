@@ -7,6 +7,7 @@ namespace Tempest\Console\Actions;
 use Closure;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
@@ -21,13 +22,13 @@ final readonly class ExecuteConsoleCommand
     ) {
     }
 
-    public function __invoke(string $commandName): void
+    public function __invoke(string $commandName): ExitCode
     {
         $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
 
         $this->argumentBag->setCommandName($commandName);
 
-        $callable(new Invocation(
+        return $callable(new Invocation(
             argumentBag: $this->argumentBag,
         ));
     }
@@ -47,6 +48,8 @@ final readonly class ExecuteConsoleCommand
                 $consoleCommandClass,
                 ...$inputBuilder->build(),
             );
+
+            return ExitCode::SUCCESS;
         };
 
         $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];

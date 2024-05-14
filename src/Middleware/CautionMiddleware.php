@@ -7,6 +7,7 @@ namespace Tempest\Console\Middleware;
 use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 
 final readonly class CautionMiddleware implements ConsoleMiddleware
@@ -17,7 +18,7 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         $environment = $this->appConfig->environment;
 
@@ -25,10 +26,10 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
             $continue = $this->console->confirm('Caution! Do you wish to continue?');
 
             if (! $continue) {
-                return;
+                return ExitCode::CANCELLED;
             }
         }
 
-        $next($invocation);
+        return $next($invocation);
     }
 }

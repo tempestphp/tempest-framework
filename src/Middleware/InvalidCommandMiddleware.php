@@ -8,6 +8,7 @@ use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\Exceptions\InvalidCommandException;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Validation\Rules\NotEmpty;
@@ -20,16 +21,16 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): void
+    public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         try {
-            $next($invocation);
+            return $next($invocation);
         } catch (InvalidCommandException $exception) {
-            $this->retry($invocation, $exception);
+            return $this->retry($invocation, $exception);
         }
     }
 
-    private function retry(Invocation $invocation, InvalidCommandException $exception): void
+    private function retry(Invocation $invocation, InvalidCommandException $exception): ExitCode
     {
         $this->console->writeln("<em>Provide missing input:</em>");
 
@@ -43,6 +44,6 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
             ));
         }
 
-        ($this->executeConsoleCommand)($invocation->consoleCommand->getName());
+        return ($this->executeConsoleCommand)($invocation->consoleCommand->getName());
     }
 }
