@@ -12,9 +12,10 @@ use Tempest\Console\Input\ConsoleArgumentDefinition;
 final class InvalidCommandException extends ConsoleException
 {
     public function __construct(
-        private readonly ConsoleCommand $consoleCommand,
-        /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidDefinitions */
-        private readonly array $invalidDefinitions,
+        public readonly ConsoleCommand $consoleCommand,
+
+        /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidArguments */
+        public readonly array $invalidArguments,
     ) {
     }
 
@@ -26,7 +27,7 @@ final class InvalidCommandException extends ConsoleException
 
         $missingArguments = implode(', ', array_map(
             fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
-            $this->invalidDefinitions,
+            $this->invalidArguments,
         ));
 
         if ($missingArguments) {

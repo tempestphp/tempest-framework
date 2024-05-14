@@ -22,7 +22,7 @@ final class ConsoleInputBuilder
     public function build(): array
     {
         $validArguments = [];
-        $invalidDefinitions = [];
+        $invalidArguments = [];
 
         $argumentDefinitions = $this->command->getArgumentDefinitions();
 
@@ -30,7 +30,7 @@ final class ConsoleInputBuilder
             $value = $this->argumentBag->findFor($argumentDefinition);
 
             if ($value === null) {
-                $invalidDefinitions[] = $argumentDefinition;
+                $invalidArguments[] = $argumentDefinition;
 
                 continue;
             }
@@ -38,10 +38,10 @@ final class ConsoleInputBuilder
             $validArguments[] = $value;
         }
 
-        if (count($invalidDefinitions)) {
+        if (count($invalidArguments)) {
             throw new InvalidCommandException(
                 $this->command,
-                $invalidDefinitions
+                $invalidArguments
             );
         }
 

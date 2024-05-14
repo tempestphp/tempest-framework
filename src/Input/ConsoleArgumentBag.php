@@ -69,7 +69,7 @@ final class ConsoleArgumentBag
         return null;
     }
 
-    private function add(ConsoleInputArgument $argument): self
+    public function add(ConsoleInputArgument $argument): self
     {
         $this->arguments[] = $argument;
 

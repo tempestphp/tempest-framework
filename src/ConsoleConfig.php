@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use ReflectionMethod;
 use Tempest\Console\Middleware\ConsoleExceptionMiddleware;
 use Tempest\Console\Middleware\HelpMiddleware;
+use Tempest\Console\Middleware\InvalidCommandMiddleware;
 use Tempest\Console\Middleware\OverviewMiddleware;
 use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
 
@@ -24,6 +25,7 @@ final class ConsoleConfig
             OverviewMiddleware::class,
             ResolveOrRescueMiddleware::class,
             ConsoleExceptionMiddleware::class,
+            InvalidCommandMiddleware::class,
             HelpMiddleware::class,
         ],
     ) {

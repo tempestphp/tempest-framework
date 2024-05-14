@@ -19,7 +19,7 @@ class ConsoleTesterTest extends TestCase
     {
         $this->console
             ->call(ComplexCommand::class)
-            ->assertContains('complex <a> <b> <c>');
+            ->assertContains('Provide missing input');
     }
 
     public function test_call_with_closure(): void
