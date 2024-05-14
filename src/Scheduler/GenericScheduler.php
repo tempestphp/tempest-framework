@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
+use Tempest\Console\Scheduler;
+use Tempest\Console\ShellExecutor;
 
 final readonly class GenericScheduler implements Scheduler
 {
@@ -12,7 +14,7 @@ final readonly class GenericScheduler implements Scheduler
 
     public function __construct(
         private SchedulerConfig $config,
-        private ScheduledInvocationExecutor $executor
+        private ShellExecutor $executor
     ) {
     }
 

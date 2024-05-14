@@ -8,7 +8,8 @@ use Tempest\AppConfig;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
-use Tempest\Console\Invocation;
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\Initializers\Invocation;
 
 final readonly class OverviewMiddleware implements ConsoleMiddleware
 {

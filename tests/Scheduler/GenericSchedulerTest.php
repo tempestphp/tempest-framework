@@ -9,7 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
-use Tempest\Console\Scheduler\NullInvocationExecutor;
+use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\Scheduler\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tests\Tempest\Console\TestCase;
@@ -32,7 +32,7 @@ final class GenericSchedulerTest extends TestCase
 
     public function test_scheduler_executes_handlers()
     {
-        $executor = $this->createMock(NullInvocationExecutor::class);
+        $executor = $this->createMock(NullShellExecutor::class);
 
         $executor->expects($this->once())
             ->method('execute')
@@ -50,7 +50,7 @@ final class GenericSchedulerTest extends TestCase
 
     public function test_scheduler_executes_commands()
     {
-        $executor = $this->createMock(NullInvocationExecutor::class);
+        $executor = $this->createMock(NullShellExecutor::class);
 
         $executor->expects($this->once())
             ->method('execute')
@@ -71,7 +71,7 @@ final class GenericSchedulerTest extends TestCase
     {
         $at = new DateTime('2024-05-01 00:00:00');
 
-        $executor = $this->createMock(NullInvocationExecutor::class);
+        $executor = $this->createMock(NullShellExecutor::class);
 
         $executor->expects($this->once())
             ->method('execute')
@@ -92,7 +92,7 @@ final class GenericSchedulerTest extends TestCase
         // nor when it's called before the next minute
         $scheduler->run($at->modify('+30 seconds'));
 
-        $executor = $this->createMock(NullInvocationExecutor::class);
+        $executor = $this->createMock(NullShellExecutor::class);
 
         $executor->expects($this->once())
             ->method('execute')

@@ -7,7 +7,8 @@ namespace Tempest\Console\Middleware;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Invocation;
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\Initializers\Invocation;
 
 final readonly class HelpMiddleware implements ConsoleMiddleware
 {

@@ -6,8 +6,9 @@ namespace Tempest\Console\Middleware;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\Exceptions\ConsoleException;
-use Tempest\Console\Invocation;
+use Tempest\Console\Initializers\Invocation;
 use Throwable;
 
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware

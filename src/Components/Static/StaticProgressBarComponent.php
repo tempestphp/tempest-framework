@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Static;
 
 use Closure;
-use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\Console;
+use Tempest\Console\StaticComponent;
 
 final readonly class StaticProgressBarComponent implements StaticComponent
 {

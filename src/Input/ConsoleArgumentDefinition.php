@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console;
+namespace Tempest\Console\Input;
 
 use ReflectionNamedType;
 use ReflectionParameter;
+use Tempest\Console\ConsoleArgument;
 
 final readonly class ConsoleArgumentDefinition
 {

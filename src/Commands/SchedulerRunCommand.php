@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Scheduler\Scheduler;
+use Tempest\Console\Scheduler;
 
 final readonly class SchedulerRunCommand
 {

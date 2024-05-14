@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console;
 
-use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleArgumentBag;
 
 /**
  * @internal

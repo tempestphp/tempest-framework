@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Tempest\Console\Exceptions\InvalidCommandException;
+use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleInputArgument;
 
 final class ConsoleInputBuilder
 {

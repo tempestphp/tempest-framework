@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
-use Tempest\Console\Components\InteractiveComponent;
 
 interface Console
 {

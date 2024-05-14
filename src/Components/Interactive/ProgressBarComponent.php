@@ -6,10 +6,10 @@ namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
-use Tempest\Console\Components\HasStaticComponent;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Components\Static\StaticProgressBarComponent;
-use Tempest\Console\Components\StaticComponent;
+use Tempest\Console\HasStaticComponent;
+use Tempest\Console\InteractiveComponent;
+use Tempest\Console\StaticComponent;
 
 final readonly class ProgressBarComponent implements InteractiveComponent, HasStaticComponent
 {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Actions\Fixtures;
 
 use Tempest\Console\Console;
-use Tempest\Console\Invocation;
-use Tempest\Console\Middleware\ConsoleMiddleware;
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\Initializers\Invocation;
 
 final readonly class SpecificMiddleware implements ConsoleMiddleware
 {

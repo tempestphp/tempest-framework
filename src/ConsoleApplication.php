@@ -8,6 +8,7 @@ use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Kernel;
 

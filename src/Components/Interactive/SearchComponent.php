@@ -6,14 +6,14 @@ namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
-use Tempest\Console\Components\HasStaticComponent;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Components\Static\StaticSearchComponent;
-use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
+use Tempest\Console\HasStaticComponent;
+use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
+use Tempest\Console\StaticComponent;
 
 final class SearchComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {

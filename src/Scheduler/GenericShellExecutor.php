@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Scheduler;
 
-final class GenericInvocationExecutor implements ScheduledInvocationExecutor
+use Tempest\Console\ShellExecutor;
+
+final class GenericShellExecutor implements ShellExecutor
 {
     public function execute(string $compiledCommand): void
     {

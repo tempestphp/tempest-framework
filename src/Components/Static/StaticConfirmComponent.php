@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Static;
 
-use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\Console;
+use Tempest\Console\StaticComponent;
 
 final readonly class StaticConfirmComponent implements StaticComponent
 {

@@ -6,6 +6,7 @@ namespace Tempest\Console\Input;
 
 use Exception;
 use Fiber;
+use Tempest\Console\InputBuffer;
 use Tempest\Console\Key;
 
 final class MemoryInputBuffer implements InputBuffer

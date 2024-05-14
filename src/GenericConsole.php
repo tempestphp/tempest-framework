@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
-use Tempest\Console\Components\HasStaticComponent;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 use Tempest\Console\Components\Interactive\PasswordComponent;
@@ -13,12 +12,9 @@ use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TextBoxComponent;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage;
-use Tempest\Console\Input\InputBuffer;
-use Tempest\Console\Output\OutputBuffer;
 use Tempest\Highlight\Highlighter;
 
 final class GenericConsole implements Console

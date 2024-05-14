@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Input;
+namespace Tempest\Console;
 
 interface InputBuffer
 {

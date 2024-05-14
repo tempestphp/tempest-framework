@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Input;
 
+use Tempest\Console\InputBuffer;
+
 final readonly class StdinInputBuffer implements InputBuffer
 {
     public function read(int $bytes): string

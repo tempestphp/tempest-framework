@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Middleware;
+namespace Tempest\Console;
 
-use Tempest\Console\Invocation;
+use Tempest\Console\Initializers\Invocation;
 
 interface ConsoleMiddleware
 {

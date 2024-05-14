@@ -7,9 +7,9 @@ namespace Tests\Tempest\Console;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleArgumentBag;
-use Tempest\Console\Scheduler\NullInvocationExecutor;
-use Tempest\Console\Scheduler\ScheduledInvocationExecutor;
+use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Scheduler\NullShellExecutor;
+use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
@@ -46,7 +46,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         );
 
         $this->container->singleton(Application::class, fn () => $application);
-        $this->container->singleton(ScheduledInvocationExecutor::class, fn () => new NullInvocationExecutor());
+        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
         $this->console = new ConsoleTester($this->container);
     }
 }

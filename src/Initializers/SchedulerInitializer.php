@@ -6,11 +6,11 @@ namespace Tempest\Console\Initializers;
 
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
+use Tempest\Console\Scheduler;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullScheduler;
-use Tempest\Console\Scheduler\ScheduledInvocationExecutor;
-use Tempest\Console\Scheduler\Scheduler;
 use Tempest\Console\Scheduler\SchedulerConfig;
+use Tempest\Console\ShellExecutor;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
@@ -28,7 +28,7 @@ final readonly class SchedulerInitializer implements Initializer
 
         return new GenericScheduler(
             $container->get(SchedulerConfig::class),
-            $container->get(ScheduledInvocationExecutor::class),
+            $container->get(ShellExecutor::class),
         );
     }
 }

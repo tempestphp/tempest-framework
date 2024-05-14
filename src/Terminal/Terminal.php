@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Console\Terminal;
 
 use Generator;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
+use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Point;
 
 final class Terminal

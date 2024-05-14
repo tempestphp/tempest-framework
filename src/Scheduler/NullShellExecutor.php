@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Scheduler;
 
-class NullInvocationExecutor implements ScheduledInvocationExecutor
+use Tempest\Console\ShellExecutor;
+
+class NullShellExecutor implements ShellExecutor
 {
     public function execute(string $compiledCommand): void
     {

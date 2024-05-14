@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Middleware;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\GenericConsole;
-use Tempest\Console\Invocation;
+use Tempest\Console\Initializers\Invocation;
 
 final readonly class ForceMiddleware implements ConsoleMiddleware
 {

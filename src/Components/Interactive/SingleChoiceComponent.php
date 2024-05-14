@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\Components\HasStaticComponent;
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\Components\Static\StaticSingleChoiceComponent;
-use Tempest\Console\Components\StaticComponent;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\HasStaticComponent;
+use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
+use Tempest\Console\StaticComponent;
 
 final class SingleChoiceComponent implements InteractiveComponent, HasStaticComponent
 {

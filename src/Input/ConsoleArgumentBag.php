@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console;
+namespace Tempest\Console\Input;
 
 final class ConsoleArgumentBag
 {

@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Console\Input\ConsoleArgumentDefinition;
 
 #[Attribute]
 final class ConsoleCommand
@@ -20,7 +21,7 @@ final class ConsoleCommand
         public readonly array $aliases = [],
         public readonly ?string $help = null,
 
-        /** @var array<array-key, class-string<\Tempest\Console\Middleware\ConsoleMiddleware>> */
+        /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
         public readonly array $middleware = [],
     ) {
     }

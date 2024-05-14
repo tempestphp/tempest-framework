@@ -9,6 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Reflection\Attributes;

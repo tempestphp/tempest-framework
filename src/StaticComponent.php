@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Components;
-
-use Tempest\Console\Console;
+namespace Tempest\Console;
 
 interface StaticComponent
 {

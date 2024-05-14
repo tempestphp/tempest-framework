@@ -6,14 +6,14 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleArgumentDefinition;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Input\ConsoleArgumentDefinition;
 
 final class InvalidCommandException extends ConsoleException
 {
     public function __construct(
         private readonly ConsoleCommand $consoleCommand,
-        /** @var \Tempest\Console\ConsoleArgumentDefinition[] $invalidDefinitions */
+        /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidDefinitions */
         private readonly array $invalidDefinitions,
     ) {
     }

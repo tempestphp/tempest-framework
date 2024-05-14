@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Output;
 
+use Tempest\Console\OutputBuffer;
+
 final readonly class LogOutputBuffer implements OutputBuffer
 {
     public function __construct(private string $path)

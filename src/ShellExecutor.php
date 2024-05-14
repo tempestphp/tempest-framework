@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Scheduler;
+namespace Tempest\Console;
 
-interface ScheduledInvocationExecutor
+interface ShellExecutor
 {
     public function execute(string $compiledCommand): void;
 }

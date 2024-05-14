@@ -6,7 +6,8 @@ namespace Tempest\Console\Middleware;
 
 use Tempest\AppConfig;
 use Tempest\Console\Console;
-use Tempest\Console\Invocation;
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\Initializers\Invocation;
 
 final readonly class CautionMiddleware implements ConsoleMiddleware
 {

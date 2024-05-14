@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Console\Actions;
 
 use Closure;
-use Tempest\Console\ConsoleArgumentBag;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
-use Tempest\Console\Invocation;
+use Tempest\Console\Initializers\Invocation;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use function Tempest\type;
 

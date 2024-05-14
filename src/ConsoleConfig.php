@@ -19,7 +19,7 @@ final class ConsoleConfig
         public array $commands = [],
         public ?string $logPath = null,
 
-        /** @var array<array-key, class-string<\Tempest\Console\Middleware\ConsoleMiddleware>> */
+        /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
         public array $middleware = [
             OverviewMiddleware::class,
             ResolveOrRescueMiddleware::class,

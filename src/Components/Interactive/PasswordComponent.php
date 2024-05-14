@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\Components\InteractiveComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
+use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 
