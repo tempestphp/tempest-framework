@@ -7,7 +7,7 @@ namespace Tempest\Application;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
