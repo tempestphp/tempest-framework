@@ -35,6 +35,8 @@ final class InteractiveComponentRenderer
         $return = $terminal->render($component);
 
         if ($return !== null) {
+            $terminal->switchToNormalMode();
+
             return $return;
         }
 
