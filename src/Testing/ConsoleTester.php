@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Closure;
+use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
+use ReflectionMethod;
 use Tempest\AppConfig;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Input\InputBuffer;
@@ -21,6 +24,7 @@ use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\OutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Highlight\Highlighter;
+use Tempest\Support\Reflection\Attributes;
 
 final class ConsoleTester
 {
@@ -28,15 +32,12 @@ final class ConsoleTester
     private ?MemoryInputBuffer $input = null;
     private ?InteractiveComponentRenderer $componentRenderer = null;
 
-    public function __construct(private Container $container)
-    {
+    public function __construct(
+        private readonly Container $container,
+    ) {
     }
 
-    /**
-     * @param string|Closure $command
-     * @return $this
-     */
-    public function call(string|Closure $command): self
+    public function call(string|Closure|array $command): self
     {
         $clone = clone $this;
 
@@ -66,6 +67,22 @@ final class ConsoleTester
                 $command($console);
             });
         } else {
+            if (is_string($command) && class_exists($command)) {
+                $command = [$command, '__invoke'];
+            }
+
+            if (is_array($command) || class_exists($command)) {
+                $attribute = Attributes::find(ConsoleCommand::class)
+                    ->in(new ReflectionMethod(...$command))
+                    ->first();
+
+                if (! $attribute) {
+                    throw new Exception("Could not resolve console command from {$command[0]}::{$command[1]}");
+                }
+
+                $command = $attribute->getName();
+            }
+
             $fiber = new Fiber(function () use ($command, $clone) {
                 $clone->container->singleton(ConsoleArgumentBag::class, new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]));
 
@@ -98,7 +115,7 @@ final class ConsoleTester
 
     public function submit(int|string $input = ''): self
     {
-        $input = (string) $input;
+        $input = (string)$input;
 
         $this->input($input . Key::ENTER->value);
 
