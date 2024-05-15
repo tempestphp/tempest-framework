@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\Authenticators;
+namespace Tempest\Auth;
 
-use Tempest\Auth\Contracts\Identifiable;
 use Tempest\Auth\Exceptions\InvalidLoginException;
 use Tempest\Database\Query;
 

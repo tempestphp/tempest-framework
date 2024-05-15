@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth\Contracts;
+namespace Tempest\Auth;
 
 interface Identifiable
 {
