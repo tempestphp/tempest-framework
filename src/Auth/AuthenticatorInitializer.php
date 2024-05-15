@@ -14,6 +14,6 @@ final readonly class AuthenticatorInitializer implements Initializer
     {
         $authConfig = $container->get(AuthConfig::class);
 
-        return $container->get($authConfig->authenticatorClass);
+        return $container->get($authConfig->authenticator);
     }
 }
