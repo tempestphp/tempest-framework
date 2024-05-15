@@ -6,8 +6,8 @@ namespace Tests\Tempest\Console\Scheduler;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
-use Tempest\Console\Scheduler\Schedule;
 use Tempest\Console\Scheduler\ScheduledInvocation;
 
 /**

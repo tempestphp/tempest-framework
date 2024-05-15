@@ -7,10 +7,10 @@ namespace Tests\Tempest\Console\Scheduler;
 use DateTime;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullShellExecutor;
-use Tempest\Console\Scheduler\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tests\Tempest\Console\TestCase;
 

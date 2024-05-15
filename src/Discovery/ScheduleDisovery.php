@@ -7,7 +7,7 @@ namespace Tempest\Console\Discovery;
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Scheduler\Schedule;
+use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;

@@ -6,8 +6,8 @@ namespace Tests\Tempest\Console\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
-use Tempest\Console\Scheduler\Schedule;
 
 final readonly class ScheduledCommand
 {

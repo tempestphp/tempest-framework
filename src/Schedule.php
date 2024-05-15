@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Scheduler;
+namespace Tempest\Console;
 
 use Attribute;
+use Tempest\Console\Scheduler\Every;
+use Tempest\Console\Scheduler\Interval;
+use Tempest\Console\Scheduler\OutputMode;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 final readonly class Schedule
