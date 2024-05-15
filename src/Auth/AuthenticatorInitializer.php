@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Auth\Contracts\Authenticator;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 
