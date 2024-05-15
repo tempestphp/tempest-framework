@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Authenticators;
 
-use Tempest\Auth\Contracts\Authenticable;
+use Tempest\Auth\Contracts\Identifiable;
 use Tempest\Auth\Exceptions\InvalidLoginException;
 use Tempest\Database\Query;
 
 final class DatabaseAuthenticator extends GenericAuthenticator
 {
-    public function login(Authenticable $authenticable): void
+    public function login(Identifiable $identifiable): void
     {
-        if (! $this->authenticableExists($authenticable)) {
+        if (! $this->identifiableExists($identifiable)) {
             throw new InvalidLoginException();
         }
 
@@ -24,23 +24,23 @@ final class DatabaseAuthenticator extends GenericAuthenticator
         // TODO: Implement logout() method.
     }
 
-    public function user(): ?Authenticable
+    public function user(): ?Identifiable
     {
         // TODO: Implement user() method.
     }
 
-    private function authenticableExists(Authenticable $authenticable): bool
+    private function identifiableExists(Identifiable $identifiable): bool
     {
         $query = new Query(
             "SELECT * FROM :table
             WHERE :identifier_field = :identifier_value
             AND :secret_field = :secret_value LIMIT 1",
             [
-                'table' => $authenticable->source(),
-                'identifier_field' => $authenticable->identifier(),
-                'identifier_value' => $authenticable->identifierValue(),
-                'secret_field' => $authenticable->secret(),
-                'secret_value' => $authenticable->secretValue(),
+                'table' => $identifiable->source(),
+                'identifier_field' => $identifiable->identifier(),
+                'identifier_value' => $identifiable->identifierValue(),
+                'secret_field' => $identifiable->secret(),
+                'secret_value' => $identifiable->secretValue(),
             ]
         );
 

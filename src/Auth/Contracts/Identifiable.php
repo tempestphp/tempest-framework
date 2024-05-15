@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Auth\Contracts;
 
-interface Authenticable
+interface Identifiable
 {
     public function source(): string;
 

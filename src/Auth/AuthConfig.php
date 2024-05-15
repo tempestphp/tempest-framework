@@ -11,7 +11,7 @@ final class AuthConfig
 {
     public function __construct(
         /** @var class-string<Authenticator> */
-        public string $authenticatorClass = DatabaseAuthenticator::class,
+        public string $authenticator = DatabaseAuthenticator::class,
     ) {
     }
 }
