@@ -9,23 +9,38 @@ use Tempest\Database\Query;
 
 final class DatabaseAuthenticator extends GenericAuthenticator
 {
+    /**
+     * @throws InvalidLoginException
+     */
     public function login(Identifiable $identifiable): void
     {
         if (! $this->identifiableExists($identifiable)) {
             throw new InvalidLoginException();
         }
 
-        // TODO: Finish implementation
+        $this->createSession($identifiable);
     }
 
-    public function logout(): void
+    /**
+     * @return Identifiable|null
+     */
+    public function user()
     {
-        // TODO: Implement logout() method.
-    }
+        $sessionUser = $this->session->get(self::SESSION_USER_KEY);
+        if (is_null($sessionUser)) {
+            return null;
+        }
 
-    public function user(): ?Identifiable
-    {
-        // TODO: Implement user() method.
+        $query = new Query(
+            "SELECT * FROM :table WHERE :identifier_field = :identifier_value LIMIT 1",
+            [
+                'table' => $sessionUser['source'],
+                'identifier_field' => $sessionUser['identifier_field'],
+                'identifier_value' => $sessionUser['identifier_value'],
+            ]
+        );
+
+        return $query->fetchFirst();
     }
 
     private function identifiableExists(Identifiable $identifiable): bool

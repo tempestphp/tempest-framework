@@ -10,5 +10,8 @@ interface Authenticator
 
     public function logout(): void;
 
-    public function user(): ?Identifiable;
+    /**
+     * @return Identifiable|null
+     */
+    public function user();
 }
