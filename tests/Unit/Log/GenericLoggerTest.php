@@ -43,12 +43,12 @@ final class GenericLoggerTest extends IntegrationTest
 
     public function test_daily_log_channel_works(): void
     {
-        $filePath = __DIR__ . '/logs/tempest.log';
+        $filePath = __DIR__ . '/logs/tempest-' . date('Y-m-d') . '.log';
 
         $config = new LogConfig(
             channelsConfig: [
                 DailyLogChannel::class => [
-                    'path' => $filePath,
+                    'path' => __DIR__ . '/logs/tempest.log',
                 ],
             ],
             channel: DailyLogChannel::class
@@ -59,12 +59,10 @@ final class GenericLoggerTest extends IntegrationTest
             $this->container,
         );
 
-        $logger->info('test {a}', ['test']);
+        $logger->info('test');
 
-        $fileName = 'logs/tempest-' . date('Y-m-d') . '.log';
+        $this->assertFileExists($filePath);
 
-        $this->assertFileExists($fileName);
-
-        $this->assertStringContainsString('test', file_get_contents($fileName));
+        $this->assertStringContainsString('test', file_get_contents($filePath));
     }
 }
