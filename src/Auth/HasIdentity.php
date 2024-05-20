@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Database\IsModel;
-
 trait HasIdentity
 {
-    use IsModel;
-
     public function source(): string
     {
         return (string) static::table();
