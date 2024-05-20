@@ -6,15 +6,13 @@ namespace Tempest\Auth;
 
 use Tempest\Http\Session\Session;
 
-abstract class GenericAuthenticator implements Authenticator
+trait AuthenticatorWithSession
 {
+    protected Session $session;
+
     public const string SESSION_USER_KEY = 'tempest_session_user';
 
-    public function __construct(protected Session $session)
-    {
-    }
-
-    public function logout(): void
+    public function destroySession(): void
     {
         $this->session->remove(self::SESSION_USER_KEY);
         $this->session->destroy();
@@ -24,7 +22,7 @@ abstract class GenericAuthenticator implements Authenticator
     {
         $this->session->set(self::SESSION_USER_KEY, [
             'source' => $identifiable->source(),
-            'identifier_field' => $identifiable->identifier(),
+            'identifier_field' => $identifiable->identifierField(),
             'identifier_value' => $identifiable->identifierValue(),
         ]);
     }

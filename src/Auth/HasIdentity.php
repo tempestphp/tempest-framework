@@ -10,32 +10,42 @@ trait HasIdentity
 {
     use IsModel;
 
-    protected const string IDENTIFIER = 'email';
-
-    protected const string SECRET = 'password';
-
     public function source(): string
     {
         return (string) static::table();
     }
 
-    public function identifier(): string
+    public function identifierField(): string
     {
-        return static::IDENTIFIER;
+        return 'email';
     }
 
     public function identifierValue(): string
     {
-        return $this->{$this->identifier()};
+        return $this->{$this->identifierField()};
     }
 
-    public function secret(): string
+    public function secretField(): string
     {
-        return static::SECRET;
+        return 'password';
     }
 
     public function secretValue(): string
     {
-        return $this->{$this->secret()};
+        return $this->{$this->secretField()};
+    }
+
+    public function setSecret(string $secret): static
+    {
+        $this->{$this->secretField()} = password_hash($secret, PASSWORD_DEFAULT);
+
+        return $this;
+    }
+
+    public function setCredentials(string $identifier, string $secret): static
+    {
+        $this->{$this->identifierField()} = $identifier;
+
+        return $this->setSecret($secret);
     }
 }
