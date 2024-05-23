@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Container;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Container\Exceptions\CircularDependencyException;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinArrayClass;
@@ -19,10 +20,14 @@ use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectD;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectDInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectE;
 use Tests\Tempest\Unit\Container\Fixtures\ContainerObjectEInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\DependencyWithTaggedDependency;
 use Tests\Tempest\Unit\Container\Fixtures\IntersectionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\TaggedDependency;
+use Tests\Tempest\Unit\Container\Fixtures\TaggedDependencyCliInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\TaggedDependencyWebInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\UnionImplementation;
 use Tests\Tempest\Unit\Container\Fixtures\UnionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\UnionInterfaceA;
@@ -206,6 +211,71 @@ class ContainerTest extends TestCase
             $this->assertStringContainsString('CircularWithInitializerBInitializer', $e->getMessage());
             $this->assertStringContainsString('CircularWithInitializerC', $e->getMessage());
             $this->assertStringContainsString(__FILE__, $e->getMessage());
+        }
+    }
+
+    public function test_tagged_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('web'),
+            tag: 'web',
+        );
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('cli'),
+            tag: 'cli',
+        );
+
+        $this->assertSame('web', $container->get(TaggedDependency::class, 'web')->name);
+        $this->assertSame('cli', $container->get(TaggedDependency::class, 'cli')->name);
+    }
+
+    public function test_tagged_singleton_with_initializer(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(TaggedDependencyWebInitializer::class);
+        $container->addInitializer(TaggedDependencyCliInitializer::class);
+
+        $this->assertSame('web', $container->get(TaggedDependency::class, 'web')->name);
+        $this->assertSame('cli', $container->get(TaggedDependency::class, 'cli')->name);
+    }
+
+    public function test_tagged_singleton_exception(): void
+    {
+        $container = new GenericContainer();
+
+        $this->expectException(CannotResolveTaggedDependency::class);
+
+        $container->get(TaggedDependency::class, 'web');
+    }
+
+    public function test_autowired_tagged_dependency(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(TaggedDependencyWebInitializer::class);
+
+        $dependency = $container->get(DependencyWithTaggedDependency::class);
+        $this->assertSame('web', $dependency->dependency->name);
+    }
+
+    public function test_autowired_tagged_dependency_exception(): void
+    {
+        $container = new GenericContainer();
+
+        try {
+            $container->get(DependencyWithTaggedDependency::class);
+        } catch (CannotResolveTaggedDependency $exception) {
+            $this->assertStringContainsString(
+                <<<'TXT'
+	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
+	└── Tests\Tempest\Unit\Container\Fixtures\TaggedDependency
+TXT,
+                $exception->getMessage()
+            );
         }
     }
 }

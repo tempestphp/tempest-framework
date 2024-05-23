@@ -41,6 +41,12 @@ final readonly class Dependency
     {
         $dependency = $this->dependency;
 
+        if (is_string($dependency)) {
+            $parts = explode('\\', $dependency);
+
+            return $parts[array_key_last($parts)];
+        }
+
         return match($dependency::class) {
             ReflectionClass::class => $dependency->getShortName(),
             ReflectionMethod::class => $dependency->getDeclaringClass()->getShortName(),

@@ -14,6 +14,7 @@ use ReflectionParameter;
 use ReflectionUnionType;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
+use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Support\Reflection\Attributes;
 use Throwable;
 
@@ -56,8 +57,10 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function singleton(string $className, object|callable $definition): self
+    public function singleton(string $className, object|callable $definition, ?string $tag = null): self
     {
+        $className = $this->resolveTaggedName($className, $tag);
+
         $this->singletons[$className] = $definition;
 
         return $this;
@@ -70,11 +73,15 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className, mixed ...$params): object
+    public function get(string $className, ?string $tag = null, mixed ...$params): object
     {
         $this->resolveChain();
 
-        $dependency = $this->resolve($className, ...$params);
+        $dependency = $this->resolve(
+            className: $className,
+            tag: $tag,
+            params: $params,
+        );
 
         $this->stopChain();
 
@@ -110,9 +117,15 @@ final class GenericContainer implements Container
             return $this;
         }
 
+        $initializeMethod = $initializerClass->getMethod('initialize');
+
+        // We resolve the optional Tag attribute from this initializer class
+        $tag = Attributes::find(Tag::class)->in($initializerClass)->first()
+            ?? Attributes::find(Tag::class)->in($initializeMethod)->first();
+
         // For normal Initializers, we'll use the return type
         // to determine which dependency they resolve
-        $returnTypes = $initializerClass->getMethod('initialize')->getReturnType();
+        $returnTypes = $initializeMethod->getReturnType();
 
         $returnTypes = match ($returnTypes::class) {
             ReflectionNamedType::class => [$returnTypes],
@@ -121,16 +134,18 @@ final class GenericContainer implements Container
 
         /** @var ReflectionNamedType[] $returnTypes */
         foreach ($returnTypes as $returnType) {
-            $this->initializers[$returnType->getName()] = $initializerClass->getName();
+            $this->initializers[$this->resolveTaggedName($returnType->getName(), $tag?->name)] = $initializerClass->getName();
         }
 
         return $this;
     }
 
-    private function resolve(string $className, mixed ...$params): object
+    private function resolve(string $className, ?string $tag = null, mixed ...$params): object
     {
+        $dependencyName = $this->resolveTaggedName($className, $tag);
+
         // Check if the class has been registered as a singleton.
-        if ($instance = $this->singletons[$className] ?? null) {
+        if ($instance = $this->singletons[$dependencyName] ?? null) {
             if (is_callable($instance)) {
                 $instance = $instance($this);
                 $this->singletons[$className] = $instance;
@@ -142,14 +157,14 @@ final class GenericContainer implements Container
         }
 
         // Check if a callable has been registered to resolve this class.
-        if ($definition = $this->definitions[$className] ?? null) {
+        if ($definition = $this->definitions[$dependencyName] ?? null) {
             $this->resolveChain()->add(new ReflectionFunction($definition));
 
             return $definition($this);
         }
 
         // Next we check if any of our default initializers can initialize this class.
-        if ($initializer = $this->initializerFor($className)) {
+        if ($initializer = $this->initializerFor($className, $tag)) {
             $this->resolveChain()->add(new ReflectionClass($initializer));
 
             $object = match (true) {
@@ -158,29 +173,34 @@ final class GenericContainer implements Container
             };
 
             // Check whether the initializer's result should be registered as a singleton
-            if (Attributes::find(Singleton::class)->in($initializer::class)->first() !== null) {
-                $this->singleton($className, $object);
+            $singleton = Attributes::find(Singleton::class)->in($initializer::class)->first()
+                ?? Attributes::find(Singleton::class)->in((new ReflectionClass($initializer))->getMethod('initialize'))->first();
+
+            if ($singleton !== null) {
+                $this->singleton($className, $object, $tag);
             }
 
             return $object;
+        }
+
+        // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
+        if ($tag) {
+            throw new CannotResolveTaggedDependency($this->chain, new Dependency($className), $tag);
         }
 
         // Finally, autowire the class.
         return $this->autowire($className, ...$params);
     }
 
-    private function initializerFor(string $className): null|Initializer|DynamicInitializer
+    private function initializerFor(string $className, ?string $tag = null): null|Initializer|DynamicInitializer
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
-        if (
-            is_a($className, Initializer::class, true)
-            || is_a($className, DynamicInitializer::class, true)
-        ) {
+        if (is_a($className, Initializer::class, true) || is_a($className, DynamicInitializer::class, true)) {
             return null;
         }
 
-        if ($initializerClass = $this->initializers[$className] ?? null) {
+        if ($initializerClass = $this->initializers[$this->resolveTaggedName($className, $tag)] ?? null) {
             return $this->resolve($initializerClass);
         }
 
@@ -233,8 +253,11 @@ final class GenericContainer implements Container
         // Build the class by iterating through its
         // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
+            $tag = Attributes::find(Tag::class)->in($parameter)->first();
+
             $dependencies[] = $this->clone()->autowireDependency(
                 parameter: $parameter,
+                tag: $tag?->name,
                 providedValue: $parameters[$parameter->getName()] ?? null,
             );
         }
@@ -242,7 +265,7 @@ final class GenericContainer implements Container
         return $dependencies;
     }
 
-    private function autowireDependency(ReflectionParameter $parameter, mixed $providedValue = null): mixed
+    private function autowireDependency(ReflectionParameter $parameter, ?string $tag, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
 
@@ -262,7 +285,12 @@ final class GenericContainer implements Container
         // Loop through each type until we hit a match.
         foreach ($types as $type) {
             try {
-                return $this->autowireObjectDependency($type, $providedValue);
+                return $this->autowireObjectDependency(
+                    /** @phpstan-ignore-next-line  */
+                    type: $type,
+                    tag: $tag,
+                    providedValue: $providedValue
+                );
             } catch (Throwable $throwable) {
                 // We were unable to resolve the dependency for the last union
                 // type, so we are moving on to the next one. We hang onto
@@ -282,7 +310,7 @@ final class GenericContainer implements Container
         throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
-    private function autowireObjectDependency(ReflectionNamedType $type, mixed $providedValue): mixed
+    private function autowireObjectDependency(ReflectionNamedType $type, ?string $tag, mixed $providedValue): mixed
     {
         // If the provided value is of the right type,
         // don't waste time autowiring, return it!
@@ -292,7 +320,7 @@ final class GenericContainer implements Container
 
         // If we can successfully retrieve an instance
         // of the necessary dependency, return it.
-        if ($instance = $this->resolve($type->getName())) {
+        if ($instance = $this->resolve(className: $type->getName(), tag: $tag)) {
             return $instance;
         }
 
@@ -360,5 +388,12 @@ final class GenericContainer implements Container
     public function __clone(): void
     {
         $this->chain = $this->chain?->clone();
+    }
+
+    private function resolveTaggedName(string $className, ?string $tag): string
+    {
+        return $tag
+            ? "{$className}#{$tag}"
+            : $className;
     }
 }
