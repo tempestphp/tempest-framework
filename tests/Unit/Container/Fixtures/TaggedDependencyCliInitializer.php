@@ -6,9 +6,9 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
-use Tempest\Container\Tag;
+use Tempest\Container\Singleton;
 
-#[Tag('cli')]
+#[Singleton('cli')]
 final readonly class TaggedDependencyCliInitializer implements Initializer
 {
     public function initialize(Container $container): TaggedDependency

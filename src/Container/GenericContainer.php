@@ -120,8 +120,8 @@ final class GenericContainer implements Container
         $initializeMethod = $initializerClass->getMethod('initialize');
 
         // We resolve the optional Tag attribute from this initializer class
-        $tag = Attributes::find(Tag::class)->in($initializerClass)->first()
-            ?? Attributes::find(Tag::class)->in($initializeMethod)->first();
+        $singleton = Attributes::find(Singleton::class)->in($initializerClass)->first()
+            ?? Attributes::find(Singleton::class)->in($initializeMethod)->first();
 
         // For normal Initializers, we'll use the return type
         // to determine which dependency they resolve
@@ -134,7 +134,7 @@ final class GenericContainer implements Container
 
         /** @var ReflectionNamedType[] $returnTypes */
         foreach ($returnTypes as $returnType) {
-            $this->initializers[$this->resolveTaggedName($returnType->getName(), $tag?->name)] = $initializerClass->getName();
+            $this->initializers[$this->resolveTaggedName($returnType->getName(), $singleton?->tag)] = $initializerClass->getName();
         }
 
         return $this;

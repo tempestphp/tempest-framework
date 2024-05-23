@@ -6,9 +6,9 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
-use Tempest\Container\Tag;
+use Tempest\Container\Singleton;
 
-#[Tag('web')]
+#[Singleton('web')]
 final readonly class TaggedDependencyWebInitializer implements Initializer
 {
     public function initialize(Container $container): TaggedDependency
