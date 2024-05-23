@@ -29,9 +29,6 @@
         "php-http/mock-client": "^1.6",
         "aidan-casey/mock-client": "dev-master"
     },
-    "bin": [
-        "tempest"
-    ],
     "autoload": {
         "psr-4": {
             "Tempest\\": "src/"
