@@ -11,13 +11,13 @@ use Tempest\Http\Status;
 use function Tempest\uri;
 use function Tempest\view;
 use Tempest\View\GenericView;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class ViewTest extends FrameworkIntegrationTestCase
+class ViewTest extends FrameworkIntegrationTest
 {
     public function test_render()
     {

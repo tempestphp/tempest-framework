@@ -6,13 +6,13 @@ namespace Tests\Tempest\Integration\HttpClient;
 
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class HttpClientInitializerTest extends FrameworkIntegrationTestCase
+class HttpClientInitializerTest extends FrameworkIntegrationTest
 {
     public function test_container_can_initialize_http_client()
     {

@@ -7,13 +7,13 @@ namespace Tests\Tempest\Integration\Exceptions;
 use App\Controllers\FailController;
 use Tempest\Exceptions\HttpExceptionHandler;
 use function Tempest\uri;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
+class HttpExceptionHandlerTest extends FrameworkIntegrationTest
 {
     public function test_exception()
     {

@@ -14,10 +14,8 @@ final class Redirect implements Response
 
     public function __construct(
         string $to,
-        string|array|null $body = null,
     ) {
         $this->status = Status::FOUND;
-        $this->body = $body;
         $this->addHeader('Location', $to);
     }
 }

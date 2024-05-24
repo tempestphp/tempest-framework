@@ -16,7 +16,7 @@ use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
 
-abstract class FrameworkIntegrationTestCase extends IntegrationTest
+abstract class FrameworkIntegrationTest extends IntegrationTest
 {
     protected function setUp(): void
     {

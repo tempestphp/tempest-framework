@@ -7,13 +7,13 @@ namespace Tests\Tempest\Integration\Http;
 use App\Controllers\ValidationController;
 use Tempest\Http\Session\Session;
 use function Tempest\uri;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-final class ValidationResponseTest extends FrameworkIntegrationTestCase
+final class ValidationResponseTest extends FrameworkIntegrationTest
 {
     public function test_validation_errors_are_listed_in_the_response_body()
     {

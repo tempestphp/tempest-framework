@@ -9,13 +9,13 @@ use Tempest\Http\GenericResponseSender;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use function Tempest\view;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class GenericResponseSenderTest extends FrameworkIntegrationTestCase
+class GenericResponseSenderTest extends FrameworkIntegrationTest
 {
     public function test_sending()
     {

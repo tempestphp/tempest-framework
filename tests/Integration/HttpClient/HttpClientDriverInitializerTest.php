@@ -6,13 +6,13 @@ namespace Tests\Tempest\Integration\HttpClient;
 
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\HttpClientDriver;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class HttpClientDriverInitializerTest extends FrameworkIntegrationTestCase
+class HttpClientDriverInitializerTest extends FrameworkIntegrationTest
 {
     public function test_container_can_initialize_http_client_driver()
     {

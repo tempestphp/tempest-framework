@@ -9,13 +9,13 @@ use App\Controllers\TestGlobalMiddleware;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class RouterTest extends FrameworkIntegrationTestCase
+class RouterTest extends FrameworkIntegrationTest
 {
     public function test_dispatch()
     {

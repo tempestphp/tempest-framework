@@ -10,13 +10,13 @@ use Tempest\Http\Request;
 use Tempest\Http\Session\Resolvers\HeaderSessionIdResolver;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
+final class SessionFromHeaderTest extends FrameworkIntegrationTest
 {
     public function test_resolving_session_from_cookie(): void
     {

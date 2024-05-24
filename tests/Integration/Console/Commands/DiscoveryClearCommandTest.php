@@ -6,13 +6,13 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\AppConfig;
 use Tests\Tempest\Integration\Console\Fixtures\MyDiscovery;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
+class DiscoveryClearCommandTest extends FrameworkIntegrationTest
 {
     public function test_it_clears_discovery_cache()
     {

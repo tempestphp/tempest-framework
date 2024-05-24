@@ -15,13 +15,13 @@ use Tempest\Http\Method;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
 use function Tempest\uri;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class RequestTest extends FrameworkIntegrationTestCase
+class RequestTest extends FrameworkIntegrationTest
 {
     public function test_from_factory()
     {

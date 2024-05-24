@@ -7,13 +7,13 @@ namespace Tests\Tempest\Integration\Http;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
+final class CleanupSessionsCommandTest extends FrameworkIntegrationTest
 {
     public function test_destroy_sessions(): void
     {

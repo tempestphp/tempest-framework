@@ -12,7 +12,7 @@ use function Tempest\make;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
@@ -24,7 +24,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
  * @internal
  * @small
  */
-class MapperTest extends FrameworkIntegrationTestCase
+class MapperTest extends FrameworkIntegrationTest
 {
     public function test_make_object_from_class_string()
     {

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\Database\Migrations\MigrationException;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTest;
 
 /**
  * @internal
  * @small
  */
-class MigrateDownCommandTest extends FrameworkIntegrationTestCase
+class MigrateDownCommandTest extends FrameworkIntegrationTest
 {
     public function test_migrate_rollback_command(): void
     {
