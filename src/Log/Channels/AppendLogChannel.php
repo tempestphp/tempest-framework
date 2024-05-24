@@ -38,4 +38,9 @@ final readonly class AppendLogChannel implements LogChannel
             new PsrLogMessageProcessor(),
         ];
     }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
 }
