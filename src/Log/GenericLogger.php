@@ -8,19 +8,15 @@ use Monolog\Level;
 use Monolog\Logger as Monolog;
 use Psr\Log\LoggerInterface;
 use Stringable;
-use Tempest\Container\Container;
-use Tempest\Log\Channels\LogChannel;
-use Tempest\Support\ArrayHelper;
 
 final class GenericLogger implements LoggerInterface
 {
-    public function __construct(
-        private LogConfig $logConfig,
-        private Container $container,
-        /** @var array<class-string, Monolog> $drivers */
-        private array $drivers = [],
-    ) {
+    /** @var array<class-string, Monolog> */
+    private array $drivers = [];
 
+    public function __construct(
+        private readonly LogConfig $logConfig,
+    ) {
     }
 
     public function emergency(Stringable|string $message, array $context = []): void
@@ -72,24 +68,21 @@ final class GenericLogger implements LoggerInterface
 
     private function writeLog(Level $level, string $message, array $context): void
     {
-        $this->resolveDriver($this->logConfig->channel, $level)->log($level, $message, $context);
+        foreach ($this->logConfig->channels as $channel) {
+            $this->resolveDriver($channel, $level)->log($level, $message, $context);
+        }
     }
 
-    private function resolveDriver(string $channelName, Level $level): Monolog
+    private function resolveDriver(LogChannel $channel, Level $level): Monolog
     {
-        if (isset($this->drivers[$channelName])) {
-            return $this->drivers[$channelName];
+        if (! isset($this->drivers[$channel::class])) {
+            $this->drivers[$channel::class] = new Monolog(
+                name: $this->logConfig->prefix,
+                handlers: $channel->getHandlers($level),
+                processors: $channel->getProcessors(),
+            );
         }
 
-        /** @var LogChannel $channel */
-        $channel = $this->container->get($channelName);
-
-        $config = $this->logConfig->channelsConfig[$channelName] ?? [];
-
-        return $this->drivers[$channelName] = new Monolog(
-            name: $this->logConfig->prefix,
-            handlers: ArrayHelper::wrap($channel->handler($level, $config)),
-            processors: ArrayHelper::wrap($channel->processor($config)),
-        );
+        return $this->drivers[$channel::class];
     }
 }

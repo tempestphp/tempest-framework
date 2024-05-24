@@ -21,18 +21,12 @@ final class GenericLoggerTest extends IntegrationTest
         $filePath = __DIR__ . '/logs/tempest.log';
 
         $config = new LogConfig(
-            channelsConfig: [
-                AppendLogChannel::class => [
-                  'path' => $filePath,
-              ],
+            channels: [
+                new AppendLogChannel($filePath),
             ],
-            channel: AppendLogChannel::class,
         );
 
-        $logger = new GenericLogger(
-            $config,
-            $this->container,
-        );
+        $logger = new GenericLogger($config);
 
         $logger->info('test');
 
@@ -46,18 +40,12 @@ final class GenericLoggerTest extends IntegrationTest
         $filePath = __DIR__ . '/logs/tempest-' . date('Y-m-d') . '.log';
 
         $config = new LogConfig(
-            channelsConfig: [
-                DailyLogChannel::class => [
-                    'path' => __DIR__ . '/logs/tempest.log',
-                ],
+            channels: [
+                new DailyLogChannel(__DIR__ . '/logs/tempest.log'),
             ],
-            channel: DailyLogChannel::class
         );
 
-        $logger = new GenericLogger(
-            $config,
-            $this->container,
-        );
+        $logger = new GenericLogger($config);
 
         $logger->info('test');
 

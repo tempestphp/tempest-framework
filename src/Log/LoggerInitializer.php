@@ -16,7 +16,6 @@ final readonly class LoggerInitializer implements Initializer
     {
         return new GenericLogger(
             $container->get(LogConfig::class),
-            $container,
         );
     }
 }

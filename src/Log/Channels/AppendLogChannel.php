@@ -4,25 +4,35 @@ declare(strict_types=1);
 
 namespace Tempest\Log\Channels;
 
-use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Processor\PsrLogMessageProcessor;
+use Tempest\Log\LogChannel;
 
-final class AppendLogChannel implements LogChannel
+final readonly class AppendLogChannel implements LogChannel
 {
-    public function handler(Level $level, array $config): HandlerInterface
-    {
-        return new StreamHandler(
-            stream: $config['path'] ?? 'logs/tempest.log',
-            level: $level,
-            bubble: $config['bubble'] ?? true,
-            filePermission: $config['file_permission'] ?? null,
-            useLocking: $config['use_locking'] ?? false
-        );
+    public function __construct(
+        private string $path,
+        private bool $bubble = true,
+        private ?int $filePermission = null,
+        private bool $useLocking = false,
+    ) {
     }
 
-    public function processor(array $config): array
+    public function getHandlers(Level $level): array
+    {
+        return [
+            new StreamHandler(
+                stream: $this->path,
+                level: $level,
+                bubble: $this->bubble,
+                filePermission: $this->filePermission,
+                useLocking: $this->useLocking,
+            ),
+        ];
+    }
+
+    public function getProcessors(): array
     {
         return [
             new PsrLogMessageProcessor(),

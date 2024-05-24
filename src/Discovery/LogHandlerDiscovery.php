@@ -6,7 +6,7 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
-use Tempest\Log\Channels\LogChannel;
+use Tempest\Log\LogChannel;
 use Tempest\Log\LogConfig;
 
 final readonly class LogHandlerDiscovery implements Discovery

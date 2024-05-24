@@ -4,26 +4,37 @@ declare(strict_types=1);
 
 namespace Tempest\Log\Channels;
 
-use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Level;
 use Monolog\Processor\PsrLogMessageProcessor;
+use Tempest\Log\LogChannel;
 
-final class DailyLogChannel implements LogChannel
+final readonly class DailyLogChannel implements LogChannel
 {
-    public function handler(Level $level, array $config): HandlerInterface
-    {
-        return new RotatingFileHandler(
-            filename: $config['path'] ?? 'logs/tempest.log',
-            maxFiles: $config['rotation'] ?? 30,
-            level: $level,
-            bubble: $config['bubble'] ?? true,
-            filePermission: $config['file_permission'] ?? null,
-            useLocking: $config['use_locking'] ?? false
-        );
+    public function __construct(
+        private string $path,
+        private int $maxFiles = 30,
+        private bool $bubble = true,
+        private ?int $filePermission = null,
+        private bool $useLocking = false,
+    ) {
     }
 
-    public function processor(array $config): array
+    public function getHandlers(Level $level): array
+    {
+        return [
+            new RotatingFileHandler(
+                filename: $this->path,
+                maxFiles: $this->maxFiles,
+                level: $level,
+                bubble: $this->bubble,
+                filePermission: $this->filePermission,
+                useLocking: $this->useLocking,
+            ),
+        ];
+    }
+
+    public function getProcessors(): array
     {
         return [
             new PsrLogMessageProcessor(),
