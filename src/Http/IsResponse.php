@@ -31,7 +31,7 @@ trait IsResponse
 
     public function getHeader(string $name): ?Header
     {
-        return $this->headers[$name];
+        return $this->headers[$name] ?? null;
     }
 
     public function addHeader(string $key, string $value): self
@@ -53,13 +53,6 @@ trait IsResponse
     public function getBody(): View|string|array|Generator|null
     {
         return $this->body;
-    }
-
-    public function setBody(View|string|array|Generator|null $body): self
-    {
-        $this->body = $body;
-
-        return $this;
     }
 
     public function addSession(string $name, mixed $value): self

@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
+use Tempest\AppConfig;
+use Tempest\View\View;
 
 final readonly class GenericResponseSender implements ResponseSender
 {
+    public function __construct(private AppConfig $appConfig)
+    {
+    }
+
     public function send(Response $response): Response
     {
-        $response = $this->prepareResponse($response);
-
         ob_start();
 
         $this->sendHeaders($response);
@@ -30,38 +34,50 @@ final readonly class GenericResponseSender implements ResponseSender
             return;
         }
 
-        foreach ($response->getHeaders() as $key => $header) {
-            foreach ($header->values as $value) {
-                header("{$key}: {$value}");
-            }
+        foreach ($this->resolveHeaders($response) as $header) {
+            header($header);
         }
 
         http_response_code($response->getStatus()->value);
     }
 
+    private function resolveHeaders(Response $response): Generator
+    {
+        $headers = $response->getHeaders();
+
+        if (is_array($response->getBody())) {
+            $contentType = 'Content-Type';
+            $headers[$contentType] ??= new Header($contentType);
+            $headers[$contentType]->add('application/json');
+        }
+
+        foreach ($headers as $key => $header) {
+            foreach ($header->values as $value) {
+                yield "{$key}: {$value}";
+            }
+        }
+    }
+
     private function sendContent(Response $response): void
+    {
+        foreach ($this->resolveBody($response) as $content) {
+            echo $content;
+            ob_flush();
+        }
+    }
+
+    private function resolveBody(Response $response): Generator
     {
         $body = $response->getBody();
 
         if ($body instanceof Generator) {
-            foreach ($body as $content) {
-                echo $content;
-                ob_flush();
-            }
+            return $body;
+        } elseif (is_array($body)) {
+            yield json_encode($body);
+        } elseif ($body instanceof View) {
+            yield $body->render($this->appConfig);
         } else {
-            echo $body;
+            yield $body;
         }
-    }
-
-    private function prepareResponse(Response $response): Response
-    {
-        $body = $response->getBody();
-
-        if (is_array($body)) {
-            $response->addHeader('Content-Type', 'application/json');
-            $response->setBody(json_encode($body));
-        }
-
-        return $response;
     }
 }

@@ -23,8 +23,6 @@ interface Response
 
     public function getBody(): View|string|array|Generator|null;
 
-    public function setBody(View|string|array|Generator|null $body): self;
-
     public function addSession(string $name, mixed $value): self;
 
     public function flash(string $key, mixed $value): self;
