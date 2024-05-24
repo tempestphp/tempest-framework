@@ -48,7 +48,7 @@ final class GenericRouter implements Router
             MatchedRoute::class,
             fn () => $matchedRoute,
         );
-        
+
         $callable = $this->getCallable($matchedRoute);
 
         try {
