@@ -11,7 +11,6 @@ namespace Tempest {
     use Symfony\Component\VarDumper\VarDumper;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
-    use Tempest\Log\Logger;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\TypeName;
