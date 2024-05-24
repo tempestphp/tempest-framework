@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest {
 
+    use Psr\Log\LoggerInterface;
     use ReflectionType;
     use Reflector;
     use Stringable;
@@ -70,8 +71,8 @@ namespace Tempest {
 
     function lw(mixed ...$input): void
     {
-        /** @var Logger $logger */
-        $logger = get(Logger::class);
+        /** @var LoggerInterface $logger */
+        $logger = get(LoggerInterface::class);
 
         foreach ($input as $key => $item) {
             if ($item instanceof Stringable) {
