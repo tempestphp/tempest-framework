@@ -12,18 +12,17 @@ trait AuthenticatorWithSession
 
     public const string SESSION_USER_KEY = 'tempest_session_user';
 
-    public function destroySession(): void
-    {
-        $this->session->remove(self::SESSION_USER_KEY);
-        $this->session->destroy();
-    }
-
     protected function createSession(Identifiable $identifiable): void
     {
         $this->session->set(self::SESSION_USER_KEY, [
-            'source' => $identifiable->source(),
             'identifier_field' => $identifiable->identifierField(),
             'identifier_value' => $identifiable->identifierValue(),
         ]);
+    }
+
+    protected function destroySession(): void
+    {
+        $this->session->remove(self::SESSION_USER_KEY);
+        $this->session->destroy();
     }
 }
