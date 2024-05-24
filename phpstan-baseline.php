@@ -1159,52 +1159,52 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:__construct\\(\\) has parameter \\$body with no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:__construct\\(\\) has parameter \\$headers with no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:getBody\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:getHeaders\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Property Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:\\$body type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Property Tempest\\\\Http\\\\Responses\\\\CreatedResponse\\:\\:\\$headers type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/CreatedResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Created.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\InvalidResponse\\:\\:getBody\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/InvalidResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Invalid.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Responses\\\\InvalidResponse\\:\\:getHeaders\\(\\) return type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/InvalidResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Invalid.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Property Tempest\\\\Http\\\\Responses\\\\InvalidResponse\\:\\:\\$body type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/InvalidResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Invalid.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Property Tempest\\\\Http\\\\Responses\\\\InvalidResponse\\:\\:\\$headers type has no value type specified in iterable type array\\.$#',
 	'count' => 1,
-	'path' => __DIR__ . '/src/Http/Responses/InvalidResponse.php',
+	'path' => __DIR__ . '/src/Http/Responses/Invalid.php',
 ];
 $ignoreErrors[] = [
 	'message' => '#^Method Tempest\\\\Http\\\\Route\\:\\:__unserialize\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',

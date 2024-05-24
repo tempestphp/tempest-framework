@@ -7,6 +7,7 @@ namespace Tempest\Testing\Http;
 use Closure;
 use PHPUnit\Framework\Assert;
 use function Tempest\get;
+use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
@@ -104,7 +105,9 @@ final readonly class TestResponseHelper
 
     public function assertHasCookie(string $key, ?Closure $test = null): self
     {
-        $cookie = $this->response->getCookie($key);
+        $cookies = get(CookieManager::class);
+
+        $cookie = $cookies->get($key);
 
         Assert::assertNotNull($cookie);
 

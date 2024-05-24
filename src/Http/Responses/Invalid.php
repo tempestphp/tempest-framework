@@ -11,7 +11,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\Validation\Exceptions\ValidationException;
 
-final class InvalidResponse implements Response
+final class Invalid implements Response
 {
     use IsResponse;
 
@@ -19,8 +19,8 @@ final class InvalidResponse implements Response
         PsrRequest $request,
         ValidationException $exception,
     ) {
-        $this->status = Status::BAD_REQUEST;
-        $this->redirect((string) $request->getUri());
+        $this->addHeader('Location', (string) $request->getUri());
+        $this->status = Status::FOUND;
         $this->flash(Session::VALIDATION_ERRORS, $exception->failingRules);
         $this->flash(Session::ORIGINAL_VALUES, $request->getParsedBody());
     }

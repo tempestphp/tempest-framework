@@ -6,15 +6,15 @@ namespace App\Modules\Form;
 
 use Tempest\Http\Get;
 use Tempest\Http\Post;
-use Tempest\Http\Response;
-use function Tempest\response;
+use function Tempest\view;
+use Tempest\View\View;
 
 final readonly class FormController
 {
     #[Get('/form')]
-    public function index(): Response
+    public function index(): View
     {
-        return response()->setView('Modules/Form/form.view.php');
+        return view('Modules/Form/form.view.php');
     }
 
     #[Post('/form')]

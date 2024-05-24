@@ -12,7 +12,8 @@ use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
-use Tempest\Http\Responses\InvalidResponse;
+use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Responses\NotFound;
 use function Tempest\map;
 use function Tempest\response;
 use Tempest\Validation\Exceptions\ValidationException;
@@ -40,7 +41,7 @@ final class GenericRouter implements Router
         $matchedRoute = $this->matchRoute($request);
 
         if ($matchedRoute === null) {
-            return response()->notFound();
+            return new NotFound();
         }
 
         $this->container->singleton(
@@ -54,7 +55,7 @@ final class GenericRouter implements Router
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
         } catch (ValidationException $exception) {
-            return new InvalidResponse($request, $exception);
+            return new Invalid($request, $exception);
         }
 
         if ($response === null) {
@@ -165,8 +166,10 @@ final class GenericRouter implements Router
             return response($input->render($this->appConfig));
         }
 
-        if ($view = $input->getView()) {
-            $input->setBody($view->render($this->appConfig));
+        $body = $input->getBody();
+
+        if ($body instanceof View) {
+            $input->setBody($body->render($this->appConfig));
         }
 
         return $input;

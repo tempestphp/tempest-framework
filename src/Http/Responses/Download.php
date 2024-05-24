@@ -6,16 +6,14 @@ namespace Tempest\Http\Responses;
 
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
-use Tempest\Http\Status;
 
-final class CreatedResponse implements Response
+final class Download implements Response
 {
     use IsResponse;
 
     public function __construct(
-        string|array|null $body = null,
+        //        string $path,
     ) {
-        $this->status = Status::CREATED;
-        $this->body = $body;
+        // TODO
     }
 }

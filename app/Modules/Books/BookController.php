@@ -10,16 +10,16 @@ use Tempest\Http\Get;
 use Tempest\Http\Post;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
+use Tempest\Http\Responses\Ok;
 use function Tempest\map;
 use function Tempest\redirect;
-use function Tempest\response;
 
 final readonly class BookController
 {
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {
-        return response()->ok()->setBody($book->title);
+        return (new Ok($book->title));
     }
 
     #[Post('/books')]
