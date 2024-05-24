@@ -7,10 +7,25 @@ namespace Tempest\Auth;
 final class AuthConfig
 {
     public function __construct(
-        /** @var class-string<Authenticator> */
-        public string $authenticator = DatabaseAuthenticator::class,
-        /** @var class-string|null */
-        public ?string $authenticable = null,
+        /** @var class-string<Identifiable>|null */
+        public ?string $identifiable = null,
+
+        /** @var array<string,class-string<Authenticator>> */
+        public array $authenticators = [
+            'database' => DatabaseAuthenticator::class,
+        ],
+
+        /** @var array<string,class-string<CredentialsResolver>> */
+        public array $credentials = [
+            'database' => DatabaseCredentials::class,
+        ],
+
+        /** @var array<string,string> */
+        public array $databaseSource = [
+            'source' => 'users',
+            'identifier' => 'email',
+            'password' => 'password',
+        ],
     ) {
     }
 }
