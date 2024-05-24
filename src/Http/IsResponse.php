@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Generator;
 use function Tempest\get;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
@@ -12,8 +13,8 @@ use Tempest\View\View;
 
 trait IsResponse
 {
-    private Status $status;
-    private View|string|array|null $body = null;
+    private Status $status = Status::OK;
+    private View|string|array|Generator|null $body = null;
     /** @var \Tempest\Http\Header[] */
     private array $headers = [];
     private ?View $view = null;
@@ -42,12 +43,19 @@ trait IsResponse
         return $this;
     }
 
-    public function getBody(): View|string|array|null
+    public function removeHeader(string $key): self
+    {
+        unset($this->headers[$key]);
+
+        return $this;
+    }
+
+    public function getBody(): View|string|array|Generator|null
     {
         return $this->body;
     }
 
-    public function setBody(View|string|array|null $body): self
+    public function setBody(View|string|array|Generator|null $body): self
     {
         $this->body = $body;
 

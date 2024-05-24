@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Generator;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\View\View;
 
@@ -18,9 +19,11 @@ interface Response
 
     public function addHeader(string $key, string $value): self;
 
-    public function getBody(): View|string|array|null;
+    public function removeHeader(string $key): self;
 
-    public function setBody(View|string|array|null $body): self;
+    public function getBody(): View|string|array|Generator|null;
+
+    public function setBody(View|string|array|Generator|null $body): self;
 
     public function addSession(string $name, mixed $value): self;
 
