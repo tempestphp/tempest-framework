@@ -6,5 +6,5 @@ use App\Modules\Auth\Models\User;
 use Tempest\Auth\AuthConfig;
 
 return new AuthConfig(
-    authenticable: User::class,
+    identifiable: User::class,
 );

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth;
 
-use App\Modules\Auth\Models\User;
 use Tempest\Auth\Authenticator;
+use Tempest\Auth\CredentialsResolver;
+use Tempest\Auth\DatabaseAuthenticationCall;
+use Tempest\Auth\Exceptions\MissingIdentifiableException;
+use Tempest\Container\Tag;
 use Tempest\Http\Get;
 use Tempest\Http\Post;
 use Tempest\Http\Request;
@@ -15,6 +18,9 @@ use function Tempest\response;
 final readonly class AuthController
 {
     public function __construct(
+        #[Tag('database')]
+        private CredentialsResolver $credentialsResolver,
+        #[Tag('database')]
         private Authenticator $authenticator,
     ) {
     }
@@ -22,10 +28,10 @@ final readonly class AuthController
     #[Post('/login')]
     public function login(Request $request): Response
     {
-        $user = (new User(name: 'John Doe'))->setCredentials(
+        $user = $this->credentialsResolver->resolve(new DatabaseAuthenticationCall(
             identifier: $request->get('email'),
-            secret: $request->get('password')
-        );
+            password: $request->get('password')
+        ));
 
         $this->authenticator->login($user);
 
@@ -40,6 +46,9 @@ final readonly class AuthController
         return response()->ok();
     }
 
+    /**
+     * @throws MissingIdentifiableException
+     */
     #[Get('/me')]
     public function user(): Response
     {
