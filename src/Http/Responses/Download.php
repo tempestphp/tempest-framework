@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Responses;
 
 use Generator;
+use Tempest\Http\ContentType;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
 
@@ -18,7 +19,7 @@ final class Download implements Response
 
         $this
             ->addHeader('Content-Disposition', "attachment; filename=\"{$filename}\"")
-            ->addHeader('Content-Type', mime_content_type($path))
+            ->setContentType(ContentType::fromPath($path))
             ->removeHeader('Transfer-Encoding');
 
         if ($filesize = filesize($path)) {

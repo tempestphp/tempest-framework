@@ -97,6 +97,22 @@ trait IsResponse
         return $this;
     }
 
+    public function setContentType(ContentType $contentType): self
+    {
+        $this
+            ->removeHeader(ContentType::HEADER)
+            ->addHeader(ContentType::HEADER, $contentType->value);
+
+        return $this;
+    }
+
+    public function setStatus(Status $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
     private function getCookieManager(): CookieManager
     {
         return get(CookieManager::class);
