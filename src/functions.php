@@ -7,6 +7,7 @@ namespace Tempest {
     use Tempest\Commands\CommandBus;
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Response;
+    use Tempest\Http\Responses\Redirect;
     use Tempest\Http\Router;
     use Tempest\Http\Status;
     use Tempest\View\GenericView;
@@ -45,7 +46,7 @@ namespace Tempest {
 
     function redirect(string|array $action, ...$params): Response
     {
-        return response()->redirect(uri($action, ...$params));
+        return new Redirect(uri($action, ...$params));
     }
 
     function command(object $command): void

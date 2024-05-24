@@ -7,8 +7,11 @@ namespace App\Controllers;
 use App\Views\ViewModelWithResponseData;
 use Tempest\Http\Get;
 use Tempest\Http\Response;
-use Tempest\Http\Status;
-use function Tempest\response;
+use Tempest\Http\Responses\Created;
+use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Responses\Ok;
+use Tempest\Http\Responses\Redirect;
+use Tempest\Http\Responses\ServerError;
 use function Tempest\view;
 use Tempest\View\View;
 
@@ -17,13 +20,13 @@ final readonly class TestController
     #[Get(uri: '/test/{id}/{name}')]
     public function withParams(string $id, string $name): Response
     {
-        return response($id . $name);
+        return new Ok($id . $name);
     }
 
     #[Get(uri: '/test')]
     public function __invoke(): Response
     {
-        return response('test');
+        return new Ok('test');
     }
 
     #[Get(uri: '/view')]
@@ -37,25 +40,19 @@ final readonly class TestController
     #[Get(uri: '/redirect')]
     public function redirect(): Response
     {
-        return response()->redirect('/');
+        return new Redirect('/');
     }
 
     #[Get(uri: '/not-found')]
     public function notFound(): Response
     {
-        return response(
-            body: 'Not Found Test',
-            status: Status::NOT_FOUND,
-        );
+        return new NotFound('Not Found Test');
     }
 
     #[Get(uri: '/server-error')]
     public function serverError(): Response
     {
-        return response(
-            body: 'Server Error Test',
-            status: Status::INTERNAL_SERVER_ERROR,
-        );
+        return new ServerError('Server Error Test');
     }
 
     #[Get(uri: '/with-middleware', middleware: [
@@ -63,15 +60,13 @@ final readonly class TestController
     ])]
     public function withMiddleware(): Response
     {
-        return response()->ok();
+        return new Ok();
     }
 
     #[Get('/view-model-with-response-data')]
     public function viewModelWithResponseData(): Response
     {
-        return response()
-            ->addHeader('x-from-viewmodel', 'true')
-            ->setStatus(Status::CREATED)
-            ->setView(new ViewModelWithResponseData());
+        return (new Created(new ViewModelWithResponseData()))
+            ->addHeader('x-from-viewmodel', 'true');
     }
 }

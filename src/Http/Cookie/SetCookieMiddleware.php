@@ -10,7 +10,7 @@ use Tempest\Http\Response;
 
 final readonly class SetCookieMiddleware implements HttpMiddleware
 {
-    public function __construct()
+    public function __construct(private CookieManager $cookies)
     {
     }
 
@@ -19,7 +19,7 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
         /** @var Response $response */
         $response = $next($request);
 
-        foreach ($response->getCookies() as $cookie) {
+        foreach ($this->cookies->all() as $cookie) {
             $response->addHeader('set-cookie', (string) $cookie);
         }
 
