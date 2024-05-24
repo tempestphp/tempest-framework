@@ -6,8 +6,11 @@ namespace Tempest {
 
     use ReflectionType;
     use Reflector;
+    use Stringable;
+    use Symfony\Component\VarDumper\VarDumper;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
+    use Tempest\Log\Logger;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\TypeName;
@@ -63,5 +66,29 @@ namespace Tempest {
     function type(Reflector|ReflectionType $reflector): string
     {
         return (new TypeName())->resolve($reflector);
+    }
+
+    function lw(mixed ...$input): void
+    {
+        /** @var Logger $logger */
+        $logger = get(Logger::class);
+
+        foreach ($input as $key => $item) {
+            if ($item instanceof Stringable) {
+                $message = (string)$item;
+            } else {
+                $message = var_export($item, true);
+            }
+
+            $logger->debug("[{$key}] {$message}");
+        }
+
+        VarDumper::dump(...$input);
+    }
+
+    function ld(mixed ...$input): void
+    {
+        lw(...$input);
+        die();
     }
 }

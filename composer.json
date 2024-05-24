@@ -16,7 +16,8 @@
         "phpstan/phpstan": "^1.10.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "phpat/phpat": "^0.10.14",
-        "spaze/phpstan-disallowed-calls": "^3.1"
+        "spaze/phpstan-disallowed-calls": "^3.1",
+        "symfony/var-dumper": "^7.0"
     },
     "autoload": {
         "psr-4": {
