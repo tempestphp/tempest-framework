@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Highlight\Injections;
+namespace Tempest\Console\Highlight\TempestConsoleLanguage\Injections;
 
 use Tempest\Console\Highlight\ConsoleTokenType;
 use Tempest\Console\Highlight\IsTagInjection;
 use Tempest\Highlight\Injection;
 
-final readonly class QuestionInjection implements Injection
+final readonly class ErrorInjection implements Injection
 {
     use IsTagInjection;
 
     public function getTag(): string
     {
-        return 'question';
+        return 'error';
     }
 
     public function getTokenType(): ConsoleTokenType
     {
-        return ConsoleTokenType::QUESTION;
+        return ConsoleTokenType::ERROR;
     }
 }

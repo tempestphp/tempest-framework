@@ -14,7 +14,7 @@ use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
-use Tempest\Console\Highlight\TempestConsoleLanguage;
+use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Highlight\Highlighter;
 
 final class GenericConsole implements Console

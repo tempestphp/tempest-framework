@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Highlight\Injections;
+namespace Tempest\Console\Highlight\TempestConsoleLanguage\Injections;
 
 use Tempest\Console\Highlight\ConsoleTokenType;
 use Tempest\Console\Highlight\IsTagInjection;
-use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
-use Tempest\Highlight\ParsedInjection;
 
 final readonly class CommentInjection implements Injection
 {

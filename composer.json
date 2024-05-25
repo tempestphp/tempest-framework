@@ -29,10 +29,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\Tempest\\Console\\": "tests/"
-        },
-        "files": [
-            "src/functions.php"
-        ]
+        }
     },
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",

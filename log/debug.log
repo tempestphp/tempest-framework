@@ -1,0 +1,1096 @@
+[0] \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Tempest\\Console\\Commands\\LogCommands'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Commands\\LogCommands')),
+        clone ($p['Tempest\\Console\\GenericConsole'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\GenericConsole')),
+        clone ($p['Tempest\\Console\\Components\\InteractiveComponentRenderer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Components\\InteractiveComponentRenderer')),
+        clone ($p['Tempest\\Console\\Output\\StdoutOutputBuffer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Output\\StdoutOutputBuffer')),
+        clone ($p['Tempest\\Console\\Input\\StdinInputBuffer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Input\\StdinInputBuffer')),
+        clone ($p['Tempest\\Highlight\\Highlighter'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Highlighter')),
+        clone ($p['Tempest\\Highlight\\Languages\\Blade\\BladeLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Blade\\BladeLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Css\\CssLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Css\\CssLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Diff\\DiffLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Diff\\DiffLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\DocComment\\DocCommentLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\DocComment\\DocCommentLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Ellison\\EllisonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Ellison\\EllisonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Gdscript\\GdscriptLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Gdscript\\GdscriptLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Html\\HtmlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Html\\HtmlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\JavaScript\\JavaScriptLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\JavaScript\\JavaScriptLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Json\\JsonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Json\\JsonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Php\\PhpLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Php\\PhpLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Python\\PythonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Python\\PythonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Sql\\SqlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Sql\\SqlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Xml\\XmlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Xml\\XmlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Yaml\\YamlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Yaml\\YamlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Twig\\TwigLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Twig\\TwigLanguage')),
+        clone ($p['Tempest\\Console\\Highlight\\TempestTerminalTheme'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Highlight\\TempestTerminalTheme')),
+        clone ($p['Tempest\\Log\\LogConfig'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Log\\LogConfig')),
+        clone ($p['Tempest\\Log\\Channels\\AppendLogChannel'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Log\\Channels\\AppendLogChannel')),
+    ],
+    null,
+    [
+        'Tempest\\Console\\Commands\\LogCommands' => [
+            'console' => [
+                $o[1],
+            ],
+            'logConfig' => [
+                $o[22],
+            ],
+        ],
+        'Tempest\\Console\\GenericConsole' => [
+            'componentRenderer' => [
+                1 => $o[2],
+            ],
+            'output' => [
+                1 => $o[3],
+            ],
+            'input' => [
+                1 => $o[4],
+            ],
+            'highlighter' => [
+                1 => $o[5],
+            ],
+        ],
+        'Tempest\\Highlight\\Highlighter' => [
+            'languages' => [
+                5 => [
+                    'blade' => $o[6],
+                    'css' => $o[7],
+                    'diff' => $o[8],
+                    'doc' => $o[9],
+                    'ellison' => $o[10],
+                    'gdscript' => $o[11],
+                    'html' => $o[12],
+                    'js' => $o[13],
+                    'javascript' => $o[13],
+                    'node' => $o[13],
+                    'json' => $o[14],
+                    'php' => $o[15],
+                    'python' => $o[16],
+                    'py' => $o[16],
+                    'sql' => $o[17],
+                    'xml' => $o[18],
+                    'yaml' => $o[19],
+                    'yml' => $o[19],
+                    'twig' => $o[20],
+                ],
+            ],
+            'theme' => [
+                5 => $o[21],
+            ],
+        ],
+        'stdClass' => [
+            'channels' => [
+                22 => [
+                    $o[23],
+                ],
+            ],
+            'prefix' => [
+                22 => 'tempest',
+            ],
+            'debugLogPath' => [
+                22 => '/Users/brent/Dev/tempest-console/log/debug.log',
+            ],
+        ],
+        'Tempest\\Log\\Channels\\AppendLogChannel' => [
+            'path' => [
+                23 => '/Users/brent/Dev/tempest-console/log/tempest.log',
+            ],
+            'bubble' => [
+                23 => true,
+            ],
+            'filePermission' => [
+                23 => null,
+            ],
+            'useLocking' => [
+                23 => false,
+            ],
+        ],
+    ],
+    $o[0],
+    []
+)
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[0] 'hi'
+[1] 'ho'
+[2] 'ha'
+[0] 'hi'
+[1] 'ho'
+[2] 'ha'
+[0] 'hi'
+[1] 'ho'
+[2] 'ha'
+[0] 'hi'
+[1] 'ho'
+[2] 'ha'
+[0] 'hi'
+[1] 'ho'
+[2] 'ha'
+[0] \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Tempest\\Console\\Commands\\LogCommands'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Commands\\LogCommands')),
+        clone ($p['Tempest\\Console\\GenericConsole'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\GenericConsole')),
+        clone ($p['Tempest\\Console\\Components\\InteractiveComponentRenderer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Components\\InteractiveComponentRenderer')),
+        clone ($p['Tempest\\Console\\Output\\StdoutOutputBuffer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Output\\StdoutOutputBuffer')),
+        clone ($p['Tempest\\Console\\Input\\StdinInputBuffer'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Input\\StdinInputBuffer')),
+        clone ($p['Tempest\\Highlight\\Highlighter'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Highlighter')),
+        clone ($p['Tempest\\Highlight\\Languages\\Blade\\BladeLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Blade\\BladeLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Css\\CssLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Css\\CssLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Diff\\DiffLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Diff\\DiffLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\DocComment\\DocCommentLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\DocComment\\DocCommentLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Ellison\\EllisonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Ellison\\EllisonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Gdscript\\GdscriptLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Gdscript\\GdscriptLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Html\\HtmlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Html\\HtmlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\JavaScript\\JavaScriptLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\JavaScript\\JavaScriptLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Json\\JsonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Json\\JsonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Php\\PhpLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Php\\PhpLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Python\\PythonLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Python\\PythonLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Sql\\SqlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Sql\\SqlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Xml\\XmlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Xml\\XmlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Yaml\\YamlLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Yaml\\YamlLanguage')),
+        clone ($p['Tempest\\Highlight\\Languages\\Twig\\TwigLanguage'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Highlight\\Languages\\Twig\\TwigLanguage')),
+        clone ($p['Tempest\\Console\\Highlight\\TempestTerminalTheme'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Console\\Highlight\\TempestTerminalTheme')),
+        clone ($p['Tempest\\Log\\LogConfig'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Log\\LogConfig')),
+        clone ($p['Tempest\\Log\\Channels\\AppendLogChannel'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Tempest\\Log\\Channels\\AppendLogChannel')),
+    ],
+    null,
+    [
+        'Tempest\\Console\\Commands\\LogCommands' => [
+            'console' => [
+                $o[1],
+            ],
+            'logConfig' => [
+                $o[22],
+            ],
+        ],
+        'Tempest\\Console\\GenericConsole' => [
+            'componentRenderer' => [
+                1 => $o[2],
+            ],
+            'output' => [
+                1 => $o[3],
+            ],
+            'input' => [
+                1 => $o[4],
+            ],
+            'highlighter' => [
+                1 => $o[5],
+            ],
+        ],
+        'Tempest\\Highlight\\Highlighter' => [
+            'languages' => [
+                5 => [
+                    'blade' => $o[6],
+                    'css' => $o[7],
+                    'diff' => $o[8],
+                    'doc' => $o[9],
+                    'ellison' => $o[10],
+                    'gdscript' => $o[11],
+                    'html' => $o[12],
+                    'js' => $o[13],
+                    'javascript' => $o[13],
+                    'node' => $o[13],
+                    'json' => $o[14],
+                    'php' => $o[15],
+                    'python' => $o[16],
+                    'py' => $o[16],
+                    'sql' => $o[17],
+                    'xml' => $o[18],
+                    'yaml' => $o[19],
+                    'yml' => $o[19],
+                    'twig' => $o[20],
+                ],
+            ],
+            'theme' => [
+                5 => $o[21],
+            ],
+        ],
+        'stdClass' => [
+            'channels' => [
+                22 => [
+                    $o[23],
+                ],
+            ],
+            'prefix' => [
+                22 => 'tempest',
+            ],
+            'debugLogPath' => [
+                22 => '/Users/brent/Dev/tempest-console/log/debug.log',
+            ],
+        ],
+        'Tempest\\Log\\Channels\\AppendLogChannel' => [
+            'path' => [
+                23 => '/Users/brent/Dev/tempest-console/log/tempest.log',
+            ],
+            'bubble' => [
+                23 => true,
+            ],
+            'filePermission' => [
+                23 => null,
+            ],
+            'useLocking' => [
+                23 => false,
+            ],
+        ],
+    ],
+    $o[0],
+    []
+)
+[0] \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['stdClass'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('stdClass')),
+    ],
+    null,
+    [
+        'stdClass' => [
+            'a' => [
+                'a',
+            ],
+            'b' => [
+                'b',
+            ],
+        ],
+    ],
+    $o[0],
+    []
+)
+[0] \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['stdClass'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('stdClass')),
+    ],
+    null,
+    [
+        'stdClass' => [
+            'a' => [
+                'a',
+            ],
+            'b' => [
+                'b',
+            ],
+        ],
+    ],
+    $o[0],
+    []
+)
+[0] \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (\Symfony\Component\VarExporter\Internal\Registry::$prototypes['stdClass'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('stdClass')),
+    ],
+    null,
+    [
+        'stdClass' => [
+            'a' => [
+                'a',
+            ],
+            'b' => [
+                'b',
+            ],
+        ],
+    ],
+    $o[0],
+    []
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] (object) array(
+   'a' => 'a',
+   'b' => 'b',
+)
+[0] \Tempest\Console\Commands\LogCommands::__set_state(array(
+   'console' => 
+  \Tempest\Console\GenericConsole::__set_state(array(
+     'label' => NULL,
+     'isForced' => false,
+     'componentRenderer' => 
+    \Tempest\Console\Components\InteractiveComponentRenderer::__set_state(array(
+       'validationErrors' => 
+      array (
+      ),
+    )),
+     'output' => 
+    \Tempest\Console\Output\StdoutOutputBuffer::__set_state(array(
+    )),
+     'input' => 
+    \Tempest\Console\Input\StdinInputBuffer::__set_state(array(
+    )),
+     'highlighter' => 
+    \Tempest\Highlight\Highlighter::__set_state(array(
+       'languages' => 
+      array (
+        'blade' => 
+        \Tempest\Highlight\Languages\Blade\BladeLanguage::__set_state(array(
+        )),
+        'css' => 
+        \Tempest\Highlight\Languages\Css\CssLanguage::__set_state(array(
+        )),
+        'diff' => 
+        \Tempest\Highlight\Languages\Diff\DiffLanguage::__set_state(array(
+        )),
+        'doc' => 
+        \Tempest\Highlight\Languages\DocComment\DocCommentLanguage::__set_state(array(
+        )),
+        'ellison' => 
+        \Tempest\Highlight\Languages\Ellison\EllisonLanguage::__set_state(array(
+        )),
+        'gdscript' => 
+        \Tempest\Highlight\Languages\Gdscript\GdscriptLanguage::__set_state(array(
+        )),
+        'html' => 
+        \Tempest\Highlight\Languages\Html\HtmlLanguage::__set_state(array(
+        )),
+        'js' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'javascript' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'node' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'json' => 
+        \Tempest\Highlight\Languages\Json\JsonLanguage::__set_state(array(
+        )),
+        'php' => 
+        \Tempest\Highlight\Languages\Php\PhpLanguage::__set_state(array(
+        )),
+        'python' => 
+        \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+        )),
+        'py' => 
+        \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+        )),
+        'sql' => 
+        \Tempest\Highlight\Languages\Sql\SqlLanguage::__set_state(array(
+        )),
+        'xml' => 
+        \Tempest\Highlight\Languages\Xml\XmlLanguage::__set_state(array(
+        )),
+        'yaml' => 
+        \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+        )),
+        'yml' => 
+        \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+        )),
+        'twig' => 
+        \Tempest\Highlight\Languages\Twig\TwigLanguage::__set_state(array(
+        )),
+      ),
+       'gutterInjection' => NULL,
+       'currentLanguage' => NULL,
+       'isNested' => false,
+       'theme' => 
+      \Tempest\Console\Highlight\TempestTerminalTheme::__set_state(array(
+      )),
+    )),
+  )),
+   'logConfig' => 
+  \Tempest\Log\LogConfig::__set_state(array(
+     'channels' => 
+    array (
+      0 => 
+      \Tempest\Log\Channels\AppendLogChannel::__set_state(array(
+         'path' => '/Users/brent/Dev/tempest-console/log/tempest.log',
+         'bubble' => true,
+         'filePermission' => NULL,
+         'useLocking' => false,
+      )),
+    ),
+     'prefix' => 'tempest',
+     'debugLogPath' => '/Users/brent/Dev/tempest-console/log/debug.log',
+  )),
+   'highlighter' => 
+  \Tempest\Highlight\Highlighter::__set_state(array(
+     'languages' => 
+    array (
+      'blade' => 
+      \Tempest\Highlight\Languages\Blade\BladeLanguage::__set_state(array(
+      )),
+      'css' => 
+      \Tempest\Highlight\Languages\Css\CssLanguage::__set_state(array(
+      )),
+      'diff' => 
+      \Tempest\Highlight\Languages\Diff\DiffLanguage::__set_state(array(
+      )),
+      'doc' => 
+      \Tempest\Highlight\Languages\DocComment\DocCommentLanguage::__set_state(array(
+      )),
+      'ellison' => 
+      \Tempest\Highlight\Languages\Ellison\EllisonLanguage::__set_state(array(
+      )),
+      'gdscript' => 
+      \Tempest\Highlight\Languages\Gdscript\GdscriptLanguage::__set_state(array(
+      )),
+      'html' => 
+      \Tempest\Highlight\Languages\Html\HtmlLanguage::__set_state(array(
+      )),
+      'js' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'javascript' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'node' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'json' => 
+      \Tempest\Highlight\Languages\Json\JsonLanguage::__set_state(array(
+      )),
+      'php' => 
+      \Tempest\Highlight\Languages\Php\PhpLanguage::__set_state(array(
+      )),
+      'python' => 
+      \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+      )),
+      'py' => 
+      \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+      )),
+      'sql' => 
+      \Tempest\Highlight\Languages\Sql\SqlLanguage::__set_state(array(
+      )),
+      'xml' => 
+      \Tempest\Highlight\Languages\Xml\XmlLanguage::__set_state(array(
+      )),
+      'yaml' => 
+      \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+      )),
+      'yml' => 
+      \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+      )),
+      'twig' => 
+      \Tempest\Highlight\Languages\Twig\TwigLanguage::__set_state(array(
+      )),
+    ),
+     'gutterInjection' => NULL,
+     'currentLanguage' => NULL,
+     'isNested' => false,
+     'theme' => 
+    \Tempest\Console\Highlight\TempestTerminalTheme::__set_state(array(
+    )),
+  )),
+))
+[0] \Tempest\Console\Commands\LogCommands::__set_state(array(
+   'console' => 
+  \Tempest\Console\GenericConsole::__set_state(array(
+     'label' => NULL,
+     'isForced' => false,
+     'componentRenderer' => 
+    \Tempest\Console\Components\InteractiveComponentRenderer::__set_state(array(
+       'validationErrors' => 
+      array (
+      ),
+    )),
+     'output' => 
+    \Tempest\Console\Output\StdoutOutputBuffer::__set_state(array(
+    )),
+     'input' => 
+    \Tempest\Console\Input\StdinInputBuffer::__set_state(array(
+    )),
+     'highlighter' => 
+    \Tempest\Highlight\Highlighter::__set_state(array(
+       'languages' => 
+      array (
+        'blade' => 
+        \Tempest\Highlight\Languages\Blade\BladeLanguage::__set_state(array(
+        )),
+        'css' => 
+        \Tempest\Highlight\Languages\Css\CssLanguage::__set_state(array(
+        )),
+        'diff' => 
+        \Tempest\Highlight\Languages\Diff\DiffLanguage::__set_state(array(
+        )),
+        'doc' => 
+        \Tempest\Highlight\Languages\DocComment\DocCommentLanguage::__set_state(array(
+        )),
+        'ellison' => 
+        \Tempest\Highlight\Languages\Ellison\EllisonLanguage::__set_state(array(
+        )),
+        'gdscript' => 
+        \Tempest\Highlight\Languages\Gdscript\GdscriptLanguage::__set_state(array(
+        )),
+        'html' => 
+        \Tempest\Highlight\Languages\Html\HtmlLanguage::__set_state(array(
+        )),
+        'js' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'javascript' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'node' => 
+        \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+        )),
+        'json' => 
+        \Tempest\Highlight\Languages\Json\JsonLanguage::__set_state(array(
+        )),
+        'php' => 
+        \Tempest\Highlight\Languages\Php\PhpLanguage::__set_state(array(
+        )),
+        'python' => 
+        \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+        )),
+        'py' => 
+        \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+        )),
+        'sql' => 
+        \Tempest\Highlight\Languages\Sql\SqlLanguage::__set_state(array(
+        )),
+        'xml' => 
+        \Tempest\Highlight\Languages\Xml\XmlLanguage::__set_state(array(
+        )),
+        'yaml' => 
+        \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+        )),
+        'yml' => 
+        \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+        )),
+        'twig' => 
+        \Tempest\Highlight\Languages\Twig\TwigLanguage::__set_state(array(
+        )),
+      ),
+       'gutterInjection' => NULL,
+       'currentLanguage' => NULL,
+       'isNested' => false,
+       'theme' => 
+      \Tempest\Console\Highlight\TempestTerminalTheme::__set_state(array(
+      )),
+    )),
+  )),
+   'logConfig' => 
+  \Tempest\Log\LogConfig::__set_state(array(
+     'channels' => 
+    array (
+      0 => 
+      \Tempest\Log\Channels\AppendLogChannel::__set_state(array(
+         'path' => '/Users/brent/Dev/tempest-console/log/tempest.log',
+         'bubble' => true,
+         'filePermission' => NULL,
+         'useLocking' => false,
+      )),
+    ),
+     'prefix' => 'tempest',
+     'debugLogPath' => '/Users/brent/Dev/tempest-console/log/debug.log',
+  )),
+   'highlighter' => 
+  \Tempest\Highlight\Highlighter::__set_state(array(
+     'languages' => 
+    array (
+      'blade' => 
+      \Tempest\Highlight\Languages\Blade\BladeLanguage::__set_state(array(
+      )),
+      'css' => 
+      \Tempest\Highlight\Languages\Css\CssLanguage::__set_state(array(
+      )),
+      'diff' => 
+      \Tempest\Highlight\Languages\Diff\DiffLanguage::__set_state(array(
+      )),
+      'doc' => 
+      \Tempest\Highlight\Languages\DocComment\DocCommentLanguage::__set_state(array(
+      )),
+      'ellison' => 
+      \Tempest\Highlight\Languages\Ellison\EllisonLanguage::__set_state(array(
+      )),
+      'gdscript' => 
+      \Tempest\Highlight\Languages\Gdscript\GdscriptLanguage::__set_state(array(
+      )),
+      'html' => 
+      \Tempest\Highlight\Languages\Html\HtmlLanguage::__set_state(array(
+      )),
+      'js' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'javascript' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'node' => 
+      \Tempest\Highlight\Languages\JavaScript\JavaScriptLanguage::__set_state(array(
+      )),
+      'json' => 
+      \Tempest\Highlight\Languages\Json\JsonLanguage::__set_state(array(
+      )),
+      'php' => 
+      \Tempest\Highlight\Languages\Php\PhpLanguage::__set_state(array(
+      )),
+      'python' => 
+      \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+      )),
+      'py' => 
+      \Tempest\Highlight\Languages\Python\PythonLanguage::__set_state(array(
+      )),
+      'sql' => 
+      \Tempest\Highlight\Languages\Sql\SqlLanguage::__set_state(array(
+      )),
+      'xml' => 
+      \Tempest\Highlight\Languages\Xml\XmlLanguage::__set_state(array(
+      )),
+      'yaml' => 
+      \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+      )),
+      'yml' => 
+      \Tempest\Highlight\Languages\Yaml\YamlLanguage::__set_state(array(
+      )),
+      'twig' => 
+      \Tempest\Highlight\Languages\Twig\TwigLanguage::__set_state(array(
+      )),
+    ),
+     'gutterInjection' => NULL,
+     'currentLanguage' => NULL,
+     'isNested' => false,
+     'theme' => 
+    \Tempest\Console\Highlight\TempestTerminalTheme::__set_state(array(
+    )),
+  )),
+))
+[0] [0;38;5;208m[38;5;38mTempest\Console\Commands\LogCommands[0;38;5;208m {[38;5;247m#100[0;38;5;208m[m
+ [0;38;5;208m-[mconsole[0;38;5;208m: [38;5;38mTempest\Console\GenericConsole[0;38;5;208m {[38;5;247m#69[0;38;5;208m[m
+  [0;38;5;208m-[mlabel[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misForced[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mcomponentRenderer[0;38;5;208m: [38;5;38mTempest\Console\Components\InteractiveComponentRenderer[0;38;5;208m {[38;5;247m#74[0;38;5;208m[m
+   [0;38;5;208m-[mvalidationErrors[0;38;5;208m: [][m
+  [0;38;5;208m}[m
+  [0;38;5;208m-[moutput[0;38;5;208m: [38;5;38mTempest\Console\Output\StdoutOutputBuffer[0;38;5;208m {[38;5;247m#72[0;38;5;208m}[m
+  [0;38;5;208m-[minput[0;38;5;208m: [38;5;38mTempest\Console\Input\StdinInputBuffer[0;38;5;208m {[38;5;247m#73[0;38;5;208m}[m
+  [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#53[0;38;5;208m[m
+   [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+    [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#21[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#55[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#56[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#57[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#58[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#59[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#60[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#61[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#63[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#65[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#66[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#67[0;38;5;208m}[m
+   [0;38;5;208m][m
+   [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#54[0;38;5;208m}[m
+  [0;38;5;208m}[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mlogConfig[0;38;5;208m: [38;5;38mTempest\Log\LogConfig[0;38;5;208m {[38;5;247m#14[0;38;5;208m[m
+  [0;38;5;208m+[mchannels[0;38;5;208m: [38;5;38marray:1[0;38;5;208m [[m
+   [0;38;5;208m[38;5;38m0[0;38;5;208m => [38;5;38mTempest\Log\Channels\AppendLogChannel[0;38;5;208m {[38;5;247m#24[0;38;5;208m[m
+    [0;38;5;208m-[mpath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/tempest.log[0;38;5;208m"[m
+    [0;38;5;208m-[mbubble[0;38;5;208m: [1;38;5;208mtrue[0;38;5;208m[m
+    [0;38;5;208m-[mfilePermission[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+    [0;38;5;208m-[museLocking[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m+[mprefix[0;38;5;208m: "[1;38;5;113mtempest[0;38;5;208m"[m
+  [0;38;5;208m+[mdebugLogPath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/debug.log[0;38;5;208m"[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#76[0;38;5;208m[m
+  [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+   [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#79[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#80[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#81[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#82[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#83[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#84[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#85[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#86[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#88[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#90[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#91[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#92[0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#78[0;38;5;208m}[m
+ [0;38;5;208m}[m
+[0;38;5;208m}[m
+
+[0]
+[0;38;5;208m[38;5;38mTempest\Console\Commands\LogCommands[0;38;5;208m {[38;5;247m#100[0;38;5;208m[m
+ [0;38;5;208m-[mconsole[0;38;5;208m: [38;5;38mTempest\Console\GenericConsole[0;38;5;208m {[38;5;247m#69[0;38;5;208m[m
+  [0;38;5;208m-[mlabel[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misForced[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mcomponentRenderer[0;38;5;208m: [38;5;38mTempest\Console\Components\InteractiveComponentRenderer[0;38;5;208m {[38;5;247m#74[0;38;5;208m[m
+   [0;38;5;208m-[mvalidationErrors[0;38;5;208m: [][m
+  [0;38;5;208m}[m
+  [0;38;5;208m-[moutput[0;38;5;208m: [38;5;38mTempest\Console\Output\StdoutOutputBuffer[0;38;5;208m {[38;5;247m#72[0;38;5;208m}[m
+  [0;38;5;208m-[minput[0;38;5;208m: [38;5;38mTempest\Console\Input\StdinInputBuffer[0;38;5;208m {[38;5;247m#73[0;38;5;208m}[m
+  [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#53[0;38;5;208m[m
+   [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+    [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#21[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#55[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#56[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#57[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#58[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#59[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#60[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#61[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#63[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#65[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#66[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#67[0;38;5;208m}[m
+   [0;38;5;208m][m
+   [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#54[0;38;5;208m}[m
+  [0;38;5;208m}[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mlogConfig[0;38;5;208m: [38;5;38mTempest\Log\LogConfig[0;38;5;208m {[38;5;247m#14[0;38;5;208m[m
+  [0;38;5;208m+[mchannels[0;38;5;208m: [38;5;38marray:1[0;38;5;208m [[m
+   [0;38;5;208m[38;5;38m0[0;38;5;208m => [38;5;38mTempest\Log\Channels\AppendLogChannel[0;38;5;208m {[38;5;247m#24[0;38;5;208m[m
+    [0;38;5;208m-[mpath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/tempest.log[0;38;5;208m"[m
+    [0;38;5;208m-[mbubble[0;38;5;208m: [1;38;5;208mtrue[0;38;5;208m[m
+    [0;38;5;208m-[mfilePermission[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+    [0;38;5;208m-[museLocking[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m+[mprefix[0;38;5;208m: "[1;38;5;113mtempest[0;38;5;208m"[m
+  [0;38;5;208m+[mdebugLogPath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/debug.log[0;38;5;208m"[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#76[0;38;5;208m[m
+  [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+   [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#79[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#80[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#81[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#82[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#83[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#84[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#85[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#86[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#88[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#90[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#91[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#92[0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#78[0;38;5;208m}[m
+ [0;38;5;208m}[m
+[0;38;5;208m}[m
+
+[0]
+[0;38;5;208m[38;5;38mTempest\Console\Commands\LogCommands[0;38;5;208m {[38;5;247m#100[0;38;5;208m[m
+ [0;38;5;208m-[mconsole[0;38;5;208m: [38;5;38mTempest\Console\GenericConsole[0;38;5;208m {[38;5;247m#69[0;38;5;208m[m
+  [0;38;5;208m-[mlabel[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misForced[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mcomponentRenderer[0;38;5;208m: [38;5;38mTempest\Console\Components\InteractiveComponentRenderer[0;38;5;208m {[38;5;247m#74[0;38;5;208m[m
+   [0;38;5;208m-[mvalidationErrors[0;38;5;208m: [][m
+  [0;38;5;208m}[m
+  [0;38;5;208m-[moutput[0;38;5;208m: [38;5;38mTempest\Console\Output\StdoutOutputBuffer[0;38;5;208m {[38;5;247m#72[0;38;5;208m}[m
+  [0;38;5;208m-[minput[0;38;5;208m: [38;5;38mTempest\Console\Input\StdinInputBuffer[0;38;5;208m {[38;5;247m#73[0;38;5;208m}[m
+  [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#53[0;38;5;208m[m
+   [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+    [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#21[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#55[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#56[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#57[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#58[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#59[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#60[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#62[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#61[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#63[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#64[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#65[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#66[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#68[0;38;5;208m}[m
+    [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#67[0;38;5;208m}[m
+   [0;38;5;208m][m
+   [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+   [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#54[0;38;5;208m}[m
+  [0;38;5;208m}[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mlogConfig[0;38;5;208m: [38;5;38mTempest\Log\LogConfig[0;38;5;208m {[38;5;247m#14[0;38;5;208m[m
+  [0;38;5;208m+[mchannels[0;38;5;208m: [38;5;38marray:1[0;38;5;208m [[m
+   [0;38;5;208m[38;5;38m0[0;38;5;208m => [38;5;38mTempest\Log\Channels\AppendLogChannel[0;38;5;208m {[38;5;247m#24[0;38;5;208m[m
+    [0;38;5;208m-[mpath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/tempest.log[0;38;5;208m"[m
+    [0;38;5;208m-[mbubble[0;38;5;208m: [1;38;5;208mtrue[0;38;5;208m[m
+    [0;38;5;208m-[mfilePermission[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+    [0;38;5;208m-[museLocking[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+   [0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m+[mprefix[0;38;5;208m: "[1;38;5;113mtempest[0;38;5;208m"[m
+  [0;38;5;208m+[mdebugLogPath[0;38;5;208m: "[1;38;5;113m/Users/brent/Dev/tempest-console/log/debug.log[0;38;5;208m"[m
+ [0;38;5;208m}[m
+ [0;38;5;208m-[mhighlighter[0;38;5;208m: [38;5;38mTempest\Highlight\Highlighter[0;38;5;208m {[38;5;247m#76[0;38;5;208m[m
+  [0;38;5;208m-[mlanguages[0;38;5;208m: [38;5;38marray:19[0;38;5;208m [[m
+   [0;38;5;208m"[38;5;113mblade[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Blade\BladeLanguage[0;38;5;208m {[38;5;247m#79[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mcss[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Css\CssLanguage[0;38;5;208m {[38;5;247m#80[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdiff[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Diff\DiffLanguage[0;38;5;208m {[38;5;247m#81[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mdoc[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\DocComment\DocCommentLanguage[0;38;5;208m {[38;5;247m#82[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mellison[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Ellison\EllisonLanguage[0;38;5;208m {[38;5;247m#83[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mgdscript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Gdscript\GdscriptLanguage[0;38;5;208m {[38;5;247m#84[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mhtml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Html\HtmlLanguage[0;38;5;208m {[38;5;247m#85[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjs[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjavascript[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mnode[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\JavaScript\JavaScriptLanguage[0;38;5;208m {[38;5;247m#87[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mjson[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Json\JsonLanguage[0;38;5;208m {[38;5;247m#86[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mphp[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Php\PhpLanguage[0;38;5;208m {[38;5;247m#88[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpython[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mpy[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Python\PythonLanguage[0;38;5;208m {[38;5;247m#89[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113msql[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Sql\SqlLanguage[0;38;5;208m {[38;5;247m#90[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mxml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Xml\XmlLanguage[0;38;5;208m {[38;5;247m#91[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myaml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113myml[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Yaml\YamlLanguage[0;38;5;208m {[38;5;247m#93[0;38;5;208m}[m
+   [0;38;5;208m"[38;5;113mtwig[0;38;5;208m" => [38;5;38mTempest\Highlight\Languages\Twig\TwigLanguage[0;38;5;208m {[38;5;247m#92[0;38;5;208m}[m
+  [0;38;5;208m][m
+  [0;38;5;208m-[mgutterInjection[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[mcurrentLanguage[0;38;5;208m: [1;38;5;208mnull[0;38;5;208m[m
+  [0;38;5;208m-[misNested[0;38;5;208m: [1;38;5;208mfalse[0;38;5;208m[m
+  [0;38;5;208m-[mtheme[0;38;5;208m: [38;5;38mTempest\Console\Highlight\TempestTerminalTheme[0;38;5;208m {[38;5;247m#78[0;38;5;208m}[m
+ [0;38;5;208m}[m
+[0;38;5;208m}[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616227[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616277[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616280[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616284[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616292[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616294[0;38;5;208m[m
+
+[a]
+[0;38;5;208m[38;5;38marray:1[0;38;5;208m [[m
+ [0;38;5;208m"[38;5;113ma[0;38;5;208m" => [1;38;5;38m123[0;38;5;208m[m
+[0;38;5;208m][m
+
+[b]
+[0;38;5;208m"[1;38;5;113mabc[0;38;5;208m"[m
+
+[time]
+[0;38;5;208m[1;38;5;38m1716616624[0;38;5;208m[m
+

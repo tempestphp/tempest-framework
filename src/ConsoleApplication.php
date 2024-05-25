@@ -11,6 +11,9 @@ use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Kernel;
+use Tempest\Log\Channels\AppendLogChannel;
+use Tempest\Log\LogConfig;
+use Tempest\Support\PathHelper;
 
 final readonly class ConsoleApplication implements Application
 {
@@ -35,6 +38,10 @@ final readonly class ConsoleApplication implements Application
         // Application-specific config
         $consoleConfig = $container->get(ConsoleConfig::class);
         $consoleConfig->name = $name;
+
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
 
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
