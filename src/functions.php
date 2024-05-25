@@ -68,12 +68,18 @@ namespace Tempest {
 
     function lw(mixed ...$input): void
     {
-        get(Debug::class)->log(...$input);
+        get(Debug::class)->log($input);
     }
 
     function ld(mixed ...$input): void
     {
-        get(Debug::class)->log(...$input);
+        get(Debug::class)->log($input);
+        die();
+    }
+
+    function ll(mixed ...$input): void
+    {
+        get(Debug::class)->log($input, writeToOut: false);
         die();
     }
 }

@@ -15,22 +15,26 @@ final readonly class Debug
     {
     }
 
-    public function log(mixed ...$input): void
+    public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $callPath = "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'];
 
-        $this->writeToLog($input, $callPath);
+        if ($writeToLog) {
+            $this->writeToLog($items, $callPath);
+        }
 
-        $this->writeToOut($input, $callPath);
+        if ($writeToOut) {
+            $this->writeToOut($items, $callPath);
+        }
     }
 
-    public function writeToLog(array $input, string $callPath): void
+    private function writeToLog(array $items, string $callPath): void
     {
         $handle = fopen($this->logConfig->debugLogPath, 'a');
         $cloner = new VarCloner();
 
-        foreach ($input as $key => $item) {
+        foreach ($items as $key => $item) {
             $output = '';
 
             $dumper = new CliDumper(function ($line, $depth) use (&$output) {
@@ -52,9 +56,9 @@ final readonly class Debug
         fclose($handle);
     }
 
-    public function writeToOut(array $input, string $callPath): void
+    private function writeToOut(array $items, string $callPath): void
     {
-        foreach ($input as $item) {
+        foreach ($items as $item) {
             VarDumper::dump($item);
         }
 
