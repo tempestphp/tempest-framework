@@ -10,6 +10,7 @@ use Tempest\ExceptionHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Throwable;
+use function Tempest\ll;
 
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
@@ -46,6 +47,8 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ->writeln('<u>' . $throwable->getFile() . ':' . $throwable->getLine() . '</u>')
                 ->writeln();
         }
+
+        ll(exception: $throwable->getMessage());
     }
 
     private function writeSnippet(Throwable $throwable): void
