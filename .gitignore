@@ -8,3 +8,5 @@ app/database.sqlite
 composer.lock
 *.cache.php
 sessions/
+debug.log
+tempest.log
