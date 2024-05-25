@@ -6,7 +6,6 @@ namespace Tempest\Console\Output;
 
 use Closure;
 use Fiber;
-use function Tempest\ld;
 
 final readonly class TailReader
 {
