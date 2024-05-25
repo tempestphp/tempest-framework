@@ -11,6 +11,7 @@ final class LogConfig
         public array $channels = [],
         public string $prefix = 'tempest',
         public ?string $debugLogPath = null,
+        public ?string $serverLogPath = null,
     ) {
     }
 }
