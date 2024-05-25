@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest {
 
-    use Psr\Log\LoggerInterface;
     use ReflectionType;
     use Reflector;
-    use Stringable;
-    use Symfony\Component\VarDumper\VarDumper;
     use Tempest\Container\GenericContainer;
     use Tempest\Events\EventBus;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\TypeName;
+    use Tempest\Support\VarExport\Debug;
 
     /**
      * @template TClassName
@@ -70,25 +68,12 @@ namespace Tempest {
 
     function lw(mixed ...$input): void
     {
-        /** @var LoggerInterface $logger */
-        $logger = get(LoggerInterface::class);
-
-        foreach ($input as $key => $item) {
-            if ($item instanceof Stringable) {
-                $message = (string)$item;
-            } else {
-                $message = var_export($item, true);
-            }
-
-            $logger->debug("[{$key}] {$message}");
-        }
-
-        VarDumper::dump(...$input);
+        get(Debug::class)->log(...$input);
     }
 
     function ld(mixed ...$input): void
     {
-        lw(...$input);
+        get(Debug::class)->log(...$input);
         die();
     }
 }

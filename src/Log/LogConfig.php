@@ -10,6 +10,7 @@ final class LogConfig
         /** @var LogChannel[] */
         public array $channels = [],
         public string $prefix = 'tempest',
+        public ?string $debugLogPath = null,
     ) {
     }
 }
