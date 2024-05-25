@@ -23,7 +23,7 @@ final readonly class Debug
             if ($item instanceof Stringable) {
                 $output = (string) $item;
             } else {
-                $output = VarExporter::export($item);
+                $output = var_export($item, true);
             }
 
             fwrite($handle, "[{$key}] {$output}" . PHP_EOL);

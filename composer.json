@@ -6,8 +6,8 @@
         "giggsey/libphonenumber-for-php": "^8.13",
         "egulias/email-validator": "^4.0",
         "tempest/highlight": "^2.0",
-        "symfony/var-exporter": "^7.0",
         "psr/log": "^3.0",
+        "symfony/var-dumper": "^7.0",
         "monolog/monolog": "^3.6"
     },
     "require-dev": {
@@ -16,8 +16,7 @@
         "phpstan/phpstan": "^1.10.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "phpat/phpat": "^0.10.14",
-        "spaze/phpstan-disallowed-calls": "^3.1",
-        "symfony/var-dumper": "^7.0"
+        "spaze/phpstan-disallowed-calls": "^3.1"
     },
     "autoload": {
         "psr-4": {
