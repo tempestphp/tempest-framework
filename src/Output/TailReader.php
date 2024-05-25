@@ -3,6 +3,7 @@
 namespace Tempest\Console\Output;
 
 use Closure;
+use Fiber;
 
 final readonly class TailReader
 {
@@ -16,6 +17,10 @@ final readonly class TailReader
 
         /** @phpstan-ignore-next-line */
         while (true) {
+            if (Fiber::getCurrent()) {
+                Fiber::suspend();
+            }
+
             fseek($handle, -1, SEEK_END);
             $newOffset = ftell($handle);
 

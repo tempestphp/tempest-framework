@@ -1113,3 +1113,31 @@ Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandle
 [0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
 
 Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"""[m
+[0;38;5;208m[1;38;5;113mCannot resolve Tempest\Log\Logger because it is not an instantiable class. Maybe it's missing an initializer class?[m[0;38;5;208m\n[m
+[0;38;5;208m\n[m
+[0;38;5;208m\t[m[1;38;5;113m    LoggerCommand::__construct(Logger $logger)Originally called in /Users/brent/Dev/tempest-console/src/Actions/ExecuteConsoleCommand.php:43[m[0;38;5;208m\n[m
+[0;38;5;208m"""[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51
+[exception]
+[0;38;5;208m"[1;38;5;113mA message from the exception default[0;38;5;208m"[m
+
+Called in /Users/brent/Dev/tempest-console/src/Exceptions/ConsoleExceptionHandler.php:51

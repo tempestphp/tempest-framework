@@ -41,7 +41,7 @@ final readonly class LogDebugCommand
             touch($debugLogPath);
         }
 
-        $this->console->writeln("<h2>Debug</h2> Listening for logs, use <em><strong>ll()</strong></em>, <em><strong>lw()</strong></em>, or <em><strong>ld()</strong></em>");
+        $this->console->writeln("<h1>Debug</h1> Listening for logs, use <em><strong>ll()</strong></em>, <em><strong>lw()</strong></em>, or <em><strong>ld()</strong></em>");
 
         (new TailReader())->tail(
             $debugLogPath,
