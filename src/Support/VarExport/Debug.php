@@ -29,7 +29,7 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
-        $handle = @fopen($this->logConfig->debugLogPath, 'a');
+        $handle = @fopen($this->logConfig->debugLogPath ?? '', 'a');
 
         if (! $handle) {
             return;
