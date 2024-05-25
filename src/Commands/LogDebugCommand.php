@@ -8,10 +8,9 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Highlight\VarExportLanguage\VarExportLanguage;
 use Tempest\Highlight\Highlighter;
-use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 
-final readonly class LogCommands
+final readonly class LogDebugCommand
 {
     public function __construct(
         private Console $console,
@@ -20,20 +19,8 @@ final readonly class LogCommands
     ) {
     }
 
-    #[ConsoleCommand('log:project', aliases: ['lp'])]
-    public function project(): void
-    {
-        foreach ($this->logConfig->channels as $channel) {
-            if ($channel instanceof AppendLogChannel) {
-                passthru("tail -f {$channel->getPath()}");
-            }
-        }
-
-        $this->console->error("No AppendLogChannel registered");
-    }
-
     #[ConsoleCommand('log:debug', aliases: ['ld'])]
-    public function debug(): void
+    public function __invoke(): void
     {
         $debugLogPath = $this->logConfig->debugLogPath;
 
@@ -43,19 +30,25 @@ final readonly class LogCommands
             return;
         }
 
-        $this->console->writeln("<h2>Debug</h2> Listening for logs, use <em><strong>lw</strong></em> or <em><strong>ld</strong></em> to start");
+        $dir = pathinfo($debugLogPath, PATHINFO_DIRNAME);
+
+        if (! is_dir($dir)) {
+            mkdir($dir);
+        }
 
         if (! file_exists($debugLogPath)) {
             touch($debugLogPath);
         }
 
-        $handle = @fopen($debugLogPath, "r");
+        $handle = fopen($debugLogPath, "r");
+
+        $this->console->writeln("<h2>Debug</h2> Listening for logs, use <em><strong>lw</strong></em> or <em><strong>ld</strong></em> to start");
 
         fseek($handle, -1, SEEK_END);
         $offset = ftell($handle);
 
-        /** @phpstan-ignore-next-line  */
-        while(true) {
+        /** @phpstan-ignore-next-line */
+        while (true) {
             fseek($handle, -1, SEEK_END);
             $newOffset = ftell($handle);
 
