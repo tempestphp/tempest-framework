@@ -6,10 +6,9 @@ namespace Tempest\Log;
 
 use Monolog\Level;
 use Monolog\Logger as Monolog;
-use Psr\Log\LoggerInterface;
 use Stringable;
 
-final class GenericLogger implements LoggerInterface
+final class GenericLogger implements Logger
 {
     /** @var array<class-string, Monolog> */
     private array $drivers = [];

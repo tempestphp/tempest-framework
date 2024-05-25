@@ -12,7 +12,7 @@ use Tempest\Container\Singleton;
 #[Singleton]
 final readonly class LoggerInitializer implements Initializer
 {
-    public function initialize(Container $container): LoggerInterface
+    public function initialize(Container $container): LoggerInterface|Logger
     {
         return new GenericLogger(
             $container->get(LogConfig::class),
