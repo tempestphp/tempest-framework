@@ -6,6 +6,7 @@ namespace Tempest\Console\Output;
 
 use Closure;
 use Fiber;
+use function Tempest\ld;
 
 final readonly class TailReader
 {
@@ -13,12 +14,7 @@ final readonly class TailReader
     {
         $format ??= fn (string $text) => $text;
 
-        $handle = @fopen($path, "r");
-
-        if (! $handle) {
-            Fiber::suspend();
-            return;
-        }
+        $handle = fopen($path, "r");
 
         fseek($handle, -1, SEEK_END);
         $offset = ftell($handle);

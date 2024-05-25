@@ -22,6 +22,8 @@ final readonly class TailServerLogCommand
     {
         $serverLogPath = $this->logConfig->serverLogPath;
 
+        $this->console->write('<h1>Server</h1> ');
+
         if (! $serverLogPath) {
             $this->console->error("No server log configured in LogConfig");
 
@@ -34,7 +36,7 @@ final readonly class TailServerLogCommand
             return;
         }
 
-        $this->console->writeln("<h1>Server</h1> Listening for logs…");
+        $this->console->writeln("Listening at <em>{$serverLogPath}</em>");
 
         (new TailReader())->tail($serverLogPath);
     }

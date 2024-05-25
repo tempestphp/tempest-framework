@@ -30,11 +30,25 @@ final readonly class TailProjectLogCommand
             }
         }
 
-        if ($appendLogChannel) {
-            $this->console->writeln("<h1>Log</h1> Listening for logs…");
-            (new TailReader())->tail($appendLogChannel->getPath());
-        } else {
+        $this->console->write('<h1>Log</h1> ');
+
+        if (! $appendLogChannel) {
             $this->console->error("No AppendLogChannel registered");
+            return;
         }
+
+        $dir = pathinfo($appendLogChannel->getPath(), PATHINFO_DIRNAME);
+
+        if (! is_dir($dir)) {
+            mkdir($dir);
+        }
+
+        if (! file_exists($appendLogChannel->getPath())) {
+            touch($appendLogChannel->getPath());
+        }
+
+        $this->console->writeln("Listening at <em>{$appendLogChannel->getPath()}</em>");
+
+        (new TailReader())->tail($appendLogChannel->getPath());
     }
 }
