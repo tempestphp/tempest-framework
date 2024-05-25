@@ -11,9 +11,9 @@ use Tempest\Console\ConsoleCommand;
 final readonly class TailCommand
 {
     public function __construct(
-        private TailDebugLogCommand $logDebugCommand,
-        private TailProjectLogCommand $logProjectCommand,
-        private TailServerLogCommand $logServerCommand,
+        private TailDebugLogCommand $tailDebugLogCommand,
+        private TailProjectLogCommand $tailProjectLogCommand,
+        private TailServerLogCommand $tailServerLogCommand,
     ) {}
 
     #[ConsoleCommand(
@@ -34,9 +34,9 @@ final readonly class TailCommand
 
         /** @var array<array-key, \Tempest\Console\Commands\TailDebugLogCommand|\Tempest\Console\Commands\TailProjectLogCommand> $loggers */
         $loggers = array_filter([
-            ($shouldFilter === false || $debug) ? $this->logDebugCommand : null,
-            ($shouldFilter === false || $project) ? $this->logProjectCommand : null,
-            ($shouldFilter === false || $server) ? $this->logServerCommand : null,
+            ($shouldFilter === false || $debug) ? $this->tailDebugLogCommand : null,
+            ($shouldFilter === false || $project) ? $this->tailProjectLogCommand : null,
+            ($shouldFilter === false || $server) ? $this->tailServerLogCommand : null,
         ]);
 
         /** @var Fiber[] $fibers */
