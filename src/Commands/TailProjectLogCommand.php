@@ -26,6 +26,7 @@ final readonly class TailProjectLogCommand
         foreach ($this->logConfig->channels as $channel) {
             if ($channel instanceof AppendLogChannel) {
                 $appendLogChannel = $channel;
+
                 break;
             }
         }

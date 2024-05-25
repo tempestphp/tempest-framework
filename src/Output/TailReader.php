@@ -17,6 +17,7 @@ final readonly class TailReader
 
         if (! $handle) {
             Fiber::suspend();
+
             return;
         }
 
