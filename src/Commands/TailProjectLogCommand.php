@@ -35,6 +35,7 @@ final readonly class TailProjectLogCommand
 
         if (! $appendLogChannel) {
             $this->console->error("No AppendLogChannel registered");
+
             return;
         }
 
