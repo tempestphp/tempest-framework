@@ -6,7 +6,6 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Highlight\VarExportLanguage\VarExportLanguage;
 use Tempest\Console\Output\TailReader;
 use Tempest\Log\LogConfig;
 
