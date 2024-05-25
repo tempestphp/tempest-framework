@@ -11,15 +11,14 @@ use Tempest\Console\ConsoleCommand;
 final readonly class TailCommand
 {
     public function __construct(
-        private LogDebugCommand $logDebugCommand,
-        private LogProjectCommand $logProjectCommand,
-        private LogServerCommand $logServerCommand,
+        private TailDebugLogCommand $logDebugCommand,
+        private TailProjectLogCommand $logProjectCommand,
+        private TailServerLogCommand $logServerCommand,
     ) {}
 
     #[ConsoleCommand(
-        name: 'log:tail',
+        name: 'tail',
         description: 'Tail multiple logs',
-        aliases: ['tail'],
     )]
     public function __invoke(
         #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
@@ -35,7 +34,7 @@ final readonly class TailCommand
             || $project !== null
             || $server !== null;
 
-        /** @var array<array-key, \Tempest\Console\Commands\LogDebugCommand|\Tempest\Console\Commands\LogProjectCommand> $loggers */
+        /** @var array<array-key, \Tempest\Console\Commands\TailDebugLogCommand|\Tempest\Console\Commands\TailProjectLogCommand> $loggers */
         $loggers = array_filter([
             ($shouldFilter === false || $debug) ? $this->logDebugCommand : null,
             ($shouldFilter === false || $project) ? $this->logProjectCommand : null,

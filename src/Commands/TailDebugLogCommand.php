@@ -11,7 +11,7 @@ use Tempest\Console\Output\TailReader;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\LogConfig;
 
-final readonly class LogDebugCommand
+final readonly class TailDebugLogCommand
 {
     public function __construct(
         private Console $console,
@@ -20,7 +20,7 @@ final readonly class LogDebugCommand
     ) {
     }
 
-    #[ConsoleCommand('log:debug', aliases: ['ld'])]
+    #[ConsoleCommand('tail:debug', description: 'Tails the debug log', aliases: ['td'])]
     public function __invoke(): void
     {
         $debugLogPath = $this->logConfig->debugLogPath;

@@ -6,11 +6,10 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Highlight\VarExportLanguage\VarExportLanguage;
 use Tempest\Console\Output\TailReader;
 use Tempest\Log\LogConfig;
 
-final readonly class LogServerCommand
+final readonly class TailServerLogCommand
 {
     public function __construct(
         private Console $console,
@@ -18,7 +17,7 @@ final readonly class LogServerCommand
     ) {
     }
 
-    #[ConsoleCommand('log:server', aliases: ['ls'])]
+    #[ConsoleCommand('tail:server', description: "Tails the server log", aliases: ['ts'])]
     public function __invoke(): void
     {
         $serverLogPath = $this->logConfig->serverLogPath;

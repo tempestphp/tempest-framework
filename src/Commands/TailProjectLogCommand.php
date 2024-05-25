@@ -10,7 +10,7 @@ use Tempest\Console\Output\TailReader;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 
-final readonly class LogProjectCommand
+final readonly class TailProjectLogCommand
 {
     public function __construct(
         private Console $console,
@@ -18,7 +18,7 @@ final readonly class LogProjectCommand
     ) {
     }
 
-    #[ConsoleCommand('log:project', aliases: ['lp'])]
+    #[ConsoleCommand('tail:project', description: 'Tails the project log', aliases: ['tp'])]
     public function __invoke(): void
     {
         foreach ($this->logConfig->channels as $channel) {
