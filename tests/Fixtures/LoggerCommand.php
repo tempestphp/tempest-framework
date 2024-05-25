@@ -9,7 +9,9 @@ use Tempest\Log\Logger;
 
 final readonly class LoggerCommand
 {
-    public function __construct(private Logger $logger) {}
+    public function __construct(private Logger $logger)
+    {
+    }
 
     #[ConsoleCommand('logger')]
     public function __invoke(): void

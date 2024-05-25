@@ -23,10 +23,8 @@ final readonly class TailCommand
     public function __invoke(
         #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
         ?bool $debug = null,
-
         #[ConsoleArgument(description: 'Include the project log', aliases: ['-p'])]
         ?bool $project = null,
-
         #[ConsoleArgument(description: 'Include the server log', aliases: ['-s'])]
         ?bool $server = null
     ): void {
