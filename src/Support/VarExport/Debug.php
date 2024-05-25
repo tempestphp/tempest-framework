@@ -11,9 +11,7 @@ use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    public function __construct(private LogConfig $logConfig)
-    {
-    }
+    public function __construct(private LogConfig $logConfig) {}
 
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
@@ -31,7 +29,12 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
-        $handle = fopen($this->logConfig->debugLogPath, 'a');
+        $handle = @fopen($this->logConfig->debugLogPath, 'a');
+
+        if (! $handle) {
+            return;
+        }
+
         $cloner = new VarCloner();
 
         foreach ($items as $key => $item) {
