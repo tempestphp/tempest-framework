@@ -11,7 +11,9 @@ use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    public function __construct(private LogConfig $logConfig) {}
+    public function __construct(private LogConfig $logConfig)
+    {
+    }
 
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
