@@ -17,8 +17,17 @@ final readonly class Debug
 
     public function log(mixed ...$input): void
     {
-        $handle = fopen($this->logConfig->debugLogPath, 'a');
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $callPath = "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'];
 
+        $this->writeToLog($input, $callPath);
+
+        $this->writeToOut($input, $callPath);
+    }
+
+    public function writeToLog(array $input, string $callPath): void
+    {
+        $handle = fopen($this->logConfig->debugLogPath, 'a');
         $cloner = new VarCloner();
 
         foreach ($input as $key => $item) {
@@ -39,14 +48,18 @@ final readonly class Debug
             fwrite($handle, "[{$key}]" . PHP_EOL . $output . PHP_EOL);
         }
 
+        fwrite($handle, $callPath . PHP_EOL);
         fclose($handle);
+    }
 
-        VarDumper::dump($input);
-
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+    public function writeToOut(array $input, string $callPath): void
+    {
+        foreach ($input as $item) {
+            VarDumper::dump($item);
+        }
 
         if (defined('STDOUT')) {
-            fwrite(STDOUT, PHP_EOL . "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'] . PHP_EOL);
+            fwrite(STDOUT, PHP_EOL . $callPath . PHP_EOL);
         }
     }
 }
