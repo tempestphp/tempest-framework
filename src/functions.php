@@ -80,6 +80,5 @@ namespace Tempest {
     function ll(mixed ...$input): void
     {
         get(Debug::class)->log($input, writeToOut: false);
-        die();
     }
 }
