@@ -45,6 +45,8 @@ final readonly class Debug
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
-        fwrite(STDOUT, PHP_EOL . "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'] . PHP_EOL);
+        if (defined('STDOUT')) {
+            fwrite(STDOUT, PHP_EOL . "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'] . PHP_EOL);
+        }
     }
 }
