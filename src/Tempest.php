@@ -11,6 +11,9 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\HttpExceptionHandler;
+use Tempest\Log\Channels\AppendLogChannel;
+use Tempest\Log\LogConfig;
+use Tempest\Support\PathHelper;
 
 final readonly class Tempest
 {
@@ -60,6 +63,10 @@ final readonly class Tempest
         $consoleConfig = $container->get(ConsoleConfig::class);
         $consoleConfig->name = 'Tempest';
 
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
+
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
         return $application;
@@ -76,6 +83,10 @@ final readonly class Tempest
         );
 
         $container->singleton(Application::class, fn () => $application);
+
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
 
         $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
 
