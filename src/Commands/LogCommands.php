@@ -76,10 +76,4 @@ final readonly class LogCommands
             $offset = $newOffset;
         }
     }
-
-    #[ConsoleCommand('log')]
-    public function log(): void
-    {
-        lw(a: ['a' => 123], b: 'abc', time: time());
-    }
 }
