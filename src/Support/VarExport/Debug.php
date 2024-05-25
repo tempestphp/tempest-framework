@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Support\VarExport;
 
-use Stringable;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\VarDumper;
@@ -12,7 +11,9 @@ use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    public function __construct(private LogConfig $logConfig) {}
+    public function __construct(private LogConfig $logConfig)
+    {
+    }
 
     public function log(mixed ...$input): void
     {
