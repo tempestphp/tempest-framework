@@ -21,13 +21,20 @@ final readonly class TailProjectLogCommand
     #[ConsoleCommand('tail:project', description: 'Tails the project log', aliases: ['tp'])]
     public function __invoke(): void
     {
+        $appendLogChannel = null;
+
         foreach ($this->logConfig->channels as $channel) {
             if ($channel instanceof AppendLogChannel) {
-                $this->console->writeln("<h1>Log</h1> Listening for logs…");
-                (new TailReader())->tail($channel->getPath());
+                $appendLogChannel = $channel;
+                break;
             }
         }
 
-        $this->console->error("No AppendLogChannel registered");
+        if ($appendLogChannel) {
+            $this->console->writeln("<h1>Log</h1> Listening for logs…");
+            (new TailReader())->tail($appendLogChannel->getPath());
+        } else {
+            $this->console->error("No AppendLogChannel registered");
+        }
     }
 }

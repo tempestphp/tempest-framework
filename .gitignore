@@ -9,3 +9,5 @@ composer.lock
 *.cache.php
 sessions/
 console.log
+debug.log
+tempest.log
