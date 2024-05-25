@@ -10,7 +10,6 @@ use Tempest\Console\Highlight\VarExportLanguage\VarExportLanguage;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use function Tempest\lw;
 
 final readonly class LogCommands
 {
