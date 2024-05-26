@@ -17,6 +17,7 @@ enum ConsoleTokenType implements TokenType
     case STRONG;
     case SUCCESS;
     case UNDERLINE;
+    case HIGHLIGHT;
 
     public function getValue(): string
     {

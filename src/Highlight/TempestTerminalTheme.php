@@ -25,6 +25,7 @@ final readonly class TempestTerminalTheme implements TerminalTheme
             TokenTypeEnum::COMMENT, ConsoleTokenType::COMMENT => $this->style(TerminalStyle::FG_GRAY),
             ConsoleTokenType::H1 => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_DARK_BLUE) . ' ',
             ConsoleTokenType::H2 => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE) . ' ',
+            ConsoleTokenType::HIGHLIGHT => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE),
             ConsoleTokenType::ERROR => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_RED) . ' ',
             ConsoleTokenType::QUESTION => $this->style(TerminalStyle::BG_BLUE) . ' ',
             ConsoleTokenType::SUCCESS => $this->style(TerminalStyle::BG_DARK_GREEN) . ' ',
