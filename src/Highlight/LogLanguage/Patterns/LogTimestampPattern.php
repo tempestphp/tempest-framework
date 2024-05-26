@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Highlight\LogLanguage\Patterns;
 
 use Tempest\Console\Highlight\ConsoleTokenType;
