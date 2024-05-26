@@ -14,7 +14,8 @@ final readonly class TailCommand
         private TailDebugLogCommand $tailDebugLogCommand,
         private TailProjectLogCommand $tailProjectLogCommand,
         private TailServerLogCommand $tailServerLogCommand,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'tail',
@@ -27,8 +28,7 @@ final readonly class TailCommand
         ?bool $server = null,
         #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
         ?bool $debug = null,
-    ): void
-    {
+    ): void {
         $shouldFilter =
             $project !== null
             || $server !== null
