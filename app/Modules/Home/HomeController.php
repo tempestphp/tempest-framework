@@ -20,7 +20,7 @@ final readonly class HomeController
     public function __invoke(Request $request): View
     {
         ll('ll');
-        $this->logger->debug('hi');
+        $this->logger->debug('logger');
         $view = new HomeView(
             name: 'Brent',
         );

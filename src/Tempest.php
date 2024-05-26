@@ -65,6 +65,7 @@ final readonly class Tempest
 
         $logConfig = $container->get(LogConfig::class);
         $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->serverLogPath = env('SERVER_LOG');
         $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
@@ -85,6 +86,7 @@ final readonly class Tempest
 
         $logConfig = $container->get(LogConfig::class);
         $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->serverLogPath = env('SERVER_LOG');
         $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
         $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
 
