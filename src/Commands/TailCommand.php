@@ -14,30 +14,31 @@ final readonly class TailCommand
         private TailDebugLogCommand $tailDebugLogCommand,
         private TailProjectLogCommand $tailProjectLogCommand,
         private TailServerLogCommand $tailServerLogCommand,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'tail',
         description: 'Tail multiple logs',
     )]
     public function __invoke(
-        #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
-        ?bool $debug = null,
         #[ConsoleArgument(description: 'Include the project log', aliases: ['-p'])]
         ?bool $project = null,
         #[ConsoleArgument(description: 'Include the server log', aliases: ['-s'])]
-        ?bool $server = null
-    ): void {
-        $shouldFilter = $debug !== null
-            || $project !== null
-            || $server !== null;
+        ?bool $server = null,
+        #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
+        ?bool $debug = null,
+    ): void
+    {
+        $shouldFilter =
+            $project !== null
+            || $server !== null
+            || $debug !== null;
 
         /** @var array<array-key, \Tempest\Console\Commands\TailDebugLogCommand|\Tempest\Console\Commands\TailProjectLogCommand> $loggers */
         $loggers = array_filter([
-            ($shouldFilter === false || $debug) ? $this->tailDebugLogCommand : null,
             ($shouldFilter === false || $project) ? $this->tailProjectLogCommand : null,
             ($shouldFilter === false || $server) ? $this->tailServerLogCommand : null,
+            ($shouldFilter === false || $debug) ? $this->tailDebugLogCommand : null,
         ]);
 
         /** @var Fiber[] $fibers */
