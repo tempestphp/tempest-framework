@@ -14,7 +14,7 @@ final class ConsoleInputArgument
     ) {
     }
 
-    public static function fromString(string $argument, int $position): ConsoleInputArgument
+    public static function fromString(string $argument, ?int $position = null): ConsoleInputArgument
     {
         if (str_starts_with($argument, '--')) {
             [$key, $value] = self::parseNamedArgument($argument);
@@ -38,6 +38,12 @@ final class ConsoleInputArgument
                 isPositional: true,
             );
         }
+    }
+
+    public function matches(string $name): bool
+    {
+        return $this->name === $name
+            || $this->name === "-{$name}";
     }
 
     /**

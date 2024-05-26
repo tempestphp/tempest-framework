@@ -31,10 +31,11 @@ final readonly class TailProjectLogCommand
             }
         }
 
-        $this->console->write('<h1>Log</h1> ');
+        $this->console->write('<h1>Project</h1> ');
 
         if (! $appendLogChannel) {
             $this->console->error("No AppendLogChannel registered");
+
             return;
         }
 

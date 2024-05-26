@@ -59,6 +59,12 @@ final readonly class ConsoleArgumentDefinition
             return false;
         }
 
-        return in_array($argument->name, [$this->name, ...$this->aliases]);
+        foreach ([$this->name, ...$this->aliases] as $match) {
+            if ($argument->matches($match)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

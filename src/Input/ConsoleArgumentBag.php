@@ -25,6 +25,19 @@ final class ConsoleArgumentBag
         unset($arguments[0], $arguments[1]);
 
         foreach (array_values($arguments) as $position => $argument) {
+            if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
+                $flags = str_split($argument);
+                unset($flags[0]);
+
+                foreach ($flags as $flag) {
+                    $arguments[] = "-{$flag}";
+                }
+
+                unset($arguments[$position]);
+            }
+        }
+
+        foreach (array_values($arguments) as $position => $argument) {
             $this->add(
                 ConsoleInputArgument::fromString($argument, $position),
             );
@@ -42,7 +55,7 @@ final class ConsoleArgumentBag
     public function get(string $name): ?ConsoleInputArgument
     {
         foreach ($this->arguments as $argument) {
-            if ($argument->name === $name) {
+            if ($argument->matches($name)) {
                 return $argument;
             }
         }

@@ -55,4 +55,18 @@ final class ConsoleArgumentBagTest extends TestCase
             ->assertContains('true')
         ;
     }
+
+    public function test_combined_flags(): void
+    {
+        $this->console
+            ->call('flags -ab')
+            ->assertContains('ok');
+    }
+
+    public function test_short_flags_are_mapped_to_parameters_directly(): void
+    {
+        $this->console
+            ->call('flags:short -ab')
+            ->assertContains('ok');
+    }
 }
