@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Highlight\LogLanguage\Patterns;
 
 use Tempest\Console\Highlight\ConsoleTokenType;
@@ -18,6 +20,6 @@ final readonly class LogNamePattern implements Pattern
 
     public function getTokenType(): TokenType
     {
-        return ConsoleTokenType::EM;
+        return ConsoleTokenType::H2;
     }
 }

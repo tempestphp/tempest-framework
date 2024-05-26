@@ -6,7 +6,9 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Highlight\LogLanguage\LogLanguage;
 use Tempest\Console\Output\TailReader;
+use Tempest\Highlight\Highlighter;
 use Tempest\Log\LogConfig;
 
 final readonly class TailServerLogCommand
@@ -14,6 +16,7 @@ final readonly class TailServerLogCommand
     public function __construct(
         private Console $console,
         private LogConfig $logConfig,
+        private Highlighter $highlighter,
     ) {
     }
 
@@ -38,6 +41,12 @@ final readonly class TailServerLogCommand
 
         $this->console->writeln("Listening at <em>{$serverLogPath}</em>");
 
-        (new TailReader())->tail($serverLogPath);
+        (new TailReader())->tail(
+            path: $serverLogPath,
+            format: fn (string $text) => $this->highlighter->parse(
+                $text,
+                new LogLanguage(),
+            ),
+        );
     }
 }

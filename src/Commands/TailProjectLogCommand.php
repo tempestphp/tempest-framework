@@ -6,7 +6,9 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Highlight\LogLanguage\LogLanguage;
 use Tempest\Console\Output\TailReader;
+use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 
@@ -15,6 +17,7 @@ final readonly class TailProjectLogCommand
     public function __construct(
         private Console $console,
         private LogConfig $logConfig,
+        private Highlighter $highlighter,
     ) {
     }
 
@@ -51,6 +54,12 @@ final readonly class TailProjectLogCommand
 
         $this->console->writeln("Listening at <em>{$appendLogChannel->getPath()}</em>");
 
-        (new TailReader())->tail($appendLogChannel->getPath());
+        (new TailReader())->tail(
+            path: $appendLogChannel->getPath(),
+            format: fn (string $text) => $this->highlighter->parse(
+                $text,
+                new LogLanguage(),
+            ),
+        );
     }
 }

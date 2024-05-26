@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Highlight\LogLanguage;
 
 use Tempest\Console\Highlight\LogLanguage\Patterns\LogNamePattern;

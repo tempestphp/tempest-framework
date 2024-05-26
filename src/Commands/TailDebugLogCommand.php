@@ -46,8 +46,8 @@ final readonly class TailDebugLogCommand
         $this->console->writeln("Listening at <em>{$debugLogPath}</em>");
 
         (new TailReader())->tail(
-            $debugLogPath,
-            fn (string $text) => $this->highlighter->parse(
+            path: $debugLogPath,
+            format: fn (string $text) => $this->highlighter->parse(
                 $text,
                 new VarExportLanguage(),
             )
