@@ -58,10 +58,11 @@ final readonly class Debug
 
             $dumper->dump($cloner->cloneVar($item));
 
+            $output .=  $callPath;
+
             fwrite($handle, "[{$key}] " . $output . PHP_EOL);
         }
 
-        fwrite($handle, $callPath);
         fclose($handle);
     }
 
