@@ -52,7 +52,7 @@ final readonly class TailProjectLogCommand
             touch($appendLogChannel->getPath());
         }
 
-        $this->console->writeln("Listening at <em>{$appendLogChannel->getPath()}</em>");
+        $this->console->writeln("Listening at {$appendLogChannel->getPath()}");
 
         (new TailReader())->tail(
             path: $appendLogChannel->getPath(),

@@ -43,7 +43,7 @@ final readonly class TailDebugLogCommand
             touch($debugLogPath);
         }
 
-        $this->console->writeln("Listening at <em>{$debugLogPath}</em>");
+        $this->console->writeln("Listening at {$debugLogPath}");
 
         (new TailReader())->tail(
             path: $debugLogPath,
