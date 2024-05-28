@@ -2,6 +2,29 @@
 
 declare(strict_types=1);
 
+namespace {
+    if (! function_exists('lw')) {
+        function lw(mixed ...$input): void
+        {
+            \Tempest\lw(...$input);
+        }
+    }
+
+    if (! function_exists('ld')) {
+        function ld(mixed ...$input): void
+        {
+            \Tempest\ld(...$input);
+        }
+    }
+
+    if (! function_exists('ll')) {
+        function ll(mixed ...$input): void
+        {
+            \Tempest\ll(...$input);
+        }
+    }
+}
+
 namespace Tempest {
 
     use ReflectionType;
