@@ -79,7 +79,7 @@ final class ConfirmComponent implements InteractiveComponent, HasCursor, HasStat
     public function getCursorPosition(): Point
     {
         return new Point(
-            x: strlen($this->question) + 15,
+            x: strlen($this->question) + 12,
             y: 0,
         );
     }

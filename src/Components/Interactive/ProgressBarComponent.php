@@ -67,7 +67,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
 
     public function renderFooter(): string
     {
-        return "";
+        return "Press <em>ctrl+c</em> to cancel";
     }
 
     public function getStaticComponent(): StaticComponent

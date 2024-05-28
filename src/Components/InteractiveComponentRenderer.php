@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components;
 
+use Fiber;
 use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Console;
@@ -20,70 +21,150 @@ use Tempest\Validation\Validator;
 final class InteractiveComponentRenderer
 {
     private array $validationErrors = [];
+    private bool $shouldRerender = true;
 
-    public function render(
-        Console $console,
-        InteractiveComponent $component,
-        array $validation = []
-    ): mixed {
-        $terminal = new Terminal($console);
+    public function render(Console $console, InteractiveComponent $component, array $validation = []): mixed
+    {
+        $clone = clone $this;
 
-        [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
+        return $clone->renderComponent($console, $component, $validation);
+    }
 
-        $terminal->cursor->clearAfter();
+    private function renderComponent(Console $console, InteractiveComponent $component, array $validation = []): mixed
+    {
+        $terminal = $this->createTerminal($console);
 
-        $return = $terminal->render($component);
+        $fibers = [
+            new Fiber(fn () => $this->applyKey($component, $validation)),
+            new Fiber(fn () => $this->renderFrames($component, $terminal)),
+        ];
 
-        if ($return !== null) {
-            $terminal->switchToNormalMode();
+        try {
+            while ($fibers !== []) {
+                foreach ($fibers as $key => $fiber) {
+                    if (! $fiber->isStarted()) {
+                        $fiber->start();
+                    }
 
-            return $return;
+                    $fiber->resume();
+
+                    if ($fiber->isTerminated()) {
+                        unset($fibers[$key]);
+
+                        $return = $fiber->getReturn();
+
+                        if ($return !== null) {
+                            $this->closeTerminal($terminal);
+
+                            return $return;
+                        }
+                    }
+                }
+            }
+        } catch (InterruptException $interruptException) {
+            $this->closeTerminal($terminal);
+
+            throw $interruptException;
         }
 
-        while ($key = $console->read(16)) {
-            if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
-                $terminal->switchToNormalMode();
+        $this->closeTerminal($terminal);
 
+        return null;
+    }
+
+    private function applyKey(InteractiveComponent $component, array $validation): mixed
+    {
+        [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
+
+        while (true) {
+            $key = fread(STDIN, 16);
+
+            // If there's no keypress, continue
+            if ($key === '') {
+                Fiber::suspend();
+
+                continue;
+            }
+
+            // If ctrl+c or ctrl+d, we'll exit
+            if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
                 throw new InterruptException();
             }
 
             $return = null;
 
             if ($handlersForKey = $keyBindings[$key] ?? null) {
-                // Specific key handlers
+                // Apply specific key handlers
                 foreach ($handlersForKey as $handler) {
                     $return ??= $handler->invoke($component);
                 }
             } else {
-                // Catch-all key handlers
+                // Apply catch-all key handlers
                 foreach ($inputHandlers as $handler) {
                     $return ??= $handler->invoke($component, $key);
                 }
             }
 
+            // If nothing's returned, we can continue waiting for the next key press
             if ($return === null) {
-                $terminal->render($component, footerLines: $this->validationErrors);
-            } else {
-                $this->validationErrors = [];
+                $this->shouldRerender = true;
+                Fiber::suspend();
 
-                $failingRule = $this->validate($return, $validation);
+                continue;
+            }
 
-                if ($failingRule) {
-                    $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
-                }
+            // If something's returned, we'll need to validate the result
+            $this->validationErrors = [];
 
-                if ($this->validationErrors) {
-                    $terminal->render($component, footerLines: $this->validationErrors);
-                } else {
-                    $terminal->render($component, renderFooter: false);
-                    $terminal->switchToNormalMode();
+            $failingRule = $this->validate($return, $validation);
 
-                    return $return;
-                }
+            // If invalid, we'll remember the validation message and continue
+            if ($failingRule) {
+                $this->shouldRerender = true;
+                $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
+                Fiber::suspend();
+
+                continue;
+            }
+
+            // If valid, we can return
+            return $return;
+        }
+    }
+
+    private function renderFrames(InteractiveComponent $component, Terminal $terminal): mixed
+    {
+        while (true) {
+            // If there are no updates,
+            // we won't spend time re-rendering the same frame
+            if (! $this->shouldRerender) {
+                Fiber::suspend();
+
+                continue;
+            }
+
+            // Rerender the frames, it could be one or more
+            $frames = $terminal->render(
+                component: $component,
+                footerLines: $this->validationErrors,
+                renderFooter: $this->validationErrors !== [],
+            );
+
+            // Looping over the frames will display them (within Terminal, might need to refactor)
+            // We suspend between each frame to allow key press interruptions
+            foreach ($frames as $frame) {
+                Fiber::suspend();
+            }
+
+            $return = $frames->getReturn();
+
+            // Everything's rerendered
+            $this->shouldRerender = false;
+
+            if ($return !== null) {
+                return $return;
             }
         }
-
-        return null;
     }
 
     private function resolveHandlers(InteractiveComponent $component): array
@@ -123,5 +204,20 @@ final class InteractiveComponentRenderer
         }
 
         return null;
+    }
+
+    private function createTerminal(Console $console): Terminal
+    {
+        $terminal = new Terminal($console);
+        $terminal->cursor->clearAfter();
+        stream_set_blocking(STDIN, false);
+
+        return $terminal;
+    }
+
+    private function closeTerminal(Terminal $terminal): void
+    {
+        $terminal->switchToNormalMode();
+        stream_set_blocking(STDIN, true);
     }
 }

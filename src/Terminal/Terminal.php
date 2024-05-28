@@ -44,7 +44,10 @@ final class Terminal
     {
         $this->cursor->show();
 
-        system("stty {$this->tty}");
+        if ($this->tty) {
+            system("stty {$this->tty}");
+        }
+
         system("stty echo");
         system("stty icanon");
         system("stty isig");
@@ -59,24 +62,28 @@ final class Terminal
         InteractiveComponent $component,
         array $footerLines = [],
         bool $renderFooter = true,
-    ): mixed {
+    ): Generator {
         $rendered = $component->render();
 
-        if ($renderFooter && is_string($rendered)) {
-            if ($footer = $component->renderFooter()) {
-                $footerLines = [...$footerLines, $footer];
-            }
+        if (! $rendered instanceof Generator) {
+            $rendered = (function (string $content): Generator {
+                yield $content;
 
-            if ($footerLines !== []) {
-                $rendered .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
-            }
-        }
-
-        if (is_string($rendered)) {
-            $rendered = [$rendered];
+                return null;
+            })($rendered);
         }
 
         foreach ($rendered as $content) {
+            if ($renderFooter) {
+                if ($footer = $component->renderFooter()) {
+                    $footerLines = [...$footerLines, $footer];
+                }
+
+                if ($footerLines !== []) {
+                    $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
+                }
+            }
+
             $this
                 ->clear()
                 ->write($content)
@@ -87,13 +94,11 @@ final class Terminal
             } else {
                 $this->cursor->hide();
             }
+
+            yield;
         }
 
-        if ($rendered instanceof Generator) {
-            return $rendered->getReturn();
-        }
-
-        return null;
+        return $rendered->getReturn();
     }
 
     private function clear(): self

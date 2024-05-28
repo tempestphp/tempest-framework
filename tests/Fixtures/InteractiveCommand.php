@@ -28,7 +28,9 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:confirm')]
     public function confirm(): void
     {
-        $this->console->confirm('abc', true);
+        $confirm = $this->console->confirm('abc', true);
+
+        $this->console->writeln($confirm ? 'yes' : 'no');
     }
 
     #[ConsoleCommand('interactive:password')]
@@ -98,14 +100,16 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:progress')]
     public function progress(): void
     {
-        $this->console->progressBar(
+        $result = $this->console->progressBar(
             data: array_fill(0, 10, 'a'),
             handler: function ($i) {
                 usleep(100000);
 
-                return $i;
+                return $i . $i;
             },
         );
+
+        $this->console->writeln(json_encode($result, JSON_PRETTY_PRINT));
     }
 
     #[ConsoleCommand('interactive:search')]
