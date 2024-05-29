@@ -23,8 +23,8 @@ final class ConsoleConfig
         /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
         public array $middleware = [
             OverviewMiddleware::class,
-            ResolveOrRescueMiddleware::class,
             ConsoleExceptionMiddleware::class,
+            ResolveOrRescueMiddleware::class,
             InvalidCommandMiddleware::class,
             HelpMiddleware::class,
         ],

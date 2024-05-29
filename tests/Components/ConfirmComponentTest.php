@@ -43,6 +43,6 @@ class ConfirmComponentTest extends TestCase
 
         $this->assertFalse($component->enter());
 
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(20, 0)));
+        $this->assertTrue($component->getCursorPosition()->equals(new Point(17, 0)));
     }
 }

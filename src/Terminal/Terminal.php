@@ -74,7 +74,7 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
-            if ($renderFooter) {
+            if ($renderFooter || $footerLines !== []) {
                 if ($footer = $component->renderFooter()) {
                     $footerLines = [...$footerLines, $footer];
                 }

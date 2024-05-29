@@ -11,7 +11,7 @@ use Tempest\Console\Key;
 
 final class MemoryInputBuffer implements InputBuffer
 {
-    private ?string $buffer = null;
+    private array $buffer = [];
     private ?Fiber $fiber = null;
 
     public function __construct()
@@ -21,7 +21,7 @@ final class MemoryInputBuffer implements InputBuffer
     public function add(int|string|Key ...$input): void
     {
         foreach ($input as $line) {
-            $this->buffer .= $line instanceof Key
+            $this->buffer[] = $line instanceof Key
                 ? $line->value
                 : (string) $line;
         }
@@ -49,14 +49,8 @@ final class MemoryInputBuffer implements InputBuffer
 
         Fiber::suspend();
 
-        $buffer = $this->buffer;
+        $next = array_shift($this->buffer);
 
-        if ($buffer === null) {
-            throw new Exception('Empty buffer');
-        }
-
-        $this->buffer = null;
-
-        return $buffer;
+        return $next ?? '';
     }
 }

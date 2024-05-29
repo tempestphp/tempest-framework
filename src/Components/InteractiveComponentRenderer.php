@@ -35,7 +35,7 @@ final class InteractiveComponentRenderer
         $terminal = $this->createTerminal($console);
 
         $fibers = [
-            new Fiber(fn () => $this->applyKey($component, $validation)),
+            new Fiber(fn () => $this->applyKey($component, $console, $validation)),
             new Fiber(fn () => $this->renderFrames($component, $terminal)),
         ];
 
@@ -60,6 +60,12 @@ final class InteractiveComponentRenderer
                         }
                     }
                 }
+
+                // If we're running within a fiber, we'll suspend here as well so that the parent can continue
+                // This is needed for our testing helper
+                if (Fiber::getCurrent()) {
+                    Fiber::suspend();
+                }
             }
         } catch (InterruptException $interruptException) {
             $this->closeTerminal($terminal);
@@ -72,13 +78,13 @@ final class InteractiveComponentRenderer
         return null;
     }
 
-    private function applyKey(InteractiveComponent $component, array $validation): mixed
+    private function applyKey(InteractiveComponent $component, Console $console, array $validation): mixed
     {
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
         while (true) {
             usleep(5000);
-            $key = fread(STDIN, 16);
+            $key = $console->read(16);
 
             // If there's no keypress, continue
             if ($key === '') {
@@ -91,6 +97,8 @@ final class InteractiveComponentRenderer
             if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
                 throw new InterruptException();
             }
+
+            $this->shouldRerender = true;
 
             $return = null;
 
@@ -108,7 +116,6 @@ final class InteractiveComponentRenderer
 
             // If nothing's returned, we can continue waiting for the next key press
             if ($return === null) {
-                $this->shouldRerender = true;
                 Fiber::suspend();
 
                 continue;
@@ -121,7 +128,6 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule) {
-                $this->shouldRerender = true;
                 $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
                 Fiber::suspend();
 
@@ -150,10 +156,10 @@ final class InteractiveComponentRenderer
             $frames = $terminal->render(
                 component: $component,
                 footerLines: $this->validationErrors,
-                renderFooter: $this->validationErrors !== [],
             );
 
-            // Looping over the frames will display them (within Terminal, might need to refactor)
+            // Looping over the frames will display them
+            // (this happens within the Terminal class, might need to refactor)
             // We suspend between each frame to allow key press interruptions
             foreach ($frames as $frame) {
                 Fiber::suspend();
