@@ -91,4 +91,11 @@ final class ConsoleArgumentBagTest extends TestCase
             ->call('array_input --input=a --input=b')
             ->assertContains('["a","b"]');
     }
+
+    public function test_array_with_one_element_to_command(): void
+    {
+        $this->console
+            ->call('array_input --input=a')
+            ->assertContains('["a"]');
+    }
 }

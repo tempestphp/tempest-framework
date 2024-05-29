@@ -85,4 +85,13 @@ final class ConsoleInputArgument
 
         return $clone;
     }
+
+    public function asArray(): self
+    {
+        $clone = clone $this;
+
+        $clone->value = ArrayHelper::wrap($this->value);
+
+        return $clone;
+    }
 }
