@@ -60,8 +60,7 @@ final class Terminal
 
     public function render(
         InteractiveComponent $component,
-        array $footerLines = [],
-        bool $renderFooter = true,
+        array $footerLines = []
     ): Generator {
         $rendered = $component->render();
 
@@ -74,14 +73,12 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
-            if ($renderFooter || $footerLines !== []) {
-                if ($footer = $component->renderFooter()) {
-                    $footerLines = [...$footerLines, $footer];
-                }
+            if ($footer = $component->renderFooter()) {
+                $footerLines[] = $footer;
+            }
 
-                if ($footerLines !== []) {
-                    $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
-                }
+            if ($footerLines !== []) {
+                $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
             }
 
             $this
