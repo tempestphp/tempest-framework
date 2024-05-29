@@ -147,6 +147,11 @@ final class ConsoleTester
         return $this;
     }
 
+    public function assertSee(string $text): self
+    {
+        return $this->assertContains($text);
+    }
+
     public function assertContains(string $text): self
     {
         Assert::assertStringContainsString(

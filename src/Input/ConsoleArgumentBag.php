@@ -34,7 +34,7 @@ final class ConsoleArgumentBag
 
         $this->path = [$cli, $commandName];
 
-        foreach (array_values($arguments) as $position => $argument) {
+        foreach ($arguments as $argument) {
             if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
                 $flags = str_split($argument);
                 unset($flags[0]);
@@ -42,8 +42,6 @@ final class ConsoleArgumentBag
                 foreach ($flags as $flag) {
                     $arguments[] = "-{$flag}";
                 }
-
-                unset($arguments[$position]);
             }
         }
 
@@ -107,7 +105,9 @@ final class ConsoleArgumentBag
 
     public function add(ConsoleInputArgument $argument): self
     {
-        $this->arguments[] = $argument;
+        $key = $argument->name ?? $argument->position;
+
+        $this->arguments[$key] = $argument->merge($this->arguments[$key] ?? null);
 
         return $this;
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Input;
 
+use Tempest\Support\ArrayHelper;
+
 final class ConsoleInputArgument
 {
     public function __construct(
@@ -69,5 +71,18 @@ final class ConsoleInputArgument
         };
 
         return [$key, $value];
+    }
+
+    public function merge(?ConsoleInputArgument $other): self
+    {
+        $clone = clone $this;
+
+        if ($other === null) {
+            return $clone;
+        }
+
+        $clone->value = array_values([...ArrayHelper::wrap($other->value), ...ArrayHelper::wrap($this->value)]);
+
+        return $clone;
     }
 }

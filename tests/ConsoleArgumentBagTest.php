@@ -31,12 +31,12 @@ final class ConsoleArgumentBagTest extends TestCase
         $this->assertSame(0, $firstArg->position);
         $this->assertNull($firstArg->name);
 
-        $forceFlag = $bag->all()[1];
+        $forceFlag = $bag->all()['force'];
         $this->assertSame(true, $forceFlag->value);
         $this->assertSame(null, $forceFlag->position);
         $this->assertSame('force', $forceFlag->name);
 
-        $timesFlag = $bag->all()[2];
+        $timesFlag = $bag->all()['times'];
         $this->assertSame('2', $timesFlag->value);
         $this->assertSame(null, $timesFlag->position);
         $this->assertSame('times', $timesFlag->name);
@@ -68,5 +68,27 @@ final class ConsoleArgumentBagTest extends TestCase
         $this->console
             ->call('flags:short -ab')
             ->assertContains('ok');
+    }
+
+    public function test_array_input(): void
+    {
+        $argv = [
+            'tempest',
+            'test',
+            '--input=a',
+            '--input=b',
+            '--input=c',
+        ];
+
+        $bag = new ConsoleArgumentBag($argv);
+
+        $this->assertSame(['a', 'b', 'c'], $bag->get('input')->value);
+    }
+
+    public function test_array_input_to_command(): void
+    {
+        $this->console
+            ->call('array_input --input=a --input=b')
+            ->assertContains('["a","b"]');
     }
 }
