@@ -77,6 +77,7 @@ final class InteractiveComponentRenderer
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
         while (true) {
+            usleep(5000);
             $key = fread(STDIN, 16);
 
             // If there's no keypress, continue
@@ -135,6 +136,8 @@ final class InteractiveComponentRenderer
     private function renderFrames(InteractiveComponent $component, Terminal $terminal): mixed
     {
         while (true) {
+            usleep(5000);
+
             // If there are no updates,
             // we won't spend time re-rendering the same frame
             if (! $this->shouldRerender) {
