@@ -23,6 +23,7 @@ final class ConsoleCommand
 
         /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
         public readonly array $middleware = [],
+        public readonly bool $hidden = false,
     ) {
     }
 

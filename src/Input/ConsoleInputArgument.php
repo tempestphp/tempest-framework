@@ -42,8 +42,11 @@ final class ConsoleInputArgument
 
     public function matches(string $name): bool
     {
-        return $this->name === $name
-            || $this->name === "-{$name}";
+        if ($this->name === null) {
+            return false;
+        }
+
+        return ltrim($this->name, '-') === ltrim($name, '-');
     }
 
     /**

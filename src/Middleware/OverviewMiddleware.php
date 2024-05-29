@@ -24,7 +24,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     public function __invoke(Invocation $invocation, callable $next): ExitCode
     {
         if (! $invocation->argumentBag->getCommandName()) {
-            $this->renderOverview();
+            $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));
 
             return ExitCode::SUCCESS;
         }
@@ -32,7 +32,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         return $next($invocation);
     }
 
-    private function renderOverview(): void
+    private function renderOverview(bool $showHidden = false): void
     {
         $this->console
             ->writeln("<h1>{$this->consoleConfig->name}</h1>")
@@ -45,6 +45,10 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         $commands = [];
 
         foreach ($this->consoleConfig->commands as $consoleCommand) {
+            if ($showHidden === false && $consoleCommand->hidden) {
+                continue;
+            }
+
             $parts = explode(':', $consoleCommand->getName());
 
             $group = count($parts) > 1 ? $parts[0] : 'General';

@@ -17,12 +17,22 @@ final class ConsoleArgumentBag
      */
     public function __construct(array $arguments)
     {
-        $this->path = array_filter([
-            $arguments[0] ?? null,
-            $arguments[1] ?? null,
-        ]);
+        $cli = $arguments[0] ?? null;
+        unset($arguments[0]);
 
-        unset($arguments[0], $arguments[1]);
+        $commandName = $arguments[1] ?? null;
+
+        if (
+            $commandName !== null
+            && ! str_starts_with($commandName, '--')
+            && ! str_starts_with($commandName, '-')
+        ) {
+            unset($arguments[1]);
+        } else {
+            $commandName = null;
+        }
+
+        $this->path = [$cli, $commandName];
 
         foreach (array_values($arguments) as $position => $argument) {
             if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
@@ -50,6 +60,19 @@ final class ConsoleArgumentBag
     public function all(): array
     {
         return $this->arguments;
+    }
+
+    public function has(string ...$names): bool
+    {
+        foreach ($this->arguments as $argument) {
+            foreach ($names as $name) {
+                if ($argument->matches($name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public function get(string $name): ?ConsoleInputArgument
