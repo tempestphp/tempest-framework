@@ -20,7 +20,10 @@ final readonly class ScheduleTaskCommand
     ) {
     }
 
-    #[ConsoleCommand(self::NAME)]
+    #[ConsoleCommand(
+        name: self::NAME,
+        complete: [self::class, 'complete'],
+    )]
     public function __invoke(string $task): void
     {
         $console = $this->console->withLabel($task);
@@ -51,5 +54,10 @@ final readonly class ScheduleTaskCommand
         );
 
         $console->success('Done');
+    }
+
+    public function complete()
+    {
+        dd('complete');
     }
 }

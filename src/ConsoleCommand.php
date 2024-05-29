@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Attribute;
+use Closure;
 use ReflectionMethod;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 
@@ -24,6 +25,7 @@ final class ConsoleCommand
         /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
         public readonly array $middleware = [],
         public readonly bool $hidden = false,
+        public string|array|Closure|null $complete = null,
     ) {
     }
 
