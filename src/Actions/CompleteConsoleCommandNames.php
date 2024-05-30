@@ -21,6 +21,10 @@ final readonly class CompleteConsoleCommandNames
         $completions = [];
 
         foreach ($this->consoleConfig->commands as $name => $definition) {
+            if ($definition->hidden) {
+                continue;
+            }
+
             if (! str_starts_with($name, $currentCommandName)) {
                 continue;
             }
