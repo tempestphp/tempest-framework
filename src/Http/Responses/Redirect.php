@@ -18,4 +18,11 @@ final class Redirect implements Response
         $this->status = Status::FOUND;
         $this->addHeader('Location', $to);
     }
+
+    public function permanent(): self
+    {
+        $this->status = Status::MOVED_PERMANENTLY;
+
+        return $this;
+    }
 }
