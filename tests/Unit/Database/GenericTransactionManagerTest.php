@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Database;
 
-use Exception;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Exceptions\CannotBeginTransaction;
@@ -101,5 +100,4 @@ final class GenericTransactionManagerTest extends TestCase
 
         $manager->rollback();
     }
-
 }

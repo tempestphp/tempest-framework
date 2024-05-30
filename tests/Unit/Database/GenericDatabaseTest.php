@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Database;
 
-use PDO;
 use Exception;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
 
+/**
+ * @internal
+ * @small
+ */
 final class GenericDatabaseTest extends TestCase
 {
-
-
     public function test_it_executes_transactions(): void
     {
         $pdo = $this->createMock(PDO::class);
@@ -61,5 +63,4 @@ final class GenericDatabaseTest extends TestCase
 
         $this->assertFalse($result);
     }
-
 }

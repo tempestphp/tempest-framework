@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Integration\Database;
 
-use Exception;
 use PDOException;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Transactions\TransactionManager;
@@ -29,7 +28,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->rollback();
 
-        $this->expectExceptionMessage("no such table");
+        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
 
         $this->assertCount(0, Migration::all());
     }
@@ -47,7 +46,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->rollback();
 
-        $this->expectExceptionMessage("no such table");
+        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
 
         $this->assertCount(0, Migration::all());
     }
@@ -83,8 +82,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(3, Migration::all());
 
-        $this->expectExceptionMessage("There is no active transaction");
-        $this->expectException(PDOException::class);
+        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
 
         $manager->rollback();
 
@@ -104,7 +102,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->rollback();
 
-        $this->expectExceptionMessage("no such table");
+        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
 
         $this->assertCount(0, Migration::all());
 

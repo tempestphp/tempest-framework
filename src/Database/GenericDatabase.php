@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use PDO;
-use Throwable;
 use Tempest\Database\Transactions\TransactionManager;
+use Throwable;
 
 final readonly class GenericDatabase implements Database
 {
