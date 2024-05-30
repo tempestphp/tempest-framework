@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console;
 
+use PHPUnit\Framework\TestCase;
 use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
@@ -19,7 +20,7 @@ use Tempest\Kernel;
  * @internal
  * @small
  */
-class TestCase extends \PHPUnit\Framework\TestCase
+class ConsoleIntegrationTestCase extends TestCase
 {
     protected Container $container;
     protected ConsoleTester $console;

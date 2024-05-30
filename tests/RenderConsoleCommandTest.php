@@ -18,7 +18,7 @@ use Tests\Tempest\Console\Fixtures\MyConsole;
  * @internal
  * @small
  */
-class RenderConsoleCommandTest extends TestCase
+class RenderConsoleCommandTest extends ConsoleIntegrationTestCase
 {
     public function test_render()
     {

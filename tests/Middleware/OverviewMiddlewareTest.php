@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Middleware;
 
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class OverviewMiddlewareTest extends TestCase
+class OverviewMiddlewareTest extends ConsoleIntegrationTestCase
 {
     public function test_overview(): void
     {

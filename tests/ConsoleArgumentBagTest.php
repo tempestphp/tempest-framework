@@ -11,7 +11,7 @@ use Tempest\Console\Input\ConsoleArgumentDefinition;
  * @internal
  * @small
  */
-final class ConsoleArgumentBagTest extends TestCase
+final class ConsoleArgumentBagTest extends ConsoleIntegrationTestCase
 {
     public function test_argument_bag_works(): void
     {

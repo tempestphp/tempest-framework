@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Scheduler;
 
 use Tempest\Console\Commands\ScheduleTaskCommand;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 use Tests\Tempest\Console\Fixtures\ScheduledCommand;
-use Tests\Tempest\Console\TestCase;
 
 /**
  * @internal
  * @small
  */
-final class SchedulerInvokeCommandTest extends TestCase
+final class SchedulerInvokeCommandTest extends ConsoleIntegrationTestCase
 {
     public function test_scheduler_invoke_command_executes_handler()
     {

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class StaticSearchComponentTest extends TestCase
+class StaticSearchComponentTest extends ConsoleIntegrationTestCase
 {
     public function test_search_component(): void
     {

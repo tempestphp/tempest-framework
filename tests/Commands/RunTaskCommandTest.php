@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Commands;
 
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class RunTaskCommandTest extends TestCase
+class RunTaskCommandTest extends ConsoleIntegrationTestCase
 {
     public function test_run_task()
     {

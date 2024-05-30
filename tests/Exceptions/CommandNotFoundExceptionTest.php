@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Exceptions;
 
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class CommandNotFoundExceptionTest extends TestCase
+class CommandNotFoundExceptionTest extends ConsoleIntegrationTestCase
 {
     public function test_console_exception_handler(): void
     {

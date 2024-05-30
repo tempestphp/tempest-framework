@@ -6,13 +6,13 @@ namespace Tests\Tempest\Console\Terminal;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class TerminalTest extends TestCase
+class TerminalTest extends ConsoleIntegrationTestCase
 {
     public function test_terminal_rendering(): void
     {

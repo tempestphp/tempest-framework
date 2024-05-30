@@ -6,16 +6,16 @@ namespace Tests\Tempest\Console\Testing;
 
 use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 use Tests\Tempest\Console\Fixtures\ComplexCommand;
 use Tests\Tempest\Console\Fixtures\Hello;
 use Tests\Tempest\Console\Fixtures\InteractiveCommand;
-use Tests\Tempest\Console\TestCase;
 
 /**
  * @internal
  * @small
  */
-class ConsoleTesterTest extends TestCase
+class ConsoleTesterTest extends ConsoleIntegrationTestCase
 {
     public function test_call_with_invokable(): void
     {

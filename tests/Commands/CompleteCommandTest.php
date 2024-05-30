@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Commands;
 
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class CompleteCommandTest extends TestCase
+class CompleteCommandTest extends ConsoleIntegrationTestCase
 {
     public function test_complete_commands(): void
     {

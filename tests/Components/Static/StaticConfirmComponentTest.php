@@ -6,13 +6,13 @@ namespace Tests\Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class StaticConfirmComponentTest extends TestCase
+class StaticConfirmComponentTest extends ConsoleIntegrationTestCase
 {
     public function test_confirm(): void
     {

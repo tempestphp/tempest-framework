@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Middleware;
 
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 use Tests\Tempest\Console\Fixtures\ComplexCommand;
-use Tests\Tempest\Console\TestCase;
 
 /**
  * @internal
  * @small
  */
-class InvalidCommandMiddlewareTest extends TestCase
+class InvalidCommandMiddlewareTest extends ConsoleIntegrationTestCase
 {
     public function test_provide_missing_input(): void
     {

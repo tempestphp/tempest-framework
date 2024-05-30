@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Console\Actions;
 
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class CompleteConsoleCommandArgumentsTest extends TestCase
+class CompleteConsoleCommandArgumentsTest extends ConsoleIntegrationTestCase
 {
     public function test_arguments_are_printed(): void
     {

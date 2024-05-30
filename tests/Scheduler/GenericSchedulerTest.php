@@ -12,13 +12,13 @@ use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\Scheduler\SchedulerConfig;
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class GenericSchedulerTest extends TestCase
+final class GenericSchedulerTest extends ConsoleIntegrationTestCase
 {
     protected function setUp(): void
     {

@@ -6,13 +6,13 @@ namespace Tests\Tempest\Console\Components;
 
 use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Point;
-use Tests\Tempest\Console\TestCase;
+use Tests\Tempest\Console\ConsoleIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class TextBoxComponentTest extends TestCase
+class TextBoxComponentTest extends ConsoleIntegrationTestCase
 {
     public function test_text_question_component(): void
     {
