@@ -8,7 +8,6 @@ use Tempest\AppConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Kernel;
 use Tempest\Log\LogConfig;
-use function Tempest\lw;
 
 $appConfig = new AppConfig(
     root: __DIR__ . '/..',

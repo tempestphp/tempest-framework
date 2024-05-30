@@ -3,24 +3,29 @@
 declare(strict_types=1);
 
 namespace {
+
+    use function Tempest\get;
+    use Tempest\Support\VarExport\Debug;
+
     if (! function_exists('lw')) {
         function lw(mixed ...$input): void
         {
-            \Tempest\lw(...$input);
+            get(Debug::class)->log($input);
         }
     }
 
     if (! function_exists('ld')) {
         function ld(mixed ...$input): void
         {
-            \Tempest\ld(...$input);
+            get(Debug::class)->log($input);
+            die();
         }
     }
 
     if (! function_exists('ll')) {
         function ll(mixed ...$input): void
         {
-            \Tempest\ll(...$input);
+            get(Debug::class)->log($input, writeToOut: false);
         }
     }
 }
@@ -34,7 +39,6 @@ namespace Tempest {
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\TypeName;
-    use Tempest\Support\VarExport\Debug;
 
     /**
      * @template TClassName
@@ -87,21 +91,5 @@ namespace Tempest {
     function type(Reflector|ReflectionType $reflector): string
     {
         return (new TypeName())->resolve($reflector);
-    }
-
-    function lw(mixed ...$input): void
-    {
-        get(Debug::class)->log($input);
-    }
-
-    function ld(mixed ...$input): void
-    {
-        get(Debug::class)->log($input);
-        die();
-    }
-
-    function ll(mixed ...$input): void
-    {
-        get(Debug::class)->log($input, writeToOut: false);
     }
 }

@@ -7,6 +7,7 @@ namespace Tempest\Support\VarExport;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\VarDumper;
+use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Log\LogConfig;
 
 final readonly class Debug
@@ -60,7 +61,7 @@ final readonly class Debug
 
             $output .= $callPath;
 
-            fwrite($handle, "[{$key}] " . $output . PHP_EOL);
+            fwrite($handle, "{$key} " . $output . PHP_EOL);
         }
 
         fclose($handle);
@@ -68,12 +69,16 @@ final readonly class Debug
 
     private function writeToOut(array $items, string $callPath): void
     {
-        foreach ($items as $item) {
+        foreach ($items as $key => $item) {
+            if (defined('STDOUT')) {
+                fwrite(STDOUT, TerminalStyle::BG_BLUE(" {$key} ") . ' ');
+            }
+
             VarDumper::dump($item);
         }
 
         if (defined('STDOUT')) {
-            fwrite(STDOUT, PHP_EOL . $callPath . PHP_EOL);
+            fwrite(STDOUT, $callPath . PHP_EOL);
         }
     }
 }
