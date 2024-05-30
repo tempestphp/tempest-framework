@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\Transactions;
 
 use PDO;
-use Tempest\Database\Exceptions\TransactionException;
-use Throwable;
+use Tempest\Database\Exceptions\CannotBeginTransaction;
+use Tempest\Database\Exceptions\CannotCommitTransaction;
 
 final class GenericTransactionManager implements TransactionManager
 {
@@ -19,7 +19,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionBegun = $this->pdo->beginTransaction();
 
         if (! $transactionBegun) {
-            throw TransactionException::beginFailed();
+            throw new CannotBeginTransaction();
         }
     }
 
@@ -28,7 +28,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionCommitted = $this->pdo->commit();
 
         if (! $transactionCommitted) {
-            throw TransactionException::commitFailed();
+            throw new CannotCommitTransaction();
         }
     }
 
@@ -37,24 +37,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionRolledBack = $this->pdo->rollBack();
 
         if (! $transactionRolledBack) {
-            throw TransactionException::transactionFailed();
+            throw new CannotBeginTransaction();
         }
-    }
-
-    public function execute(callable $callback): bool
-    {
-        $this->begin();
-
-        try {
-            $callback();
-
-            $this->commit();
-        } catch (Throwable $e) {
-            $this->rollback();
-
-            return false;
-        }
-
-        return true;
     }
 }

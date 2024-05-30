@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use PDO;
+use Throwable;
 use Tempest\Database\Transactions\TransactionManager;
 
 final readonly class GenericDatabase implements Database
@@ -41,9 +42,21 @@ final readonly class GenericDatabase implements Database
         return $this->fetch($query)[0] ?? null;
     }
 
-    public function transaction(): TransactionManager
+    public function withinTransaction(callable $callback): bool
     {
-        return $this->transactionManager;
+        $this->transactionManager->begin();
+
+        try {
+            $callback();
+
+            $this->transactionManager->commit();
+        } catch (Throwable) {
+            $this->transactionManager->rollback();
+
+            return false;
+        }
+
+        return true;
     }
 
     private function resolveBindings(Query $query): array

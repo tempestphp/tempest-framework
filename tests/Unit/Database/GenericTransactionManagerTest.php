@@ -7,7 +7,9 @@ namespace Tests\Tempest\Unit\Database;
 use Exception;
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\Exceptions\TransactionException;
+use Tempest\Database\Exceptions\CannotBeginTransaction;
+use Tempest\Database\Exceptions\CannotCommitTransaction;
+use Tempest\Database\Exceptions\CannotRollbackTransaction;
 use Tempest\Database\Transactions\GenericTransactionManager;
 
 /**
@@ -37,7 +39,7 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(TransactionException::class);
+        $this->expectException(CannotBeginTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
@@ -65,7 +67,7 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(TransactionException::class);
+        $this->expectException(CannotCommitTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
@@ -93,52 +95,11 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(TransactionException::class);
+        $this->expectException(CannotRollbackTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
         $manager->rollback();
     }
 
-    public function test_it_executes_transactions(): void
-    {
-        $pdo = $this->createMock(PDO::class);
-        $pdo->expects($this->once())
-            ->method('beginTransaction')
-            ->withAnyParameters()
-            ->willReturn(true);
-        $pdo->expects($this->once())
-            ->method('commit')
-            ->withAnyParameters()
-            ->willReturn(true);
-
-        $manager = new GenericTransactionManager($pdo);
-
-        $result = $manager->execute(function () {
-            return true;
-        });
-
-        $this->assertTrue($result);
-    }
-
-    public function test_it_rolls_back_transactions_on_failure(): void
-    {
-        $pdo = $this->createMock(PDO::class);
-        $pdo->expects($this->once())
-            ->method('beginTransaction')
-            ->withAnyParameters()
-            ->willReturn(true);
-        $pdo->expects($this->once())
-            ->method('rollback')
-            ->withAnyParameters()
-            ->willReturn(true);
-
-        $manager = new GenericTransactionManager($pdo);
-
-        $result = $manager->execute(function () {
-            throw new Exception();
-        });
-
-        $this->assertFalse($result);
-    }
 }
