@@ -45,9 +45,21 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    public function setDynamicInitializers(array $dynamicInitializers): self
+    {
+        $this->dynamicInitializers = new ArrayIterator($dynamicInitializers);
+
+        return $this;
+    }
+
     public function getInitializers(): array
     {
         return $this->initializers->getArrayCopy();
+    }
+
+    public function getDynamicInitializers(): array
+    {
+        return $this->dynamicInitializers->getArrayCopy();
     }
 
     public function register(string $className, callable $definition): self

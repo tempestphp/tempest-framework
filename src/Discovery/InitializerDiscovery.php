@@ -42,14 +42,20 @@ final readonly class InitializerDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->container->getInitializers()));
+        file_put_contents(self::CACHE_PATH, serialize(
+            [
+                'initializers' => $this->container->getInitializers(),
+                'dynamic_initializers' => $this->container->getDynamicInitializers(),
+            ],
+        ));
     }
 
     public function restoreCache(Container $container): void
     {
-        $initializers = unserialize(file_get_contents(self::CACHE_PATH));
+        $data = unserialize(file_get_contents(self::CACHE_PATH));
 
-        $this->container->setInitializers($initializers);
+        $this->container->setInitializers($data['initializers'] ?? []);
+        $this->container->setDynamicInitializers($data['dynamic_initializers'] ?? []);
     }
 
     public function destroyCache(): void
