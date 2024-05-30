@@ -73,12 +73,14 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
+            $footerLinesForContent = $footerLines;
+
             if ($footer = $component->renderFooter()) {
-                $footerLines[] = $footer;
+                $footerLinesForContent[] = $footer;
             }
 
-            if ($footerLines !== []) {
-                $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLines);
+            if ($footerLinesForContent !== []) {
+                $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLinesForContent);
             }
 
             $this

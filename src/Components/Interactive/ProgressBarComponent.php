@@ -51,7 +51,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
                 $bar,
                 $step,
                 $count,
-            ) . PHP_EOL;
+            );
         };
 
         foreach ($this->data as $item) {
