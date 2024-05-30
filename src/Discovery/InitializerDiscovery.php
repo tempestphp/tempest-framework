@@ -6,6 +6,7 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Initializer;
 
@@ -20,9 +21,13 @@ final readonly class InitializerDiscovery implements Discovery
 
     public function discover(ReflectionClass $class): void
     {
+        if (! $class->isInstantiable()) {
+            return;
+        }
+
         if (
-            ! $class->isInstantiable()
-            || ! $class->implementsInterface(Initializer::class)
+            ! $class->implementsInterface(Initializer::class)
+            && ! $class->implementsInterface(DynamicInitializer::class)
         ) {
             return;
         }
