@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Console;
 
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleArgumentDefinition;
 
 /**
  * @internal
@@ -31,12 +32,12 @@ final class ConsoleArgumentBagTest extends TestCase
         $this->assertSame(0, $firstArg->position);
         $this->assertNull($firstArg->name);
 
-        $forceFlag = $bag->all()['force'];
+        $forceFlag = $bag->all()[1];
         $this->assertSame(true, $forceFlag->value);
         $this->assertSame(null, $forceFlag->position);
         $this->assertSame('force', $forceFlag->name);
 
-        $timesFlag = $bag->all()['times'];
+        $timesFlag = $bag->all()[2];
         $this->assertSame('2', $timesFlag->value);
         $this->assertSame(null, $timesFlag->position);
         $this->assertSame('times', $timesFlag->name);
@@ -82,7 +83,15 @@ final class ConsoleArgumentBagTest extends TestCase
 
         $bag = new ConsoleArgumentBag($argv);
 
-        $this->assertSame(['a', 'b', 'c'], $bag->get('input')->value);
+        $definition = new ConsoleArgumentDefinition(
+            name: 'input',
+            type: 'array',
+            default: null,
+            hasDefault: false,
+            position: 0,
+        );
+
+        $this->assertSame(['a', 'b', 'c'], $bag->findArrayFor($definition)->value);
     }
 
     public function test_array_input_to_command(): void

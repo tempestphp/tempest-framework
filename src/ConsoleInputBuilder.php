@@ -27,16 +27,14 @@ final class ConsoleInputBuilder
         $argumentDefinitions = $this->command->getArgumentDefinitions();
 
         foreach ($argumentDefinitions as $argumentDefinition) {
-            $argument = $this->argumentBag->findFor($argumentDefinition);
+            $argument = $argumentDefinition->type === 'array'
+                ? $this->argumentBag->findArrayFor($argumentDefinition)
+                : $this->argumentBag->findFor($argumentDefinition);
 
             if ($argument === null) {
                 $invalidArguments[] = $argumentDefinition;
 
                 continue;
-            }
-
-            if ($argumentDefinition->type === 'array' && is_string($argument->value)) {
-                $argument = $argument->asArray();
             }
 
             $validArguments[] = $argument;

@@ -103,11 +103,26 @@ final class ConsoleArgumentBag
         return null;
     }
 
+    public function findArrayFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
+    {
+        $values = [];
+
+        foreach ($this->arguments as $argument) {
+            if ($argumentDefinition->matchesArgument($argument)) {
+                $values[] = $argument->value;
+            }
+        }
+
+        return new ConsoleInputArgument(
+            name: $argumentDefinition->name,
+            position: $argumentDefinition->position,
+            value: $values,
+        );
+    }
+
     public function add(ConsoleInputArgument $argument): self
     {
-        $key = $argument->name ?? $argument->position;
-
-        $this->arguments[$key] = $argument->merge($this->arguments[$key] ?? null);
+        $this->arguments[] = $argument;
 
         return $this;
     }

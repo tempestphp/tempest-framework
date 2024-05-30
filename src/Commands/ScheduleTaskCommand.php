@@ -58,6 +58,6 @@ final readonly class ScheduleTaskCommand
 
     public function complete()
     {
-        dd('complete');
+        return '';
     }
 }
