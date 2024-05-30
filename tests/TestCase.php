@@ -31,6 +31,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $appConfig = new AppConfig(
             root: getcwd(),
             enableExceptionHandling: true,
+            discoveryCache: true,
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Console\\', __DIR__),
             ],

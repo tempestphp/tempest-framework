@@ -7,6 +7,7 @@
         displayDetailsOnTestsThatTriggerErrors="true"
         displayDetailsOnTestsThatTriggerNotices="true"
         displayDetailsOnTestsThatTriggerWarnings="true"
+        bootstrap="tests/bootstrap.php"
 >
   <testsuites>
     <testsuite name="Tests">

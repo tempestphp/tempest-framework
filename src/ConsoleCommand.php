@@ -57,6 +57,9 @@ final class ConsoleCommand
             'handler_method' => $this->handler->getName(),
             'aliases' => $this->aliases,
             'help' => $this->help,
+            'middleware' => $this->middleware,
+            'hidden' => $this->hidden,
+            'complete' => $this->complete,
         ];
     }
 
@@ -70,6 +73,9 @@ final class ConsoleCommand
         );
         $this->aliases = $data['aliases'];
         $this->help = $data['help'];
+        $this->middleware = $data['middleware'];
+        $this->hidden = $data['hidden'];
+        $this->complete = $data['complete'];
     }
 
     /**
