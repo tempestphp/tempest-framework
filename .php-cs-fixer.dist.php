@@ -2,7 +2,6 @@
 
 $finder = Symfony\Component\Finder\Finder::create()
     ->in([
-        __DIR__ . '/app',
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])

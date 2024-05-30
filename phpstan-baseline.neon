@@ -1,0 +1,141 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: src/Database/Migrations/Migration.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: src/Database/Migrations/Migration.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: src/Http/GenericRouter.php
+
+		-
+			message: "#^Parameter \\$middleware of method Tempest\\\\Http\\\\Route\\:\\:__construct\\(\\) has invalid type Tempest\\\\Http\\\\MiddlewareClass\\.$#"
+			count: 1
+			path: src/Http/Route.php
+
+		-
+			message: "#^Property Tempest\\\\Http\\\\Route\\:\\:\\$middleware has unknown class Tempest\\\\Http\\\\MiddlewareClass as its type\\.$#"
+			count: 1
+			path: src/Http/Route.php
+
+		-
+			message: "#^Comparison operation \"\\<\" between 500\\|501\\|502\\|503\\|504\\|505\\|506\\|507\\|508\\|510\\|511 and 600 is always true\\.$#"
+			count: 1
+			path: src/Http/Status.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between 100\\|101\\|102\\|103\\|200\\|201\\|202\\|203\\|204\\|205\\|206\\|207\\|208\\|226\\|300\\|301\\|302\\|303\\|304\\|305\\|306\\|307\\|308\\|400\\|401\\|402\\|403\\|404\\|405\\|406\\|407\\|408\\|409\\|410\\|411\\|412\\|413\\|414\\|415\\|416\\|417\\|418\\|421\\|422\\|423\\|424\\|425\\|426\\|428\\|429\\|431\\|451\\|500\\|501\\|502\\|503\\|504\\|505\\|506\\|507\\|508\\|510\\|511 and 100 is always true\\.$#"
+			count: 1
+			path: src/Http/Status.php
+
+		-
+			message: "#^Match expression does not handle remaining values\\: 306\\|418$#"
+			count: 1
+			path: src/Http/Status.php
+
+		-
+			message: "#^Parameter \\#1 \\$request of method Tempest\\\\HttpClient\\\\Driver\\\\Psr18Driver\\:\\:sendRequest\\(\\) expects Psr\\\\Http\\\\Message\\\\RequestInterface, Tempest\\\\Http\\\\Request given\\.$#"
+			count: 1
+			path: src/HttpClient/Driver/Psr18Driver.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Fixtures/Modules/Books/Models/Author.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Fixtures/Modules/Books/Models/Author.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Fixtures/Modules/Books/Models/Book.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Fixtures/Modules/Books/Models/Book.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Fixtures/Modules/Books/Models/Chapter.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Fixtures/Modules/Books/Models/Chapter.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$title\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/base.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$title\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/baseWithNamedSlot.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$prop\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/include-child.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$prop\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/include-parent.php
+
+		-
+			message: "#^Variable \\$this might not be defined\\.$#"
+			count: 2
+			path: tests/Fixtures/Views/index.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$name\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/overview.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$property\\.$#"
+			count: 1
+			path: tests/Fixtures/Views/rawAndEscaping.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Integration/Mapper/Fixtures/ObjectFactoryA.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Integration/Mapper/Fixtures/ObjectFactoryA.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Integration/Mapper/Fixtures/ObjectFactoryWithValidation.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Integration/Mapper/Fixtures/ObjectFactoryWithValidation.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 2
+			path: tests/Integration/ORM/Foo.php
+
+		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+			count: 1
+			path: tests/Integration/ORM/Foo.php

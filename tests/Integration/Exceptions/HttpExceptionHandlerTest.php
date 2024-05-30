@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Exceptions;
 
-use App\Controllers\FailController;
 use Tempest\Exceptions\HttpExceptionHandler;
 use function Tempest\uri;
+use Tests\Tempest\Fixtures\Controllers\FailController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

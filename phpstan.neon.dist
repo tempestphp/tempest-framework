@@ -1,5 +1,5 @@
 includes:
-	- phpstan-baseline.php
+	- phpstan-baseline.neon
 	- vendor/phpat/phpat/extension.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
 services:
@@ -11,7 +11,6 @@ parameters:
 	level: 5
 	reportUnmatchedIgnoredErrors: false
 	paths:
-		- app
 		- src
 		- tests
 	ignoreErrors:

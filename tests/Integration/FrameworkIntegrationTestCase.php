@@ -21,13 +21,11 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         $this->appConfig = new AppConfig(
-            root: __DIR__ . '/../../',
+            root: getcwd(),
+            enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [
-                new DiscoveryLocation(
-                    'App\\',
-                    __DIR__ . '/../../app',
-                ),
+                new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
             ],
         );
 
@@ -36,8 +34,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
 
-        $databasePath = __DIR__ . '/../../app/database.sqlite';
-        $cleanDatabasePath = __DIR__ . '/../../app/database-clean.sqlite';
+        $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
+        $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
 
         @unlink(DiscoveryDiscovery::CACHE_PATH);
         @unlink($databasePath);

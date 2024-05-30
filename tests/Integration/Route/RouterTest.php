@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
-use App\Controllers\TestController;
-use App\Controllers\TestGlobalMiddleware;
-use App\Migrations\CreateAuthorTable;
-use App\Migrations\CreateBookTable;
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
+use Tests\Tempest\Fixtures\Controllers\TestController;
+use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
