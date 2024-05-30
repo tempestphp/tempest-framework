@@ -15,7 +15,7 @@ final readonly class VarExportTagPattern implements Pattern
 
     public function getPattern(): string
     {
-        return '/^(?<match>\[.*?\])/m';
+        return '/^(?<match>.*?)\s/';
     }
 
     public function getTokenType(): TokenType
