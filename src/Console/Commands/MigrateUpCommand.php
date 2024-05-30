@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
@@ -19,23 +19,16 @@ final class MigrateUpCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
-        private readonly AppConfig $config,
     ) {
     }
 
     #[ConsoleCommand(
         name: 'migrate:up',
         description: 'Run all new migrations',
+        middleware: [CautionMiddleware::class],
     )]
-    public function __invoke(bool $force = false): void
+    public function __invoke(): void
     {
-        if (! $force
-            && $this->config->environment->isProduction()
-            && ! $this->console->confirm("You are running in production. Are you sure you want to continue?")
-        ) {
-            return;
-        }
-
         $this->migrationManager->up();
 
         $this->console->success("Done");
