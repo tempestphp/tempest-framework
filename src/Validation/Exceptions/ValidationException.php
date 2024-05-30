@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
-use Tempest\Validation\Rule;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\LanguageHelper;
+use Tempest\Validation\Rule;
 
 final class ValidationException extends Exception
 {

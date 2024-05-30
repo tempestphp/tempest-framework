@@ -6,7 +6,6 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use Tempest\Validation\Rule;
-use Tempest\Support\LanguageHelper;
 
 #[Attribute]
 final readonly class Password implements Rule
@@ -52,6 +51,9 @@ final readonly class Password implements Rule
         return true;
     }
 
+    /**
+     * @return string[]
+     */
     public function message(): array
     {
         $messages = ["Value should contain at least {$this->min} characters"];

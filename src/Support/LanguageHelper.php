@@ -6,16 +6,19 @@ namespace Tempest\Support;
 
 final class LanguageHelper
 {
-
-    public static function join(array $strings): string
+    /**
+     * @param string[] $parts
+     *
+     * @return string
+     */
+    public static function join(array $parts): string
     {
-        $last = array_pop($strings);
+        $last = array_pop($parts);
 
-        if ($strings) {
-            return implode(', ', $strings) . ' ' . 'and' . ' ' . $last;
+        if ($parts) {
+            return implode(', ', $parts) . ' ' . 'and' . ' ' . $last;
         }
 
         return $last;
     }
-
 }

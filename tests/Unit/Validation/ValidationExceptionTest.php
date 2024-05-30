@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Validation;
 
-use stdClass;
-use Tempest\Validation\Rule;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Rule;
 
+/**
+ * @internal
+ * @small
+ */
 final class ValidationExceptionTest extends TestCase
 {
-
     public function test_exception_message(): void
     {
         $this->expectException(ValidationException::class);
@@ -20,8 +23,7 @@ final class ValidationExceptionTest extends TestCase
 
         throw new ValidationException(new stdClass(), [
             'email' => [
-                new class implements Rule {
-
+                new class () implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -31,8 +33,8 @@ final class ValidationExceptionTest extends TestCase
                     {
                         return 'Value should be a valid email address';
                     }
-                }
-            ]
+                },
+            ],
         ]);
     }
 
@@ -45,8 +47,7 @@ final class ValidationExceptionTest extends TestCase
 
         throw new ValidationException(new stdClass(), [
             'email' => [
-                new class implements Rule {
-
+                new class () implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -57,8 +58,7 @@ final class ValidationExceptionTest extends TestCase
                         return 'Value should be a valid email address';
                     }
                 },
-                new class implements Rule {
-
+                new class () implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -72,8 +72,7 @@ final class ValidationExceptionTest extends TestCase
                             'the new gods from the future',
                         ];
                     }
-                }]
+                }],
         ]);
     }
-
 }
