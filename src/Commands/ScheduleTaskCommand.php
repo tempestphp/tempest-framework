@@ -22,7 +22,6 @@ final readonly class ScheduleTaskCommand
 
     #[ConsoleCommand(
         name: self::NAME,
-        complete: [self::class, 'complete'],
     )]
     public function __invoke(string $task): void
     {
@@ -54,10 +53,5 @@ final readonly class ScheduleTaskCommand
         );
 
         $console->success('Done');
-    }
-
-    public function complete()
-    {
-        return '';
     }
 }

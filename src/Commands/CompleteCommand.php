@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use ReflectionMethod;
+use Tempest\Console\Actions\CompleteConsoleCommandArguments;
+use Tempest\Console\Actions\CompleteConsoleCommandNames;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\HasConsole;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 
 final readonly class CompleteCommand
@@ -33,28 +36,26 @@ final readonly class CompleteCommand
     ): void {
         $commandName = $input[1] ?? null;
 
-        $definition = $this->consoleConfig->commands[$commandName] ?? null;
+        $command = $this->consoleConfig->commands[$commandName] ?? null;
+        $argumentBag = new ConsoleArgumentBag($input);
 
-        if (! $definition) {
-            $this->error("Command {$commandName} not found");
-
-            return;
-        }
-
-        if (! $definition->complete) {
-            $this->error("No completion configured for command {$commandName}");
+        if (! $command) {
+            $this->container->get(CompleteConsoleCommandNames::class)($argumentBag, $current);
 
             return;
         }
 
         $complete = match(true) {
-            is_array($definition->complete) => new ReflectionMethod(...$definition->complete),
-            is_string($definition->complete) && class_exists($definition->complete) => new ReflectionMethod($definition->complete, '__invoke'),
-            default => null,
+            is_array($command->complete) => new ReflectionMethod(...$command->complete),
+            is_string($command->complete) && class_exists($command->complete) => new ReflectionMethod($command->complete, '__invoke'),
+            default => new ReflectionMethod(CompleteConsoleCommandArguments::class, '__invoke'),
         };
 
-        $complete?->invoke(
+        $complete->invoke(
             $this->container->get($complete->getDeclaringClass()->getName()),
+            $command,
+            $argumentBag,
+            $current,
         );
     }
 }
