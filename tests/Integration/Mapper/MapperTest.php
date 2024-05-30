@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use function Tempest\make;
 use function Tempest\map;
-use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
@@ -157,7 +157,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $a->id->id);
         $this->assertSame('casted', $a->prop);
 
-        $collection = make(ObjectFactoryA::class)->from(new Query(
+        $collection = make(ObjectFactoryA::class)->collection()->from(new Query(
             "SELECT * FROM ObjectFactoryA",
         ));
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use function Tempest\make;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

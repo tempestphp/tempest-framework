@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use App\Modules\Posts\PostRequest;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
-use Tempest\Mapper\PsrRequestToRequestMapper;
-use Tempest\ORM\Exceptions\MissingValuesException;
+use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

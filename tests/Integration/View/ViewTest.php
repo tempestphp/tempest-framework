@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use App\Controllers\TestController;
-use App\Views\ViewModel;
 use Tempest\AppConfig;
 use Tempest\Http\Status;
 use function Tempest\uri;
 use function Tempest\view;
 use Tempest\View\GenericView;
+use Tests\Tempest\Fixtures\Controllers\TestController;
+use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

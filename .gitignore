@@ -4,7 +4,9 @@ vendor/
 .env
 .php-cs-fixer.cache
 .phpunit.result.cache
-app/database.sqlite
+tests/fixtures/database.sqlite
 composer.lock
 *.cache.php
 sessions/
+debug.log
+tempest.log

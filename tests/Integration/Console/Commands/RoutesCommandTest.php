@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
-use App\Modules\Posts\PostController;
+use Tests\Tempest\Fixtures\Modules\Posts\PostController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
-use App\Controllers\TestController;
-use App\Controllers\TestGlobalMiddleware;
-use App\Migrations\CreateAuthorTable;
-use App\Migrations\CreateBookTable;
-use App\Modules\Books\Models\Author;
-use App\Modules\Books\Models\Book;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
+use Tempest\Http\Responses\Ok;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
+use Tests\Tempest\Fixtures\Controllers\TestController;
+use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -56,41 +57,28 @@ class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/view'));
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-
-        $expected = <<<HTML
-<html lang="en">
-<head>
-    <title></title>
-</head>
-<body>Hello Brent!</body>
-</html>
-HTML;
-
-        $this->assertEquals($expected, $response->getBody());
+        $this->assertInstanceOf(Ok::class, $response);
     }
 
     public function test_route_binding()
     {
-        $this->markTestSkipped('Broken, need to debug');
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateAuthorTable::class,
+        );
 
-        //        $this->migrate(
-        //            CreateMigrationsTable::class,
-        //            CreateBookTable::class,
-        //            CreateAuthorTable::class,
-        //        );
-        //
-        //        Book::create(
-        //            title: 'Test',
-        //            author: new Author(name: 'Brent'),
-        //        );
-        //
-        //        $router = $this->container->get(Router::class);
-        //
-        //        $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
-        //
-        //        $this->assertSame(Status::OK, $response->getStatus());
-        //        $this->assertSame('Test', $response->getBody());
+        Book::create(
+            title: 'Test',
+            author: new Author(name: 'Brent'),
+        );
+
+        $router = $this->container->get(Router::class);
+
+        $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
+
+        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame('Test', $response->getBody());
     }
 
     public function test_middleware()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Exceptions;
 
+use Tempest\Container\Tag;
 use Tempest\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Throwable;
@@ -12,8 +13,10 @@ final class HttpExceptionHandler implements ExceptionHandler
 {
     private ?Throwable $throwable = null;
 
-    public function __construct(private Highlighter $highlighter)
-    {
+    public function __construct(
+        #[Tag('web')]
+        private readonly Highlighter $highlighter,
+    ) {
     }
 
     public function handle(Throwable $throwable): void
@@ -21,14 +24,19 @@ final class HttpExceptionHandler implements ExceptionHandler
         $this->throwable = $throwable;
 
         ob_start();
+
         include __DIR__ . '/exception.php';
+
         $contents = ob_get_clean();
 
         ob_start();
+
         if (! headers_sent()) {
             http_response_code(500);
         }
+
         echo $contents;
+
         ob_end_flush();
     }
 

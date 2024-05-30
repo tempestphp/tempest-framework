@@ -6,6 +6,8 @@ namespace Tempest\Http\Session;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Schedule;
+use Tempest\Console\Scheduler\Every;
 use Tempest\Events\EventHandler;
 
 final readonly class CleanupSessionsCommand
@@ -16,6 +18,7 @@ final readonly class CleanupSessionsCommand
     ) {
     }
 
+    #[Schedule(Every::MINUTE)]
     #[ConsoleCommand(
         name: 'session:clean',
         description: 'Find and remove all expired sessions',

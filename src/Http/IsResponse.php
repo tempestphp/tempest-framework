@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Generator;
 use function Tempest\get;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
-use function Tempest\view;
 use Tempest\View\View;
 
 trait IsResponse
 {
-    private Status $status;
-    private string|array|null $body = null;
+    private Status $status = Status::OK;
+    private View|string|array|Generator|null $body = null;
     /** @var \Tempest\Http\Header[] */
     private array $headers = [];
     private ?View $view = null;
@@ -24,13 +24,6 @@ trait IsResponse
         return $this->status;
     }
 
-    public function setStatus(Status $status): self
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function getHeaders(): array
     {
         return $this->headers;
@@ -38,7 +31,7 @@ trait IsResponse
 
     public function getHeader(string $name): ?Header
     {
-        return $this->headers[$name];
+        return $this->headers[$name] ?? null;
     }
 
     public function addHeader(string $key, string $value): self
@@ -50,32 +43,16 @@ trait IsResponse
         return $this;
     }
 
-    public function getBody(): string|array|null
+    public function removeHeader(string $key): self
+    {
+        unset($this->headers[$key]);
+
+        return $this;
+    }
+
+    public function getBody(): View|string|array|Generator|null
     {
         return $this->body;
-    }
-
-    public function setBody(string $body): self
-    {
-        $this->body = $body;
-
-        return $this;
-    }
-
-    public function getView(): ?View
-    {
-        return $this->view;
-    }
-
-    public function setView(string|View $view, mixed ...$data): self
-    {
-        if (is_string($view)) {
-            $view = view($view)->data(...$data);
-        }
-
-        $this->view = $view;
-
-        return $this;
     }
 
     public function addSession(string $name, mixed $value): self
@@ -113,16 +90,6 @@ trait IsResponse
         return $this;
     }
 
-    public function getCookie(string $name): ?Cookie
-    {
-        return $this->getCookieManager()->get($name);
-    }
-
-    public function getCookies(): array
-    {
-        return $this->getCookieManager()->all();
-    }
-
     public function flash(string $key, mixed $value): self
     {
         $this->getSession()->flash($key, $value);
@@ -130,25 +97,20 @@ trait IsResponse
         return $this;
     }
 
-    public function ok(): self
+    public function setContentType(ContentType $contentType): self
     {
-        $this->status = Status::OK;
+        $this
+            ->removeHeader(ContentType::HEADER)
+            ->addHeader(ContentType::HEADER, $contentType->value);
 
         return $this;
     }
 
-    public function notFound(): self
+    public function setStatus(Status $status): self
     {
-        $this->status = Status::NOT_FOUND;
+        $this->status = $status;
 
         return $this;
-    }
-
-    public function redirect(string $to): self
-    {
-        return $this
-            ->addHeader('Location', $to)
-            ->setStatus(Status::FOUND);
     }
 
     private function getCookieManager(): CookieManager

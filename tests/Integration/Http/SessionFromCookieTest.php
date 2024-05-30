@@ -47,9 +47,12 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
             expirationInSeconds: 1,
         ));
 
+        // Resolve the session so that the ID is set
         $this->container->get(Session::class);
+
         $cookieManager = $this->container->get(CookieManager::class);
-        $cookie = $cookieManager->get('tempest_session_id');
+        $cookie = $cookieManager->get(Session::ID);
+
         $this->assertEquals(1, $cookie->maxAge);
         $this->assertEquals($clock->time() + 1, $cookie->getExpiresAtTime());
     }

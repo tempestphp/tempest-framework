@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Http;
+namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
@@ -42,7 +42,7 @@ final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
     {
         $request = new GenericRequest(Method::GET, '/', [], [Session::ID => $id]);
 
-        $this->container->register(Request::class, fn () => $request);
-        $this->container->register(GenericRequest::class, fn () => $request);
+        $this->container->singleton(Request::class, fn () => $request);
+        $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 }

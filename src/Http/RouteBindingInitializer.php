@@ -8,7 +8,7 @@ use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Database\Id;
-use Tempest\ORM\Model;
+use Tempest\Database\Model;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\ORM\Attributes\CastWith;
-use Tempest\ORM\Casters\IdCaster;
+use Tempest\Database\Casters\IdCaster;
+use Tempest\Mapper\CastWith;
 
 #[CastWith(IdCaster::class)]
 final readonly class Id

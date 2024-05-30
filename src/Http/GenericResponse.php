@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Generator;
 use Tempest\View\View;
 
 final class GenericResponse implements Response
@@ -12,7 +13,7 @@ final class GenericResponse implements Response
 
     public function __construct(
         Status $status,
-        string|array|null $body = null,
+        Generator|View|string|array|null $body = null,
         array $headers = [],
         ?View $view = null,
     ) {

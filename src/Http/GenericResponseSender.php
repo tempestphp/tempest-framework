@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Generator;
+use Tempest\AppConfig;
+use Tempest\View\View;
+
 final readonly class GenericResponseSender implements ResponseSender
 {
+    public function __construct(private AppConfig $appConfig)
+    {
+    }
+
     public function send(Response $response): Response
     {
         ob_start();
 
-        $response = $this->prepareResponse($response);
-
         $this->sendHeaders($response);
-        $this->sendContent($response);
+        ob_flush();
 
+        $this->sendContent($response);
         ob_end_flush();
 
         return $response;
@@ -23,34 +30,53 @@ final readonly class GenericResponseSender implements ResponseSender
     private function sendHeaders(Response $response): void
     {
         // TODO: Handle SAPI/FastCGI
-
         if (headers_sent()) {
             return;
         }
 
-        foreach ($response->getHeaders() as $key => $header) {
-            foreach ($header->values as $value) {
-                header("{$key}: {$value}");
-            }
+        foreach ($this->resolveHeaders($response) as $header) {
+            header($header);
         }
 
         http_response_code($response->getStatus()->value);
     }
 
-    private function sendContent(Response $response): void
+    private function resolveHeaders(Response $response): Generator
     {
-        echo $response->getBody();
+        $headers = $response->getHeaders();
+
+        if (is_array($response->getBody())) {
+            $headers[ContentType::HEADER] ??= new Header(ContentType::HEADER);
+            $headers[ContentType::HEADER]->add(ContentType::JSON->value);
+        }
+
+        foreach ($headers as $key => $header) {
+            foreach ($header->values as $value) {
+                yield "{$key}: {$value}";
+            }
+        }
     }
 
-    private function prepareResponse(Response $response): Response
+    private function sendContent(Response $response): void
+    {
+        foreach ($this->resolveBody($response) as $content) {
+            echo $content;
+            ob_flush();
+        }
+    }
+
+    private function resolveBody(Response $response): Generator
     {
         $body = $response->getBody();
 
-        if (is_array($body)) {
-            $response->addHeader('Content-Type', 'application/json');
-            $response->setBody(json_encode($body));
+        if ($body instanceof Generator) {
+            return $body;
+        } elseif (is_array($body)) {
+            yield json_encode($body);
+        } elseif ($body instanceof View) {
+            yield $body->render($this->appConfig);
+        } else {
+            yield $body;
         }
-
-        return $response;
     }
 }

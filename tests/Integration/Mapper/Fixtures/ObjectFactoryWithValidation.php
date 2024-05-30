@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\ORM\IsModel;
-use Tempest\ORM\Model;
+use Tempest\Database\IsModel;
+use Tempest\Database\Model;
 use Tempest\Validation\Rules\Length;
 
 class ObjectFactoryWithValidation implements Model

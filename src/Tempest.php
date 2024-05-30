@@ -7,10 +7,13 @@ namespace Tempest;
 use Dotenv\Dotenv;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Exceptions\HttpExceptionHandler;
+use Tempest\Log\Channels\AppendLogChannel;
+use Tempest\Log\LogConfig;
+use Tempest\Support\PathHelper;
 
 final readonly class Tempest
 {
@@ -54,14 +57,16 @@ final readonly class Tempest
         $container = $this->kernel->init();
         $appConfig = $container->get(AppConfig::class);
 
-        $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag($_SERVER['argv']),
-            container: $container,
-            appConfig: $appConfig,
-        );
+        $application = $container->get(ConsoleApplication::class);
 
-        $container->singleton(Application::class, fn () => $application);
+        // Application-specific config
+        $consoleConfig = $container->get(ConsoleConfig::class);
+        $consoleConfig->name = 'Tempest';
 
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->serverLogPath = env('SERVER_LOG');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
         $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
         return $application;
@@ -79,6 +84,10 @@ final readonly class Tempest
 
         $container->singleton(Application::class, fn () => $application);
 
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->serverLogPath = env('SERVER_LOG');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
         $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
 
         return $application;

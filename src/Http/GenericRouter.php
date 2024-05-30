@@ -7,14 +7,14 @@ namespace Tempest\Http;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
-use Tempest\AppConfig;
 use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
-use Tempest\Http\Responses\InvalidResponse;
+use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Responses\Ok;
 use function Tempest\map;
-use function Tempest\response;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -29,9 +29,8 @@ final class GenericRouter implements Router
     private array $middleware = [];
 
     public function __construct(
-        private Container $container,
-        private AppConfig $appConfig,
-        private RouteConfig $routeConfig,
+        private readonly Container $container,
+        private readonly RouteConfig $routeConfig,
     ) {
     }
 
@@ -40,7 +39,7 @@ final class GenericRouter implements Router
         $matchedRoute = $this->matchRoute($request);
 
         if ($matchedRoute === null) {
-            return response()->notFound();
+            return new NotFound();
         }
 
         $this->container->singleton(
@@ -54,7 +53,7 @@ final class GenericRouter implements Router
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
         } catch (ValidationException $exception) {
-            return new InvalidResponse($request, $exception);
+            return new Invalid($request, $exception);
         }
 
         if ($response === null) {
@@ -162,11 +161,7 @@ final class GenericRouter implements Router
     private function createResponse(Response|View $input): Response
     {
         if ($input instanceof View) {
-            return response($input->render($this->appConfig));
-        }
-
-        if ($view = $input->getView()) {
-            $input->setBody($view->render($this->appConfig));
+            return new Ok($input);
         }
 
         return $input;

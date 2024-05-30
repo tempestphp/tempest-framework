@@ -8,7 +8,10 @@ use Tempest\AppConfig;
 use Tempest\Application;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleArgumentBag;
+use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Console\Output\StdoutOutputBuffer;
+use Tempest\Console\OutputBuffer;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
@@ -18,20 +21,21 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         $this->appConfig = new AppConfig(
-            root: __DIR__ . '/../../',
+            root: getcwd(),
+            enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [
-                new DiscoveryLocation(
-                    'App\\',
-                    __DIR__ . '/../../app',
-                ),
+                new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
             ],
         );
 
         parent::setUp();
 
-        $databasePath = __DIR__ . '/../../app/database.sqlite';
-        $cleanDatabasePath = __DIR__ . '/../../app/database-clean.sqlite';
+        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
+        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
+
+        $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
+        $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
 
         @unlink(DiscoveryDiscovery::CACHE_PATH);
         @unlink($databasePath);
@@ -41,9 +45,8 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function actAsConsoleApplication(string $command = ''): Application
     {
         $application = new ConsoleApplication(
-            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
             container: $this->container,
-            appConfig: $this->container->get(AppConfig::class),
+            argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
         );
 
         $this->container->singleton(Application::class, fn () => $application);
