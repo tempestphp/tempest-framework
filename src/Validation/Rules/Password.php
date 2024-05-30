@@ -6,7 +6,7 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use Tempest\Validation\Rule;
-use Tempest\Support\StringHelper;
+use Tempest\Support\LanguageHelper;
 
 #[Attribute]
 final readonly class Password implements Rule

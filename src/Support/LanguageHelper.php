@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-final class StringHelper
+final class LanguageHelper
 {
 
-    public static function naturalLangJoin(array $strings): string
+    public static function join(array $strings): string
     {
         $last = array_pop($strings);
 
