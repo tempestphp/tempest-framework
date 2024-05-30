@@ -6,8 +6,14 @@ namespace Tests\Tempest\Integration\Route;
 
 use App\Controllers\TestController;
 use App\Controllers\TestGlobalMiddleware;
+use App\Migrations\CreateAuthorTable;
+use App\Migrations\CreateBookTable;
+use App\Modules\Books\Models\Author;
+use App\Modules\Books\Models\Book;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Router;
 use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -56,25 +62,23 @@ class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_route_binding()
     {
-        $this->markTestSkipped('Broken, need to debug');
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateBookTable::class,
+            CreateAuthorTable::class,
+        );
 
-        //        $this->migrate(
-        //            CreateMigrationsTable::class,
-        //            CreateBookTable::class,
-        //            CreateAuthorTable::class,
-        //        );
-        //
-        //        Book::create(
-        //            title: 'Test',
-        //            author: new Author(name: 'Brent'),
-        //        );
-        //
-        //        $router = $this->container->get(Router::class);
-        //
-        //        $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
-        //
-        //        $this->assertSame(Status::OK, $response->getStatus());
-        //        $this->assertSame('Test', $response->getBody());
+        Book::create(
+            title: 'Test',
+            author: new Author(name: 'Brent'),
+        );
+
+        $router = $this->container->get(Router::class);
+
+        $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
+
+        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame('Test', $response->getBody());
     }
 
     public function test_middleware()

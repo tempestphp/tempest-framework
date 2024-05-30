@@ -6,7 +6,6 @@ namespace App\Modules\Home;
 
 use Tempest\Http\Get;
 use Tempest\Http\Request;
-use function Tempest\ll;
 use Tempest\Log\Logger;
 use Tempest\View\View;
 
