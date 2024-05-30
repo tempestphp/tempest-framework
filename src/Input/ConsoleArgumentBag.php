@@ -60,6 +60,11 @@ final class ConsoleArgumentBag
         return $this->arguments;
     }
 
+    public function last(): ?ConsoleInputArgument
+    {
+        return $this->arguments[array_key_last($this->arguments)] ?? null;
+    }
+
     public function has(string ...$names): bool
     {
         foreach ($this->arguments as $argument) {

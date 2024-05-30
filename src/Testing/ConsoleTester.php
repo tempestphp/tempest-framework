@@ -107,6 +107,22 @@ final class ConsoleTester
         return $clone;
     }
 
+    public function complete(?string $command = null): self
+    {
+        if ($command) {
+            $input = explode(' ', $command);
+
+            $inputString = implode(' ', array_map(
+                fn (string $item) => "--input=\"{$item}\"",
+                $input
+            ));
+        } else {
+            $inputString = '';
+        }
+
+        return $this->call("_complete --current=0 --input=\"./tempest\" {$inputString}");
+    }
+
     public function input(int|string|Key $input): self
     {
         $this->output->clear();
@@ -150,6 +166,11 @@ final class ConsoleTester
     public function assertSee(string $text): self
     {
         return $this->assertContains($text);
+    }
+
+    public function assertNotSee(string $text): self
+    {
+        return $this->assertDoesNotContain($text);
     }
 
     public function assertContains(string $text): self

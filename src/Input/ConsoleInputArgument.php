@@ -56,18 +56,23 @@ final class ConsoleInputArgument
      */
     private static function parseNamedArgument(string $argument): array
     {
-        $parts = explode('=', str_replace('--', '', $argument));
+        preg_match('/--(?<name>[\w]+)((?<hasValue>=)\"?(?<value>(.*?))(\"|$))?/', $argument, $matches);
 
-        $key = $parts[0];
+        $name = $matches['name'] ?? null;
+        $hasValue = $matches['hasValue'] ?? null;
+        $value = $matches['value'] ?? null;
 
-        $value = $parts[1] ?? true;
+        if (! $hasValue) {
+            return [$name, true];
+        }
 
         $value = match ($value) {
             'true' => true,
             'false' => false,
+            '' => null,
             default => $value,
         };
 
-        return [$key, $value];
+        return [$name, $value];
     }
 }

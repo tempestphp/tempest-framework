@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use ReflectionMethod;
 use Tempest\Console\Actions\CompleteConsoleCommandArguments;
 use Tempest\Console\Actions\CompleteConsoleCommandNames;
 use Tempest\Console\Console;
@@ -37,25 +36,26 @@ final readonly class CompleteCommand
         $commandName = $input[1] ?? null;
 
         $command = $this->consoleConfig->commands[$commandName] ?? null;
+
         $argumentBag = new ConsoleArgumentBag($input);
 
         if (! $command) {
-            $this->container->get(CompleteConsoleCommandNames::class)($argumentBag, $current);
+            $completions = $this->container->get(CompleteConsoleCommandNames::class)->complete($argumentBag, $current);
+
+            $this->writeln(implode(PHP_EOL, $completions));
 
             return;
         }
 
         $complete = match(true) {
-            is_array($command->complete) => new ReflectionMethod(...$command->complete),
-            is_string($command->complete) && class_exists($command->complete) => new ReflectionMethod($command->complete, '__invoke'),
-            default => new ReflectionMethod(CompleteConsoleCommandArguments::class, '__invoke'),
+            is_string($command->complete) && class_exists($command->complete) => $this->container->get($command->complete),
+            default => $this->container->get(CompleteConsoleCommandArguments::class),
         };
 
-        $complete->invoke(
-            $this->container->get($complete->getDeclaringClass()->getName()),
+        $this->writeln(implode(PHP_EOL, $complete->complete(
             $command,
             $argumentBag,
             $current,
-        );
+        )));
     }
 }
