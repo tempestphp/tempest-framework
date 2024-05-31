@@ -43,13 +43,15 @@ namespace Tempest {
     /**
      * @template TClassName
      * @param class-string<TClassName> $className
+     * @param string|null $tag
+     * @param mixed ...$params
      * @return TClassName
      */
-    function get(string $className): object
+    function get(string $className, ?string $tag = null, mixed ...$params): object
     {
         $container = GenericContainer::instance();
 
-        return $container->get($className);
+        return $container->get($className, $tag, ...$params);
     }
 
     function event(object $event): void
