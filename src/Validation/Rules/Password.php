@@ -51,9 +51,12 @@ final readonly class Password implements Rule
         return true;
     }
 
-    public function message(): string
+    /**
+     * @return string[]
+     */
+    public function message(): array
     {
-        $messages = ["at least {$this->min} characters"];
+        $messages = ["Value should contain at least {$this->min} characters"];
 
         if ($this->mixedCase) {
             $messages[] = 'at least one uppercase and one lowercase letter';
@@ -68,16 +71,6 @@ final readonly class Password implements Rule
             $messages[] = 'at least one symbol';
         }
 
-        return 'Value should contain ' . $this->natural_language_join($messages);
-    }
-
-    private function natural_language_join(array $list)
-    {
-        $last = array_pop($list);
-        if ($list) {
-            return implode(', ', $list) . ' ' . 'and' . ' ' . $last;
-        }
-
-        return $last;
+        return $messages;
     }
 }

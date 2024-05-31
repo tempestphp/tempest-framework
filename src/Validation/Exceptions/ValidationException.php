@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
+use Tempest\Support\ArrayHelper;
+use Tempest\Support\LanguageHelper;
 use Tempest\Validation\Rule;
 
 final class ValidationException extends Exception
@@ -20,7 +22,7 @@ final class ValidationException extends Exception
         foreach ($failingRules as $field => $failingRulesForField) {
             /** @var Rule $failingRuleForField */
             foreach ($failingRulesForField as $failingRuleForField) {
-                $messages[$field][] = $failingRuleForField->message();
+                $messages[$field][] = LanguageHelper::join(ArrayHelper::wrap($failingRuleForField->message()));
             }
         }
 
