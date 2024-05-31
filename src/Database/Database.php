@@ -13,4 +13,6 @@ interface Database
     public function fetch(Query $query): array;
 
     public function fetchFirst(Query $query): ?array;
+
+    public function withinTransaction(callable $callback): bool;
 }
