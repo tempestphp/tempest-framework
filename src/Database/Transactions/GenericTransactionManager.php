@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\Transactions;
 
 use PDO;
-use Tempest\Database\Exceptions\CannotBeginTransaction;
-use Tempest\Database\Exceptions\CannotCommitTransaction;
-use Tempest\Database\Exceptions\CannotRollbackTransaction;
+use Tempest\Database\Exceptions\CouldNotBeginTransaction;
+use Tempest\Database\Exceptions\CouldNotCommitTransaction;
+use Tempest\Database\Exceptions\CouldNotRollbackTransaction;
 
 final class GenericTransactionManager implements TransactionManager
 {
@@ -20,7 +20,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionBegun = $this->pdo->beginTransaction();
 
         if (! $transactionBegun) {
-            throw new CannotBeginTransaction();
+            throw new CouldNotBeginTransaction();
         }
     }
 
@@ -29,7 +29,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionCommitted = $this->pdo->commit();
 
         if (! $transactionCommitted) {
-            throw new CannotCommitTransaction();
+            throw new CouldNotCommitTransaction();
         }
     }
 
@@ -38,7 +38,7 @@ final class GenericTransactionManager implements TransactionManager
         $transactionRolledBack = $this->pdo->rollBack();
 
         if (! $transactionRolledBack) {
-            throw new CannotRollbackTransaction();
+            throw new CouldNotRollbackTransaction();
         }
     }
 }

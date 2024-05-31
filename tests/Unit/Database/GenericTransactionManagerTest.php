@@ -6,9 +6,9 @@ namespace Tests\Tempest\Unit\Database;
 
 use PDO;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\Exceptions\CannotBeginTransaction;
-use Tempest\Database\Exceptions\CannotCommitTransaction;
-use Tempest\Database\Exceptions\CannotRollbackTransaction;
+use Tempest\Database\Exceptions\CouldNotBeginTransaction;
+use Tempest\Database\Exceptions\CouldNotCommitTransaction;
+use Tempest\Database\Exceptions\CouldNotRollbackTransaction;
 use Tempest\Database\Transactions\GenericTransactionManager;
 
 /**
@@ -38,7 +38,7 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(CannotBeginTransaction::class);
+        $this->expectException(CouldNotBeginTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
@@ -66,7 +66,7 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(CannotCommitTransaction::class);
+        $this->expectException(CouldNotCommitTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
@@ -94,7 +94,7 @@ final class GenericTransactionManagerTest extends TestCase
             ->withAnyParameters()
             ->willReturn(false);
 
-        $this->expectException(CannotRollbackTransaction::class);
+        $this->expectException(CouldNotRollbackTransaction::class);
 
         $manager = new GenericTransactionManager($pdo);
 
