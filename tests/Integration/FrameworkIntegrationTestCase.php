@@ -21,7 +21,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         $this->appConfig = new AppConfig(
-            root: getcwd(),
+            root: __DIR__ . '/../../',
             enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [

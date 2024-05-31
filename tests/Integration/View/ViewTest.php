@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\AppConfig;
 use Tempest\Http\Status;
 use function Tempest\uri;
 use function Tempest\view;
@@ -21,8 +20,6 @@ class ViewTest extends FrameworkIntegrationTestCase
 {
     public function test_render()
     {
-        $appConfig = $this->container->get(AppConfig::class);
-
         $view = new GenericView(
             'Views/overview.php',
             params: [
@@ -30,7 +27,7 @@ class ViewTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $html = $view->render($appConfig);
+        $html = $view->render();
 
         $expected = <<<HTML
 <html lang="en">
@@ -46,11 +43,9 @@ HTML;
 
     public function test_render_with_view_model()
     {
-        $appConfig = $this->container->get(AppConfig::class);
-
         $view = new ViewModel('Brent');
 
-        $html = $view->render($appConfig);
+        $html = $view->render();
 
         $expected = <<<HTML
 
@@ -62,13 +57,11 @@ HTML;
 
     public function test_with_view_function()
     {
-        $appConfig = $this->container->get(AppConfig::class);
-
         $view = view('Views/overview.php')->data(
             name: 'Brent',
         );
 
-        $html = $view->render($appConfig);
+        $html = $view->render();
 
         $expected = <<<HTML
 <html lang="en">
@@ -86,7 +79,7 @@ HTML;
     {
         $html = view('Views/rawAndEscaping.php')->data(
             property: '<h1>hi</h1>',
-        )->render($this->container->get(AppConfig::class));
+        )->render();
 
         $expected = <<<HTML
         &lt;h1&gt;hi&lt;/h1&gt;<h1>hi</h1>
@@ -97,7 +90,7 @@ HTML;
 
     public function test_extends_parameters()
     {
-        $html = view('Views/extendsWithVariables.php')->render($this->container->get(AppConfig::class));
+        $html = view('Views/extendsWithVariables.php')->render();
 
         $this->assertStringContainsString('<title>Test</title>', $html);
         $this->assertStringContainsString('<h1>Hello</h1>', $html);
@@ -105,7 +98,7 @@ HTML;
 
     public function test_named_slots()
     {
-        $html = view('Views/extendsWithNamedSlot.php')->render($this->container->get(AppConfig::class));
+        $html = view('Views/extendsWithNamedSlot.php')->render();
 
         $this->assertStringContainsString(
             needle: <<<HTML
@@ -135,7 +128,7 @@ HTML;
     {
         $html = view('Views/include-parent.php')
             ->data(prop: 'test')
-            ->render($this->container->get(AppConfig::class));
+            ->render();
 
         $expected = <<<HTML
         parent test 

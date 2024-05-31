@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\AppConfig;
-
 interface View
 {
-    public function render(AppConfig $appConfig): string;
+    public function render(): string;
 
     public function path(string $path): self;
 

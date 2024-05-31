@@ -63,7 +63,7 @@ trait IsView
 
     public function include(string $path, ...$params): string
     {
-        return view($path)->data(...$this->rawParams, ...$params)->render($this->appConfig);
+        return view($path)->data(...$this->rawParams, ...$params)->render();
     }
 
     public function raw(string $name): ?string
@@ -76,27 +76,9 @@ trait IsView
         return $this->rawParams[$name] ?? null;
     }
 
-    public function render(AppConfig $appConfig): string
+    public function render(): string
     {
-        $this->appConfig = $appConfig;
-
-        $path = null;
-
-        foreach ($appConfig->discoveryLocations as $location) {
-            $path = path($location->path, $this->path);
-
-            if (file_exists($path)) {
-                break;
-            }
-        }
-
-        if ($path === null) {
-            throw new Exception("View {$path} not found");
-        }
-
-        ob_start();
-        include $path;
-        $contents = ob_get_clean();
+        $contents = $this->resolveContent();
 
         if ($this->extendsPath) {
             $slots = $this->parseSlots($contents);
@@ -105,10 +87,10 @@ trait IsView
 
             return view($this->extendsPath)
                 ->data(...$extendsData)
-                ->render($appConfig);
+                ->render();
         }
 
-        return $contents;
+        return $this->parseViewComponents($contents);
     }
 
     private function escape(array $items): array
@@ -147,6 +129,70 @@ trait IsView
             fn (array $content) => implode(PHP_EOL, $content),
             $slots,
         );
+    }
+
+    private function parseViewComponents(string $contents): string
+    {
+        $viewConfig = get(ViewConfig::class);
+
+        preg_match_all(
+            pattern: '/<x-(?<tag>\w+)(?<attributes>(.|\n)*?(?<!-))>(?<body>(.|\n)*?)<\/x/',
+            subject: $contents,
+            matches: $matches,
+            flags: PREG_OFFSET_CAPTURE,
+        );
+
+        $additionalOffset = 0;
+
+        foreach ($matches[0] as $key => $match) {
+            $tag = $matches['tag'][$key][0];
+
+            $componentClass = $viewConfig->viewComponents[$tag] ?? null;
+
+            if (! $componentClass) {
+                continue;
+            }
+
+            preg_match_all(
+                pattern: '/(?<injection>:)?(?<attribute>\w+)="(?<value>(.|\n)*?)"/',
+                subject: trim($matches['attributes'][$key][0]),
+                matches: $attributeMatches,
+            );
+
+            $attributes = [];
+
+            foreach ($attributeMatches[0] as $attributeKey => $attributeMatch) {
+                $value = $attributeMatches['value'][$attributeKey];
+                $attribute = $attributeMatches['attribute'][$attributeKey];
+
+                if ($attributeMatches['injection'][$attributeKey] === ':') {
+                    /** @phpstan-ignore-next-line */
+                    $value = eval("return {$value};");
+                }
+
+                $attributes[$attribute] = $value;
+            }
+
+            /** @var ViewComponent $component */
+            $component = new $componentClass(...$attributes);
+
+            $body = $matches['body'][$key][0];
+
+            $rendered = $component->render($body);
+
+            $fullMatch = $match[0];
+            $offset = $match[1];
+
+            $contents = substr_replace(
+                string: $contents,
+                replace: $rendered,
+                offset: $offset + $additionalOffset,
+            );
+
+            $additionalOffset += strlen($rendered) - strlen($fullMatch);
+        }
+
+        return $contents;
     }
 
     private function determineSlotName(string $content): string
@@ -207,5 +253,32 @@ trait IsView
     private function getSession(): Session
     {
         return get(Session::class);
+    }
+
+    public function resolveContent(): string
+    {
+        $appConfig = get(AppConfig::class);
+
+        if (! str_ends_with($this->path, '.php')) {
+            return $this->path;
+        }
+
+        $path = $this->path;
+        $discoveryLocations = $appConfig->discoveryLocations;
+
+        while (! file_exists($path) && $location = current($discoveryLocations)) {
+            $path = path($location->path, $this->path);
+            next($discoveryLocations);
+        }
+
+        if (! file_exists($path)) {
+            throw new Exception("View {$path} not found");
+        }
+
+        ob_start();
+
+        include $path;
+
+        return ob_get_clean();
     }
 }

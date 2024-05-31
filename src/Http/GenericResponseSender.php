@@ -5,15 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
-use Tempest\AppConfig;
 use Tempest\View\View;
 
 final readonly class GenericResponseSender implements ResponseSender
 {
-    public function __construct(private AppConfig $appConfig)
-    {
-    }
-
     public function send(Response $response): Response
     {
         ob_start();
@@ -74,7 +69,7 @@ final readonly class GenericResponseSender implements ResponseSender
         } elseif (is_array($body)) {
             yield json_encode($body);
         } elseif ($body instanceof View) {
-            yield $body->render($this->appConfig);
+            yield $body->render();
         } else {
             yield $body;
         }
