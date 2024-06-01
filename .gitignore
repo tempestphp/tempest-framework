@@ -10,3 +10,4 @@ composer.lock
 sessions/
 debug.log
 tempest.log
+tests/Unit/Console/test-console.log
