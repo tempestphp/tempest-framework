@@ -18,7 +18,13 @@ interface View
 
     public function slot(string $name = 'slot'): ?string;
 
+    /**
+     * @param string $name
+     * @return \Tempest\Validation\Rule[]
+     */
     public function getErrorsFor(string $name): array;
 
     public function hasErrors(): bool;
+
+    public function original(string $name, mixed $default = ''): mixed;
 }

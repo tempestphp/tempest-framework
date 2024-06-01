@@ -6,6 +6,9 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tempest\Http\Session\Session;
+use Tempest\Validation\Rules\AlphaNumeric;
+use Tempest\Validation\Rules\Between;
 use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -28,9 +31,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: '<div foo="hello" bar="barValue"></div>',
-            actual: view(<<<'HTML'
+            actual: view(
+                <<<'HTML'
             <x-my :foo="$this->input" bar="barValue"></x-my>',
-            HTML)->data(input: 'hello')->render(),
+            HTML,
+            )->data(input: 'hello')->render(),
         );
     }
 
@@ -47,14 +52,50 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             
             </form>
             HTML,
-            actual: view(<<<'HTML'
+            actual: view(
+                <<<'HTML'
             <x-form action="#">
                 <div>
                     <x-input name="a" label="a" type="number"></x-input>
                 </div>
                 <x-input name="b" label="b" type="text" />
             </x-form>
-            HTML)->render()
+            HTML,
+            )->render(),
+        );
+    }
+
+    public function test_view_component_with_injected_view(): void
+    {
+        $between = new Between(min: 1, max: 10);
+        $alphaNumeric = new AlphaNumeric();
+
+        $this->container->get(Session::class)->flash(
+            Session::VALIDATION_ERRORS,
+            ['name' => [$between, $alphaNumeric]],
+        );
+
+        $this->container->get(Session::class)->flash(
+            Session::ORIGINAL_VALUES,
+            ['name' => 'original name'],
+        );
+
+        $html = view(
+            <<<'HTML'
+            <x-input name="name" label="a" type="number" />
+            HTML,
+        )->render();
+
+        $this->assertStringContainsString('value="original name"', $html);
+        $this->assertStringContainsString($between->message(), $html);
+        $this->assertStringContainsString($alphaNumeric->message(), $html);
+    }
+
+    public function test_component_with_injected_dependency(): void
+    {
+        $this->assertSame(
+            expected: 'hi',
+            actual: view('<x-with-injection />')->render(),
         );
     }
 

@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Exception;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionParameter;
 use SimpleXMLElement;
 use Tempest\AppConfig;
 use function Tempest\get;
 use Tempest\Http\Session\Session;
 use function Tempest\path;
+use function Tempest\type;
 use function Tempest\view;
 
 trait IsView
@@ -139,7 +143,7 @@ trait IsView
         libxml_use_internal_errors(true);
         $xml = new SimpleXMLElement("<div>{$content}</div>");
 
-        if ((string) $xml === $content) {
+        if ((string)$xml === $content) {
             return $content;
         }
 
@@ -155,7 +159,9 @@ trait IsView
                 return $content;
             }
 
-            $attributes = [];
+            $attributes = [
+                'view' => $this,
+            ];
 
             foreach ($element->attributes() as $attribute) {
                 preg_match(
@@ -168,7 +174,6 @@ trait IsView
                 $name = $attributeMatch['name'];
 
                 if ($attributeMatch['injection'] === ':') {
-
                     /** @phpstan-ignore-next-line */
                     $value = eval("return {$value};");
                 }
@@ -176,8 +181,29 @@ trait IsView
                 $attributes[$name] = $value;
             }
 
+            $reflection = new ReflectionClass($componentClass);
+
+            $attributes = array_map(
+                callback: function (ReflectionParameter $parameter) use ($attributes, $componentClass) {
+                    if (array_key_exists($parameter->getName(), $attributes)) {
+                        return $attributes[$parameter->getName()];
+                    }
+
+                    if ($parameter->isDefaultValueAvailable()) {
+                        return $parameter->getDefaultValue();
+                    }
+
+                    try {
+                        return get(type($parameter->getType()));
+                    } catch (ReflectionException) {
+                        throw new Exception("Could not resolve value for field {$componentClass}::\${$parameter->name}");
+                    }
+                },
+                array: $reflection->getConstructor()->getParameters(),
+            );
+
             /** @var ViewComponent $component */
-            $component = new $componentClass(...$attributes);
+            $component = $reflection->newInstance(...$attributes);
 
             $slot = preg_replace(
                 pattern: [
@@ -236,7 +262,7 @@ trait IsView
         return $originalValues[$name] ?? $default;
     }
 
-    /** @return array<mixed> */
+    /** @return \Tempest\Validation\Rule[][] */
     private function resolveValidationErrors(): ?array
     {
         $this->errors ??= $this->getSession()->get(Session::VALIDATION_ERRORS);
@@ -244,7 +270,6 @@ trait IsView
         return $this->errors;
     }
 
-    /** @return array<mixed> */
     private function resolveOriginalValues(): ?array
     {
         $this->originalValues ??= $this->getSession()->get(Session::ORIGINAL_VALUES);
