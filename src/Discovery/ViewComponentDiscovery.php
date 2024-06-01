@@ -28,7 +28,7 @@ final readonly class ViewComponentDiscovery implements Discovery
             return;
         }
 
-        $this->viewConfig->viewComponents[forward_static_call($class->getName() . '::getName')] = $class->getName();
+        $this->viewConfig->addViewComponent($class);
     }
 
     public function hasCache(): bool

@@ -19,12 +19,12 @@ final readonly class MyViewComponent implements ViewComponent
     ) {
     }
 
-    public function render(string $body): string
+    public function render(string $slot): string
     {
         if ($this->foo && $this->bar) {
-            return "<div foo=\"{$this->foo}\" bar=\"{$this->bar}\">" . $body . '</div>';
+            return "<div foo=\"{$this->foo}\" bar=\"{$this->bar}\">" . $slot . '</div>';
         }
 
-        return '<div>' . $body . '</div>';
+        return '<div>' . $slot . '</div>';
     }
 }

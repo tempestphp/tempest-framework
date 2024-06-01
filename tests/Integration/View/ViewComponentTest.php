@@ -34,21 +34,50 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_nested_components(): void
+    {
+        $this->assertSame(
+            expected: <<<'HTML'
+            <form action="#" method="post">
+                
+                <div>
+                    <x-input name="a" label="a" type="number"/>
+                </div>
+                <x-input name="b" label="b" type="text"/>
+            
+            </form>
+            HTML,
+            actual: view(<<<'HTML'
+            <x-form action="#">
+                <div>
+                    <x-input name="a" label="a" type="number"></x-input>
+                </div>
+                <x-input name="b" label="b" type="text" />
+            </x-form>
+            HTML)->render()
+        );
+    }
+
     public static function view_components(): Generator
     {
+        yield [
+            '<x-my></x-my>',
+            '<div></div>',
+        ];
+
         yield [
             '<x-my>body</x-my>',
             '<div>body</div>',
         ];
 
         yield [
-            '<x-my>body</x-my><x-my>body</x-my>',
-            '<div>body</div><div>body</div>',
+            '<x-my><p>a</p><p>b</p></x-my>',
+            '<div><p>a</p><p>b</p></div>',
         ];
 
         yield [
-            '<x-my></x-my>',
-            '<div></div>',
+            '<x-my>body</x-my><x-my>body</x-my>',
+            '<div>body</div><div>body</div>',
         ];
 
         yield [

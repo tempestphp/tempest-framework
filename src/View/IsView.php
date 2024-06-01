@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Exception;
+use SimpleXMLElement;
 use Tempest\AppConfig;
 use function Tempest\get;
 use Tempest\Http\Session\Session;
@@ -131,68 +132,69 @@ trait IsView
         );
     }
 
-    private function parseViewComponents(string $contents): string
+    private function parseViewComponents(string $content): string
     {
         $viewConfig = get(ViewConfig::class);
 
-        preg_match_all(
-            pattern: '/<x-(?<tag>\w+)(?<attributes>(.|\n)*?(?<!-))>(?<body>(.|\n)*?)<\/x/',
-            subject: $contents,
-            matches: $matches,
-            flags: PREG_OFFSET_CAPTURE,
-        );
+        libxml_use_internal_errors(true);
+        $xml = new SimpleXMLElement("<div>{$content}</div>");
 
-        $additionalOffset = 0;
+        if ((string) $xml === $content) {
+            return $content;
+        }
 
-        foreach ($matches[0] as $key => $match) {
-            $tag = $matches['tag'][$key][0];
+        $parsed = [];
 
-            $componentClass = $viewConfig->viewComponents[$tag] ?? null;
+        foreach ($xml->children() as $element) {
+            /** @var class-string<\Tempest\View\ViewComponent>|null $component */
+            $componentClass = $viewConfig->viewComponents[$element->getName()]
+                ?? $viewConfig->viewComponents[$element->getName()]
+                ?? null;
 
             if (! $componentClass) {
-                continue;
+                return $content;
             }
-
-            preg_match_all(
-                pattern: '/(?<injection>:)?(?<attribute>\w+)="(?<value>(.|\n)*?)"/',
-                subject: trim($matches['attributes'][$key][0]),
-                matches: $attributeMatches,
-            );
 
             $attributes = [];
 
-            foreach ($attributeMatches[0] as $attributeKey => $attributeMatch) {
-                $value = $attributeMatches['value'][$attributeKey];
-                $attribute = $attributeMatches['attribute'][$attributeKey];
+            foreach ($element->attributes() as $attribute) {
+                preg_match(
+                    pattern: '/(?<injection>:)?(?<name>\w+)="(?<value>(.|\n)*?)"/',
+                    subject: trim(html_entity_decode($attribute->asXML())),
+                    matches: $attributeMatch,
+                );
 
-                if ($attributeMatches['injection'][$attributeKey] === ':') {
+                $value = $attributeMatch['value'];
+                $name = $attributeMatch['name'];
+
+                if ($attributeMatch['injection'] === ':') {
+
                     /** @phpstan-ignore-next-line */
                     $value = eval("return {$value};");
                 }
 
-                $attributes[$attribute] = $value;
+                $attributes[$name] = $value;
             }
 
             /** @var ViewComponent $component */
             $component = new $componentClass(...$attributes);
 
-            $body = $matches['body'][$key][0];
-
-            $rendered = $component->render($body);
-
-            $fullMatch = $match[0];
-            $offset = $match[1];
-
-            $contents = substr_replace(
-                string: $contents,
-                replace: $rendered,
-                offset: $offset + $additionalOffset,
+            $slot = preg_replace(
+                pattern: [
+                    "/^<{$element->getName()}(.|\n)*?(?<!-)>/",
+                    "/<\/{$element->getName()}>$/",
+                ],
+                replacement: '',
+                subject: html_entity_decode($element->asXML()),
             );
 
-            $additionalOffset += strlen($rendered) - strlen($fullMatch);
+            $parsed[] = $component->render($this->parseViewComponents($slot));
         }
 
-        return $contents;
+        libxml_clear_errors();
+        libxml_use_internal_errors(false);
+
+        return implode('', $parsed);
     }
 
     private function determineSlotName(string $content): string

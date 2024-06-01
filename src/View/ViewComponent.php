@@ -8,5 +8,5 @@ interface ViewComponent
 {
     public static function getName(): string;
 
-    public function render(string $body): string;
+    public function render(string $slot): string;
 }
