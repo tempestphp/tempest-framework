@@ -4,7 +4,6 @@
     "require": {
         "php": "^8.3",
         "tempest/core": "dev-main",
-        "tempest/console": "dev-main",
         "ext-pdo": "*",
         "vlucas/phpdotenv": "^5.6",
         "ext-dom": "*",
