@@ -16,10 +16,10 @@ parameters:
 	ignoreErrors:
 		-
 			message: '#.*#'
-			path: src/Exceptions/HttpExceptionHandler.php
+			path: src/Tempest/Exceptions/HttpExceptionHandler.php
 		-
 			message: '#.*#'
-			path: src/Exceptions/exception.php
+			path: src/Tempest/Exceptions/exception.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'
