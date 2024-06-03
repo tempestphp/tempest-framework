@@ -6,7 +6,7 @@ namespace Tempest\Console\Scheduler;
 
 use Tempest\Console\ShellExecutor;
 
-final class NullShellExecutor implements ShellExecutor
+class NullShellExecutor implements ShellExecutor
 {
     public function execute(string $compiledCommand): void
     {
