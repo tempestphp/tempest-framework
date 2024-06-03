@@ -1,0 +1,80 @@
+name: 'Sub-split Packages'
+
+on:
+  # TODO: Remove this after making sure it works.
+  pull_request:
+    branches: [ main ]
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+jobs:
+  get_packages:
+    name: Get Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - uses: actions/checkout@v2
+
+      - name: Get Packages
+        id: get_json
+        run: echo "::set-output name=json::$(bin/get-packages)"
+
+      - name: Output Packages
+        run: echo "${{ steps.get_json.outputs.json }}"
+    outputs:
+      matrix: ${{ steps.get_json.outputs.json }}
+
+  packages_split:
+    name: Split Package ${{ matrix.package.name }}
+    needs: get_packages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
+    steps:
+      -   uses: actions/checkout@v2
+      # no tag
+      -
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: "symplify/monorepo-split-github-action@2.1"
+        with:
+          # ↓ split "src/Tempest/Console" directory
+          package_directory: '${{ matrix.package.directory }}'
+
+          # ↓ into https://github.com/tempestphp/tempest-console repository
+          repository_organization: '${{ matrix.package.organization }}'
+          repository_name: '${{ matrix.package.repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "aidan-casey"
+          user_email: "aidan@caseyhouse.net"
+
+      # with tag
+      -
+        if: "startsWith(github.ref, 'refs/tags/')"
+        uses: "symplify/monorepo-split-github-action@2.1"
+        with:
+          tag: ${GITHUB_REF#refs/tags/}
+
+          # ↓ split "src/Tempest/Console" directory
+          package_directory: '${{ matrix.package.directory }}'
+
+          # ↓ into https://github.com/tempestphp/tempest-console repository
+          repository_organization: '${{ matrix.package.organization }}'
+          repository_name: '${{ matrix.package.repository }}'
+
+          # ↓ the user signed under the split commit
+          user_name: "aidan-casey"
+          user_email: "aidan@caseyhouse.net"
