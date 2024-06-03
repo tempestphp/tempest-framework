@@ -47,7 +47,8 @@ __:x: Bad Example__
 
 # Release Workflow
 
-**Note:** Tempest uses sub-splits to allow components to be installed as individual packages. The following outlines how this process works.
+> [!NOTE]  
+> Tempest uses sub-splits to allow components to be installed as individual packages. The following outlines how this process works.
 
 ## Workflow Steps
 
