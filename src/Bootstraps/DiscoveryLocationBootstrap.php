@@ -67,6 +67,13 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         $discoveredLocations = [];
 
         foreach ($namespaceMap as $namespace => $path) {
+            // TODO: Refactor before v1!
+            // This was added by Aidan Casey on June 3rd, 2024.
+            // It was added as a workaround to console being discovered twice.
+            if ($namespace === 'Tempest\\Console\\') {
+                continue;
+            }
+
             $path = PathHelper::make($this->appConfig->root, $path);
 
             $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
