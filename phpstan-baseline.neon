@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Tempest\\\\Console\\\\Exceptions\\\\ConsoleException should be final$#"
+			count: 1
+			path: src/Tempest/Console/Exceptions/ConsoleException.php
+
+		-
+			message: "#^Calling exec\\(\\) is forbidden\\.$#"
+			count: 3
+			path: src/Tempest/Console/Terminal/Terminal.php
+
+		-
 			message: "#^Tempest\\\\Database\\\\Exceptions\\\\DatabaseException should be final$#"
 			count: 1
 			path: src/Tempest/Database/Exceptions/DatabaseException.php
@@ -49,6 +59,41 @@ parameters:
 			message: "#^Parameter \\#1 \\$request of method Tempest\\\\HttpClient\\\\Driver\\\\Psr18Driver\\:\\:sendRequest\\(\\) expects Psr\\\\Http\\\\Message\\\\RequestInterface, Tempest\\\\Http\\\\Request given\\.$#"
 			count: 1
 			path: src/Tempest/HttpClient/Driver/Psr18Driver.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\View\\:\\:\\$path\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\ViewRenderer\\:\\:\\$extendsParams\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\ViewRenderer\\:\\:\\$extendsPath\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\ViewRenderer\\:\\:\\$path\\.$#"
+			count: 3
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Access to an undefined property Tempest\\\\View\\\\ViewRenderer\\:\\:\\$rawParams\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Call to an undefined method Tempest\\\\View\\\\ViewRenderer\\:\\:parseSlots\\(\\)\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
+
+		-
+			message: "#^Method Tempest\\\\View\\\\ViewRenderer\\:\\:escape\\(\\) is unused\\.$#"
+			count: 1
+			path: src/View/ViewRenderer.php
 
 		-
 			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
