@@ -1,14 +1,9 @@
 name: 'Sub-split Packages'
 
 on:
-  # TODO: Remove this after making sure it works.
-  pull_request:
-    branches: [ main ]
   push:
-    branches:
-      - main
-    tags:
-      - '*'
+    branches: [ main ]
+    tags: [ '*' ]
 
 env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
