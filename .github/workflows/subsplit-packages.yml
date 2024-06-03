@@ -48,7 +48,7 @@ jobs:
       # no tag
       -
         if: "!startsWith(github.ref, 'refs/tags/')"
-        uses: "symplify/monorepo-split-github-action@2.3"
+        uses: "symplify/monorepo-split-github-action@v2.3.0"
         with:
           # ↓ split "src/Tempest/Console" directory
           package_directory: '${{ matrix.package.directory }}'
@@ -64,7 +64,7 @@ jobs:
       # with tag
       -
         if: "startsWith(github.ref, 'refs/tags/')"
-        uses: "symplify/monorepo-split-github-action@2.3"
+        uses: "symplify/monorepo-split-github-action@v2.3.0"
         with:
           tag: ${GITHUB_REF#refs/tags/}
 
