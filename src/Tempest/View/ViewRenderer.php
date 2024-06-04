@@ -213,9 +213,4 @@ final class ViewRenderer
 
         return implode('', $parsed);
     }
-
-    public function include(string $path, ...$params): string
-    {
-        return $this->render(view($path)->data(...$this->currentView->getRawData(), ...$params));
-    }
 }

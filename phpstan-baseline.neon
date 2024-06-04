@@ -141,11 +141,6 @@ parameters:
 			path: tests/Fixtures/Views/include-child.php
 
 		-
-			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$prop\\.$#"
-			count: 1
-			path: tests/Fixtures/Views/include-parent.php
-
-		-
 			message: "#^Variable \\$this might not be defined\\.$#"
 			count: 2
 			path: tests/Fixtures/Views/index.php

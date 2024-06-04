@@ -124,19 +124,6 @@ HTML;
         );
     }
 
-    public function test_include_parameters()
-    {
-        $html = $this->render(view('Views/include-parent.php')
-            ->data(prop: 'test'));
-
-        $expected = <<<HTML
-        parent test 
-        child test
-        HTML;
-
-        $this->assertSame(trim($expected), trim($html));
-    }
-
     public function test_view_model_with_response_data()
     {
         $this->http
