@@ -23,7 +23,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: $rendered,
-            actual: view($component)->render(),
+            actual: $this->render(view($component)),
         );
     }
 
@@ -31,11 +31,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: '<div foo="hello" bar="barValue"></div>',
-            actual: view(
+            actual: $this->render(view(
                 <<<'HTML'
             <x-my :foo="$this->input" bar="barValue"></x-my>',
             HTML,
-            )->data(input: 'hello')->render(),
+            )->data(input: 'hello')),
         );
     }
 
@@ -52,7 +52,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             
             </form>
             HTML,
-            actual: view(
+            actual: $this->render(view(
                 <<<'HTML'
             <x-form action="#">
                 <div>
@@ -61,7 +61,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-input name="b" label="b" type="text" />
             </x-form>
             HTML,
-            )->render(),
+            )),
         );
     }
 
@@ -80,11 +80,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             ['name' => 'original name'],
         );
 
-        $html = view(
+        $html = $this->render(view(
             <<<'HTML'
             <x-input name="name" label="a" type="number" />
             HTML,
-        )->render();
+        ));
 
         $this->assertStringContainsString('value="original name"', $html);
         $this->assertStringContainsString($between->message(), $html);
@@ -95,7 +95,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: 'hi',
-            actual: view('<x-with-injection />')->render(),
+            actual: $this->render(view('<x-with-injection />')),
         );
     }
 

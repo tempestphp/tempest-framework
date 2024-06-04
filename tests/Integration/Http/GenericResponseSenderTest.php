@@ -27,7 +27,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
             headers: ['Content-Type' => ['application/json']],
         );
 
-        $responseSender = new GenericResponseSender();
+        $responseSender = $this->container->get(GenericResponseSender::class);
 
         $this->assertSame($response, $responseSender->send($response));
 
@@ -43,7 +43,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
             body: ['key' => 'value'],
         );
 
-        $responseSender = new GenericResponseSender();
+        $responseSender = $this->container->get(GenericResponseSender::class);
 
         $responseSender->send($response);
 
@@ -62,7 +62,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
             ),
         );
 
-        $responseSender = new GenericResponseSender();
+        $responseSender = $this->container->get(GenericResponseSender::class);
 
         $responseSender->send($response);
 

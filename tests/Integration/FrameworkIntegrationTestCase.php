@@ -15,6 +15,8 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
+use Tempest\View\View;
+use Tempest\View\ViewRenderer;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
@@ -64,5 +66,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(Application::class, fn () => $application);
 
         return $application;
+    }
+
+    protected function render(View $view): string
+    {
+        return $this->container->get(ViewRenderer::class)->render($view);
     }
 }

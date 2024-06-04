@@ -27,7 +27,7 @@ class ViewTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $html = $view->render();
+        $html = $this->render($view);
 
         $expected = <<<HTML
 <html lang="en">
@@ -45,7 +45,7 @@ HTML;
     {
         $view = new ViewModel('Brent');
 
-        $html = $view->render();
+        $html = $this->render($view);
 
         $expected = <<<HTML
 
@@ -61,7 +61,7 @@ HTML;
             name: 'Brent',
         );
 
-        $html = $view->render();
+        $html = $this->render($view);
 
         $expected = <<<HTML
 <html lang="en">
@@ -77,9 +77,9 @@ HTML;
 
     public function test_raw_and_escaping()
     {
-        $html = view('Views/rawAndEscaping.php')->data(
+        $html = $this->render(view('Views/rawAndEscaping.php')->data(
             property: '<h1>hi</h1>',
-        )->render();
+        ));
 
         $expected = <<<HTML
         &lt;h1&gt;hi&lt;/h1&gt;<h1>hi</h1>
@@ -90,7 +90,7 @@ HTML;
 
     public function test_extends_parameters()
     {
-        $html = view('Views/extendsWithVariables.php')->render();
+        $html = $this->render(view('Views/extendsWithVariables.php'));
 
         $this->assertStringContainsString('<title>Test</title>', $html);
         $this->assertStringContainsString('<h1>Hello</h1>', $html);
@@ -98,7 +98,7 @@ HTML;
 
     public function test_named_slots()
     {
-        $html = view('Views/extendsWithNamedSlot.php')->render();
+        $html = $this->render(view('Views/extendsWithNamedSlot.php'));
 
         $this->assertStringContainsString(
             needle: <<<HTML
@@ -126,9 +126,8 @@ HTML;
 
     public function test_include_parameters()
     {
-        $html = view('Views/include-parent.php')
-            ->data(prop: 'test')
-            ->render();
+        $html = $this->render(view('Views/include-parent.php')
+            ->data(prop: 'test'));
 
         $expected = <<<HTML
         parent test 

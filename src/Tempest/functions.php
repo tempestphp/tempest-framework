@@ -47,6 +47,7 @@ namespace Tempest {
     use Tempest\Support\Reflection\TypeName;
     use Tempest\View\GenericView;
     use Tempest\View\View;
+    use Tempest\View\ViewRenderer;
 
     /**
      * @template TClassName

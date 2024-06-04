@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+/**
+ * @method include(string $path, ...$params): string
+ */
 interface View
 {
-    public function render(): string;
-
     public function path(string $path): self;
 
     public function getPath(): string;

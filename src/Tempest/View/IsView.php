@@ -7,7 +7,6 @@ namespace Tempest\View;
 use Tempest\Application\AppConfig;
 use function Tempest\get;
 use Tempest\Http\Session\Session;
-use function Tempest\view;
 
 trait IsView
 {
@@ -82,11 +81,6 @@ trait IsView
         $this->extendsData = $params;
 
         return $this;
-    }
-
-    public function include(string $path, ...$params): string
-    {
-        return view($path)->data(...$this->rawData, ...$params)->render();
     }
 
     public function raw(string $name): ?string
