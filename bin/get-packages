@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * The following is heavily borrowed from Ecotone.
+ *
+ * This script allows us to dynamically retrieve the package namespace
+ * and directory from our composer file. This is then used by our GitHub
+ * action to publish the packages to their appropriate repositories.
+ *
+ * @link https://github.com/ecotoneframework/ecotone-dev/blob/main/bin/get-packages
+ */
+
+const PACKAGES_DIRECTORY = __DIR__ . '/../src/Tempest/';
+
+function getPackageNameFromComposerFile(string $composerFile)
+{
+    $composer = json_decode(file_get_contents($composerFile), true);
+
+    $name = $composer['name'] ?? throw new UnexpectedValueException(
+        'The referenced package is invalid because it is missing a name: ' . $composerFile
+    );
+
+    return str_replace('tempest/', '', $name);
+}
+
+/**
+ * @return array<array-key, array{
+ *     directory: string,
+ *     name: string,
+ *     package: string,
+ *     organization: string,
+ *     repository: string
+ * }>
+ */
+function getPackages(): array {
+    $packages = [];
+    $directoryIterator = new DirectoryIterator(realpath(PACKAGES_DIRECTORY));
+
+    /**
+     * @var DirectoryIterator $directory
+     */
+    foreach ($directoryIterator as $directory) {
+        if ($directory->isDot()) {
+            continue;
+        }
+
+        $file = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'composer.json';
+
+        if (! file_exists($file)) {
+            continue;
+        }
+
+        $name = getPackageNameFromComposerFile($file);
+        $packages[] = [
+            'directory'  => $directory->getRealPath(),
+            'name' => $name,
+            'package' => 'tempest/' . $name,
+            'organization' => 'tempestphp',
+            'repository' => sprintf('tempest-%s', $name),
+        ];
+    }
+
+    return $packages;
+}
+
+echo json_encode(getPackages());

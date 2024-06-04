@@ -44,3 +44,31 @@ __:white_check_mark: Good Example__
 
 __:x: Bad Example__
 > Value should be a valid email address!
+
+# Release Workflow
+
+> [!NOTE]  
+> Tempest uses sub-splits to allow components to be installed as individual packages. The following outlines how this process works.
+
+## Workflow Steps
+
+1. **Trigger Event**
+   - When a pull request is merged, or a new tag is created, the `.github/workflows/subsplit-packages.yml` action is run.
+
+2. **Package Information Retrieval**
+   - When the `subsplit-packages.yml` is run, it calls `bin/get-packages`.
+   - This PHP script uses a combination of Composer and the filesystem to return (in JSON) some information about every package. It returns the:
+      - **Directory**
+      - **Name**
+      - **Package**
+      - **Organization**
+      - **Repository**
+
+3. **Action Matrix Creation**
+   - The result of the `get-packages` command is then used to create an action matrix.
+   - This ensures that the next steps are performed for _every_ package discovered.
+
+4. **Monorepo Split Action**
+   - The `symplify/monorepo-split-github-action@v2.3.0` GitHub action is called for every package and provided the necessary information (destination repo, directory, etc.).
+   - This action takes any changes and pushes them to the sub-split repository determined by combining the "Organization" and "Repository" values returned in step 2.
+   - Depending on whether a tag is found or not, a tag is also supplied so the repository is tagged appropriately.
