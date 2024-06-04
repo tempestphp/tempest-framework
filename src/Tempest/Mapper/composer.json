@@ -1,0 +1,12 @@
+{
+    "name": "tempest/mapper",
+    "require": {
+        "php": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Mapper\\": ""
+        }
+    },
+    "license": "MIT"
+}

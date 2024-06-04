@@ -8,9 +8,9 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use function Tempest\map;
 use Tempest\Mapper\Mapper;
 use Tempest\Validation\Validator;
+use function Tempest\map;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Mapper\Mappers;
 
 use InvalidArgumentException;
-use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\IntegrationTest;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
@@ -15,6 +14,7 @@ use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentWithChildrenObject;
+use function Tempest\map;
 
 /**
  * @internal
