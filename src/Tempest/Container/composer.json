@@ -1,0 +1,10 @@
+{
+    "name": "tempest/container",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Container\\": ""
+        }
+    },
+    "require": {}
+}

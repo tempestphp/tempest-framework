@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Log;
 
+use PHPUnit\Framework\TestCase;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
 use Tempest\Log\GenericLogger;
 use Tempest\Log\LogConfig;
-use Tests\Tempest\IntegrationTest;
 
 /**
  * @internal
  * @small
  */
-final class GenericLoggerTest extends IntegrationTest
+final class GenericLoggerTest extends TestCase
 {
     public function test_append_log_channel_works(): void
     {
