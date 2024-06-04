@@ -4,25 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Exception;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionParameter;
-use SimpleXMLElement;
 use Tempest\Application\AppConfig;
 use function Tempest\get;
 use Tempest\Http\Session\Session;
-use function Tempest\path;
-use function Tempest\type;
 use function Tempest\view;
 
 trait IsView
 {
     public string $path;
-    public array $params = [];
-    private array $rawParams = [];
+    public array $data = [];
+    private array $rawData = [];
     public ?string $extendsPath = null;
-    public array $extendsParams = [];
+    public array $extendsData = [];
     private AppConfig $appConfig;
     /** @var array<mixed>|null */
     private ?array $errors = null;
@@ -34,13 +27,8 @@ trait IsView
         array $params = [],
     ) {
         $this->path = $path;
-        $this->params = $this->escape($params);
-        $this->rawParams = $params;
-    }
-
-    public function __get(string $name): mixed
-    {
-        return $this->params[$name] ?? null;
+        $this->data = $this->escape($params);
+        $this->rawData = $params;
     }
 
     public function path(string $path): self
@@ -50,10 +38,40 @@ trait IsView
         return $this;
     }
 
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    public function getRawData(): array
+    {
+        return $this->rawData;
+    }
+
+    public function getRaw(string $key): mixed
+    {
+        return $this->rawData[$key] ?? null;
+    }
+
+    public function get(string $key): mixed
+    {
+        return $this->{$key} ?? $this->data[$key] ?? null;
+    }
+
+    public function getExtendsPath(): ?string
+    {
+        return $this->extendsPath;
+    }
+
     public function data(...$params): self
     {
-        $this->rawParams = [...$this->rawParams, ...$params];
-        $this->params = [...$this->params, ...$this->escape($params)];
+        $this->rawData = [...$this->rawData, ...$params];
+        $this->data = [...$this->data, ...$this->escape($params)];
 
         return $this;
     }
@@ -61,41 +79,29 @@ trait IsView
     public function extends(string $path, ...$params): self
     {
         $this->extendsPath = $path;
-        $this->extendsParams = $params;
+        $this->extendsData = $params;
 
         return $this;
     }
 
     public function include(string $path, ...$params): string
     {
-        return view($path)->data(...$this->rawParams, ...$params)->render();
+        return view($path)->data(...$this->rawData, ...$params)->render();
     }
 
     public function raw(string $name): ?string
     {
-        return $this->rawParams[$name] ?? null;
+        return $this->rawData[$name] ?? null;
     }
 
     public function slot(string $name = 'slot'): ?string
     {
-        return $this->rawParams[$name] ?? null;
+        return $this->rawData[$name] ?? null;
     }
 
     public function render(): string
     {
-        $contents = $this->resolveContent();
-
-        if ($this->extendsPath) {
-            $slots = $this->parseSlots($contents);
-
-            $extendsData = [...$slots, ...$this->extendsParams];
-
-            return view($this->extendsPath)
-                ->data(...$extendsData)
-                ->render();
-        }
-
-        return $this->parseViewComponents($contents);
+        return get(ViewRenderer::class)->render($this);
     }
 
     private function escape(array $items): array
@@ -107,127 +113,9 @@ trait IsView
         return $items;
     }
 
-    private function parseSlots(string $content): array
+    public function getExtendsData(): array
     {
-        $parts = array_map(
-            fn (string $slot) => explode('<x-slot', $slot),
-            explode('</x-slot>', $content),
-        );
-
-        $slots = [];
-
-        foreach ($parts as $partsGroup) {
-            foreach ($partsGroup as $part) {
-                $part = trim($part);
-
-                $slotName = $this->determineSlotName($part);
-
-                if ($slotName !== 'slot') {
-                    $part = trim(str_replace("name=\"{$slotName}\">", '', $part));
-                }
-
-                $slots[$slotName][] = $part;
-            }
-        }
-
-        return array_map(
-            fn (array $content) => implode(PHP_EOL, $content),
-            $slots,
-        );
-    }
-
-    private function parseViewComponents(string $content): string
-    {
-        $viewConfig = get(ViewConfig::class);
-
-        libxml_use_internal_errors(true);
-        $xml = new SimpleXMLElement("<div>{$content}</div>");
-
-        if ((string)$xml === $content) {
-            return $content;
-        }
-
-        $parsed = [];
-
-        foreach ($xml->children() as $element) {
-            /** @var class-string<\Tempest\View\ViewComponent>|null $component */
-            $componentClass = $viewConfig->viewComponents[$element->getName()]
-                ?? $viewConfig->viewComponents[$element->getName()]
-                ?? null;
-
-            if (! $componentClass) {
-                return $content;
-            }
-
-            $attributes = [
-                'view' => $this,
-            ];
-
-            foreach ($element->attributes() as $attribute) {
-                preg_match(
-                    pattern: '/(?<injection>:)?(?<name>\w+)="(?<value>(.|\n)*?)"/',
-                    subject: trim(html_entity_decode($attribute->asXML())),
-                    matches: $attributeMatch,
-                );
-
-                $value = $attributeMatch['value'];
-                $name = $attributeMatch['name'];
-
-                if ($attributeMatch['injection'] === ':') {
-                    /** @phpstan-ignore-next-line */
-                    $value = eval("return {$value};");
-                }
-
-                $attributes[$name] = $value;
-            }
-
-            $reflection = new ReflectionClass($componentClass);
-
-            $attributes = array_map(
-                callback: function (ReflectionParameter $parameter) use ($attributes, $componentClass) {
-                    if (array_key_exists($parameter->getName(), $attributes)) {
-                        return $attributes[$parameter->getName()];
-                    }
-
-                    if ($parameter->isDefaultValueAvailable()) {
-                        return $parameter->getDefaultValue();
-                    }
-
-                    try {
-                        return get(type($parameter->getType()));
-                    } catch (ReflectionException) {
-                        throw new Exception("Could not resolve value for field {$componentClass}::\${$parameter->name}");
-                    }
-                },
-                array: $reflection->getConstructor()->getParameters(),
-            );
-
-            /** @var ViewComponent $component */
-            $component = $reflection->newInstance(...$attributes);
-
-            $slot = preg_replace(
-                pattern: [
-                    "/^<{$element->getName()}(.|\n)*?(?<!-)>/",
-                    "/<\/{$element->getName()}>$/",
-                ],
-                replacement: '',
-                subject: html_entity_decode($element->asXML()),
-            );
-
-            $parsed[] = $component->render($this->parseViewComponents($slot));
-        }
-
-        libxml_clear_errors();
-        libxml_use_internal_errors(false);
-
-        return implode('', $parsed);
-    }
-
-    private function determineSlotName(string $content): string
-    {
-        preg_match('/name=\"(\w+)\">/', $content, $matches);
-
-        return $matches[1] ?? 'slot';
+        return $this->extendsData;
     }
 
     /**
@@ -280,32 +168,5 @@ trait IsView
     private function getSession(): Session
     {
         return get(Session::class);
-    }
-
-    public function resolveContent(): string
-    {
-        $appConfig = get(AppConfig::class);
-
-        if (! str_ends_with($this->path, '.php')) {
-            return $this->path;
-        }
-
-        $path = $this->path;
-        $discoveryLocations = $appConfig->discoveryLocations;
-
-        while (! file_exists($path) && $location = current($discoveryLocations)) {
-            $path = path($location->path, $this->path);
-            next($discoveryLocations);
-        }
-
-        if (! file_exists($path)) {
-            throw new Exception("View {$path} not found");
-        }
-
-        ob_start();
-
-        include $path;
-
-        return ob_get_clean();
     }
 }
