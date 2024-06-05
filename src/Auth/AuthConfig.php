@@ -10,14 +10,12 @@ final class AuthConfig
         /** @var class-string<Identifiable>|null */
         public ?string $identifiable = null,
 
-        /** @var array<string,class-string<Authenticator>> */
-        public array $authenticators = [
-            'database' => DatabaseAuthenticator::class,
-        ],
+        /** @var class-string<Authenticator> */
+        public string $authenticator = SessionAuthenticator::class,
 
-        /** @var array<string,class-string<CredentialsResolver>> */
-        public array $credentials = [
-            'database' => DatabaseCredentials::class,
+        /** @var array<string,class-string<IdentifierResolver>> */
+        public array $identifiers = [
+            'database' => DatabaseIdentifier::class,
         ],
 
         /** @var array<string,string> */

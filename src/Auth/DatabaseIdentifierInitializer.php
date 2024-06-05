@@ -9,12 +9,12 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
 #[Singleton(tag: 'database')]
-final readonly class DatabaseCredentialsInitializer implements Initializer
+final readonly class DatabaseIdentifierInitializer implements Initializer
 {
-    public function initialize(Container $container): CredentialsResolver
+    public function initialize(Container $container): IdentifierResolver
     {
         $authConfig = $container->get(AuthConfig::class);
 
-        return $container->get($authConfig->credentials['database']);
+        return $container->get($authConfig->identifiers['database']);
     }
 }
