@@ -9,7 +9,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
 use SimpleXMLElement;
-use Tempest\AppConfig;
+use Tempest\Application\AppConfig;
 use function Tempest\get;
 use function Tempest\path;
 use function Tempest\type;
