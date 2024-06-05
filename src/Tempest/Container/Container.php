@@ -15,7 +15,7 @@ interface Container
     public function config(object $config): self;
 
     /**
-     * @template TClassName
+     * @template TClassName of object
      * @param class-string<TClassName> $className
      * @return TClassName
      */

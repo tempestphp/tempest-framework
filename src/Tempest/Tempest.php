@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Tempest;
 
 use Dotenv\Dotenv;
+use Tempest\Application\AppConfig;
+use Tempest\Application\Application;
+use Tempest\Application\Environment;
 use Tempest\Application\HttpApplication;
+use Tempest\Application\Kernel;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;

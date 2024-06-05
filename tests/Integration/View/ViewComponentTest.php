@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\view;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

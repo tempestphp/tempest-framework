@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Exceptions;
 
+use Tempest\Application\ExceptionHandler;
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\ExceptionHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Throwable;

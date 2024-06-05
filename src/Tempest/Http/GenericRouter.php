@@ -7,16 +7,16 @@ namespace Tempest\Http;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
+use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
+use function Tempest\map;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
-use function Tempest\attribute;
-use function Tempest\map;
 
 /**
  * @template MiddlewareClass of \Tempest\Http\HttpMiddleware

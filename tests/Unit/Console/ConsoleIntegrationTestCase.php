@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Console;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\AppConfig;
-use Tempest\Application;
+use Tempest\Application\AppConfig;
+use Tempest\Application\Application;
+use Tempest\Application\Kernel;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler\NullShellExecutor;
@@ -14,7 +15,6 @@ use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Kernel;
 
 /**
  * @internal

@@ -8,8 +8,8 @@ use ReflectionClass;
 use ReflectionProperty;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
-use Tempest\Mapper\Mapper;
 use function Tempest\map;
+use Tempest\Mapper\Mapper;
 use function Tempest\type;
 
 final readonly class ModelToQueryMapper implements Mapper

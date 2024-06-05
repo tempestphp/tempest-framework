@@ -6,6 +6,6 @@ namespace Tempest\Support\VarExport;
 
 use RuntimeException;
 
-class FileDoesNotExistException extends RuntimeException
+final class FileDoesNotExistException extends RuntimeException
 {
 }

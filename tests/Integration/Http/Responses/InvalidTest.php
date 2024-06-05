@@ -10,10 +10,10 @@ use Tempest\Http\Method;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use function Tempest\map;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\NotEmpty;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\map;
 
 /**
  * @internal

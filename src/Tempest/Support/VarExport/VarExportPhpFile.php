@@ -11,7 +11,7 @@ use Symfony\Component\VarExporter\VarExporter;
  *
  * @template T type of exported data
  */
-readonly class VarExportPhpFile
+final readonly class VarExportPhpFile
 {
     public function __construct(
         public string $filename,

@@ -6,7 +6,8 @@ namespace Tempest\Testing;
 
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
-use Tempest\AppConfig;
+use Tempest\Application\AppConfig;
+use Tempest\Application\Kernel;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
@@ -15,7 +16,6 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Kernel;
 use Tempest\Testing\Http\HttpRouterTester;
 
 abstract class IntegrationTest extends TestCase
@@ -60,7 +60,7 @@ abstract class IntegrationTest extends TestCase
         }
     }
 
-    protected function clock(DateTimeInterface|string $now): MockClock
+    protected function clock(DateTimeInterface|string $now): Clock
     {
         $this->container->singleton(Clock::class, fn () => new MockClock($now));
 
