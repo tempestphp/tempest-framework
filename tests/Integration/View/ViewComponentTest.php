@@ -143,4 +143,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             HTML,
         ];
     }
+
+    public function test_anonymous_view_component(): void
+    {
+        $html = $this->render(view('<x-my-a>hi</x-my-a>'));
+
+        lw($html);
+    }
 }
