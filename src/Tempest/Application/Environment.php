@@ -17,4 +17,29 @@ enum Environment: string
     {
         return $this === self::PRODUCTION;
     }
+
+    public function isStaging(): bool
+    {
+        return $this === self::STAGING;
+    }
+
+    public function isLocal(): bool
+    {
+        return $this === self::LOCAL;
+    }
+
+    public function isCI(): bool
+    {
+        return $this === self::CI;
+    }
+
+    public function isTesting(): bool
+    {
+        return $this === self::TESTING;
+    }
+
+    public function isOther(): bool
+    {
+        return $this === self::OTHER;
+    }
 }
