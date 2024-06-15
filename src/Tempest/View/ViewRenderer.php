@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Exception;
+use PHPHtmlParser\Dom;
+use PHPHtmlParser\Dom\AbstractNode;
+use PHPHtmlParser\Dom\InnerNode;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionParameter;
-use SimpleXMLElement;
 use Tempest\Application\AppConfig;
 use function Tempest\get;
 use function Tempest\path;
 use function Tempest\type;
-use function Tempest\view;
 
 final class ViewRenderer
 {
@@ -43,28 +43,40 @@ final class ViewRenderer
         return $this->currentView?->{$name}(...$arguments);
     }
 
-    private function clone(): self
-    {
-        return clone $this;
-    }
-
     public function render(View $view): string
     {
         $this->currentView = $view;
 
         $contents = $this->resolveContent($view);
 
-        if ($extendsPath = $view->getExtendsPath()) {
-            $slots = $this->renderSlots($contents);
+        $dom = new Dom();
+        $dom->load($contents);
 
-            $extendsData = [...$slots, ...$view->getExtendsData()];
+        $elements = [];
 
-            return $this->clone()->render(
-                view($extendsPath)->data(...$extendsData),
-            );
+        foreach($dom->root->getChildren() as $child) {
+            $elements[] = $this->resolveElement($child);
         }
 
-        return $this->renderViewComponents($contents);
+       return $this->renderElements($elements);
+    }
+
+    /**
+     * @param \Tempest\View\Element[] $elements
+     */
+    private function renderElements(array $elements): string
+    {
+        $rendered = [];
+
+        foreach ($elements as $element) {
+            if ($viewComponent = $this->resolveViewComponent($element)) {
+                $rendered[] = $viewComponent->render($this->renderElements($element->getChildren()));
+            } else {
+                $rendered[] = $element->render();
+            }
+        }
+
+        return implode('', $rendered);
     }
 
     private function resolveContent(View $view): string
@@ -72,7 +84,12 @@ final class ViewRenderer
         $path = $view->getPath();
 
         if (! str_ends_with($path, '.php')) {
-            return $path;
+            ob_start();
+
+            /** @phpstan-ignore-next-line */
+            eval('?>' . $path . '<?php');
+
+            return ob_get_clean();
         }
 
         $discoveryLocations = $this->appConfig->discoveryLocations;
@@ -93,80 +110,44 @@ final class ViewRenderer
         return ob_get_clean();
     }
 
-    private function renderSlots(string $content): array
+    private function resolveElement(AbstractNode $node): Element
     {
-        $parts = array_map(
-            fn (string $slot) => explode('<x-slot', $slot),
-            explode('</x-slot>', $content),
-        );
+        $children = [];
 
-        $slots = [];
-
-        foreach ($parts as $partsGroup) {
-            foreach ($partsGroup as $part) {
-                $part = trim($part);
-
-                $slotName = $this->determineSlotName($part);
-
-                if ($slotName !== 'slot') {
-                    $part = trim(str_replace("name=\"{$slotName}\">", '', $part));
-                }
-
-                $slots[$slotName][] = $part;
+        if ($node instanceof InnerNode) {
+            foreach ($node->getChildren() as $child)
+            {
+                $children[] = $this->resolveElement($child);
             }
         }
 
-        return array_map(
-            fn (array $content) => implode(PHP_EOL, $content),
-            $slots,
+        return new Element(
+            html: $node->outerHtml(),
+            tag: $node->getTag()->name(),
+            attributes: $node->getAttributes(),
+            children: $children,
         );
     }
 
-    private function determineSlotName(string $content): string
+    private function resolveViewComponent(Element $element): ?ViewComponent
     {
-        preg_match('/name=\"(\w+)\">/', $content, $matches);
+        /** @var class-string<\Tempest\View\ViewComponent>|null $component */
+        $componentClass = $this->viewConfig->viewComponents[$element->getTag()] ?? null;
 
-        return $matches[1] ?? 'slot';
-    }
-
-    private function renderViewComponents(string $content): string
-    {
-        libxml_use_internal_errors(true);
-        $xml = new SimpleXMLElement("<div>{$content}</div>");
-
-        if ((string)$xml === $content) {
-            return $content;
+        if (! $componentClass) {
+            return null;
         }
 
-        $parsed = [];
-
-        foreach ($xml->children() as $element) {
-            /** @var class-string<\Tempest\View\ViewComponent>|null $component */
-            $componentClass = $this->viewConfig->viewComponents[$element->getName()]
-                ?? $this->viewConfig->viewComponents[$element->getName()]
-                ?? null;
-
-            if (! $componentClass) {
-                return $content;
-            }
-
+        if (! $componentClass instanceof ViewComponent) {
             $attributes = [
                 'view' => $this->currentView,
             ];
 
-            foreach ($element->attributes() as $attribute) {
-                preg_match(
-                    pattern: '/(?<injection>:)?(?<name>\w+)="(?<value>(.|\n)*?)"/',
-                    subject: trim(html_entity_decode($attribute->asXML())),
-                    matches: $attributeMatch,
-                );
-
-                $value = $attributeMatch['value'];
-                $name = $attributeMatch['name'];
-
-                if ($attributeMatch['injection'] === ':') {
+            foreach ($element->getAttributes() as $name => $value) {
+                if (str_starts_with($name, ':')) {
                     /** @phpstan-ignore-next-line */
                     $value = eval("return {$value};");
+                    $name = substr($name, 1);
                 }
 
                 $attributes[$name] = $value;
@@ -174,43 +155,27 @@ final class ViewRenderer
 
             $reflection = new ReflectionClass($componentClass);
 
-            $attributes = array_map(
-                callback: function (ReflectionParameter $parameter) use ($attributes, $componentClass) {
-                    if (array_key_exists($parameter->getName(), $attributes)) {
-                        return $attributes[$parameter->getName()];
-                    }
+            $attributesToInject = [];
 
-                    if ($parameter->isDefaultValueAvailable()) {
-                        return $parameter->getDefaultValue();
-                    }
-
+            foreach ($reflection->getConstructor()->getParameters() as $parameter) {
+                if (array_key_exists($parameter->getName(), $attributes)) {
+                    $attributesToInject[$parameter->getName()] = $attributes[$parameter->getName()];
+                } elseif ($parameter->isDefaultValueAvailable()) {
+                    $attributesToInject[$parameter->getName()] = $parameter->getDefaultValue();
+                } else {
                     try {
-                        return get(type($parameter->getType()));
+                        $attributesToInject[$parameter->getName()] = get(type($parameter->getType()));
                     } catch (ReflectionException) {
                         throw new Exception("Could not resolve value for field {$componentClass}::\${$parameter->name}");
                     }
-                },
-                array: $reflection->getConstructor()->getParameters(),
-            );
+                }
+            }
 
             /** @var ViewComponent $component */
-            $component = $reflection->newInstance(...$attributes);
-
-            $slot = preg_replace(
-                pattern: [
-                    "/^<{$element->getName()}(.|\n)*?(?<!-)>/",
-                    "/<\/{$element->getName()}>$/",
-                ],
-                replacement: '',
-                subject: html_entity_decode($element->asXML()),
-            );
-
-            $parsed[] = $component->render($this->renderViewComponents($slot));
+            $component = $reflection->newInstance(...$attributesToInject);
+        } else {
+            $component = $componentClass;
         }
-
-        libxml_clear_errors();
-        libxml_use_internal_errors(false);
-
-        return implode('', $parsed);
+        return $component;
     }
 }

@@ -62,11 +62,6 @@ trait IsView
         return $this->{$key} ?? $this->data[$key] ?? null;
     }
 
-    public function getExtendsPath(): ?string
-    {
-        return $this->extendsPath;
-    }
-
     public function data(...$params): self
     {
         $this->rawData = [...$this->rawData, ...$params];

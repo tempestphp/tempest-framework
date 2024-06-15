@@ -6,7 +6,7 @@ namespace Tempest\View;
 
 interface ViewComponent
 {
-    public static function getName(): string;
+    public function getName(): string;
 
-    public function render(string $slot): string;
+    public function render(Element $element): string;
 }

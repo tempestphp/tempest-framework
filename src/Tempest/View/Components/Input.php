@@ -40,12 +40,7 @@ final readonly class Input implements ViewComponent
         return <<<HTML
 <div>
     <label for="{$this->name}">{$this->label}</label>
-    <input 
-        type="{$this->type}" 
-        name="{$this->name}" 
-        id="{$this->name}" 
-        value="{$this->view->original($this->name, $this->default)}"
-    />
+    <input type="{$this->type}" name="{$this->name}" id="{$this->name}" value="{$this->view->original($this->name, $this->default)}" />
     {$errorHtml}
 </div>
 HTML;

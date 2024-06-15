@@ -9,7 +9,7 @@ use ReflectionClass;
 final class ViewConfig
 {
     public function __construct(
-        /** @var array<array-key, class-string<\Tempest\View\ViewComponent>> */
+        /** @var array<array-key, class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent> */
         public array $viewComponents = [],
     ) {
     }

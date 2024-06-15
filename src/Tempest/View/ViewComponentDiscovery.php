@@ -7,6 +7,7 @@ namespace Tempest\View;
 use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\View\Components\Component;
 
 final readonly class ViewComponentDiscovery implements Discovery
 {
@@ -14,11 +15,16 @@ final readonly class ViewComponentDiscovery implements Discovery
 
     public function __construct(
         private ViewConfig $viewConfig,
-    ) {
-    }
+    ) {}
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ReflectionClass|string $class): void
     {
+        if (is_string($class)) {
+            $this->discoverPath($class);
+
+            return;
+        }
+
         if (! $class->isInstantiable()) {
             return;
         }
@@ -28,6 +34,35 @@ final readonly class ViewComponentDiscovery implements Discovery
         }
 
         $this->viewConfig->addViewComponent($class);
+    }
+
+    private function discoverPath(string $path): void
+    {
+        if (! str_ends_with($path, '.view.php')) {
+            return;
+        }
+
+        if (! is_file($path)) {
+            return;
+        }
+
+        $content = ltrim(file_get_contents($path));
+
+        if (! str_starts_with($content, '<x-component name=')) {
+            return;
+        }
+
+        preg_match(
+            pattern: '/<x-component name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/',
+            subject: $content,
+            matches: $matches,
+        );
+
+        if (! $matches['name']) {
+            return;
+        }
+
+        $this->viewConfig->viewComponents[$matches['name']] = new Component($matches['name'], $matches['view']);
     }
 
     public function hasCache(): bool

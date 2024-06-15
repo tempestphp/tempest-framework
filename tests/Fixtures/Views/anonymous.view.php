@@ -1,3 +1,3 @@
 <x-component name="x-my-a">
-    <?= $this->slot() ?>
+    <div class="anonymous"><x-slot /></div>
 </x-component>

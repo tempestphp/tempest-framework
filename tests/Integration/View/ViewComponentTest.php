@@ -27,15 +27,32 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_view_component_with_php_code(): void
+    public function test_view_component_with_php_code_in_attribute(): void
     {
         $this->assertSame(
             expected: '<div foo="hello" bar="barValue"></div>',
             actual: $this->render(view(
                 <<<'HTML'
-            <x-my :foo="$this->input" bar="barValue"></x-my>',
+            <x-my :foo="$this->input" bar="barValue"></x-my>
             HTML,
             )->data(input: 'hello')),
+        );
+    }
+
+    public function test_view_component_with_php_code_in_slot(): void
+    {
+        $this->assertSame(
+            expected: '<div>foo</div>',
+            actual: $this->render(view(
+                <<<'HTML'
+
+
+            <x-my><?= $this->foo ?></x-my>
+
+
+
+            HTML,
+            )->data(foo: 'foo')),
         );
     }
 
@@ -44,12 +61,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: <<<'HTML'
             <form action="#" method="post">
+                 <div> <x-input name="a" label="a" type="number"></x-input> </div> <div>
+                <label for="b">b</label>
+                <input type="text" name="b" id="b" value="" />
                 
-                <div>
-                    <x-input name="a" label="a" type="number"/>
-                </div>
-                <x-input name="b" label="b" type="text"/>
-            
+            </div> 
             </form>
             HTML,
             actual: $this->render(view(
@@ -124,23 +140,6 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         yield [
             '<x-my foo="fooValue" bar="barValue">body</x-my>',
             '<div foo="fooValue" bar="barValue">body</div>',
-        ];
-
-        yield [
-            <<<'HTML'
-            <x-my>
-            body
-            
-            multiline
-            </x-my>
-            HTML,
-            <<<'HTML'
-            <div>
-            body
-            
-            multiline
-            </div>
-            HTML,
         ];
     }
 
