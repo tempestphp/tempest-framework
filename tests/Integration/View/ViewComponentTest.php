@@ -52,7 +52,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: <<<'HTML'
             <form action="#" method="post">
-                 <div> <div>
+                <div> <div>
                 <label for="a">a</label>
                 <input type="number" name="a" id="a" value="" />
                 
@@ -60,7 +60,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
                 <label for="b">b</label>
                 <input type="text" name="b" id="b" value="" />
                 
-            </div> 
+            </div>
             </form>
             HTML,
             actual: $this->render(view(

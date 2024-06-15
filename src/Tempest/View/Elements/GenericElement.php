@@ -5,18 +5,25 @@ namespace Tempest\View\Elements;
 use Tempest\View\Element;
 use Tempest\View\ViewRenderer;
 
-final readonly class GenericElement implements Element
+final class GenericElement implements Element
 {
     use IsElement;
 
+    /** @var \Tempest\View\Element[] */
+    private array $children = [];
+
     public function __construct(
-        private string $html,
-        private string $tag,
-        /** @var \Tempest\View\Element[] */
-        private array $children,
-        private ?Element $previous,
-        private array $attributes,
+        private readonly string $html,
+        private readonly string $tag,
+        private readonly ?Element $previous,
+        private readonly array $attributes,
+        private array $data = [],
     ) {}
+
+    public function setChildren(array $children): void
+    {
+        $this->children = $children;
+    }
 
     public function render(ViewRenderer $renderer): string
     {
@@ -55,5 +62,27 @@ final readonly class GenericElement implements Element
     public function getChildren(): array
     {
         return $this->children;
+    }
+
+    public function data(...$data): self
+    {
+        $this->data = [...$this->data, ...$data];
+
+        foreach ($this->children as $child) {
+            $child->data(...$data);
+        }
+
+        return $this;
+    }
+
+    public function __clone(): void
+    {
+        $childClones = [];
+
+        foreach ($this->children as $child) {
+            $childClones[] = clone $child;
+        }
+
+        $this->children = $childClones;
     }
 }

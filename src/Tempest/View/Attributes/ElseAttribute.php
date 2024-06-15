@@ -16,7 +16,7 @@ final readonly class ElseAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
-        $previous = $element->previous();
+        $previous = $element->getPrevious();
 
         if (!$previous) {
             throw new Exception('No previous element found for else condition');
@@ -29,7 +29,7 @@ final readonly class ElseAttribute implements Attribute
         }
 
         if ($this->view->eval($condition)) {
-            return new EmptyElement($previous, $element->getAttributes());
+            return new EmptyElement($element);
         } else {
             return $element;
         }

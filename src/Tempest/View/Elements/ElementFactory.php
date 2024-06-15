@@ -59,21 +59,28 @@ final class ElementFactory
             );
         }
 
+        $element = new GenericElement(
+            html: $node->outerHtml(),
+            tag: $node->getTag()->name(),
+            previous: $this->previous,
+            attributes: $node->getAttributes(),
+        );
+
         $children = [];
 
         if ($node instanceof InnerNode) {
             foreach ($node->getChildren() as $child) {
-                $children[] = $this->clone()->make($view, $child);
+                $children[] = $this->clone()->make(
+                    view: $view,
+                    node: $child,
+                );
             }
         }
 
-        return new GenericElement(
-            html: $node->outerHtml(),
-            tag: $node->getTag()->name(),
-            children: $children,
-            previous: $this->previous,
-            attributes: $node->getAttributes(),
-        );
+
+        $element->setChildren($children);
+
+        return $element;
     }
 
     private function resolveViewComponent(View $view, AbstractNode $node): ?ViewComponent

@@ -24,8 +24,9 @@ final readonly class AttributeFactory
     {
         return match($name) {
             ':if' => new IfAttribute($view, $value),
-            ':foreach' => new ForeachAttribute($value),
             ':else' => new ElseAttribute($view),
+            ':foreach' => new ForeachAttribute($view, $value),
+            ':forelse' => new ForelseAttribute($view),
             default => new DefaultAttribute($value),
         };
     }

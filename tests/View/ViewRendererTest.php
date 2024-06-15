@@ -58,4 +58,32 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
             $this->render(view('<div :if="$this->show">True</div><div :else>False</div>')->data(show: false)),
         );
     }
+
+    public function test_foreach_attribute(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div :foreach="$this->items as $foo">a</div>
+            <div :foreach="$this->items as $foo">b</div>
+            HTML,
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div>')->data(items: ['a', 'b'])),
+        );
+    }
+
+    public function test_forelse_attribute(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div :forelse>Empty</div>
+            HTML,
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div><div :forelse>Empty</div>')->data(items: [])),
+        );
+
+        $this->assertSame(
+            <<<'HTML'
+            <div :foreach="$this->items as $foo">a</div>
+            HTML,
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
+        );
+    }
 }

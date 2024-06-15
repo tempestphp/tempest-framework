@@ -19,7 +19,7 @@ final readonly class IfAttribute implements Attribute
         if ($this->view->eval($this->eval)) {
             return $element;
         } else {
-            return new EmptyElement($element->previous(), $element->getAttributes());
+            return new EmptyElement($element);
         }
     }
 }

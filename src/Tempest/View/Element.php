@@ -6,7 +6,11 @@ interface Element
 {
     public function render(ViewRenderer $renderer): string;
 
-    public function previous(): ?Element;
+    public function data(...$data): self;
+
+    public function getData(): array;
+
+    public function getPrevious(): ?Element;
 
     public function getAttributes(): array;
 

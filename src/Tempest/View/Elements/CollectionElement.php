@@ -3,15 +3,15 @@
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final class ViewComponentElement implements Element
+final class CollectionElement implements Element
 {
     use IsElement;
 
     public function __construct(
-        private readonly ViewComponent $viewComponent,
+        /** @var \Tempest\View\Element[] */
+        private readonly array $elements,
         private readonly ?Element $previous,
         private readonly array $attributes,
         private array $data = [],
@@ -19,6 +19,12 @@ final class ViewComponentElement implements Element
 
     public function render(ViewRenderer $renderer): string
     {
-        return $this->viewComponent->render($renderer);
+        $rendered = [];
+
+        foreach ($this->elements as $element) {
+            $rendered[] = $element->render($renderer);
+        }
+
+        return implode(PHP_EOL, $rendered);
     }
 }

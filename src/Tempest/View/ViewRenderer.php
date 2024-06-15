@@ -35,7 +35,7 @@ final readonly class ViewRenderer
             $elements[] = $this->elementFactory->make($view, $child);
         }
 
-       return $this->renderElements($elements);
+       return trim($this->renderElements($elements));
     }
 
     /**
