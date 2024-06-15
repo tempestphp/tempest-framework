@@ -101,6 +101,10 @@ trait IsView
     private function escape(array $items): array
     {
         foreach ($items as $key => $value) {
+            if (! is_string($value)) {
+                continue;
+            }
+
             $items[$key] = htmlentities($value ?? '');
         }
 

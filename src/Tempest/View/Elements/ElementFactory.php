@@ -7,6 +7,7 @@ use PHPHtmlParser\Dom\AbstractNode;
 use PHPHtmlParser\Dom\InnerNode;
 use ReflectionClass;
 use ReflectionException;
+use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\View;
 use Tempest\View\ViewComponent;
@@ -15,35 +16,63 @@ use function Tempest\get;
 use function Tempest\type;
 use function Tempest\view;
 
-final readonly class ElementFactory
+final class ElementFactory
 {
+    private ?Element $previous = null;
+
     public function __construct(
-        private ViewConfig $viewConfig,
+        private readonly ViewConfig $viewConfig,
+        private readonly AttributeFactory $attributeFactory,
     ) {}
 
     public function make(View $view, AbstractNode $node): Element
     {
+        $element = $this->makeElement($view, $node);
+
+        $attributes = $this->attributeFactory->makeCollection($view, $node);
+
+        foreach ($attributes as $attribute) {
+            $element = $attribute->apply($element);
+        }
+
+        $this->previous = $element;
+
+        return $element;
+    }
+
+    private function makeElement(View $view, AbstractNode $node): Element
+    {
         if ($node->getTag()->name() === 'text') {
-            return new TextElement($view, $node->text());
+            return new TextElement(
+                view: $view,
+                text: $node->outerHtml(),
+                previous: $this->previous,
+                attributes: $node->getAttributes(),
+            );
         }
 
         if ($viewComponent = $this->resolveViewComponent($view, $node)) {
-            return $viewComponent;
+            return new ViewComponentElement(
+                viewComponent: $viewComponent,
+                previous: $this->previous,
+                attributes: $node->getAttributes(),
+            );
         }
 
         $children = [];
 
         if ($node instanceof InnerNode) {
             foreach ($node->getChildren() as $child) {
-                $children[] = $this->make($view, $child);
+                $children[] = $this->clone()->make($view, $child);
             }
         }
 
         return new GenericElement(
             html: $node->outerHtml(),
             tag: $node->getTag()->name(),
-            attributes: $node->getAttributes(),
             children: $children,
+            previous: $this->previous,
+            attributes: $node->getAttributes(),
         );
     }
 
@@ -93,5 +122,10 @@ final readonly class ElementFactory
         }
 
         return $reflection->newInstance(...$attributesToInject);
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }

@@ -3,21 +3,19 @@
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
-final class GenericElement implements Element
+final readonly class GenericElement implements Element
 {
+    use IsElement;
+
     public function __construct(
         private string $html,
-
         private string $tag,
-
-        /** @var string[] */
-        private array $attributes = [],
-
         /** @var \Tempest\View\Element[] */
-        private array $children = [],
+        private array $children,
+        private ?Element $previous,
+        private array $attributes,
     ) {}
 
     public function render(ViewRenderer $renderer): string
@@ -30,17 +28,28 @@ final class GenericElement implements Element
 
         $content = implode('', $content);
 
-        return "<{$this->tag}>{$content}</{$this->tag}>";
+        $attributes = [];
+
+        foreach ($this->attributes as $name => $value) {
+            if ($value) {
+                $attributes[] = $name . '="' . $value . '"';
+            } else {
+                $attributes[] = $name;
+            }
+        }
+
+        $attributes = implode(' ', $attributes);
+
+        if ($attributes !== '') {
+            $attributes = ' ' . $attributes;
+        }
+
+        return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
     }
 
     public function getTag(): string
     {
         return $this->tag;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
     }
 
     public function getChildren(): array

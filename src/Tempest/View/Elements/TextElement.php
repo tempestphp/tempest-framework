@@ -8,9 +8,13 @@ use Tempest\View\ViewRenderer;
 
 final readonly class TextElement implements Element
 {
+    use IsElement;
+
     public function __construct(
         private View $view,
         private string $text,
+        private ?Element $previous,
+        private array $attributes,
     ) {}
 
     public function render(ViewRenderer $renderer): string
