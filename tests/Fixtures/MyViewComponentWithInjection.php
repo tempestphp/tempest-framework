@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures;
 
 use Tempest\Http\Session\Session;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewRenderer;
 
 final readonly class MyViewComponentWithInjection implements ViewComponent
 {
@@ -20,7 +21,7 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
     ) {
     }
 
-    public function render(string $slot): string
+    public function render(ViewRenderer $renderer): string
     {
         return 'hi';
     }

@@ -33,4 +33,6 @@ interface View
     public function hasErrors(): bool;
 
     public function original(string $name, mixed $default = ''): mixed;
+
+    public function eval(string $eval): mixed;
 }

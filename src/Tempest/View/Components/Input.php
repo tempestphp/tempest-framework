@@ -7,6 +7,7 @@ namespace Tempest\View\Components;
 use Tempest\Validation\Rule;
 use Tempest\View\View;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewRenderer;
 
 final readonly class Input implements ViewComponent
 {
@@ -24,7 +25,7 @@ final readonly class Input implements ViewComponent
         return 'x-input';
     }
 
-    public function render(string $slot): string
+    public function render(ViewRenderer $renderer): string
     {
         $errors = $this->view->getErrorsFor($this->name);
 

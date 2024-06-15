@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-interface ViewComponent
+interface ViewComponent extends Element
 {
-    public function getName(): string;
-
-    public function render(Element $element): string;
+    public static function getName(): string;
 }

@@ -42,17 +42,8 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_view_component_with_php_code_in_slot(): void
     {
         $this->assertSame(
-            expected: '<div>foo</div>',
-            actual: $this->render(view(
-                <<<'HTML'
-
-
-            <x-my><?= $this->foo ?></x-my>
-
-
-
-            HTML,
-            )->data(foo: 'foo')),
+            expected: '<div>bar</div>',
+            actual: $this->render(view('<x-my>{{ $this->foo }}</x-my>')->data(foo: 'bar')),
         );
     }
 
@@ -61,7 +52,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: <<<'HTML'
             <form action="#" method="post">
-                 <div> <x-input name="a" label="a" type="number"></x-input> </div> <div>
+                 <div> <div>
+                <label for="a">a</label>
+                <input type="number" name="a" id="a" value="" />
+                
+            </div> </div> <div>
                 <label for="b">b</label>
                 <input type="text" name="b" id="b" value="" />
                 

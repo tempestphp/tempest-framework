@@ -4,6 +4,7 @@ namespace Tempest\View\Components;
 
 use Tempest\View\View;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewRenderer;
 use function Tempest\view;
 
 final readonly class Component implements ViewComponent
@@ -11,6 +12,7 @@ final readonly class Component implements ViewComponent
     public function __construct(
         private string $name,
         private string $view,
+        private ?View $slot = null,
     ) {}
 
     public static function getName(): string
@@ -18,8 +20,8 @@ final readonly class Component implements ViewComponent
         return 'x-component';
     }
 
-    public function render(string $slot): string|View
+    public function render(ViewRenderer $renderer): string
     {
-        return view($this->view)->data(slot: $slot);
+        return $renderer->render(view($this->view)->data(slot: $this->slot));
     }
 }

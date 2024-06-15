@@ -30,6 +30,11 @@ trait IsView
         $this->rawData = $params;
     }
 
+    public function __get(string $name)
+    {
+        return $this->data[$name] ?? null;
+    }
+
     public function path(string $path): self
     {
         $this->path = $path;
@@ -96,7 +101,7 @@ trait IsView
     private function escape(array $items): array
     {
         foreach ($items as $key => $value) {
-            $items[$key] = htmlentities($value);
+            $items[$key] = htmlentities($value ?? '');
         }
 
         return $items;
@@ -157,5 +162,11 @@ trait IsView
     private function getSession(): Session
     {
         return get(Session::class);
+    }
+
+    public function eval(string $eval): mixed
+    {
+        /** @phpstan-ignore-next-line */
+        return eval("return {$eval};");
     }
 }
