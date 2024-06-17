@@ -22,11 +22,12 @@ final readonly class AttributeFactory
 
     public function make(View $view, string $name, ?string $value): Attribute
     {
-        return match($name) {
-            ':if' => new IfAttribute($view, $value),
-            ':else' => new ElseAttribute($view),
-            ':foreach' => new ForeachAttribute($view, $value),
-            ':forelse' => new ForelseAttribute($view),
+        return match(true) {
+            $name === ':if' => new IfAttribute($view, $value),
+            $name === ':else' => new ElseAttribute($view),
+            $name === ':foreach' => new ForeachAttribute($view, $value),
+            $name === ':forelse' => new ForelseAttribute($view),
+            str_starts_with(':', $name) && $value => new DataAttribute($view, $name, $value),
             default => new DefaultAttribute($value),
         };
     }

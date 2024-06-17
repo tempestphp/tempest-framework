@@ -101,8 +101,9 @@ final class ElementFactory
             'slot' => view($node->innerhtml)->data(...$view->getData()),
         ];
 
+        // TODO: should view components still have attribute injection, or should view components retrieve attribute values via the element?
         foreach ($node->getAttributes() as $name => $value) {
-            if (str_starts_with($name, ':')) {
+            if (str_starts_with($name, ':') && $value) {
                 $value = $view->eval($value);
                 $name = substr($name, 1);
             }

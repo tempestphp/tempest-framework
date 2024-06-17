@@ -110,6 +110,28 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_component_with_if(): void
+    {
+        $this->assertSame(
+            expected: '<div>true</div>',
+            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: true)),
+        );
+
+        $this->assertSame(
+            expected: '<div>false</div>',
+            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: false)),
+        );
+    }
+
+    public function test_component_with_foreach(): void
+    {
+        $this->assertSame(
+            expected: '<div>a</div>
+<div>b</div>',
+            actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $this->foo }}</x-my>')->data(items: ['a', 'b'])),
+        );
+    }
+
     public static function view_components(): Generator
     {
         yield [

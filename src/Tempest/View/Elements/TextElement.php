@@ -21,6 +21,7 @@ final class TextElement implements Element
     public function render(ViewRenderer $renderer): string
     {
         return preg_replace_callback(
+            // TODO: make this-> optional
             pattern: '/{{\s*(?<eval>\$this->.*?)\s*}}/',
             callback: function (array $matches) : string {
                 $viewClone = clone $this->view;

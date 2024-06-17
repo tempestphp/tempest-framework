@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
+use Tempest\View\Element;
 use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
@@ -22,7 +23,7 @@ final readonly class Form implements ViewComponent
         return 'x-form';
     }
 
-    public function render(ViewRenderer $renderer): string
+    public function render(ViewRenderer $renderer, Element $element): string
     {
         $slot = $renderer->render($this->slot);
 
