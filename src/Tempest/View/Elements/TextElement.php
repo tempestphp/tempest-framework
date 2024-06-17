@@ -26,7 +26,7 @@ final class TextElement implements Element
                     return $this->view->eval($eval) ?? '';
                 }
 
-                return $this->getData()[ltrim($eval, '$')];
+                return $this->getData()[ltrim($eval, '$')] ?? '';
             },
             subject: $this->text,
         );

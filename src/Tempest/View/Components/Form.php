@@ -4,32 +4,25 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-use Tempest\View\Element;
-use Tempest\View\View;
+use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class Form /*implements ViewComponent*/
+final readonly class Form implements ViewComponent
 {
-    public function __construct(
-        private string $action,
-        private string $method = 'post',
-        private ?View $slot = null,
-    ) {
-    }
-
     public static function getName(): string
     {
         return 'x-form';
     }
 
-    public function render(ViewRenderer $renderer, Element $element): string
+    public function render(GenericElement $element, ViewRenderer $renderer): string
     {
-        $slot = $renderer->render($this->slot);
+        $action = $element->getAttribute('action');
+        $method = $element->getAttribute('method') ?? 'post';
 
         return <<<HTML
-<form action="{$this->action}" method="{$this->method}">
-    {$slot}
+<form action="{$action}" method="{$method}">
+    <x-slot />
 </form>
 HTML;
     }

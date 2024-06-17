@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Tempest\View\Elements;
+namespace Integration\View;
 
 use PHPHtmlParser\Dom;
 use PHPUnit\Framework\TestCase;

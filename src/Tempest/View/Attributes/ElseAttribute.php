@@ -6,7 +6,7 @@ use Exception;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
-use Tempest\View\HasAttributes;
+use Tempest\View\Elements\GenericElement;
 use Tempest\View\View;
 
 final readonly class ElseAttribute implements Attribute
@@ -21,7 +21,7 @@ final readonly class ElseAttribute implements Attribute
 
         $condition = null;
 
-        if ($previous instanceof HasAttributes) {
+        if ($previous instanceof GenericElement) {
             $condition = $previous->getAttribute(':if');
         }
 

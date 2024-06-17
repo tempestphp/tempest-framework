@@ -146,7 +146,8 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
 
         yield [
             '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p><p>b</p></div>',
+            '<div><p>a</p>
+<p>b</p></div>',
         ];
 
         yield [

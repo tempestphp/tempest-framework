@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Tempest\View;
+namespace Integration\View;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\view;
@@ -81,6 +81,74 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
             <div :foreach="$this->items as $foo">a</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
+        );
+    }
+
+    public function test_default_slot(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div class="base">
+                 Test 
+            </div>
+            HTML,
+            $this->render(<<<'HTML'
+                <x-base>
+                    <x-slot>
+                        Test
+                    </x-slot>
+                </x-base>
+                HTML,
+            ),
+        );
+    }
+
+    public function test_implicit_default_slot(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <div class="base">
+                 Test 
+            </div>
+            HTML,
+            $this->render(<<<'HTML'
+                <x-base>
+                    Test
+                </x-base>
+                HTML,
+            ),
+        );
+    }
+
+    public function test_multiple_slots(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            injected scripts 
+            
+            <div class="base">
+                 Test 
+             Hi 
+            </div>
+            
+             injected styles
+            HTML,
+            $this->render(<<<'HTML'
+            <x-complex-base>
+                Test
+                
+                <x-slot name="scripts">
+                injected scripts
+                </x-slot>
+                
+                <x-slot name="styles">
+                injected styles
+                </x-slot>
+                
+                Hi
+            </x-complex-base>
+            HTML,
+            ),
         );
     }
 }

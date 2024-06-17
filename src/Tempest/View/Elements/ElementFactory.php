@@ -37,10 +37,17 @@ final class ElementFactory
             );
         }
 
-        $element = new GenericElement(
-            tag: $node->getTag()->name(),
-            attributes: $node->getAttributes(),
-        );
+        if ($node->getTag()->name() === 'x-slot') {
+            $element = new SlotElement(
+                name: $node->getAttribute('name') ?? 'slot',
+            );
+        } else {
+            $element = new GenericElement(
+                view: $view,
+                tag: $node->getTag()->name(),
+                attributes: $node->getAttributes(),
+            );
+        }
 
         $children = [];
 
@@ -64,55 +71,6 @@ final class ElementFactory
 
         return $element;
     }
-
-//    private function resolveViewComponent(View $view, AbstractNode $node): ?ViewComponent
-//    {
-//        /** @var class-string<\Tempest\View\ViewComponent>|null $component */
-//        $viewComponentClass = $this->viewConfig->viewComponents[$node->getTag()->name()] ?? null;
-//
-//        if (! $viewComponentClass) {
-//            return null;
-//        }
-//
-//        if ($viewComponentClass instanceof ViewComponent) {
-//            return $viewComponentClass;
-//        }
-//
-//        $attributes = [
-//            'view' => $view,
-//            'slot' => view($node->innerhtml)->data(...$view->getData()),
-//        ];
-//
-//        // TODO: should view components still have attribute injection, or should view components retrieve attribute values via the element?
-//        foreach ($node->getAttributes() as $name => $value) {
-//            if (str_starts_with($name, ':') && $value) {
-//                $value = $view->eval($value);
-//                $name = substr($name, 1);
-//            }
-//
-//            $attributes[$name] = $value;
-//        }
-//
-//        $reflection = new ReflectionClass($viewComponentClass);
-//
-//        $attributesToInject = [];
-//
-//        foreach ($reflection->getConstructor()->getParameters() as $parameter) {
-//            if (array_key_exists($parameter->getName(), $attributes)) {
-//                $attributesToInject[$parameter->getName()] = $attributes[$parameter->getName()];
-//            } elseif ($parameter->isDefaultValueAvailable()) {
-//                $attributesToInject[$parameter->getName()] = $parameter->getDefaultValue();
-//            } else {
-//                try {
-//                    $attributesToInject[$parameter->getName()] = get(type($parameter->getType()));
-//                } catch (ReflectionException) {
-//                    throw new Exception("Could not resolve value for field {$viewComponentClass}::\${$parameter->name}");
-//                }
-//            }
-//        }
-//
-//        return $reflection->newInstance(...$attributesToInject);
-//    }
 
     private function clone(): self
     {
