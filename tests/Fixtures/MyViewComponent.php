@@ -8,7 +8,7 @@ use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class MyViewComponent implements ViewComponent
+final readonly class MyViewComponent /* implements ViewComponent */
 {
     public static function getName(): string
     {

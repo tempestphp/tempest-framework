@@ -19,6 +19,7 @@ final readonly class ViewComponentDiscovery implements Discovery
 
     public function discover(ReflectionClass|string $class): void
     {
+        return; 
         if (is_string($class)) {
             $this->discoverPath($class);
 

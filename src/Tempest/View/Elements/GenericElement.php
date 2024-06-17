@@ -3,33 +3,24 @@
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\HasAttributes;
 use Tempest\View\ViewRenderer;
 
-final class GenericElement implements Element
+final class GenericElement implements Element, HasAttributes
 {
     use IsElement;
 
-    /** @var \Tempest\View\Element[] */
-    private array $children = [];
-
     public function __construct(
-        private readonly string $html,
         private readonly string $tag,
-        private readonly ?Element $previous,
         private readonly array $attributes,
-        private array $data = [],
-    ) {}
-
-    public function setChildren(array $children): void
-    {
-        $this->children = $children;
+    ) {
     }
 
     public function render(ViewRenderer $renderer): string
     {
         $content = [];
 
-        foreach ($this->children as $child) {
+        foreach ($this->getChildren() as $child) {
             $content[] = $child->render($renderer);
         }
 
@@ -54,35 +45,13 @@ final class GenericElement implements Element
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
     }
 
-    public function getTag(): string
+    public function getAttributes(): array
     {
-        return $this->tag;
+        return $this->attributes;
     }
 
-    public function getChildren(): array
+    public function getAttribute(string $name): ?string
     {
-        return $this->children;
-    }
-
-    public function data(...$data): self
-    {
-        $this->data = [...$this->data, ...$data];
-
-        foreach ($this->children as $child) {
-            $child->data(...$data);
-        }
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        $childClones = [];
-
-        foreach ($this->children as $child) {
-            $childClones[] = clone $child;
-        }
-
-        $this->children = $childClones;
+        return $this->attributes[$name] ?? null;
     }
 }

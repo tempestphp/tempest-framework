@@ -9,7 +9,7 @@ use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class Form implements ViewComponent
+final readonly class Form /*implements ViewComponent*/
 {
     public function __construct(
         private string $action,

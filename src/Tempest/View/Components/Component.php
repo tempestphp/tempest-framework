@@ -8,7 +8,7 @@ use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 use function Tempest\view;
 
-final readonly class Component implements ViewComponent
+final readonly class Component /*implements ViewComponent*/
 {
     public function __construct(
         private string $name,

@@ -7,6 +7,7 @@ namespace Tempest\View;
 use Exception;
 use PHPHtmlParser\Dom;
 use Tempest\Application\AppConfig;
+use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Elements\ElementFactory;
 use function Tempest\path;
 
@@ -14,6 +15,7 @@ final readonly class ViewRenderer
 {
     public function __construct(
         private ElementFactory $elementFactory,
+        private AttributeFactory $attributeFactory,
         private AppConfig $appConfig,
         private ViewConfig $viewConfig,
     ) {}
@@ -27,30 +29,26 @@ final readonly class ViewRenderer
         $contents = $this->resolveContent($view);
 
         $dom = new Dom();
-        $dom->load($contents);
 
-        $elements = [];
+        $dom->load('<div>' . $contents . '</div>');
 
-        foreach($dom->root->getChildren() as $child) {
-            $elements[] = $this->elementFactory->make($view, $child);
-        }
+        $element = $this->applyAttributes(
+            view: $view,
+            element: $this->elementFactory->make($view,
+                $dom->root->getChildren()[0],
+            ),
+        );
 
-        foreach ($elements as $element) {
-
-        }
-
-       return trim($this->renderElements($elements));
+        return trim($this->renderElements($view, $element->getChildren()));
     }
 
-    /**
-     * @param \Tempest\View\Elements\GenericElement[] $elements
-     */
-    private function renderElements(array $elements): string
+    /** @param \Tempest\View\Element[] $elements */
+    private function renderElements(View $view, array $elements): string
     {
         $rendered = [];
 
         foreach ($elements as $element) {
-            $rendered[] = $element->render($this);
+            $rendered[] = $element->addData(...$view->getData())->render($this);
         }
 
         return implode('', $rendered);
@@ -85,5 +83,30 @@ final readonly class ViewRenderer
         include $path;
 
         return ob_get_clean();
+    }
+
+    private function applyAttributes(View $view, Element $element): Element
+    {
+        if (! $element instanceof HasAttributes) {
+            return $element;
+        }
+
+        /** @var \Tempest\View\Element&\Tempest\View\HasAttributes $element */
+
+        $children = [];
+
+        foreach ($element->getChildren() as $child) {
+            $children[] = $this->applyAttributes($view, $child);
+        }
+
+        $element->setChildren($children);
+
+        foreach ($element->getAttributes() as $name => $value) {
+            $attribute = $this->attributeFactory->make($view, $name, $value);
+
+            $element = $attribute->apply($element);
+        }
+
+        return $element;
     }
 }

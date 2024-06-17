@@ -2,9 +2,6 @@
 
 namespace Tests\Tempest\View;
 
-use Generator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tempest\View\View;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\view;
 
@@ -66,7 +63,7 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
             <div :foreach="$this->items as $foo">a</div>
             <div :foreach="$this->items as $foo">b</div>
             HTML,
-            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div>')->data(items: ['a', 'b'])),
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div>')->data(items: ['a', 'b'])),
         );
     }
 
@@ -76,14 +73,14 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
             <<<'HTML'
             <div :forelse>Empty</div>
             HTML,
-            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div><div :forelse>Empty</div>')->data(items: [])),
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: [])),
         );
 
         $this->assertSame(
             <<<'HTML'
             <div :foreach="$this->items as $foo">a</div>
             HTML,
-            $this->render(view('<div :foreach="$this->items as $foo">{{ $this->foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
+            $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
         );
     }
 }

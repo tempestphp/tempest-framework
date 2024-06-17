@@ -6,6 +6,7 @@ use Exception;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
+use Tempest\View\HasAttributes;
 use Tempest\View\View;
 
 final readonly class ElseAttribute implements Attribute
@@ -18,14 +19,14 @@ final readonly class ElseAttribute implements Attribute
     {
         $previous = $element->getPrevious();
 
-        if (!$previous) {
-            throw new Exception('No previous element found for else condition');
+        $condition = null;
+
+        if ($previous instanceof HasAttributes) {
+            $condition = $previous->getAttribute(':if');
         }
 
-        $condition = $previous->getAttribute(':if');
-
         if (! $condition) {
-            throw new Exception('No valid if condition found');
+            throw new Exception('No valid if condition found in preceding element');
         }
 
         if ($this->view->eval($condition)) {

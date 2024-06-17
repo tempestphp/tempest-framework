@@ -9,7 +9,7 @@ use Tempest\View\View;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class Input implements ViewComponent
+final readonly class Input /*implements ViewComponent*/
 {
     public function __construct(
         private View $view,

@@ -6,22 +6,20 @@ use Tempest\View\Element;
 
 trait IsElement
 {
-    public function __construct(
-        private readonly ?Element $previous,
-        private readonly array $attributes,
-        private array $data = [],
-    ) {}
+    /** @var Element[] */
+    private array $children = [];
 
-    public function data(...$data): self
+    private ?Element $parent = null;
+
+    private ?Element $previous = null;
+
+    private array $data = [];
+
+    public function setPrevious(?Element $previous): self
     {
-        $this->data = [...$this->data, ...$data];
+        $this->previous = $previous;
 
         return $this;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
     }
 
     public function getPrevious(): ?Element
@@ -29,34 +27,64 @@ trait IsElement
         return $this->previous;
     }
 
-    public function getAttribute(string $name): ?string
+    public function setParent(?Element $parent): self
     {
-        return $this->attributes[$name] ?? null;
+        $this->parent = $parent;
+
+        return $this;
     }
 
-    public function getAttributes(): array
+    public function getParent(): ?Element
     {
-        return $this->attributes;
-}
+        return $this->parent;
+    }
 
-    public function debug(int $level = 1): string
+    /** @return \Tempest\View\Element[] */
+    public function getChildren(): array
     {
-        $children = [];
+        return $this->children;
+    }
 
-        if ($this instanceof GenericElement) {
-            foreach ($this->getChildren() as $child)
-            {
-                $children[] = str_repeat(' ', $level * 4) . $child->debug($level + 1);
-            }
-        } elseif ($this instanceof CollectionElement) {
-            foreach ($this->elements as $child)
-            {
-                $children[] = str_repeat(' ', $level * 4) . $child->debug($level + 1);
-            }
+    /** @param \Tempest\View\Element[] $children */
+    public function setChildren(array $children): self
+    {
+        $previous = null;
+
+        foreach ($children as $child) {
+            $child
+                ->setParent($this)
+                ->setPrevious($previous);
+
+            $previous = $child;
         }
 
-        $children = implode(PHP_EOL, $children);
+        $this->children = $children;
 
-        return self::class . ' ' . json_encode($this->data) . PHP_EOL . $children;
+        return $this;
+    }
+
+    public function getData(): array
+    {
+        $parentData = $this->getParent()?->getData() ?? [];
+
+        return [...$parentData, ...$this->data];
+    }
+
+    public function addData(...$data): self
+    {
+        $this->data = [...$this->data, ...$data];
+
+        return $this;
+    }
+
+    public function __clone(): void
+    {
+        $childClones = [];
+
+        foreach ($this->children as $child) {
+            $childClones[] = clone $child;
+        }
+
+        $this->setChildren($childClones);
     }
 }

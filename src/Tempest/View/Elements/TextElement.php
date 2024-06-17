@@ -13,22 +13,20 @@ final class TextElement implements Element
     public function __construct(
         private readonly View $view,
         private readonly string $text,
-        private readonly ?Element $previous,
-        private readonly array $attributes,
-        private array $data = [],
     ) {}
 
     public function render(ViewRenderer $renderer): string
     {
         return preg_replace_callback(
-            // TODO: make this-> optional
-            pattern: '/{{\s*(?<eval>\$this->.*?)\s*}}/',
-            callback: function (array $matches) : string {
-                $viewClone = clone $this->view;
+            pattern: '/{{\s*(?<eval>\$.*?)\s*}}/',
+            callback: function (array $matches): string {
+                $eval = $matches['eval'] ?? '';
 
-                $viewClone->data(...$this->getData());
+                if (str_starts_with($eval, '$this->')) {
+                    return $this->view->eval($eval) ?? '';
+                }
 
-                return $viewClone->eval($matches['eval']) ?? '';
+                return $this->getData()[ltrim($eval, '$')];
             },
             subject: $this->text,
         );

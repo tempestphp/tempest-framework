@@ -10,11 +10,7 @@ final class CollectionElement implements Element
     use IsElement;
 
     public function __construct(
-        /** @var \Tempest\View\Element[] */
         private readonly array $elements,
-        private readonly ?Element $previous,
-        private readonly array $attributes,
-        private array $data = [],
     ) {}
 
     public function render(ViewRenderer $renderer): string

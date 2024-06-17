@@ -31,14 +31,11 @@ final readonly class ForeachAttribute implements Attribute
         {
             $elementClone = clone $element;
 
-            $elements[] = $elementClone->data(...[$itemName => $item]);
+            $elements[] = $elementClone->addData(...[$itemName => $item]);
         }
-
+        
         return new CollectionElement(
             elements: $elements,
-            previous: $element->getPrevious(),
-            attributes: $element->getAttributes(),
-            data: $element->getData(),
         );
     }
 }
