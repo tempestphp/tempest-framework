@@ -20,23 +20,14 @@ class ViewTest extends FrameworkIntegrationTestCase
 {
     public function test_render()
     {
-        $view = new GenericView(
-            'Views/overview.php',
-            params: [
-                'name' => 'Brent',
-            ],
-        );
+        $view = view('Views/overview.view.php')->data(name: 'Brent');
 
         $html = $this->render($view);
 
         $expected = <<<HTML
-<html lang="en">
-<head>
-    <title></title>
-</head>
-<body>Hello Brent!</body>
-</html>
-HTML;
+            <html lang="en"><head><title></title></head>
+            <body> Hello Brent! </body></html>
+            HTML;
 
         $this->assertEquals($expected, $html);
     }

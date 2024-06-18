@@ -9,7 +9,6 @@ use PHPHtmlParser\Dom;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
 use Tempest\View\Attributes\AttributeFactory;
-use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\EmptyElement;
@@ -18,21 +17,37 @@ use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
 use function Tempest\path;
 
-final readonly class ViewRenderer
+final class ViewRenderer
 {
+    private ?View $currentView = null;
+
     public function __construct(
-        private ElementFactory $elementFactory,
-        private AttributeFactory $attributeFactory,
-        private AppConfig $appConfig,
-        private ViewConfig $viewConfig,
-        private Container $container,
+        private readonly ElementFactory $elementFactory,
+        private readonly AttributeFactory $attributeFactory,
+        private readonly AppConfig $appConfig,
+        private readonly ViewConfig $viewConfig,
+        private readonly Container $container,
     ) {}
 
-    public function render(?View $view): string
+    public function __get(string $name): mixed
+    {
+        return $this->currentView?->get($name);
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->currentView?->{$name}(...$arguments);
+    }
+
+    public function render(string|View|null $view): string
     {
         if ($view === null) {
             return '';
+        } elseif (is_string($view)) {
+            $view = new GenericView($view);
         }
+
+        $this->currentView = $view;
 
         $contents = $this->resolveContent($view);
 
@@ -59,7 +74,7 @@ final readonly class ViewRenderer
             $rendered[] = $this->renderElement($view, $element);
         }
 
-        return implode('', $rendered);
+        return implode(PHP_EOL, $rendered);
     }
 
     public function renderElement(View $view, Element $element): string
@@ -197,7 +212,7 @@ final readonly class ViewRenderer
 
     private function renderViewComponent(View $view, ViewComponent $viewComponent, GenericElement $element): string
     {
-        return preg_replace_callback(
+        return $this->render(preg_replace_callback(
             pattern: '/<x-slot\s*(name="(?<name>\w+)")?\s*\/>/',
             callback: function ($matches) use ($view, $element) {
                 $name = $matches['name'] ?? 'slot';
@@ -211,7 +226,7 @@ final readonly class ViewRenderer
                 return $this->renderElement($view, $slot);
             },
             subject: $viewComponent->render($element, $this),
-        );
+        ));
     }
 
     private function renderEmptyElement(EmptyElement $element): string
@@ -239,7 +254,7 @@ final readonly class ViewRenderer
             $content[] = $this->renderElement($view, $child);
         }
 
-        $content = implode('', $content);
+        $content = implode(PHP_EOL, $content);
 
         $attributes = [];
 

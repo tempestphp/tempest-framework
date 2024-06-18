@@ -4,7 +4,6 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\View;
-use Tempest\View\ViewRenderer;
 
 final class TextElement implements Element
 {

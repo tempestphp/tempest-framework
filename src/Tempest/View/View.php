@@ -6,8 +6,6 @@ namespace Tempest\View;
 
 interface View
 {
-    public function path(string $path): self;
-
     public function getPath(): string;
 
     public function getData(): array;
@@ -21,18 +19,6 @@ interface View
     public function data(...$params): self;
 
     public function raw(string $name): ?string;
-
-    public function slot(string $name = 'slot'): ?string;
-
-    /**
-     * @param string $name
-     * @return \Tempest\Validation\Rule[]
-     */
-    public function getErrorsFor(string $name): array;
-
-    public function hasErrors(): bool;
-
-    public function original(string $name, mixed $default = ''): mixed;
 
     public function eval(string $eval): mixed;
 }
