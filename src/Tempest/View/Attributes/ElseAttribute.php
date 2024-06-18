@@ -7,29 +7,23 @@ use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
 use Tempest\View\Elements\GenericElement;
-use Tempest\View\View;
 
 final readonly class ElseAttribute implements Attribute
 {
-    public function __construct(
-        private View $view,
-    ) {}
-
     public function apply(Element $element): Element
     {
         $previous = $element->getPrevious();
 
-        $condition = null;
-
-        if ($previous instanceof GenericElement) {
-            $condition = $previous->getAttribute(':if');
-        }
-
-        if (! $condition) {
+        if (
+            ! $previous instanceof GenericElement
+            || ! $previous->hasAttribute('if')
+        ) {
             throw new Exception('No valid if condition found in preceding element');
         }
 
-        if ($this->view->eval($condition)) {
+        $condition = $previous->getAttribute('if');
+
+        if ($condition) {
             return new EmptyElement($element);
         } else {
             return $element;

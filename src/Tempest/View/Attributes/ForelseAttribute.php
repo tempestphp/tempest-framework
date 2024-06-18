@@ -6,21 +6,22 @@ use Exception;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
-use Tempest\View\View;
+use Tempest\View\Elements\GenericElement;
 
 final readonly class ForelseAttribute implements Attribute
 {
-    public function __construct(
-        private View $view,
-    ) {}
-
     public function apply(Element $element): Element
     {
-        $foreach = $element->getPrevious()?->getAttribute(':foreach');
-
-        if (! $foreach) {
-            throw new Exception('No valid foreach found in previous element');
+        $previous = $element->getPrevious();
+            
+        if (
+            ! $previous instanceof GenericElement
+            || ! $previous->hasAttribute('foreach')
+        ) {
+            throw new Exception('No valid foreach loop found in preceding element');
         }
+        
+        $foreach = $previous->getAttribute('foreach', eval: false);
 
         preg_match(
             '/\$this->(?<collection>\w+) as \$(?<item>\w+)/',
@@ -28,7 +29,7 @@ final readonly class ForelseAttribute implements Attribute
             $matches,
         );
 
-        $collection = $this->view->get($matches['collection']);
+        $collection = $element->getData()[$matches['collection']] ?? [];
 
         if ($collection) {
             return new EmptyElement($element);

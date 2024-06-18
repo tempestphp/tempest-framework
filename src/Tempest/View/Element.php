@@ -18,10 +18,7 @@ interface Element
     /** @return \Tempest\View\Element[] */
     public function getChildren(): array;
 
-    public function getData(): array;
+    public function getData(?string $key = null): mixed;
 
     public function addData(...$data): self;
-
-    // TODO: move element rendering into ViewRenderer
-    public function render(ViewRenderer $renderer): string;
 }

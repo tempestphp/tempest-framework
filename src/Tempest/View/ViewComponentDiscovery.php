@@ -7,7 +7,7 @@ namespace Tempest\View;
 use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
-use Tempest\View\Components\Component;
+use Tempest\View\Components\AnonymousViewComponent;
 
 final readonly class ViewComponentDiscovery implements Discovery
 {
@@ -62,7 +62,7 @@ final readonly class ViewComponentDiscovery implements Discovery
             return;
         }
 
-        $this->viewConfig->viewComponents[$matches['name']] = new Component($matches['name'], $matches['view']);
+        $this->viewConfig->viewComponents[$matches['name']] = new AnonymousViewComponent($matches['name'], $matches['view']);
     }
 
     public function hasCache(): bool

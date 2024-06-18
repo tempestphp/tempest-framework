@@ -13,6 +13,12 @@ final class CollectionElement implements Element
         private readonly array $elements,
     ) {}
 
+    /** @return \Tempest\View\Element[] */
+    public function getElements(): array
+    {
+        return $this->elements;
+    }
+
     public function render(ViewRenderer $renderer): string
     {
         $rendered = [];

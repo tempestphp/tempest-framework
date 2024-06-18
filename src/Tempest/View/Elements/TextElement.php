@@ -15,20 +15,8 @@ final class TextElement implements Element
         private readonly string $text,
     ) {}
 
-    public function render(ViewRenderer $renderer): string
+    public function getText(): string
     {
-        return preg_replace_callback(
-            pattern: '/{{\s*(?<eval>\$.*?)\s*}}/',
-            callback: function (array $matches): string {
-                $eval = $matches['eval'] ?? '';
-
-                if (str_starts_with($eval, '$this->')) {
-                    return $this->view->eval($eval) ?? '';
-                }
-
-                return $this->getData()[ltrim($eval, '$')] ?? '';
-            },
-            subject: $this->text,
-        );
+        return $this->text;
     }
 }

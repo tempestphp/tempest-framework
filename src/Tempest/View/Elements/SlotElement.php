@@ -17,15 +17,4 @@ final class SlotElement implements Element
     {
         return $this->name === $name;
     }
-
-    public function render(ViewRenderer $renderer): string
-    {
-        $rendered = [];
-
-        foreach ($this->getChildren() as $child) {
-            $rendered[] = $child->render($renderer);
-        }
-
-        return implode(PHP_EOL, $rendered);
-    }
 }

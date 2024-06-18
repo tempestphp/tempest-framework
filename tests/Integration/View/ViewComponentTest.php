@@ -52,11 +52,12 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: <<<'HTML'
             <form action="#" method="post">
-                <div> <div>
+                <div><div>
                 <label for="a">a</label>
                 <input type="number" name="a" id="a" value="" />
                 
-            </div> </div> <div>
+            </div></div>
+            <div>
                 <label for="b">b</label>
                 <input type="text" name="b" id="b" value="" />
                 
@@ -106,7 +107,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             expected: 'hi',
-            actual: $this->render(view('<x-with-injection />')),
+            actual: $this->render('<x-with-injection />'),
         );
     }
 
@@ -128,7 +129,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: '<div>a</div>
 <div>b</div>',
-            actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $this->foo }}</x-my>')->data(items: ['a', 'b'])),
+            actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $foo }}</x-my>')->data(items: ['a', 'b'])),
         );
     }
 
@@ -163,8 +164,11 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_anonymous_view_component(): void
     {
-        $html = $this->render(view('<x-my-a>hi</x-my-a>'));
-
-        lw($html);
+        $this->assertSame(
+            <<<HTML
+            <div class="anonymous">hi</div>
+            HTML,
+            $this->render(view('<x-my-a>hi</x-my-a>'))
+        );
     }
 }

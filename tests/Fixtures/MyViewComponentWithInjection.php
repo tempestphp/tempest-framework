@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures;
 
 use Tempest\Http\Session\Session;
+use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class MyViewComponentWithInjection /* implements ViewComponent */
+final readonly class MyViewComponentWithInjection implements ViewComponent
 {
     public static function getName(): string
     {
@@ -18,10 +19,9 @@ final readonly class MyViewComponentWithInjection /* implements ViewComponent */
     public function __construct(
         /** @phpstan-ignore-next-line */
         private Session $session,
-    ) {
-    }
+    ) {}
 
-    public function render(ViewRenderer $renderer): string
+    public function render(GenericElement $element, ViewRenderer $renderer): string
     {
         return 'hi';
     }

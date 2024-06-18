@@ -7,9 +7,15 @@ namespace Tempest\View;
 use Exception;
 use PHPHtmlParser\Dom;
 use Tempest\Application\AppConfig;
+use Tempest\Container\Container;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Components\AnonymousViewComponent;
+use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\Elements\EmptyElement;
 use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\SlotElement;
+use Tempest\View\Elements\TextElement;
 use function Tempest\path;
 
 final readonly class ViewRenderer
@@ -19,6 +25,7 @@ final readonly class ViewRenderer
         private AttributeFactory $attributeFactory,
         private AppConfig $appConfig,
         private ViewConfig $viewConfig,
+        private Container $container,
     ) {}
 
     public function render(?View $view): string
@@ -55,24 +62,39 @@ final readonly class ViewRenderer
         return implode('', $rendered);
     }
 
-    private function renderElement(View $view, Element $element): string
+    public function renderElement(View $view, Element $element): string
     {
-        $element->addData(...$view->getData());
-
-        if (! $element instanceof GenericElement) {
-            return $element->render($this);
+        if ($element instanceof CollectionElement) {
+            return $this->renderCollectionElement($view, $element);
         }
 
-        $viewComponent = $this->resolveViewComponent($element);
-
-        if (! $viewComponent) {
-            return $element->render($this);
+        if ($element instanceof TextElement) {
+            return $this->renderTextElement($view, $element);
         }
 
-        return $this->renderSlots(
-            rendered: $viewComponent->render($element, $this),
-            element: $element,
-        );
+        if ($element instanceof EmptyElement) {
+            return $this->renderEmptyElement($element);
+        }
+
+        if ($element instanceof SlotElement) {
+            return $this->renderSlotElement($view, $element);
+        }
+
+        if ($element instanceof GenericElement) {
+            $viewComponent = $this->resolveViewComponent($element);
+
+            if (! $viewComponent) {
+                return $this->renderGenericElement($view, $element);
+            }
+
+            return $this->renderViewComponent(
+                view: $view,
+                viewComponent: $viewComponent,
+                element: $element,
+            );
+        }
+
+        // Cannot render
     }
 
     private function resolveContent(View $view): string
@@ -118,43 +140,8 @@ final readonly class ViewRenderer
         if ($viewComponentClass instanceof ViewComponent) {
             return $viewComponentClass;
         } else {
-            return new $viewComponentClass;
+            return $this->container->get($viewComponentClass);
         }
-//
-//        $attributes = [
-//            'view' => $view,
-//            'slot' => '', // TODO rendered child contents
-//        ];
-
-        // TODO: should view components still have attribute injection, or should view components retrieve attribute values via the element?
-//        foreach ($node->getAttributes() as $name => $value) {
-//            if (str_starts_with($name, ':') && $value) {
-//                $value = $view->eval($value);
-//                $name = substr($name, 1);
-//            }
-//
-//            $attributes[$name] = $value;
-//        }
-
-//        $reflection = new ReflectionClass($viewComponentClass);
-//
-//        $attributesToInject = [];
-//
-//        foreach ($reflection->getConstructor()->getParameters() as $parameter) {
-//            if (array_key_exists($parameter->getName(), $attributes)) {
-//                $attributesToInject[$parameter->getName()] = $attributes[$parameter->getName()];
-//            } elseif ($parameter->isDefaultValueAvailable()) {
-//                $attributesToInject[$parameter->getName()] = $parameter->getDefaultValue();
-//            } else {
-//                try {
-//                    $attributesToInject[$parameter->getName()] = get(type($parameter->getType()));
-//                } catch (ReflectionException) {
-//                    throw new Exception("Could not resolve value for field {$viewComponentClass}::\${$parameter->name}");
-//                }
-//            }
-//        }
-//
-//        return $reflection->newInstance(...$attributesToInject);
     }
 
     private function applyAttributes(View $view, Element $element): Element
@@ -180,21 +167,96 @@ final readonly class ViewRenderer
         return $element;
     }
 
-    private function renderSlots(string $rendered, Element $element): string
+    private function renderTextElement(View $view, TextElement $element): string
     {
-        if (! $element instanceof GenericElement) {
-            return $rendered;
-        }
-
         return preg_replace_callback(
-            pattern: '/<x-slot\s*(name="(?<name>\w+)")?\s*\/>/',
-            callback: function ($matches) use ($element) {
-                $name = $matches['name'] ?? 'slot';
+            pattern: '/{{\s*(?<eval>\$.*?)\s*}}/',
+            callback: function (array $matches) use ($element, $view): string {
+                $eval = $matches['eval'] ?? '';
 
-                return $element->getSlot($name)?->render($this) ?? $matches[0];
+                if (str_starts_with($eval, '$this->')) {
+                    return $view->eval($eval) ?? '';
+                }
+
+                return $element->getData()[ltrim($eval, '$')] ?? '';
             },
-            subject: $rendered,
+            subject: $element->getText(),
         );
     }
 
+    private function renderCollectionElement(View $view, CollectionElement $collectionElement): string
+    {
+        $rendered = [];
+
+        foreach ($collectionElement->getElements() as $element) {
+            $rendered[] = $this->renderElement($view, $element);
+        }
+
+        return implode(PHP_EOL, $rendered);
+    }
+
+    private function renderViewComponent(View $view, ViewComponent $viewComponent, GenericElement $element): string
+    {
+        return preg_replace_callback(
+            pattern: '/<x-slot\s*(name="(?<name>\w+)")?\s*\/>/',
+            callback: function ($matches) use ($view, $element) {
+                $name = $matches['name'] ?? 'slot';
+
+                $slot = $element->getSlot($name);
+
+                if (! $slot) {
+                    return $matches[0];
+                }
+
+                return $this->renderElement($view, $slot);
+            },
+            subject: $viewComponent->render($element, $this),
+        );
+    }
+
+    private function renderEmptyElement(EmptyElement $element): string
+    {
+        return '';
+    }
+
+    private function renderSlotElement(View $view, SlotElement $element): string
+    {
+        $rendered = [];
+
+        foreach ($element->getChildren() as $child) {
+            $rendered[] = $this->renderElement($view, $child);
+        }
+
+        return implode(PHP_EOL, $rendered);
+    }
+
+
+    private function renderGenericElement(View $view, GenericElement $element): string
+    {
+        $content = [];
+
+        foreach ($element->getChildren() as $child) {
+            $content[] = $this->renderElement($view, $child);
+        }
+
+        $content = implode('', $content);
+
+        $attributes = [];
+
+        foreach ($element->getAttributes() as $name => $value) {
+            if ($value) {
+                $attributes[] = $name . '="' . $value . '"';
+            } else {
+                $attributes[] = $name;
+            }
+        }
+
+        $attributes = implode(' ', $attributes);
+
+        if ($attributes !== '') {
+            $attributes = ' ' . $attributes;
+        }
+
+        return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
+    }
 }

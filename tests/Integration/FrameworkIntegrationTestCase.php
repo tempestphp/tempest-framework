@@ -26,7 +26,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
             enableExceptionHandling: true,
-            discoveryCache: false,
+            discoveryCache: true,
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
             ],

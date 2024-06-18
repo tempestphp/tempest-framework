@@ -63,11 +63,17 @@ trait IsElement
         return $this;
     }
 
-    public function getData(): array
+    public function getData(?string $key = null): mixed
     {
         $parentData = $this->getParent()?->getData() ?? [];
 
-        return [...$parentData, ...$this->data];
+        $data = [...$parentData, ...$this->data];
+
+        if ($key) {
+            return $data[$key] ?? null;
+        }
+
+        return $data;
     }
 
     public function addData(...$data): self

@@ -4,7 +4,6 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\View;
-use Tempest\View\ViewRenderer;
 
 final class GenericElement implements Element
 {
@@ -16,35 +15,6 @@ final class GenericElement implements Element
         private readonly array $attributes,
     ) {}
 
-    public function render(ViewRenderer $renderer): string
-    {
-        $content = [];
-
-        foreach ($this->getChildren() as $child) {
-            $content[] = $child->render($renderer);
-        }
-
-        $content = implode('', $content);
-
-        $attributes = [];
-
-        foreach ($this->attributes as $name => $value) {
-            if ($value) {
-                $attributes[] = $name . '="' . $value . '"';
-            } else {
-                $attributes[] = $name;
-            }
-        }
-
-        $attributes = implode(' ', $attributes);
-
-        if ($attributes !== '') {
-            $attributes = ' ' . $attributes;
-        }
-
-        return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
-    }
-
     public function getTag(): string
     {
         return $this->tag;
@@ -55,7 +25,15 @@ final class GenericElement implements Element
         return $this->attributes;
     }
 
-    public function getAttribute(string $name): ?string
+    public function hasAttribute(string $name): bool
+    {
+        $name = ltrim($name, ':');
+
+        return array_key_exists($name, $this->attributes)
+            || array_key_exists(":{$name}", $this->attributes);
+    }
+
+    public function getAttribute(string $name, bool $eval = true): bool|string|null
     {
         $name = ltrim($name, ':');
 
@@ -66,7 +44,11 @@ final class GenericElement implements Element
 
             if ($attributeName === ":{$name}") {
                 if (! $value) {
-                    return '';
+                    return null;
+                }
+
+                if (! $eval) {
+                    return $value;
                 }
 
                 // TODO: possible refactor with TextElement:25-29 ?
@@ -108,5 +90,18 @@ final class GenericElement implements Element
         }
 
         return null;
+    }
+
+    public function getData(?string $key = null): mixed
+    {
+        $parentData = $this->getParent()?->getData() ?? [];
+
+        $data = [...$this->view->getData(), ...$parentData, ...$this->data];
+
+        if ($key) {
+            return $data[$key] ?? null;
+        }
+
+        return $data;
     }
 }
