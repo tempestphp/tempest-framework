@@ -8,22 +8,19 @@ use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class MyViewComponent implements ViewComponent
+final readonly class BaseLayoutComponent implements ViewComponent
 {
     public static function getName(): string
     {
-        return 'my';
+        return 'x-base-layout';
     }
 
     public function render(GenericElement $element, ViewRenderer $renderer): string
     {
-        $foo = $element->getAttribute('foo');
-        $bar = $element->getAttribute('bar');
-
-        if ($foo && $bar) {
-            return "<div foo=\"{$foo}\" bar=\"{$bar}\"><x-slot /></div>";
-        }
-
-        return '<div><x-slot /></div>';
+        return <<<HTML
+        <div class="base">
+            <x-slot />
+        </div>
+        HTML;
     }
 }

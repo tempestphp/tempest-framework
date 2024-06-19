@@ -8,22 +8,23 @@ use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
-final readonly class MyViewComponent implements ViewComponent
+final readonly class ComplexBaseLayoutComponent implements ViewComponent
 {
     public static function getName(): string
     {
-        return 'my';
+        return 'x-complex-base';
     }
 
     public function render(GenericElement $element, ViewRenderer $renderer): string
     {
-        $foo = $element->getAttribute('foo');
-        $bar = $element->getAttribute('bar');
+        return <<<HTML
+        <x-slot name="scripts" />
+        
+        <div class="base">
+            <x-slot />
+        </div>
 
-        if ($foo && $bar) {
-            return "<div foo=\"{$foo}\" bar=\"{$bar}\"><x-slot /></div>";
-        }
-
-        return '<div><x-slot /></div>';
+        <x-slot name="styles" />
+        HTML;
     }
 }

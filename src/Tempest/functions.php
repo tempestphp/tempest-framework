@@ -49,7 +49,7 @@ namespace Tempest {
     use Tempest\View\View;
 
     /**
-     * @template TClassName
+     * @template TClassName of object
      * @param class-string<TClassName> $className
      * @param string|null $tag
      * @param mixed ...$params

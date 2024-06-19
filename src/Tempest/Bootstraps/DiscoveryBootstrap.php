@@ -12,6 +12,7 @@ use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Throwable;
+use TypeError;
 
 final readonly class DiscoveryBootstrap implements Bootstrap
 {
@@ -48,24 +49,31 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                         $fileName === ''
                         || $fileName === '.'
                         || $fileName === '..'
-                        || ucfirst($fileName) !== $fileName
                     ) {
                         continue;
                     }
 
-                    $className = str_replace(
-                        [$discoveryLocation->path, '/', '.php', '\\\\'],
-                        [$discoveryLocation->namespace, '\\', '', '\\'],
-                        $file->getPathname(),
-                    );
+                    $input = $file->getPathname();
 
-                    try {
-                        $reflection = new ReflectionClass($className);
-                    } catch (Throwable) {
-                        continue;
+                    if (ucfirst($fileName) === $fileName) {
+                        $className = str_replace(
+                            [$discoveryLocation->path, '/', '.php', '\\\\'],
+                            [$discoveryLocation->namespace, '\\', '', '\\'],
+                            $file->getPathname(),
+                        );
+
+                        try {
+                            $input = new ReflectionClass($className);
+                        } catch (Throwable) {
+                            continue;
+                        }
                     }
 
-                    $discovery->discover($reflection);
+                    try {
+                        $discovery->discover($input);
+                    } catch (TypeError) {
+                        continue;
+                    }
                 }
             }
 

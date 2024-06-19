@@ -15,6 +15,9 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Testing\IntegrationTest;
+use Tempest\View\GenericView;
+use Tempest\View\View;
+use Tempest\View\ViewRenderer;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
@@ -64,5 +67,16 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(Application::class, fn () => $application);
 
         return $application;
+    }
+
+    protected function render(string|View $view, mixed ...$params): string
+    {
+        if (is_string($view)) {
+            $view = new GenericView($view);
+        }
+
+        $view->data(...$params);
+
+        return $this->container->get(ViewRenderer::class)->render($view);
     }
 }
