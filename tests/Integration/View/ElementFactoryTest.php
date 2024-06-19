@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\View;
 
 use PHPHtmlParser\Dom;
 use PHPUnit\Framework\TestCase;
+use function Tempest\view;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
-use function Tempest\view;
 
+/**
+ * @internal
+ * @small
+ */
 class ElementFactoryTest extends TestCase
 {
     public function test_parental_relations(): void

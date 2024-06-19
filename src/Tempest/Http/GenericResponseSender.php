@@ -12,7 +12,8 @@ final readonly class GenericResponseSender implements ResponseSender
 {
     public function __construct(
         private ViewRenderer $viewRenderer,
-    ) {}
+    ) {
+    }
 
     public function send(Response $response): Response
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Components;
 
 use Tempest\View\Elements\GenericElement;
@@ -11,7 +13,8 @@ final readonly class AnonymousViewComponent implements ViewComponent
     public function __construct(
         private string $name,
         private string $contents,
-    ) {}
+    ) {
+    }
 
     public static function getName(): string
     {

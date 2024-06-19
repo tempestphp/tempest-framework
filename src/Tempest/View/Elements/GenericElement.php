@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
@@ -13,7 +15,8 @@ final class GenericElement implements Element
         private readonly View $view,
         private readonly string $tag,
         private readonly array $attributes,
-    ) {}
+    ) {
+    }
 
     public function getTag(): string
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use PHPHtmlParser\Dom\AbstractNode;
@@ -11,11 +13,11 @@ final class ElementFactory
 {
     public function make(View $view, AbstractNode $node): ?Element
     {
-//        $attributes = $this->attributeFactory->makeCollection($view, $node);
-//
-//        foreach ($attributes as $attribute) {
-//            $element = $attribute->apply($element);
-//        }
+        //        $attributes = $this->attributeFactory->makeCollection($view, $node);
+        //
+        //        foreach ($attributes as $attribute) {
+        //            $element = $attribute->apply($element);
+        //        }
 
         return $this->makeElement(
             view: $view,
@@ -32,7 +34,6 @@ final class ElementFactory
             }
 
             return new TextElement(
-                view: $view,
                 text: $node->outerHtml(),
             );
         }

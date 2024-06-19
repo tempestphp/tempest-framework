@@ -4,4 +4,5 @@ use Tempest\View\GenericView;
 
 /** @var GenericView $this */ ?>
 
-<?= $this->property ?><?= $this->raw('property') ?>
+<?= $this->property ?>
+<?= $this->raw('property') ?>

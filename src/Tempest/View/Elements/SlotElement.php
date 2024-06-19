@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
-use Tempest\View\ViewRenderer;
 
 final class SlotElement implements Element
 {
@@ -11,7 +12,8 @@ final class SlotElement implements Element
 
     public function __construct(
         private readonly string $name,
-    ) {}
+    ) {
+    }
 
     public function matches(string $name): bool
     {

@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\View;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\view;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class ViewRendererTest extends FrameworkIntegrationTestCase
 {
     public function test_view_renderer(): void
@@ -88,16 +94,15 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div class="base">
-                 Test 
-            </div>
+            <div class="base"> Test </div>
             HTML,
-            $this->render(<<<'HTML'
-                <x-base>
+            $this->render(
+                <<<'HTML'
+                <x-base-layout>
                     <x-slot>
                         Test
                     </x-slot>
-                </x-base>
+                </x-base-layout>
                 HTML,
             ),
         );
@@ -107,14 +112,13 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div class="base">
-                 Test 
-            </div>
+            <div class="base"> Test </div>
             HTML,
-            $this->render(<<<'HTML'
-                <x-base>
+            $this->render(
+                <<<'HTML'
+                <x-base-layout>
                     Test
-                </x-base>
+                </x-base-layout>
                 HTML,
             ),
         );
@@ -125,15 +129,11 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             <<<'HTML'
             injected scripts 
-            
-            <div class="base">
-                 Test 
-             Hi 
-            </div>
-            
+            <div class="base"> Test Hi </div>
              injected styles
             HTML,
-            $this->render(<<<'HTML'
+            $this->render(
+                <<<'HTML'
             <x-complex-base>
                 Test
                 

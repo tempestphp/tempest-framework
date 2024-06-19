@@ -14,7 +14,8 @@ final readonly class Input implements ViewComponent
 {
     public function __construct(
         private Session $session,
-    ) {}
+    ) {
+    }
 
     public static function getName(): string
     {
@@ -34,9 +35,9 @@ final readonly class Input implements ViewComponent
 
         if ($errors) {
             $errorHtml = '<div>' . implode('', array_map(
-                    fn (Rule $failingRule) => "<div>{$failingRule->message()}</div>",
-                    $errors,
-                )) . '</div>';
+                fn (Rule $failingRule) => "<div>{$failingRule->message()}</div>",
+                $errors,
+            )) . '</div>';
         }
 
         return <<<HTML

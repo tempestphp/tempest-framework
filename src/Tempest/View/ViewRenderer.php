@@ -8,6 +8,7 @@ use Exception;
 use PHPHtmlParser\Dom;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
+use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
@@ -15,7 +16,6 @@ use Tempest\View\Elements\EmptyElement;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
-use function Tempest\path;
 
 final class ViewRenderer
 {
@@ -27,7 +27,8 @@ final class ViewRenderer
         private readonly AppConfig $appConfig,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
@@ -57,7 +58,8 @@ final class ViewRenderer
 
         $element = $this->applyAttributes(
             view: $view,
-            element: $this->elementFactory->make($view,
+            element: $this->elementFactory->make(
+                $view,
                 $dom->root->getChildren()[0],
             ),
         );
@@ -109,7 +111,7 @@ final class ViewRenderer
             );
         }
 
-        // Cannot render
+        throw new Exception("No rendered found");
     }
 
     private function resolveContent(View $view): string
@@ -145,7 +147,7 @@ final class ViewRenderer
 
     private function resolveViewComponent(GenericElement $element): ?ViewComponent
     {
-        /** @var class-string<\Tempest\View\ViewComponent>|null $component */
+        /** @var class-string<\Tempest\View\ViewComponent>|null $viewComponentClass */
         $viewComponentClass = $this->viewConfig->viewComponents[$element->getTag()] ?? null;
 
         if (! $viewComponentClass) {
@@ -244,7 +246,6 @@ final class ViewRenderer
 
         return implode(PHP_EOL, $rendered);
     }
-
 
     private function renderGenericElement(View $view, GenericElement $element): string
     {

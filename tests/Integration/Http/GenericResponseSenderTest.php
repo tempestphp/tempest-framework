@@ -57,7 +57,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         ob_start();
 
         $response = new Ok(
-            body: view('Views/overview.php')->data(
+            body: view('Views/overview.view.php')->data(
                 name: 'Brent',
             ),
         );
@@ -68,6 +68,6 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 
         $output = ob_get_clean();
 
-        $this->assertStringContainsString('<body>Hello Brent!</body>', $output);
+        $this->assertStringContainsString('<body> Hello Brent! </body>', $output);
     }
 }
