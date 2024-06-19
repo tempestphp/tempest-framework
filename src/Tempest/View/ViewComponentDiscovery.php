@@ -34,6 +34,8 @@ final readonly class ViewComponentDiscovery implements Discovery
             return;
         }
 
+        // TODO: check if component already exists
+
         $this->viewConfig->addViewComponent($class);
     }
 
@@ -62,6 +64,8 @@ final readonly class ViewComponentDiscovery implements Discovery
         if (! $matches['name']) {
             return;
         }
+
+        // TODO: check if component already exists
 
         $this->viewConfig->viewComponents[$matches['name']] = new AnonymousViewComponent($matches['name'], $matches['view']);
     }
