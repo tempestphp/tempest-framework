@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Testing\BypassMock;
 
+use ParseError;
 use php_user_filter;
 
 final class Filter extends php_user_filter
@@ -18,6 +19,7 @@ final class Filter extends php_user_filter
     {
         $this->data = '';
         $this->tokens = Bypass::getTokens();
+
         return true;
     }
 
@@ -31,7 +33,7 @@ final class Filter extends php_user_filter
             $this->bucket = $bucket;
         }
 
-        if (!$closing) {
+        if (! $closing) {
             return PSFS_FEED_ME;
         }
 
@@ -43,39 +45,39 @@ final class Filter extends php_user_filter
         $this->bucket->data = $filter;
         $this->bucket->datalen = strlen($this->data);
 
-        if(!empty($this->bucket->data)) {
+        if(! empty($this->bucket->data)) {
             stream_bucket_append($out, $this->bucket);
         }
 
         return PSFS_PASS_ON;
     }
 
-	private function modifyCode(string $code): string
-	{
-		foreach ($this->tokens as $text) {
-			if (stripos($code, $text) !== false) {
+    private function modifyCode(string $code): string
+    {
+        foreach ($this->tokens as $text) {
+            if (stripos($code, $text) !== false) {
                 return $this->removeTokens($code);
-			}
-		}
+            }
+        }
 
-		return $code;
-	}
+        return $code;
+    }
 
-	private function removeTokens(string $code): string
-	{
-		try {
-			$tokens = token_get_all($code, TOKEN_PARSE);
-		} catch (\ParseError $e) {
-			return $code;
-		}
+    private function removeTokens(string $code): string
+    {
+        try {
+            $tokens = token_get_all($code, TOKEN_PARSE);
+        } catch (ParseError $e) {
+            return $code;
+        }
 
-		$code = '';
-		foreach ($tokens as $token) {
-			$code .= is_array($token)
-				? (isset($this->tokens[$token[0]]) ? '' : $token[1])
-				: $token;
-		}
+        $code = '';
+        foreach ($tokens as $token) {
+            $code .= is_array($token)
+                ? (isset($this->tokens[$token[0]]) ? '' : $token[1])
+                : $token;
+        }
 
-		return $code;
-	}
+        return $code;
+    }
 }
