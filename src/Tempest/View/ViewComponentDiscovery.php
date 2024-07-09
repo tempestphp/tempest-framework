@@ -67,7 +67,11 @@ final readonly class ViewComponentDiscovery implements Discovery
 
         $this->viewConfig->addViewComponent(
             name: $matches['name'],
-            viewComponent: new AnonymousViewComponent($matches['name'], $matches['view']),
+            viewComponent: new AnonymousViewComponent(
+                name: $matches['name'],
+                contents: $matches['view'],
+                file: $path,
+            ),
         );
     }
 

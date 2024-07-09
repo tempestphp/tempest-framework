@@ -13,6 +13,7 @@ final readonly class AnonymousViewComponent implements ViewComponent
     public function __construct(
         private string $name,
         private string $contents,
+        private string $file,
     ) {
     }
 
@@ -24,5 +25,10 @@ final readonly class AnonymousViewComponent implements ViewComponent
     public function render(GenericElement $element, ViewRenderer $renderer): string
     {
         return $this->contents;
+    }
+
+    public function getPath(): string
+    {
+        return $this->file;
     }
 }
