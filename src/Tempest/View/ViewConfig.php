@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use ReflectionClass;
+use Tempest\View\Components\AnonymousViewComponent;
 
 final class ViewConfig
 {
@@ -14,18 +15,18 @@ final class ViewConfig
     ) {
     }
 
-    /**
-     * @param ReflectionClass $viewComponentClass
-     * @return void
-     */
-    public function addViewComponent(ReflectionClass $viewComponentClass): void
+    public function addViewComponent(string $name, ReflectionClass|AnonymousViewComponent $viewComponent): void
     {
-        $name = forward_static_call($viewComponentClass->getName() . '::getName');
-
         if (! str_starts_with($name, 'x-')) {
             $name = "x-{$name}";
         }
 
-        $this->viewComponents[$name] = $viewComponentClass->getName();
+        // check for duplicates
+
+        if ($viewComponent instanceof ReflectionClass) {
+            $viewComponent = $viewComponent->getName();
+        }
+
+        $this->viewComponents[$name] = $viewComponent;
     }
 }

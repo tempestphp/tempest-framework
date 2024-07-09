@@ -32,7 +32,7 @@ final class ElementFactory
                 text: $node->textContent,
             );
         }
-        
+
         if (
             $node instanceof DOMComment
             || $node->tagName === 'pre'

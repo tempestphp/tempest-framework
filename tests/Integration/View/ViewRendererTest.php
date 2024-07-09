@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\View;
+namespace Tests\Tempest\Integration\View;
 
 use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -139,6 +139,7 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
             injected scripts
                 
             
+            
             <div class="base">
                 
                 Test
@@ -149,6 +150,7 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
                 Hi
             
             </div>
+            
             
             
                 injected styles

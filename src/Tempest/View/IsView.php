@@ -13,7 +13,8 @@ trait IsView
     public function __construct(
         string $path,
         array $data = [],
-    ) {
+    )
+    {
         $this->path = $path;
         $this->data = $this->escape($data);
         $this->rawData = $data;
@@ -21,7 +22,13 @@ trait IsView
 
     public function __get(string $name)
     {
-        return $this->data[$name] ?? null;
+        $value = $this->data[$name] ?? null;
+
+        if (is_string($value)) {
+            $value = htmlentities($value);
+        }
+
+        return $value;
     }
 
     public function getPath(): string

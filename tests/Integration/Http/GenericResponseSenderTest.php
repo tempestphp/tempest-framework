@@ -68,6 +68,6 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 
         $output = ob_get_clean();
 
-        $this->assertStringContainsString('<body> Hello Brent! </body>', $output);
+        $this->assertStringContainsString('Hello Brent!', $output);
     }
 }

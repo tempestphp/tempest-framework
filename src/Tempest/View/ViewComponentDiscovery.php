@@ -15,8 +15,7 @@ final readonly class ViewComponentDiscovery implements Discovery
 
     public function __construct(
         private ViewConfig $viewConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(ReflectionClass|string $class): void
     {
@@ -34,9 +33,10 @@ final readonly class ViewComponentDiscovery implements Discovery
             return;
         }
 
-        // TODO: check if component already exists
-
-        $this->viewConfig->addViewComponent($class);
+        $this->viewConfig->addViewComponent(
+            name: forward_static_call($class->getName() . '::getName'),
+            viewComponent: $class,
+        );
     }
 
     private function discoverPath(string $path): void
@@ -65,9 +65,10 @@ final readonly class ViewComponentDiscovery implements Discovery
             return;
         }
 
-        // TODO: check if component already exists
-
-        $this->viewConfig->viewComponents[$matches['name']] = new AnonymousViewComponent($matches['name'], $matches['view']);
+        $this->viewConfig->addViewComponent(
+            name: $matches['name'],
+            viewComponent: new AnonymousViewComponent($matches['name'], $matches['view']),
+        );
     }
 
     public function hasCache(): bool
