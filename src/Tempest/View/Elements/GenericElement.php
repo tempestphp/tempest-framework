@@ -56,7 +56,13 @@ final class GenericElement implements Element
 
                 // TODO: possible refactor with TextElement:25-29 ?
                 if (str_starts_with($value, '$this->')) {
-                    return $this->view->eval($value) ?? '';
+                    $result = $this->view->eval($value);
+
+                    if (is_bool($result) || is_string($result)) {
+                        return $result;
+                    }
+
+                    return (bool) $result;
                 }
 
                 return $this->getData()[ltrim($value, '$')] ?? '';

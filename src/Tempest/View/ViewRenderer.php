@@ -9,8 +9,6 @@ use Masterminds\HTML5;
 use ParseError;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
-use Tempest\View\Elements\CodeElement;
-use Tempest\View\Elements\CommentElement;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Elements\CollectionElement;
@@ -232,7 +230,7 @@ final class ViewRenderer
 
     private function renderViewComponent(View $view, ViewComponent $viewComponent, GenericElement $element): string
     {
-        return $this->render(preg_replace_callback(
+        $renderedContent = preg_replace_callback(
             pattern: '/<x-slot\s*(name="(?<name>\w+)")?\s*\/>/',
             callback: function ($matches) use ($view, $element) {
                 $name = $matches['name'] ?? 'slot';
@@ -246,6 +244,11 @@ final class ViewRenderer
                 return $this->renderElement($view, $slot);
             },
             subject: $viewComponent->render($element, $this),
+        );
+
+        return $this->render(new ViewComponentView(
+            wrappingView: $view,
+            content: $renderedContent,
         ));
     }
 
