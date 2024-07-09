@@ -6,15 +6,18 @@ namespace Tempest\View;
 
 use Exception;
 use Masterminds\HTML5;
+use ParseError;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
+use Tempest\View\Elements\CodeElement;
+use Tempest\View\Elements\CommentElement;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\EmptyElement;
 use Tempest\View\Elements\GenericElement;
-use Tempest\View\Elements\PreElement;
+use Tempest\View\Elements\RawElement;
 use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
 
@@ -99,8 +102,8 @@ final class ViewRenderer
             return $this->renderSlotElement($view, $element);
         }
 
-        if ($element instanceof PreElement) {
-            return $this->renderPreElement($element);
+        if ($element instanceof RawElement) {
+            return $this->renderRawElement($element);
         }
 
         if ($element instanceof GenericElement) {
@@ -127,8 +130,12 @@ final class ViewRenderer
         if (! str_ends_with($path, '.php')) {
             ob_start();
 
-            /** @phpstan-ignore-next-line */
-            eval('?>' . $path . '<?php');
+            try {
+                /** @phpstan-ignore-next-line */
+                eval('?>' . $path . '<?php');
+            } catch (ParseError) {
+                return $path;
+            }
 
             return ob_get_clean();
         }
@@ -207,7 +214,7 @@ final class ViewRenderer
         );
     }
 
-    private function renderPreElement(PreElement $element): string
+    private function renderRawElement(RawElement $element): string
     {
         return $element->getHtml();
     }
@@ -245,6 +252,16 @@ final class ViewRenderer
     private function renderEmptyElement(EmptyElement $element): string
     {
         return '';
+    }
+
+    private function renderCommentElement(CommentElement $element): string
+    {
+        return $element->getHtml();
+    }
+
+    private function renderCodeElement(CodeElement $element): string
+    {
+        return $element->getHtml();
     }
 
     private function renderSlotElement(View $view, SlotElement $element): string

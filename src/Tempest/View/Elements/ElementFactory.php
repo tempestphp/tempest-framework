@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use DOMComment;
 use DOMElement;
 use DOMText;
 use Tempest\View\Element;
@@ -20,7 +21,7 @@ final class ElementFactory
         );
     }
 
-    private function makeElement(View $view, DOMElement|DOMText $node, ?Element $parent): ?Element
+    private function makeElement(View $view, DOMElement|DOMText|DOMComment $node, ?Element $parent): ?Element
     {
         if ($node instanceof DOMText) {
             if (trim($node->textContent) === '') {
@@ -31,9 +32,13 @@ final class ElementFactory
                 text: $node->textContent,
             );
         }
-
-        if ($node->tagName === 'pre') {
-            return new PreElement($node->ownerDocument->saveHTML($node));
+        
+        if (
+            $node instanceof DOMComment
+            || $node->tagName === 'pre'
+            || $node->tagName === 'code'
+        ) {
+            return new RawElement($node->ownerDocument->saveHTML($node));
         }
 
         if ($node->tagName === 'x-slot') {

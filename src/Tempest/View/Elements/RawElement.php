@@ -6,7 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 
-final class PreElement implements Element
+final class RawElement implements Element
 {
     use IsElement;
 
