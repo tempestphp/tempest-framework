@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integration\View;
 
+use Masterminds\HTML5;
 use PHPHtmlParser\Dom;
 use PHPUnit\Framework\TestCase;
 use function Tempest\view;
@@ -19,8 +20,7 @@ class ElementFactoryTest extends TestCase
 {
     public function test_parental_relations(): void
     {
-        $dom = new Dom();
-        $dom->load(<<<'HTML'
+        $contents = <<<'HTML'
         <a>
             <b>
                 <c>
@@ -30,11 +30,14 @@ class ElementFactoryTest extends TestCase
                 <e />
             </b>    
         </a>
-        HTML);
+        HTML;
+
+        $html5 = new HTML5();
+        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
 
         $elementFactory = new ElementFactory();
 
-        $a = $elementFactory->make(view(''), $dom->root->getChildren()[0]);
+        $a = $elementFactory->make(view(''), $dom->getElementById('tempest_render')->firstElementChild);
 
         $this->assertInstanceOf(GenericElement::class, $a);
         $this->assertCount(1, $a->getChildren());

@@ -25,7 +25,9 @@ class ViewTest extends FrameworkIntegrationTestCase
 
         $expected = <<<HTML
             <html lang="en"><head><title></title></head>
-            <body> Hello Brent! </body></html>
+            <body>
+                Hello Brent!
+            </body></html>
             HTML;
 
         $this->assertEquals($expected, $html);

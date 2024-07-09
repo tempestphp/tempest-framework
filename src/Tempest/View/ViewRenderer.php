@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Exception;
-use PHPHtmlParser\Dom;
+use Masterminds\HTML5;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
 use function Tempest\path;
@@ -14,6 +14,7 @@ use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\EmptyElement;
 use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\PreElement;
 use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
 
@@ -52,16 +53,17 @@ final class ViewRenderer
 
         $contents = $this->resolveContent($view);
 
-        $dom = new Dom();
+        $html5 = new HTML5();
+        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
 
-        $dom->load('<div>' . $contents . '</div>');
+        $element = $this->elementFactory->make(
+            $view,
+            $dom->getElementById('tempest_render'),
+        );
 
         $element = $this->applyAttributes(
             view: $view,
-            element: $this->elementFactory->make(
-                $view,
-                $dom->root->getChildren()[0],
-            ),
+            element: $element,
         );
 
         return trim($this->renderElements($view, $element->getChildren()));
@@ -95,6 +97,10 @@ final class ViewRenderer
 
         if ($element instanceof SlotElement) {
             return $this->renderSlotElement($view, $element);
+        }
+
+        if ($element instanceof PreElement) {
+            return $this->renderPreElement($element);
         }
 
         if ($element instanceof GenericElement) {
@@ -199,6 +205,11 @@ final class ViewRenderer
             },
             subject: $element->getText(),
         );
+    }
+
+    private function renderPreElement(PreElement $element): string
+    {
+        return $element->getHtml();
     }
 
     private function renderCollectionElement(View $view, CollectionElement $collectionElement): string

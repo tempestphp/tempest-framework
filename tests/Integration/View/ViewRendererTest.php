@@ -94,7 +94,11 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div class="base"> Test </div>
+            <div class="base">
+                
+                    Test
+                
+            </div>
             HTML,
             $this->render(
                 <<<'HTML'
@@ -112,7 +116,11 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div class="base"> Test </div>
+            <div class="base">
+                
+                Test
+            
+            </div>
             HTML,
             $this->render(
                 <<<'HTML'
@@ -128,9 +136,22 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            injected scripts 
-            <div class="base"> Test Hi </div>
-             injected styles
+            injected scripts
+                
+            
+            <div class="base">
+                
+                Test
+                
+                
+            
+                
+                Hi
+            
+            </div>
+            
+            
+                injected styles
             HTML,
             $this->render(
                 <<<'HTML'
@@ -147,6 +168,28 @@ class ViewRendererTest extends FrameworkIntegrationTestCase
                 
                 Hi
             </x-complex-base>
+            HTML,
+            ),
+        );
+    }
+
+    public function test_pre(): void
+    {
+        $this->assertSame(
+            <<<'HTML'
+            <pre>
+            a
+                    <span class="hl-prop">b</span>
+               <span class="hl-type">c</span>
+            </pre>
+            HTML,
+            $this->render(
+                <<<'HTML'
+            <pre>
+            a
+                    <span class="hl-prop">b</span>
+               <span class="hl-type">c</span>
+            </pre>
             HTML,
             ),
         );
