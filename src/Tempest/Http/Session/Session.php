@@ -66,8 +66,7 @@ final class Session
 
     public function cleanup(): void
     {
-        foreach ($this->expiredKeys as $key)
-        {
+        foreach ($this->expiredKeys as $key) {
             $this->getSessionManager()->remove($this->id, $key);
         }
     }

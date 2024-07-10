@@ -7,9 +7,9 @@ namespace Tempest\Http;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
-use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use function Tempest\attribute;
 use Tempest\Container\Container;
+use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Responses\Invalid;
@@ -89,8 +89,7 @@ final class GenericRouter implements Router
                 ...$matchedRoute->params,
             );
 
-            if ($response === null)
-            {
+            if ($response === null) {
                 throw new ControllerActionHasNoReturn($route);
             }
 

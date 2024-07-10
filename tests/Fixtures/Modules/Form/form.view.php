@@ -1,16 +1,17 @@
 <?php
 
 use function Tempest\uri;
+use Tempest\View\GenericView;
 use Tests\Tempest\Fixtures\Modules\Form\FormController;
 
-/** @var \Tempest\View\GenericView $this */
+/** @var GenericView $this */
 
 ?>
 
 <x-base title="Form">
-<!--    --><?php //if ($this->hasErrors()) { ?>
+<!--    --><?php //if ($this->hasErrors()) {?>
 <!--        ERROR!-->
-<!--    --><?php //} ?>
+<!--    --><?php //}?>
 
     <x-form action="<?= uri([FormController::class, 'store']) ?>">
         <x-input name="name" label="Name" type="text"></x-input>
