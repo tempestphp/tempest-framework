@@ -20,6 +20,9 @@ parameters:
 		-
 			message: '#.*#'
 			path: src/Tempest/Exceptions/exception.php
+		-
+			message: '#Access to an undefined property.*#'
+			path: tests/**/**.view.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'

@@ -22,9 +22,9 @@ class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         try {
             $discovery->discover(__DIR__ . '/duplicateComponent.view.php');
         } catch (DuplicateViewComponent $e) {
-            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $e);
-            $this->assertStringContainsString(Input::class, $e);
-            $this->assertStringContainsString('x-input', $e);
+            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $e->getMessage());
+            $this->assertStringContainsString(Input::class, $e->getMessage());
+            $this->assertStringContainsString('x-input', $e->getMessage());
         }
     }
 }

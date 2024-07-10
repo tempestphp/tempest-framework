@@ -12,6 +12,8 @@ interface SessionManager
 
     public function get(SessionId $id, string $key, mixed $default = null): mixed;
 
+    public function all(SessionId $id): array;
+
     public function remove(SessionId $id, string $key): void;
 
     public function destroy(SessionId $id): void;

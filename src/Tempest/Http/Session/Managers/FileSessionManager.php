@@ -88,6 +88,11 @@ final readonly class FileSessionManager implements SessionManager
         }
     }
 
+    public function all(SessionId $id): array
+    {
+        return $this->getData($id);
+    }
+
     /**
      * @param SessionId $id
      * @return array<mixed>
