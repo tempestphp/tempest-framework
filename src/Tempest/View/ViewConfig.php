@@ -13,7 +13,8 @@ final class ViewConfig
     public function __construct(
         /** @var array<array-key, class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent> */
         public array $viewComponents = [],
-    ) {}
+    ) {
+    }
 
     public function addViewComponent(string $name, ReflectionClass|AnonymousViewComponent $viewComponent): void
     {

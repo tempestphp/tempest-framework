@@ -11,8 +11,7 @@ final class ViewComponentView implements View
     public function __construct(
         private readonly View $wrappingView,
         string $content,
-    )
-    {
+    ) {
         $this->path = $content;
     }
 

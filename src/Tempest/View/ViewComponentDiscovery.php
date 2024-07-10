@@ -15,7 +15,8 @@ final readonly class ViewComponentDiscovery implements Discovery
 
     public function __construct(
         private ViewConfig $viewConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(ReflectionClass|string $class): void
     {

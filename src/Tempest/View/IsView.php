@@ -13,8 +13,7 @@ trait IsView
     public function __construct(
         string $path,
         array $data = [],
-    )
-    {
+    ) {
         $this->path = $path;
         $this->data = $this->escape($data);
         $this->rawData = $data;
