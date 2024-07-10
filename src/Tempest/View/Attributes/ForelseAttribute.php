@@ -34,7 +34,7 @@ final readonly class ForelseAttribute implements Attribute
         $collection = $element->getData()[$matches['collection']] ?? [];
 
         if ($collection) {
-            return new EmptyElement($element);
+            return new EmptyElement();
         } else {
             return $element;
         }

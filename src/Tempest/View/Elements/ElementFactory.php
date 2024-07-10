@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use DOMComment;
 use DOMElement;
+use DOMNode;
 use DOMText;
 use Tempest\View\Element;
 use Tempest\View\View;
@@ -21,7 +21,7 @@ final class ElementFactory
         );
     }
 
-    private function makeElement(View $view, DOMElement|DOMText|DOMComment $node, ?Element $parent): ?Element
+    private function makeElement(View $view, DOMNode $node, ?Element $parent): ?Element
     {
         if ($node instanceof DOMText) {
             if (trim($node->textContent) === '') {
@@ -34,7 +34,7 @@ final class ElementFactory
         }
 
         if (
-            $node instanceof DOMComment
+            ! $node instanceof DOMElement
             || $node->tagName === 'pre'
             || $node->tagName === 'code'
         ) {

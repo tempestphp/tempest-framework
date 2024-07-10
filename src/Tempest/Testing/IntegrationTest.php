@@ -62,8 +62,10 @@ abstract class IntegrationTest extends TestCase
 
     protected function clock(DateTimeInterface|string $now): MockClock
     {
-        $this->container->singleton(Clock::class, fn () => new MockClock($now));
+        $clock = new MockClock($now);
 
-        return $this->container->get(Clock::class);
+        $this->container->singleton(Clock::class, fn () => $clock);
+
+        return $clock;
     }
 }

@@ -158,7 +158,7 @@ final class ViewRenderer
 
     private function resolveViewComponent(GenericElement $element): ?ViewComponent
     {
-        /** @var class-string<\Tempest\View\ViewComponent>|null $viewComponentClass */
+        /** @var class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent|null $viewComponentClass */
         $viewComponentClass = $this->viewConfig->viewComponents[$element->getTag()] ?? null;
 
         if (! $viewComponentClass) {
@@ -255,16 +255,6 @@ final class ViewRenderer
     private function renderEmptyElement(EmptyElement $element): string
     {
         return '';
-    }
-
-    private function renderCommentElement(CommentElement $element): string
-    {
-        return $element->getHtml();
-    }
-
-    private function renderCodeElement(CodeElement $element): string
-    {
-        return $element->getHtml();
     }
 
     private function renderSlotElement(View $view, SlotElement $element): string

@@ -19,6 +19,6 @@ final readonly class DataAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
-        $element->addData(...[$this->name => $this->view->eval($this->eval)]);
+        return $element->addData(...[$this->name => $this->view->eval($this->eval)]);
     }
 }

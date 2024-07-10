@@ -59,7 +59,7 @@ final class Attributes
     /**
      * @return T|null
      */
-    public function first(): object|null
+    public function first(): mixed
     {
         $firstAttribute = $this->resolveAttributes()[0] ?? null;
 
