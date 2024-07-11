@@ -68,17 +68,17 @@ final readonly class ModelToQueryMapper implements Mapper
 
     private function updateQuery(Model $model, array $fields): Query
     {
-        unset($fields['id']);
+        $fields['id'] = $model->id;
 
         $values = implode(', ', array_map(
             fn (string $key) => "{$key} = :{$key}",
-            array_keys($fields),
+            array_filter(array_keys($fields), fn ($key) => $key !== 'id'),
         ));
 
         $table = $model::table();
 
         return new Query(
-            "UPDATE {$table} SET {$values} WHERE id = {$model->getId()};",
+            "UPDATE {$table} SET {$values} WHERE id = :id;",
             $fields,
         );
     }
@@ -90,13 +90,13 @@ final readonly class ModelToQueryMapper implements Mapper
         $fields = [];
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (! $property->isInitialized($model)) {
+            if (!$property->isInitialized($model)) {
                 continue;
             }
 
             $value = $property->getValue($model);
 
-            if (! $value instanceof Model) {
+            if (!$value instanceof Model) {
                 continue;
             }
 
@@ -114,7 +114,7 @@ final readonly class ModelToQueryMapper implements Mapper
         $fields = [];
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (! $property->isInitialized($model)) {
+            if (!$property->isInitialized($model)) {
                 continue;
             }
 
