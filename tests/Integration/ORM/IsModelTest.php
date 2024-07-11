@@ -46,6 +46,25 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
+    public function test_creating_many_and_saving_preserves_model_id()
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooMigration::class,
+        );
+
+        $a = Foo::create(
+            bar: 'a',
+        );
+        $b = Foo::create(
+            bar: 'b',
+        );
+
+        $this->assertEquals(1, $a->id->id);
+        $a->save();
+        $this->assertEquals(1, $a->id->id);
+    }
+
     public function test_complex_query()
     {
         $this->migrate(
