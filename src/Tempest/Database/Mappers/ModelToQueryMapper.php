@@ -90,13 +90,13 @@ final readonly class ModelToQueryMapper implements Mapper
         $fields = [];
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (!$property->isInitialized($model)) {
+            if (! $property->isInitialized($model)) {
                 continue;
             }
 
             $value = $property->getValue($model);
 
-            if (!$value instanceof Model) {
+            if (! $value instanceof Model) {
                 continue;
             }
 
@@ -114,7 +114,7 @@ final readonly class ModelToQueryMapper implements Mapper
         $fields = [];
 
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (!$property->isInitialized($model)) {
+            if (! $property->isInitialized($model)) {
                 continue;
             }
 
