@@ -12,6 +12,10 @@ final readonly class BladeInitializer implements DynamicInitializer
 {
     public function canInitialize(string $className): bool
     {
+        if (! class_exists('\Jenssegers\Blade\Blade')) {
+            return false;
+        }
+
         return $className === Blade::class;
     }
 
