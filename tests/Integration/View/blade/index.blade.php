@@ -1,0 +1,3 @@
+@component('base')
+    Hi
+@endcomponent

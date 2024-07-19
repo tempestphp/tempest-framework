@@ -7,12 +7,16 @@ namespace Tempest\View;
 use ReflectionClass;
 use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Exceptions\DuplicateViewComponent;
+use Tempest\View\Renderers\TempestViewRenderer;
 
 final class ViewConfig
 {
     public function __construct(
         /** @var array<array-key, class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent> */
         public array $viewComponents = [],
+
+        /** @var class-string<\Tempest\View\ViewRenderer> */
+        public string $rendererClass = TempestViewRenderer::class,
     ) {
     }
 
