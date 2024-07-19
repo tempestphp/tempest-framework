@@ -12,3 +12,4 @@ composer.lock
 debug.log
 tempest.log
 *.cache.php
+tests/Integration/View/blade/cache
