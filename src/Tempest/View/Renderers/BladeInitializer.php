@@ -4,13 +4,18 @@ namespace Tempest\View\Renderers;
 
 use Jenssegers\Blade\Blade;
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 
 #[Singleton]
-final readonly class BladeInitializer implements Initializer
+final readonly class BladeInitializer implements DynamicInitializer
 {
-    public function initialize(Container $container): Blade
+    public function canInitialize(string $className): bool
+    {
+        return $className === Blade::class;
+    }
+
+    public function initialize(string $className, Container $container): object
     {
         $bladeConfig = $container->get(BladeConfig::class);
 
