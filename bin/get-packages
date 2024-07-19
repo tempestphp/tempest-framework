@@ -64,4 +64,4 @@ function getPackages(): array {
     return $packages;
 }
 
-echo json_encode(getPackages(), JSON_PRETTY_PRINT);
+echo json_encode(getPackages());
