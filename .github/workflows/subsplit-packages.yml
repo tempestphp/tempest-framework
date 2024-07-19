@@ -2,11 +2,8 @@ name: 'Sub-split Packages'
 
 on:
   push:
-    branches: [ main ]
+    branches: [ '*' ]
     tags: [ '*' ]
-  pull_request:
-    branches:
-      - *
 
 env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
