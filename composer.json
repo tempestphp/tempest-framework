@@ -24,7 +24,6 @@
         "ramsey/uuid": "^4.7",
         "symfony/dependency-injection": "^6.0",
         "symfony/http-kernel": "^6.0",
-        "tempest/core": "dev-main",
         "tempest/highlight": "^2.0",
         "vlucas/phpdotenv": "^5.6"
     },
