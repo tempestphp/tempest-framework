@@ -19,7 +19,9 @@ final class EventBusConfig
 
     public function addHandler(EventHandler $eventHandler, string $eventName, ReflectionMethod $reflectionMethod): self
     {
-        $this->handlers[$eventName][] = $eventHandler
+        $handlerKey = $reflectionMethod->getDeclaringClass()->getName() . '::' . $reflectionMethod->getName();
+
+        $this->handlers[$eventName][$handlerKey] = $eventHandler
             ->setEventName($eventName)
             ->setHandler($reflectionMethod);
 
