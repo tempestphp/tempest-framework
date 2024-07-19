@@ -1,5 +1,6 @@
 {
     "name": "tempest/mapper",
+    "license": "MIT",
     "require": {
         "php": "^8.3"
     },
@@ -7,6 +8,5 @@
         "psr-4": {
             "Tempest\\Mapper\\": ""
         }
-    },
-    "license": "MIT"
+    }
 }

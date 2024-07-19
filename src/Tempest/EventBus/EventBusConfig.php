@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Events;
+namespace Tempest\EventBus;
 
 use ReflectionMethod;
 
 final class EventBusConfig
 {
     public function __construct(
-        /** @var \Tempest\Events\EventHandler[][] */
+        /** @var \Tempest\EventBus\EventHandler[][] */
         public array $handlers = [],
 
-        /** @var \Tempest\Events\EventBusMiddleware[] */
+        /** @var \Tempest\EventBus\EventBusMiddleware[] */
         public array $middleware = [],
     ) {
     }

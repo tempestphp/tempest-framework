@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Events\Fixtures;
 
-use Tempest\Events\EventBusMiddleware;
+use Tempest\EventBus\EventBusMiddleware;
 
 class MyEventBusMiddleware implements EventBusMiddleware
 {

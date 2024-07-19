@@ -1,10 +1,15 @@
 {
     "name": "tempest/console",
     "description": "The PHP framework that gets out of your way.",
+    "license": "MIT",
     "require": {
         "php": "^8.3",
+        "tempest/container": "self.version",
+        "tempest/discovery": "self.version",
         "tempest/highlight": "^2.0",
-        "tempest/core": "dev-main",
+        "tempest/log": "self.version",
+        "tempest/support": "self.version",
+        "tempest/validation": "self.version",
         "ext-readline": "*"
     },
     "require-dev": {
@@ -25,6 +30,5 @@
         "psr-4": {
             "Tempest\\Console\\": ""
         }
-    },
-    "license": "MIT"
+    }
 }

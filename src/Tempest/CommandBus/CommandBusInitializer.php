@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Commands;
+namespace Tempest\CommandBus;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;

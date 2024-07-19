@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Commands;
+namespace Tempest\CommandBus;
 
 use ReflectionMethod;
 
 final class CommandBusConfig
 {
     public function __construct(
-        /** @var \Tempest\Commands\CommandHandler[] */
+        /** @var \Tempest\CommandBus\CommandHandler[] */
         public array $handlers = [],
 
-        /** @var \Tempest\Commands\CommandBusMiddleware[] */
+        /** @var \Tempest\CommandBus\CommandBusMiddleware[] */
         public array $middleware = [],
     ) {
     }

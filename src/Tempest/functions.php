@@ -33,9 +33,9 @@ namespace Tempest {
 
     use ReflectionType;
     use Reflector;
-    use Tempest\Commands\CommandBus;
+    use Tempest\CommandBus\CommandBus;
     use Tempest\Container\GenericContainer;
-    use Tempest\Events\EventBus;
+    use Tempest\EventBus\EventBus;
     use Tempest\Http\GenericResponse;
     use Tempest\Http\Response;
     use Tempest\Http\Responses\Redirect;

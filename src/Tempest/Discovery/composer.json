@@ -1,0 +1,14 @@
+{
+    "name": "tempest/discovery",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*",
+        "tempest/container": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Discovery\\": ""
+        }
+    }
+}
