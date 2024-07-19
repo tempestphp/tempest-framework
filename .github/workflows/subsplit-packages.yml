@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
     tags: [ '*' ]
+  pull_request:
+    branches:
+      - *
 
 env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
