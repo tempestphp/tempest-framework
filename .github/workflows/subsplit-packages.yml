@@ -2,7 +2,7 @@ name: 'Sub-split Packages'
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ main ]
     tags: [ '*' ]
 
 env:
