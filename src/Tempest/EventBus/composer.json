@@ -1,0 +1,14 @@
+{
+    "name": "tempest/event-bus",
+    "require": {
+        "php": "^8.3",
+        "tempest/container": "self.version",
+        "tempest/discovery": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\EventBus\\": ""
+        }
+    },
+    "license": "MIT"
+}

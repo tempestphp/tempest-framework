@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Events;
+namespace Tempest\EventBus;
 
 use ReflectionClass;
 use ReflectionMethod;

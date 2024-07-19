@@ -10,7 +10,7 @@ use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
-use Tempest\Events\EventHandler;
+use Tempest\EventBus\EventHandler;
 
 final class MigrateUpCommand
 {

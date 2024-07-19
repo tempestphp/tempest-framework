@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Events;
+namespace Tempest\EventBus;
 
 use Closure;
 use Tempest\Container\Container;
@@ -17,7 +17,7 @@ final readonly class GenericEventBus implements EventBus
 
     public function dispatch(object $event): void
     {
-        /** @var \Tempest\Events\EventHandler[] $eventHandlers */
+        /** @var \Tempest\EventBus\EventHandler[] $eventHandlers */
         $eventHandlers = $this->eventBusConfig->handlers[$event::class] ?? [];
 
         foreach ($eventHandlers as $eventHandler) {

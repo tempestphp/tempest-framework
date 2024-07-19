@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus\Fixtures;
 
-use Tempest\Commands\CommandBusMiddleware;
+use Tempest\CommandBus\CommandBusMiddleware;
 
 class MyCommandBusMiddleware implements CommandBusMiddleware
 {
