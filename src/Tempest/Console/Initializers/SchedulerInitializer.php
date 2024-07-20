@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Initializers;
 
-use Tempest\Application;
+use Tempest\Application\Application;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Scheduler;
 use Tempest\Console\Scheduler\GenericScheduler;

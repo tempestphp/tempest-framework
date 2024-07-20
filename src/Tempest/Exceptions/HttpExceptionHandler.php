@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Exceptions;
 
+use Tempest\Application\ExceptionHandler;
 use Tempest\Container\Tag;
-use Tempest\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Throwable;
 

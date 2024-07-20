@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
-use Tempest\AppConfig;
-use Tempest\Application;
+use Tempest\Application\AppConfig;
+use Tempest\Application\Application;
 use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;

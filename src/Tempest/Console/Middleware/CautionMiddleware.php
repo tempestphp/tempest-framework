@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
-use Tempest\AppConfig;
+use Tempest\Application\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ExitCode;

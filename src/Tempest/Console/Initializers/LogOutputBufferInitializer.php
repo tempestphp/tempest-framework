@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Initializers;
 
-use Tempest\AppConfig;
+use Tempest\Application\AppConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Output\LogOutputBuffer;
 use Tempest\Container\Container;

@@ -9,7 +9,7 @@ use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
 use ReflectionMethod;
-use Tempest\AppConfig;
+use Tempest\Application\AppConfig;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
@@ -29,8 +29,8 @@ use Tempest\Support\Reflection\Attributes;
 
 final class ConsoleTester
 {
-    private ?MemoryOutputBuffer $output = null;
-    private ?MemoryInputBuffer $input = null;
+    private ?OutputBuffer $output = null;
+    private ?InputBuffer $input = null;
     private ?InteractiveComponentRenderer $componentRenderer = null;
     private ?ExitCode $exitCode = null;
 

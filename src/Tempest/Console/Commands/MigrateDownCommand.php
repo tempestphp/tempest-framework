@@ -10,15 +10,15 @@ use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
-use Tempest\Events\EventHandler;
+use Tempest\EventBus\EventHandler;
 
 final class MigrateDownCommand
 {
     private static int $count = 0;
 
     public function __construct(
-        readonly private Console $console,
-        readonly private MigrationManager $migrationManager,
+        private readonly Console $console,
+        private readonly MigrationManager $migrationManager,
     ) {
     }
 
@@ -38,7 +38,7 @@ final class MigrateDownCommand
     #[EventHandler]
     public function onMigrationRolledBack(MigrationRolledBack $event): void
     {
-        $this->console->writeln("- {$event->name}");
+        $this->console->writeln("- Rollback {$event->name}");
         self::$count += 1;
     }
 
