@@ -31,7 +31,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [
-                new DiscoveryLocation('Tests\Tempest\Unit\Console\Fixtures\\', __DIR__ . '/../Unit/Console/Fixtures'),
+                new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
                 new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
             ],
         );
