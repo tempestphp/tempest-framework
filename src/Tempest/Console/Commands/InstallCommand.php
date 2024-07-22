@@ -16,7 +16,7 @@ final readonly class InstallCommand
 
     #[ConsoleCommand(
         name: 'install',
-        description:  'Interactively install Tempest in your project'
+        description: 'Interactively install Tempest in your project'
     )]
     public function install(bool $force = false): void
     {
@@ -54,7 +54,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../.env.example', $path);
+        copy(__DIR__ . '/../../../../.env.example', $path);
 
         $this->console->success("{$path} created");
     }
@@ -76,7 +76,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../.env.example', $path);
+        copy(__DIR__ . '/../../../../.env.example', $path);
 
         $this->console->success("{$path} created");
     }
@@ -98,7 +98,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../Tempest', $path);
+        copy(__DIR__ . '/../../../../tempest', $path);
 
         $this->console->success("{$path} created");
     }
@@ -124,7 +124,7 @@ final readonly class InstallCommand
             mkdir(dirname($path), recursive: true);
         }
 
-        copy(__DIR__ . '/../../../public/index.php', $path);
+        copy(__DIR__ . '/../../../../public/index.php', $path);
 
         $this->console->success("{$path} created");
     }
