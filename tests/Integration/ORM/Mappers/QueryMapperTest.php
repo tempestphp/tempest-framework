@@ -62,7 +62,7 @@ class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $table = Author::table();
 
-        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = 1;", $query->getSql());
-        $this->assertSame(['name' => 'other'], $query->bindings);
+        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = :id;", $query->getSql());
+        $this->assertSame(['name' => 'other', 'id' => $author->id], $query->bindings);
     }
 }

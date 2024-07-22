@@ -75,10 +75,12 @@ final readonly class ModelToQueryMapper implements Mapper
             array_keys($fields),
         ));
 
+        $fields['id'] = $model->getId();
+
         $table = $model::table();
 
         return new Query(
-            "UPDATE {$table} SET {$values} WHERE id = {$model->getId()};",
+            "UPDATE {$table} SET {$values} WHERE id = :id;",
             $fields,
         );
     }
