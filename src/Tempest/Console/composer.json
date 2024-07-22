@@ -4,6 +4,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "tempest/framework": "self.version",
         "tempest/container": "self.version",
         "tempest/discovery": "self.version",
         "tempest/highlight": "^2.0",
