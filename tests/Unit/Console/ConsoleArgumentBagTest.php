@@ -6,12 +6,13 @@ namespace Tests\Tempest\Unit\Console;
 
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class ConsoleArgumentBagTest extends ConsoleIntegrationTestCase
+final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
 {
     public function test_argument_bag_works(): void
     {

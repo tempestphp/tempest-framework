@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace  Tests\Tempest\Unit\Console\Scheduler;
 
 use Tempest\Console\Scheduler\Interval;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class IntervalTest extends ConsoleIntegrationTestCase
+final class IntervalTest extends FrameworkIntegrationTestCase
 {
     public function test_interval_with_seconds_returns_correct_in_seconds()
     {

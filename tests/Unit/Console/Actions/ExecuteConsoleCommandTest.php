@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Console\Actions;
 
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class ExecuteConsoleCommandTest extends ConsoleIntegrationTestCase
+class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_command_specific_middleware(): void
     {

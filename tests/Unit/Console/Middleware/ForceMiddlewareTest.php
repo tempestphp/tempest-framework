@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Console\Middleware;
 
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class ForceMiddlewareTest extends ConsoleIntegrationTestCase
+class ForceMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_force(): void
     {

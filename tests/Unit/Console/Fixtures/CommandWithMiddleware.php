@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Console\Actions\Fixtures;
+namespace Tests\Tempest\Unit\Console\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;

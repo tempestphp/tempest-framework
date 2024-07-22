@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Console\Fixtures;
 
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-final class CommandAliasesWork extends ConsoleIntegrationTestCase
+final class CommandAliasesWork extends FrameworkIntegrationTestCase
 {
     public function test_aliases_work()
     {

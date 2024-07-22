@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Console\Components;
 
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class QuestionComponentTest extends ConsoleIntegrationTestCase
+class QuestionComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_question_component(): void
     {

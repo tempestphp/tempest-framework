@@ -7,13 +7,13 @@ namespace Tests\Tempest\Unit\Console\Components;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class SearchComponentTest extends ConsoleIntegrationTestCase
+class SearchComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_search_component(): void
     {

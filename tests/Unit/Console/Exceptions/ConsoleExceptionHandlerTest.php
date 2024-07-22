@@ -12,13 +12,13 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Highlight\Highlighter;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class ConsoleExceptionHandlerTest extends ConsoleIntegrationTestCase
+class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
 {
     public function test_render_console_exception(): void
     {

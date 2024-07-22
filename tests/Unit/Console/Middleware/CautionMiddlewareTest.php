@@ -6,13 +6,13 @@ namespace Tests\Tempest\Unit\Console\Middleware;
 
 use Tempest\Application\AppConfig;
 use Tempest\Application\Environment;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class CautionMiddlewareTest extends ConsoleIntegrationTestCase
+class CautionMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_in_local(): void
     {

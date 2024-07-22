@@ -12,13 +12,14 @@ use Tempest\Console\Highlight\TextTerminalTheme;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Highlight\Highlighter;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Unit\Console\Fixtures\MyConsole;
 
 /**
  * @internal
  * @small
  */
-class RenderConsoleCommandTest extends ConsoleIntegrationTestCase
+class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_render()
     {

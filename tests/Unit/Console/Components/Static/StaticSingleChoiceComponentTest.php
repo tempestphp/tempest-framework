@@ -6,13 +6,13 @@ namespace Tests\Tempest\Unit\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
-use Tests\Tempest\Unit\Console\ConsoleIntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  * @small
  */
-class StaticSingleChoiceComponentTest extends ConsoleIntegrationTestCase
+class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_with_options(): void
     {
