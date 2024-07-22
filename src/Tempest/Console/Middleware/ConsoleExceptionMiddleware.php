@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
-use Tempest\Application\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\Application\AppConfig;
 use Throwable;
 
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware

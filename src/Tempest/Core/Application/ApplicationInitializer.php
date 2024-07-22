@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Application;
+namespace Tempest\Core\Application;
 
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Initializers;
 
-use Tempest\Application\AppConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Output\LogOutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\Application\AppConfig;
 use Tempest\Support\PathHelper;
 
 #[Singleton]

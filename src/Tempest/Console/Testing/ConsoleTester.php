@@ -9,7 +9,6 @@ use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
 use ReflectionMethod;
-use Tempest\Application\AppConfig;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
@@ -24,6 +23,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
+use Tempest\Core\Application\AppConfig;
 use Tempest\Highlight\Highlighter;
 use Tempest\Support\Reflection\Attributes;
 

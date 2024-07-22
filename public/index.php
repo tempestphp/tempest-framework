@@ -1,6 +1,6 @@
 <?php
 
-use Tempest\Tempest;
+use Tempest\Core\Tempest;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

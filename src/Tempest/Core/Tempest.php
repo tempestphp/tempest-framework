@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tempest;
+namespace Tempest\Core;
 
 use Dotenv\Dotenv;
-use Tempest\Application\AppConfig;
-use Tempest\Application\Application;
-use Tempest\Application\Environment;
-use Tempest\Application\HttpApplication;
-use Tempest\Application\Kernel;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Core\Application\AppConfig;
+use Tempest\Core\Application\Application;
+use Tempest\Core\Application\Environment;
+use Tempest\Core\Application\HttpApplication;
+use Tempest\Core\Application\Kernel;
+use Tempest\Core\Exceptions\HttpExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Exceptions\HttpExceptionHandler;
+use function Tempest\env;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
+use function Tempest\path;
 use Tempest\Support\PathHelper;
 
 final readonly class Tempest

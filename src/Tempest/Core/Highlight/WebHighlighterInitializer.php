@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Highlight;
+namespace Tempest\Core\Highlight;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\CssTheme;
 
 #[Singleton(tag: 'web')]

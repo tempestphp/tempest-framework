@@ -44,10 +44,10 @@
     },
     "autoload": {
         "files": [
-            "src/Tempest/functions.php"
+            "src/Tempest/Core/functions.php"
         ],
         "psr-4": {
-            "Tempest\\": "src/Tempest",
+            "Tempest\\Core\\": "src/Tempest/Core/",
             "Tempest\\Clock\\": "src/Tempest/Clock/",
             "Tempest\\CommandBus\\": "src/Tempest/CommandBus/",
             "Tempest\\Console\\": "src/Tempest/Console/",
@@ -55,6 +55,7 @@
             "Tempest\\Database\\": "src/Tempest/Database/",
             "Tempest\\Discovery\\": "src/Tempest/Discovery/",
             "Tempest\\EventBus\\": "src/Tempest/EventBus/",
+            "Tempest\\Http\\": "src/Tempest/Http/",
             "Tempest\\HttpClient\\": "src/Tempest/HttpClient/",
             "Tempest\\Log\\": "src/Tempest/Log/",
             "Tempest\\Mapper\\": "src/Tempest/Mapper/",
@@ -87,6 +88,7 @@
         }
     },
     "replace": {
+        "tempest/core": "self.version",
         "tempest/clock": "self.version",
         "tempest/command-bus": "self.version",
         "tempest/console": "self.version",
@@ -94,6 +96,7 @@
         "tempest/database": "self.version",
         "tempest/discovery": "self.version",
         "tempest/event-bus": "self.version",
+        "tempest/http": "self.version",
         "tempest/http-client": "self.version",
         "tempest/log": "self.version",
         "tempest/mapper": "self.version",

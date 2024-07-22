@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Application;
+namespace Tempest\Core\Application;
 
 use Tempest\Container\Container;
 use Tempest\Http\RequestFactory;

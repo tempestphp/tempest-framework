@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Bootstraps;
+namespace Tempest\Core\Bootstraps;
 
 use Exception;
 

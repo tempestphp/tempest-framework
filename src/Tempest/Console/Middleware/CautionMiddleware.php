@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
-use Tempest\Application\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\Application\AppConfig;
 
 final readonly class CautionMiddleware implements ConsoleMiddleware
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\Application\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Container\Container;
+use Tempest\Core\Application\AppConfig;
 use Tempest\Discovery\Discovery;
 
 final readonly class DiscoveryClearCommand

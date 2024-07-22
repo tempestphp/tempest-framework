@@ -1,5 +1,5 @@
 <?php
-/** @var $this \Tempest\Exceptions\HttpExceptionHandler */
+/** @var $this \Tempest\Core\Exceptions\HttpExceptionHandler */
 ?>
 
 <html>

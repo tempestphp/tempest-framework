@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use Tempest\Application\AppConfig;
-use Tempest\Application\Application;
-use Tempest\Application\Kernel;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
+use Tempest\Core\Application\AppConfig;
+use Tempest\Core\Application\Application;
+use Tempest\Core\Application\Kernel;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;

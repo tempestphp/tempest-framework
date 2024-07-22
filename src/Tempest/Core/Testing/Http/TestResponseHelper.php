@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Testing\Http;
+namespace Tempest\Core\Testing\Http;
 
 use Closure;
 use PHPUnit\Framework\Assert;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Discovery;
 
 use ReflectionClass;
-use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
+use Tempest\Core\Application\AppConfig;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {

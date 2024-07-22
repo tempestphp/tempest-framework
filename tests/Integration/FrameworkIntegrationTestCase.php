@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
-use Tempest\Application\AppConfig;
-use Tempest\Application\Application;
-use Tempest\Application\HttpApplication;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -15,9 +12,12 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
+use Tempest\Core\Application\AppConfig;
+use Tempest\Core\Application\Application;
+use Tempest\Core\Application\HttpApplication;
+use Tempest\Core\Testing\IntegrationTest;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Testing\IntegrationTest;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;

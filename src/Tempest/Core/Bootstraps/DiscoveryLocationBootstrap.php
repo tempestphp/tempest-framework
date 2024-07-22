@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Bootstraps;
+namespace Tempest\Core\Bootstraps;
 
-use Tempest\Application\AppConfig;
+use Tempest\Core\Application\AppConfig;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Support\PathHelper;
 
@@ -40,7 +40,7 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         foreach ($packages as $package) {
             $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
             $packageName = ($package['name'] ?? null);
-            $isTempest = $packageName === 'tempest/framework' || $packageName === 'tempest/core';
+            $isTempest = str_starts_with($packageName, 'tempest');
 
             if (! $isTempest) {
                 continue;
@@ -67,13 +67,6 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         $discoveredLocations = [];
 
         foreach ($namespaceMap as $namespace => $path) {
-            // TODO: Refactor before v1!
-            // This was added by Aidan Casey on June 3rd, 2024.
-            // It was added as a workaround to console being discovered twice.
-            if ($namespace !== 'Tempest\\') {
-                continue;
-            }
-
             $path = PathHelper::make($this->appConfig->root, $path);
 
             $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
