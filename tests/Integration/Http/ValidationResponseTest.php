@@ -21,11 +21,6 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->post(uri([ValidationController::class, 'store']), ['number' => 11, 'item.number' => 11])
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number');
-
-        $this->http
-            ->get(uri([ValidationController::class, 'get']))
-            ->assertOk()
-            ->assertHasNoValidationsErrors();
     }
 
     public function test_original_values(): void

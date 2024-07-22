@@ -1,0 +1,15 @@
+{
+    "name": "tempest/log",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "monolog/monolog": "^3.7.0",
+        "psr/log": "^3.0.0",
+        "tempest/container": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Log\\": ""
+        }
+    }
+}

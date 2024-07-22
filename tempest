@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Tempest\Tempest;
+use Tempest\Framework\Tempest;
 
 require_once getcwd() . '/vendor/autoload.php';
 

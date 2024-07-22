@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Initializers;
 
-use Tempest\Application;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Scheduler;
 use Tempest\Console\Scheduler\GenericScheduler;
@@ -14,6 +13,7 @@ use Tempest\Console\ShellExecutor;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Framework\Application\Application;
 
 #[Singleton]
 final readonly class SchedulerInitializer implements Initializer

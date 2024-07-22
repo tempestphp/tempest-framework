@@ -13,7 +13,7 @@ use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Responses\ServerError;
 use function Tempest\view;
 use Tempest\View\View;
-use Tests\Tempest\Fixtures\Views\ViewModelWithResponseData;
+use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
 
 final readonly class TestController
 {
@@ -64,9 +64,9 @@ final readonly class TestController
     }
 
     #[Get('/view-model-with-response-data')]
-    public function viewModelWithResponseData(): Response
+    public function viewWithResponseData(): Response
     {
-        return (new Created(new ViewModelWithResponseData()))
-            ->addHeader('x-from-viewmodel', 'true');
+        return (new Created(new ViewWithResponseData()))
+            ->addHeader('x-from-view', 'true');
     }
 }

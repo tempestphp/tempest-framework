@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
+use Tempest\Http\Session\Session;
 use Tempest\Validation\Rule;
-use Tempest\View\View;
+use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewRenderer;
 
 final readonly class Input implements ViewComponent
 {
     public function __construct(
-        private View $view,
-        private string $name,
-        private string $label,
-        private ?string $default = null,
-        private string $type = 'text',
+        private Session $session,
     ) {
     }
 
@@ -24,30 +22,41 @@ final readonly class Input implements ViewComponent
         return 'x-input';
     }
 
-    public function render(string $slot): string
+    public function render(GenericElement $element, ViewRenderer $renderer): string
     {
-        $errors = $this->view->getErrorsFor($this->name);
+        $name = $element->getAttribute('name');
+        $label = $element->getAttribute('label');
+        $type = $element->getAttribute('type');
+        $default = $element->getAttribute('default');
+
+        $errors = $this->getErrorsFor($name);
 
         $errorHtml = '';
 
         if ($errors) {
             $errorHtml = '<div>' . implode('', array_map(
                 fn (Rule $failingRule) => "<div>{$failingRule->message()}</div>",
-                $errors
+                $errors,
             )) . '</div>';
         }
 
         return <<<HTML
 <div>
-    <label for="{$this->name}">{$this->label}</label>
-    <input 
-        type="{$this->type}" 
-        name="{$this->name}" 
-        id="{$this->name}" 
-        value="{$this->view->original($this->name, $this->default)}"
-    />
+    <label for="{$name}">{$label}</label>
+    <input type="{$type}" name="{$name}" id="{$name}" value="{$this->original($name, $default)}" />
     {$errorHtml}
 </div>
 HTML;
+    }
+
+    public function original(string $name, mixed $default = ''): mixed
+    {
+        return $this->session->get(Session::ORIGINAL_VALUES)[$name] ?? $default;
+    }
+
+    /** @return \Tempest\Validation\Rule[] */
+    public function getErrorsFor(string $name): array
+    {
+        return $this->session->get(Session::VALIDATION_ERRORS)[$name] ?? [];
     }
 }

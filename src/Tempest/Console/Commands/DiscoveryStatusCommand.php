@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\AppConfig;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Framework\Application\AppConfig;
 
 final readonly class DiscoveryStatusCommand
 {

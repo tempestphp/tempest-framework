@@ -15,8 +15,6 @@ final class BookDetailView implements View
     public function __construct(
         public Book $book,
     ) {
-        $this
-            ->path('/Modules/Books/book.view.php')
-            ->extends('/Views/base.php', title: $this->book->title);
+        $this->path = __DIR__ . '/book.view.php';
     }
 }

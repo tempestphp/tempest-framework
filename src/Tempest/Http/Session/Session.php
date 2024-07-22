@@ -12,6 +12,7 @@ final class Session
     public const string ID = 'tempest_session_id';
     public const string VALIDATION_ERRORS = 'validation_errors';
     public const string ORIGINAL_VALUES = 'original_values';
+    private array $expiredKeys = [];
 
     public function __construct(
         public SessionId $id,
@@ -36,11 +37,16 @@ final class Session
         $value = $this->getSessionManager()->get($this->id, $key, $default);
 
         if ($value instanceof FlashValue) {
+            $this->expiredKeys[] = $key;
             $value = $value->value;
-            $this->getSessionManager()->remove($this->id, $key);
         }
 
         return $value;
+    }
+
+    public function all(): array
+    {
+        return $this->getSessionManager()->all($this->id);
     }
 
     public function remove(string $key): void
@@ -56,6 +62,13 @@ final class Session
     public function isValid(): bool
     {
         return $this->getSessionManager()->isValid($this->id);
+    }
+
+    public function cleanup(): void
+    {
+        foreach ($this->expiredKeys as $key) {
+            $this->getSessionManager()->remove($this->id, $key);
+        }
     }
 
     private function getSessionManager(): SessionManager

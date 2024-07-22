@@ -1,0 +1,17 @@
+{
+    "name": "tempest/http",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "tempest/discovery": "self.version",
+        "tempest/container": "self.version",
+        "laminas/laminas-diactoros": "^3.3",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.0|^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Http\\": ""
+        }
+    }
+}

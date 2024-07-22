@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures;
 
+use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;
+use Tempest\View\ViewRenderer;
 
 final readonly class MyViewComponent implements ViewComponent
 {
@@ -13,18 +15,15 @@ final readonly class MyViewComponent implements ViewComponent
         return 'my';
     }
 
-    public function __construct(
-        private ?string $foo = null,
-        private ?string $bar = null,
-    ) {
-    }
-
-    public function render(string $slot): string
+    public function render(GenericElement $element, ViewRenderer $renderer): string
     {
-        if ($this->foo && $this->bar) {
-            return "<div foo=\"{$this->foo}\" bar=\"{$this->bar}\">" . $slot . '</div>';
+        $foo = $element->getAttribute('foo');
+        $bar = $element->getAttribute('bar');
+
+        if ($foo && $bar) {
+            return "<div foo=\"{$foo}\" bar=\"{$bar}\"><x-slot /></div>";
         }
 
-        return '<div>' . $slot . '</div>';
+        return '<div><x-slot /></div>';
     }
 }

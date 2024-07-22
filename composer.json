@@ -2,7 +2,7 @@
     "name": "tempest/framework",
     "description": "The PHP framework that gets out of your way.",
     "require": {
-        "egulias/email-validator": "^4.0",
+        "egulias/email-validator": "^4.0.2",
         "ext-dom": "*",
         "ext-fileinfo": "*",
         "ext-libxml": "*",
@@ -10,20 +10,23 @@
         "ext-pdo": "*",
         "ext-readline": "*",
         "ext-simplexml": "*",
-        "giggsey/libphonenumber-for-php": "^8.13",
+        "giggsey/libphonenumber-for-php": "^8.13.40",
         "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3",
+        "monolog/monolog": "^3.7.0",
         "php": "^8.3",
-        "psr/clock": "^1.0",
-        "psr/http-client": "^1.0",
+        "php-http/discovery": "^1.19.2",
+        "psr/clock": "^1.0.0",
+        "psr/http-client": "^1.0.0",
         "psr/http-factory": "^1.0",
-        "psr/http-message": "^2.0",
+        "psr/http-message": "^1.0|^2.0",
+        "psr/log": "^3.0.0",
         "ramsey/uuid": "^4.7",
         "symfony/dependency-injection": "^6.0",
         "symfony/http-kernel": "^6.0",
-        "tempest/core": "dev-main",
         "tempest/highlight": "^2.0",
-        "vlucas/phpdotenv": "^5.6"
+        "vlucas/phpdotenv": "^5.6",
+        "masterminds/html5": "^2.9"
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
@@ -35,15 +38,30 @@
         "phpstan/phpstan": "^1.10.0",
         "phpunit/phpunit": "^10.2",
         "spaze/phpstan-disallowed-calls": "^3.1",
-        "symplify/monorepo-builder": "^11.2"
+        "symplify/monorepo-builder": "^11.2",
+        "jenssegers/blade": "^2.0",
+        "illuminate/view": "~11.7.0"
     },
     "autoload": {
         "files": [
-            "src/Tempest/functions.php"
+            "src/Tempest/Framework/functions.php"
         ],
         "psr-4": {
-            "Tempest\\": "src/Tempest",
-            "Tempest\\Console\\": "src/Tempest/Console/"
+            "Tempest\\Framework\\": "src/Tempest/Framework/",
+            "Tempest\\Clock\\": "src/Tempest/Clock/",
+            "Tempest\\CommandBus\\": "src/Tempest/CommandBus/",
+            "Tempest\\Console\\": "src/Tempest/Console/",
+            "Tempest\\Container\\": "src/Tempest/Container/",
+            "Tempest\\Database\\": "src/Tempest/Database/",
+            "Tempest\\Discovery\\": "src/Tempest/Discovery/",
+            "Tempest\\EventBus\\": "src/Tempest/EventBus/",
+            "Tempest\\Http\\": "src/Tempest/Http/",
+            "Tempest\\HttpClient\\": "src/Tempest/HttpClient/",
+            "Tempest\\Log\\": "src/Tempest/Log/",
+            "Tempest\\Mapper\\": "src/Tempest/Mapper/",
+            "Tempest\\Support\\": "src/Tempest/Support/",
+            "Tempest\\Validation\\": "src/Tempest/Validation/",
+            "Tempest\\View\\": "src/Tempest/View/"
         }
     },
     "autoload-dev": {
@@ -55,7 +73,7 @@
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "csfixer": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "phpstan": "vendor/bin/phpstan analyse src tests",
+        "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "qa": [
             "./tempest discovery:clear",
             "composer csfixer",
@@ -70,6 +88,20 @@
         }
     },
     "replace": {
-        "tempest/console": "self.version"
+        "tempest/core": "self.version",
+        "tempest/clock": "self.version",
+        "tempest/command-bus": "self.version",
+        "tempest/console": "self.version",
+        "tempest/container": "self.version",
+        "tempest/database": "self.version",
+        "tempest/discovery": "self.version",
+        "tempest/event-bus": "self.version",
+        "tempest/http": "self.version",
+        "tempest/http-client": "self.version",
+        "tempest/log": "self.version",
+        "tempest/mapper": "self.version",
+        "tempest/support": "self.version",
+        "tempest/validation": "self.version",
+        "tempest/view": "self.version"
     }
 }

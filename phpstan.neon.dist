@@ -16,10 +16,16 @@ parameters:
 	ignoreErrors:
 		-
 			message: '#.*#'
-			path: src/Tempest/Exceptions/HttpExceptionHandler.php
+			path:  tests/Integration/View/blade/cache/**.php
 		-
 			message: '#.*#'
-			path: src/Tempest/Exceptions/exception.php
+			path: src/Tempest/Framework/Exceptions/HttpExceptionHandler.php
+		-
+			message: '#.*#'
+			path: src/Tempest/Framework/Exceptions/exception.php
+		-
+			message: '#Access to an undefined property.*#'
+			path: tests/**/**.view.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'

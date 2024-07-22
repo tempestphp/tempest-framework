@@ -6,6 +6,8 @@ namespace Tests\Tempest\Fixtures\Modules\Form;
 
 use Tempest\Http\Get;
 use Tempest\Http\Post;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Ok;
 use function Tempest\view;
 use Tempest\View\View;
 
@@ -18,7 +20,8 @@ final readonly class FormController
     }
 
     #[Post('/form')]
-    public function store(FormRequest $request): void
+    public function store(FormRequest $request): Response
     {
+        return new Ok('Ok!');
     }
 }

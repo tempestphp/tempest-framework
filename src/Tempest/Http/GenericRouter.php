@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionClass;
 use function Tempest\attribute;
 use Tempest\Container\Container;
+use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Responses\Invalid;
@@ -81,18 +82,31 @@ final class GenericRouter implements Router
     {
         $route = $matchedRoute->route;
 
-        $callControllerAction = fn (Request $request) => $this->container->call(
-            $this->container->get($route->handler->getDeclaringClass()->getName()),
-            $route->handler->getName(),
-            ...$matchedRoute->params,
-        );
+        $callControllerAction = function (Request $request) use ($route, $matchedRoute) {
+            $response = $this->container->call(
+                $this->container->get($route->handler->getDeclaringClass()->getName()),
+                $route->handler->getName(),
+                ...$matchedRoute->params,
+            );
+
+            if ($response === null) {
+                throw new ControllerActionHasNoReturn($route);
+            }
+
+            return $response;
+        };
 
         $callable = fn (Request $request) => $this->createResponse($callControllerAction($request));
 
         $middlewareStack = [...$this->middleware, ...$route->middleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = fn (Request $request) => $this->container->get($middlewareClass)($request, $callable);
+            $callable = function (Request $request) use ($middlewareClass, $callable) {
+                /** @var HttpMiddleware $middleware */
+                $middleware = $this->container->get($middlewareClass);
+
+                return $middleware($request, $callable);
+            };
         }
 
         return $callable;

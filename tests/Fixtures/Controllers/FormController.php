@@ -10,7 +10,7 @@ use Tempest\View\View;
 
 final readonly class FormController
 {
-    #[Get('/form')]
+    #[Get('/form-test')]
     public function index(): View
     {
         return view('Views/form.php');

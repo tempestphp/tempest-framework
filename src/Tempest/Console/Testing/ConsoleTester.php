@@ -9,7 +9,6 @@ use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
 use ReflectionMethod;
-use Tempest\AppConfig;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
@@ -24,13 +23,14 @@ use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
+use Tempest\Framework\Application\AppConfig;
 use Tempest\Highlight\Highlighter;
 use Tempest\Support\Reflection\Attributes;
 
 final class ConsoleTester
 {
-    private ?MemoryOutputBuffer $output = null;
-    private ?MemoryInputBuffer $input = null;
+    private (OutputBuffer&MemoryOutputBuffer)|null $output = null;
+    private (InputBuffer&MemoryInputBuffer)|null $input = null;
     private ?InteractiveComponentRenderer $componentRenderer = null;
     private ?ExitCode $exitCode = null;
 
@@ -43,12 +43,15 @@ final class ConsoleTester
     {
         $clone = clone $this;
 
-        $clone->container->singleton(OutputBuffer::class, new MemoryOutputBuffer());
-        $clone->container->singleton(InputBuffer::class, new MemoryInputBuffer());
+        $memoryOutputBuffer = new MemoryOutputBuffer();
+        $clone->container->singleton(OutputBuffer::class, $memoryOutputBuffer);
+
+        $memoryInputBuffer = new MemoryInputBuffer();
+        $clone->container->singleton(InputBuffer::class, $memoryInputBuffer);
 
         $console = new GenericConsole(
-            output: $clone->container->get(OutputBuffer::class),
-            input: $clone->container->get(InputBuffer::class),
+            output: $memoryOutputBuffer,
+            input: $memoryInputBuffer,
             highlighter: $clone->container->get(Highlighter::class),
         );
 
@@ -61,8 +64,8 @@ final class ConsoleTester
         $appConfig = $this->container->get(AppConfig::class);
         $appConfig->exceptionHandlers[] = $clone->container->get(ConsoleExceptionHandler::class);
 
-        $clone->output = $clone->container->get(OutputBuffer::class);
-        $clone->input = $clone->container->get(InputBuffer::class);
+        $clone->output = $memoryOutputBuffer;
+        $clone->input = $memoryInputBuffer;
 
         if ($command instanceof Closure) {
             $fiber = new Fiber(function () use ($clone, $command, $console) {
