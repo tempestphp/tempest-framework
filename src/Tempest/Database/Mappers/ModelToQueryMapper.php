@@ -68,12 +68,14 @@ final readonly class ModelToQueryMapper implements Mapper
 
     private function updateQuery(Model $model, array $fields): Query
     {
-        $fields['id'] = $model->id;
+        unset($fields['id']);
 
         $values = implode(', ', array_map(
             fn (string $key) => "{$key} = :{$key}",
-            array_filter(array_keys($fields), fn ($key) => $key !== 'id'),
+            array_keys($fields),
         ));
+
+        $fields['id'] = $model->getId();
 
         $table = $model::table();
 
