@@ -16,6 +16,7 @@ use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Support\Reflection\Attributes;
+use function Tempest\type;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -140,8 +141,8 @@ final class GenericContainer implements Container
         $returnTypes = $initializeMethod->getReturnType();
 
         $returnTypes = match ($returnTypes::class) {
-            ReflectionNamedType::class => [$returnTypes],
             ReflectionUnionType::class, ReflectionIntersectionType::class => $returnTypes->getTypes(),
+            default => [$returnTypes],
         };
 
         /** @var ReflectionNamedType[] $returnTypes */
@@ -290,8 +291,8 @@ final class GenericContainer implements Container
         // Convert the types to an array regardless, so we can handle
         // union types and single types the same.
         $types = match ($parameterType::class) {
-            ReflectionNamedType::class => [$parameterType],
             ReflectionUnionType::class, ReflectionIntersectionType::class => $parameterType->getTypes(),
+            default => [$parameterType],
         };
 
         // Loop through each type until we hit a match.
@@ -332,13 +333,7 @@ final class GenericContainer implements Container
 
         // If we can successfully retrieve an instance
         // of the necessary dependency, return it.
-        if ($instance = $this->resolve(className: $type->getName(), tag: $tag)) {
-            return $instance;
-        }
-
-        // At this point, there is nothing else we can do; we don't know
-        // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain, new Dependency($type));
+        return $this->resolve(className: $type->getName(), tag: $tag);
     }
 
     private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
@@ -358,10 +353,7 @@ final class GenericContainer implements Container
 
         // If the dependency's type is an array or variadic variable, we'll
         // try to prevent an error by returning an empty array.
-        if (
-            $parameter->getType()?->getName() === 'array' ||
-            $parameter->isVariadic()
-        ) {
+        if ($parameter->isVariadic() || type($parameter) === 'array') {
             return [];
         }
 

@@ -3,6 +3,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "masterminds/html5": "^2.9",
         "tempest/container": "self.version",
         "tempest/discovery": "self.version",
         "tempest/validation": "self.version"

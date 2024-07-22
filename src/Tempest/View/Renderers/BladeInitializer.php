@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Renderers;
 
 use Jenssegers\Blade\Blade;

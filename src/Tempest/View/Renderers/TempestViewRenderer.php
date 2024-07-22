@@ -9,6 +9,7 @@ use Masterminds\HTML5;
 use ParseError;
 use Tempest\Application\AppConfig;
 use Tempest\Container\Container;
+use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\CollectionElement;
@@ -24,7 +25,6 @@ use Tempest\View\ViewComponent;
 use Tempest\View\ViewComponentView;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
-use function Tempest\path;
 
 final class TempestViewRenderer implements ViewRenderer
 {

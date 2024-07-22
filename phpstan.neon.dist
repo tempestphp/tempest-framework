@@ -16,6 +16,9 @@ parameters:
 	ignoreErrors:
 		-
 			message: '#.*#'
+			path:  tests/Integration/View/blade/cache/**.php
+		-
+			message: '#.*#'
 			path: src/Tempest/Exceptions/HttpExceptionHandler.php
 		-
 			message: '#.*#'

@@ -101,7 +101,12 @@ final class GenericRouter implements Router
         $middlewareStack = [...$this->middleware, ...$route->middleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = fn (Request $request) => $this->container->get($middlewareClass)($request, $callable);
+            $callable = function (Request $request) use ($middlewareClass, $callable) {
+                /** @var HttpMiddleware $middleware */
+                $middleware = $this->container->get($middlewareClass);
+
+                return $middleware($request, $callable);
+            };
         }
 
         return $callable;
