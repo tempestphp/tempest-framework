@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Application;
+namespace Tempest\Framework\Application;
 
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\Bootstraps\ConfigBootstrap;
-use Tempest\Core\Bootstraps\DiscoveryBootstrap;
-use Tempest\Core\Bootstraps\DiscoveryLocationBootstrap;
+use Tempest\Framework\Bootstraps\ConfigBootstrap;
+use Tempest\Framework\Bootstraps\DiscoveryBootstrap;
+use Tempest\Framework\Bootstraps\DiscoveryLocationBootstrap;
 
 final readonly class Kernel
 {

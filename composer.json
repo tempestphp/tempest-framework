@@ -44,10 +44,10 @@
     },
     "autoload": {
         "files": [
-            "src/Tempest/Core/functions.php"
+            "src/Tempest/Framework/functions.php"
         ],
         "psr-4": {
-            "Tempest\\Core\\": "src/Tempest/Core/",
+            "Tempest\\Framework\\": "src/Tempest/Framework/",
             "Tempest\\Clock\\": "src/Tempest/Clock/",
             "Tempest\\CommandBus\\": "src/Tempest/CommandBus/",
             "Tempest\\Console\\": "src/Tempest/Console/",

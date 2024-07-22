@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Framework;
 
 use Dotenv\Dotenv;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
-use Tempest\Core\Application\AppConfig;
-use Tempest\Core\Application\Application;
-use Tempest\Core\Application\Environment;
-use Tempest\Core\Application\HttpApplication;
-use Tempest\Core\Application\Kernel;
-use Tempest\Core\Exceptions\HttpExceptionHandler;
 use Tempest\Discovery\DiscoveryLocation;
 use function Tempest\env;
+use Tempest\Framework\Application\AppConfig;
+use Tempest\Framework\Application\Application;
+use Tempest\Framework\Application\Environment;
+use Tempest\Framework\Application\HttpApplication;
+use Tempest\Framework\Application\Kernel;
+use Tempest\Framework\Exceptions\HttpExceptionHandler;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use function Tempest\path;

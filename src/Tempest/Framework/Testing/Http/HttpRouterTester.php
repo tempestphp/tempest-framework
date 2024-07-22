@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Testing\Http;
+namespace Tempest\Framework\Testing\Http;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;

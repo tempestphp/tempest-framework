@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Exceptions;
+namespace Tempest\Framework\Exceptions;
 
 use Tempest\Container\Tag;
-use Tempest\Core\Application\ExceptionHandler;
+use Tempest\Framework\Application\ExceptionHandler;
 use Tempest\Highlight\Highlighter;
 use Throwable;
 

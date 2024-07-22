@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
-use Tempest\Core\Testing\Http\TestResponseHelper;
+use Tempest\Framework\Testing\Http\TestResponseHelper;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 

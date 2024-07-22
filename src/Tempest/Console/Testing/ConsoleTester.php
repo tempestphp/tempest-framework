@@ -23,7 +23,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
+use Tempest\Framework\Application\AppConfig;
 use Tempest\Highlight\Highlighter;
 use Tempest\Support\Reflection\Attributes;
 

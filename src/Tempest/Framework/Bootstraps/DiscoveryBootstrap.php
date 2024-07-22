@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Bootstraps;
+namespace Tempest\Framework\Bootstraps;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use SplFileInfo;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
 use Tempest\Discovery\Discovery;
+use Tempest\Framework\Application\AppConfig;
 use Throwable;
 use TypeError;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Highlight;
+namespace Tempest\Framework\Highlight;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;

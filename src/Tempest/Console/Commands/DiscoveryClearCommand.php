@@ -7,8 +7,8 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
 use Tempest\Discovery\Discovery;
+use Tempest\Framework\Application\AppConfig;
 
 final readonly class DiscoveryClearCommand
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Testing;
+namespace Tempest\Framework\Testing;
 
 use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
@@ -10,10 +10,10 @@ use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
-use Tempest\Core\Application\Kernel;
-use Tempest\Core\Testing\Http\HttpRouterTester;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Framework\Application\AppConfig;
+use Tempest\Framework\Application\Kernel;
+use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;

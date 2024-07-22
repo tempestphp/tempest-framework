@@ -11,7 +11,7 @@ use Tempest\Console\ShellExecutor;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\Application\Application;
+use Tempest\Framework\Application\Application;
 
 #[Singleton]
 final readonly class InvocationExecutorInitializer implements Initializer

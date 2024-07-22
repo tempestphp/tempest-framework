@@ -19,10 +19,10 @@ parameters:
 			path:  tests/Integration/View/blade/cache/**.php
 		-
 			message: '#.*#'
-			path: src/Tempest/Core/Exceptions/HttpExceptionHandler.php
+			path: src/Tempest/Framework/Exceptions/HttpExceptionHandler.php
 		-
 			message: '#.*#'
-			path: src/Tempest/Core/Exceptions/exception.php
+			path: src/Tempest/Framework/Exceptions/exception.php
 		-
 			message: '#Access to an undefined property.*#'
 			path: tests/**/**.view.php

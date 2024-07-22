@@ -6,7 +6,7 @@ namespace Tempest\Discovery;
 
 use ReflectionClass;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
+use Tempest\Framework\Application\AppConfig;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {

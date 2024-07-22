@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Bootstraps;
+namespace Tempest\Framework\Bootstraps;
 
-use Tempest\Core\Application\AppConfig;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Framework\Application\AppConfig;
 use Tempest\Support\PathHelper;
 
 final readonly class DiscoveryLocationBootstrap implements Bootstrap

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Application;
+namespace Tempest\Framework\Application;
 
 use Tempest\Discovery\DiscoveryDiscovery;
 
@@ -24,7 +24,7 @@ final class AppConfig
             // …,
         ],
 
-        /** @var \Tempest\Core\Application\ExceptionHandler[] */
+        /** @var \Tempest\Framework\Application\ExceptionHandler[] */
         public array $exceptionHandlers = [
             // …,
         ],

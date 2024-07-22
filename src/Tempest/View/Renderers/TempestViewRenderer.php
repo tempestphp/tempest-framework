@@ -8,7 +8,7 @@ use Exception;
 use Masterminds\HTML5;
 use ParseError;
 use Tempest\Container\Container;
-use Tempest\Core\Application\AppConfig;
+use Tempest\Framework\Application\AppConfig;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
