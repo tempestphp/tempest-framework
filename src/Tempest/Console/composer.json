@@ -23,9 +23,6 @@
         "aidan-casey/mock-client": "dev-master",
         "nyholm/psr7": "^1.8"
     },
-    "bin": [
-        "tempest"
-    ],
     "autoload": {
         "psr-4": {
             "Tempest\\Console\\": ""

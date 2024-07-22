@@ -17,8 +17,8 @@ final class MigrateDownCommand
     private static int $count = 0;
 
     public function __construct(
-        readonly private Console $console,
-        readonly private MigrationManager $migrationManager,
+        private readonly Console $console,
+        private readonly MigrationManager $migrationManager,
     ) {
     }
 
@@ -38,7 +38,7 @@ final class MigrateDownCommand
     #[EventHandler]
     public function onMigrationRolledBack(MigrationRolledBack $event): void
     {
-        $this->console->writeln("- {$event->name}");
+        $this->console->writeln("- Rollback {$event->name}");
         self::$count += 1;
     }
 

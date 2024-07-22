@@ -14,7 +14,7 @@ final class DatabaseConfig
 
     public function addMigration(string $className): self
     {
-        $this->migrations[] = $className;
+        $this->migrations[$className] = $className;
 
         return $this;
     }
