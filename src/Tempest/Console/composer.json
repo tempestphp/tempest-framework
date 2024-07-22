@@ -27,5 +27,6 @@
         "psr-4": {
             "Tempest\\Console\\": ""
         }
-    }
+    },
+    "bin": ["tempest"]
 }
