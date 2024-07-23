@@ -20,7 +20,7 @@ class KernelTest extends TestCase
     public function test_discovery_boot(): void
     {
         $appConfig = new AppConfig(
-            root: getcwd(),
+            root: __DIR__ . '/../../',
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../Fixtures/'),
             ],
