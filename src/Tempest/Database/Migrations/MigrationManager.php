@@ -54,7 +54,7 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         } catch (PDOException) {
             // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
-            event(new MigrationFailed(null, MigrationException::noTable()));
+            event(new MigrationFailed('Migration', MigrationException::noTable()));
 
             return;
         }

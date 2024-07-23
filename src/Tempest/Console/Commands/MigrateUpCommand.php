@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Middleware\CautionMiddleware;
+use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
@@ -25,7 +26,7 @@ final class MigrateUpCommand
     #[ConsoleCommand(
         name: 'migrate:up',
         description: 'Run all new migrations',
-        middleware: [CautionMiddleware::class],
+        middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): void
     {

@@ -9,7 +9,7 @@ use Throwable;
 final readonly class MigrationFailed
 {
     public function __construct(
-        public ?string $name,
+        public string $name,
         public Throwable $exception,
     ) {
     }
