@@ -52,12 +52,12 @@ final readonly class ViewComponentDiscovery implements Discovery
 
         $content = ltrim(file_get_contents($path));
 
-        if (! str_starts_with($content, '<x-component name=')) {
+        if (! str_contains($content, '<x-component name=')) {
             return;
         }
 
         preg_match(
-            pattern: '/<x-component name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/',
+            pattern: '/(?<header>(.|\n)*?)<x-component name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/',
             subject: $content,
             matches: $matches,
         );
@@ -69,7 +69,7 @@ final readonly class ViewComponentDiscovery implements Discovery
         $this->viewConfig->addViewComponent(
             name: $matches['name'],
             viewComponent: new AnonymousViewComponent(
-                contents: $matches['view'],
+                contents: $matches['header'] . $matches['view'],
                 file: $path,
             ),
         );
