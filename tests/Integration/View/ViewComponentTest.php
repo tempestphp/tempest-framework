@@ -165,7 +165,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             $this->render(view('<x-my-a>hi</x-my-a>'))
         );
     }
-    
+
     public function test_with_header(): void
     {
         $this->assertSame(
