@@ -8,6 +8,7 @@ use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
 use function Tempest\event;
@@ -121,11 +122,11 @@ final readonly class MigrationManager
         try {
             $this->database->execute(
                 new Query(
-                    "DELETE FROM migrations WHERE name = :name",
+                    "DELETE FROM Migration WHERE name = :name",
                     ['name' => $migration->getName()],
                 )
             );
-        } catch (PDOException $e) {
+        } catch (QueryException $e) {
             /**
              * If the migration was executed successfully but the entry in the migrations table could not be deleted,
              * we should not throw an exception as the migration was successfully rolled back.

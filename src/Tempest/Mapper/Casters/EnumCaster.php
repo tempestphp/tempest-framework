@@ -12,10 +12,14 @@ final readonly class EnumCaster implements Caster
     {
     }
 
-    public function cast(mixed $input): object
+    public function cast(mixed $input): ?object
     {
         if ($input instanceof $this->enum) {
             return $input;
+        }
+
+        if ($input === null) {
+            return null;
         }
 
         return forward_static_call("{$this->enum}::from", $input);

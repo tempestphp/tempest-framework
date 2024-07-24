@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use BackedEnum;
 use PDO;
+use PDOException;
+use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 
@@ -18,9 +21,13 @@ final readonly class GenericDatabase implements Database
 
     public function execute(Query $query): void
     {
-        $this->pdo
-            ->prepare($query->getSql())
-            ->execute($this->resolveBindings($query));
+        try {
+            $this->pdo
+                ->prepare($query->getSql())
+                ->execute($this->resolveBindings($query));
+        } catch (PDOException $exception) {
+            throw new QueryException($query, $exception);
+        }
     }
 
     public function getLastInsertId(): Id
@@ -70,6 +77,10 @@ final readonly class GenericDatabase implements Database
 
             if ($value instanceof Query) {
                 $value = $value->execute();
+            }
+
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
             }
 
             $bindings[$key] = $value;

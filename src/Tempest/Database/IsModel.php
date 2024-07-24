@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use BackedEnum;
 use ReflectionClass;
 use ReflectionProperty;
 use function Tempest\attribute;
@@ -11,6 +12,7 @@ use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use function Tempest\make;
 use Tempest\Mapper\CastWith;
+use function Tempest\type;
 
 trait IsModel
 {
@@ -140,6 +142,12 @@ trait IsModel
         $fieldNames = [];
 
         foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            if (is_a(type($property), BackedEnum::class, true)) {
+                $fieldNames[] = self::field($property->getName());
+
+                continue;
+            }
+
             if (! $property->getType()->isBuiltin()) {
                 $castWith = attribute(CastWith::class)
                     ->in($property)

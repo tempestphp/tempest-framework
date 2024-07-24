@@ -16,7 +16,7 @@ class MigrateDownCommandTest extends FrameworkIntegrationTestCase
     public function test_migrate_rollback_command(): void
     {
         $this->console
-            ->call('migrate:up')
+            ->call('migrate:up --force')
             ->assertContains('create_migrations_table');
 
         $this->console

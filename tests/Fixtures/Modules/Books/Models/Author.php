@@ -13,6 +13,7 @@ class Author implements Model
 
     public function __construct(
         public string $name,
+        public ?AuthorType $type = AuthorType::A,
 
         /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Book[] */
         public array $books = [],

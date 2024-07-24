@@ -9,6 +9,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -77,6 +78,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
             title: 'Book Title',
             author: new Author(
                 name: 'Author Name',
+                type: AuthorType::B,
             ),
         );
 
@@ -88,6 +90,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals(1, $book->id->id);
         $this->assertSame('Book Title', $book->title);
+        $this->assertSame(AuthorType::B, $book->author->type);
         $this->assertInstanceOf(Author::class, $book->author);
         $this->assertSame('Author Name', $book->author->name);
         $this->assertEquals(1, $book->author->id->id);
