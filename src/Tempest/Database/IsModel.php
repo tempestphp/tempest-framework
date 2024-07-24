@@ -55,19 +55,30 @@ trait IsModel
         return make(self::class)->from($params);
     }
 
-    public static function all(): array
+    public static function all(array $relations = []): array
     {
         $table = self::table();
 
         $fields = self::fieldNames();
+
+        /** @var class-string<\Tempest\Database\Model> $relation */
+        foreach ($relations as $relation) {
+            $fields = [...$fields, ...$relation::fieldNames()];
+        }
 
         $fields = implode(', ', array_map(
             fn (FieldName $fieldName) => $fieldName->asDefault(),
             $fields,
         ));
 
+        $statements = ["SELECT {$fields} FROM {$table}"];
+
+        foreach ($relations as $relation) {
+            $statements[] = 'INNER JOIN ' . $relation::table() . ' ON ' . $relation::field('id') . ' = ' . self::relationField($relation);
+        }
+
         return make(static::class)->collection()->from(new Query(
-            "SELECT {$fields} FROM {$table}",
+            implode(PHP_EOL, $statements),
         ));
     }
 

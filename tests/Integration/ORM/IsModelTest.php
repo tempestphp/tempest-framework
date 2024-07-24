@@ -95,4 +95,36 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('Author Name', $book->author->name);
         $this->assertEquals(1, $book->author->id->id);
     }
+
+    public function test_all_with_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(
+            title: 'Book Title',
+            author: new Author(
+                name: 'Author Name',
+                type: AuthorType::B,
+            ),
+        )->save();
+
+        $books = Book::all(relations: [
+            Author::class,
+        ]);
+
+        $this->assertCount(1, $books);
+
+        $book = $books[0];
+
+        $this->assertEquals(1, $book->id->id);
+        $this->assertSame('Book Title', $book->title);
+        $this->assertSame(AuthorType::B, $book->author->type);
+        $this->assertInstanceOf(Author::class, $book->author);
+        $this->assertSame('Author Name', $book->author->name);
+        $this->assertEquals(1, $book->author->id->id);
+    }
 }
