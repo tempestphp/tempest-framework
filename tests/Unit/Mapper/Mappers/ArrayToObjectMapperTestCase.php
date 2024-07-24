@@ -6,7 +6,6 @@ namespace Tests\Tempest\Unit\Mapper\Mappers;
 
 use InvalidArgumentException;
 use Tempest\Http\Method;
-use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithEnum;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Unit\IntegrationTestCase;
@@ -14,6 +13,7 @@ use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithDefaultValues;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithDoubleStringCaster;
+use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithEnum;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentWithChildrenObject;
