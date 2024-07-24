@@ -10,6 +10,7 @@ final class ViewComponentView implements View
 
     public function __construct(
         private readonly View $wrappingView,
+        private readonly Element $wrappingElement,
         string $content,
     ) {
         $this->path = $content;
@@ -17,7 +18,7 @@ final class ViewComponentView implements View
 
     public function __get(string $name): mixed
     {
-        return $this->wrappingView->get($name);
+        return $this->wrappingElement->getData($name);
     }
 
     public function __call(string $name, array $arguments)

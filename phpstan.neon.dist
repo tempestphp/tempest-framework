@@ -26,6 +26,9 @@ parameters:
 		-
 			message: '#Access to an undefined property.*#'
 			path: tests/**/**.view.php
+		-
+			message: '#.*might not be defined.*#'
+			path: tests/**/**.view.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'

@@ -255,6 +255,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         return $this->render(new ViewComponentView(
             wrappingView: $view,
+            wrappingElement: $element,
             content: $renderedContent,
         ));
     }
