@@ -173,7 +173,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             $this->render(view('<x-with-header></x-with-header>'))
         );
     }
-    
+
     public function test_with_passed_variable(): void
     {
         $rendered = $this->render(
@@ -182,10 +182,12 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             )
         );
 
-        $this->assertSame(<<<HTML
+        $this->assertSame(
+            <<<HTML
         <div>
                 test    </div>
         HTML,
-        $rendered);
+            $rendered
+        );
     }
 }
