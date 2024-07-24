@@ -17,7 +17,7 @@ final readonly class CreateMigrationsTable implements Migration
     public function up(): Query|null
     {
         return new Query("CREATE TABLE IF NOT EXISTS Migration (
-            `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
             `name` TEXT NOT NULL
         )");
     }
