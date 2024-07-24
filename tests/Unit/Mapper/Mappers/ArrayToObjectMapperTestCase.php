@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Unit\Mapper\Mappers;
 
 use InvalidArgumentException;
+use Tempest\Http\Method;
+use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithEnum;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Unit\IntegrationTestCase;
@@ -119,5 +121,12 @@ class ArrayToObjectMapperTestCase extends IntegrationTestCase
         $this->assertSame('c', $parent->children[1]->name);
         $this->assertSame('a', $parent->children[1]->parent->name);
         $this->assertSame('a', $parent->children[1]->parentCollection[0]->name);
+    }
+
+    public function test_backed_enum_value(): void
+    {
+        $object = map(['method' => 'GET'])->to(ObjectWithEnum::class);
+
+        $this->assertSame(Method::GET, $object->method);
     }
 }

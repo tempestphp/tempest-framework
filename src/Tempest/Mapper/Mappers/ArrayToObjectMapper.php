@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -15,6 +16,7 @@ use function Tempest\get;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Casters\BooleanCaster;
 use Tempest\Mapper\Casters\DateTimeCaster;
+use Tempest\Mapper\Casters\EnumCaster;
 use Tempest\Mapper\Casters\FloatCaster;
 use Tempest\Mapper\Casters\IntegerCaster;
 use Tempest\Mapper\CastWith;
@@ -98,6 +100,8 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function getCaster(ReflectionProperty $property): ?Caster
     {
+        $type = type($property);
+
         // Get CastWith from the property
         $castWith = attribute(CastWith::class)
             ->in($property)
@@ -107,7 +111,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         if (! $castWith) {
             try {
                 $castWith = attribute(CastWith::class)
-                    ->in(type($property))
+                    ->in($type)
                     ->first();
             } catch (ReflectionException) {
                 // Could not resolve CastWith from the type
@@ -119,8 +123,13 @@ final readonly class ArrayToObjectMapper implements Mapper
             return get($castWith->className);
         }
 
+        // Check if backed enum
+        if (is_a($type, BackedEnum::class, true)) {
+            return new EnumCaster($type);
+        }
+
         // Get Caster from built-in casters
-        return match (type($property)) {
+        return match ($type) {
             'int' => new IntegerCaster(),
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
