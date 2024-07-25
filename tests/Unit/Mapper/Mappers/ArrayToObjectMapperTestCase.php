@@ -14,6 +14,7 @@ use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithDefaultValues;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithDoubleStringCaster;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithEnum;
+use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Unit\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Unit\Mapper\Fixtures\ParentWithChildrenObject;
@@ -128,5 +129,12 @@ class ArrayToObjectMapperTestCase extends IntegrationTestCase
         $object = map(['method' => 'GET'])->to(ObjectWithEnum::class);
 
         $this->assertSame(Method::GET, $object->method);
+    }
+
+    public function test_non_strict_values_with_magic_getter(): void
+    {
+        $object = map([])->to(ObjectWithMagicGetter::class);
+
+        $this->assertSame('magic', $object->a);
     }
 }

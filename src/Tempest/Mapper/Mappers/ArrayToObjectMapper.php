@@ -53,6 +53,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $class = new ReflectionClass($to);
 
         $missingValues = [];
+        $unsetProperties = [];
 
         $from = (new ArrayHelper())->unwrap($from);
 
@@ -70,6 +71,8 @@ final readonly class ArrayToObjectMapper implements Mapper
 
                 if ($isStrictProperty) {
                     $missingValues[] = $propertyName;
+                } else {
+                    $unsetProperties[] = $propertyName;
                 }
 
                 continue;
@@ -100,6 +103,12 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         if ($missingValues !== []) {
             throw new MissingValuesException($to, $missingValues);
+        }
+
+        // Non-strict properties that weren't passed are unset,
+        // which means that they can now be accessed via `__get`
+        foreach ($unsetProperties as $unsetProperty) {
+            unset($object->{$unsetProperty});
         }
 
         $this->validate($object);
