@@ -84,9 +84,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         $book = $book->save();
 
-        $book = Book::find($book->id, relations: [
-            Author::class,
-        ]);
+        $book = Book::find($book->id, relations: ['author']);
 
         $this->assertEquals(1, $book->id->id);
         $this->assertSame('Book Title', $book->title);
@@ -113,7 +111,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
         )->save();
 
         $books = Book::all(relations: [
-            Author::class,
+            'author',
         ]);
 
         $this->assertCount(1, $books);

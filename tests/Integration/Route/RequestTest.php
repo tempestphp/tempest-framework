@@ -13,7 +13,6 @@ use function Tempest\uri;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -106,7 +105,7 @@ class RequestTest extends FrameworkIntegrationTestCase
             )
             ->assertStatus(Status::FOUND);
 
-        $book = Book::find(new Id(1), relations: [Author::class]);
+        $book = Book::find(new Id(1), relations: ['author']);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
         $this->assertSame('b', $book->author->name);

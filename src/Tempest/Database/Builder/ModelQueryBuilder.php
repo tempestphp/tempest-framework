@@ -6,9 +6,11 @@ namespace Tempest\Database\Builder;
 
 use BackedEnum;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
 use function Tempest\attribute;
+use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
@@ -62,9 +64,9 @@ final class ModelQueryBuilder
     {
         $fields = $this->getFieldNames($this->modelClass);
 
-        /** @var class-string<\Tempest\Database\Model> $relation */
+        /** @var string $relation */
         foreach ($this->relations as $relation) {
-            $fields = [...$fields, ...$this->getFieldNames($relation)];
+            $fields = [...$fields, ...$this->getFieldNames($this->modelClass, $relation)];
         }
 
         $fields = implode(', ', array_map(
@@ -76,7 +78,7 @@ final class ModelQueryBuilder
         $statements[] = "SELECT {$fields} FROM " . $this->getTableName($this->modelClass);
 
         foreach ($this->relations as $relation) {
-            $statements[] = 'INNER JOIN ' . $this->getTableName($relation) . ' ON ' . $this->getFieldName($relation, 'id') . ' = ' . $this->getRelationFieldName($this->modelClass, $relation);
+            $statements[] = 'INNER JOIN ' . $this->getTableName($this->modelClass, $relation) . ' ON ' . $this->getFieldName($this->modelClass, 'id', $relation) . ' = ' . $this->getRelationFieldName($this->modelClass, $relation);
         }
 
         if ($this->where !== []) {
@@ -90,17 +92,25 @@ final class ModelQueryBuilder
     /**
      * @param class-string<Model> $modelClass
      */
-    private function getTableName(string $modelClass): TableName
+    private function getTableName(string $modelClass, ?string $relationName = null): TableName
     {
+        if ($relationName !== null) {
+            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
+        }
+
         return $modelClass::table();
     }
 
     /**
      * @param class-string<Model> $modelClass
      */
-    private function getFieldName(string $modelClass, string $name): FieldName
+    private function getFieldName(string $modelClass, string $fieldName, ?string $relationName = null): FieldName
     {
-        return $modelClass::field($name);
+        if ($relationName !== null) {
+            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
+        }
+
+        return $modelClass::field($fieldName);
     }
 
     /**
@@ -113,8 +123,12 @@ final class ModelQueryBuilder
         return $this->getFieldName($modelClass, $field);
     }
 
-    private function getFieldNames(string $modelClass): array
+    private function getFieldNames(string $modelClass, ?string $relationName = null): array
     {
+        if ($relationName !== null) {
+            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
+        }
+
         $fieldNames = [];
 
         foreach ((new ReflectionClass($modelClass))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
@@ -156,5 +170,17 @@ final class ModelQueryBuilder
         }
 
         return $fieldNames;
+    }
+
+    /** @return ReflectionClass<Model> */
+    private function getRelationClass(string $modelClass, string $relationName): ReflectionClass
+    {
+        $class = new ReflectionClass($modelClass);
+
+        try {
+            return new ReflectionClass(type($class->getProperty($relationName)));
+        } catch (ReflectionException) {
+            throw new InvalidRelation($modelClass, $relationName);
+        }
     }
 }
