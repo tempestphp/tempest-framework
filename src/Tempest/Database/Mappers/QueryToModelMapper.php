@@ -16,21 +16,13 @@ final readonly class QueryToModelMapper implements Mapper
         return $from instanceof Query;
     }
 
-    public function map(mixed $from, mixed $to): array|object
+    public function map(mixed $from, mixed $to): array
     {
-        $shouldFetchFirst =
-            str_contains($from->getSql(), 'LIMIT 1')
-            || ($from->bindings['id'] ?? null);
-
         /** @var Query $from */
-        if ($shouldFetchFirst) {
-            return make($to)->from($this->resolveData($to, $from->fetchFirst()));
-        } else {
-            return array_map(
-                fn (array $item) => make($to)->from($this->resolveData($to, $item)),
-                $from->fetch(),
-            );
-        }
+        return array_map(
+            fn (array $item) => make($to)->from($this->resolveData($to, $item)),
+            $from->fetch(),
+        );
     }
 
     private function resolveData(mixed $objectOrClass, array $data): array

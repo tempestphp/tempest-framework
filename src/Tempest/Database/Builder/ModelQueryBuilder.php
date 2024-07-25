@@ -35,7 +35,7 @@ final class ModelQueryBuilder
     {
         $query = $this->build($bindings)->append('LIMIT 1');
 
-        return map($query)->to($this->modelClass);
+        return map($query)->collection()->to($this->modelClass)[0];
     }
 
     /** @return TModelClass[] */

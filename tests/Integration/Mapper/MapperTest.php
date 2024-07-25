@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Query;
 use function Tempest\make;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
@@ -14,7 +12,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryAMigration;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
@@ -130,40 +127,6 @@ class MapperTest extends FrameworkIntegrationTestCase
         ]);
 
         $this->assertSame('casted', $object->prop);
-    }
-
-    public function test_single_with_query()
-    {
-        $this->migrate(
-            CreateMigrationsTable::class,
-            ObjectFactoryAMigration::class,
-        );
-
-        ObjectFactoryA::create(
-            prop: 'a',
-        );
-
-        ObjectFactoryA::create(
-            prop: 'b',
-        );
-
-        $a = make(ObjectFactoryA::class)->from(new Query(
-            "SELECT * FROM ObjectFactoryA WHERE id = :id",
-            [
-                'id' => 1,
-            ],
-        ));
-
-        $this->assertSame(1, $a->id->id);
-        $this->assertSame('casted', $a->prop);
-
-        $collection = make(ObjectFactoryA::class)->collection()->from(new Query(
-            "SELECT * FROM ObjectFactoryA",
-        ));
-
-        $this->assertCount(2, $collection);
-        $this->assertSame('casted', $collection[0]->prop);
-        $this->assertSame('casted', $collection[1]->prop);
     }
 
     public function test_validation()
