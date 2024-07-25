@@ -71,7 +71,7 @@ trait IsModel
         return self::query()
             ->with(...$relations)
             ->where(self::field('id') . ' = :id')
-            ->first(['id' => $id]);
+            ->first(id: $id);
     }
 
     public static function create(...$params): self

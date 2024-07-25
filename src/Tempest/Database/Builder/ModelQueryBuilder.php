@@ -31,7 +31,7 @@ final class ModelQueryBuilder
     }
 
     /** @return TModelClass */
-    public function first(array $bindings = []): Model
+    public function first(mixed ...$bindings): Model
     {
         $query = $this->build($bindings)->append('LIMIT 1');
 
@@ -39,7 +39,7 @@ final class ModelQueryBuilder
     }
 
     /** @return TModelClass[] */
-    public function all(array $bindings = []): array
+    public function all(mixed ...$bindings): array
     {
         return map($this->build($bindings))->collection()->to($this->modelClass);
     }
