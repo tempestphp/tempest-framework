@@ -18,8 +18,12 @@ final readonly class QueryToModelMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array|object
     {
+        $shouldFetchFirst =
+            str_contains($from->getSql(), 'LIMIT 1')
+            || ($from->bindings['id'] ?? null);
+
         /** @var Query $from */
-        if ($from->bindings['id'] ?? null) {
+        if ($shouldFetchFirst) {
             return make($to)->from($this->resolveData($to, $from->fetchFirst()));
         } else {
             return array_map(

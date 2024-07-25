@@ -19,6 +19,7 @@ final readonly class ModelToQueryMapper implements Mapper
         return $to === Query::class && $from instanceof Model;
     }
 
+    // TODO: refactor to ModelQueryBuilder
     public function map(mixed $from, mixed $to): array|object
     {
         /** @var Model $model */
