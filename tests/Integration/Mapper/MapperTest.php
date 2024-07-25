@@ -16,6 +16,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 
 /**
  * @internal
@@ -109,15 +111,30 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $book->author->books[0]->title);
     }
 
-    public function test_make_object_with_missing_values_throws_exception()
+    public function test_can_make_non_strict_object_with_uninitialized_values()
     {
-        $this->expectException(MissingValuesException::class);
+        $author = make(Author::class)->from([]);
 
-        make(Book::class)->from([
-            'title' => 'test',
-            'author' => [
-            ],
-        ]);
+        $this->assertFalse(isset($author->name));
+    }
+
+    public function test_make_object_with_missing_values_throws_exception_for_strict_property()
+    {
+        try {
+            make(ObjectWithStrictProperty::class)->from([]);
+        } catch (MissingValuesException $e) {
+            $this->assertStringContainsString(': a', $e->getMessage());
+            $this->assertStringNotContainsString(': a, b', $e->getMessage());
+        }
+    }
+
+    public function test_make_object_with_missing_values_throws_exception_for_strict_class()
+    {
+        try {
+            make(ObjectWithStrictOnClass::class)->from([]);
+        } catch (MissingValuesException $e) {
+            $this->assertStringContainsString(': a, b', $e->getMessage());
+        }
     }
 
     public function test_caster_on_field()

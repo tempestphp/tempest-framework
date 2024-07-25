@@ -56,6 +56,11 @@ final class Attributes
         );
     }
 
+    public function exists(): bool
+    {
+        return $this->first() !== null;
+    }
+
     /**
      * @return T|null
      */

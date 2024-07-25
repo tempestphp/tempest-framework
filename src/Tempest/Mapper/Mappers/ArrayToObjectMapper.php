@@ -22,6 +22,7 @@ use Tempest\Mapper\Casters\IntegerCaster;
 use Tempest\Mapper\CastWith;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
+use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
 use function Tempest\type;
@@ -55,11 +56,19 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $from = (new ArrayHelper())->unwrap($from);
 
+        $isStrictClass = attribute(Strict::class)->in($class)->exists();
+
         foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $propertyName = $property->getName();
 
             if (! array_key_exists($propertyName, $from)) {
-                if (! $this->hasDefaultValue($property)) {
+                $isStrictProperty = $isStrictClass || attribute(Strict::class)->in($property)->exists();
+
+                if ($this->hasDefaultValue($property)) {
+                    continue;
+                }
+
+                if ($isStrictProperty) {
                     $missingValues[] = $propertyName;
                 }
 
