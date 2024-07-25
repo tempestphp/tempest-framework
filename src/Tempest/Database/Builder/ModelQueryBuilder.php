@@ -106,11 +106,10 @@ final class ModelQueryBuilder
      */
     private function getFieldName(string $modelClass, string $fieldName, ?string $relationName = null): FieldName
     {
-        if ($relationName !== null) {
-            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
-        }
-
-        return $modelClass::field($fieldName);
+        return new FieldName(
+            tableName: $this->getTableName($modelClass, $relationName),
+            fieldName: $fieldName,
+        );
     }
 
     /**

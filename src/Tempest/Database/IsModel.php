@@ -36,21 +36,6 @@ trait IsModel
         return new TableName(pathinfo(str_replace('\\', '/', static::class), PATHINFO_FILENAME));
     }
 
-    public static function field(string $field): FieldName
-    {
-        return new FieldName(
-            tableName: self::table(),
-            fieldName: $field,
-        );
-    }
-
-    public static function relationField(string $relation): FieldName
-    {
-        $field = lcfirst(pathinfo(str_replace('\\', '/', $relation), PATHINFO_FILENAME)) . '_id';
-
-        return self::field($field);
-    }
-
     public static function new(...$params): self
     {
         return make(self::class)->from($params);
@@ -73,10 +58,12 @@ trait IsModel
 
     public static function find(Id $id, array $relations = []): self
     {
+        $field = new FieldName(self::table(), 'id');
+
         /** @phpstan-ignore-next-line  */
         return self::query()
             ->with(...$relations)
-            ->where(self::field('id') . ' = :id')
+            ->where($field . ' = :id')
             ->first(id: $id);
     }
 
