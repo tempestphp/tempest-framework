@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use BackedEnum;
-use ReflectionClass;
-use ReflectionProperty;
-use function Tempest\attribute;
 use Tempest\Database\Builder\FieldName;
+use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use function Tempest\make;
-use Tempest\Mapper\CastWith;
-use function Tempest\type;
 
 trait IsModel
 {
@@ -55,64 +50,28 @@ trait IsModel
         return make(self::class)->from($params);
     }
 
+    /**
+     * @return \Tempest\Database\Builder\ModelQueryBuilder<self>
+     */
+    public static function query(): ModelQueryBuilder
+    {
+        return new ModelQueryBuilder(self::class);
+    }
+
     public static function all(array $relations = []): array
     {
-        $table = self::table();
-
-        $fields = self::fieldNames();
-
-        /** @var class-string<\Tempest\Database\Model> $relation */
-        foreach ($relations as $relation) {
-            $fields = [...$fields, ...$relation::fieldNames()];
-        }
-
-        $fields = implode(', ', array_map(
-            fn (FieldName $fieldName) => $fieldName->asDefault(),
-            $fields,
-        ));
-
-        $statements = ["SELECT {$fields} FROM {$table}"];
-
-        foreach ($relations as $relation) {
-            $statements[] = 'INNER JOIN ' . $relation::table() . ' ON ' . $relation::field('id') . ' = ' . self::relationField($relation);
-        }
-
-        return make(static::class)->collection()->from(new Query(
-            implode(PHP_EOL, $statements),
-        ));
+        return self::query()
+            ->with(...$relations)
+            ->all();
     }
 
     public static function find(Id $id, array $relations = []): self
     {
-        $statements = [];
-
-        $fields = self::fieldNames();
-
-        /** @var class-string<\Tempest\Database\Model> $relation */
-        foreach ($relations as $relation) {
-            $fields = [...$fields, ...$relation::fieldNames()];
-        }
-
-        $fields = implode(', ', array_map(
-            fn (FieldName $fieldName) => $fieldName->asDefault(),
-            $fields,
-        ));
-
-        $statements[] = "SELECT {$fields} FROM " . self::table();
-
-        foreach ($relations as $relation) {
-            $statements[] = 'INNER JOIN ' . $relation::table() . ' ON ' . $relation::field('id') . ' = ' . self::relationField($relation);
-        }
-
-        $statements[] = 'WHERE ' . self::field('id') . ' = :id';
-        $statements[] = 'LIMIT 1';
-
-        $query = new Query(
-            implode(PHP_EOL, $statements),
-            ['id' => $id],
-        );
-
-        return make(static::class)->from($query);
+        /** @phpstan-ignore-next-line  */
+        return self::query()
+            ->with(...$relations)
+            ->where(self::field('id') . ' = :id')
+            ->first(['id' => $id]);
     }
 
     public static function create(...$params): self
@@ -146,44 +105,5 @@ trait IsModel
         $query->execute();
 
         return $this;
-    }
-
-    public static function fieldNames(): array
-    {
-        $fieldNames = [];
-
-        foreach ((new ReflectionClass(self::class))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (is_a(type($property), BackedEnum::class, true)) {
-                $fieldNames[] = self::field($property->getName());
-
-                continue;
-            }
-
-            if (! $property->getType()->isBuiltin()) {
-                $castWith = attribute(CastWith::class)
-                    ->in($property)
-                    ->first();
-
-                if (! $castWith) {
-                    $castWith = attribute(CastWith::class)
-                        ->in($property->getType()->getName())
-                        ->first();
-                }
-
-                if ($castWith) {
-                    $fieldNames[] = self::field($property->getName());
-                }
-
-                continue;
-            }
-
-            if ($property->getType()->getName() === 'array') {
-                continue;
-            }
-
-            $fieldNames[] = self::field($property->getName());
-        }
-
-        return $fieldNames;
     }
 }

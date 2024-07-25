@@ -6,7 +6,7 @@ namespace Tempest\Database;
 
 use function Tempest\get;
 
-final readonly class Query
+final class Query
 {
     public function __construct(
         public string $sql,
@@ -38,6 +38,13 @@ final readonly class Query
     public function getSql(): string
     {
         return $this->sql;
+    }
+
+    public function append(string $append): self
+    {
+        $this->sql .= PHP_EOL . $append;
+
+        return $this;
     }
 
     private function getDatabase(): Database
