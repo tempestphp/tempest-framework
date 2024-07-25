@@ -7,11 +7,17 @@ namespace Tempest\Database;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
+use Tempest\Database\Exceptions\MissingRelation;
 use function Tempest\make;
 
 trait IsModel
 {
     public ?Id $id = null;
+
+    public function __get(string $name)
+    {
+        throw new MissingRelation($this, $name);
+    }
 
     public function setId(Id $id): self
     {

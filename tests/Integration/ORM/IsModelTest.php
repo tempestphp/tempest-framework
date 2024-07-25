@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM;
 
+use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Models\A;
+use Tests\Tempest\Fixtures\Models\B;
+use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 
 /**
  * @internal
@@ -124,5 +131,27 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(Author::class, $book->author);
         $this->assertSame('Author Name', $book->author->name);
         $this->assertEquals(1, $book->author->id->id);
+    }
+
+    public function test_missing_relation_exception(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new A(
+            b: new B(
+                c: new C(name: 'test')
+            )
+        ))->save();
+
+        $a = A::query()->first();
+
+        $this->expectException(MissingRelation::class);
+
+        $b = $a->b;
     }
 }
