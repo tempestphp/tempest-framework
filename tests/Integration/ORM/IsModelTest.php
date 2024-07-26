@@ -188,4 +188,29 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         $this->assertNull(A::query()->first());
     }
+
+    public function test_update_or_create(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(
+            title: 'A',
+            author: new Author(
+                name: 'Author Name',
+                type: AuthorType::B,
+            ),
+        )->save();
+
+        Book::updateOrCreate(
+            ['title' => 'A'],
+            ['title' => 'B'],
+        );
+
+        $this->assertNull(Book::query()->where('title = :title')->first(title: 'A'));
+        $this->assertNotNull(Book::query()->where('title = :title')->first(title: 'B'));
+    }
 }

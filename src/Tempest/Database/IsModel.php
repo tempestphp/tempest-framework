@@ -67,6 +67,23 @@ trait IsModel
             ->first(id: $id);
     }
 
+    public static function updateOrCreate(array $find, array $update): self
+    {
+        $existing = self::query()->bind(...$find);
+
+        foreach ($find as $key => $value) {
+            $existing = $existing->where("{$key} = :{$key}");
+        }
+
+        $model = $existing->first() ?? new self(...$find);
+
+        foreach ($update as $key => $value) {
+            $model->{$key} = $value;
+        }
+
+        return $model->save();
+    }
+
     public static function create(...$params): self
     {
         $model = self::new(...$params);
