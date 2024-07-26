@@ -17,6 +17,8 @@ final class ModelQueryBuilder
 
     private array $relations = [];
 
+    private array $bindings = [];
+
     public function __construct(
         /** @var class-string<TModelClass> $modelClass */
         private readonly string $modelClass,
@@ -24,11 +26,11 @@ final class ModelQueryBuilder
     }
 
     /** @return TModelClass */
-    public function first(mixed ...$bindings): Model
+    public function first(mixed ...$bindings): ?Model
     {
         $query = $this->build($bindings)->append('LIMIT 1');
 
-        return map($query)->collection()->to($this->modelClass)[0];
+        return map($query)->collection()->to($this->modelClass)[0] ?? null;
     }
 
     /** @return TModelClass[] */
@@ -51,6 +53,19 @@ final class ModelQueryBuilder
         $this->relations = [...$this->relations, ...$relations];
 
         return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function bind(mixed ...$bindings): self
+    {
+        $this->bindings = [...$this->bindings, ...$bindings];
+
+        return $this;
+    }
+
+    public function toSql(): string
+    {
+        return $this->build([])->getSql();
     }
 
     private function build(array $bindings): Query
@@ -99,6 +114,6 @@ final class ModelQueryBuilder
             );
         }
 
-        return new Query(implode(PHP_EOL, $statements), $bindings);
+        return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
     }
 }
