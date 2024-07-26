@@ -20,14 +20,18 @@ final class FieldName
         return $this;
     }
 
-    public function asDefault(): self
+    public function withAlias(): self
     {
-        return $this->as($this->tableName->tableName . ':' . $this->fieldName);
+        $tableName = $this->tableName->as ?? $this->tableName->tableName;
+
+        return $this->as($tableName . '.' . $this->fieldName);
     }
 
     public function __toString(): string
     {
-        $string = "{$this->tableName}.`{$this->fieldName}`";
+        $tableName = $this->tableName->as ?? $this->tableName->tableName;
+
+        $string = "`{$tableName}`.`{$this->fieldName}`";
 
         if ($this->as) {
             $string .= " AS `{$this->as}`";

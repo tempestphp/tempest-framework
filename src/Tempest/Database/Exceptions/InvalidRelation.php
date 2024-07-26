@@ -8,8 +8,8 @@ use Exception;
 
 final class InvalidRelation extends Exception
 {
-    public function __construct(string $modelClass, string $relationName)
+    public function __construct(string $modelClass, string $relationName, string $relationPart)
     {
-        parent::__construct("Could not determine the relation '{$relationName}' of {$modelClass}.");
+        parent::__construct("Could not determine the relation '{$relationName}' ({$relationPart}) of {$modelClass}.");
     }
 }

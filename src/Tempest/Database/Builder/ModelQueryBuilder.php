@@ -62,124 +62,50 @@ final class ModelQueryBuilder
 
     private function build(array $bindings): Query
     {
-        $fields = $this->getFieldNames($this->modelClass);
+        $modelDefinition = new ModelDefinition($this->modelClass);
 
-        /** @var string $relation */
-        foreach ($this->relations as $relation) {
-            $fields = [...$fields, ...$this->getFieldNames($this->modelClass, $relation)];
+        /** @var \Tempest\Database\Builder\RelationDefinition[] $relations */
+        $relations = [];
+
+        foreach ($this->relations as $relationName) {
+            $relations = [...$relations, ...$modelDefinition->getRelations($relationName)];
+        }
+
+        $fields = $modelDefinition->getFieldNames();
+
+        foreach ($relations as $relation) {
+            $fields = [...$fields, ...$relation->getFieldNames()];
         }
 
         $fields = implode(', ', array_map(
-            fn (FieldName $fieldName) => $fieldName->asDefault(),
+            fn (FieldName $fieldName) => $fieldName->withAlias(),
             $fields,
         ));
 
         $statements = [];
-        $statements[] = "SELECT {$fields} FROM " . $this->getTableName($this->modelClass);
 
-        foreach ($this->relations as $relation) {
-            $statements[] = 'INNER JOIN ' . $this->getTableName($this->modelClass, $relation) . ' ON ' . $this->getFieldName($this->modelClass, 'id', $relation) . ' = ' . $this->getRelationFieldName($this->modelClass, $relation);
+        $statements[] = sprintf(
+            'SELECT %s FROM %s',
+            $fields,
+            $modelDefinition->getTableName(),
+        );
+
+        foreach ($relations as $relation) {
+            $statements[] = sprintf(
+                'INNER JOIN %s ON %s = %s',
+                $relation->getTableName(),
+                $relation->getFieldName('id'),
+                $relation->getRelationName(),
+            );
         }
 
         if ($this->where !== []) {
-            $statements[] = 'WHERE ';
-            $statements[] = implode(' AND ', $this->where);
+            $statements[] = sprintf(
+                'WHERE %s',
+                implode(' AND ', $this->where)
+            );
         }
 
         return new Query(implode(PHP_EOL, $statements), $bindings);
-    }
-
-    /**
-     * @param class-string<Model> $modelClass
-     */
-    private function getTableName(string $modelClass, ?string $relationName = null): TableName
-    {
-        if ($relationName !== null) {
-            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
-        }
-
-        return $modelClass::table();
-    }
-
-    /**
-     * @param class-string<Model> $modelClass
-     */
-    private function getFieldName(string $modelClass, string $fieldName, ?string $relationName = null): FieldName
-    {
-        return new FieldName(
-            tableName: $this->getTableName($modelClass, $relationName),
-            fieldName: $fieldName,
-        );
-    }
-
-    /**
-     * @param class-string<Model> $modelClass
-     */
-    private function getRelationFieldName(string $modelClass, string $relationName): FieldName
-    {
-        $field = lcfirst(pathinfo(str_replace('\\', '/', $relationName), PATHINFO_FILENAME)) . '_id';
-
-        return $this->getFieldName($modelClass, $field);
-    }
-
-    private function getFieldNames(string $modelClass, ?string $relationName = null): array
-    {
-        if ($relationName !== null) {
-            $modelClass = $this->getRelationClass($modelClass, $relationName)->getName();
-        }
-
-        $fieldNames = [];
-
-        foreach ((new ReflectionClass($modelClass))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (is_a(type($property), BackedEnum::class, true)) {
-                $fieldNames[] = $this->getFieldName($modelClass, $property->getName());
-
-                continue;
-            }
-
-            $type = $property->getType();
-
-            if (! $type instanceof ReflectionNamedType) {
-                continue;
-            }
-
-            if (! $type->isBuiltin()) {
-                $castWith = attribute(CastWith::class)
-                    ->in($property)
-                    ->first();
-
-                if (! $castWith) {
-                    $castWith = attribute(CastWith::class)
-                        ->in($type->getName())
-                        ->first();
-                }
-
-                if ($castWith) {
-                    $fieldNames[] = $this->getFieldName($modelClass, $property->getName());
-                }
-
-                continue;
-            }
-
-            if ($type->getName() === 'array') {
-                continue;
-            }
-
-            $fieldNames[] = $this->getFieldName($modelClass, $property->getName());
-        }
-
-        return $fieldNames;
-    }
-
-    /** @return ReflectionClass<Model> */
-    private function getRelationClass(string $modelClass, string $relationName): ReflectionClass
-    {
-        $class = new ReflectionClass($modelClass);
-
-        try {
-            return new ReflectionClass(type($class->getProperty($relationName)));
-        } catch (ReflectionException) {
-            throw new InvalidRelation($modelClass, $relationName);
-        }
     }
 }

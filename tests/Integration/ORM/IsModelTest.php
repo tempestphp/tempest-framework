@@ -154,4 +154,26 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         $b = $a->b;
     }
+
+    public function test_nested_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new A(
+            b: new B(
+                c: new C(name: 'test')
+            )
+        ))->save();
+
+        $a = A::query()->with('b.c')->first();
+        $this->assertSame('test', $a->b->c->name);
+
+        $a = A::query()->with('b.c')->all()[0];
+        $this->assertSame('test', $a->b->c->name);
+    }
 }

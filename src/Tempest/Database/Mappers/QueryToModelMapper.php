@@ -6,6 +6,7 @@ namespace Tempest\Database\Mappers;
 
 use ReflectionClass;
 use Tempest\Database\Query;
+use Tempest\Support\ArrayHelper;
 use function Tempest\make;
 use Tempest\Mapper\Mapper;
 
@@ -20,32 +21,21 @@ final readonly class QueryToModelMapper implements Mapper
     {
         /** @var Query $from */
         return array_map(
-            fn (array $item) => make($to)->from($this->resolveData($to, $item)),
+            fn (array $item) => make($to)->from($this->resolveData($item)),
             $from->fetch(),
         );
     }
 
-    private function resolveData(mixed $objectOrClass, array $data): array
+    private function resolveData(array $data): array
     {
-        $className = (new ReflectionClass($objectOrClass))->getShortName();
-
         $values = [];
 
         foreach ($data as $key => $value) {
-            if (! strpos($key, ':')) {
-                $values[$key] = $value;
+            $keyParts = explode('.', $key);
 
-                continue;
-            }
+            array_shift($keyParts);
 
-            // TODO: we need to properly map table names to relation fields, as they aren't always the same
-            [$table, $field] = explode(':', $key);
-
-            if ($table === $className) {
-                $values[$field] = $value;
-            } else {
-                $values[lcfirst($table)][$field] = $value;
-            }
+            ArrayHelper::set($values, implode('.', $keyParts), $value);
         }
 
         return $values;
