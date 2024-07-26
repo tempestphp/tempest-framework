@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database\Builder;
 
 final readonly class RelationDefinition extends ModelDefinition
@@ -9,7 +11,8 @@ final readonly class RelationDefinition extends ModelDefinition
         protected string $modelClass,
         protected string $relationName,
         protected ModelDefinition|RelationDefinition $parentDefinition,
-    ) {}
+    ) {
+    }
 
     public function getTableName(): TableName
     {

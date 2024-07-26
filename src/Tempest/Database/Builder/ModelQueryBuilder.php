@@ -4,18 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
-use BackedEnum;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionNamedType;
-use ReflectionProperty;
-use function Tempest\attribute;
-use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
-use Tempest\Mapper\CastWith;
-use function Tempest\type;
 
 /**
  * @template TModelClass of Model
@@ -46,6 +37,7 @@ final class ModelQueryBuilder
         return map($this->build($bindings))->collection()->to($this->modelClass);
     }
 
+    /** @return self<TModelClass> */
     public function where(string ...$where): self
     {
         $this->where = [...$this->where, ...$where];
@@ -53,6 +45,7 @@ final class ModelQueryBuilder
         return $this;
     }
 
+    /** @return self<TModelClass> */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];

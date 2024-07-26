@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database\Builder;
 
 use BackedEnum;
@@ -7,19 +9,21 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
+use function Tempest\attribute;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Mapper\CastWith;
-use function Tempest\attribute;
 use function Tempest\type;
 
+/** @phpstan-ignore-next-line  */
 readonly class ModelDefinition
 {
     public function __construct(
         /** @var class-string<\Tempest\Database\Model> $modelClass */
         protected string $modelClass,
-    ) {}
+    ) {
+    }
 
-    /** @return \Tempest\Database\Builder\RelationDefinition */
+    /** @return RelationDefinition[] */
     public function getRelations(string $relationName): array
     {
         $relations = [];

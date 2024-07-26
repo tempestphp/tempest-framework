@@ -16,8 +16,7 @@ final readonly class TableName
     {
         $string = "`{$this->tableName}`";
 
-        if ($this->as !== null)
-        {
+        if ($this->as !== null) {
             $string .= " AS `{$this->as}`";
         }
 
