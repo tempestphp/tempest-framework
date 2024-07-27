@@ -40,11 +40,18 @@ final class ModelQueryBuilder
     }
 
     /** @return self<TModelClass> */
-    public function where(string ...$where): self
+    public function where(string $where, mixed ...$bindings): self
     {
-        $this->where = [...$this->where, ...$where];
+        $this->where[] = $where;
+
+        $this->bind(...$bindings);
 
         return $this;
+    }
+
+    public function whereField(string $field, mixed $value): self
+    {
+        return $this->where("{$field} = :{$field}", ...[$field => $value]);
     }
 
     /** @return self<TModelClass> */

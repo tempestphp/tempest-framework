@@ -210,7 +210,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
             ['title' => 'B'],
         );
 
-        $this->assertNull(Book::query()->where('title = :title')->first(title: 'A'));
-        $this->assertNotNull(Book::query()->where('title = :title')->first(title: 'B'));
+        $this->assertNull(Book::query()->whereField('title', 'A')->first());
+        $this->assertNotNull(Book::query()->whereField('title', 'B')->first());
     }
 }
