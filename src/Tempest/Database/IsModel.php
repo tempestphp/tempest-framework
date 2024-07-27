@@ -75,7 +75,7 @@ trait IsModel
             $existing = $existing->where("{$key} = :{$key}");
         }
 
-        $model = $existing->first() ?? new self(...$find);
+        $model = $existing->first() ?? self::new(...$find);
 
         foreach ($update as $key => $value) {
             $model->{$key} = $value;
