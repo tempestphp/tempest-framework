@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use ReflectionClass;
+use ReflectionProperty;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
@@ -36,7 +38,7 @@ trait IsModel
         return new TableName(pathinfo(str_replace('\\', '/', static::class), PATHINFO_FILENAME));
     }
 
-    public static function new(...$params): self
+    public static function new(mixed ...$params): self
     {
         return make(self::class)->from($params);
     }
@@ -67,6 +69,28 @@ trait IsModel
             ->first(id: $id);
     }
 
+    public function load(string ...$relations): self
+    {
+        $new = self::find($this->getId(), $relations);
+
+        foreach ((new ReflectionClass($new))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            $property->setValue($this, $property->getValue($new));
+        }
+
+        return $this;
+    }
+
+    public static function create(mixed ...$params): self
+    {
+        $model = self::new(...$params);
+
+        $id = make(Query::class)->from($model)->execute();
+
+        $model->setId($id);
+
+        return $model;
+    }
+
     public static function updateOrCreate(array $find, array $update): self
     {
         $existing = self::query()->bind(...$find);
@@ -84,17 +108,6 @@ trait IsModel
         return $model->save();
     }
 
-    public static function create(...$params): self
-    {
-        $model = self::new(...$params);
-
-        $id = make(Query::class)->from($model)->execute();
-
-        $model->setId($id);
-
-        return $model;
-    }
-
     public function save(): self
     {
         $id = make(Query::class)->from($this)->execute();
@@ -104,7 +117,7 @@ trait IsModel
         return $this;
     }
 
-    public function update(...$params): self
+    public function update(mixed ...$params): self
     {
         foreach ($params as $key => $value) {
             $this->{$key} = $value;

@@ -11,16 +11,16 @@ interface Model
 {
     public static function table(): TableName;
 
-    /**
-     * @return \Tempest\Database\Builder\ModelQueryBuilder<self>
-     */
+    /** @return \Tempest\Database\Builder\ModelQueryBuilder<self> */
     public static function query(): ModelQueryBuilder;
 
     public static function all(): array;
 
-    public static function new(...$params): self;
+    public static function new(mixed ...$params): self;
 
-    public static function create(...$params): self;
+    public static function create(mixed ...$params): self;
+
+    public static function updateOrCreate(array $find, array $update): self;
 
     public static function find(Id $id): self;
 
@@ -30,5 +30,7 @@ interface Model
 
     public function setId(Id $id): self;
 
-    public function update(...$params): self;
+    public function update(mixed ...$params): self;
+
+    public function load(string ...$relations): self;
 }

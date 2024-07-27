@@ -177,6 +177,29 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $a->b->c->name);
     }
 
+    public function test_load(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new A(
+            b: new B(
+                c: new C(name: 'test')
+            )
+        ))->save();
+
+        $a = A::query()->first();
+        $this->assertFalse(isset($a->b));
+
+        $a->load('b.c');
+        $this->assertTrue(isset($a->b));
+        $this->assertTrue(isset($a->b->c));
+    }
+
     public function test_no_result(): void
     {
         $this->migrate(
