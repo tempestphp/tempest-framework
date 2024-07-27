@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use ReflectionClass;
 use ReflectionProperty;
+use function Tempest\attribute;
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
@@ -18,6 +19,14 @@ trait IsModel
 
     public function __get(string $name)
     {
+        $property = new ReflectionProperty($this, $name);
+
+        if (attribute(Eager::class)->in($property)->exists()) {
+            $this->load($name);
+
+            return $property->getValue($this);
+        }
+
         throw new MissingRelation($this, $name);
     }
 
