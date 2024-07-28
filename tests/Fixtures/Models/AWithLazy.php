@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\Eager;
+use Tempest\Database\Lazy;
 use Tempest\Database\IsModel;
 use Tempest\Database\Model;
 
-final class AWithEager implements Model
+final class AWithLazy implements Model
 {
     use IsModel;
 
@@ -19,7 +19,7 @@ final class AWithEager implements Model
     }
 
     public function __construct(
-        #[Eager]
+        #[Lazy]
         public B $b,
     ) {
     }

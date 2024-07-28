@@ -21,7 +21,7 @@ trait IsModel
     {
         $property = new ReflectionProperty($this, $name);
 
-        if (attribute(Eager::class)->in($property)->exists()) {
+        if (attribute(Lazy::class)->in($property)->exists()) {
             $this->load($name);
 
             return $property->getValue($this);

@@ -10,7 +10,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
-use Tests\Tempest\Fixtures\Models\AWithEager;
+use Tests\Tempest\Fixtures\Models\AWithLazy;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -201,7 +201,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($a->b->c));
     }
 
-    public function test_eager_load(): void
+    public function test_lazy_load(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -210,13 +210,13 @@ class IsModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new AWithEager(
+        (new AWithLazy(
             b: new B(
                 c: new C(name: 'test')
             )
         ))->save();
 
-        $a = AWithEager::query()->first();
+        $a = AWithLazy::query()->first();
         $this->assertNotNull($a->b);
     }
 
