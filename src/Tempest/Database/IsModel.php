@@ -7,7 +7,6 @@ namespace Tempest\Database;
 use ReflectionClass;
 use ReflectionProperty;
 use function Tempest\attribute;
-use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
@@ -67,15 +66,11 @@ trait IsModel
             ->all();
     }
 
-    public static function find(Id $id, array $relations = []): self
+    public static function find(Id $id, array $relations = []): ?self
     {
-        $field = new FieldName(self::table(), 'id');
-
-        /** @phpstan-ignore-next-line  */
         return self::query()
             ->with(...$relations)
-            ->where($field . ' = :id')
-            ->first(id: $id);
+            ->find($id);
     }
 
     public function load(string ...$relations): self

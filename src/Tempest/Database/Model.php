@@ -22,7 +22,7 @@ interface Model
 
     public static function updateOrCreate(array $find, array $update): self;
 
-    public static function find(Id $id): self;
+    public static function find(Id $id, array $relations = []): ?self;
 
     public function save(): self;
 

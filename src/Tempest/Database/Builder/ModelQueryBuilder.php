@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use Tempest\Database\Id;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
@@ -13,6 +14,8 @@ use function Tempest\map;
  */
 final class ModelQueryBuilder
 {
+    private ModelDefinition $modelDefinition;
+
     private array $where = [];
 
     private array $relations = [];
@@ -23,14 +26,23 @@ final class ModelQueryBuilder
         /** @var class-string<TModelClass> $modelClass */
         private readonly string $modelClass,
     ) {
+        $this->modelDefinition = new ModelDefinition($this->modelClass);
     }
 
-    /** @return TModelClass */
+    /** @return TModelClass|null */
     public function first(mixed ...$bindings): ?Model
     {
         $query = $this->build($bindings)->append('LIMIT 1');
 
         return map($query)->collection()->to($this->modelClass)[0] ?? null;
+    }
+
+    /** @return TModelClass|null */
+    public function find(Id $id): ?Model
+    {
+        return $this
+            ->whereField('id', $id)
+            ->first();
     }
 
     /** @return TModelClass[] */
@@ -49,9 +61,12 @@ final class ModelQueryBuilder
         return $this;
     }
 
+    /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        return $this->where("{$field} = :{$field}", ...[$field => $value]);
+        $field = $this->modelDefinition->getFieldName($field);
+
+        return $this->where("{$field} = :{$field->fieldName}", ...[$field->fieldName => $value]);
     }
 
     /** @return self<TModelClass> */
@@ -117,7 +132,7 @@ final class ModelQueryBuilder
         if ($this->where !== []) {
             $statements[] = sprintf(
                 'WHERE %s',
-                implode(' AND ', $this->where)
+                implode(' AND ', $this->where),
             );
         }
 
