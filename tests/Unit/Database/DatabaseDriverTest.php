@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Database;
 
@@ -10,13 +12,17 @@ use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
 
+/**
+ * @internal
+ * @small
+ */
 final class DatabaseDriverTest extends TestCase
 {
     #[Test]
     #[DataProvider('provide_database_drivers')]
     public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn): void
     {
-        self::assertSame($dsn, $driver->getDsn());
+        $this->assertSame($dsn, $driver->getDsn());
     }
 
     public static function provide_database_drivers(): Generator
