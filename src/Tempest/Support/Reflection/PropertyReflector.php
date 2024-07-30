@@ -24,6 +24,11 @@ final readonly class PropertyReflector implements Reflector
         return $this->getType()->accepts($input);
     }
 
+    public function getClass(): ClassReflector
+    {
+        return new ClassReflector($this->reflectionProperty->getDeclaringClass());
+    }
+
     public function getType(): ?TypeReflector
     {
         return new TypeReflector($this->reflectionProperty);

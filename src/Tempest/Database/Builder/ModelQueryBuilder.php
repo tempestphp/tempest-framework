@@ -94,20 +94,6 @@ final class ModelQueryBuilder
     {
         $modelDefinition = new ModelDefinition($this->modelClass);
 
-        /*
-         * 0. Build relation array
-         * 1. Selecting fields
-         *      - Own fields
-         *      - All relation fields
-         * 2. Joining relations
-         *      - BelongsTo
-         *      - HasMany
-         *      - …
-         * 3. Applying where,order by, limit, etc.
-         * 4. Create query
-         */
-
-
         $relations = $this->getRelations($modelDefinition);
 
         $fields = $modelDefinition->getFieldNames();
@@ -139,7 +125,7 @@ final class ModelQueryBuilder
                 implode(' AND ', $this->where),
             );
         }
-ld(implode(PHP_EOL, $statements));
+
         return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
     }
 

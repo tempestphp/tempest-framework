@@ -49,6 +49,11 @@ final readonly class TypeReflector implements Reflector
         return true;
     }
 
+    public function matches(string $className): bool
+    {
+        return is_a($this->definition, $className, true);
+    }
+
     public function getName(): string
     {
         return $this->definition;

@@ -52,7 +52,7 @@ final readonly class ArrayHelper
             // from that array as our key.
             unset($keys[$i]);
 
-            // If we this key is not an array, make it one.
+            // If we know this key is not an array, make it one.
             if (! isset($array[$key]) || ! is_array($array[$key])) {
                 $array[$key] = [];
             }
