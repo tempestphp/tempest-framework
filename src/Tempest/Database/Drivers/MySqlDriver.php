@@ -25,7 +25,7 @@ final readonly class MySqlDriver implements DatabaseDriver
 
     public function getDsn(): string
     {
-        return "mysql:host={$this->host};port={$this->port};dbname={$this->database}";
+        return "mysql:host={$this->host}:{$this->port};dbname={$this->database}";
     }
 
     public function getUsername(): ?string
