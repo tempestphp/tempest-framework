@@ -9,6 +9,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
+use Tempest\Database\Builder\Relations\BelongsToRelation;
 use function Tempest\attribute;
 use Tempest\Database\Eager;
 use Tempest\Database\Exceptions\InvalidRelation;
@@ -26,29 +27,64 @@ readonly class ModelDefinition
     ) {
     }
 
-    /** @return RelationDefinition[] */
+    /** @return \Tempest\Database\Builder\Relations\Relation[] */
     public function getRelations(string $relationName): array
     {
-        $relations = [];
+        return BelongsToRelation::make(reflect($this->modelClass), $relationName);
 
-        $class = new ReflectionClass($this->modelClass);
         $parentDefinition = $this;
 
         foreach (explode('.', $relationName) as $relationPart) {
             try {
-                $class = new ReflectionClass(type($class->getProperty($relationPart)));
+                // $class = Author
+                // $property = books
+                // book.author_id
+                $property = $class->getProperty($relationPart);
+
+                if ($property->isIterable()) {
+                    $iterableType = $property->getIterableType();
+
+                    $type = RelationType::HAS_MANY;
+                    $typeToMatch = $class->getType();
+
+                    $class = $iterableType->asClass();
+
+                    $matchingProperty = null;
+                    
+                    foreach ($class->getPublicProperties() as $property) {
+                        if ($property->getType()->equals($typeToMatch)) {
+                            $matchingProperty = $property;
+                            break;
+                        }
+                    }
+                    
+                    $inverseDefinition = new InverseRelationDefinition(
+                        modelClass: $class->getName(),
+                        fieldName: $matchingProperty->getName() . '_id',
+                    );
+                } else {
+                    $class = $class->getProperty($relationPart)->getType()->asClass();
+                    $type = RelationType::BELONGS_TO;
+                }
 
                 $relation = new RelationDefinition(
-                    $class->getName(),
-                    $relationPart,
-                    $parentDefinition,
+                    modelClass: $class->getName(),
+                    relationName: $relationPart,
+                    parentDefinition: $parentDefinition,
+                    inverseDefinition: $inverseDefinition ?? null,
+                    type: $type,
                 );
 
                 $relations[] = $relation;
 
                 $parentDefinition = $relation;
-            } catch (ReflectionException) {
-                throw new InvalidRelation($this->modelClass, $relationName, $relationPart);
+            } catch (ReflectionException $e) {
+                throw new InvalidRelation(
+                    modelClass: $this->modelClass,
+                    relationName: $relationName,
+                    relationPart: $relationPart,
+                    previous: $e,
+                );
             }
         }
 

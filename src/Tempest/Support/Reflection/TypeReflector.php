@@ -31,6 +31,11 @@ final readonly class TypeReflector implements Reflector
         return new ClassReflector($this->definition);
     }
 
+    public function equals(TypeReflector $type): bool
+    {
+        return $this->definition === $type->definition;
+    }
+
     public function accepts(mixed $input): bool
     {
         $test = eval(sprintf('return fn (%s $input) => $input;', $this->definition));

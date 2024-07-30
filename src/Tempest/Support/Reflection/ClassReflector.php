@@ -6,6 +6,7 @@ namespace Tempest\Support\Reflection;
 
 use Generator;
 use ReflectionClass as PHPReflectionClass;
+use ReflectionProperty;
 use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class ClassReflector implements Reflector
@@ -38,9 +39,24 @@ final readonly class ClassReflector implements Reflector
         }
     }
 
+    public function getProperty(string $name): PropertyReflector
+    {
+        return new PropertyReflector(new ReflectionProperty($this->reflectionClass->getName(), $name));
+    }
+
     public function getName(): string
     {
         return $this->reflectionClass->getName();
+    }
+
+    public function getShortName(): string
+    {
+        return $this->reflectionClass->getShortName();
+    }
+
+    public function getType(): TypeReflector
+    {
+        return new TypeReflector($this->reflectionClass);
     }
 
     public function getConstructor(): ?MethodReflector
@@ -72,5 +88,12 @@ final readonly class ClassReflector implements Reflector
     public function newInstanceArgs(array $args = []): object
     {
         return $this->reflectionClass->newInstanceArgs($args);
+    }
+
+    public function callStatic(string $method, mixed ...$args): mixed
+    {
+        $className = $this->getName();
+
+        return $className::$method(...$args);
     }
 }

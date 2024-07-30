@@ -179,7 +179,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $a->b->c->name);
     }
 
-    public function test_load(): void
+    public function test_load_belongs_to(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -200,6 +200,28 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $a->load('b.c');
         $this->assertTrue(isset($a->b));
         $this->assertTrue(isset($a->b->c));
+    }
+
+
+    public function test_has_many_relations(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        Book::new(
+            title: 'Book Title',
+            author: new Author(
+                name: 'Author Name',
+                type: AuthorType::B,
+            ),
+        )->save();
+
+        $author = Author::query()->with('books')->first();
+
+        $this->assertCount(1, $author->books);
     }
 
     public function test_lazy_load(): void

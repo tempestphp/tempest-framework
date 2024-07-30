@@ -11,9 +11,8 @@ final readonly class PropertyReflector implements Reflector
     use HasAttributes;
 
     public function __construct(
-        private PHPReflectionProperty $reflectionProperty
-    ) {
-    }
+        private PHPReflectionProperty $reflectionProperty,
+    ) {}
 
     public function getReflection(): PHPReflectionProperty
     {
@@ -28,6 +27,28 @@ final readonly class PropertyReflector implements Reflector
     public function getType(): ?TypeReflector
     {
         return new TypeReflector($this->reflectionProperty);
+    }
+
+    public function isIterable(): bool
+    {
+        return $this->getType()->isIterable();
+    }
+
+    public function getIterableType(): ?TypeReflector
+    {
+        $doc = $this->reflectionProperty->getDocComment();
+
+        if (! $doc) {
+            return null;
+        }
+
+        preg_match('/@var ([\\\\\w]+)\[]/', $doc, $match);
+
+        if (! isset($match[1])) {
+            return null;
+        }
+
+        return new TypeReflector(ltrim($match[1], '\\'));
     }
 
     public function getName(): string
