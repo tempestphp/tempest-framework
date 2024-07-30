@@ -10,6 +10,7 @@ use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
 use Tempest\Database\Builder\Relations\BelongsToRelation;
+use Tempest\Database\Builder\Relations\HasManyRelation;
 use function Tempest\attribute;
 use Tempest\Database\Eager;
 use Tempest\Database\Exceptions\InvalidRelation;
@@ -30,62 +31,23 @@ readonly class ModelDefinition
     /** @return \Tempest\Database\Builder\Relations\Relation[] */
     public function getRelations(string $relationName): array
     {
-        return BelongsToRelation::make(reflect($this->modelClass), $relationName);
+        $relations = [];
+        $class = reflect($this->modelClass);
+        $relationNames = explode('.', $relationName);
+        $alias = TableName::for($class)->tableName;
 
-        $parentDefinition = $this;
+        foreach ($relationNames as $relationNamePart) {
+            $property = $class->getProperty($relationNamePart);
 
-        foreach (explode('.', $relationName) as $relationPart) {
-            try {
-                // $class = Author
-                // $property = books
-                // book.author_id
-                $property = $class->getProperty($relationPart);
-
-                if ($property->isIterable()) {
-                    $iterableType = $property->getIterableType();
-
-                    $type = RelationType::HAS_MANY;
-                    $typeToMatch = $class->getType();
-
-                    $class = $iterableType->asClass();
-
-                    $matchingProperty = null;
-                    
-                    foreach ($class->getPublicProperties() as $property) {
-                        if ($property->getType()->equals($typeToMatch)) {
-                            $matchingProperty = $property;
-                            break;
-                        }
-                    }
-                    
-                    $inverseDefinition = new InverseRelationDefinition(
-                        modelClass: $class->getName(),
-                        fieldName: $matchingProperty->getName() . '_id',
-                    );
-                } else {
-                    $class = $class->getProperty($relationPart)->getType()->asClass();
-                    $type = RelationType::BELONGS_TO;
-                }
-
-                $relation = new RelationDefinition(
-                    modelClass: $class->getName(),
-                    relationName: $relationPart,
-                    parentDefinition: $parentDefinition,
-                    inverseDefinition: $inverseDefinition ?? null,
-                    type: $type,
-                );
-
-                $relations[] = $relation;
-
-                $parentDefinition = $relation;
-            } catch (ReflectionException $e) {
-                throw new InvalidRelation(
-                    modelClass: $this->modelClass,
-                    relationName: $relationName,
-                    relationPart: $relationPart,
-                    previous: $e,
-                );
+            if ($property->getType()->isIterable()) {
+                $relations[] = new HasManyRelation($property, $alias);
+                $class = $property->getIterableType()->asClass();
+            } else {
+                $relations[] = new BelongsToRelation($property, $alias);
+                $class = $property->getType()->asClass();
             }
+
+            $alias .= ".{$property->getName()}";
         }
 
         return $relations;
@@ -140,46 +102,6 @@ readonly class ModelDefinition
     /** @return \Tempest\Database\Builder\FieldName[] */
     public function getFieldNames(): array
     {
-        $fieldNames = [];
-
-        foreach ((new ReflectionClass($this->modelClass))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (is_a(type($property), BackedEnum::class, true)) {
-                $fieldNames[] = $this->getFieldName($property->getName());
-
-                continue;
-            }
-
-            $type = $property->getType();
-
-            if (! $type instanceof ReflectionNamedType) {
-                continue;
-            }
-
-            if (! $type->isBuiltin()) {
-                $castWith = attribute(CastWith::class)
-                    ->in($property)
-                    ->first();
-
-                if (! $castWith) {
-                    $castWith = attribute(CastWith::class)
-                        ->in($type->getName())
-                        ->first();
-                }
-
-                if ($castWith) {
-                    $fieldNames[] = $this->getFieldName($property->getName());
-                }
-
-                continue;
-            }
-
-            if ($type->getName() === 'array') {
-                continue;
-            }
-
-            $fieldNames[] = $this->getFieldName($property->getName());
-        }
-
-        return $fieldNames;
+        return FieldName::make(reflect($this->modelClass));
     }
 }

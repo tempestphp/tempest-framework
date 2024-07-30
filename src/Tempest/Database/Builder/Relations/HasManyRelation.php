@@ -7,7 +7,7 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
-final readonly class BelongsToRelation implements Relation
+final readonly class HasManyRelation implements Relation
 {
     private ClassReflector $relationModelClass;
     private FieldName $localField;
@@ -15,13 +15,22 @@ final readonly class BelongsToRelation implements Relation
 
     public function __construct(PropertyReflector $property, string $alias)
     {
-        $this->relationModelClass = $property->getType()->asClass();
+        $this->relationModelClass = $property->getIterableType()->asClass();
+
+        $inverseProperty = null;
+
+        foreach ($this->relationModelClass->getPublicProperties() as $potentialInverseProperty) {
+            if ($potentialInverseProperty->getType()->equals($property->getClass()->getType())) {
+                $inverseProperty = $potentialInverseProperty;
+                break;
+            }
+        }
 
         $localTable = TableName::for($property->getClass(), $alias);
-        $this->localField = new FieldName($localTable, $property->getName() . '_id');
+        $this->localField = new FieldName($localTable, 'id');
 
-        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
-        $this->joinField = new FieldName($joinTable, 'id');
+        $joinTable = TableName::for($this->relationModelClass, "{$alias}.{$property->getName()}[]");
+        $this->joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
     }
 
     public function getStatement(): string
