@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Container\Exceptions;
 
 use Exception;
-use ReflectionClass;
 use Tempest\Container\DependencyChain;
+use Tempest\Support\Reflection\ClassReflector;
 
 final class CannotInstantiateDependencyException extends Exception
 {
-    public function __construct(ReflectionClass $class, DependencyChain $chain)
+    public function __construct(ClassReflector $class, DependencyChain $chain)
     {
         $message = "Cannot resolve {$class->getName()} because it is not an instantiable class. Maybe it's missing an initializer class?" . PHP_EOL;
 

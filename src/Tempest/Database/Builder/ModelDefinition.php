@@ -52,6 +52,21 @@ readonly class ModelDefinition
         return $relations;
     }
 
+    //    /** @return RelationDefinition[] */
+    //    public function getEagerRelations(): array
+    //    {
+    //        $relations = [];
+    //
+    //        $class = reflect($this->modelClass);
+    //
+    //        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+    //        }
+    //
+    //        dd($relations);
+    //
+    //        return $relations;
+    //    }
+
     public function getTableName(): TableName
     {
         return ($this->modelClass)::table();

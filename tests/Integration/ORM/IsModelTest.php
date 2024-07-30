@@ -10,6 +10,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
+use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Models\AWithLazy;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
@@ -218,6 +219,27 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         $a = AWithLazy::query()->first();
         $this->assertNotNull($a->b);
+    }
+
+    public function test_eager_load(): void
+    {
+        $this->markTestSkipped('Not implemented yet');
+        //
+        //        $this->migrate(
+        //            CreateMigrationsTable::class,
+        //            CreateATable::class,
+        //            CreateBTable::class,
+        //            CreateCTable::class,
+        //        );
+        //
+        //        (new AWithLazy(
+        //            b: new B(
+        //                c: new C(name: 'test')
+        //            )
+        //        ))->save();
+        //
+        //        $a = AWithEager::query()->first();
+        //        $this->assertTrue(isset($a->b->c));
     }
 
     public function test_no_result(): void

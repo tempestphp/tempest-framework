@@ -94,12 +94,7 @@ final class ModelQueryBuilder
     {
         $modelDefinition = new ModelDefinition($this->modelClass);
 
-        /** @var \Tempest\Database\Builder\RelationDefinition[] $relations */
-        $relations = [];
-
-        foreach ($this->relations as $relationName) {
-            $relations = [...$relations, ...$modelDefinition->getRelations($relationName)];
-        }
+        $relations = $this->getRelations($modelDefinition);
 
         $fields = $modelDefinition->getFieldNames();
 
@@ -137,5 +132,18 @@ final class ModelQueryBuilder
         }
 
         return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
+    }
+
+    /** @return \Tempest\Database\Builder\RelationDefinition[] */
+    private function getRelations(ModelDefinition $modelDefinition): array
+    {
+        $relations = [];
+
+        foreach ($this->relations as $relationName) {
+            $relations = [...$relations, ...$modelDefinition->getRelations($relationName)];
+        }
+
+        return $relations;
+        //        return array_unique([...$relations, ...$modelDefinition->getEagerRelations()]);
     }
 }

@@ -29,6 +29,9 @@ parameters:
 		-
 			message: '#.*might not be defined.*#'
 			path: tests/**/**.view.php
+		-
+			message: '#.*eval*#'
+			path:  src/Tempest/Support/Reflection/TypeReflector.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'

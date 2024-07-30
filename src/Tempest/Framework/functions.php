@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace {
+
     use function Tempest\get;
     use Tempest\Support\VarExport\Debug;
 
@@ -31,19 +32,23 @@ namespace {
 
 namespace Tempest {
 
+    use ReflectionClass as PHPReflectionClass;
+    use ReflectionProperty as PHPReflectionProperty;
     use ReflectionType;
     use Reflector;
     use Tempest\CommandBus\CommandBus;
     use Tempest\Container\GenericContainer;
     use Tempest\EventBus\EventBus;
     use Tempest\Http\GenericResponse;
+
     use Tempest\Http\Response;
     use Tempest\Http\Responses\Redirect;
-
     use Tempest\Http\Router;
     use Tempest\Http\Status;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\Attributes;
+    use Tempest\Support\Reflection\ClassReflector;
+    use Tempest\Support\Reflection\PropertyReflector;
     use Tempest\Support\Reflection\TypeName;
     use Tempest\View\GenericView;
     use Tempest\View\View;
@@ -160,5 +165,18 @@ namespace Tempest {
             'null', '' => null,
             default => $value,
         };
+    }
+
+    function reflect(mixed $classOrProperty, ?string $propertyName = null): ClassReflector|PropertyReflector
+    {
+        if ($classOrProperty instanceof PHPReflectionClass) {
+            return new ClassReflector($classOrProperty);
+        } elseif ($classOrProperty instanceof PHPReflectionProperty) {
+            return new PropertyReflector($classOrProperty);
+        } elseif ($propertyName !== null) {
+            return new PropertyReflector(new PHPReflectionProperty($classOrProperty, $propertyName));
+        } else {
+            return new ClassReflector($classOrProperty);
+        }
     }
 }

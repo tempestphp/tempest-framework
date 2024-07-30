@@ -8,7 +8,6 @@ use ArrayIterator;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionIntersectionType;
-use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
@@ -16,7 +15,10 @@ use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Support\Reflection\Attributes;
-use function Tempest\type;
+use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Support\Reflection\ParameterReflector;
+use Tempest\Support\Reflection\TypeReflector;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -107,13 +109,13 @@ final class GenericContainer implements Container
 
         $object = is_string($object) ? $this->get($object) : $object;
 
-        $reflectionMethod = (new ReflectionClass($object))->getMethod($methodName);
+        $methodReflector = (new ClassReflector($object))->getMethod($methodName);
 
-        $parameters = $this->autowireDependencies($reflectionMethod, $params);
+        $parameters = $this->autowireDependencies($methodReflector, $params);
 
         $this->stopChain();
 
-        return $reflectionMethod->invokeArgs($object, $parameters);
+        return $methodReflector->invokeArgs($object, $parameters);
     }
 
     public function addInitializer(ReflectionClass|string $initializerClass): Container
@@ -234,22 +236,22 @@ final class GenericContainer implements Container
 
     private function autowire(string $className, mixed ...$params): object
     {
-        $reflectionClass = new ReflectionClass($className);
+        $classReflector = new ClassReflector($className);
 
-        $constructor = $reflectionClass->getConstructor();
+        $constructor = $classReflector->getConstructor();
 
-        if (! $reflectionClass->isInstantiable()) {
-            throw new CannotInstantiateDependencyException($reflectionClass, $this->chain);
+        if (! $classReflector->isInstantiable()) {
+            throw new CannotInstantiateDependencyException($classReflector, $this->chain);
         }
 
         return $constructor === null
             // If there isn't a constructor, don't waste time
             // trying to build it.
-            ? $reflectionClass->newInstanceWithoutConstructor()
+            ? $classReflector->newInstanceWithoutConstructor()
 
             // Otherwise, use our autowireDependencies helper to automagically
             // build up each parameter.
-            : $reflectionClass->newInstanceArgs(
+            : $classReflector->newInstanceArgs(
                 $this->autowireDependencies($constructor, $params),
             );
     }
@@ -257,20 +259,18 @@ final class GenericContainer implements Container
     /**
      * @return ReflectionParameter[]
      */
-    private function autowireDependencies(ReflectionMethod $method, array $parameters = []): array
+    private function autowireDependencies(MethodReflector $method, array $parameters = []): array
     {
-        $this->resolveChain()->add($method);
+        $this->resolveChain()->add($method->getReflection());
 
         $dependencies = [];
 
         // Build the class by iterating through its
         // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
-            $tag = Attributes::find(Tag::class)->in($parameter)->first();
-
             $dependencies[] = $this->clone()->autowireDependency(
                 parameter: $parameter,
-                tag: $tag?->name,
+                tag: $parameter->getAttribute(Tag::class)?->name,
                 providedValue: $parameters[$parameter->getName()] ?? null,
             );
         }
@@ -278,28 +278,20 @@ final class GenericContainer implements Container
         return $dependencies;
     }
 
-    private function autowireDependency(ReflectionParameter $parameter, ?string $tag, mixed $providedValue = null): mixed
+    private function autowireDependency(ParameterReflector $parameter, ?string $tag, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
 
         // If the parameter is a built-in type, immediately skip reflection
         // stuff and attempt to give it a default or null value.
-        if ($parameterType instanceof ReflectionNamedType && $parameterType->isBuiltin()) {
+        if ($parameterType->isBuiltin()) {
             return $this->autowireBuiltinDependency($parameter, $providedValue);
         }
 
-        // Convert the types to an array regardless, so we can handle
-        // union types and single types the same.
-        $types = match ($parameterType::class) {
-            ReflectionUnionType::class, ReflectionIntersectionType::class => $parameterType->getTypes(),
-            default => [$parameterType],
-        };
-
         // Loop through each type until we hit a match.
-        foreach ($types as $type) {
+        foreach ($parameter->getType()->split() as $type) {
             try {
                 return $this->autowireObjectDependency(
-                    /** @phpstan-ignore-next-line  */
                     type: $type,
                     tag: $tag,
                     providedValue: $providedValue
@@ -314,20 +306,20 @@ final class GenericContainer implements Container
 
         // If the dependency has a default value, we do our best to prevent
         // an error by using that.
-        if ($parameter->isDefaultValueAvailable()) {
+        if ($parameter->hasDefaultValue()) {
             return $parameter->getDefaultValue();
         }
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
+        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter->getReflection()));
     }
 
-    private function autowireObjectDependency(ReflectionNamedType $type, ?string $tag, mixed $providedValue): mixed
+    private function autowireObjectDependency(TypeReflector $type, ?string $tag, mixed $providedValue): mixed
     {
         // If the provided value is of the right type,
         // don't waste time autowiring, return it!
-        if (is_a($providedValue, $type->getName())) {
+        if ($type->accepts($providedValue)) {
             return $providedValue;
         }
 
@@ -336,7 +328,7 @@ final class GenericContainer implements Container
         return $this->resolve(className: $type->getName(), tag: $tag);
     }
 
-    private function autowireBuiltinDependency(ReflectionParameter $parameter, mixed $providedValue): mixed
+    private function autowireBuiltinDependency(ParameterReflector $parameter, mixed $providedValue): mixed
     {
         // Due to type coercion, the provided value may (or may not) work.
         // Here we give up trying to do type work for people. If they
@@ -347,25 +339,25 @@ final class GenericContainer implements Container
 
         // If the dependency has a default value, we might as well
         // use that at this point.
-        if ($parameter->isDefaultValueAvailable()) {
+        if ($parameter->hasDefaultValue()) {
             return $parameter->getDefaultValue();
         }
 
         // If the dependency's type is an array or variadic variable, we'll
         // try to prevent an error by returning an empty array.
-        if ($parameter->isVariadic() || type($parameter) === 'array') {
+        if ($parameter->isVariadic() || $parameter->isIterable()) {
             return [];
         }
 
         // If the dependency's type allows null or is optional, we'll
         // try to prevent an error by returning null.
-        if ($parameter->allowsNull() || $parameter->isOptional()) {
+        if (! $parameter->isRequired()) {
             return null;
         }
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain, new Dependency($parameter));
+        throw new CannotAutowireException($this->chain, new Dependency($parameter->getReflection()));
     }
 
     private function clone(): self
