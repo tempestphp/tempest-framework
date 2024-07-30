@@ -94,6 +94,20 @@ final class ModelQueryBuilder
     {
         $modelDefinition = new ModelDefinition($this->modelClass);
 
+        /*
+         * 0. Build relation array
+         * 1. Selecting fields
+         *      - Own fields
+         *      - All relation fields
+         * 2. Joining relations
+         *      - BelongsTo
+         *      - HasMany
+         *      - …
+         * 3. Applying where,order by, limit, etc.
+         * 4. Create query
+         */
+
+
         $relations = $this->getRelations($modelDefinition);
 
         $fields = $modelDefinition->getFieldNames();
@@ -116,12 +130,7 @@ final class ModelQueryBuilder
         );
 
         foreach ($relations as $relation) {
-            $statements[] = sprintf(
-                'INNER JOIN %s ON %s = %s',
-                $relation->getTableName(),
-                $relation->getFieldName('id'),
-                $relation->getRelationFieldName(),
-            );
+            $statements[] = $relation->getStatement();
         }
 
         if ($this->where !== []) {
@@ -130,11 +139,11 @@ final class ModelQueryBuilder
                 implode(' AND ', $this->where),
             );
         }
-
+ld(implode(PHP_EOL, $statements));
         return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
     }
 
-    /** @return \Tempest\Database\Builder\RelationDefinition[] */
+    /** @return \Tempest\Database\Builder\Relations\Relation[] */
     private function getRelations(ModelDefinition $modelDefinition): array
     {
         $relations = $modelDefinition->getEagerRelations();
