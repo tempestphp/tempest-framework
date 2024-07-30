@@ -8,21 +8,11 @@ use ReflectionParameter;
 
 final readonly class ParameterReflector implements Reflector
 {
+    use HasAttributes;
+
     public function __construct(
         private ReflectionParameter $reflectionParameter,
     ) {
-    }
-
-    /**
-     * @template TAttributeClass of object
-     * @param class-string<TAttributeClass> $attributeClass
-     * @return TAttributeClass|null
-     */
-    public function getAttribute(string $attributeClass): object|null
-    {
-        $attribute = $this->reflectionParameter->getAttributes($attributeClass)[0] ?? null;
-
-        return $attribute?->newInstance();
     }
 
     public function getReflection(): ReflectionParameter

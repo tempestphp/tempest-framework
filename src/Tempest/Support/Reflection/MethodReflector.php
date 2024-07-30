@@ -9,6 +9,8 @@ use ReflectionMethod;
 
 final readonly class MethodReflector implements Reflector
 {
+    use HasAttributes;
+
     public function __construct(
         private ReflectionMethod $reflectionMethod,
     ) {

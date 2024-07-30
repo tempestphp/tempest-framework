@@ -37,7 +37,12 @@ final readonly class RelationDefinition extends ModelDefinition
         return new TableName($tableName, $prefix);
     }
 
-    public function getRelationName(): FieldName
+    public function getRelationName(): string
+    {
+        return $this->relationName;
+    }
+
+    public function getRelationFieldName(): FieldName
     {
         return $this->parentDefinition->getFieldName($this->relationName . '_id');
     }

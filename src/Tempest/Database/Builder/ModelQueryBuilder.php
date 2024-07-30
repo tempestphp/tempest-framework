@@ -120,7 +120,7 @@ final class ModelQueryBuilder
                 'INNER JOIN %s ON %s = %s',
                 $relation->getTableName(),
                 $relation->getFieldName('id'),
-                $relation->getRelationName(),
+                $relation->getRelationFieldName(),
             );
         }
 
@@ -137,13 +137,14 @@ final class ModelQueryBuilder
     /** @return \Tempest\Database\Builder\RelationDefinition[] */
     private function getRelations(ModelDefinition $modelDefinition): array
     {
-        $relations = [];
+        $relations = $modelDefinition->getEagerRelations();
 
         foreach ($this->relations as $relationName) {
-            $relations = [...$relations, ...$modelDefinition->getRelations($relationName)];
+            foreach ($modelDefinition->getRelations($relationName) as $relation) {
+                $relations[$relation->getRelationName()] = $relation;
+            }
         }
 
         return $relations;
-        //        return array_unique([...$relations, ...$modelDefinition->getEagerRelations()]);
     }
 }

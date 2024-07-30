@@ -20,7 +20,7 @@ final class AWithEager implements Model
 
     public function __construct(
         #[Eager]
-        public B $b,
+        public BWithEager $b,
     ) {
     }
 }

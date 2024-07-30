@@ -10,11 +10,14 @@ use ReflectionException;
 use ReflectionNamedType;
 use ReflectionProperty;
 use function Tempest\attribute;
+use Tempest\Database\Eager;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Mapper\CastWith;
+use function Tempest\reflect;
+use Tempest\Support\Reflection\ClassReflector;
 use function Tempest\type;
 
-/** @phpstan-ignore-next-line  */
+/** @phpstan-ignore-next-line */
 readonly class ModelDefinition
 {
     public function __construct(
@@ -52,20 +55,38 @@ readonly class ModelDefinition
         return $relations;
     }
 
-    //    /** @return RelationDefinition[] */
-    //    public function getEagerRelations(): array
-    //    {
-    //        $relations = [];
-    //
-    //        $class = reflect($this->modelClass);
-    //
-    //        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-    //        }
-    //
-    //        dd($relations);
-    //
-    //        return $relations;
-    //    }
+    /** @return RelationDefinition[] */
+    public function getEagerRelations(): array
+    {
+        $relations = [];
+
+        foreach ($this->buildEagerRelationNames(reflect($this->modelClass)) as $relationName) {
+            foreach ($this->getRelations($relationName) as $relation) {
+                $relations[$relation->getRelationName()] = $relation;
+            }
+        }
+
+        return $relations;
+    }
+
+    private function buildEagerRelationNames(ClassReflector $class): array
+    {
+        $relations = [];
+
+        foreach ($class->getPublicProperties() as $property) {
+            if (! $property->hasAttribute(Eager::class)) {
+                continue;
+            }
+
+            $relations[] = $property->getName();
+
+            foreach ($this->buildEagerRelationNames($property->getType()->asClass()) as $childRelation) {
+                $relations[] = "{$property->getName()}.{$childRelation}";
+            }
+        }
+
+        return $relations;
+    }
 
     public function getTableName(): TableName
     {

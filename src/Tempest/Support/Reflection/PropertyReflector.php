@@ -8,9 +8,16 @@ use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class PropertyReflector implements Reflector
 {
+    use HasAttributes;
+
     public function __construct(
         private PHPReflectionProperty $reflectionProperty
     ) {
+    }
+
+    public function getReflection(): PHPReflectionProperty
+    {
+        return $this->reflectionProperty;
     }
 
     public function accepts(mixed $input): bool

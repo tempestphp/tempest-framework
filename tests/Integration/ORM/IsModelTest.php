@@ -146,8 +146,8 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         (new A(
             b: new B(
-                c: new C(name: 'test')
-            )
+                c: new C(name: 'test'),
+            ),
         ))->save();
 
         $a = A::query()->first();
@@ -168,8 +168,8 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         (new A(
             b: new B(
-                c: new C(name: 'test')
-            )
+                c: new C(name: 'test'),
+            ),
         ))->save();
 
         $a = A::query()->with('b.c')->first();
@@ -190,8 +190,8 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         (new A(
             b: new B(
-                c: new C(name: 'test')
-            )
+                c: new C(name: 'test'),
+            ),
         ))->save();
 
         $a = A::query()->first();
@@ -213,8 +213,8 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
         (new AWithLazy(
             b: new B(
-                c: new C(name: 'test')
-            )
+                c: new C(name: 'test'),
+            ),
         ))->save();
 
         $a = AWithLazy::query()->first();
@@ -223,23 +223,21 @@ class IsModelTest extends FrameworkIntegrationTestCase
 
     public function test_eager_load(): void
     {
-        $this->markTestSkipped('Not implemented yet');
-        //
-        //        $this->migrate(
-        //            CreateMigrationsTable::class,
-        //            CreateATable::class,
-        //            CreateBTable::class,
-        //            CreateCTable::class,
-        //        );
-        //
-        //        (new AWithLazy(
-        //            b: new B(
-        //                c: new C(name: 'test')
-        //            )
-        //        ))->save();
-        //
-        //        $a = AWithEager::query()->first();
-        //        $this->assertTrue(isset($a->b->c));
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new AWithLazy(
+            b: new B(
+                c: new C(name: 'test'),
+            ),
+        ))->save();
+
+        $a = AWithEager::query()->first();
+        $this->assertTrue(isset($a->b->c));
     }
 
     public function test_no_result(): void

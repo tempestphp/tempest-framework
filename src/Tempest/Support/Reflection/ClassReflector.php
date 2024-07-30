@@ -10,6 +10,8 @@ use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class ClassReflector implements Reflector
 {
+    use HasAttributes;
+
     private PHPReflectionClass $reflectionClass;
 
     public function __construct(string|object $reflectionClass)
@@ -21,6 +23,11 @@ final readonly class ClassReflector implements Reflector
         }
 
         $this->reflectionClass = $reflectionClass;
+    }
+
+    public function getReflection(): PHPReflectionClass
+    {
+        return $this->reflectionClass;
     }
 
     /** @return Generator|PropertyReflector[] */
