@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Drivers\MySqlDriver;
+use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
 
 /**
@@ -28,8 +29,8 @@ final class DatabaseDriverTest extends TestCase
     public static function provide_database_drivers(): Generator
     {
         yield 'sqlite' => [
-            new SQLiteDriver(path: 'localhost'),
-            'sqlite:localhost',
+            new SQLiteDriver(path: '/usr/local/db.sqlite'),
+            'sqlite:/usr/local/db.sqlite',
         ];
 
         yield 'mysql' => [
@@ -41,6 +42,17 @@ final class DatabaseDriverTest extends TestCase
                 database: 'tempest'
             ),
             'mysql:host=localhost:3307;dbname=tempest',
+        ];
+
+        yield 'postgresql' => [
+            new PostgreSqlDriver(
+                host: 'localhost',
+                port: '5432',
+                username: 'postgres',
+                password: '',
+                database: 'tempest'
+            ),
+            'postgresql:localhost:5432/tempest',
         ];
     }
 }
