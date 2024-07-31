@@ -21,7 +21,7 @@ final class DatabaseDriverTest extends TestCase
 {
     #[Test]
     #[DataProvider('provide_database_drivers')]
-    public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn, string $username, string $password): void
+    public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn, ?string $username, ?string $password): void
     {
         $this->assertSame($dsn, $driver->getDsn());
         $this->assertSame($username, $driver->getUsername());
@@ -33,6 +33,8 @@ final class DatabaseDriverTest extends TestCase
         yield 'sqlite' => [
             new SQLiteDriver(path: '/usr/local/db.sqlite'),
             'sqlite:/usr/local/db.sqlite',
+            null,
+            null,
         ];
 
         yield 'mysql' => [
