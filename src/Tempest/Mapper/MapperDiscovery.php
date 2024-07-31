@@ -10,7 +10,7 @@ use Tempest\Discovery\Discovery;
 
 final readonly class MapperDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/mapper-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/mapper-discovery.cache.php';
 
     public function __construct(
         private MapperConfig $config,

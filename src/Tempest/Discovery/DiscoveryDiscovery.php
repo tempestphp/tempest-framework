@@ -10,7 +10,7 @@ use Tempest\Framework\Application\AppConfig;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
-    public const CACHE_PATH = __DIR__ . '/discovery-discovery.cache.php';
+    public const CACHE_PATH = __DIR__ . '/../../../.cache/tempest/discovery-discovery.cache.php';
 
     public function __construct(
         private AppConfig $appConfig,

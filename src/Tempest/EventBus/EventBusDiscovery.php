@@ -13,7 +13,7 @@ use Tempest\Support\Reflection\Attributes;
 
 final readonly class EventBusDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/event-bus-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/event-bus-discovery.cache.php';
 
     public function __construct(
         private EventBusConfig $eventBusConfig,

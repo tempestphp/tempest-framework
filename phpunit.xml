@@ -8,6 +8,7 @@
         displayDetailsOnTestsThatTriggerNotices="true"
         displayDetailsOnTestsThatTriggerWarnings="true"
         bootstrap="./tests/bootstrap.php"
+        cacheDirectory=".cache/phpunit"
 >
   <testsuites>
     <testsuite name="Integration">
