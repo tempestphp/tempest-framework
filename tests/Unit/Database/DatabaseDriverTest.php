@@ -21,9 +21,11 @@ final class DatabaseDriverTest extends TestCase
 {
     #[Test]
     #[DataProvider('provide_database_drivers')]
-    public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn): void
+    public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn, string $username, string $password): void
     {
         $this->assertSame($dsn, $driver->getDsn());
+        $this->assertSame($username, $driver->getUsername());
+        $this->assertSame($password, $driver->getPassword());
     }
 
     public static function provide_database_drivers(): Generator
@@ -42,6 +44,8 @@ final class DatabaseDriverTest extends TestCase
                 database: 'tempest'
             ),
             'mysql:host=localhost:3307;dbname=tempest',
+            'user',
+            'secret',
         ];
 
         yield 'postgresql' => [
@@ -49,10 +53,12 @@ final class DatabaseDriverTest extends TestCase
                 host: 'localhost',
                 port: '5432',
                 username: 'postgres',
-                password: '',
+                password: 'secret',
                 database: 'tempest'
             ),
             'postgresql:localhost:5432/tempest',
+            'postgres',
+            'secret',
         ];
     }
 }
