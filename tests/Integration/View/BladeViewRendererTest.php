@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\View;
+namespace Tests\Tempest\Integration\View;
 
 use function Tempest\view;
 use Tempest\View\Renderers\BladeConfig;
