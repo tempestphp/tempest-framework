@@ -15,7 +15,7 @@ use Tempest\Support\Reflection\Attributes;
 
 final class ScheduleDisovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/schedule-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/schedule-discovery.cache.php';
 
     public function __construct(private SchedulerConfig $schedulerConfig)
     {
