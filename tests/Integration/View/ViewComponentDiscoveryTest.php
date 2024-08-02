@@ -20,7 +20,7 @@ class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
         $discovery = $this->container->get(ViewComponentDiscovery::class);
 
         try {
-            $discovery->discover(__DIR__ . '/duplicateComponent.view.php');
+            $discovery->discoverPath(__DIR__ . '/duplicateComponent.view.php');
         } catch (DuplicateViewComponent $e) {
             $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $e->getMessage());
             $this->assertStringContainsString(Input::class, $e->getMessage());

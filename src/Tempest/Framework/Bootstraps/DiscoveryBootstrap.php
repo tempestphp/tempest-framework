@@ -9,10 +9,10 @@ use RecursiveIteratorIterator;
 use ReflectionClass;
 use SplFileInfo;
 use Tempest\Container\Container;
+use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Framework\Application\AppConfig;
 use Throwable;
-use TypeError;
 
 final readonly class DiscoveryBootstrap implements Bootstrap
 {
@@ -69,10 +69,10 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                         }
                     }
 
-                    try {
+                    if ($input instanceof ReflectionClass) {
                         $discovery->discover($input);
-                    } catch (TypeError) {
-                        continue;
+                    } elseif ($discovery instanceof DiscoversPath) {
+                        $discovery->discoverPath($input);
                     }
                 }
             }

@@ -6,11 +6,12 @@ namespace Tempest\View;
 
 use ReflectionClass;
 use Tempest\Container\Container;
+use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\View\Components\AnonymousViewComponent;
 
-final readonly class ViewComponentDiscovery implements Discovery
+final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
 {
     use HandlesDiscoveryCache;
 
@@ -19,14 +20,8 @@ final readonly class ViewComponentDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass|string $class): void
+    public function discover(ReflectionClass $class): void
     {
-        if (is_string($class)) {
-            $this->discoverPath($class);
-
-            return;
-        }
-
         if (! $class->isInstantiable()) {
             return;
         }
@@ -41,7 +36,7 @@ final readonly class ViewComponentDiscovery implements Discovery
         );
     }
 
-    private function discoverPath(string $path): void
+    public function discoverPath(string $path): void
     {
         if (! str_ends_with($path, '.view.php')) {
             return;
