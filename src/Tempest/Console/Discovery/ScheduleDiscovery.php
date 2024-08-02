@@ -11,14 +11,16 @@ use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\Attributes;
 
 final class ScheduleDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/schedule-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
-    public function __construct(private SchedulerConfig $schedulerConfig)
-    {
+    public function __construct(
+        private SchedulerConfig $schedulerConfig,
+    ) {
     }
 
     public function discover(ReflectionClass $class): void
@@ -40,25 +42,15 @@ final class ScheduleDiscovery implements Discovery
         }
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->schedulerConfig->scheduledInvocations);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->schedulerConfig->scheduledInvocations));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $scheduledInvocations = unserialize(file_get_contents(self::CACHE_PATH));
+        $scheduledInvocations = unserialize($payload);
 
         $this->schedulerConfig->scheduledInvocations = $scheduledInvocations;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

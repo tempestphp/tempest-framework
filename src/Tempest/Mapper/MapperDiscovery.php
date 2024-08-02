@@ -7,10 +7,11 @@ namespace Tempest\Mapper;
 use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 
 final readonly class MapperDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/mapper-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
     public function __construct(
         private MapperConfig $config,
@@ -28,25 +29,15 @@ final readonly class MapperDiscovery implements Discovery
         }
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->config->mappers);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->config->mappers));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $mappers = unserialize(file_get_contents(self::CACHE_PATH));
+        $mappers = unserialize($payload);
 
         $this->config->mappers = $mappers;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

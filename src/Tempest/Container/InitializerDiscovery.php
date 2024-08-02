@@ -6,10 +6,11 @@ namespace Tempest\Container;
 
 use ReflectionClass;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 
 final readonly class InitializerDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/initializer-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
     public function __construct(
         private Container&GenericContainer $container,
@@ -32,31 +33,21 @@ final readonly class InitializerDiscovery implements Discovery
         $this->container->addInitializer($class);
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
-    }
-
-    public function storeCache(): void
-    {
-        file_put_contents(self::CACHE_PATH, serialize(
+        return serialize(
             [
                 'initializers' => $this->container->getInitializers(),
                 'dynamic_initializers' => $this->container->getDynamicInitializers(),
             ],
-        ));
+        );
     }
 
-    public function restoreCache(Container $container): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        $data = unserialize(file_get_contents(self::CACHE_PATH));
+        $data = unserialize($payload);
 
         $this->container->setInitializers($data['initializers'] ?? []);
         $this->container->setDynamicInitializers($data['dynamic_initializers'] ?? []);
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

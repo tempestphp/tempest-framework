@@ -7,11 +7,12 @@ namespace Tempest\View;
 use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\View\Components\AnonymousViewComponent;
 
 final readonly class ViewComponentDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/view-component-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
     public function __construct(
         private ViewConfig $viewConfig,
@@ -75,25 +76,15 @@ final readonly class ViewComponentDiscovery implements Discovery
         );
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->viewConfig->viewComponents);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->viewConfig->viewComponents));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $handlers = unserialize(file_get_contents(self::CACHE_PATH));
+        $handlers = unserialize($payload);
 
         $this->viewConfig->viewComponents = $handlers;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

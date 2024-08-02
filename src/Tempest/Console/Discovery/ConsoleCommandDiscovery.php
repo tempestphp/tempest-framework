@@ -10,14 +10,16 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\Attributes;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/console-command-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
-    public function __construct(private ConsoleConfig $consoleConfig)
-    {
+    public function __construct(
+        private ConsoleConfig $consoleConfig,
+    ) {
     }
 
     public function discover(ReflectionClass $class): void
@@ -33,25 +35,15 @@ final readonly class ConsoleCommandDiscovery implements Discovery
         }
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->consoleConfig->commands);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->consoleConfig->commands));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $commands = unserialize(file_get_contents(self::CACHE_PATH));
+        $commands = unserialize($payload);
 
         $this->consoleConfig->commands = $commands;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

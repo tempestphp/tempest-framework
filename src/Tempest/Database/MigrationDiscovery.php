@@ -7,10 +7,11 @@ namespace Tempest\Database;
 use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Discovery\HandlesDiscoveryCache;
 
 final class MigrationDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/migration-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
     public function __construct(private DatabaseConfig $databaseConfig)
     {
@@ -29,25 +30,15 @@ final class MigrationDiscovery implements Discovery
         $this->databaseConfig->addMigration($class->getName());
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->databaseConfig->migrations);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        file_put_contents(self::CACHE_PATH, serialize($this->databaseConfig->migrations));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $migrations = unserialize(file_get_contents(self::CACHE_PATH));
+        $migrations = unserialize($payload);
 
         $this->databaseConfig->migrations = $migrations;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }
