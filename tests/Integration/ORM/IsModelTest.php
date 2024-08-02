@@ -211,17 +211,25 @@ class IsModelTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
+        $author = (new Author(
+            name: 'Author Name',
+            type: AuthorType::B,
+        ))->save();
+
         Book::new(
             title: 'Book Title',
-            author: new Author(
-                name: 'Author Name',
-                type: AuthorType::B,
-            ),
+            // TODO: nested saves
+            author: $author,
+        )->save();
+
+        Book::new(
+            title: 'Timeline Taxi',
+            author: $author,
         )->save();
 
         $author = Author::query()->with('books')->first();
 
-        $this->assertCount(1, $author->books);
+        $this->assertCount(2, $author->books);
     }
 
     public function test_lazy_load(): void

@@ -32,9 +32,11 @@ final class ModelQueryBuilder
     /** @return TModelClass|null */
     public function first(mixed ...$bindings): ?Model
     {
-        $query = $this->build($bindings)->append('LIMIT 1');
+        $query = $this->build($bindings);
 
-        return map($query)->collection()->to($this->modelClass)[0] ?? null;
+        $result = map($query)->collection()->to($this->modelClass);
+
+        return $result[array_key_first($result)];
     }
 
     /** @return TModelClass|null */
