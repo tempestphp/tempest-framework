@@ -13,7 +13,8 @@ final readonly class PropertyReflector implements Reflector
 
     public function __construct(
         private PHPReflectionProperty $reflectionProperty,
-    ) {}
+    ) {
+    }
 
     public function getReflection(): PHPReflectionProperty
     {

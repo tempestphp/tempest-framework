@@ -4,20 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
-use BackedEnum;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionNamedType;
-use ReflectionProperty;
 use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
-use function Tempest\attribute;
 use Tempest\Database\Eager;
-use Tempest\Database\Exceptions\InvalidRelation;
-use Tempest\Mapper\CastWith;
 use function Tempest\reflect;
 use Tempest\Support\Reflection\ClassReflector;
-use function Tempest\type;
 
 /** @phpstan-ignore-next-line */
 readonly class ModelDefinition
@@ -53,7 +44,7 @@ readonly class ModelDefinition
         return $relations;
     }
 
-    /** @return RelationDefinition[] */
+    /** @return \Tempest\Database\Builder\Relations\Relation[] */
     public function getEagerRelations(): array
     {
         $relations = [];

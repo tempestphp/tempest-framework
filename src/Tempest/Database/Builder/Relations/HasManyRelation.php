@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
@@ -22,6 +24,7 @@ final readonly class HasManyRelation implements Relation
         foreach ($this->relationModelClass->getPublicProperties() as $potentialInverseProperty) {
             if ($potentialInverseProperty->getType()->equals($property->getClass()->getType())) {
                 $inverseProperty = $potentialInverseProperty;
+
                 break;
             }
         }

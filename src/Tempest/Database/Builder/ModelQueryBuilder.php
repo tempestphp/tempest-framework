@@ -36,6 +36,10 @@ final class ModelQueryBuilder
 
         $result = map($query)->collection()->to($this->modelClass);
 
+        if ($result === []) {
+            return null;
+        }
+
         return $result[array_key_first($result)];
     }
 

@@ -202,7 +202,6 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue(isset($a->b->c));
     }
 
-
     public function test_has_many_relations(): void
     {
         $this->migrate(
