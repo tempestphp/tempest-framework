@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Reflection;
 
+use Error;
 use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class PropertyReflector implements Reflector
@@ -54,6 +55,30 @@ final readonly class PropertyReflector implements Reflector
         }
 
         return new TypeReflector(ltrim($match[1], '\\'));
+    }
+
+    public function isUninitialized(object $object): bool
+    {
+        return ! $this->reflectionProperty->isInitialized($object);
+    }
+
+    public function unset(object $object): void
+    {
+        unset($object->{$this->getName()});
+    }
+
+    public function set(object $object, mixed $value): void
+    {
+        $this->reflectionProperty->setValue($object, $value);
+    }
+
+    public function get(object $object, mixed $default = null): mixed
+    {
+        try {
+            return $this->reflectionProperty->getValue($object) ?? $default;
+        } catch (Error $e) {
+            return $default ?? throw $e;
+        }
     }
 
     public function getName(): string
