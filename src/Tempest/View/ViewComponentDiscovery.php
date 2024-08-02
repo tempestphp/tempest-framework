@@ -11,7 +11,7 @@ use Tempest\View\Components\AnonymousViewComponent;
 
 final readonly class ViewComponentDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/view-component-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/view-component-discovery.cache.php';
 
     public function __construct(
         private ViewConfig $viewConfig,

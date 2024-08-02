@@ -50,9 +50,9 @@ class KernelTest extends TestCase
         //        $this->assertSame(InitializerDiscovery::class, $appConfig->discoveryClasses[5]);
         //        $this->assertSame(RouteDiscovery::class, $appConfig->discoveryClasses[6]);
         //        $this->assertSame(ViewComponentDiscovery::class, $appConfig->discoveryClasses[7]);
-        //        $this->assertSame(ScheduleDisovery::class, $appConfig->discoveryClasses[8]);
+        //        $this->assertSame(ScheduleDiscovery::class, $appConfig->discoveryClasses[8]);
         //        $this->assertSame(EventBusDiscovery::class, $appConfig->discoveryClasses[9]);
-        //        $this->assertSame(ScheduleDisovery::class, $appConfig->discoveryClasses[10]);
+        //        $this->assertSame(ScheduleDiscovery::class, $appConfig->discoveryClasses[10]);
         //        $this->assertSame(ConsoleCommandDiscovery::class, $appConfig->discoveryClasses[11]);
 
         //        $this->assertCount(2, $appConfig->discoveryLocations);

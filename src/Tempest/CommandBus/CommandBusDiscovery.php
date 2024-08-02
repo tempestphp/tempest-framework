@@ -13,7 +13,7 @@ use Tempest\Discovery\Discovery;
 
 final readonly class CommandBusDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/command-bus-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/command-bus-discovery.cache.php';
 
     public function __construct(
         private CommandBusConfig $commandBusConfig,

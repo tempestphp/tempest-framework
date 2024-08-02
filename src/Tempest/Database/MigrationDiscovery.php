@@ -10,7 +10,7 @@ use Tempest\Discovery\Discovery;
 
 final class MigrationDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/migration-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/migration-discovery.cache.php';
 
     public function __construct(private DatabaseConfig $databaseConfig)
     {

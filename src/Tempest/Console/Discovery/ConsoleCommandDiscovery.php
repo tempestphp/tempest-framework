@@ -14,7 +14,7 @@ use Tempest\Support\Reflection\Attributes;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/console-command-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/console-command-discovery.cache.php';
 
     public function __construct(private ConsoleConfig $consoleConfig)
     {

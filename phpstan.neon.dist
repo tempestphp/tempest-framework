@@ -10,6 +10,7 @@ services:
 parameters:
 	level: 5
 	reportUnmatchedIgnoredErrors: false
+	tmpDir: .cache/phpstan
 	paths:
 		- src
 		- tests

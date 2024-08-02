@@ -10,7 +10,7 @@ use Tempest\Console\ShellExecutor;
 
 final readonly class GenericScheduler implements Scheduler
 {
-    public const string CACHE_PATH = __DIR__ . '/last-schedule-run.cache.php';
+    public const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/last-schedule-run.cache.php';
 
     public function __construct(
         private SchedulerConfig $config,

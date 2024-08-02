@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\View;
+namespace Tests\Tempest\Integration\View;
 
 use function Tempest\view;
 use Tempest\View\Renderers\BladeConfig;
@@ -25,7 +25,7 @@ class BladeViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new BladeConfig(
             viewPaths: [__DIR__ . '/blade'],
-            cachePath: __DIR__ . '/blade/cache',
+            cachePath: __DIR__ . '/../../../../.cache/tempest/blade/cache',
         ));
 
         $renderer = $this->container->get(ViewRenderer::class);

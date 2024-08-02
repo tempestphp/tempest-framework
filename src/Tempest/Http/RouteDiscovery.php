@@ -13,7 +13,7 @@ use Tempest\Support\VarExport\VarExportPhpFile;
 
 final readonly class RouteDiscovery implements Discovery
 {
-    private const CACHE_PATH = __DIR__ . '/route-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/route-discovery.cache.php';
 
     /** @var VarExportPhpFile<RouteConfig> */
     private VarExportPhpFile $routeCacheFile;

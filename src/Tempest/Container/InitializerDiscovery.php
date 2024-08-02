@@ -9,7 +9,7 @@ use Tempest\Discovery\Discovery;
 
 final readonly class InitializerDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/initializer-discovery.cache.php';
+    private const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/initializer-discovery.cache.php';
 
     public function __construct(
         private Container&GenericContainer $container,
