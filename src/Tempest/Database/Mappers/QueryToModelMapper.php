@@ -8,8 +8,8 @@ use BackedEnum;
 use Tempest\Database\Id;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
-use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Mapper\Mapper;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
 final readonly class QueryToModelMapper implements Mapper
@@ -27,7 +27,6 @@ final readonly class QueryToModelMapper implements Mapper
         $models = [];
 
         foreach ($from->fetch() as $row) {
-            lw($row);
             $idField = $table->tableName . '.id';
 
             $id = $row[$idField];
@@ -47,27 +46,43 @@ final readonly class QueryToModelMapper implements Mapper
 
             $propertyName = $keyParts[1];
 
-            if (str_ends_with($propertyName, '[]')) {
-                $property = $class->getProperty(rtrim($propertyName, '[]'));
+            $count = count($keyParts);
 
-                $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
+            if ($count > 3) {
+                $property = $class->getProperty($propertyName);
 
-                $model = $this->parseHasMany(
-                    $property,
-                    $model,
-                    (string)$childId,
-                    $keyParts[2],
-                    $value,
-                );
-            } elseif (count($keyParts) > 2) {
-                $property = $class->getProperty(rtrim($propertyName));
+                $childModel = $property->get($model, $property->getType()->asClass()->newInstanceWithoutConstructor());
 
-                $model = $this->parseBelongsTo(
-                    $property,
-                    $model,
-                    $keyParts[2],
-                    $value,
-                );
+                unset($keyParts[0]);
+
+                $property->set($model, $this->parse(
+                    $class->getProperty($propertyName)->getType()->asClass(),
+                    $childModel,
+                    [implode('.', $keyParts) => $value]
+                ));
+            } elseif ($count === 3) {
+                if (str_contains($keyParts[1], '[]')) {
+                    $property = $class->getProperty(rtrim($propertyName, '[]'));
+
+                    $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
+
+                    $model = $this->parseHasMany(
+                        $property,
+                        $model,
+                        (string)$childId,
+                        $keyParts[2],
+                        $value,
+                    );
+                } else {
+                    $property = $class->getProperty($propertyName);
+
+                    $model = $this->parseBelongsTo(
+                        $property,
+                        $model,
+                        $keyParts[2],
+                        $value,
+                    );
+                }
             } else {
                 $property = $class->getProperty($propertyName);
 
@@ -83,7 +98,7 @@ final readonly class QueryToModelMapper implements Mapper
         $type = $property->getType();
 
         $value = match (true) {
-            $type->matches(BackedEnum::class) => $type->asClass()->callStatic('tryFrom', $value),
+            $type->matches(BackedEnum::class) => $value ? $type->asClass()->callStatic('tryFrom', $value) : null,
             $type->matches(Id::class) => new Id($value),
             default => $value,
         };

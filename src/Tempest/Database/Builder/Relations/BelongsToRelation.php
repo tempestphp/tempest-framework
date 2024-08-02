@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
