@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM;
 
+use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
 use Tempest\Database\Query;
 
-class FooMigration implements Migration
+final readonly class FooMigration implements Migration
 {
+    public function __construct(
+        private DatabaseDriver $driver,
+    ) {
+    }
+
     public function getName(): string
     {
         return 'foo';

@@ -10,6 +10,8 @@ use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
+use Tempest\Database\DatabaseDriver;
+use Tempest\Database\Drivers\SQLiteDriver;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Application\AppConfig;
 use Tempest\Framework\Application\Kernel;
@@ -49,10 +51,12 @@ abstract class IntegrationTest extends TestCase
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton(GenericRequest::class, fn () => $request);
+        $this->container->singleton(DatabaseDriver::class, fn () => new SQLiteDriver());
     }
 
     protected function migrate(string ...$migrationClasses): void
     {
+        /** @var MigrationManager $migrationManager */
         $migrationManager = $this->container->get(MigrationManager::class);
 
         foreach ($migrationClasses as $migrationClass) {

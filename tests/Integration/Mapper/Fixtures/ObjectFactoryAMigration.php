@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
+use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
 use Tempest\Database\Query;
 
 class ObjectFactoryAMigration implements Migration
 {
+    public function __construct(
+        private DatabaseDriver $driver,
+    ) {
+    }
+
     public function getName(): string
     {
         return 'object-a';

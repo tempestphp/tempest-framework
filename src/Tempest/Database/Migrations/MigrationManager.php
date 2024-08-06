@@ -27,21 +27,21 @@ final readonly class MigrationManager
         try {
             $existingMigrations = Migration::all();
         } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable());
+            $this->executeUp(new CreateMigrationsTable($this->databaseConfig->driver));
 
             $existingMigrations = Migration::all();
         }
 
         $existingMigrations = array_map(
-            fn (Migration $migration) => $migration->name,
+            static fn (Migration $migration) => $migration->name,
             $existingMigrations,
         );
 
         foreach ($this->databaseConfig->migrations as $migrationClassName) {
             /** @var MigrationInterface $migration */
-            $migration = $this->container->get($migrationClassName);
+            $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver);
 
-            if (in_array($migration->getName(), $existingMigrations)) {
+            if (in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
 
@@ -72,7 +72,7 @@ final readonly class MigrationManager
             /**
              * If the migration is not in the existing migrations, it means it has not been executed
              */
-            if (! in_array($migration->getName(), $existingMigrations)) {
+            if (!in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
 
