@@ -19,14 +19,14 @@ final readonly class ElseIfAttribute implements Attribute
 
         if (
             !$previous instanceof GenericElement
-            || !$previous->hasAttribute('if')
+            !$previous->hasAttribute('if') || !$previous->hasAttribute('elseif')
         ) {
             throw new Exception('No valid if statement found in preceding element');
         }
 
-        $elseif = $previous->getAttribute('elseif');
+        $condition = $previous->getAttribute('elseif');
 
-        if ($elseif) {
+        if ($condition) {
             return $element;
         } else {
             return new EmptyElement;
