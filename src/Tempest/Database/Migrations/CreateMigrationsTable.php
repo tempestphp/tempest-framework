@@ -23,10 +23,13 @@ final readonly class CreateMigrationsTable implements Migration
 
     public function up(): Query|null
     {
-        return new Query("CREATE TABLE IF NOT EXISTS Migration (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `name` TEXT NOT NULL
-        )");
+        return QueryStatement::new($this->driver, table: 'Migration')
+            ->create(function (QueryStatement $statement): QueryStatement {
+                return $statement
+                    ->primary()
+                    ->statement('name VARCHAR(255) NOT NULL');
+            })
+            ->toQuery();
     }
 
     public function down(): Query|null

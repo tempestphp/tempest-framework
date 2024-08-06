@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\ORM\Migrations;
 use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatement;
 
 final readonly class CreateBTable implements Migration
 {
@@ -22,10 +23,13 @@ final readonly class CreateBTable implements Migration
 
     public function up(): Query|null
     {
-        return new Query("CREATE TABLE B (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `c_id` INTEGER
-        )");
+        return QueryStatement::new($this->driver, table: 'B')
+            ->create(
+                fn (QueryStatement $statement) => $statement
+                    ->primary()
+                    ->statement('c_id INTEGER')
+            )
+            ->toQuery();
     }
 
     public function down(): Query|null
