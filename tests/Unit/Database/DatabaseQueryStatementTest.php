@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Tempest\Unit\Database;
 
@@ -13,6 +15,10 @@ use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
 use Tempest\Database\QueryStatement;
 
+/**
+ * @internal
+ * @small
+ */
 final class DatabaseQueryStatementTest extends TestCase
 {
     #[Test]
@@ -24,8 +30,9 @@ final class DatabaseQueryStatementTest extends TestCase
                 ->primary()
                 ->statement('name VARCHAR(255) NOT NULL'));
 
-        self::assertSame($validSql, (string) $statement);
+        $this->assertSame($validSql, (string) $statement);
     }
+
     public static function provide_create_table_database_drivers(): Generator
     {
         yield 'mysql' => [
@@ -34,7 +41,7 @@ final class DatabaseQueryStatementTest extends TestCase
         ];
 
         yield 'postgresql' => [
-            new PostgresqlDriver(),
+            new PostgreSqlDriver(),
             'CREATE TABLE Migration (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL);',
         ];
 
@@ -55,9 +62,9 @@ final class DatabaseQueryStatementTest extends TestCase
                 ->constraint('author_id', 'Author')
                 ->statement('name VARCHAR(255) NOT NULL'));
 
-        self::assertSame($validSql, (string) $statement);
+        $this->assertSame($validSql, (string) $statement);
     }
-    
+
     public static function provide_fk_create_table_database_drivers(): Generator
     {
         yield 'mysql' => [
@@ -66,7 +73,7 @@ final class DatabaseQueryStatementTest extends TestCase
         ];
 
         yield 'postgresql' => [
-            new PostgresqlDriver(),
+            new PostgreSqlDriver(),
             'CREATE TABLE Book (id SERIAL PRIMARY KEY, author_id INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY (author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
         ];
 
@@ -98,7 +105,8 @@ final class DatabaseQueryStatementTest extends TestCase
 
         QueryStatement::new($driver, 'Book')
             ->statement('SELECT VERSION()')
-            ->alterTable('DELETE',
+            ->alterTable(
+                'DELETE',
                 fn (QueryStatement $statement): QueryStatement => $statement
                     ->statement('KEY')
             );
@@ -111,7 +119,7 @@ final class DatabaseQueryStatementTest extends TestCase
         ];
 
         yield 'postgresql' => [
-            new PostgresqlDriver(),
+            new PostgreSqlDriver(),
         ];
 
         yield 'sqlite' => [
@@ -127,7 +135,7 @@ final class DatabaseQueryStatementTest extends TestCase
             ->alterTable($operation, fn (QueryStatement $statement): QueryStatement => $statement
                 ->statement('name VARCHAR(255) NOT NULL'));
 
-        self::assertSame($validSql, (string) $statement);
+        $this->assertSame($validSql, (string) $statement);
     }
 
     public static function provide_alter_table_syntax(): Generator
@@ -168,5 +176,4 @@ final class DatabaseQueryStatementTest extends TestCase
             'ALTER TABLE Author DELETE COLUMN name VARCHAR(255) NOT NULL',
         ];
     }
-
 }

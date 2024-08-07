@@ -72,7 +72,7 @@ final readonly class MigrationManager
             /**
              * If the migration is not in the existing migrations, it means it has not been executed
              */
-            if (!in_array($migration->getName(), $existingMigrations, strict: true)) {
+            if (! in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
 

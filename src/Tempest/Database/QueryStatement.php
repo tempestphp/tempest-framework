@@ -83,8 +83,16 @@ final class QueryStatement implements Stringable
     {
         $this->query[] = match ($this->driver::class) {
             MySqlDriver::class,
-            PostgreSqlDriver::class => sprintf('CONSTRAINT fk_%s_%s FOREIGN KEY (%s) REFERENCES %s(%s) %s %s',
-                strtolower($table), strtolower($this->table), $localKey, $table, $key, $onDelete, $onUpdate),
+            PostgreSqlDriver::class => sprintf(
+                'CONSTRAINT fk_%s_%s FOREIGN KEY (%s) REFERENCES %s(%s) %s %s',
+                strtolower($table),
+                strtolower($this->table),
+                $localKey,
+                $table,
+                $key,
+                $onDelete,
+                $onUpdate
+            ),
             SQLiteDriver::class => sprintf('FOREIGN KEY (%s) REFERENCES %s (%s) %s %s', $localKey, $table, $key, $onDelete, $onUpdate),
         };
 
