@@ -7,17 +7,35 @@ namespace Tempest\Database;
 final class DatabaseConfig
 {
     public function __construct(
-        public readonly DatabaseDriver $driver,
-        public array $migrations = [],
+        private readonly DatabaseDriver $driver,
+        private array $migrations = [],
     ) {
+    }
+
+    public function driver(): DatabaseDriver
+    {
+        return $this->driver;
     }
 
     public function addMigration(string $className): self
     {
         $this->migrations[$className] = $className;
 
-        ksort($this->migrations);
-
         return $this;
+    }
+
+    public function set(array $migrations): void
+    {
+        $this->migrations = $migrations;
+    }
+
+    public function get(string $sort = 'asc'): array
+    {
+        match ($sort) {
+            'asc' => ksort($this->migrations),
+            default => rsort($this->migrations)
+        };
+
+        return $this->migrations;
     }
 }
