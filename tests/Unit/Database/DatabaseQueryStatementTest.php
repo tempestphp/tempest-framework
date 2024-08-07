@@ -8,6 +8,7 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\PostgreSqlDriver;
@@ -79,6 +80,95 @@ final class DatabaseQueryStatementTest extends TestCase
         yield 'sqlite' => [
             new SQLiteDriver(),
             'CREATE TABLE Book (id INTEGER PRIMARY KEY AUTOINCREMENT, author_id INTEGER UNSIGNED NOT NULL, FOREIGN KEY (author_id) REFERENCES Author (id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provide_database_driver')]
+    public function it_throws_a_exception_when_a_create_statement_is_called_second(DatabaseDriver $driver): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        QueryStatement::new($driver, 'Book')
+            ->statement('SELECT VERSION()')
+            ->createTable()
+            ->primary();
+    }
+
+    #[Test]
+    #[DataProvider('provide_database_driver')]
+    public function it_throws_a_exception_when_a_alter_statement_is_called_second(DatabaseDriver $driver): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        QueryStatement::new($driver, 'Book')
+            ->statement('SELECT VERSION()')
+            ->alterTable('DELETE')
+            ->statement('KEY');
+    }
+
+    public static function provide_database_driver(): Generator
+    {
+        yield 'mysql' => [
+            new MySqlDriver(),
+        ];
+
+        yield 'postgresql' => [
+            new PostgreSqlDriver(),
+        ];
+
+        yield 'sqlite' => [
+            new SQLiteDriver(),
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provide_alter_table_syntax')]
+    public function it_can_create_an_alter_table_add_statement(DatabaseDriver $driver, string $operation, string $validSql): void
+    {
+        $statement = QueryStatement::new($driver, 'Author')
+            ->alterTable($operation)
+            ->statement('name VARCHAR(255) NOT NULL');
+
+        $this->assertSame($validSql, (string) $statement);
+    }
+
+    public static function provide_alter_table_syntax(): Generator
+    {
+        yield 'mysql add statement' => [
+            new MySqlDriver(),
+            'ADD',
+            'ALTER TABLE Author ADD name VARCHAR(255) NOT NULL',
+        ];
+
+        yield 'postgresql add statement' => [
+            new PostgreSqlDriver(),
+            'ADD',
+            'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL',
+        ];
+
+        yield 'sqlite add statement' => [
+            new SQLiteDriver(),
+            'ADD',
+            'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL',
+        ];
+
+        yield 'mysql delete statement' => [
+            new MySqlDriver(),
+            'DELETE',
+            'ALTER TABLE Author DELETE name VARCHAR(255) NOT NULL',
+        ];
+
+        yield 'postgresql delete statement' => [
+            new PostgreSqlDriver(),
+            'DELETE',
+            'ALTER TABLE Author DELETE COLUMN name VARCHAR(255) NOT NULL',
+        ];
+
+        yield 'sqlite delete statement' => [
+            new SQLiteDriver(),
+            'DELETE',
+            'ALTER TABLE Author DELETE COLUMN name VARCHAR(255) NOT NULL',
         ];
     }
 }
