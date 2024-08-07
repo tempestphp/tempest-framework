@@ -44,15 +44,23 @@ final class QueryStatement implements Stringable
         return $this;
     }
 
-    public function alter(callable $callback): self
+    /** @throws UnhandledMatchError */
+    public function alter(string $action, callable $callback): self
     {
         if (! empty($this->query)) {
             throw new RuntimeException('alter statement should be the first statement');
         }
 
-        $this->query[] = sprintf(
-            "ALTER TABLE %s %s",
+        $operation = match ($this->driver::class) {
+            MySqlDriver::class => sprintf('%s', strtoupper($action)),
+            PostgreSqlDriver::class,
+            SQLiteDriver::class => sprintf('%s COLUMN', strtoupper($action)),
+        };
+
+        $this->query[] = sprintf( // @coverage
+            "ALTER TABLE %s %s %s",
             $this->table,
+            $operation,
             $callback(self::new($this->driver, $this->table))
         );
 
