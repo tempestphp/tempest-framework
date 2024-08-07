@@ -13,20 +13,12 @@ use UnhandledMatchError;
 
 final class QueryStatement implements Stringable
 {
-    private string $table;
+    private array                   $query = [];
 
     public function __construct(
         private readonly DatabaseDriver $driver,
-        private array                   $query = [],
+        private string $table,
     ) {
-    }
-
-    public static function new(DatabaseDriver $driver, string $table): self
-    {
-        $instance = new self($driver);
-        $instance->table = $table;
-
-        return $instance;
     }
 
     public function create(callable $callback): self
@@ -38,7 +30,7 @@ final class QueryStatement implements Stringable
         $this->query[] = sprintf(
             "CREATE TABLE %s (%s);",
             $this->table,
-            $callback(self::new($this->driver, $this->table))
+            $callback($this->driver->createQueryStatement($this->table))
         );
 
         return $this;
@@ -61,7 +53,7 @@ final class QueryStatement implements Stringable
             "ALTER TABLE %s %s %s",
             $this->table,
             $operation,
-            $callback(self::new($this->driver, $this->table))
+            $callback($this->driver->createQueryStatement($this->table))
         );
 
         return $this;

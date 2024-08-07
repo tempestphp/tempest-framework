@@ -23,7 +23,7 @@ final readonly class ObjectFactoryAMigration implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'ObjectFactoryA')
+        return $this->driver->createQueryStatement('ObjectFactoryA')
             ->create(
                 fn (QueryStatement $statement) => $statement
                     ->primary()

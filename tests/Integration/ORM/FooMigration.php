@@ -23,7 +23,7 @@ final readonly class FooMigration implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'Foo')
+        return $this->driver->createQueryStatement('Foo')
             ->create(
                 fn (QueryStatement $statement) => $statement
                     ->primary()

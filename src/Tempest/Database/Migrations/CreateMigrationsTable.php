@@ -23,7 +23,7 @@ final readonly class CreateMigrationsTable implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'Migration')
+        return $this->driver->createQueryStatement('Migration')
             ->create(function (QueryStatement $statement): QueryStatement {
                 return $statement
                     ->primary()

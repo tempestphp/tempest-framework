@@ -23,14 +23,14 @@ final readonly class CreateAuthorTable implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'Author')
-        ->create(
-            fn (QueryStatement $statement) => $statement
-                ->primary()
-                ->statement('name TEXT NOT NULL')
-                ->statement('type TEXT')
-        )
-        ->toQuery();
+        return $this->driver->createQueryStatement('Author')
+            ->create(
+                fn (QueryStatement $statement) => $statement
+                    ->primary()
+                    ->statement('name TEXT NOT NULL')
+                    ->statement('type TEXT')
+            )
+            ->toQuery();
     }
 
     public function down(): Query|null

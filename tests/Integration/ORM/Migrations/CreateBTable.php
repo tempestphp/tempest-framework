@@ -23,7 +23,7 @@ final readonly class CreateBTable implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'B')
+        return $this->driver->createQueryStatement('B')
             ->create(
                 fn (QueryStatement $statement) => $statement
                     ->primary()

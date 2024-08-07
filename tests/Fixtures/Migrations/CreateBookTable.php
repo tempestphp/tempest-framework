@@ -23,7 +23,7 @@ final readonly class CreateBookTable implements Migration
 
     public function up(): Query|null
     {
-        return QueryStatement::new($this->driver, table: 'Book')
+        return $this->driver->createQueryStatement('Book')
             ->create(
                 fn (QueryStatement $statement) => $statement
                     ->primary()

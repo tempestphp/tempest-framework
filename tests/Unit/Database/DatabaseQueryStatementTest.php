@@ -25,7 +25,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_create_table_database_drivers')]
     public function it_can_create_a_table(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Migration')
+        $statement = $driver->createQueryStatement('Migration')
             ->create(fn (QueryStatement $statement): QueryStatement => $statement
                 ->primary()
                 ->statement('name VARCHAR(255) NOT NULL'));
@@ -55,7 +55,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_fk_create_table_database_drivers')]
     public function it_can_create_a_foreign_key_constraint(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Book')
+        $statement = $driver->createQueryStatement('Book')
             ->create(fn (QueryStatement $statement): QueryStatement => $statement
                 ->primary()
                 ->statement('author_id INTEGER UNSIGNED NOT NULL')
@@ -89,7 +89,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        QueryStatement::new($driver, 'Book')
+        $driver->createQueryStatement('Book')
             ->statement('SELECT VERSION()')
             ->create(
                 fn (QueryStatement $statement): QueryStatement => $statement
@@ -103,7 +103,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        QueryStatement::new($driver, 'Book')
+        $driver->createQueryStatement('Book')
             ->statement('SELECT VERSION()')
             ->alterTable(
                 'DELETE',
@@ -131,7 +131,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_alter_table_syntax')]
     public function it_can_create_an_alter_table_add_statement(DatabaseDriver $driver, string $operation, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Author')
+        $statement = $driver->createQueryStatement('Author')
             ->alterTable($operation, fn (QueryStatement $statement): QueryStatement => $statement
                 ->statement('name VARCHAR(255) NOT NULL'));
 
