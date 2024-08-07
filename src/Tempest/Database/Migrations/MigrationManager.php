@@ -27,7 +27,7 @@ final readonly class MigrationManager
         try {
             $existingMigrations = Migration::all();
         } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable($this->databaseConfig->driver));
+            $this->executeUp(new CreateMigrationsTable($this->databaseConfig->driver()));
 
             $existingMigrations = Migration::all();
         }
@@ -37,9 +37,9 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->migrations as $migrationClassName) {
+        foreach ($this->databaseConfig->get() as $migrationClassName) {
             /** @var MigrationInterface $migration */
-            $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver);
+            $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver());
 
             if (in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
@@ -65,7 +65,7 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->migrations as $migrationClassName) {
+        foreach ($this->databaseConfig->get('desc') as $migrationClassName) {
             /** @var MigrationInterface $migration */
             $migration = $this->container->get($migrationClassName);
 

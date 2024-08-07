@@ -13,6 +13,6 @@ final class DatabaseDriverInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): DatabaseDriver
     {
-        return $container->get(DatabaseConfig::class)->driver;
+        return $container->get(DatabaseConfig::class)->driver();
     }
 }
