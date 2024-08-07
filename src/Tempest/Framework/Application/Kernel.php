@@ -6,8 +6,6 @@ namespace Tempest\Framework\Application;
 
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Database\DatabaseConfig;
-use Tempest\Database\DatabaseDriver;
 use Tempest\Framework\Bootstraps\ConfigBootstrap;
 use Tempest\Framework\Bootstraps\DiscoveryBootstrap;
 use Tempest\Framework\Bootstraps\DiscoveryLocationBootstrap;
@@ -36,8 +34,6 @@ final readonly class Kernel
                 appConfig: $this->appConfig,
             )->boot();
         }
-
-        $container->singleton(DatabaseDriver::class, $container->get(DatabaseConfig::class)->driver);
 
         return $container;
     }
