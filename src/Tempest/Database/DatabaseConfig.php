@@ -16,6 +16,8 @@ final class DatabaseConfig
     {
         $this->migrations[$className] = $className;
 
+        ksort($this->migrations);
+
         return $this;
     }
 }
