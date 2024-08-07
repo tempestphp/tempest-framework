@@ -45,7 +45,7 @@ final class QueryStatement implements Stringable
     }
 
     /** @throws UnhandledMatchError */
-    public function alter(string $action, callable $callback): self
+    public function alterTable(string $action, callable $callback): self
     {
         if (! empty($this->query)) {
             throw new RuntimeException('alter statement should be the first statement');
