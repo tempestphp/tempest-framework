@@ -32,11 +32,15 @@ final class UriAttribute implements Attribute
             return $element;
         }
 
-        /** @var Router $router */
-        $router = $this->container->get(Router::class);
+        $invokeMethod = $this->getMethod($element);
 
-        // resolve the route from the container
-        $controller = $element->getAttribute('uri', eval: false);
+        if ($invokeMethod === null || ! $this->hasHttpAttribute($invokeMethod)) {
+            return $element;
+        }
+
+        $uri = $this->getHttpAttribute($invokeMethod)->uri;
+        /** @var TextElement $body */
+        $body = current($element->getChildren());
 
         return new TextElement(sprintf('<a href="%s">%s</a>', $uri, $body->getText()));
     }
