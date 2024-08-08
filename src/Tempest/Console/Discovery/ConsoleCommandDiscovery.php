@@ -40,7 +40,7 @@ final readonly class ConsoleCommandDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $commands = unserialize($payload);
+        $commands = unserialize($payload, ['allowed_classes' => [ConsoleCommand::class]]);
 
         $this->consoleConfig->commands = $commands;
     }

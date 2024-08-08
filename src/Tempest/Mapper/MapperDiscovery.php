@@ -34,7 +34,7 @@ final readonly class MapperDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $mappers = unserialize($payload);
+        $mappers = unserialize($payload, ['allowed_classes' => [Mapper::class]]);
 
         $this->config->mappers = $mappers;
     }

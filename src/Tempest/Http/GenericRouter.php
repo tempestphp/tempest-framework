@@ -125,7 +125,7 @@ final class GenericRouter implements Router
 
         $routeAttribute = $controllerMethod->getAttribute(Route::class);
 
-        if (! $routeAttribute) {
+        if ($routeAttribute === null) {
             throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
         }
 

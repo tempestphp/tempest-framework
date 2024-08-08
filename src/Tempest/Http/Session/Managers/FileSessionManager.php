@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session\Managers;
 
+use DateTimeImmutable;
+use RuntimeException;
 use Tempest\Clock\Clock;
 use function Tempest\event;
+use Tempest\Http\Session\FlashValue;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use function Tempest\path;
+use Tempest\Validation\Rules\AlphaNumeric;
+use Tempest\Validation\Rules\Between;
+use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
 
 final readonly class FileSessionManager implements SessionManager
@@ -63,11 +69,7 @@ final readonly class FileSessionManager implements SessionManager
 
         $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
 
-        if ($validUntil - $this->clock->time() <= 0) {
-            return false;
-        }
-
-        return true;
+        return $validUntil - $this->clock->time() > 0;
     }
 
     private function getPath(SessionId $id): string
@@ -82,7 +84,15 @@ final readonly class FileSessionManager implements SessionManager
         try {
             $content = @file_get_contents($path);
 
-            return unserialize($content);
+            return unserialize($content, ['allowed_classes' => [
+                SessionId::class,
+                Session::class,
+                DateTimeImmutable::class,
+                FlashValue::class,
+                NotEmpty::class,
+                Between::class,
+                AlphaNumeric::class,
+            ]]);
         } catch (Throwable) {
             return null;
         }
@@ -114,8 +124,8 @@ final readonly class FileSessionManager implements SessionManager
         $path = $this->getPath($id);
         $dir = dirname($path);
 
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
+        if (! is_dir($dir) && ! mkdir($dir, recursive: true) && ! is_dir($dir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
 
         if ($data !== null) {

@@ -80,7 +80,7 @@ final readonly class TypeReflector implements Reflector
 
     public function isClass(): bool
     {
-        return class_exists($this->getName());
+        return class_exists($this->definition);
     }
 
     public function isIterable(): bool

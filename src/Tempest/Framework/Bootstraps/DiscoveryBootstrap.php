@@ -40,7 +40,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
             }
 
             foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
-                $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS);
+                $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
                 $files = new RecursiveIteratorIterator($directories);
 
                 /** @var SplFileInfo $file */

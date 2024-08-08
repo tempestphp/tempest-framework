@@ -8,12 +8,15 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
 
+/**
+ * @property GenericContainer $container
+ */
 final readonly class InitializerDiscovery implements Discovery
 {
     use HandlesDiscoveryCache;
 
     public function __construct(
-        private Container&GenericContainer $container,
+        private Container $container,
     ) {
     }
 
@@ -38,7 +41,10 @@ final readonly class InitializerDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $data = unserialize($payload);
+        $data = unserialize($payload, ['allowed_classes' => [
+            Initializer::class,
+            DynamicInitializer::class,
+        ]]);
 
         $this->container->setInitializers($data['initializers'] ?? []);
         $this->container->setDynamicInitializers($data['dynamic_initializers'] ?? []);

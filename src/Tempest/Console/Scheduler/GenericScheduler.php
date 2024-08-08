@@ -76,7 +76,7 @@ final readonly class GenericScheduler implements Scheduler
             return [];
         }
 
-        return unserialize(file_get_contents(self::CACHE_PATH));
+        return unserialize(file_get_contents(self::CACHE_PATH), ['allowed_classes' => false]);
     }
 
     /**

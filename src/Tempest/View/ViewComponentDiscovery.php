@@ -74,7 +74,9 @@ final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $handlers = unserialize($payload);
+        $handlers = unserialize($payload, ['allowed_classes' => [
+            AnonymousViewComponent::class,
+        ]]);
 
         $this->viewConfig->viewComponents = $handlers;
     }

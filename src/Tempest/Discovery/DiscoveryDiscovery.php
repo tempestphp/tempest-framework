@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
+use Tempest\CommandBus\CommandBusDiscovery;
+use Tempest\Console\Discovery\ConsoleCommandDiscovery;
+use Tempest\Console\Discovery\ScheduleDiscovery;
 use Tempest\Container\Container;
+use Tempest\Container\InitializerDiscovery;
+use Tempest\Database\MigrationDiscovery;
+use Tempest\EventBus\EventBusDiscovery;
 use Tempest\Framework\Application\AppConfig;
+use Tempest\Http\RouteDiscovery;
+use Tempest\Mapper\MapperDiscovery;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\View\ViewComponentDiscovery;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
@@ -42,7 +51,20 @@ final readonly class DiscoveryDiscovery implements Discovery
 
     public function restoreCache(Container $container): void
     {
-        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH));
+        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH), [
+            'allowed_classes' => [
+                CommandBusDiscovery::class,
+                ConsoleCommandDiscovery::class,
+                self::class,
+                EventBusDiscovery::class,
+                InitializerDiscovery::class,
+                MapperDiscovery::class,
+                MigrationDiscovery::class,
+                RouteDiscovery::class,
+                ScheduleDiscovery::class,
+                ViewComponentDiscovery::class,
+            ],
+        ]);
 
         $this->appConfig->discoveryClasses = $discoveryClasses;
     }
