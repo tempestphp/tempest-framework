@@ -15,7 +15,7 @@ final class QueryException extends Exception
         $message = $previous->getMessage();
 
         $message .= PHP_EOL . PHP_EOL . $query->getSql() . PHP_EOL;
-        
+
         $message .= PHP_EOL . 'bindings: ' . json_encode($bindings, JSON_PRETTY_PRINT);
 
         parent::__construct(
