@@ -244,7 +244,7 @@ final class GenericRouter implements Router
         }
 
         // We map the original request we got into this method to the right request class
-        /** @var \Tempest\Http\Request $request */
+        /** @var Request $request */
         $request = map($psrRequest)->to($requestClass);
 
         // Next, we register this newly created request object in the container

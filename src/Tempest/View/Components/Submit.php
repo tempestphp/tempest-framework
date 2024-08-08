@@ -25,5 +25,4 @@ final readonly class Submit implements ViewComponent
 </div>
 HTML;
     }
-
 }

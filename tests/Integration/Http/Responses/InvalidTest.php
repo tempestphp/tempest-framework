@@ -11,7 +11,6 @@ use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use function Tempest\map;
-use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\NotEmpty;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -27,11 +26,11 @@ class InvalidTest extends FrameworkIntegrationTestCase
 
         $response = new Invalid(
             $request,
-            new ValidationException($this, [
+            [
                 'foo' => [
                     new NotEmpty(),
                 ],
-            ])
+            ]
         );
 
         $this->assertSame(Status::FOUND, $response->getStatus());
