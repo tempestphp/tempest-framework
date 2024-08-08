@@ -7,13 +7,23 @@ namespace Tempest\Support\VarExport;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\VarDumper;
+use Tempest\Container\GenericContainer;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    public function __construct(private LogConfig $logConfig)
+    private function __construct(private ?LogConfig $logConfig)
     {
+    }
+
+    public static function resolve(): self
+    {
+        $container = GenericContainer::instance();
+
+        $logConfig = $container?->get(LogConfig::class);
+
+        return new self($logConfig);
     }
 
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
@@ -32,6 +42,10 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
+        if (! $this->logConfig) {
+            return;
+        }
+
         if (! $this->logConfig->debugLogPath) {
             return;
         }

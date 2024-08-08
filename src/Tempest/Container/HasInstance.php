@@ -8,7 +8,7 @@ trait HasInstance
 {
     private static self $instance;
 
-    public static function instance(): self
+    public static function instance(): ?self
     {
         return self::$instance;
     }

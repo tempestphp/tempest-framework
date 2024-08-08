@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use ArrayIterator;
+use Closure;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionIntersectionType;
@@ -161,7 +162,7 @@ final class GenericContainer implements Container
 
         // Check if the class has been registered as a singleton.
         if ($instance = $this->singletons[$dependencyName] ?? null) {
-            if (is_callable($instance)) {
+            if ($instance instanceof Closure) {
                 $instance = $instance($this);
                 $this->singletons[$className] = $instance;
             }
@@ -244,7 +245,7 @@ final class GenericContainer implements Container
             throw new CannotInstantiateDependencyException($classReflector, $this->chain);
         }
 
-        return $constructor === null
+        $instance = $constructor === null
             // If there isn't a constructor, don't waste time
             // trying to build it.
             ? $classReflector->newInstanceWithoutConstructor()
@@ -254,6 +255,16 @@ final class GenericContainer implements Container
             : $classReflector->newInstanceArgs(
                 $this->autowireDependencies($constructor, $params),
             );
+
+        if (
+            ! $classReflector->getType()->matches(Initializer::class)
+            && ! $classReflector->getType()->matches(DynamicInitializer::class)
+            && $classReflector->hasAttribute(Singleton::class)
+        ) {
+            $this->singleton($className, $instance);
+        }
+
+        return $instance;
     }
 
     /**

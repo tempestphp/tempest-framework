@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use BackedEnum;
+use DateTimeInterface;
 use PDO;
 use PDOException;
 use Tempest\Database\Exceptions\QueryException;
@@ -21,12 +22,14 @@ final readonly class GenericDatabase implements Database
 
     public function execute(Query $query): void
     {
+        $bindings = $this->resolveBindings($query);
+
         try {
             $this->pdo
                 ->prepare($query->getSql())
-                ->execute($this->resolveBindings($query));
+                ->execute($bindings);
         } catch (PDOException $exception) {
-            throw new QueryException($query, $exception);
+            throw new QueryException($query, $bindings, $exception);
         }
     }
 
@@ -81,6 +84,10 @@ final readonly class GenericDatabase implements Database
 
             if ($value instanceof BackedEnum) {
                 $value = $value->value;
+            }
+
+            if ($value instanceof DateTimeInterface) {
+                $value = $value->format('Y-m-d H:i:s');
             }
 
             $bindings[$key] = $value;

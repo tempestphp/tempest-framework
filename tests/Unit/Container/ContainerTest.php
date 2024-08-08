@@ -25,6 +25,7 @@ use Tests\Tempest\Unit\Container\Fixtures\IntersectionInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\OptionalTypesClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonClass;
 use Tests\Tempest\Unit\Container\Fixtures\SingletonInitializer;
+use Tests\Tempest\Unit\Container\Fixtures\ClassWithSingletonAttribute;
 use Tests\Tempest\Unit\Container\Fixtures\TaggedDependency;
 use Tests\Tempest\Unit\Container\Fixtures\TaggedDependencyCliInitializer;
 use Tests\Tempest\Unit\Container\Fixtures\TaggedDependencyWebInitializer;
@@ -277,5 +278,18 @@ TXT,
                 $exception->getMessage()
             );
         }
+    }
+
+    public function test_singleton_on_class(): void
+    {
+        $container = new GenericContainer();
+
+        $a = $container->get(ClassWithSingletonAttribute::class);
+
+        $a->flag = true;
+
+        $b = $container->get(ClassWithSingletonAttribute::class);
+
+        $this->assertTrue($b->flag);
     }
 }

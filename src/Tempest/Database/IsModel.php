@@ -95,7 +95,7 @@ trait IsModel
         return $model;
     }
 
-    public static function updateOrCreate(array $find, array $update): self
+    public static function updateOrNew(array $find, array $update): self
     {
         $existing = self::query()->bind(...$find);
 
@@ -109,7 +109,12 @@ trait IsModel
             $model->{$key} = $value;
         }
 
-        return $model->save();
+        return $model;
+    }
+
+    public static function updateOrCreate(array $find, array $update): self
+    {
+        return self::updateOrNew($find, $update)->save();
     }
 
     public function save(): self
