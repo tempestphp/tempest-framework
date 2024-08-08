@@ -66,19 +66,19 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         yield 'invokable' => [
             '<a href="/test">Test pagina</a>',
-            '\Tests\Tempest\Fixtures\Controllers\TestController::class',
+            'Tests\Tempest\Fixtures\Controllers\TestController::class',
             'Test pagina',
         ];
 
         yield 'with method' => [
             '<a href="/not-found">Page not found</a>',
-            '[\Tests\Tempest\Fixtures\Controllers\TestController::class, \'notFound\']',
+            '[Tests\Tempest\Fixtures\Controllers\TestController::class, \'notFound\']',
             'Page not found',
         ];
 
         yield 'with method and parameters' => [
             '<a href="/test/123/felipe">Hello Felipe</a>',
-            '[\Tests\Tempest\Fixtures\Controllers\TestController::class, \'withParams\', \'123\', \'filipe\']',
+            '[Tests\Tempest\Fixtures\Controllers\TestController::class, \'withParams\', \'123\', \'filipe\']',
             'Hello Felipe',
         ];
     }

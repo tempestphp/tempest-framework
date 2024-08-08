@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\View\Attributes;
 
+use ReflectionAttribute;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Http\Router;
+use Tempest\Http\Get;
+use Tempest\Http\Post;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
-use Tempest\View\GenericView;
 
 final class UriAttribute implements Attribute
 {
@@ -59,5 +63,22 @@ final class UriAttribute implements Attribute
         });
 
         return count($attributes) === 1;
+    }
+
+    /** @throws ReflectionException */
+    private function getMethod(GenericElement $element): ?ReflectionMethod
+    {
+        $action = $this->parseAction($element);
+        $resolved = $this->container->get($action['controller']);
+
+        $controller = (new ReflectionClass($resolved));
+
+        return array_filter($controller->getMethods(), static function (ReflectionMethod $method) use ($action) {
+            if (is_null($action['method'])) {
+                return false;
+            }
+
+            return $method->getName() === str_replace("'", '', $action['method']);
+        })[0] ?? null;
     }
 }
