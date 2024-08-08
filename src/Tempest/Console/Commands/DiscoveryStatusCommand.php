@@ -18,7 +18,8 @@ final readonly class DiscoveryStatusCommand
 
     #[ConsoleCommand(
         name: 'discovery:status',
-        description: 'List all discovery locations and discovery classes'
+        description: 'List all discovery locations and discovery classes',
+        aliases: ['ds'],
     )]
     public function __invoke(): void
     {

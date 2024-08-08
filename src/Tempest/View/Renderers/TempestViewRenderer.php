@@ -136,6 +136,9 @@ final class TempestViewRenderer implements ViewRenderer
             ob_start();
 
             try {
+                // TODO: find a better way of dealing with views that declare strict types
+                $path = str_replace('declare(strict_types=1);', '', $path);
+
                 /** @phpstan-ignore-next-line */
                 eval('?>' . $path . '<?php');
             } catch (ParseError) {

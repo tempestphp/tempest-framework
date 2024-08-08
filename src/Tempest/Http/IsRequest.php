@@ -85,6 +85,11 @@ trait IsRequest
         return $cookies->all();
     }
 
+    public function validate(): void
+    {
+        // No additional validation done
+    }
+
     private function resolvePath(): string
     {
         $decodedUri = rawurldecode($this->uri);

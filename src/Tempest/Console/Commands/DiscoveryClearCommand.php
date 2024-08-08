@@ -22,6 +22,7 @@ final readonly class DiscoveryClearCommand
     #[ConsoleCommand(
         name: 'discovery:clear',
         description: 'Clear all cached discovery files',
+        aliases: ['dc'],
     )]
     public function __invoke(): void
     {

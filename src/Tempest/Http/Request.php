@@ -28,4 +28,6 @@ interface Request
 
     /** @return Cookie[] */
     public function getCookies(): array;
+
+    public function validate(): void;
 }

@@ -54,7 +54,8 @@ final class GenericRouter implements Router
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
         } catch (ValidationException $exception) {
-            return new Invalid($request, $exception);
+            // TODO: refactor to middleware
+            return new Invalid($request, $exception->failingRules);
         }
 
         if ($response === null) {
@@ -243,13 +244,17 @@ final class GenericRouter implements Router
         }
 
         // We map the original request we got into this method to the right request class
+        /** @var \Tempest\Http\Request $request */
         $request = map($psrRequest)->to($requestClass);
 
-        // Finally, we register this newly created request object in the container
+        // Next, we register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
         // Making it so that we don't need to set any $_SERVER variables and stuff like that
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton($request::class, fn () => $request);
+
+        // Finally, we validate the request
+        $request->validate();
 
         return $request;
     }
