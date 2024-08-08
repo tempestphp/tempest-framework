@@ -38,11 +38,21 @@ final class UriAttribute implements Attribute
         // resolve the route from the container
         $controller = $element->getAttribute('uri', eval: false);
 
-        /** @var TextElement $child */
-        $child = $element->getChildren()[0];
-        $body = $child->getText();
+        return new TextElement(sprintf('<a href="%s">%s</a>', $uri, $body->getText()));
+    }
 
-        return new TextElement($body);
+    private function parseAction(GenericElement $element): array
+    {
+        $attributes = current($element->getAttributes());
+        if (! str_contains($attributes, '[')) {
+            return ['controller' => str_replace('::class', '', $attributes)];
+        }
+
+        $data = explode(', ', str_replace(['[', ']'], '', $attributes));
+        $controller = str_replace('::class', '', array_shift($data));
+        $method = array_shift($data);
+
+        return compact('controller', 'method', 'data');
     }
 
     private function getHttpAttribute(ReflectionMethod $method): mixed
