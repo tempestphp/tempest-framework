@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -36,7 +39,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_if_attribute()
+    public function test_if_attribute(): void
     {
         $this->assertSame(
             '',
@@ -47,6 +50,37 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
             '<div :if="$this->show">Hello</div>',
             $this->render(view('<div :if="$this->show">Hello</div>')->data(show: true)),
         );
+    }
+
+    #[Test]
+    #[DataProvider('provide_a_attribute_values')]
+    public function it_can_render_an_a_element_with_href_attribute(string $expected, string $action, string $body): void
+    {
+        $this->assertSame(
+            $expected,
+            $this->render(view(sprintf('<a :uri="%s">%s</a>', $action, $body))),
+        );
+    }
+
+    public static function provide_a_attribute_values(): Generator
+    {
+        yield 'invokable' => [
+            '<a href="/test">Test pagina</a>',
+            '\Tests\Tempest\Fixtures\Controllers\TestController::class',
+            'Test pagina',
+        ];
+
+        yield 'with method' => [
+            '<a href="/not-found">Page not found</a>',
+            '[\Tests\Tempest\Fixtures\Controllers\TestController::class, \'notFound\']',
+            'Page not found',
+        ];
+
+        yield 'with method and parameters' => [
+            '<a href="/test/123/felipe">Hello Felipe</a>',
+            '[\Tests\Tempest\Fixtures\Controllers\TestController::class, \'withParams\', \'123\', \'filipe\']',
+            'Hello Felipe',
+        ];
     }
 
     public function test_else_attribute(): void
