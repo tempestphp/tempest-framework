@@ -40,7 +40,8 @@
         "spaze/phpstan-disallowed-calls": "^3.1",
         "symplify/monorepo-builder": "^11.2",
         "jenssegers/blade": "^2.0",
-        "illuminate/view": "~11.7.0"
+        "illuminate/view": "~11.7.0",
+        "rector/rector": "^1.2"
     },
     "autoload": {
         "files": [
