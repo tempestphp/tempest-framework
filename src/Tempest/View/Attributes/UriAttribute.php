@@ -40,4 +40,24 @@ final class UriAttribute implements Attribute
 
         return new TextElement($body);
     }
+
+    private function getHttpAttribute(ReflectionMethod $method): mixed
+    {
+        if ($get = current($method->getAttributes(Get::class))) {
+            return new Get($get->getArguments()['uri']);
+        }
+
+        return current($method->getAttributes(Post::class));
+    }
+
+    private function hasHttpAttribute(ReflectionMethod $invokeMethod): bool
+    {
+        $attributes = array_filter($invokeMethod->getAttributes(), static fn (ReflectionAttribute $attribute): bool => match ($attribute->getName()) {
+            Get::class,
+            Post::class => true,
+            default => false,
+        });
+
+        return count($attributes) === 1;
+    }
 }
