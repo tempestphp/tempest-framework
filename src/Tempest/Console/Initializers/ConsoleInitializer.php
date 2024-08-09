@@ -21,9 +21,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Highlight\Highlighter;
 
-#[Singleton]
 final class ConsoleInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): Console
     {
         $argumentBag = $container->get(ConsoleArgumentBag::class);

@@ -8,9 +8,9 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-#[Singleton]
 final readonly class SessionManagerInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): SessionManager
     {
         $config = $container->get(SessionConfig::class);

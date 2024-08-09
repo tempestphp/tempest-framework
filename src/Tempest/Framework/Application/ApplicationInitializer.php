@@ -10,9 +10,9 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-#[Singleton]
 final readonly class ApplicationInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): Application
     {
         if (isset($_SERVER['argv'])) {

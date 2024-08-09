@@ -6,15 +6,16 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
+use Tempest\Support\Reflection\ClassReflector;
 
 class ContainerObjectEInitializer implements DynamicInitializer
 {
-    public function canInitialize(string $className): bool
+    public function canInitialize(ClassReflector $class): bool
     {
-        return $className === ContainerObjectE::class;
+        return $class->getName() === ContainerObjectE::class;
     }
 
-    public function initialize(string $className, Container $container): ContainerObjectE
+    public function initialize(ClassReflector $class, Container $container): object
     {
         return new ContainerObjectE();
     }

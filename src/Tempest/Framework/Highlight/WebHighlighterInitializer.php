@@ -10,9 +10,9 @@ use Tempest\Container\Singleton;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Themes\CssTheme;
 
-#[Singleton(tag: 'web')]
 final readonly class WebHighlighterInitializer implements Initializer
 {
+    #[Singleton(tag: 'web')]
     public function initialize(Container $container): Highlighter
     {
         return new Highlighter(new CssTheme());

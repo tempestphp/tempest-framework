@@ -10,9 +10,9 @@ use Tempest\Container\Singleton;
 use Tempest\Http\Cookie\SetCookieMiddleware;
 use Tempest\Http\Session\SessionMiddleware;
 
-#[Singleton]
 final readonly class RouterInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): Router
     {
         $router = $container->get(GenericRouter::class);

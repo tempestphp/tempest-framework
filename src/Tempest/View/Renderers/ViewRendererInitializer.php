@@ -10,9 +10,9 @@ use Tempest\Container\Singleton;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
-#[Singleton]
 final readonly class ViewRendererInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): ViewRenderer
     {
         $viewConfig = $container->get(ViewConfig::class);

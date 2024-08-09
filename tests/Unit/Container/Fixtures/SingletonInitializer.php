@@ -8,9 +8,9 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-#[Singleton]
 class SingletonInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): ContainerObjectE
     {
         return new ContainerObjectE();

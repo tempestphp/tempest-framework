@@ -9,12 +9,19 @@ use ReflectionClass as PHPReflectionClass;
 use ReflectionProperty;
 use ReflectionProperty as PHPReflectionProperty;
 
+/**
+ * @template TClassName
+ */
 final readonly class ClassReflector implements Reflector
 {
     use HasAttributes;
 
     private PHPReflectionClass $reflectionClass;
 
+    /**
+     * @param class-string<TClassName>|object<TClassName>|PHPReflectionClass<TClassName> $reflectionClass
+     * @phpstan-ignore-next-line
+     */
     public function __construct(string|object $reflectionClass)
     {
         if (is_string($reflectionClass)) {
@@ -44,6 +51,9 @@ final readonly class ClassReflector implements Reflector
         return new PropertyReflector(new ReflectionProperty($this->reflectionClass->getName(), $name));
     }
 
+    /**
+     * @return class-string<TClassName>
+     */
     public function getName(): string
     {
         return $this->reflectionClass->getName();
@@ -95,5 +105,10 @@ final readonly class ClassReflector implements Reflector
         $className = $this->getName();
 
         return $className::$method(...$args);
+    }
+
+    public function is(string $className): bool
+    {
+        return $this->getType()->matches($className);
     }
 }

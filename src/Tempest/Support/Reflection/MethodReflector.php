@@ -34,6 +34,11 @@ final readonly class MethodReflector implements Reflector
         return $this->reflectionMethod->invokeArgs($object, $args);
     }
 
+    public function getReturnType(): TypeReflector
+    {
+        return new TypeReflector($this->reflectionMethod->getReturnType());
+    }
+
     public function getName(): string
     {
         return $this->getName();

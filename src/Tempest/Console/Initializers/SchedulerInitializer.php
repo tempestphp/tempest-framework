@@ -15,9 +15,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Framework\Application\Application;
 
-#[Singleton]
 final readonly class SchedulerInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): Scheduler
     {
         $application = $container->get(Application::class);

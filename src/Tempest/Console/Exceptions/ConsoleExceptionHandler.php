@@ -45,7 +45,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
             $this->console->writeln();
         } else {
             $firstLine = $throwable->getTrace()[0];
-            
+
             $this->console
                 ->writeln("<h2>#0</h2> " . $this->formatTrace($firstLine))
                 ->writeln()

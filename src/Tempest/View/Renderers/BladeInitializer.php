@@ -8,20 +8,21 @@ use Jenssegers\Blade\Blade;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
+use Tempest\Support\Reflection\ClassReflector;
 
-#[Singleton]
 final readonly class BladeInitializer implements DynamicInitializer
 {
-    public function canInitialize(string $className): bool
+    public function canInitialize(ClassReflector $class): bool
     {
         if (! class_exists('\Jenssegers\Blade\Blade')) {
             return false;
         }
 
-        return $className === Blade::class;
+        return $class->getName() === Blade::class;
     }
 
-    public function initialize(string $className, Container $container): object
+    #[Singleton]
+    public function initialize(ClassReflector $class, Container $container): object
     {
         $bladeConfig = $container->get(BladeConfig::class);
 

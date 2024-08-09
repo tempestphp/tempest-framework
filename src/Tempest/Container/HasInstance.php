@@ -10,7 +10,7 @@ trait HasInstance
 
     public static function instance(): ?self
     {
-        return self::$instance;
+        return self::$instance ?? null;
     }
 
     public static function setInstance(self $instance): void

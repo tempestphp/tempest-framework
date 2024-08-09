@@ -13,9 +13,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Framework\Application\Application;
 
-#[Singleton]
 final readonly class InvocationExecutorInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): ShellExecutor
     {
         $app = $container->get(Application::class);

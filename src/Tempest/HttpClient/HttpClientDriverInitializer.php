@@ -12,9 +12,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\HttpClient\Driver\Psr18Driver;
 
-#[Singleton]
 final class HttpClientDriverInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): HttpClientDriver|ClientInterface
     {
         return new Psr18Driver(

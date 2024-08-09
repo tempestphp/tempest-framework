@@ -11,9 +11,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Framework\Application\Application;
 
-#[Singleton]
 final readonly class ConsoleApplicationInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): ConsoleApplication
     {
         $argumentBag = new ConsoleArgumentBag($_SERVER['argv']);

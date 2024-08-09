@@ -8,10 +8,7 @@ use ArrayIterator;
 use Closure;
 use ReflectionClass;
 use ReflectionFunction;
-use ReflectionIntersectionType;
-use ReflectionNamedType;
 use ReflectionParameter;
-use ReflectionUnionType;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
@@ -119,15 +116,15 @@ final class GenericContainer implements Container
         return $methodReflector->invokeArgs($object, $parameters);
     }
 
-    public function addInitializer(ReflectionClass|string $initializerClass): Container
+    public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): Container
     {
-        $initializerClass = $initializerClass instanceof ReflectionClass
-            ? $initializerClass
-            : new ReflectionClass($initializerClass);
+        if (! $initializerClass instanceof ClassReflector) {
+            $initializerClass = new ClassReflector($initializerClass);
+        }
 
         // First, we check whether this is a DynamicInitializer,
         // which don't have a one-to-one mapping
-        if ($initializerClass->implementsInterface(DynamicInitializer::class)) {
+        if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
             $this->dynamicInitializers[] = $initializerClass->getName();
 
             return $this;
@@ -136,21 +133,14 @@ final class GenericContainer implements Container
         $initializeMethod = $initializerClass->getMethod('initialize');
 
         // We resolve the optional Tag attribute from this initializer class
-        $singleton = Attributes::find(Singleton::class)->in($initializerClass)->first()
-            ?? Attributes::find(Singleton::class)->in($initializeMethod)->first();
+        $singleton = $initializeMethod->getAttribute(Singleton::class);
 
         // For normal Initializers, we'll use the return type
         // to determine which dependency they resolve
-        $returnTypes = $initializeMethod->getReturnType();
+        $returnType = $initializeMethod->getReturnType();
 
-        $returnTypes = match ($returnTypes::class) {
-            ReflectionUnionType::class, ReflectionIntersectionType::class => $returnTypes->getTypes(),
-            default => [$returnTypes],
-        };
-
-        /** @var ReflectionNamedType[] $returnTypes */
-        foreach ($returnTypes as $returnType) {
-            $this->initializers[$this->resolveTaggedName($returnType->getName(), $singleton?->tag)] = $initializerClass->getName();
+        foreach ($returnType->split() as $type) {
+            $this->initializers[$this->resolveTaggedName($type->getName(), $singleton?->tag)] = $initializerClass->getName();
         }
 
         return $this;
@@ -158,6 +148,8 @@ final class GenericContainer implements Container
 
     private function resolve(string $className, ?string $tag = null, mixed ...$params): object
     {
+        $class = new ClassReflector($className);
+
         $dependencyName = $this->resolveTaggedName($className, $tag);
 
         // Check if the class has been registered as a singleton.
@@ -180,12 +172,12 @@ final class GenericContainer implements Container
         }
 
         // Next we check if any of our default initializers can initialize this class.
-        if ($initializer = $this->initializerFor($className, $tag)) {
+        if ($initializer = $this->initializerFor($class, $tag)) {
             $this->resolveChain()->add(new ReflectionClass($initializer));
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($className, $this->clone()),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
             };
 
             // Check whether the initializer's result should be registered as a singleton
@@ -208,24 +200,25 @@ final class GenericContainer implements Container
         return $this->autowire($className, ...$params);
     }
 
-    private function initializerFor(string $className, ?string $tag = null): null|Initializer|DynamicInitializer
+    private function initializerFor(ClassReflector $class, ?string $tag = null): null|Initializer|DynamicInitializer
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
-        if (is_a($className, Initializer::class, true) || is_a($className, DynamicInitializer::class, true)) {
+        if ($class->getType()->matches(Initializer::class) || $class->getType()->matches(DynamicInitializer::class)) {
             return null;
         }
 
-        if ($initializerClass = $this->initializers[$this->resolveTaggedName($className, $tag)] ?? null) {
+        if ($initializerClass = $this->initializers[$this->resolveTaggedName($class, $tag)] ?? null) {
             return $this->resolve($initializerClass);
         }
 
         // Loop through the registered initializers to see if
         // we have something to handle this class.
         foreach ($this->dynamicInitializers as $initializerClass) {
+            /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($className)) {
+            if (! $initializer->canInitialize($class)) {
                 continue;
             }
 
@@ -397,8 +390,10 @@ final class GenericContainer implements Container
         $this->chain = $this->chain?->clone();
     }
 
-    private function resolveTaggedName(string $className, ?string $tag): string
+    private function resolveTaggedName(string|ClassReflector $class, ?string $tag): string
     {
+        $className = is_string($class) ? $class : $class->getName();
+
         return $tag
             ? "{$className}#{$tag}"
             : $className;

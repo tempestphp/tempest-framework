@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
+use Tempest\Support\Reflection\ClassReflector;
+
 interface DynamicInitializer
 {
-    public function canInitialize(string $className): bool;
+    public function canInitialize(ClassReflector $class): bool;
 
-    public function initialize(string $className, Container $container): object;
+    public function initialize(ClassReflector $class, Container $container): object;
 }

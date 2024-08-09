@@ -9,9 +9,9 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-#[Singleton]
 final readonly class CookieManagerInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): CookieManager
     {
         $cookieManager = new CookieManager(

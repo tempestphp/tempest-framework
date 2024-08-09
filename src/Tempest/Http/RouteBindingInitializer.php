@@ -4,26 +4,25 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Database\Id;
 use Tempest\Database\Model;
+use Tempest\Support\Reflection\ClassReflector;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
-    public function canInitialize(string $className): bool
+    public function canInitialize(ClassReflector $class): bool
     {
-        return is_a($className, Model::class, true);
+        return $class->getType()->matches(Model::class);
     }
 
-    public function initialize(string $className, Container $container): object
+    public function initialize(ClassReflector $class, Container $container): object
     {
         $matchedRoute = $container->get(MatchedRoute::class);
 
-        $paramName = lcfirst((new ReflectionClass($className))->getShortName());
+        $paramName = lcfirst($class->getShortName());
 
-        /** @var class-string<Model>|Model $className */
-        return $className::find(new Id($matchedRoute->params[$paramName]));
+        return $class->callStatic('find', new Id($matchedRoute->params[$paramName]));
     }
 }

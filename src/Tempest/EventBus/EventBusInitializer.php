@@ -8,9 +8,9 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-#[Singleton]
 final readonly class EventBusInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): EventBus
     {
         return new GenericEventBus(

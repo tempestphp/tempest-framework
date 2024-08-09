@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use ReflectionClass;
+use Tempest\Support\Reflection\ClassReflector;
 
 interface Container
 {
@@ -26,8 +27,8 @@ interface Container
     /**
      * @template T of \Tempest\Container\Initializer
      * @template U of \Tempest\Container\DynamicInitializer
-     * @param ReflectionClass|class-string<T>|class-string<U> $initializerClass
+     * @param ClassReflector|ReflectionClass<T>|class-string<T>|class-string<U> $initializerClass
      * @return self
      */
-    public function addInitializer(ReflectionClass|string $initializerClass): self;
+    public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): self;
 }

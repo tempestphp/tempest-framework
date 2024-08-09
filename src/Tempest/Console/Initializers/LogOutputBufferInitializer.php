@@ -12,9 +12,9 @@ use Tempest\Container\Singleton;
 use Tempest\Framework\Application\AppConfig;
 use Tempest\Support\PathHelper;
 
-#[Singleton]
 final readonly class LogOutputBufferInitializer implements Initializer
 {
+    #[Singleton]
     public function initialize(Container $container): LogOutputBuffer
     {
         $consoleConfig = $container->get(ConsoleConfig::class);
