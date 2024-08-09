@@ -16,6 +16,7 @@ use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Application\AppConfig;
 use Tempest\Framework\Application\Application;
+use Tempest\Framework\Application\Environment;
 use Tempest\Framework\Application\HttpApplication;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\View\GenericView;
@@ -28,6 +29,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
+            environment: Environment::TESTING,
             enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [

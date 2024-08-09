@@ -32,6 +32,10 @@ final readonly class DiscoveryClearCommand
 
             $discovery->destroyCache();
 
+            if ($this->appConfig->environment->isTesting()) {
+                return;
+            }
+
             $this->console->writeln(implode('', [
                 "<em>{$discoveryClass}</em>",
                 ' cleared successful',
