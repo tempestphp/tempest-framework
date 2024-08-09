@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Drivers;
 
 use SensitiveParameter;
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseDriver;
 use Tempest\Database\QueryStatement;
 
@@ -37,6 +38,11 @@ final readonly class MySqlDriver implements DatabaseDriver
     public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+    public function dialect(): DatabaseDialect
+    {
+        return DatabaseDialect::MYSQL;
     }
 
     public function createQueryStatement(string $table): QueryStatement
