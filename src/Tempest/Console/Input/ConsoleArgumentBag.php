@@ -7,10 +7,10 @@ namespace Tempest\Console\Input;
 final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
-    protected array $arguments = [];
+    private array $arguments = [];
 
     /** @var string[] */
-    protected array $path = [];
+    private array $path = [];
 
     /**
      * @param array<string|int, mixed> $arguments

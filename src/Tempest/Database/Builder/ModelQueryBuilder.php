@@ -109,7 +109,7 @@ final class ModelQueryBuilder
         }
 
         $fields = implode(', ', array_map(
-            fn (FieldName $fieldName) => $fieldName->withAlias(),
+            fn (FieldName $fieldName): FieldName => $fieldName->withAlias(),
             $fields,
         ));
 

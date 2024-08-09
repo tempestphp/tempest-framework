@@ -41,7 +41,7 @@ use Tests\Tempest\Unit\Container\Fixtures\UnionTypesClass;
  */
 class ContainerTest extends TestCase
 {
-    public function test_get_with_autowire()
+    public function test_get_with_autowire(): void
     {
         $container = new GenericContainer();
 
@@ -51,13 +51,13 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $b->a);
     }
 
-    public function test_get_with_definition()
+    public function test_get_with_definition(): void
     {
         $container = new GenericContainer();
 
         $container->register(
             ContainerObjectC::class,
-            fn () => new ContainerObjectC(prop: 'test'),
+            fn (): ContainerObjectC => new ContainerObjectC(prop: 'test'),
         );
 
         $c = $container->get(ContainerObjectC::class);
@@ -65,7 +65,7 @@ class ContainerTest extends TestCase
         $this->assertEquals('test', $c->prop);
     }
 
-    public function test_get_with_initializer()
+    public function test_get_with_initializer(): void
     {
         $container = (new GenericContainer())->setInitializers([
             ContainerObjectD::class => ContainerObjectDInitializer::class,
@@ -76,11 +76,11 @@ class ContainerTest extends TestCase
         $this->assertEquals('test', $d->prop);
     }
 
-    public function test_singleton()
+    public function test_singleton(): void
     {
         $container = new GenericContainer();
 
-        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+        $container->singleton(SingletonClass::class, fn (): SingletonClass => new SingletonClass());
 
         $instance = $container->get(SingletonClass::class);
 
@@ -91,7 +91,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(1, $instance::$count);
     }
 
-    public function test_initialize_with_can_initializer()
+    public function test_initialize_with_can_initializer(): void
     {
         $container = new GenericContainer();
 
@@ -102,10 +102,11 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectE::class, $object);
     }
 
-    public function test_call_tries_to_transform_unmatched_values()
+    public function test_call_tries_to_transform_unmatched_values(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(ContainerObjectEInitializer::class);
+
         $classToCall = new CallContainerObjectE();
 
         $return = $container->call($classToCall, 'method', input: '1');
@@ -117,7 +118,7 @@ class ContainerTest extends TestCase
         $this->assertSame('other', $return->id);
     }
 
-    public function test_arrays_are_automatically_created()
+    public function test_arrays_are_automatically_created(): void
     {
         $container = new GenericContainer();
 
@@ -130,7 +131,7 @@ class ContainerTest extends TestCase
         $this->assertEmpty($class->anArray);
     }
 
-    public function test_builtin_defaults_are_used()
+    public function test_builtin_defaults_are_used(): void
     {
         $container = new GenericContainer();
 
@@ -142,7 +143,7 @@ class ContainerTest extends TestCase
         $this->assertSame('This is a default value', $class->aString);
     }
 
-    public function test_optional_types_resolve_to_null()
+    public function test_optional_types_resolve_to_null(): void
     {
         $container = new GenericContainer();
 
@@ -154,7 +155,7 @@ class ContainerTest extends TestCase
         $this->assertNull($class->aString);
     }
 
-    public function test_union_types_iterate_to_resolution()
+    public function test_union_types_iterate_to_resolution(): void
     {
         $container = new GenericContainer();
 
@@ -165,7 +166,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(ContainerObjectA::class, $class->input);
     }
 
-    public function test_singleton_initializers()
+    public function test_singleton_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(SingletonInitializer::class);
@@ -175,7 +176,7 @@ class ContainerTest extends TestCase
         $this->assertSame(spl_object_id($a), spl_object_id($b));
     }
 
-    public function test_union_initializers()
+    public function test_union_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(UnionInitializer::class);
@@ -187,7 +188,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(UnionImplementation::class, $b);
     }
 
-    public function test_intersection_initializers()
+    public function test_intersection_initializers(): void
     {
         $container = new GenericContainer();
         $container->addInitializer(IntersectionInitializer::class);
@@ -206,12 +207,12 @@ class ContainerTest extends TestCase
 
         try {
             $container->get(CircularWithInitializerA::class);
-        } catch (CircularDependencyException $e) {
-            $this->assertStringContainsString('CircularWithInitializerA', $e->getMessage());
-            $this->assertStringContainsString('CircularWithInitializerB', $e->getMessage());
-            $this->assertStringContainsString('CircularWithInitializerBInitializer', $e->getMessage());
-            $this->assertStringContainsString('CircularWithInitializerC', $e->getMessage());
-            $this->assertStringContainsString(__FILE__, $e->getMessage());
+        } catch (CircularDependencyException $circularDependencyException) {
+            $this->assertStringContainsString('CircularWithInitializerA', $circularDependencyException->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerB', $circularDependencyException->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerBInitializer', $circularDependencyException->getMessage());
+            $this->assertStringContainsString('CircularWithInitializerC', $circularDependencyException->getMessage());
+            $this->assertStringContainsString(__FILE__, $circularDependencyException->getMessage());
         }
     }
 
@@ -269,13 +270,13 @@ class ContainerTest extends TestCase
 
         try {
             $container->get(DependencyWithTaggedDependency::class);
-        } catch (CannotResolveTaggedDependency $exception) {
+        } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
             $this->assertStringContainsString(
                 <<<'TXT'
 	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
 	└── Tests\Tempest\Unit\Container\Fixtures\TaggedDependency
 TXT,
-                $exception->getMessage()
+                $cannotResolveTaggedDependency->getMessage()
             );
         }
     }

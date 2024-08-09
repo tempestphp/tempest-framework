@@ -14,7 +14,7 @@ final readonly class ComplexCommand
     }
 
     #[ConsoleCommand('complex')]
-    public function __invoke(string $a, string $b, string $c, bool $flag = false)
+    public function __invoke(string $a, string $b, string $c, bool $flag = false): void
     {
         $this->console->writeln($a . $b . $c);
         $this->console->writeln($flag ? 'true' : 'false');

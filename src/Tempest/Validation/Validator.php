@@ -40,7 +40,6 @@ final readonly class Validator
     }
 
     /**
-     * @param mixed $value
      * @param Rule[] $rules
      */
     public function validateValue(mixed $value, array $rules): void

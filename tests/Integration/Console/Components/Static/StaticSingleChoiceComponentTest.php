@@ -17,7 +17,7 @@ class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_with_options(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b']);
 
                 $console->writeln("picked {$answer}");
@@ -31,7 +31,7 @@ class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_with_default_option(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b'], default: 'b');
 
                 $console->writeln("picked {$answer}");
@@ -43,7 +43,7 @@ class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_as_list(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b'], asList: true);
 
                 $console->writeln("picked {$answer}");
@@ -55,7 +55,7 @@ class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_as_list_with_default(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b'], default: 1, asList: true);
 
                 $console->writeln("picked {$answer}");

@@ -69,10 +69,11 @@ final readonly class GenericResponseSender implements ResponseSender
     private function resolveBody(Response $response): Generator
     {
         $body = $response->getBody();
-
         if ($body instanceof Generator) {
             return $body;
-        } elseif (is_array($body)) {
+        }
+
+        if (is_array($body)) {
             yield json_encode($body);
         } elseif ($body instanceof View) {
             yield $this->viewRenderer->render($body);

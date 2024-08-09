@@ -47,8 +47,8 @@ abstract class IntegrationTest extends TestCase
         $this->http = $this->container->get(HttpRouterTester::class);
 
         $request = new GenericRequest(Method::GET, '/', []);
-        $this->container->singleton(Request::class, fn () => $request);
-        $this->container->singleton(GenericRequest::class, fn () => $request);
+        $this->container->singleton(Request::class, fn (): GenericRequest => $request);
+        $this->container->singleton(GenericRequest::class, fn (): GenericRequest => $request);
     }
 
     protected function migrate(string ...$migrationClasses): void
@@ -64,7 +64,7 @@ abstract class IntegrationTest extends TestCase
     {
         $clock = new MockClock($now);
 
-        $this->container->singleton(Clock::class, fn () => $clock);
+        $this->container->singleton(Clock::class, fn (): MockClock => $clock);
 
         return $clock;
     }

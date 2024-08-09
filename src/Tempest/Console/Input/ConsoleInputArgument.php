@@ -24,20 +24,22 @@ final class ConsoleInputArgument
                 position: null,
                 value: $value,
             );
-        } elseif(str_starts_with($argument, '-')) {
+        }
+
+        if (str_starts_with($argument, '-')) {
             return new ConsoleInputArgument(
                 name: $argument,
                 position: null,
                 value: true,
             );
-        } else {
-            return new ConsoleInputArgument(
-                name: null,
-                position: $position,
-                value: $argument,
-                isPositional: true,
-            );
         }
+
+        return new ConsoleInputArgument(
+            name: null,
+            position: $position,
+            value: $argument,
+            isPositional: true,
+        );
     }
 
     public function matches(string $name): bool
@@ -50,8 +52,6 @@ final class ConsoleInputArgument
     }
 
     /**
-     * @param string $argument
-     *
      * @return array{0: string, 1: mixed}
      */
     private static function parseNamedArgument(string $argument): array

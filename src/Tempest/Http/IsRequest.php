@@ -12,6 +12,7 @@ use Tempest\Http\Session\Session;
 trait IsRequest
 {
     public string $path;
+
     public array $query;
 
     public function __construct(

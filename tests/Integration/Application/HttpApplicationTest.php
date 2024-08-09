@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class HttpApplicationTest extends FrameworkIntegrationTestCase
 {
-    public function test_http_application_run()
+    public function test_http_application_run(): void
     {
         $this->http
             ->get('/')

@@ -16,6 +16,7 @@ use Tempest\Console\StaticComponent;
 final class TextBoxComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
+
     public string $answer = '';
 
     public function __construct(

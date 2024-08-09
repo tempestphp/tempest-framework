@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class ViewTest extends FrameworkIntegrationTestCase
 {
-    public function test_render()
+    public function test_render(): void
     {
         $view = view('Views/overview.view.php')->data(name: 'Brent');
 
@@ -33,7 +33,7 @@ class ViewTest extends FrameworkIntegrationTestCase
         $this->assertEquals($expected, $html);
     }
 
-    public function test_render_with_view_model()
+    public function test_render_with_view_model(): void
     {
         $view = new ViewModel('Brent');
 
@@ -46,7 +46,7 @@ HTML;
         $this->assertEquals($expected, $html);
     }
 
-    public function test_raw_and_escaping()
+    public function test_raw_and_escaping(): void
     {
         $html = $this->render(view('Views/rawAndEscaping.php')->data(
             property: '<h1>hi</h1>',
@@ -60,7 +60,7 @@ HTML;
         $this->assertSame(trim($expected), trim($html));
     }
 
-    public function test_custom_view_with_response_data()
+    public function test_custom_view_with_response_data(): void
     {
         $this->http
             ->get(uri([TestController::class, 'viewWithResponseData']))

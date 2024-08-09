@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Between;
  */
 class BetweenTest extends TestCase
 {
-    public function test_between()
+    public function test_between(): void
     {
         $rule = new Between(min: 0, max: 10);
 

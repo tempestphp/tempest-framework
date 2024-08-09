@@ -13,7 +13,9 @@ use Tempest\Framework\Application\Kernel;
 abstract class IntegrationTestCase extends TestCase
 {
     protected AppConfig $appConfig;
+
     protected Kernel $kernel;
+
     protected Container $container;
 
     protected function setUp(): void

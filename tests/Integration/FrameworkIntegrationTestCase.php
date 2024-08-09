@@ -44,9 +44,9 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
 
-        $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
-        $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
+        $this->container->singleton(OutputBuffer::class, fn (): MemoryOutputBuffer => new MemoryOutputBuffer());
+        $this->container->singleton(StdoutOutputBuffer::class, fn (): MemoryOutputBuffer => new MemoryOutputBuffer());
+        $this->container->singleton(ShellExecutor::class, fn (): NullShellExecutor => new NullShellExecutor());
 
         $this->console = new ConsoleTester($this->container);
     }
@@ -58,7 +58,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
         );
 
-        $this->container->singleton(Application::class, fn () => $application);
+        $this->container->singleton(Application::class, fn (): ConsoleApplication => $application);
 
         return $application;
     }
@@ -70,7 +70,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             $this->container->get(AppConfig::class),
         );
 
-        $this->container->singleton(Application::class, fn () => $application);
+        $this->container->singleton(Application::class, fn (): HttpApplication => $application);
 
         return $application;
     }

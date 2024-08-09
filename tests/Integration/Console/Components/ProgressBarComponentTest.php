@@ -17,7 +17,7 @@ class ProgressBarComponentTest extends TestCase
     {
         $component = new ProgressBarComponent(
             data: ['a', 'b', 'c', 'd'],
-            handler: fn (string $input) => $input . $input,
+            handler: fn (string $input): string => $input . $input,
         );
 
         $generator = $component->render();
@@ -45,8 +45,8 @@ class ProgressBarComponentTest extends TestCase
     {
         $component = new ProgressBarComponent(
             data: ['a', 'b', 'c', 'd'],
-            handler: fn (string $input) => $input,
-            format: fn (int $step, int $count) => str_repeat(':', $step),
+            handler: fn (string $input): string => $input,
+            format: fn (int $step, int $count): string => str_repeat(':', $step),
         );
 
         $generator = $component->render();

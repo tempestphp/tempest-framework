@@ -14,7 +14,7 @@ use Tempest\Validation\Rules\Timezone;
  */
 class TimezoneTest extends TestCase
 {
-    public function test_timezone()
+    public function test_timezone(): void
     {
         $rule = new Timezone();
 
@@ -28,7 +28,7 @@ class TimezoneTest extends TestCase
         $this->assertTrue($rule->isValid('UTC'));
     }
 
-    public function test_timezone_with_country_code()
+    public function test_timezone_with_country_code(): void
     {
         $rule = new Timezone(DateTimeZone::PER_COUNTRY, 'AU');
 
@@ -44,7 +44,7 @@ class TimezoneTest extends TestCase
         $this->assertTrue($rule->isValid('America/Chicago'));
     }
 
-    public function test_timezone_with_group()
+    public function test_timezone_with_group(): void
     {
         $rule = new Timezone(DateTimeZone::ASIA);
 

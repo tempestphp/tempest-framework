@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\NotEmpty;
  */
 class NotEmptyTest extends TestCase
 {
-    public function test_not_empty()
+    public function test_not_empty(): void
     {
         $rule = new NotEmpty();
 

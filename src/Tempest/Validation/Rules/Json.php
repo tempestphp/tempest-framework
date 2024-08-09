@@ -23,6 +23,7 @@ final readonly class Json implements Rule
         if ($this->depth !== null) {
             $arguments['depth'] = $this->depth;
         }
+
         if ($this->flags !== null) {
             $arguments['flags'] = $this->flags;
         }

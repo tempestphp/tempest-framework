@@ -91,7 +91,7 @@ final readonly class TypeReflector implements Reflector
     public function split(): array
     {
         return array_map(
-            fn (string $part) => new self($part),
+            fn (string $part): TypeReflector => new self($part),
             preg_split('/[&|]/', $this->definition),
         );
     }
@@ -119,14 +119,14 @@ final readonly class TypeReflector implements Reflector
 
         if ($reflector instanceof ReflectionUnionType) {
             return implode('|', array_map(
-                fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
+                fn (PHPReflectionType $reflectionType): string => $this->resolveDefinition($reflectionType),
                 $reflector->getTypes(),
             ));
         }
 
         if ($reflector instanceof ReflectionIntersectionType) {
             return implode('&', array_map(
-                fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
+                fn (PHPReflectionType $reflectionType): string => $this->resolveDefinition($reflectionType),
                 $reflector->getTypes(),
             ));
         }

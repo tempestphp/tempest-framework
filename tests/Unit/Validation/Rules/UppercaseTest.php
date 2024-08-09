@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Uppercase;
  */
 class UppercaseTest extends TestCase
 {
-    public function test_uppercase()
+    public function test_uppercase(): void
     {
         $rule = new Uppercase();
 

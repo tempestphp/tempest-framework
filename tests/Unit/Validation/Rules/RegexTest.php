@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\RegEx;
  */
 class RegexTest extends TestCase
 {
-    public function test_regex_rule()
+    public function test_regex_rule(): void
     {
         $rule = new RegEx('/^[aA][bB]$/');
 

@@ -30,7 +30,7 @@ final class HandlerInvocationTest extends TestCase
     }
 
     // dummy handler method
-    public function handler()
+    public function handler(): void
     {
     }
 }

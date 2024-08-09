@@ -12,6 +12,7 @@ use Tempest\Console\Key;
 final class MemoryInputBuffer implements InputBuffer
 {
     private array $buffer = [];
+
     private ?Fiber $fiber = null;
 
     public function __construct()

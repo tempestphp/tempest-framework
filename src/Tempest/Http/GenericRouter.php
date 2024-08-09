@@ -45,7 +45,7 @@ final class GenericRouter implements Router
 
         $this->container->singleton(
             MatchedRoute::class,
-            fn () => $matchedRoute,
+            fn (): MatchedRoute => $matchedRoute,
         );
 
         $callable = $this->getCallable($matchedRoute);
@@ -53,9 +53,9 @@ final class GenericRouter implements Router
         try {
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
-        } catch (ValidationException $exception) {
+        } catch (ValidationException $validationException) {
             // TODO: refactor to middleware
-            return new Invalid($request, $exception->failingRules);
+            return new Invalid($request, $validationException->failingRules);
         }
 
         if ($response === null) {
@@ -71,7 +71,7 @@ final class GenericRouter implements Router
     private function matchRoute(PsrRequest $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
-        if ($staticRoute = $this->matchStaticRoute($request)) {
+        if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
             return $staticRoute;
         }
 
@@ -97,7 +97,7 @@ final class GenericRouter implements Router
             return $response;
         };
 
-        $callable = fn (Request $request) => $this->createResponse($callControllerAction($request));
+        $callable = fn (Request $request): Response => $this->createResponse($callControllerAction($request));
 
         $middlewareStack = [...$this->middleware, ...$route->middleware];
 

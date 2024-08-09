@@ -14,9 +14,12 @@ use Tempest\View\View;
 trait IsResponse
 {
     private Status $status = Status::OK;
+
     private View|string|array|Generator|null $body = null;
+
     /** @var \Tempest\Http\Header[] */
     private array $headers = [];
+
     private ?View $view = null;
 
     public function getStatus(): Status

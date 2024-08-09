@@ -18,8 +18,11 @@ use Tempest\Console\StaticComponent;
 final class SearchComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
+
     public string $query = '';
+
     public int $selectedOption = 0;
+
     public array $options = [];
 
     public function __construct(

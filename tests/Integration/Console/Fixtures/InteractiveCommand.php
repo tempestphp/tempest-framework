@@ -22,7 +22,7 @@ final readonly class InteractiveCommand
         $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max: 2)]);
         $b = $this->console->ask('b', validation: [new Email()]);
 
-        $this->console->success("$a $b");
+        $this->console->success("{$a} {$b}");
     }
 
     #[ConsoleCommand('interactive:confirm')]
@@ -126,7 +126,7 @@ final readonly class InteractiveCommand
 
                 return array_filter(
                     $data,
-                    fn (string $name) => str_contains(strtolower($name), strtolower($query)),
+                    fn (string $name): bool => str_contains(strtolower($name), strtolower($query)),
                 );
             }
         );

@@ -29,9 +29,9 @@ final readonly class ModelToQueryMapper implements Mapper
 
         if ($fields['id'] === null) {
             return $this->createQuery($model, $fields);
-        } else {
-            return $this->updateQuery($model, $fields);
         }
+
+        return $this->updateQuery($model, $fields);
     }
 
     private function createQuery(Model $model, array $fields): Query
@@ -72,7 +72,7 @@ final readonly class ModelToQueryMapper implements Mapper
         unset($fields['id']);
 
         $values = implode(', ', array_map(
-            fn (string $key) => "{$key} = :{$key}",
+            fn (string $key): string => "{$key} = :{$key}",
             array_keys($fields),
         ));
 

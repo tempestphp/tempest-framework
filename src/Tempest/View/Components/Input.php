@@ -35,7 +35,7 @@ final readonly class Input implements ViewComponent
 
         if ($errors) {
             $errorHtml = '<div>' . implode('', array_map(
-                fn (Rule $failingRule) => "<div>{$failingRule->message()}</div>",
+                fn (Rule $failingRule): string => "<div>{$failingRule->message()}</div>",
                 $errors,
             )) . '</div>';
         }

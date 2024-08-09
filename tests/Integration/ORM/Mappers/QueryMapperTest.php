@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class QueryMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_create_query()
+    public function test_create_query(): void
     {
         $author = Author::new(name: 'test');
 
@@ -29,7 +29,7 @@ class QueryMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(['name' => 'test'], $query->bindings);
     }
 
-    public function test_create_query_with_nested_relation()
+    public function test_create_query_with_nested_relation(): void
     {
         $book = Book::new(
             title: 'Book Title',
@@ -54,7 +54,7 @@ class QueryMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Author Name', $authorQuery->bindings['name']);
     }
 
-    public function test_update_query()
+    public function test_update_query(): void
     {
         $author = Author::new(id: new Id(1), name: 'other');
 

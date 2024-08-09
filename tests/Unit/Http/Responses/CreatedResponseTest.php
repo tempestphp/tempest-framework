@@ -14,7 +14,7 @@ use Tempest\Http\Status;
  */
 class CreatedResponseTest extends TestCase
 {
-    public function test_created_response()
+    public function test_created_response(): void
     {
         $response = new Created(json_encode(['foo' => 'bar']));
 

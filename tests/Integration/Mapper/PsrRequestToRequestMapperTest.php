@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_can_map()
+    public function test_can_map(): void
     {
         $mapper = new PsrRequestToRequestMapper();
 
@@ -25,7 +25,7 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertFalse($mapper->canMap(from: $this->http->makePsrRequest('/'), to: self::class));
     }
 
-    public function test_map_with()
+    public function test_map_with(): void
     {
         $mapper = new PsrRequestToRequestMapper();
 
@@ -44,7 +44,7 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertEquals(['x-test' => 'test'], $request->getHeaders());
     }
 
-    public function test_map_with_with_missing_data()
+    public function test_map_with_with_missing_data(): void
     {
         $this->expectException(MissingValuesException::class);
 
@@ -55,15 +55,15 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
                 from: $this->http->makePsrRequest('/'),
                 to: PostRequest::class,
             );
-        } catch (MissingValuesException $exception) {
-            $this->assertStringContainsString('title', $exception->getMessage());
-            $this->assertStringContainsString('text', $exception->getMessage());
+        } catch (MissingValuesException $missingValuesException) {
+            $this->assertStringContainsString('title', $missingValuesException->getMessage());
+            $this->assertStringContainsString('text', $missingValuesException->getMessage());
 
-            throw $exception;
+            throw $missingValuesException;
         }
     }
 
-    public function test_generic_request_is_used_when_interface_is_passed()
+    public function test_generic_request_is_used_when_interface_is_passed(): void
     {
         $mapper = new PsrRequestToRequestMapper();
 

@@ -40,7 +40,7 @@ final class HttpExceptionHandler implements ExceptionHandler
         ob_end_flush();
     }
 
-    private function getCodeSample(): string
+    public function getCodeSample(): string
     {
         $code = $this->highlighter->parse(file_get_contents($this->throwable->getFile()), 'php');
         $lines = explode(PHP_EOL, $code);

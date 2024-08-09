@@ -86,7 +86,6 @@ final class ObjectFactory
 
     /**
      * @template T of object
-     * @param mixed $from
      * @param T|class-string<T> $to
      * @return T|mixed
      */
@@ -102,7 +101,6 @@ final class ObjectFactory
     /**
      * @template MapperType of \Tempest\Mapper\Mapper
      * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
-     * @return mixed
      * @throws ReflectionException
      */
     public function with(Closure|string ...$mappers): mixed
@@ -140,7 +138,7 @@ final class ObjectFactory
     ): mixed {
         if ($isCollection && is_array($from)) {
             return array_map(
-                fn (mixed $item) => $this->mapObject(
+                fn (mixed $item): mixed => $this->mapObject(
                     from: $item,
                     to: $to,
                     isCollection: false,

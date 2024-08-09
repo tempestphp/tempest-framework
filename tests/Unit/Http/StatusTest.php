@@ -25,7 +25,7 @@ class StatusTest extends TestCase
     /**
      * @dataProvider provide_status_code_cases
      */
-    public function test_status_code(int $code, string $description)
+    public function test_status_code(int $code, string $description): void
     {
         $status = Status::code($code);
 

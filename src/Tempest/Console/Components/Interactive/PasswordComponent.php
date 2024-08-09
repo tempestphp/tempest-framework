@@ -22,9 +22,8 @@ final class PasswordComponent implements InteractiveComponent, HasCursor
     public function render(): string
     {
         $output = "<question>{$this->label}</question> ";
-        $output .= str_repeat('*', strlen($this->password));
 
-        return $output;
+        return $output . str_repeat('*', strlen($this->password));
     }
 
     public function renderFooter(): string

@@ -42,7 +42,7 @@ final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
     {
         $request = new GenericRequest(Method::GET, '/', [], [Session::ID => $id]);
 
-        $this->container->singleton(Request::class, fn () => $request);
-        $this->container->singleton(GenericRequest::class, fn () => $request);
+        $this->container->singleton(Request::class, fn (): GenericRequest => $request);
+        $this->container->singleton(GenericRequest::class, fn (): GenericRequest => $request);
     }
 }

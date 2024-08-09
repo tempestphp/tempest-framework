@@ -2,7 +2,7 @@
 /** @var $this \Tempest\Framework\Exceptions\HttpExceptionHandler */
 ?>
 
-<html>
+<html lang="en">
 <head>
     <title>Nope</title>
 
@@ -139,7 +139,8 @@ echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()',
     <?php foreach ($this->throwable->getTrace() as $i => $item) { ?>
         <?php if ($i === 0) {
             continue;
-        } ?>
+        }
+        ?>
 
         <div class="trace-item">
             <div>

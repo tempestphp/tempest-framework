@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Alpha;
  */
 class AlphaTest extends TestCase
 {
-    public function test_alpha()
+    public function test_alpha(): void
     {
         $rule = new Alpha();
 

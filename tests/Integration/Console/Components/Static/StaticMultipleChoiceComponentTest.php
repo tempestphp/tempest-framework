@@ -16,7 +16,7 @@ class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_ask(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,1')
@@ -26,7 +26,7 @@ class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_with_invalid_options(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,4,c,2')
@@ -36,7 +36,7 @@ class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
     public function test_confirm(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $answer = $console->ask('test', ['a', 'b', 'c'], multiple: true);
 
                 $console->writeln(json_encode($answer));

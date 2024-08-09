@@ -28,8 +28,8 @@ final readonly class GenericDatabase implements Database
             $this->pdo
                 ->prepare($query->getSql())
                 ->execute($bindings);
-        } catch (PDOException $exception) {
-            throw new QueryException($query, $bindings, $exception);
+        } catch (PDOException $pdoException) {
+            throw new QueryException($query, $bindings, $pdoException);
         }
     }
 

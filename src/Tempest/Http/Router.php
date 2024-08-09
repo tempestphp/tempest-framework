@@ -15,7 +15,6 @@ interface Router
     /**
      * @template T of \Tempest\Http\HttpMiddleware
      * @param class-string<T> $middlewareClass
-     * @return void
      */
     public function addMiddleware(string $middlewareClass): void;
 }

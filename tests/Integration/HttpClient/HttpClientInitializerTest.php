@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class HttpClientInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_container_can_initialize_http_client()
+    public function test_container_can_initialize_http_client(): void
     {
         $httpClient = $this->container->get(HttpClient::class);
 
