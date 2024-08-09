@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use ReflectionClass;
+use ReflectionMethod;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 
 interface Container
 {
@@ -22,7 +24,7 @@ interface Container
      */
     public function get(string $className, ?string $tag = null, mixed ...$params): object;
 
-    public function call(object $object, string $methodName, mixed ...$params): mixed;
+    public function invoke(ReflectionMethod|MethodReflector $method, mixed ...$params): mixed;
 
     /**
      * @template T of \Tempest\Container\Initializer

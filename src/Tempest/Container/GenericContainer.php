@@ -8,6 +8,7 @@ use ArrayIterator;
 use Closure;
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionMethod;
 use ReflectionParameter;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
@@ -101,19 +102,21 @@ final class GenericContainer implements Container
         return $dependency;
     }
 
-    public function call(string|object $object, string $methodName, ...$params): mixed
+    public function invoke(MethodReflector|ReflectionMethod $method, mixed ...$params): mixed
     {
+        if ($method instanceof ReflectionMethod) {
+            $method = new MethodReflector($method);
+        }
+
         $this->resolveChain();
 
-        $object = is_string($object) ? $this->get($object) : $object;
+        $object = $this->get($method->getDeclaringClass()->getName());
 
-        $methodReflector = (new ClassReflector($object))->getMethod($methodName);
-
-        $parameters = $this->autowireDependencies($methodReflector, $params);
+        $parameters = $this->autowireDependencies($method, $params);
 
         $this->stopChain();
 
-        return $methodReflector->invokeArgs($object, $parameters);
+        return $method->invokeArgs($object, $parameters);
     }
 
     public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): Container

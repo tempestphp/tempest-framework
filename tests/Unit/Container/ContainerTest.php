@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Container\Exceptions\CircularDependencyException;
 use Tempest\Container\GenericContainer;
+use function Tempest\reflect;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinArrayClass;
 use Tests\Tempest\Unit\Container\Fixtures\BuiltinTypesWithDefaultsClass;
 use Tests\Tempest\Unit\Container\Fixtures\CallContainerObjectE;
@@ -108,11 +109,11 @@ class ContainerTest extends TestCase
         $container->addInitializer(ContainerObjectEInitializer::class);
         $classToCall = new CallContainerObjectE();
 
-        $return = $container->call($classToCall, 'method', input: '1');
+        $return = $container->invoke(reflect($classToCall)->getMethod('method'), input: '1');
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('default', $return->id);
 
-        $return = $container->call($classToCall, 'method', input: new ContainerObjectE('other'));
+        $return = $container->invoke(reflect($classToCall)->getMethod('method'), input: new ContainerObjectE('other'));
         $this->assertInstanceOf(ContainerObjectE::class, $return);
         $this->assertSame('other', $return->id);
     }

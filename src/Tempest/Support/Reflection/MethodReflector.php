@@ -39,6 +39,11 @@ final readonly class MethodReflector implements Reflector
         return new TypeReflector($this->reflectionMethod->getReturnType());
     }
 
+    public function getDeclaringClass(): ClassReflector
+    {
+        return new ClassReflector($this->reflectionMethod->getDeclaringClass());
+    }
+
     public function getName(): string
     {
         return $this->getName();

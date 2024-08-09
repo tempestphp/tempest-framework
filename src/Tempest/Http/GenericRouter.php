@@ -84,9 +84,8 @@ final class GenericRouter implements Router
         $route = $matchedRoute->route;
 
         $callControllerAction = function (Request $request) use ($route, $matchedRoute) {
-            $response = $this->container->call(
-                $this->container->get($route->handler->getDeclaringClass()->getName()),
-                $route->handler->getName(),
+            $response = $this->container->invoke(
+                $route->handler,
                 ...$matchedRoute->params,
             );
 
