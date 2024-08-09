@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
@@ -67,6 +68,7 @@ return RectorConfig::configure()
         ReturnNeverTypeRector::class,
         StaticCallOnNonStaticToInstanceCallRector::class,
         ClosureReturnTypeRector::class,
+        EncapsedStringsToSprintfRector::class
     ])
     // If needed, we can update the parallel settings to make sure Rector doesn't start generating errors on large codebases
     ->withParallel(300, 10, 10)
