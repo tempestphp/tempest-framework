@@ -24,18 +24,13 @@ final class DatabaseConfig
         return $this;
     }
 
-    public function set(array $migrations): void
+    public function setMigrations(array $migrations): void
     {
         $this->migrations = $migrations;
     }
 
-    public function get(string $sort = 'asc'): array
+    public function getMigrations(): array
     {
-        match ($sort) {
-            'asc' => ksort($this->migrations),
-            default => rsort($this->migrations)
-        };
-
         return $this->migrations;
     }
 }
