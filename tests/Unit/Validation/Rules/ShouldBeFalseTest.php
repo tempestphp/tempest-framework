@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\ShouldBeFalse;
  */
 class ShouldBeFalseTest extends TestCase
 {
-    public function test_should_be_false()
+    public function test_should_be_false(): void
     {
         $rule = new ShouldBeFalse();
 
@@ -27,7 +27,7 @@ class ShouldBeFalseTest extends TestCase
         $this->assertTrue($rule->isValid('0'));
     }
 
-    public function test_should_be_false_message()
+    public function test_should_be_false_message(): void
     {
         $rule = new ShouldBeFalse();
 

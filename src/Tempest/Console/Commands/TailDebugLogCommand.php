@@ -47,7 +47,7 @@ final readonly class TailDebugLogCommand
 
         (new TailReader())->tail(
             path: $debugLogPath,
-            format: fn (string $text) => $this->highlighter->parse(
+            format: fn (string $text): string => $this->highlighter->parse(
                 $text,
                 new VarExportLanguage(),
             )

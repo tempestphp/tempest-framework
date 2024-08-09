@@ -16,7 +16,7 @@ class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
     public function test_text_box(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $name = $console->ask('test');
 
                 $console->writeln("Hello {$name}");

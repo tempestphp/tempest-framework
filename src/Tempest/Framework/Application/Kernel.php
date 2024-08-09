@@ -46,8 +46,8 @@ final readonly class Kernel
 
         $container
             ->config($this->appConfig)
-            ->singleton(self::class, fn () => $this)
-            ->singleton(Container::class, fn () => $container);
+            ->singleton(self::class, fn (): static => $this)
+            ->singleton(Container::class, fn (): GenericContainer => $container);
 
         return $container;
     }

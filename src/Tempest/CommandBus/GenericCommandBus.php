@@ -22,7 +22,7 @@ final class GenericCommandBus implements CommandBus
     {
         $commandHandler = $this->getCommandHandler($command);
 
-        if (! $commandHandler) {
+        if ($commandHandler === null) {
             throw new CommandHandlerNotFound($command);
         }
 
@@ -33,7 +33,7 @@ final class GenericCommandBus implements CommandBus
 
     private function getCallable(CommandHandler $commandHandler): Closure
     {
-        $callable = function (object $command) use ($commandHandler) {
+        $callable = function (object $command) use ($commandHandler): void {
             $commandHandler->handler->invoke(
                 $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
                 $command,

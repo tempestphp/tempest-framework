@@ -88,7 +88,7 @@ final readonly class Tempest
             appConfig: $appConfig,
         );
 
-        $container->singleton(Application::class, fn () => $application);
+        $container->singleton(Application::class, fn (): HttpApplication => $application);
 
         $logConfig = $container->get(LogConfig::class);
         $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');

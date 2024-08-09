@@ -27,7 +27,7 @@ class ConsoleTesterTest extends FrameworkIntegrationTestCase
     public function test_call_with_closure(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $console->writeln('hi');
             })
             ->assertContains('hi');
@@ -50,35 +50,35 @@ class ConsoleTesterTest extends FrameworkIntegrationTestCase
     public function test_exit_code_success(): void
     {
         $this->console
-            ->call(fn () => ExitCode::SUCCESS)
+            ->call(fn (): ExitCode => ExitCode::SUCCESS)
             ->assertSuccess();
     }
 
     public function test_exit_code_invalid(): void
     {
         $this->console
-            ->call(fn () => ExitCode::INVALID)
+            ->call(fn (): ExitCode => ExitCode::INVALID)
             ->assertInvalid();
     }
 
     public function test_exit_code_error(): void
     {
         $this->console
-            ->call(fn () => ExitCode::ERROR)
+            ->call(fn (): ExitCode => ExitCode::ERROR)
             ->assertError();
     }
 
     public function test_exit_code_cancelled(): void
     {
         $this->console
-            ->call(fn () => ExitCode::CANCELLED)
+            ->call(fn (): ExitCode => ExitCode::CANCELLED)
             ->assertCancelled();
     }
 
     public function test_exit_code_success_default(): void
     {
         $this->console
-            ->call(fn () => null)
+            ->call(fn (): null => null)
             ->assertSuccess();
     }
 

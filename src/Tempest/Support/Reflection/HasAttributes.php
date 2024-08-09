@@ -39,7 +39,7 @@ trait HasAttributes
     public function getAttributes(string $attributeClass): array
     {
         return array_map(
-            fn (ReflectionAttribute $attribute) => $attribute->newInstance(),
+            fn (ReflectionAttribute $attribute): object => $attribute->newInstance(),
             $this->getReflection()->getAttributes($attributeClass)
         );
     }

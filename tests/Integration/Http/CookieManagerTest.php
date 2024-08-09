@@ -53,7 +53,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
     public function test_manually_adding_a_cookie(): void
     {
         $clock = new MockClock('2023-01-01 00:00:00');
-        $this->container->singleton(Clock::class, fn () => $clock);
+        $this->container->singleton(Clock::class, fn (): MockClock => $clock);
         $cookies = $this->container->get(CookieManager::class);
 
         $cookies->add(new Cookie(

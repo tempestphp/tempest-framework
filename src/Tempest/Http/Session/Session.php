@@ -10,8 +10,11 @@ use function Tempest\get;
 final class Session
 {
     public const string ID = 'tempest_session_id';
+
     public const string VALIDATION_ERRORS = 'validation_errors';
+
     public const string ORIGINAL_VALUES = 'original_values';
+
     private array $expiredKeys = [];
 
     public function __construct(

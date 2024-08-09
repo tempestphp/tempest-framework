@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class HttpClientDriverInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_container_can_initialize_http_client_driver()
+    public function test_container_can_initialize_http_client_driver(): void
     {
         $driver = $this->container->get(HttpClientDriver::class);
 

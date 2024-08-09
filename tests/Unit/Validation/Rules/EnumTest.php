@@ -16,7 +16,7 @@ use UnexpectedValueException;
  */
 class EnumTest extends TestCase
 {
-    public function test_validating_enums()
+    public function test_validating_enums(): void
     {
         $rule = new Enum(SomeEnum::class);
 
@@ -34,7 +34,7 @@ class EnumTest extends TestCase
         $this->assertTrue($rule->isValid('VALUE_2'));
     }
 
-    public function test_validating_backed_enums()
+    public function test_validating_backed_enums(): void
     {
         $rule = new Enum(SomeBackedEnum::class);
 
@@ -52,7 +52,7 @@ class EnumTest extends TestCase
         $this->assertTrue($rule->isValid('two'));
     }
 
-    public function test_enum_has_to_exist()
+    public function test_enum_has_to_exist(): void
     {
         $this->expectExceptionObject(new UnexpectedValueException(
             sprintf(

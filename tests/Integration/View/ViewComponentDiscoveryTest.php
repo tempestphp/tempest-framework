@@ -21,10 +21,10 @@ class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 
         try {
             $discovery->discoverPath(__DIR__ . '/duplicateComponent.view.php');
-        } catch (DuplicateViewComponent $e) {
-            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $e->getMessage());
-            $this->assertStringContainsString(Input::class, $e->getMessage());
-            $this->assertStringContainsString('x-input', $e->getMessage());
+        } catch (DuplicateViewComponent $duplicateViewComponent) {
+            $this->assertStringContainsString(__DIR__ . '/duplicateComponent.view.php', $duplicateViewComponent->getMessage());
+            $this->assertStringContainsString(Input::class, $duplicateViewComponent->getMessage());
+            $this->assertStringContainsString('x-input', $duplicateViewComponent->getMessage());
         }
     }
 }

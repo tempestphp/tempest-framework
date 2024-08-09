@@ -31,7 +31,6 @@ final class Attributes
     }
 
     /**
-     * @param ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter|string $reflector
      * @return $this<T>
      */
     public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter|string $reflector): self
@@ -51,7 +50,7 @@ final class Attributes
     public function all(): array
     {
         return array_map(
-            fn (ReflectionAttribute $reflectionAttribute) => $reflectionAttribute->newInstance(),
+            fn (ReflectionAttribute $reflectionAttribute): object => $reflectionAttribute->newInstance(),
             $this->resolveAttributes(),
         );
     }

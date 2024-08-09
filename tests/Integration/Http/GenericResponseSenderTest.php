@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 {
-    public function test_sending()
+    public function test_sending(): void
     {
         ob_start();
 
@@ -34,7 +34,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         ob_get_clean();
     }
 
-    public function test_sending_of_array_to_json()
+    public function test_sending_of_array_to_json(): void
     {
         ob_start();
 
@@ -52,7 +52,7 @@ class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame('{"key":"value"}', $output);
     }
 
-    public function test_view_body()
+    public function test_view_body(): void
     {
         ob_start();
 

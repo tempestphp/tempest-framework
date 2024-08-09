@@ -17,7 +17,7 @@ final readonly class FailCommand
     }
 }
 
-function failingFunction(string $string)
+function failingFunction(string $string): void
 {
     throw new Exception("A message from the exception {$string}");
 }

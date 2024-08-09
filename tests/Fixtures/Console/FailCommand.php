@@ -10,13 +10,13 @@ use Tempest\Console\ConsoleCommand;
 final readonly class FailCommand
 {
     #[ConsoleCommand('fail')]
-    public function __invoke(string $input)
+    public function __invoke(string $input): void
     {
         failingFunction($input);
     }
 }
 
-function failingFunction(string $string)
+function failingFunction(string $string): void
 {
     throw new Exception("A message from the exception {$string}");
 }

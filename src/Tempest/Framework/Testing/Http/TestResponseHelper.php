@@ -25,17 +25,17 @@ final readonly class TestResponseHelper
 
     public function getStatus(): Status
     {
-        return $this->getResponse()->getStatus();
+        return $this->response->getStatus();
     }
 
     public function getHeaders(): array
     {
-        return $this->getResponse()->getHeaders();
+        return $this->response->getHeaders();
     }
 
     public function getBody(): string|array
     {
-        return $this->getResponse()->getBody();
+        return $this->response->getBody();
     }
 
     public function assertHasHeader(string $name): self
@@ -111,7 +111,7 @@ final readonly class TestResponseHelper
 
         Assert::assertNotNull($cookie);
 
-        if ($test) {
+        if ($test !== null) {
             $test($cookie);
         }
 
@@ -134,7 +134,7 @@ final readonly class TestResponseHelper
             ),
         );
 
-        if ($test) {
+        if ($test !== null) {
             $test($session, $data);
         }
 
@@ -158,7 +158,7 @@ final readonly class TestResponseHelper
             ),
         );
 
-        if ($test) {
+        if ($test !== null) {
             $test($validationErrors);
         }
 

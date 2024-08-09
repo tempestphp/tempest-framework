@@ -20,11 +20,10 @@ final readonly class HomeController
     {
         ll('ll');
         $this->logger->debug('logger');
-        $view = new HomeView(
-            name: 'Brent',
-        );
 
         //        lw($view);
-        return $view;
+        return new HomeView(
+            name: 'Brent',
+        );
     }
 }

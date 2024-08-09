@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\IP;
  */
 class IPTest extends TestCase
 {
-    public function test_ip_address()
+    public function test_ip_address(): void
     {
         $rule = new IP();
 
@@ -32,7 +32,7 @@ class IPTest extends TestCase
         $this->assertFalse($rule->isValid('192.168.0.1/24'));
     }
 
-    public function test_messages()
+    public function test_messages(): void
     {
         $rule = new IP();
         $this->assertSame('Value should be a valid IP address', $rule->message());

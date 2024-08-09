@@ -40,7 +40,7 @@ final class ConsoleInputBuilder
             $validArguments[] = $argument;
         }
 
-        if (count($invalidArguments)) {
+        if ($invalidArguments !== []) {
             throw new InvalidCommandException(
                 $this->command,
                 $invalidArguments
@@ -48,7 +48,7 @@ final class ConsoleInputBuilder
         }
 
         return array_map(
-            callback: fn (ConsoleInputArgument $argument) => $argument->value,
+            callback: fn (ConsoleInputArgument $argument): mixed => $argument->value,
             array: $validArguments,
         );
     }

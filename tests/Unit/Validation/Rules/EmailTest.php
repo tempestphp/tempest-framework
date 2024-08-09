@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Email;
  */
 class EmailTest extends TestCase
 {
-    public function test_email()
+    public function test_email(): void
     {
         $rule = new Email();
 

@@ -99,7 +99,7 @@ final readonly class Dependency
         return implode(
             '&',
             array_map(
-                fn (ReflectionType $subType) => $this->resolveName($subType),
+                fn (ReflectionType $subType): string => $this->resolveName($subType),
                 $type->getTypes(),
             ),
         );
@@ -110,7 +110,7 @@ final readonly class Dependency
         return implode(
             '|',
             array_map(
-                fn (ReflectionType $subType) => $this->resolveName($subType),
+                fn (ReflectionType $subType): string => $this->resolveName($subType),
                 $type->getTypes(),
             ),
         );
@@ -128,9 +128,7 @@ final readonly class Dependency
 
         $string .= implode(', ', $parameters);
 
-        $string .= ')';
-
-        return $string;
+        return $string . ')';
     }
 
     private function reflectionNameTypeToShortString(ReflectionNamedType $type): string

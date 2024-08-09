@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ValidationResponseTest extends FrameworkIntegrationTestCase
 {
-    public function test_validation_errors_are_listed_in_the_response_body()
+    public function test_validation_errors_are_listed_in_the_response_body(): void
     {
         $this->http
             ->post(uri([ValidationController::class, 'store']), ['number' => 11, 'item.number' => 11])
@@ -31,7 +31,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->post(uri([ValidationController::class, 'store']), $values)
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $session, array $data) use ($values) {
+            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $session, array $data) use ($values): void {
                 $this->assertEquals($values, $data);
             });
     }

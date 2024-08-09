@@ -21,7 +21,7 @@ final readonly class Submit implements ViewComponent
 
         return <<<HTML
 <div>
-<input type="submit" value="$label" />
+<input type="submit" value="{$label}" />
 </div>
 HTML;
     }

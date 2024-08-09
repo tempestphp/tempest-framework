@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\ShouldBeTrue;
  */
 class ShouldBeTrueTest extends TestCase
 {
-    public function test_should_be_true()
+    public function test_should_be_true(): void
     {
         $rule = new ShouldBeTrue();
 
@@ -27,7 +27,7 @@ class ShouldBeTrueTest extends TestCase
         $this->assertTrue($rule->isValid('1'));
     }
 
-    public function test_should_be_true_message()
+    public function test_should_be_true_message(): void
     {
         $rule = new ShouldBeTrue();
 

@@ -38,7 +38,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
             ->writeln("<h1>{$this->consoleConfig->name}</h1>")
             ->when(
                 expression: $this->appConfig->discoveryCache,
-                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
+                callback: fn (Console $console): Console => $console->error('Discovery cache is enabled!')
             );
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */

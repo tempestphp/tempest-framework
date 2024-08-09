@@ -14,6 +14,7 @@ use Tempest\Console\StaticComponent;
 final class MultipleChoiceComponent implements InteractiveComponent, HasStaticComponent
 {
     public array $selectedOptions = [];
+
     public int $activeOption;
 
     public function __construct(
@@ -33,7 +34,7 @@ final class MultipleChoiceComponent implements InteractiveComponent, HasStaticCo
             $output .= $this->isActive($key) ? '> ' : '  ';
             $output .= $this->isSelected($key) ? '[x]' : '[ ]';
             $output .= $this->isActive($key) ? '<em>' : '';
-            $output .= " $option";
+            $output .= " {$option}";
             $output .= $this->isActive($key) ? '</em>' : '';
         }
 

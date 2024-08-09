@@ -28,12 +28,12 @@ final class MemoryOutputBuffer implements OutputBuffer
     public function getBufferWithoutFormatting(): array
     {
         $pattern = array_map(
-            fn (TerminalStyle $consoleStyle) => TerminalStyle::ESC->value . $consoleStyle->value,
+            static fn (TerminalStyle $consoleStyle): string => TerminalStyle::ESC->value . $consoleStyle->value,
             TerminalStyle::cases(),
         );
 
         return array_map(
-            fn (string $line) => str_replace($pattern, '', $line),
+            static fn (string $line): string => str_replace($pattern, '', $line),
             $this->buffer,
         );
     }
@@ -45,7 +45,7 @@ final class MemoryOutputBuffer implements OutputBuffer
 
     public function asFormattedString(): string
     {
-        return implode('', $this->getBufferWithFormatting());
+        return implode('', $this->buffer);
     }
 
     public function clear(): self

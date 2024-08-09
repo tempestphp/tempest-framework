@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Url;
  */
 class UrlTest extends TestCase
 {
-    public function test_url()
+    public function test_url(): void
     {
         $rule = new Url();
 
@@ -23,7 +23,7 @@ class UrlTest extends TestCase
         $this->assertTrue($rule->isValid('http://example.com'));
     }
 
-    public function test_url_with_restricted_protocols()
+    public function test_url_with_restricted_protocols(): void
     {
         $rule = new Url(['https']);
 
@@ -31,14 +31,14 @@ class UrlTest extends TestCase
         $this->assertTrue($rule->isValid('https://example.com'));
     }
 
-    public function test_url_with_integer_value()
+    public function test_url_with_integer_value(): void
     {
         $rule = new Url();
 
         $this->assertFalse($rule->isValid(1));
     }
 
-    public function test_url_message()
+    public function test_url_message(): void
     {
         $rule = new Url();
 

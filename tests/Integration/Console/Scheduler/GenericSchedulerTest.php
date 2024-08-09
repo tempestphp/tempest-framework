@@ -30,7 +30,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_scheduler_executes_handlers()
+    public function test_scheduler_executes_handlers(): void
     {
         $executor = $this->createMock(NullShellExecutor::class);
 
@@ -48,7 +48,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         $scheduler->run();
     }
 
-    public function test_scheduler_executes_commands()
+    public function test_scheduler_executes_commands(): void
     {
         $executor = $this->createMock(NullShellExecutor::class);
 
@@ -67,7 +67,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         $scheduler->run();
     }
 
-    public function test_scheduler_only_dispatches_the_command_in_desired_times()
+    public function test_scheduler_only_dispatches_the_command_in_desired_times(): void
     {
         $at = new DateTime('2024-05-01 00:00:00');
 

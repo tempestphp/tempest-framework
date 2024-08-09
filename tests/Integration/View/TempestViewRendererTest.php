@@ -36,7 +36,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public function test_if_attribute()
+    public function test_if_attribute(): void
     {
         $this->assertSame(
             '',

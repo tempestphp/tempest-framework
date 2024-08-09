@@ -22,7 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RequestTest extends FrameworkIntegrationTestCase
 {
-    public function test_from_factory()
+    public function test_from_factory(): void
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
@@ -39,7 +39,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals(['test' => 'test'], $request->getCookieParams());
     }
 
-    public function test_custom_request_test()
+    public function test_custom_request_test(): void
     {
         $response = $this->http
             ->post(
@@ -54,7 +54,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
-    public function test_generic_request_can_map_to_custom_request()
+    public function test_generic_request_can_map_to_custom_request(): void
     {
         $response = $this->http
             ->post(
@@ -69,7 +69,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test-title test-text', $response->getBody());
     }
 
-    public function test_custom_request_test_with_validation()
+    public function test_custom_request_test_with_validation(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
 
@@ -87,7 +87,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $book->title);
     }
 
-    public function test_custom_request_test_with_nested_validation()
+    public function test_custom_request_test_with_nested_validation(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,

@@ -39,7 +39,7 @@ final class ConsoleInitializer implements Initializer
     {
         $textHighlighter = new Highlighter(new TextTerminalTheme());
 
-        $container->singleton(ConsoleExceptionHandler::class, fn () => new ConsoleExceptionHandler(
+        $container->singleton(ConsoleExceptionHandler::class, fn (): ConsoleExceptionHandler => new ConsoleExceptionHandler(
             console: $container->get(Console::class),
             highlighter: $textHighlighter,
             argumentBag: $container->get(ConsoleArgumentBag::class),
@@ -62,7 +62,7 @@ final class ConsoleInitializer implements Initializer
             highlighter: $terminalHighlighter,
         ))->setComponentRenderer($container->get(InteractiveComponentRenderer::class));
 
-        $container->singleton(ConsoleExceptionHandler::class, fn () => new ConsoleExceptionHandler(
+        $container->singleton(ConsoleExceptionHandler::class, fn (): ConsoleExceptionHandler => new ConsoleExceptionHandler(
             console: $console,
             highlighter: $terminalHighlighter,
             argumentBag: $container->get(ConsoleArgumentBag::class),

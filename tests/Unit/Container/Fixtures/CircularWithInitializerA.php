@@ -7,7 +7,7 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 final readonly class CircularWithInitializerA
 {
     /** @phpstan-ignore-next-line */
-    public function __construct(private CircularWithInitializerB $b)
+    public function __construct()
     {
     }
 }

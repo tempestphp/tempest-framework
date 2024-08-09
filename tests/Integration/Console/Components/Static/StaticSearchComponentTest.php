@@ -16,7 +16,7 @@ class StaticSearchComponentTest extends FrameworkIntegrationTestCase
     public function test_search_component(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $result = $console->search(
                     label: 'Search',
                     search: $this->search(...),
@@ -55,7 +55,7 @@ TXT,
 
         return array_filter(
             $data,
-            fn (string $name) => str_contains(strtolower($name), strtolower($query)),
+            fn (string $name): bool => str_contains(strtolower($name), strtolower($query)),
         );
     }
 }

@@ -28,7 +28,7 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
  */
 class IsModelTest extends FrameworkIntegrationTestCase
 {
-    public function test_create_and_update_model()
+    public function test_create_and_update_model(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -56,7 +56,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('boo', $foo->bar);
     }
 
-    public function test_creating_many_and_saving_preserves_model_id()
+    public function test_creating_many_and_saving_preserves_model_id(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -75,7 +75,7 @@ class IsModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals(1, $a->id->id);
     }
 
-    public function test_complex_query()
+    public function test_complex_query(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,

@@ -35,14 +35,14 @@ final readonly class TypeName
 
         if ($reflector instanceof ReflectionUnionType) {
             return implode('|', array_map(
-                fn (ReflectionType $reflectionType) => $this->resolve($reflectionType),
+                fn (ReflectionType $reflectionType): string => $this->resolve($reflectionType),
                 $reflector->getTypes(),
             ));
         }
 
         if ($reflector instanceof ReflectionIntersectionType) {
             return implode('&', array_map(
-                fn (ReflectionType $reflectionType) => $this->resolve($reflectionType),
+                fn (ReflectionType $reflectionType): string => $this->resolve($reflectionType),
                 $reflector->getTypes(),
             ));
         }

@@ -11,7 +11,7 @@ final readonly class TailReader
 {
     public function tail(string $path, ?Closure $format = null): void
     {
-        $format ??= fn (string $text) => $text;
+        $format ??= fn (string $text): string => $text;
 
         $handle = fopen($path, "r");
 
@@ -20,7 +20,7 @@ final readonly class TailReader
 
         /** @phpstan-ignore-next-line */
         while (true) {
-            if (Fiber::getCurrent()) {
+            if (Fiber::getCurrent() !== null) {
                 Fiber::suspend();
             }
 

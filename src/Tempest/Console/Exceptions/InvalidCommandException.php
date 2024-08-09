@@ -26,7 +26,7 @@ final class InvalidCommandException extends ConsoleException
         (new RenderConsoleCommand($console))($this->consoleCommand);
 
         $missingArguments = implode(', ', array_map(
-            fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
+            fn (ConsoleArgumentDefinition $argumentDefinition): string => $argumentDefinition->name,
             $this->invalidArguments,
         ));
 

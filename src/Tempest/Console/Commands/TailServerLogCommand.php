@@ -43,7 +43,7 @@ final readonly class TailServerLogCommand
 
         (new TailReader())->tail(
             path: $serverLogPath,
-            format: fn (string $text) => $this->highlighter->parse(
+            format: fn (string $text): string => $this->highlighter->parse(
                 $text,
                 new LogLanguage(),
             ),

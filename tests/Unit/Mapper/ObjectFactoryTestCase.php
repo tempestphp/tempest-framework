@@ -78,7 +78,7 @@ class ObjectFactoryTestCase extends IntegrationTestCase
     public function test_map_with(): void
     {
         $result = map(['a' => 'a', 'b' => 'b'])->with(
-            fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
+            fn (ArrayToObjectMapper $mapper, mixed $from): object => $mapper->map($from, ObjectA::class),
             ObjectToArrayMapper::class,
             ArrayToJsonMapper::class,
         );

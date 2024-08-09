@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Timestamp;
  */
 class TimestampTest extends TestCase
 {
-    public function test_timestamp()
+    public function test_timestamp(): void
     {
         $rule = new Timestamp();
 
@@ -21,7 +21,7 @@ class TimestampTest extends TestCase
         $this->assertFalse($rule->isValid('2021-01-01'));
     }
 
-    public function test_timestamp_message()
+    public function test_timestamp_message(): void
     {
         $rule = new Timestamp();
 

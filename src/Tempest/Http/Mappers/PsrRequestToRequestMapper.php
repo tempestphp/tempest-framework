@@ -32,7 +32,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
         $data = (array) $from->getParsedBody();
 
         $headersAsString = array_map(
-            fn (array $items) => implode(',', $items),
+            fn (array $items): string => implode(',', $items),
             $from->getHeaders(),
         );
 

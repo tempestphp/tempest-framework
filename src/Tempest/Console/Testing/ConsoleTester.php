@@ -30,8 +30,11 @@ use Tempest\Support\Reflection\Attributes;
 final class ConsoleTester
 {
     private (OutputBuffer&MemoryOutputBuffer)|null $output = null;
+
     private (InputBuffer&MemoryInputBuffer)|null $input = null;
+
     private ?InteractiveComponentRenderer $componentRenderer = null;
+
     private ?ExitCode $exitCode = null;
 
     public function __construct(
@@ -55,7 +58,7 @@ final class ConsoleTester
             highlighter: $clone->container->get(Highlighter::class),
         );
 
-        if ($this->componentRenderer) {
+        if ($this->componentRenderer !== null) {
             $console->setComponentRenderer($this->componentRenderer);
         }
 
@@ -68,7 +71,7 @@ final class ConsoleTester
         $clone->input = $memoryInputBuffer;
 
         if ($command instanceof Closure) {
-            $fiber = new Fiber(function () use ($clone, $command, $console) {
+            $fiber = new Fiber(function () use ($clone, $command, $console): void {
                 $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
             });
         } else {
@@ -92,7 +95,7 @@ final class ConsoleTester
                 $command = $attribute->getName();
             }
 
-            $fiber = new Fiber(function () use ($command, $clone) {
+            $fiber = new Fiber(function () use ($command, $clone): void {
                 $argumentBag = new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]);
 
                 $clone->container->singleton(ConsoleArgumentBag::class, $argumentBag);
@@ -103,7 +106,7 @@ final class ConsoleTester
 
         $fiber->start();
 
-        if ($clone->componentRenderer) {
+        if ($clone->componentRenderer !== null) {
             $clone->input("\e[1;1R"); // Set cursor for interactive testing
         }
 
@@ -116,7 +119,7 @@ final class ConsoleTester
             $input = explode(' ', $command);
 
             $inputString = implode(' ', array_map(
-                fn (string $item) => "--input=\"{$item}\"",
+                fn (string $item): string => "--input=\"{$item}\"",
                 $input
             ));
         } else {

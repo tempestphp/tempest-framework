@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\MACAddress;
  */
 class MACAddressTest extends TestCase
 {
-    public function test_ip_address()
+    public function test_ip_address(): void
     {
         $rule = new MACAddress();
 
