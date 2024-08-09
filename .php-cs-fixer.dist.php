@@ -1,6 +1,6 @@
 <?php
 
-use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
+declare(strict_types=1);
 
 $finder = Symfony\Component\Finder\Finder::create()
     ->in([
@@ -14,7 +14,6 @@ $finder = Symfony\Component\Finder\Finder::create()
 
 return (new PhpCsFixer\Config())
     ->setCacheFile('.cache/fixer/cs-fixer.cache')
-    ->setParallelConfig(ParallelConfigFactory::detect())
     ->setRules([
         '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
