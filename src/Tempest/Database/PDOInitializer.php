@@ -16,7 +16,7 @@ final readonly class PDOInitializer implements Initializer
     {
         $databaseConfig = $container->get(DatabaseConfig::class);
 
-        $driver = $databaseConfig->driver;
+        $driver = $databaseConfig->driver();
 
         return new PDO(
             $driver->getDsn(),

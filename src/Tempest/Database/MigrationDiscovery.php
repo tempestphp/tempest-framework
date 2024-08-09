@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use ReflectionClass;
 use Tempest\Container\Container;
+use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 
@@ -32,13 +33,13 @@ final class MigrationDiscovery implements Discovery
 
     public function createCachePayload(): string
     {
-        return serialize($this->databaseConfig->migrations);
+        return serialize($this->databaseConfig->getMigrations());
     }
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $migrations = unserialize($payload);
+        $migrations = unserialize($payload, ['allowed_classes' => [MigrationModel::class]]);
 
-        $this->databaseConfig->migrations = $migrations;
+        $this->databaseConfig->setMigrations($migrations);
     }
 }

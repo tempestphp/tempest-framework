@@ -53,6 +53,7 @@ abstract class IntegrationTest extends TestCase
 
     protected function migrate(string ...$migrationClasses): void
     {
+        /** @var MigrationManager $migrationManager */
         $migrationManager = $this->container->get(MigrationManager::class);
 
         foreach ($migrationClasses as $migrationClass) {

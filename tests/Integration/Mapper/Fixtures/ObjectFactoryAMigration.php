@@ -4,11 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
+use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatement;
 
-class ObjectFactoryAMigration implements Migration
+final readonly class ObjectFactoryAMigration implements Migration
 {
+    public function __construct(
+        private DatabaseDriver $driver,
+    ) {
+    }
+
     public function getName(): string
     {
         return 'object-a';
@@ -16,10 +23,13 @@ class ObjectFactoryAMigration implements Migration
 
     public function up(): Query|null
     {
-        return new Query("CREATE TABLE ObjectFactoryA (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `prop` TEXT
-        )");
+        return $this->driver->createQueryStatement('ObjectFactoryA')
+            ->create(
+                fn (QueryStatement $statement) => $statement
+                    ->primary()
+                    ->statement('prop TEXT')
+            )
+            ->toQuery();
     }
 
     public function down(): Query|null

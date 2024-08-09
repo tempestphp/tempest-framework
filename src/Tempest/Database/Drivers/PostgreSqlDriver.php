@@ -6,6 +6,7 @@ namespace Tempest\Database\Drivers;
 
 use SensitiveParameter;
 use Tempest\Database\DatabaseDriver;
+use Tempest\Database\QueryStatement;
 
 final class PostgreSqlDriver implements DatabaseDriver
 {
@@ -36,5 +37,10 @@ final class PostgreSqlDriver implements DatabaseDriver
     public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+    public function createQueryStatement(string $table): QueryStatement
+    {
+        return new QueryStatement($this, $table);
     }
 }
