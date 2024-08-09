@@ -38,7 +38,7 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->get() as $migrationClassName) {
+        foreach ($this->databaseConfig->getMigrations() as $migrationClassName) {
             /** @var MigrationInterface $migration */
             $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver());
 
@@ -71,7 +71,9 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->get('desc') as $migrationClassName) {
+        $migrations = $this->databaseConfig->getMigrations();
+        krsort($migrations);
+        foreach ($migrations as $migrationClassName) {
             /** @var MigrationInterface $migration */
             $migration = $this->container->get($migrationClassName);
 

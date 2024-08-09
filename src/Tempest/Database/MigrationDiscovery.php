@@ -33,13 +33,13 @@ final class MigrationDiscovery implements Discovery
 
     public function createCachePayload(): string
     {
-        return serialize($this->databaseConfig->get());
+        return serialize($this->databaseConfig->getMigrations());
     }
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
         $migrations = unserialize($payload, ['allowed_classes' => [MigrationModel::class]]);
 
-        $this->databaseConfig->set($migrations);
+        $this->databaseConfig->setMigrations($migrations);
     }
 }
