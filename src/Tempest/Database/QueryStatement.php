@@ -13,11 +13,11 @@ use UnhandledMatchError;
 
 final class QueryStatement implements Stringable
 {
-    private array                   $query = [];
+    private array $query = [];
 
     public function __construct(
         private readonly DatabaseDriver $driver,
-        private string $table,
+        private readonly string         $table,
     ) {
     }
 
@@ -105,6 +105,6 @@ final class QueryStatement implements Stringable
 
     public function toQuery(): Query
     {
-        return new Query((string) $this);
+        return new Query((string)$this);
     }
 }
