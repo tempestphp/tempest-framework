@@ -11,6 +11,7 @@ use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
+use UnhandledMatchError;
 use function Tempest\event;
 
 final readonly class MigrationManager
@@ -53,9 +54,12 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException) {
-            // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
-            event(new MigrationFailed('Migration', MigrationException::noTable()));
+        } catch (PDOException $exception) {
+            /** @throw UnhandledMatchError */
+            match ((string) $exception->getCode()) {
+                'HY000' => event(new MigrationFailed('Migration', MigrationException::noTable())),
+                default => throw new UnhandledMatchError($exception->getMessage()),
+            };
 
             return;
         }
