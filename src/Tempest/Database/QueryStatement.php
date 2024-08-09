@@ -49,7 +49,7 @@ final class QueryStatement implements Stringable
             SQLiteDriver::class => sprintf('%s COLUMN', strtoupper($action)),
         };
 
-        $this->query[] = sprintf( // @coverage
+        $this->query[] = sprintf(
             "ALTER TABLE %s %s %s",
             $this->table,
             $operation,

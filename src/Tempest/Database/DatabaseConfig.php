@@ -7,7 +7,7 @@ namespace Tempest\Database;
 final class DatabaseConfig
 {
     public function __construct(
-        private readonly DatabaseDriver $driver,
+        public readonly DatabaseDriver $driver,
         private array $migrations = [],
     ) {
     }
