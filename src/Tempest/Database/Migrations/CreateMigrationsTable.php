@@ -11,7 +11,7 @@ use Tempest\Database\Query;
 final readonly class CreateMigrationsTable implements Migration
 {
     public function __construct(
-        private DatabaseDriver $driver, // @phpstan-ignore-line
+        private DatabaseDriver $driver,
     ) {
     }
 
@@ -22,14 +22,19 @@ final readonly class CreateMigrationsTable implements Migration
 
     public function up(): Query|null
     {
-        return new Query("CREATE TABLE IF NOT EXISTS Migration (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `name` TEXT NOT NULL
-        )");
+        return $this->driver
+            ->createQueryStatement('Migration')
+            ->createTable()
+            ->primary()
+            ->createColumn('name', 'TEXT')
+            ->toQuery();
     }
 
     public function down(): Query|null
     {
-        return new Query('DROP TABLE IF EXISTS Migration');
+        return $this->driver
+            ->createQueryStatement('Migration')
+            ->dropTable()
+            ->toQuery();
     }
 }
