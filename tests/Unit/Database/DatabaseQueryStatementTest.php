@@ -25,10 +25,10 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_create_table_database_drivers')]
     public function it_can_create_a_table(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Migration')
+        $statement = (new QueryStatement($driver, 'Migration'))
             ->createTable()
             ->primary()
-            ->statement('name VARCHAR(255) NOT NULL');
+            ->createColumn('name', 'VARCHAR(255)');
 
         $this->assertSame($validSql, (string) $statement);
     }
@@ -55,12 +55,12 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_fk_create_table_database_drivers')]
     public function it_can_create_a_foreign_key_constraint(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Book')
+        $statement = (new QueryStatement($driver, 'Book'))
             ->createTable()
             ->primary()
-            ->statement('author_id INTEGER UNSIGNED NOT NULL')
+            ->createColumn('author_id', 'INTEGER UNSIGNED')
             ->createForeignKey('author_id', 'Author')
-            ->statement('name VARCHAR(255) NOT NULL');
+            ->createColumn('name', 'VARCHAR(255)');
 
         $this->assertSame($validSql, (string) $statement);
     }
@@ -89,7 +89,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        QueryStatement::new($driver, 'Book')
+        (new QueryStatement($driver, 'Book'))
             ->statement('SELECT VERSION()')
             ->createTable()
             ->primary();
@@ -101,7 +101,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        QueryStatement::new($driver, 'Book')
+        (new QueryStatement($driver, 'Book'))
             ->statement('SELECT VERSION()')
             ->alterTable('DELETE')
             ->statement('KEY');
@@ -126,9 +126,9 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_alter_table_syntax')]
     public function it_can_create_an_alter_table_add_statement(DatabaseDriver $driver, string $operation, string $validSql): void
     {
-        $statement = QueryStatement::new($driver, 'Author')
+        $statement = (new QueryStatement($driver, 'Author'))
             ->alterTable($operation)
-            ->statement('name VARCHAR(255) NOT NULL');
+            ->createColumn('name', 'VARCHAR(255)');
 
         $this->assertSame($validSql, (string) $statement);
     }
