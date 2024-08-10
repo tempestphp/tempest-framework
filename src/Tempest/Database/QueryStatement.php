@@ -128,7 +128,13 @@ final class QueryStatement implements Stringable
 
     public function __toString(): string
     {
-        return implode(', ', $this->query);
+        $queryList = array_filter($this->query);
+        $start = array_shift($queryList);
+
+        return match (true) {
+            str_starts_with($start, 'CREATE') => $start . implode(', ', $queryList) . ');',
+            default => $start . implode(', ', $queryList) . ';',
+        };
     }
 
     public function toQuery(): Query
