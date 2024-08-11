@@ -71,8 +71,7 @@ return RectorConfig::configure()
         naming: false,
         earlyReturn: true,
     )
-    // TODO: increase one level at a time
-    ->withDeadCodeLevel(40)// max 40
+    ->withDeadCodeLevel(40)
     ->withMemoryLimit('3G')
     ->withPhpSets(php83: true)
-    ->withTypeCoverageLevel(37); // max 37
+    ->withTypeCoverageLevel(37);
