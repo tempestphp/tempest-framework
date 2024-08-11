@@ -77,8 +77,7 @@ final readonly class GenericResponseSender implements ResponseSender
             yield json_encode($body);
         } elseif ($body instanceof View) {
             yield $this->viewRenderer->render($body);
-        }
-        else {
+        } else {
             yield $body;
         }
     }

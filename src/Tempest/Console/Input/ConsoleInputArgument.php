@@ -18,12 +18,14 @@ final class ConsoleInputArgument
     {
         if (str_starts_with($argument, '--')) {
             [$key, $value] = self::parseNamedArgument($argument);
+
             return new ConsoleInputArgument(
                 name: $key,
                 position: null,
                 value: $value,
             );
         }
+
         if (str_starts_with($argument, '-')) {
             return new ConsoleInputArgument(
                 name: $argument,
@@ -31,14 +33,13 @@ final class ConsoleInputArgument
                 value: true,
             );
         }
-        else {
-            return new ConsoleInputArgument(
-                name: null,
-                position: $position,
-                value: $argument,
-                isPositional: true,
-            );
-        }
+
+        return new ConsoleInputArgument(
+            name: null,
+            position: $position,
+            value: $argument,
+            isPositional: true,
+        );
     }
 
     public function matches(string $name): bool

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-final class Point implements \Stringable
+use Stringable;
+
+final class Point implements Stringable
 {
     public function __construct(
         public int $x,

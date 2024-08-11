@@ -54,6 +54,7 @@ final class TempestViewRenderer implements ViewRenderer
         if ($view === null) {
             return '';
         }
+
         if (is_string($view)) {
             $view = new GenericView($view);
         }
@@ -179,6 +180,7 @@ final class TempestViewRenderer implements ViewRenderer
         if ($viewComponentClass instanceof ViewComponent) {
             return $viewComponentClass;
         }
+
         return $this->container->get($viewComponentClass);
     }
 

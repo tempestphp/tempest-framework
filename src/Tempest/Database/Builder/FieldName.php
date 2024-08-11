@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use BackedEnum;
+use Stringable;
 use Tempest\Mapper\CastWith;
 use Tempest\Support\Reflection\ClassReflector;
 
-final class FieldName implements \Stringable
+final class FieldName implements Stringable
 {
     public function __construct(
         public readonly TableName $tableName,

@@ -36,6 +36,7 @@ final readonly class ForelseAttribute implements Attribute
         if ($collection) {
             return new EmptyElement();
         }
+
         return $element;
     }
 }

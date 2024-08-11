@@ -24,7 +24,7 @@ class CannotAutowireExceptionTest extends TestCase
 
             $container->get(AutowireA::class);
         } catch (CannotAutowireException $cannotAutowireException) {
-            $this->assertStringContainsString('Cannot autowire ' . \Tests\Tempest\Unit\Container\Fixtures\AutowireA::class . '::__construct because string cannot be resolved', $cannotAutowireException->getMessage());
+            $this->assertStringContainsString('Cannot autowire ' . AutowireA::class . '::__construct because string cannot be resolved', $cannotAutowireException->getMessage());
 
             $expected = <<<'TXT'
 	┌── AutowireA::__construct(AutowireB $b)

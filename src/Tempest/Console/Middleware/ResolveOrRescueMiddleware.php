@@ -51,10 +51,12 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
             return ExitCode::CANCELLED;
         }
+
         $intendedCommand = $this->console->ask(
             'Did you mean to run one of these?',
             options: $similarCommands,
         );
+
         return $this->runIntendedCommand($intendedCommand);
     }
 

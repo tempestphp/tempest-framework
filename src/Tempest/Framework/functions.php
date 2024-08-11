@@ -185,14 +185,15 @@ namespace Tempest {
         if ($classOrProperty instanceof PHPReflectionClass) {
             return new ClassReflector($classOrProperty);
         }
+
         if ($classOrProperty instanceof PHPReflectionProperty) {
             return new PropertyReflector($classOrProperty);
         }
+
         if ($propertyName !== null) {
             return new PropertyReflector(new PHPReflectionProperty($classOrProperty, $propertyName));
         }
-        else {
-            return new ClassReflector($classOrProperty);
-        }
+
+        return new ClassReflector($classOrProperty);
     }
 }

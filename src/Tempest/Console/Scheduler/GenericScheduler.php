@@ -47,7 +47,6 @@ final readonly class GenericScheduler implements Scheduler
         ]);
     }
 
-    
     private function getInvocationsToRun(DateTime $date): array
     {
         $previousRuns = $this->getPreviousRuns();

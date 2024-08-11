@@ -30,6 +30,7 @@ final readonly class ModelToQueryMapper implements Mapper
         if ($fields['id'] === null) {
             return $this->createQuery($model, $fields);
         }
+
         return $this->updateQuery($model, $fields);
     }
 

@@ -47,9 +47,11 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                     if ($fileName === '') {
                         continue;
                     }
+
                     if ($fileName === '.') {
                         continue;
                     }
+
                     if ($fileName === '..') {
                         continue;
                     }

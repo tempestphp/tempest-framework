@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
+use Tests\Tempest\Integration\Console\Fixtures\ScheduledCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -16,8 +17,8 @@ class RunTaskCommandTest extends FrameworkIntegrationTestCase
     {
         $this
             ->console
-            ->call('schedule:task ' . \Tests\Tempest\Integration\Console\Fixtures\ScheduledCommand::class . '::command')
-            ->assertContains(\Tests\Tempest\Integration\Console\Fixtures\ScheduledCommand::class . '::command')
+            ->call('schedule:task ' . ScheduledCommand::class . '::command')
+            ->assertContains(ScheduledCommand::class . '::command')
             ->assertContains('Starting')
             ->assertContains('Done');
     }
@@ -34,7 +35,7 @@ class RunTaskCommandTest extends FrameworkIntegrationTestCase
     {
         $this
             ->console
-            ->call('schedule:task ' . \Tests\Tempest\Integration\Console\Fixtures\ScheduledCommand::class . '::unknown')
-            ->assertContains(\Tests\Tempest\Integration\Console\Fixtures\ScheduledCommand::class . '::unknown() does not exist');
+            ->call('schedule:task ' . ScheduledCommand::class . '::unknown')
+            ->assertContains(ScheduledCommand::class . '::unknown() does not exist');
     }
 }
