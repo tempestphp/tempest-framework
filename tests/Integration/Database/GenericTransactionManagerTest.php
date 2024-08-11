@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Database;
+namespace Tests\Tempest\Integration\Database;
 
 use PDOException;
 use Tempest\Database\Migrations\Migration;
