@@ -37,13 +37,8 @@ trait HasConsole
     }
 
     /**
-     * @param string $question
-     * @param array|null $options
      * @param mixed|null $default
-     * @param bool $multiple
-     * @param bool $asList
      * @param \Tempest\Validation\Rule[] $validation
-     * @return string|array
      */
     public function ask(
         string $question,
@@ -88,9 +83,7 @@ trait HasConsole
     }
 
     /**
-     * @param string $label
      * @param Closure(string $search): array $search
-     * @return mixed
      */
     public function search(string $label, Closure $search): mixed
     {

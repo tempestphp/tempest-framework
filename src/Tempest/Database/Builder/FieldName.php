@@ -8,7 +8,7 @@ use BackedEnum;
 use Tempest\Mapper\CastWith;
 use Tempest\Support\Reflection\ClassReflector;
 
-final class FieldName
+final class FieldName implements \Stringable
 {
     public function __construct(
         public readonly TableName $tableName,

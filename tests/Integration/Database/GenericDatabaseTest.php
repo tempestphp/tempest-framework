@@ -20,7 +20,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
     {
         $manager = $this->container->get(Database::class);
 
-        $manager->withinTransaction(function () {
+        $manager->withinTransaction(function (): void {
             $this->console
                 ->call('migrate:up');
         });
@@ -32,7 +32,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
     {
         $manager = $this->container->get(Database::class);
 
-        $manager->withinTransaction(function () {
+        $manager->withinTransaction(function (): never {
             $this->console
                 ->call('migrate:up');
 

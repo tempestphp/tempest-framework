@@ -128,9 +128,7 @@ final readonly class Dependency
 
         $string .= implode(', ', $parameters);
 
-        $string .= ')';
-
-        return $string;
+        return $string . ')';
     }
 
     private function reflectionNameTypeToShortString(ReflectionNamedType $type): string

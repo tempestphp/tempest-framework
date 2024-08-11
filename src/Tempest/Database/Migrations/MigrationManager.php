@@ -137,7 +137,7 @@ final readonly class MigrationManager
     {
         $query = $migration->up();
 
-        if (! $query) {
+        if ($query === null) {
             return;
         }
 
@@ -147,10 +147,10 @@ final readonly class MigrationManager
             Migration::create(
                 name: $migration->getName(),
             );
-        } catch (PDOException $e) {
-            event(new MigrationFailed($migration->getName(), $e));
+        } catch (PDOException $pdoException) {
+            event(new MigrationFailed($migration->getName(), $pdoException));
 
-            throw $e;
+            throw $pdoException;
         }
 
         event(new MigrationMigrated($migration->getName()));
@@ -160,16 +160,16 @@ final readonly class MigrationManager
     {
         $query = $migration->down();
 
-        if (! $query) {
+        if ($query === null) {
             return;
         }
 
         try {
             $this->database->execute($query);
-        } catch (PDOException $e) {
-            event(new MigrationFailed($migration->getName(), $e));
+        } catch (PDOException $pdoException) {
+            event(new MigrationFailed($migration->getName(), $pdoException));
 
-            throw $e;
+            throw $pdoException;
         }
 
         try {
@@ -179,7 +179,7 @@ final readonly class MigrationManager
                     ['name' => $migration->getName()],
                 ),
             );
-        } catch (QueryException $e) {
+        } catch (QueryException) {
             /**
              * If the migration was executed successfully but the entry in the migrations table could not be deleted,
              * we should not throw an exception as the migration was successfully rolled back.

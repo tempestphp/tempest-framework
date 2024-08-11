@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\EndsWith;
  */
 class EndsWithTest extends TestCase
 {
-    public function test_ends_with()
+    public function test_ends_with(): void
     {
         $rule = new EndsWith(needle: 'ab');
 

@@ -31,7 +31,6 @@ final class Attributes
     }
 
     /**
-     * @param ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter|string $reflector
      * @return $this<T>
      */
     public function in(ReflectionClass|ReflectionMethod|ReflectionProperty|ReflectionParameter|string $reflector): self

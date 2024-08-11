@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CommandAliasesWork extends FrameworkIntegrationTestCase
 {
-    public function test_aliases_work()
+    public function test_aliases_work(): void
     {
         $this
             ->console

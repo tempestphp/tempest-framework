@@ -18,19 +18,20 @@ final class ConsoleInputArgument
     {
         if (str_starts_with($argument, '--')) {
             [$key, $value] = self::parseNamedArgument($argument);
-
             return new ConsoleInputArgument(
                 name: $key,
                 position: null,
                 value: $value,
             );
-        } elseif(str_starts_with($argument, '-')) {
+        }
+        if (str_starts_with($argument, '-')) {
             return new ConsoleInputArgument(
                 name: $argument,
                 position: null,
                 value: true,
             );
-        } else {
+        }
+        else {
             return new ConsoleInputArgument(
                 name: null,
                 position: $position,
@@ -50,8 +51,6 @@ final class ConsoleInputArgument
     }
 
     /**
-     * @param string $argument
-     *
      * @return array{0: string, 1: mixed}
      */
     private static function parseNamedArgument(string $argument): array

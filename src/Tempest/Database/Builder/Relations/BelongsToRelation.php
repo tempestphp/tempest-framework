@@ -12,7 +12,9 @@ use Tempest\Support\Reflection\PropertyReflector;
 final readonly class BelongsToRelation implements Relation
 {
     private ClassReflector $relationModelClass;
+
     private FieldName $localField;
+
     private FieldName $joinField;
 
     public function __construct(PropertyReflector $property, string $alias)

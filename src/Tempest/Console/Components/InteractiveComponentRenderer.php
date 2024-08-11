@@ -21,6 +21,7 @@ use Tempest\Validation\Validator;
 final class InteractiveComponentRenderer
 {
     private array $validationErrors = [];
+
     private bool $shouldRerender = true;
 
     public function render(Console $console, InteractiveComponent $component, array $validation = []): mixed
@@ -63,7 +64,7 @@ final class InteractiveComponentRenderer
 
                 // If we're running within a fiber, we'll suspend here as well so that the parent can continue
                 // This is needed for our testing helper
-                if (Fiber::getCurrent()) {
+                if (Fiber::getCurrent() !== null) {
                     Fiber::suspend();
                 }
             }
@@ -127,7 +128,7 @@ final class InteractiveComponentRenderer
             $failingRule = $this->validate($return, $validation);
 
             // If invalid, we'll remember the validation message and continue
-            if ($failingRule) {
+            if ($failingRule !== null) {
                 $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
                 Fiber::suspend();
 
@@ -181,7 +182,6 @@ final class InteractiveComponentRenderer
         /** @var ReflectionMethod[][] $keyBindings */
         $keyBindings = [];
 
-        /** @var ReflectionMethod[][] $keyBindings */
         $inputHandlers = [];
 
         foreach ((new ReflectionClass($component))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
@@ -198,9 +198,7 @@ final class InteractiveComponentRenderer
     }
 
     /**
-     * @param mixed $value
      * @param \Tempest\Validation\Rule[] $validation
-     * @return Rule|null
      */
     private function validate(mixed $value, array $validation): ?Rule
     {
@@ -208,8 +206,8 @@ final class InteractiveComponentRenderer
 
         try {
             $validator->validateValue($value, $validation);
-        } catch (InvalidValueException $e) {
-            return $e->failingRules[0];
+        } catch (InvalidValueException $invalidValueException) {
+            return $invalidValueException->failingRules[0];
         }
 
         return null;

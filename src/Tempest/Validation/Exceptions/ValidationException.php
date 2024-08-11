@@ -11,15 +11,11 @@ use Tempest\Validation\Rule;
 
 final class ValidationException extends Exception
 {
-    public readonly array $failingRules;
-
-    public function __construct(object $object, array $failingRules)
+    public function __construct(object $object, public readonly array $failingRules)
     {
-        $this->failingRules = $failingRules;
-
         $messages = [];
 
-        foreach ($failingRules as $field => $failingRulesForField) {
+        foreach ($this->failingRules as $field => $failingRulesForField) {
             /** @var Rule $failingRuleForField */
             foreach ($failingRulesForField as $failingRuleForField) {
                 $messages[$field][] = LanguageHelper::join(ArrayHelper::wrap($failingRuleForField->message()));

@@ -53,9 +53,9 @@ final class GenericRouter implements Router
         try {
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
-        } catch (ValidationException $exception) {
+        } catch (ValidationException $validationException) {
             // TODO: refactor to middleware
-            return new Invalid($request, $exception->failingRules);
+            return new Invalid($request, $validationException->failingRules);
         }
 
         if ($response === null) {
@@ -71,7 +71,7 @@ final class GenericRouter implements Router
     private function matchRoute(PsrRequest $request): ?MatchedRoute
     {
         // Try to match routes without any parameters
-        if ($staticRoute = $this->matchStaticRoute($request)) {
+        if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
             return $staticRoute;
         }
 

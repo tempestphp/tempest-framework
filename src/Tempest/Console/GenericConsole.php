@@ -21,7 +21,9 @@ use Tempest\Highlight\Highlighter;
 final class GenericConsole implements Console
 {
     private ?string $label = null;
+
     private bool $isForced = false;
+
     private ?InteractiveComponentRenderer $componentRenderer = null;
 
     public function __construct(
@@ -200,7 +202,7 @@ final class GenericConsole implements Console
 
     private function interactiveSupported(): bool
     {
-        if (! $this->componentRenderer) {
+        if ($this->componentRenderer === null) {
             return false;
         }
 

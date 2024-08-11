@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Lowercase;
  */
 class LowercaseTest extends TestCase
 {
-    public function test_lowercase()
+    public function test_lowercase(): void
     {
         $rule = new Lowercase();
 

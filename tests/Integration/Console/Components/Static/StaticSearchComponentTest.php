@@ -16,7 +16,7 @@ class StaticSearchComponentTest extends FrameworkIntegrationTestCase
     public function test_search_component(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $result = $console->search(
                     label: 'Search',
                     search: $this->search(...),

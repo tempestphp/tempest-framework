@@ -15,7 +15,7 @@ use Tests\Tempest\Unit\Container\Fixtures\AutowireA;
  */
 class CannotAutowireExceptionTest extends TestCase
 {
-    public function test_autowire_without_exception()
+    public function test_autowire_without_exception(): void
     {
         $this->expectException(CannotAutowireException::class);
 
@@ -23,8 +23,8 @@ class CannotAutowireExceptionTest extends TestCase
             $container = new GenericContainer();
 
             $container->get(AutowireA::class);
-        } catch (CannotAutowireException $exception) {
-            $this->assertStringContainsString('Cannot autowire Tests\Tempest\Unit\Container\Fixtures\AutowireA::__construct because string cannot be resolved', $exception->getMessage());
+        } catch (CannotAutowireException $cannotAutowireException) {
+            $this->assertStringContainsString('Cannot autowire ' . \Tests\Tempest\Unit\Container\Fixtures\AutowireA::class . '::__construct because string cannot be resolved', $cannotAutowireException->getMessage());
 
             $expected = <<<'TXT'
 	┌── AutowireA::__construct(AutowireB $b)
@@ -33,10 +33,10 @@ class CannotAutowireExceptionTest extends TestCase
 	                                                    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $exception->getMessage());
-            $this->assertStringContainsString("CannotAutowireExceptionTest.php:25", $exception->getMessage());
+            $this->assertStringContainsString($expected, $cannotAutowireException->getMessage());
+            $this->assertStringContainsString("CannotAutowireExceptionTest.php:25", $cannotAutowireException->getMessage());
 
-            throw $exception;
+            throw $cannotAutowireException;
         }
     }
 }

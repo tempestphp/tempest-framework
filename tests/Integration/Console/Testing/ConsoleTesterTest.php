@@ -27,7 +27,7 @@ class ConsoleTesterTest extends FrameworkIntegrationTestCase
     public function test_call_with_closure(): void
     {
         $this->console
-            ->call(function (Console $console) {
+            ->call(function (Console $console): void {
                 $console->writeln('hi');
             })
             ->assertContains('hi');

@@ -42,7 +42,7 @@ final readonly class Debug
 
     private function writeToLog(array $items, string $callPath): void
     {
-        if (! $this->logConfig) {
+        if ($this->logConfig === null) {
             return;
         }
 
@@ -61,7 +61,7 @@ final readonly class Debug
         foreach ($items as $key => $item) {
             $output = '';
 
-            $dumper = new CliDumper(function ($line, $depth) use (&$output) {
+            $dumper = new CliDumper(function ($line, $depth) use (&$output): void {
                 if ($depth < 0) {
                     return;
                 }

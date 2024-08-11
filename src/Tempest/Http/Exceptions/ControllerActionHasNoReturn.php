@@ -12,7 +12,7 @@ final class ControllerActionHasNoReturn extends Exception
     public function __construct(Route $route)
     {
         parent::__construct(sprintf(
-            'The controller action %s::%s doesn\'t return a valid response',
+            "The controller action %s::%s doesn't return a valid response",
             $route->handler->getDeclaringClass()->getName(),
             $route->handler->getName(),
         ));

@@ -175,7 +175,7 @@ final class GenericContainer implements Container
         }
 
         // Next we check if any of our default initializers can initialize this class.
-        if ($initializer = $this->initializerFor($class, $tag)) {
+        if (($initializer = $this->initializerFor($class, $tag)) !== null) {
             $this->resolveChain()->add(new ReflectionClass($initializer));
 
             $object = match (true) {

@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\DateTimeFormat;
  */
 class DateTimeFormatTest extends TestCase
 {
-    public function test_datetime_format()
+    public function test_datetime_format(): void
     {
         $rule = new DateTimeFormat();
 
@@ -24,7 +24,7 @@ class DateTimeFormatTest extends TestCase
         $this->assertTrue($rule->isValid('2024-02-19'));
     }
 
-    public function test_datetime_format_with_different_format()
+    public function test_datetime_format_with_different_format(): void
     {
         $rule = new DateTimeFormat('d/m/Y');
 
@@ -32,14 +32,14 @@ class DateTimeFormatTest extends TestCase
         $this->assertTrue($rule->isValid('19/02/2024'));
     }
 
-    public function test_datetime_format_with_integer_value()
+    public function test_datetime_format_with_integer_value(): void
     {
         $rule = new DateTimeFormat();
 
         $this->assertFalse($rule->isValid(1));
     }
 
-    public function test_datetime_format_message()
+    public function test_datetime_format_message(): void
     {
         $rule = new DateTimeFormat();
 

@@ -9,7 +9,7 @@ use Tempest\Console\ConsoleCommand;
 final readonly class CompletionTestCommand
 {
     #[ConsoleCommand('completion:test')]
-    public function __invoke(string $value, bool $flag = false, array $items = [])
+    public function __invoke(string $value, bool $flag = false, array $items = []): void
     {
         // TODO: Implement __invoke() method.
     }

@@ -22,7 +22,7 @@ final readonly class InteractiveCommand
         $a = $this->console->ask('a', validation: [new Length(min: 2), new Length(max: 2)]);
         $b = $this->console->ask('b', validation: [new Email()]);
 
-        $this->console->success("$a $b");
+        $this->console->success("{$a} {$b}");
     }
 
     #[ConsoleCommand('interactive:confirm')]

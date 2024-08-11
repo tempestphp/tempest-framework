@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\AlphaNumeric;
  */
 class AlphaNumericTest extends TestCase
 {
-    public function test_alphanumeric()
+    public function test_alphanumeric(): void
     {
         $rule = new AlphaNumeric();
 

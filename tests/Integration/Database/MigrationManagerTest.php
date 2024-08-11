@@ -14,11 +14,12 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class MigrationManagerTest extends FrameworkIntegrationTestCase
 {
-    public function test_migration()
+    public function test_migration(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
         $migrationManager->up();
+
         $migrations = Migration::all();
         $this->assertCount(3, $migrations);
 

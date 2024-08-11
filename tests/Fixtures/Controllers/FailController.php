@@ -10,7 +10,7 @@ use Tempest\Http\Get;
 final readonly class FailController
 {
     #[Get('/fail')]
-    public function __invoke()
+    public function __invoke(): void
     {
         throw new Exception('Hi!');
     }

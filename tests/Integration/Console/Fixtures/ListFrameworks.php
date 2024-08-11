@@ -20,7 +20,7 @@ final class ListFrameworks
     )]
     public function handle(
         bool $sortByBest = false,
-    ) {
+    ): void {
         $this->console->write('list');
     }
 }

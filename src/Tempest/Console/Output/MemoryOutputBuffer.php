@@ -45,7 +45,7 @@ final class MemoryOutputBuffer implements OutputBuffer
 
     public function asFormattedString(): string
     {
-        return implode('', $this->getBufferWithFormatting());
+        return implode('', $this->buffer);
     }
 
     public function clear(): self

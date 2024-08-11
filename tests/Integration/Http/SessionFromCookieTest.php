@@ -26,6 +26,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $cookieManager = $this->container->get(CookieManager::class);
 
         $cookieManager->set('tempest_session_id', 'session_a');
+
         $sessionA = $this->container->get(Session::class);
         $sessionA->set('test', 'a');
 

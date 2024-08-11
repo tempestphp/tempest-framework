@@ -25,7 +25,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
  */
 class MapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_make_object_from_class_string()
+    public function test_make_object_from_class_string(): void
     {
         $author = make(Author::class)->from([
             'id' => 1,
@@ -36,7 +36,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->id);
     }
 
-    public function test_make_collection()
+    public function test_make_collection(): void
     {
         $authors = make(Author::class)->collection()->from([
             [
@@ -50,7 +50,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $authors[0]->id->id);
     }
 
-    public function test_make_object_from_existing_object()
+    public function test_make_object_from_existing_object(): void
     {
         $author = Author::new(
             name: 'original',
@@ -65,7 +65,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->id);
     }
 
-    public function test_make_object_with_map_to()
+    public function test_make_object_with_map_to(): void
     {
         $author = Author::new(
             name: 'original',
@@ -80,7 +80,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(1, $author->id->id);
     }
 
-    public function test_make_object_with_has_many_relation()
+    public function test_make_object_with_has_many_relation(): void
     {
         $author = make(Author::class)->from([
             'name' => 'test',
@@ -97,7 +97,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $author->books[0]->author->name);
     }
 
-    public function test_make_object_with_one_to_one_relation()
+    public function test_make_object_with_one_to_one_relation(): void
     {
         $book = make(Book::class)->from([
             'title' => 'test',
@@ -111,33 +111,33 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $book->author->books[0]->title);
     }
 
-    public function test_can_make_non_strict_object_with_uninitialized_values()
+    public function test_can_make_non_strict_object_with_uninitialized_values(): void
     {
         $author = make(Author::class)->from([]);
 
         $this->assertFalse(isset($author->name));
     }
 
-    public function test_make_object_with_missing_values_throws_exception_for_strict_property()
+    public function test_make_object_with_missing_values_throws_exception_for_strict_property(): void
     {
         try {
             make(ObjectWithStrictProperty::class)->from([]);
-        } catch (MissingValuesException $e) {
-            $this->assertStringContainsString(': a', $e->getMessage());
-            $this->assertStringNotContainsString(': a, b', $e->getMessage());
+        } catch (MissingValuesException $missingValuesException) {
+            $this->assertStringContainsString(': a', $missingValuesException->getMessage());
+            $this->assertStringNotContainsString(': a, b', $missingValuesException->getMessage());
         }
     }
 
-    public function test_make_object_with_missing_values_throws_exception_for_strict_class()
+    public function test_make_object_with_missing_values_throws_exception_for_strict_class(): void
     {
         try {
             make(ObjectWithStrictOnClass::class)->from([]);
-        } catch (MissingValuesException $e) {
-            $this->assertStringContainsString(': a, b', $e->getMessage());
+        } catch (MissingValuesException $missingValuesException) {
+            $this->assertStringContainsString(': a, b', $missingValuesException->getMessage());
         }
     }
 
-    public function test_caster_on_field()
+    public function test_caster_on_field(): void
     {
         $object = make(ObjectFactoryA::class)->from([
             'prop' => [],
@@ -146,7 +146,7 @@ class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('casted', $object->prop);
     }
 
-    public function test_validation()
+    public function test_validation(): void
     {
         $this->expectException(ValidationException::class);
 

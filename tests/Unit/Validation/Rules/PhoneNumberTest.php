@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\PhoneNumber;
  */
 class PhoneNumberTest extends TestCase
 {
-    public function test_phone_number()
+    public function test_phone_number(): void
     {
         $rule = new PhoneNumber();
 

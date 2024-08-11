@@ -16,14 +16,14 @@ final readonly class Hello
 
     // hello:world {input} --flag
     #[ConsoleCommand]
-    public function world(string $input)
+    public function world(string $input): void
     {
         $this->console->info('Hi');
         $this->console->error($input);
     }
 
     #[ConsoleCommand]
-    public function test(?int $optionalValue = null, bool $flag = false)
+    public function test(?int $optionalValue = null, bool $flag = false): void
     {
         $value = $optionalValue ?? 'null';
 

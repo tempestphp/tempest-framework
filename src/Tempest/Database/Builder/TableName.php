@@ -6,7 +6,7 @@ namespace Tempest\Database\Builder;
 
 use Tempest\Support\Reflection\ClassReflector;
 
-final readonly class TableName
+final readonly class TableName implements \Stringable
 {
     public function __construct(
         public string $tableName,

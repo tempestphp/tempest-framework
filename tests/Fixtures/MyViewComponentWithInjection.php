@@ -16,10 +16,8 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
         return 'x-with-injection';
     }
 
-    public function __construct(
-        /** @phpstan-ignore-next-line */
-        private Session $session,
-    ) {
+    public function __construct()
+    {
     }
 
     public function render(GenericElement $element, ViewRenderer $renderer): string

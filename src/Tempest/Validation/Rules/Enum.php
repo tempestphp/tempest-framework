@@ -27,7 +27,7 @@ final readonly class Enum implements Rule
             return $this->enum::tryFrom($value) !== null;
         }
 
-        return defined("$this->enum::$value");
+        return defined("$this->enum::{$value}");
     }
 
     public function message(): string

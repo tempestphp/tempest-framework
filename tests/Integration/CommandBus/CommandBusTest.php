@@ -18,7 +18,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class CommandBusTest extends FrameworkIntegrationTestCase
 {
-    public function test_command_handlers_are_auto_discovered()
+    public function test_command_handlers_are_auto_discovered(): void
     {
         $command = new MyCommand();
 
@@ -29,7 +29,7 @@ class CommandBusTest extends FrameworkIntegrationTestCase
         $this->assertEquals([$command], $bus->getHistory());
     }
 
-    public function test_command_bus_with_middleware()
+    public function test_command_bus_with_middleware(): void
     {
         MyCommandBusMiddleware::$hit = false;
 
@@ -42,7 +42,7 @@ class CommandBusTest extends FrameworkIntegrationTestCase
         $this->assertTrue(MyCommandBusMiddleware::$hit);
     }
 
-    public function test_unknown_handler_throws_exception()
+    public function test_unknown_handler_throws_exception(): void
     {
         $this->expectException(CommandHandlerNotFound::class);
 

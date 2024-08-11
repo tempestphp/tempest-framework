@@ -14,7 +14,7 @@ final readonly class MyCommand
     }
 
     #[ConsoleCommand('do')]
-    public function __invoke()
+    public function __invoke(): void
     {
         $result = $this->console->ask(
             question: 'Pick several:',

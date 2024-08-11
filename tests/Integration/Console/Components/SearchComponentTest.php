@@ -25,6 +25,7 @@ class SearchComponentTest extends FrameworkIntegrationTestCase
 
         $component->input('a');
         $component->input(Key::UP->value);
+
         $rendered = $component->render();
         $this->assertStringContainsString('<question>Search</question> a', $rendered);
         $this->assertStringContainsString('[x] <em>Paul</em>', $rendered);
@@ -43,6 +44,7 @@ class SearchComponentTest extends FrameworkIntegrationTestCase
 
         $component->input('u');
         $component->input('l');
+
         $rendered = $component->render();
         $this->assertStringContainsString('<question>Search</question> aul', $rendered);
 
@@ -71,6 +73,7 @@ class SearchComponentTest extends FrameworkIntegrationTestCase
         $component->left();
         $component->left();
         $component->delete();
+
         $rendered = $component->render();
         $this->assertStringContainsString('<question>Search</question> a_-', $rendered);
         $component->right();

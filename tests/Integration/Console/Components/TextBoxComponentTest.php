@@ -50,6 +50,7 @@ class TextBoxComponentTest extends FrameworkIntegrationTestCase
 
         $component->left();
         $component->input('_');
+
         $rendered = $component->render();
         $this->assertStringContainsString('a_b', $rendered);
 

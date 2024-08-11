@@ -24,8 +24,8 @@ class CircularDependencyExceptionTest extends TestCase
             $container = new GenericContainer();
 
             $container->get(CircularA::class);
-        } catch (CircularDependencyException $exception) {
-            $this->assertStringContainsString("Cannot autowire Tests\\Tempest\\Unit\\Container\\Fixtures\\CircularA::__construct because it has a circular dependency on Tests\\Tempest\\Unit\\Container\\Fixtures\\CircularA::__construct", $exception->getMessage());
+        } catch (CircularDependencyException $circularDependencyException) {
+            $this->assertStringContainsString('Cannot autowire ' . \Tests\Tempest\Unit\Container\Fixtures\CircularA::class . '::__construct because it has a circular dependency on ' . \Tests\Tempest\Unit\Container\Fixtures\CircularA::class . '::__construct', $circularDependencyException->getMessage());
 
             $expected = <<<'TXT'
 	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
@@ -34,11 +34,11 @@ class CircularDependencyExceptionTest extends TestCase
 	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $exception->getMessage());
+            $this->assertStringContainsString($expected, $circularDependencyException->getMessage());
 
-            $this->assertStringContainsString("CircularDependencyExceptionTest.php:", $exception->getMessage());
+            $this->assertStringContainsString("CircularDependencyExceptionTest.php:", $circularDependencyException->getMessage());
 
-            throw $exception;
+            throw $circularDependencyException;
         }
     }
 
@@ -50,8 +50,8 @@ TXT;
             $container = new GenericContainer();
 
             $container->get(CircularZ::class);
-        } catch (CircularDependencyException $exception) {
-            $this->assertStringContainsString('Cannot autowire Tests\Tempest\Unit\Container\Fixtures\CircularZ::__construct because it has a circular dependency on Tests\Tempest\Unit\Container\Fixtures\CircularA::__construct:', $exception->getMessage());
+        } catch (CircularDependencyException $circularDependencyException) {
+            $this->assertStringContainsString('Cannot autowire ' . \Tests\Tempest\Unit\Container\Fixtures\CircularZ::class . '::__construct because it has a circular dependency on ' . \Tests\Tempest\Unit\Container\Fixtures\CircularA::class . '::__construct:', $circularDependencyException->getMessage());
 
             $expected = <<<'TXT'
 	    CircularZ::__construct(CircularA $a)
@@ -61,9 +61,9 @@ TXT;
 	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $exception->getMessage());
+            $this->assertStringContainsString($expected, $circularDependencyException->getMessage());
 
-            throw $exception;
+            throw $circularDependencyException;
         }
     }
 }

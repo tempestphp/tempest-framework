@@ -15,7 +15,7 @@ final readonly class Test
     }
 
     #[ConsoleCommand]
-    public function test()
+    public function test(): void
     {
         $this->console->confirm('yes or no?');
     }

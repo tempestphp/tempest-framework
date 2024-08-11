@@ -17,7 +17,7 @@ final readonly class Hello
 
     // hello:world {input} --flag
     #[ConsoleCommand]
-    public function world(string $input)
+    public function world(string $input): void
     {
         $this->console->info('Hi');
         $this->console->error($input);
@@ -25,7 +25,7 @@ final readonly class Hello
 
     // hello:werld {input} --flag
     #[ConsoleCommand]
-    public function werdl(string $input)
+    public function werdl(string $input): void
     {
         $this->console->info('Hi');
         $this->console->error($input);
@@ -39,7 +39,7 @@ final readonly class Hello
         #[ConsoleArgument]
         ?int $optionalValue = null,
         bool $flag = false
-    ) {
+    ): void {
         $value = $optionalValue ?? 'null';
 
         $this->console->info("{$value}");

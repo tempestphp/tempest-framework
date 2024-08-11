@@ -71,8 +71,6 @@ namespace Tempest {
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
-     * @param string|null $tag
-     * @param mixed ...$params
      * @return TClassName
      */
     function get(string $className, ?string $tag = null, mixed ...$params): object
@@ -186,11 +184,14 @@ namespace Tempest {
     {
         if ($classOrProperty instanceof PHPReflectionClass) {
             return new ClassReflector($classOrProperty);
-        } elseif ($classOrProperty instanceof PHPReflectionProperty) {
+        }
+        if ($classOrProperty instanceof PHPReflectionProperty) {
             return new PropertyReflector($classOrProperty);
-        } elseif ($propertyName !== null) {
+        }
+        if ($propertyName !== null) {
             return new PropertyReflector(new PHPReflectionProperty($classOrProperty, $propertyName));
-        } else {
+        }
+        else {
             return new ClassReflector($classOrProperty);
         }
     }
