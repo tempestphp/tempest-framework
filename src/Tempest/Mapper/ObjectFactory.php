@@ -86,7 +86,6 @@ final class ObjectFactory
 
     /**
      * @template T of object
-     * @param mixed $from
      * @param T|class-string<T> $to
      * @return T|mixed
      */
@@ -102,7 +101,6 @@ final class ObjectFactory
     /**
      * @template MapperType of \Tempest\Mapper\Mapper
      * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
-     * @return mixed
      * @throws ReflectionException
      */
     public function with(Closure|string ...$mappers): mixed

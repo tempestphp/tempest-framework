@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\IPv4;
  */
 class IPv4Test extends TestCase
 {
-    public function test_ipv4_address()
+    public function test_ipv4_address(): void
     {
         $rule = new IPv4();
 
@@ -27,7 +27,7 @@ class IPv4Test extends TestCase
         $this->assertFalse($rule->isValid('2001:db8:85a3::8a2e:370:7334'));
     }
 
-    public function test_ip_address_without_private_range()
+    public function test_ip_address_without_private_range(): void
     {
         $rule = new IPv4(allowPrivateRange: false);
 
@@ -35,7 +35,7 @@ class IPv4Test extends TestCase
         $this->assertTrue($rule->isValid('210.221.151.70'));
     }
 
-    public function test_ip_address_without_reserved_range()
+    public function test_ip_address_without_reserved_range(): void
     {
         $rule = new IPv4(allowReservedRange: false);
 
@@ -43,7 +43,7 @@ class IPv4Test extends TestCase
         $this->assertTrue($rule->isValid('172.16.1.1'));
     }
 
-    public function test_messages()
+    public function test_messages(): void
     {
         $rule = new IPv4();
         $this->assertSame('Value should be a valid IPv4 address', $rule->message());

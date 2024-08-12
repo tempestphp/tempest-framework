@@ -77,8 +77,8 @@ final readonly class PropertyReflector implements Reflector
     {
         try {
             return $this->reflectionProperty->getValue($object) ?? $default;
-        } catch (Error $e) {
-            return $default ?? throw $e;
+        } catch (Error $error) {
+            return $default ?? throw $error;
         }
     }
 

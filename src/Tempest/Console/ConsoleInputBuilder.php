@@ -40,7 +40,7 @@ final class ConsoleInputBuilder
             $validArguments[] = $argument;
         }
 
-        if (count($invalidArguments)) {
+        if ($invalidArguments !== []) {
             throw new InvalidCommandException(
                 $this->command,
                 $invalidArguments

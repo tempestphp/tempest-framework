@@ -61,12 +61,15 @@ final readonly class Password implements Rule
         if ($this->mixedCase) {
             $messages[] = 'at least one uppercase and one lowercase letter';
         }
+
         if ($this->numbers) {
             $messages[] = 'at least one number';
         }
+
         if ($this->letters) {
             $messages[] = 'at least one letter';
         }
+
         if ($this->symbols) {
             $messages[] = 'at least one symbol';
         }

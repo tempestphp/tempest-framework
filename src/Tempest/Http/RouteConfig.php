@@ -49,15 +49,15 @@ final class RouteConfig
         // e.g "/posts/[^/]+ (*MARK:a)".
         // This mark can than be used to find the matched route via a hashmap-lookup.
 
-        $routeRegexPart = "$route->matchingRegex (*" . GenericRouter::REGEX_MARK_TOKEN . ":$routeMark)";
+        $routeRegexPart = "$route->matchingRegex (*" . GenericRouter::REGEX_MARK_TOKEN . ":{$routeMark})";
         if (! array_key_exists($route->method->value, $this->matchingRegexes)) {
             // initialize matching regex for method
-            $this->matchingRegexes[$route->method->value] = "#^(?|$routeRegexPart)$#x";
+            $this->matchingRegexes[$route->method->value] = "#^(?|{$routeRegexPart})$#x";
 
             return;
         }
 
         // insert regex part of this route into the matching group of the regex for the method
-        $this->matchingRegexes[$route->method->value] = substr_replace($this->matchingRegexes[$route->method->value], "|$routeRegexPart", -4, 0);
+        $this->matchingRegexes[$route->method->value] = substr_replace($this->matchingRegexes[$route->method->value], "|{$routeRegexPart}", -4, 0);
     }
 }

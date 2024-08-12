@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_it_clears_discovery_cache()
+    public function test_it_clears_discovery_cache(): void
     {
         $appConfig = $this->container->get(AppConfig::class);
 

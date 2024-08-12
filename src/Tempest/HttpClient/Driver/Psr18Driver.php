@@ -57,7 +57,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
 
         // TODO: This is crappy and doesn't support stuff we need to.
         // Eventually the array will be a string.
-        if (count($tempestRequest->getBody()) !== 0) {
+        if ($tempestRequest->getBody() !== []) {
             $body = json_encode($tempestRequest->getBody());
             $request = $request->withBody(
                 $this->streamFactory->createStream($body)

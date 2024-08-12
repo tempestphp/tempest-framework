@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Boolean;
  */
 class BooleanTest extends TestCase
 {
-    public function test_boolean()
+    public function test_boolean(): void
     {
         $rule = new Boolean();
 
@@ -30,7 +30,7 @@ class BooleanTest extends TestCase
         $this->assertFalse($rule->isValid('string'));
     }
 
-    public function test_boolean_message()
+    public function test_boolean_message(): void
     {
         $rule = new Boolean();
 

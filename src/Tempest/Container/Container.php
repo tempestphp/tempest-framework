@@ -30,7 +30,6 @@ interface Container
      * @template T of \Tempest\Container\Initializer
      * @template U of \Tempest\Container\DynamicInitializer
      * @param ClassReflector|ReflectionClass<T>|class-string<T>|class-string<U> $initializerClass
-     * @return self
      */
     public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): self;
 }

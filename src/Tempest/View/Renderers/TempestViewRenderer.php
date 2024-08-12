@@ -53,7 +53,9 @@ final class TempestViewRenderer implements ViewRenderer
     {
         if ($view === null) {
             return '';
-        } elseif (is_string($view)) {
+        }
+
+        if (is_string($view)) {
             $view = new GenericView($view);
         }
 
@@ -100,7 +102,7 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         if ($element instanceof EmptyElement) {
-            return $this->renderEmptyElement($element);
+            return $this->renderEmptyElement();
         }
 
         if ($element instanceof SlotElement) {
@@ -114,7 +116,7 @@ final class TempestViewRenderer implements ViewRenderer
         if ($element instanceof GenericElement) {
             $viewComponent = $this->resolveViewComponent($element);
 
-            if (! $viewComponent) {
+            if ($viewComponent === null) {
                 return $this->renderGenericElement($view, $element);
             }
 
@@ -177,9 +179,9 @@ final class TempestViewRenderer implements ViewRenderer
 
         if ($viewComponentClass instanceof ViewComponent) {
             return $viewComponentClass;
-        } else {
-            return $this->container->get($viewComponentClass);
         }
+
+        return $this->container->get($viewComponentClass);
     }
 
     private function applyAttributes(View $view, Element $element): Element
@@ -247,7 +249,7 @@ final class TempestViewRenderer implements ViewRenderer
 
                 $slot = $element->getSlot($name);
 
-                if (! $slot) {
+                if ($slot === null) {
                     return $matches[0];
                 }
 
@@ -263,7 +265,7 @@ final class TempestViewRenderer implements ViewRenderer
         ));
     }
 
-    private function renderEmptyElement(EmptyElement $element): string
+    private function renderEmptyElement(): string
     {
         return '';
     }

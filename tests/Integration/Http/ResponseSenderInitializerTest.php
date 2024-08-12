@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class ResponseSenderInitializerTest extends FrameworkIntegrationTestCase
 {
-    public function test_response_sender_initializer()
+    public function test_response_sender_initializer(): void
     {
         $initializer = new ResponseSenderInitializer();
 

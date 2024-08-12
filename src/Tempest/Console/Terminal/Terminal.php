@@ -14,10 +14,15 @@ use Tempest\Console\Point;
 final class Terminal
 {
     public int $width;
+
     public int $height;
+
     public Cursor $cursor;
+
     private Cursor $initialCursor;
+
     private ?string $previousRender = null;
+
     private ?string $tty = null;
 
     public function __construct(

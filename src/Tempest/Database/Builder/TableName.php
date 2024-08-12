@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use Stringable;
 use Tempest\Support\Reflection\ClassReflector;
 
-final readonly class TableName
+final readonly class TableName implements Stringable
 {
     public function __construct(
         public string $tableName,

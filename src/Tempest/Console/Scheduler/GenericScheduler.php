@@ -47,11 +47,6 @@ final readonly class GenericScheduler implements Scheduler
         ]);
     }
 
-    /**
-     * @param DateTime $date
-     *
-     * @return array
-     */
     private function getInvocationsToRun(DateTime $date): array
     {
         $previousRuns = $this->getPreviousRuns();
@@ -86,9 +81,7 @@ final readonly class GenericScheduler implements Scheduler
 
     /**
      * @param ScheduledInvocation[] $ranInvocations
-     * @param DateTime $ranAt
      *
-     * @return void
      */
     private function markInvocationsAsRun(array $ranInvocations, DateTime $ranAt): void
     {

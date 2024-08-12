@@ -16,6 +16,7 @@ use Tempest\Console\StaticComponent;
 final class ConfirmComponent implements InteractiveComponent, HasCursor, HasStaticComponent
 {
     private bool $answer;
+
     private string $textualAnswer = '';
 
     public function __construct(

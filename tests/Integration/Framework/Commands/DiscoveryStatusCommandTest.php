@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_discovery_status_command()
+    public function test_discovery_status_command(): void
     {
         $output = $this->console->call('discovery:status');
 

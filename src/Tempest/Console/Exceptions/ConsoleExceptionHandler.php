@@ -37,7 +37,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
             ->writeln('<u>' . $throwable->getFile() . ':' . $throwable->getLine() . '</u>')
             ->writeln();
 
-        if ($this->argumentBag->get('-v')) {
+        if ($this->argumentBag->get('-v') !== null) {
             foreach ($throwable->getTrace() as $i => $trace) {
                 $this->console->writeln("<h2>#{$i}</h2> " . $this->formatTrace($trace));
             }
@@ -76,10 +76,6 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
         return PHP_EOL . implode(PHP_EOL, $lines);
     }
 
-    /**
-     * @param mixed $trace
-     * @return string
-     */
     public function formatTrace(mixed $trace): string
     {
         if (isset($trace['file'])) {

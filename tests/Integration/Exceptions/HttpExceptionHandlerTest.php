@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 {
-    public function test_exception()
+    public function test_exception(): void
     {
         $app = $this->actAsHttpApplication();
         $this->appConfig->enableExceptionHandling = true;

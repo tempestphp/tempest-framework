@@ -21,8 +21,8 @@ final readonly class IfAttribute implements Attribute
 
         if ($condition) {
             return $element;
-        } else {
-            return new EmptyElement();
         }
+
+        return new EmptyElement();
     }
 }

@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Time;
  */
 class TimeTest extends TestCase
 {
-    public function test_time()
+    public function test_time(): void
     {
         $rule = new Time();
 
@@ -38,7 +38,7 @@ class TimeTest extends TestCase
         $this->assertTrue($rule->isValid('01:59 a.m.'));
     }
 
-    public function test_military_time()
+    public function test_military_time(): void
     {
         $rule = new Time(twentyFourHour: true);
 

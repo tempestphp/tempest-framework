@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\StartsWith;
  */
 class StartsWithTest extends TestCase
 {
-    public function test_starts_with()
+    public function test_starts_with(): void
     {
         $rule = new StartsWith(needle: 'ab');
 

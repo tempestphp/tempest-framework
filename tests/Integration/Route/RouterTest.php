@@ -23,7 +23,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RouterTest extends FrameworkIntegrationTestCase
 {
-    public function test_dispatch()
+    public function test_dispatch(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -33,7 +33,7 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('test', $response->getBody());
     }
 
-    public function test_dispatch_with_parameter()
+    public function test_dispatch_with_parameter(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -43,7 +43,7 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1a', $response->getBody());
     }
 
-    public function test_generate_uri()
+    public function test_generate_uri(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -51,7 +51,7 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $router->toUri(TestController::class));
     }
 
-    public function test_with_view()
+    public function test_with_view(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
@@ -60,7 +60,7 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(Ok::class, $response);
     }
 
-    public function test_route_binding()
+    public function test_route_binding(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
@@ -81,7 +81,7 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame('Test', $response->getBody());
     }
 
-    public function test_middleware()
+    public function test_middleware(): void
     {
         $router = $this->container->get(GenericRouter::class);
 

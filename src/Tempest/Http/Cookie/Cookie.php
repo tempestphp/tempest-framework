@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Http\Cookie;
 
 use DateTimeImmutable;
+use Stringable;
 
 /**
  * @see https://github.com/httpsoft/http-cookie/blob/master/src/Cookie.php
  */
-final class Cookie
+final class Cookie implements Stringable
 {
     public function __construct(
         public string $key,

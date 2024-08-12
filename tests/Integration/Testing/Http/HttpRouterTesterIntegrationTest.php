@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
 {
-    public function test_get_requests()
+    public function test_get_requests(): void
     {
         $this
             ->http
@@ -21,7 +21,7 @@ class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
             ->assertOk();
     }
 
-    public function test_get_requests_failure()
+    public function test_get_requests_failure(): void
     {
         $this->expectException(AssertionFailedError::class);
 

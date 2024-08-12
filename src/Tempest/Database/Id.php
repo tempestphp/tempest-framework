@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Stringable;
 use Tempest\Database\Casters\IdCaster;
 use Tempest\Mapper\CastWith;
 
 #[CastWith(IdCaster::class)]
-final readonly class Id
+final readonly class Id implements Stringable
 {
     public string|int $id;
 

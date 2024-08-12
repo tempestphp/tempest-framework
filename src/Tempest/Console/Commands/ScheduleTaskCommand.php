@@ -42,8 +42,8 @@ final readonly class ScheduleTaskCommand
 
         try {
             $reflectionMethod = new ReflectionMethod($class, $method);
-        } catch (Throwable $e) {
-            $console->error($e->getMessage());
+        } catch (Throwable $throwable) {
+            $console->error($throwable->getMessage());
 
             return;
         }

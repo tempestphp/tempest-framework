@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Password;
  */
 class PasswordTest extends TestCase
 {
-    public function test_defaults()
+    public function test_defaults(): void
     {
         $rule = new Password();
 
@@ -21,14 +21,14 @@ class PasswordTest extends TestCase
         $this->assertTrue($rule->isValid('aaaaaaaaaaaa'));
     }
 
-    public function test_invalid_input()
+    public function test_invalid_input(): void
     {
         $rule = new Password();
         $this->assertFalse($rule->isValid(123456789012));
         $this->assertFalse($rule->isValid([123456789012]));
     }
 
-    public function test_minimum()
+    public function test_minimum(): void
     {
         $rule = new Password(min: 4);
         $this->assertTrue($rule->isValid('12345'));
@@ -36,7 +36,7 @@ class PasswordTest extends TestCase
         $this->assertFalse($rule->isValid('123'));
     }
 
-    public function test_mixed_case()
+    public function test_mixed_case(): void
     {
         $rule = new Password(mixedCase: true);
         $this->assertTrue($rule->isValid('abcdEFGHIJKL'));
@@ -44,14 +44,14 @@ class PasswordTest extends TestCase
         $this->assertFalse($rule->isValid('ABCDEFGHIJKL'));
     }
 
-    public function test_letters()
+    public function test_letters(): void
     {
         $rule = new Password(letters: true);
         $this->assertTrue($rule->isValid('12345678901a'));
         $this->assertFalse($rule->isValid('123456789012'));
     }
 
-    public function test_numbers()
+    public function test_numbers(): void
     {
         $rule = new Password(numbers: true);
         $this->assertTrue($rule->isValid('123456789012'));
@@ -59,14 +59,14 @@ class PasswordTest extends TestCase
         $this->assertFalse($rule->isValid('abcdefghijkl'));
     }
 
-    public function test_symbols()
+    public function test_symbols(): void
     {
         $rule = new Password(symbols: true);
         $this->assertTrue($rule->isValid('123456789012@'));
         $this->assertFalse($rule->isValid('123456789012'));
     }
 
-    public function test_message()
+    public function test_message(): void
     {
         $rule = new Password();
         $this->assertSame('Value should contain at least 12 characters', $rule->message()[0]);

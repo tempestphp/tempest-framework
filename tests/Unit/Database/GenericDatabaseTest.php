@@ -57,7 +57,7 @@ final class GenericDatabaseTest extends TestCase
             new GenericTransactionManager($pdo)
         );
 
-        $result = $database->withinTransaction(function () {
+        $result = $database->withinTransaction(function (): never {
             throw new Exception();
         });
 

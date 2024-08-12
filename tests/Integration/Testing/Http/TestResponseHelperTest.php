@@ -16,7 +16,7 @@ use Tempest\Http\Status;
  */
 class TestResponseHelperTest extends TestCase
 {
-    public function test_get_response()
+    public function test_get_response(): void
     {
         $response = new GenericResponse(status: Status::OK);
         $helper = new TestResponseHelper($response);
@@ -24,7 +24,7 @@ class TestResponseHelperTest extends TestCase
         $this->assertSame($response, $helper->getResponse());
     }
 
-    public function test_assert_has_header()
+    public function test_assert_has_header(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -36,7 +36,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertHasHeader('Location');
     }
 
-    public function test_assert_has_header_failure()
+    public function test_assert_has_header_failure(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -49,7 +49,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertHasHeader('Location');
     }
 
-    public function test_assert_header_value_equals()
+    public function test_assert_header_value_equals(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -61,7 +61,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertHeaderContains('Content-Type', 'application/json');
     }
 
-    public function test_assert_header_value_equals_failure()
+    public function test_assert_header_value_equals_failure(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK)
@@ -72,7 +72,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertHeaderContains('Content-Type', 'application/json');
     }
 
-    public function test_assert_redirect()
+    public function test_assert_redirect(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -86,7 +86,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertRedirect();
     }
 
-    public function test_assert_redirect_without_location_header()
+    public function test_assert_redirect_without_location_header(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::FOUND)
@@ -97,7 +97,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertRedirect();
     }
 
-    public function test_assert_redirect_without_3xx_status_code()
+    public function test_assert_redirect_without_3xx_status_code(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -111,7 +111,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertRedirect();
     }
 
-    public function test_assert_redirect_to()
+    public function test_assert_redirect_to(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(
@@ -123,7 +123,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertRedirect('/other-location');
     }
 
-    public function test_assert_ok()
+    public function test_assert_ok(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK)
@@ -132,7 +132,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertOk();
     }
 
-    public function test_assert_ok_fails_with_not_okay_response()
+    public function test_assert_ok_fails_with_not_okay_response(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::INTERNAL_SERVER_ERROR)
@@ -143,7 +143,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertOk();
     }
 
-    public function test_assert_not_found()
+    public function test_assert_not_found(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::NOT_FOUND)
@@ -152,7 +152,7 @@ class TestResponseHelperTest extends TestCase
         $helper->assertNotFound();
     }
 
-    public function test_assert_not_found_fails_with_okay_response()
+    public function test_assert_not_found_fails_with_okay_response(): void
     {
         $helper = new TestResponseHelper(
             new GenericResponse(status: Status::OK)
@@ -166,7 +166,7 @@ class TestResponseHelperTest extends TestCase
     /**
      * @dataProvider provide_assert_status_cases
      */
-    public function test_assert_status(Status $expectedStatus, GenericResponse $response)
+    public function test_assert_status(Status $expectedStatus, GenericResponse $response): void
     {
         $helper = new TestResponseHelper($response);
 
@@ -176,7 +176,7 @@ class TestResponseHelperTest extends TestCase
     /**
      * @dataProvider provide_assert_status_fails_when_status_does_not_match_cases
      */
-    public function test_assert_status_fails_when_status_does_not_match(Status $expectedStatus, GenericResponse $response)
+    public function test_assert_status_fails_when_status_does_not_match(Status $expectedStatus, GenericResponse $response): void
     {
         $helper = new TestResponseHelper($response);
 

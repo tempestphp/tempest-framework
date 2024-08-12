@@ -45,7 +45,7 @@ final class CookieManager
 
     public function add(Cookie $cookie): void
     {
-        if ($cookie->expiresAt) {
+        if ($cookie->expiresAt !== null) {
             $maxAge = $cookie->getExpiresAtTime() - $this->clock->time();
 
             $cookie->maxAge = max($maxAge, 0);

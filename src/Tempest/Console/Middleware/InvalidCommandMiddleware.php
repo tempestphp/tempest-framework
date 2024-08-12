@@ -25,8 +25,8 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
     {
         try {
             return $next($invocation);
-        } catch (InvalidCommandException $exception) {
-            return $this->retry($invocation, $exception);
+        } catch (InvalidCommandException $invalidCommandException) {
+            return $this->retry($invocation, $invalidCommandException);
         }
     }
 

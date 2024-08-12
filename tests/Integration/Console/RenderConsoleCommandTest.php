@@ -22,7 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_render()
+    public function test_render(): void
     {
         $handler = new ReflectionMethod(new MyConsole(), 'handle');
 

@@ -7,7 +7,9 @@ namespace Tempest\View;
 trait IsView
 {
     public string $path;
+
     public array $data = [];
+
     private array $rawData = [];
 
     public function __construct(
@@ -24,7 +26,7 @@ trait IsView
         $value = $this->data[$name] ?? null;
 
         if (is_string($value)) {
-            $value = htmlentities($value);
+            return htmlentities($value);
         }
 
         return $value;

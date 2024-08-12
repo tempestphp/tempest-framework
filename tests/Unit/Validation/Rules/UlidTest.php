@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\Ulid;
  */
 class UlidTest extends TestCase
 {
-    public function test_ulid()
+    public function test_ulid(): void
     {
         $rule = new Ulid();
 

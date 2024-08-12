@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\IPv6;
  */
 class IPv6Test extends TestCase
 {
-    public function test_ipv6_address()
+    public function test_ipv6_address(): void
     {
         $rule = new IPv6();
 
@@ -27,7 +27,7 @@ class IPv6Test extends TestCase
         $this->assertFalse($rule->isValid('172.16.0.1'));
     }
 
-    public function test_ip_address_without_private_range()
+    public function test_ip_address_without_private_range(): void
     {
         $rule = new IPv6(allowPrivateRange: false);
         $this->assertFalse($rule->isValid('fd36:ecf4:e32b:5e21:aaaa:aaaa:aaaa:aaaa'));
@@ -38,7 +38,7 @@ class IPv6Test extends TestCase
         $this->assertTrue($rule->isValid('2a03:b0c0:3:d0::11f5:3001'));
     }
 
-    public function test_ip_address_without_reserved_range()
+    public function test_ip_address_without_reserved_range(): void
     {
         $rule = new IPv6(allowReservedRange: false);
         $this->assertFalse($rule->isValid('2001:0db8:0000:08d3:0000:8a2e:0070:7344'));
@@ -49,7 +49,7 @@ class IPv6Test extends TestCase
         $this->assertTrue($rule->isValid('2a03:b0c0:3:d0::11f5:3001'));
     }
 
-    public function test_messages()
+    public function test_messages(): void
     {
         $rule = new IPv6();
         $this->assertSame('Value should be a valid IPv6 address', $rule->message());

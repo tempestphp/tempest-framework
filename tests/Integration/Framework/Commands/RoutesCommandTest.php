@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RoutesCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migrate_command()
+    public function test_migrate_command(): void
     {
         $this->console
             ->call('routes')

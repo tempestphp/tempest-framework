@@ -50,14 +50,14 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             }
 
             return ExitCode::CANCELLED;
-        } else {
-            $intendedCommand = $this->console->ask(
-                'Did you mean to run one of these?',
-                options: $similarCommands,
-            );
-
-            return $this->runIntendedCommand($intendedCommand);
         }
+
+        $intendedCommand = $this->console->ask(
+            'Did you mean to run one of these?',
+            options: $similarCommands,
+        );
+
+        return $this->runIntendedCommand($intendedCommand);
     }
 
     private function getSimilarCommands(string $name): array

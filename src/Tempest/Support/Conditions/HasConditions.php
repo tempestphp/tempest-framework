@@ -7,8 +7,6 @@ namespace Tempest\Support\Conditions;
 trait HasConditions
 {
     /**
-     * @param bool $condition
-     * @param callable $callback
      *
      * @return $this
      */

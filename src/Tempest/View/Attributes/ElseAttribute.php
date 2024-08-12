@@ -27,8 +27,8 @@ final readonly class ElseAttribute implements Attribute
 
         if ($condition) {
             return new EmptyElement();
-        } else {
-            return $element;
         }
+
+        return $element;
     }
 }
