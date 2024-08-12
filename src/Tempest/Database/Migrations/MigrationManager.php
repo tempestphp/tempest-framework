@@ -61,13 +61,13 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException $exception) {
+        } catch (PDOException $pdoException) {
             /** @throw UnhandledMatchError */
-            match ((string)$exception->getCode()) {
+            match ((string)$pdoException->getCode()) {
                 $this->databaseConfig->driver()->dialect()->tableNotFoundCode() => event(
                     event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable()),
                 ),
-                default => throw new UnhandledMatchError($exception->getMessage()),
+                default => throw new UnhandledMatchError($pdoException->getMessage()),
             };
 
             return;
