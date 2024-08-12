@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use ReflectionClass;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
+use Tempest\Support\Reflection\ClassReflector;
 use Throwable;
 
 final readonly class JsonToObjectMapper implements Mapper
@@ -23,7 +23,7 @@ final readonly class JsonToObjectMapper implements Mapper
         }
 
         try {
-            $class = new ReflectionClass($to);
+            $class = new ClassReflector($to);
 
             return $class->isInstantiable();
         } catch (Throwable) {

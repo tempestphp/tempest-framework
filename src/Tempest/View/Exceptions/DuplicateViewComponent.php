@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tempest\View\Exceptions;
 
 use Exception;
-use ReflectionClass;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
 final class DuplicateViewComponent extends Exception
 {
     public function __construct(
         string $name,
-        ReflectionClass|AnonymousViewComponent $pending,
+        ClassReflector|AnonymousViewComponent $pending,
         string|AnonymousViewComponent $existing,
     ) {
         $message = sprintf(

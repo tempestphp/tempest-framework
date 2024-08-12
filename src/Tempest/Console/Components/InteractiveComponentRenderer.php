@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Fiber;
-use ReflectionClass;
 use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
@@ -13,7 +12,7 @@ use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
@@ -184,8 +183,8 @@ final class InteractiveComponentRenderer
 
         $inputHandlers = [];
 
-        foreach ((new ReflectionClass($component))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            foreach (Attributes::find(HandlesKey::class)->in($method)->all() as $handlesKey) {
+        foreach ((new ClassReflector($component))->getPublicMethods() as $method) {
+            foreach ($method->getAttributes(HandlesKey::class) as $handlesKey) {
                 if ($handlesKey->key === null) {
                     $inputHandlers[] = $method;
                 } else {

@@ -6,8 +6,6 @@ namespace Tempest\Http;
 
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use ReflectionClass;
-use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
@@ -16,6 +14,7 @@ use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use function Tempest\map;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -116,15 +115,15 @@ final class GenericRouter implements Router
     {
         if (is_array($action)) {
             $controllerClass = $action[0];
-            $reflection = new ReflectionClass($controllerClass);
+            $reflection = new ClassReflector($controllerClass);
             $controllerMethod = $reflection->getMethod($action[1]);
         } else {
             $controllerClass = $action;
-            $reflection = new ReflectionClass($controllerClass);
+            $reflection = new ClassReflector($controllerClass);
             $controllerMethod = $reflection->getMethod('__invoke');
         }
 
-        $routeAttribute = attribute(Route::class)->in($controllerMethod)->first();
+        $routeAttribute = $controllerMethod->getAttribute(Route::class);
 
         if (! $routeAttribute) {
             throw new InvalidRouteException($controllerClass, $controllerMethod->getName());

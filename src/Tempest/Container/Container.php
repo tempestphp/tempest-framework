@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use ReflectionClass;
-use ReflectionMethod;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\MethodReflector;
 
@@ -24,12 +22,12 @@ interface Container
      */
     public function get(string $className, ?string $tag = null, mixed ...$params): object;
 
-    public function invoke(ReflectionMethod|MethodReflector $method, mixed ...$params): mixed;
+    public function invoke(MethodReflector $method, mixed ...$params): mixed;
 
     /**
      * @template T of \Tempest\Container\Initializer
      * @template U of \Tempest\Container\DynamicInitializer
-     * @param ClassReflector|ReflectionClass<T>|class-string<T>|class-string<U> $initializerClass
+     * @param ClassReflector<T>|class-string<T>|class-string<U> $initializerClass
      */
-    public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): self;
+    public function addInitializer(ClassReflector|string $initializerClass): self;
 }

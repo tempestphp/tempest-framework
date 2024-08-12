@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use ReflectionClass;
 use ReflectionProperty;
-use function Tempest\attribute;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
 use function Tempest\make;
+use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\PropertyReflector;
 
 trait IsModel
 {
@@ -18,9 +18,9 @@ trait IsModel
 
     public function __get(string $name)
     {
-        $property = new ReflectionProperty($this, $name);
+        $property = new PropertyReflector(new ReflectionProperty($this, $name));
 
-        if (attribute(Lazy::class)->in($property)->exists()) {
+        if ($property->hasAttribute(Lazy::class)) {
             $this->load($name);
 
             return $property->getValue($this);
@@ -77,7 +77,7 @@ trait IsModel
     {
         $new = self::find($this->getId(), $relations);
 
-        foreach ((new ReflectionClass($new))->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ((new ClassReflector($new))->getPublicProperties() as $property) {
             $property->setValue($this, $property->getValue($new));
         }
 

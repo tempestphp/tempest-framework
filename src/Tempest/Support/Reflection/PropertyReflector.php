@@ -21,6 +21,16 @@ final readonly class PropertyReflector implements Reflector
         return $this->reflectionProperty;
     }
 
+    public function getValue(object $object): mixed
+    {
+        return $this->reflectionProperty->getValue($object);
+    }
+
+    public function setValue(object $object, mixed $value): void
+    {
+        $this->reflectionProperty->setValue($object, $value);
+    }
+
     public function accepts(mixed $input): bool
     {
         return $this->getType()->accepts($input);
