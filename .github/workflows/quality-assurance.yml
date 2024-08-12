@@ -54,6 +54,25 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan --error-format=github
 
+  rector:
+    name: Run Rector
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run Rector
+        run: vendor/bin/rector process --no-ansi --dry-run --no-diffs --no-progress-bar
+
   phpunit:
     runs-on: ${{ matrix.os }}
     strategy:
