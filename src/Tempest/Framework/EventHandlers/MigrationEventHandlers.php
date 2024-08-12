@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Framework\EventHandlers;
 
 use Tempest\Console\Console;
@@ -8,7 +10,9 @@ use Tempest\EventBus\EventHandler;
 
 final readonly class MigrationEventHandlers
 {
-    public function __construct(private Console $console) {}
+    public function __construct(private Console $console)
+    {
+    }
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void

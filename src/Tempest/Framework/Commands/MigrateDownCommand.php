@@ -9,7 +9,6 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;
-use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationRolledBack;
 use Tempest\EventBus\EventHandler;
