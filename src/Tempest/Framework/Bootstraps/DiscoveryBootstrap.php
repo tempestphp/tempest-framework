@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Bootstraps;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -38,7 +39,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
             }
 
             foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
-                $directories = new RecursiveDirectoryIterator($discoveryLocation->path);
+                $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS);
                 $files = new RecursiveIteratorIterator($directories);
 
                 /** @var SplFileInfo $file */
@@ -56,9 +57,23 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                     $input = $file->getPathname();
 
                     if (ucfirst($fileName) === $fileName) {
+                        // Trim ending slashing from path
+                        $pathWithoutSlashes = rtrim($discoveryLocation->path, '\\/');
+
+                        // Try to create a PSR-compliant class name from the path
                         $className = str_replace(
-                            [$discoveryLocation->path, '/', '.php', '\\\\'],
-                            [$discoveryLocation->namespace, '\\', '', '\\'],
+                            [
+                                $pathWithoutSlashes,
+                                '/',
+                                '\\\\',
+                                '.php',
+                            ],
+                            [
+                                $discoveryLocation->namespace,
+                                '\\',
+                                '\\',
+                                '',
+                            ],
                             $file->getPathname(),
                         );
 
