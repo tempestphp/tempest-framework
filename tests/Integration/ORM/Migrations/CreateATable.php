@@ -22,7 +22,7 @@ final readonly class CreateATable implements Migration
 
     public function up(): Query|null
     {
-        return $this->driver
+        return $this->driver->dialect()
             ->createQueryStatement('A')
             ->createTable()
             ->primary()
@@ -32,7 +32,7 @@ final readonly class CreateATable implements Migration
 
     public function down(): Query|null
     {
-        return $this->driver
+        return $this->driver->dialect()
             ->createQueryStatement('A')
             ->dropTable()
             ->toQuery();

@@ -22,7 +22,7 @@ final readonly class CreateBookTable implements Migration
 
     public function up(): Query|null
     {
-        return $this->driver
+        return $this->driver->dialect()
             ->createQueryStatement('Book')
             ->createTable()
             ->primary()
@@ -34,7 +34,7 @@ final readonly class CreateBookTable implements Migration
 
     public function down(): Query|null
     {
-        return $this->driver
+        return $this->driver->dialect()
             ->createQueryStatement('Book')
             ->dropForeignKeyFor('Author')
             ->dropTable()

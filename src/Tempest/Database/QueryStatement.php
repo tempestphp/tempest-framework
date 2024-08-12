@@ -6,17 +6,14 @@ namespace Tempest\Database;
 
 use RuntimeException;
 use Stringable;
-use Tempest\Database\Drivers\MySqlDriver;
-use Tempest\Database\Drivers\PostgreSqlDriver;
-use Tempest\Database\Drivers\SQLiteDriver;
 use UnhandledMatchError;
 
 final class QueryStatement implements Stringable
 {
     public function __construct(
-        private readonly DatabaseDriver $driver, // @phpstan-ignore-line
-        private readonly string         $table = '',
-        private array                   $query = [],
+        private readonly DatabaseDialect $dialect,
+        private readonly string $table = '',
+        private array $query = [],
     ) {
     }
 
@@ -38,10 +35,10 @@ final class QueryStatement implements Stringable
             throw new RuntimeException('alter statement should be the first statement');
         }
 
-        $operation = match ($this->driver::class) {
-            MySqlDriver::class => sprintf('%s', strtoupper($action)),
-            PostgreSqlDriver::class,
-            SQLiteDriver::class => sprintf('%s COLUMN', strtoupper($action)),
+        $operation = match ($this->dialect) {
+            DatabaseDialect::MYSQL => sprintf('%s', strtoupper($action)),
+            DatabaseDialect::POSTGRESQL,
+            DatabaseDialect::SQLITE => sprintf('%s COLUMN', strtoupper($action)),
         };
 
         $this->query[] = sprintf(
@@ -56,10 +53,10 @@ final class QueryStatement implements Stringable
     /** @throws UnhandledMatchError */
     public function primary($key = 'id'): self
     {
-        $this->query[] = match ($this->driver::class) {
-            MySqlDriver::class => sprintf('%s INTEGER PRIMARY KEY AUTO_INCREMENT', $key),
-            PostgreSqlDriver::class => sprintf('%s SERIAL PRIMARY KEY', $key),
-            SQLiteDriver::class => sprintf('%s INTEGER PRIMARY KEY AUTOINCREMENT', $key),
+        $this->query[] = match ($this->dialect) {
+            DatabaseDialect::MYSQL => sprintf('%s INTEGER PRIMARY KEY AUTO_INCREMENT', $key),
+            DatabaseDialect::POSTGRESQL => sprintf('%s SERIAL PRIMARY KEY', $key),
+            DatabaseDialect::SQLITE => sprintf('%s INTEGER PRIMARY KEY AUTOINCREMENT', $key),
         };
 
         return $this;
@@ -68,9 +65,9 @@ final class QueryStatement implements Stringable
     /** @throws UnhandledMatchError */
     public function createForeignKey(string $localKey, string $table, string $key = 'id', string $onDelete = 'ON DELETE CASCADE', string $onUpdate = 'ON UPDATE NO ACTION'): self
     {
-        $this->query[] = match ($this->driver::class) {
-            MySqlDriver::class,
-            PostgreSqlDriver::class => sprintf(
+        $this->query[] = match ($this->dialect) {
+            DatabaseDialect::MYSQL,
+            DatabaseDialect::POSTGRESQL => sprintf(
                 'CONSTRAINT fk_%s_%s FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
                 strtolower($table),
                 strtolower($this->table),
@@ -79,9 +76,9 @@ final class QueryStatement implements Stringable
                 $table,
                 $key,
                 $onDelete,
-                $onUpdate
+                $onUpdate,
             ),
-            SQLiteDriver::class => null,
+            DatabaseDialect::SQLITE => null,
         };
 
         return $this;
@@ -97,16 +94,16 @@ final class QueryStatement implements Stringable
     /** @throws UnhandledMatchError */
     public function dropForeignKeyFor(string $targetTable, string $postfixKey = 'id'): self
     {
-        $this->query[] = match ($this->driver::class) {
-            MySqlDriver::class,
-            PostgreSqlDriver::class => sprintf(
+        $this->query[] = match ($this->dialect) {
+            DatabaseDialect::MYSQL,
+            DatabaseDialect::POSTGRESQL => sprintf(
                 "ALTER TABLE %s DROP FOREIGN KEY fk_%s_%s_%s;",
                 $targetTable,
                 strtolower($targetTable),
                 strtolower($this->table),
                 strtolower($targetTable) . '_' . $postfixKey,
             ),
-            SQLiteDriver::class => null,
+            DatabaseDialect::SQLITE => null,
         };
 
         return $this;
@@ -139,6 +136,6 @@ final class QueryStatement implements Stringable
 
     public function toQuery(): Query
     {
-        return new Query((string) $this);
+        return new Query((string)$this);
     }
 }

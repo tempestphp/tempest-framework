@@ -22,7 +22,7 @@ readonly class FooMigration implements Migration
 
     public function up(): Query|null
     {
-        return $this->driver
+        return $this->driver->dialect()
             ->createQueryStatement('Foo')
             ->createTable()
             ->primary()

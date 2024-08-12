@@ -7,7 +7,6 @@ namespace Tempest\Database\Drivers;
 use SensitiveParameter;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseDriver;
-use Tempest\Database\QueryStatement;
 
 final readonly class MySqlDriver implements DatabaseDriver
 {
@@ -43,10 +42,5 @@ final readonly class MySqlDriver implements DatabaseDriver
     public function dialect(): DatabaseDialect
     {
         return DatabaseDialect::MYSQL;
-    }
-
-    public function createQueryStatement(string $table): QueryStatement
-    {
-        return new QueryStatement($this, $table);
     }
 }

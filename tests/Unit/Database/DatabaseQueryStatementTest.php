@@ -24,7 +24,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_create_table_database_drivers')]
     public function it_can_create_a_table(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = $driver->createQueryStatement('Migration')
+        $statement = $driver->dialect()->createQueryStatement('Migration')
             ->createTable()
             ->primary()
             ->createColumn('name', 'VARCHAR(255)');
@@ -54,7 +54,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_fk_create_table_database_drivers')]
     public function it_can_create_a_foreign_key_constraint(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = $driver->createQueryStatement('Book')
+        $statement = $driver->dialect()->createQueryStatement('Book')
             ->createTable()
             ->primary()
             ->createColumn('author_id', 'INTEGER UNSIGNED')
@@ -88,7 +88,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $driver->createQueryStatement('Book')
+        $driver->dialect()->createQueryStatement('Book')
             ->statement('SELECT VERSION()')
             ->createTable()
             ->primary();
@@ -100,7 +100,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $driver->createQueryStatement('Book')
+        $driver->dialect()->createQueryStatement('Book')
             ->statement('SELECT VERSION()')
             ->alterTable('DELETE')
             ->statement('KEY');
@@ -125,7 +125,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_alter_table_syntax')]
     public function it_can_create_an_alter_table_add_statement(DatabaseDriver $driver, string $operation, string $validSql): void
     {
-        $statement = $driver->createQueryStatement('Author')
+        $statement = $driver->dialect()->createQueryStatement('Author')
             ->alterTable($operation)
             ->createColumn('name', 'VARCHAR(255)');
 
