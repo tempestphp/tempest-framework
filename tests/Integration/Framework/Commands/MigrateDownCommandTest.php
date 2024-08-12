@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Console\Commands;
+namespace Tests\Tempest\Integration\Framework\Commands;
 
 use Tempest\Database\Migrations\MigrationException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

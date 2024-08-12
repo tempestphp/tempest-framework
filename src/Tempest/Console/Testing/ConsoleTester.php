@@ -53,6 +53,7 @@ final class ConsoleTester
             output: $memoryOutputBuffer,
             input: $memoryInputBuffer,
             highlighter: $clone->container->get(Highlighter::class),
+            executeConsoleCommand: $clone->container->get(ExecuteConsoleCommand::class),
         );
 
         if ($this->componentRenderer) {

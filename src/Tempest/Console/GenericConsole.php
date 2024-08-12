@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 use Tempest\Console\Components\Interactive\PasswordComponent;
@@ -27,7 +28,13 @@ final class GenericConsole implements Console
         private readonly OutputBuffer $output,
         private readonly InputBuffer $input,
         private readonly Highlighter $highlighter,
+        private readonly ExecuteConsoleCommand $executeConsoleCommand,
     ) {
+    }
+
+    public function call(string $command): ExitCode
+    {
+        return ($this->executeConsoleCommand)($command);
     }
 
     public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self

@@ -8,6 +8,8 @@ use Closure;
 
 interface Console
 {
+    public function call(string $command): ExitCode;
+
     public function readln(): string;
 
     public function read(int $bytes): string;

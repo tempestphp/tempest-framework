@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Exceptions;
 
 use Exception;
+use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Highlight\TextTerminalTheme;
@@ -31,6 +32,7 @@ class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
                 output: $output,
                 input: new UnsupportedInputBuffer(),
                 highlighter: $highlighter,
+                executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class),
             ),
             highlighter: $highlighter,
             argumentBag: $this->container->get(ConsoleArgumentBag::class),

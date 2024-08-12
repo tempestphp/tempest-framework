@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Console\Commands;
+namespace Tests\Tempest\Integration\Framework\Commands;
 
 use PHPUnit\Framework\Assert;
 use Tempest\Database\Migrations\Migration;
@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class MigrateCommandTest extends FrameworkIntegrationTestCase
+class MigrateUpCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_command(): void
     {

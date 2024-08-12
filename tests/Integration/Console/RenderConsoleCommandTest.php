@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console;
 
 use ReflectionMethod;
+use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\GenericConsole;
@@ -37,6 +38,7 @@ class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
             output: $output,
             input: new UnsupportedInputBuffer(),
             highlighter: $highlighter,
+            executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class)
         );
 
         (new RenderConsoleCommand($console))($consoleCommand);

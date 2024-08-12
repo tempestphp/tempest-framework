@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
+use Exception;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
+use Tempest\Database\UnsupportedDialect;
 use function Tempest\event;
+use function Tempest\map;
+use Throwable;
 use UnhandledMatchError;
 
 final readonly class MigrationManager
@@ -58,9 +63,9 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         } catch (PDOException $exception) {
             /** @throw UnhandledMatchError */
-            match ((string) $exception->getCode()) {
+            match ((string)$exception->getCode()) {
                 $this->databaseConfig->driver()->dialect()->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable())
+                    event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($exception->getMessage()),
             };
@@ -85,6 +90,46 @@ final readonly class MigrationManager
             }
 
             $this->executeDown($migration);
+        }
+    }
+
+    public function dropAll(): void
+    {
+        $dialect = $this->databaseConfig->driver()->dialect();
+
+        try {
+            // Get all tables
+            $tables = map((new Query(match ($dialect) {
+                DatabaseDialect::MYSQL => "SHOW FULL TABLES WHERE table_type = 'BASE TABLE'",
+                DatabaseDialect::SQLITE => "select type, name from sqlite_master where type = 'table' and name not like 'sqlite_%'",
+                default => throw new UnsupportedDialect(),
+            }))->fetch())->collection()->to(TableDefinition::class);
+
+            // Disable foreign key checks
+            (new Query(match ($dialect) {
+                DatabaseDialect::MYSQL => 'SET FOREIGN_KEY_CHECKS=0',
+                DatabaseDialect::SQLITE => 'PRAGMA foreign_keys = 0',
+                default => throw new UnsupportedDialect(),
+            }))->execute();
+
+            // Drop each table
+            foreach ($tables as $table) {
+                (new Query(match ($dialect) {
+                    DatabaseDialect::MYSQL, DatabaseDialect::SQLITE => sprintf('DROP TABLE IF EXISTS %s', $table->name),
+                    default => throw new UnsupportedDialect(),
+                }))->execute();
+
+                event(new TableDropped($table->name));
+            }
+        } catch (Throwable $throwable) {
+            event(new FreshMigrationFailed($throwable));
+        } finally {
+            // Enable foreign key checks
+            (new Query(match ($dialect) {
+                DatabaseDialect::MYSQL => 'SET FOREIGN_KEY_CHECKS=1',
+                DatabaseDialect::SQLITE => 'PRAGMA foreign_keys = 1',
+                default => throw new UnsupportedDialect(),
+            }))->execute();
         }
     }
 
@@ -132,7 +177,7 @@ final readonly class MigrationManager
                 new Query(
                     "DELETE FROM Migration WHERE name = :name",
                     ['name' => $migration->getName()],
-                )
+                ),
             );
         } catch (QueryException $e) {
             /**

@@ -8,14 +8,16 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
+use Tempest\Container\Singleton;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\EventBus\EventHandler;
 
+#[Singleton]
 final class MigrateUpCommand
 {
-    private static int $count = 0;
+    private int $count = 0;
 
     public function __construct(
         private readonly Console $console,
@@ -32,15 +34,15 @@ final class MigrateUpCommand
     {
         $this->migrationManager->up();
 
-        $this->console->success("Done");
-        $this->console->writeln(sprintf("Migrated %s migrations", self::$count));
+        $this->console
+            ->success(sprintf("Migrated %s migrations", $this->count));
     }
 
     #[EventHandler]
     public function onMigrationMigrated(MigrationMigrated $event): void
     {
         $this->console->writeln("- {$event->name}");
-        self::$count += 1;
+        $this->count += 1;
     }
 
     #[EventHandler]
