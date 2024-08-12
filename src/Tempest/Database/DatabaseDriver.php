@@ -11,4 +11,8 @@ interface DatabaseDriver
     public function getUsername(): ?string;
 
     public function getPassword(): ?string;
+
+    public function dialect(): DatabaseDialect;
+
+    public function createQueryStatement(string $table): QueryStatement;
 }

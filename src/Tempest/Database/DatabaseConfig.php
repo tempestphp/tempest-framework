@@ -6,10 +6,16 @@ namespace Tempest\Database;
 
 final class DatabaseConfig
 {
+    private array $migrations = [];
+
     public function __construct(
         public readonly DatabaseDriver $driver,
-        public array $migrations = [],
     ) {
+    }
+
+    public function driver(): DatabaseDriver
+    {
+        return $this->driver;
     }
 
     public function addMigration(string $className): self
@@ -17,5 +23,15 @@ final class DatabaseConfig
         $this->migrations[$className] = $className;
 
         return $this;
+    }
+
+    public function setMigrations(array $migrations): void
+    {
+        $this->migrations = $migrations;
+    }
+
+    public function getMigrations(): array
+    {
+        return $this->migrations;
     }
 }

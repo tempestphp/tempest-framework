@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM;
 
+use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
 use Tempest\Database\Query;
 
-class FooMigration implements Migration
+readonly class FooMigration implements Migration
 {
+    public function __construct(
+        private DatabaseDriver $driver
+    ) {
+    }
+
     public function getName(): string
     {
         return 'foo';
@@ -16,10 +22,12 @@ class FooMigration implements Migration
 
     public function up(): Query|null
     {
-        return new Query("CREATE TABLE Foo (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `bar` TEXT
-        )");
+        return $this->driver
+            ->createQueryStatement('Foo')
+            ->createTable()
+            ->primary()
+            ->createColumn('bar', 'TEXT')
+            ->toQuery();
     }
 
     public function down(): Query|null

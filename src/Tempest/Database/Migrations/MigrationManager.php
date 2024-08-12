@@ -12,6 +12,7 @@ use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
 use function Tempest\event;
+use UnhandledMatchError;
 
 final readonly class MigrationManager
 {
@@ -27,21 +28,23 @@ final readonly class MigrationManager
         try {
             $existingMigrations = Migration::all();
         } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable());
+            $this->executeUp(new CreateMigrationsTable($this->databaseConfig->driver()));
 
             $existingMigrations = Migration::all();
         }
 
         $existingMigrations = array_map(
-            fn (Migration $migration) => $migration->name,
+            static fn (Migration $migration) => $migration->name,
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->migrations as $migrationClassName) {
+        $migrations = $this->databaseConfig->getMigrations();
+        ksort($migrations);
+        foreach ($migrations as $migrationClassName) {
             /** @var MigrationInterface $migration */
-            $migration = $this->container->get($migrationClassName);
+            $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver());
 
-            if (in_array($migration->getName(), $existingMigrations)) {
+            if (in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
 
@@ -53,26 +56,31 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException) {
-            // @todo should be handled better as PDO exception doesn't necessarily mean that the migrations table doesn't exist
-            event(new MigrationFailed('Migration', MigrationException::noTable()));
+        } catch (PDOException $exception) {
+            /** @throw UnhandledMatchError */
+            match ((string) $exception->getCode()) {
+                $this->databaseConfig->driver()->dialect()->tableNotFoundCode() => event(
+                    event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable())
+                ),
+                default => throw new UnhandledMatchError($exception->getMessage()),
+            };
 
             return;
         }
 
         $existingMigrations = array_map(
-            fn (Migration $migration) => $migration->name,
+            static fn (Migration $migration) => $migration->name,
             $existingMigrations,
         );
 
-        foreach ($this->databaseConfig->migrations as $migrationClassName) {
+        $migrations = $this->databaseConfig->getMigrations();
+        krsort($migrations);
+        foreach ($migrations as $migrationClassName) {
             /** @var MigrationInterface $migration */
             $migration = $this->container->get($migrationClassName);
 
-            /**
-             * If the migration is not in the existing migrations, it means it has not been executed
-             */
-            if (! in_array($migration->getName(), $existingMigrations)) {
+            /* If the migration is not in the existing migrations, it means it has not been executed */
+            if (! in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
 
