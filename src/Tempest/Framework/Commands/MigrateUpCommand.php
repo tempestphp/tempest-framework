@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Commands;
+namespace Tempest\Framework\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
@@ -10,10 +10,10 @@ use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Database\Migrations\MigrationFailed;
 use Tempest\Database\Migrations\MigrationManager;
-use Tempest\Database\Migrations\MigrationRolledBack;
+use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\EventBus\EventHandler;
 
-final class MigrateDownCommand
+final class MigrateUpCommand
 {
     private static int $count = 0;
 
@@ -24,22 +24,22 @@ final class MigrateDownCommand
     }
 
     #[ConsoleCommand(
-        name: 'migrate:down',
-        description: 'Rollbacks all executed migrations',
+        name: 'migrate:up',
+        description: 'Run all new migrations',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): void
     {
-        $this->migrationManager->down();
+        $this->migrationManager->up();
 
         $this->console->success("Done");
-        $this->console->writeln(sprintf("Rolled back %s migrations", self::$count));
+        $this->console->writeln(sprintf("Migrated %s migrations", self::$count));
     }
 
     #[EventHandler]
-    public function onMigrationRolledBack(MigrationRolledBack $event): void
+    public function onMigrationMigrated(MigrationMigrated $event): void
     {
-        $this->console->writeln("- Rollback {$event->name}");
+        $this->console->writeln("- {$event->name}");
         self::$count += 1;
     }
 
