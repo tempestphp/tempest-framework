@@ -46,6 +46,6 @@ final readonly class MethodReflector implements Reflector
 
     public function getName(): string
     {
-        return $this->getName();
+        return $this->reflectionMethod->getName();
     }
 }

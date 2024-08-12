@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Scheduler;
 
-use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class SchedulerConfig
 {
@@ -18,14 +18,14 @@ final class SchedulerConfig
     ) {
     }
 
-    public function addMethodInvocation(ReflectionMethod $handler, Schedule $schedule): self
+    public function addMethodInvocation(MethodReflector $handler, Schedule $schedule): self
     {
         $this->scheduledInvocations[] = new ScheduledInvocation($schedule, $handler);
 
         return $this;
     }
 
-    public function addCommandInvocation(ReflectionMethod $handler, ConsoleCommand $command, Schedule $schedule): self
+    public function addCommandInvocation(MethodReflector $handler, ConsoleCommand $command, Schedule $schedule): self
     {
         $command->setHandler($handler);
 

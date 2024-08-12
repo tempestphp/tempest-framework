@@ -4,35 +4,33 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Discovery;
 
-use ReflectionClass;
-use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\ClassReflector;
 
 final class ScheduleDiscovery implements Discovery
 {
     use HandlesDiscoveryCache;
 
     public function __construct(
-        private SchedulerConfig $schedulerConfig,
+        private readonly SchedulerConfig $schedulerConfig,
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $schedule = Attributes::find(Schedule::class)->in($method)->first();
+        foreach ($class->getPublicMethods() as $method) {
+            $schedule = $method->getAttribute(Schedule::class);
 
             if ($schedule === null) {
                 continue;
             }
 
-            $command = Attributes::find(ConsoleCommand::class)->in($method)->first();
+            $command = $method->getAttribute(ConsoleCommand::class);
 
             if ($command) {
                 $this->schedulerConfig->addCommandInvocation($method, $command, $schedule);

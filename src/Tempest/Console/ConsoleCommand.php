@@ -7,11 +7,12 @@ namespace Tempest\Console;
 use Attribute;
 use ReflectionMethod;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
+use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
 final class ConsoleCommand
 {
-    public ReflectionMethod $handler;
+    public MethodReflector $handler;
 
     public function __construct(
         private readonly ?string $name = null,
@@ -30,7 +31,7 @@ final class ConsoleCommand
     ) {
     }
 
-    public function setHandler(ReflectionMethod $handler): self
+    public function setHandler(MethodReflector $handler): self
     {
         $this->handler = $handler;
 
@@ -67,10 +68,10 @@ final class ConsoleCommand
     {
         $this->name = $data['name'];
         $this->description = $data['description'];
-        $this->handler = new ReflectionMethod(
+        $this->handler = new MethodReflector(new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
-        );
+        ));
         $this->aliases = $data['aliases'];
         $this->help = $data['help'];
         $this->middleware = $data['middleware'];

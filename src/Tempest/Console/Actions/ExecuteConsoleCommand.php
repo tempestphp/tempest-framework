@@ -11,7 +11,6 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
-use function Tempest\type;
 
 final readonly class ExecuteConsoleCommand
 {
@@ -40,13 +39,13 @@ final readonly class ExecuteConsoleCommand
 
             $handler = $consoleCommand->handler;
 
-            $consoleCommandClass = $this->container->get(type($handler->getDeclaringClass()));
+            $consoleCommandClass = $this->container->get($handler->getDeclaringClass()->getName());
 
             $inputBuilder = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
 
-            $consoleCommand->handler->invoke(
+            $consoleCommand->handler->invokeArgs(
                 $consoleCommandClass,
-                ...$inputBuilder->build(),
+                $inputBuilder->build(),
             );
 
             return ExitCode::SUCCESS;

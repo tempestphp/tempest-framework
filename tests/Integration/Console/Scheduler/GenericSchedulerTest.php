@@ -12,6 +12,7 @@ use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\Scheduler\SchedulerConfig;
+use Tempest\Support\Reflection\MethodReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -40,7 +41,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $config = new SchedulerConfig();
         $config->addMethodInvocation(
-            new ReflectionMethod($this, 'handler'),
+            new MethodReflector(new ReflectionMethod($this, 'handler')),
             new Schedule(Every::MINUTE)
         );
 
@@ -58,7 +59,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $config = new SchedulerConfig();
         $config->addCommandInvocation(
-            new ReflectionMethod($this, 'command'),
+            new MethodReflector(new ReflectionMethod($this, 'command')),
             new ConsoleCommand('command'),
             new Schedule(Every::MINUTE)
         );
@@ -79,7 +80,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $config = new SchedulerConfig();
         $config->addMethodInvocation(
-            new ReflectionMethod($this, 'handler'),
+            new MethodReflector(new ReflectionMethod($this, 'handler')),
             new Schedule(Every::MINUTE)
         );
 

@@ -13,6 +13,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Framework\Application\AppConfig;
+use Tempest\Support\Reflection\ClassReflector;
 use Throwable;
 
 final readonly class DiscoveryBootstrap implements Bootstrap
@@ -81,13 +82,13 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                         );
 
                         try {
-                            $input = new ReflectionClass($className);
+                            $input = new ClassReflector(new ReflectionClass($className));
                         } catch (Throwable) {
                             continue;
                         }
                     }
 
-                    if ($input instanceof ReflectionClass) {
+                    if ($input instanceof ClassReflector) {
                         $discovery->discover($input);
                     } elseif ($discovery instanceof DiscoversPath) {
                         $discovery->discoverPath($input);

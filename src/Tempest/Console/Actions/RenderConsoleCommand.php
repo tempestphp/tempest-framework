@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
-use ReflectionParameter;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Support\Reflection\ParameterReflector;
 
 final readonly class RenderConsoleCommand
 {
@@ -29,7 +29,7 @@ final readonly class RenderConsoleCommand
         $this->console->writeln(' ' . implode(' ', $parts));
     }
 
-    private function renderParameter(ReflectionParameter $parameter): string
+    private function renderParameter(ParameterReflector $parameter): string
     {
         /** @phpstan-ignore-next-line */
         $type = $parameter->getType()?->getName();

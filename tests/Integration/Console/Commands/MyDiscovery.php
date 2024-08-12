@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Support\Reflection\ClassReflector;
 
 class MyDiscovery implements Discovery
 {
     public static bool $cacheCleared = false;
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
         // TODO: Implement discover() method.
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class CommandBusConfig
 {
@@ -17,7 +17,7 @@ final class CommandBusConfig
     ) {
     }
 
-    public function addHandler(CommandHandler $commandHandler, string $commandName, ReflectionMethod $handler): self
+    public function addHandler(CommandHandler $commandHandler, string $commandName, MethodReflector $handler): self
     {
         $this->handlers[$commandName] = $commandHandler
             ->setCommandName($commandName)

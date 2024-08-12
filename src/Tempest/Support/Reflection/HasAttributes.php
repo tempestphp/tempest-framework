@@ -26,7 +26,7 @@ trait HasAttributes
      */
     public function getAttribute(string $attributeClass): object|null
     {
-        $attribute = $this->getReflection()->getAttributes($attributeClass)[0] ?? null;
+        $attribute = $this->getReflection()->getAttributes($attributeClass, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
 
         return $attribute?->newInstance();
     }

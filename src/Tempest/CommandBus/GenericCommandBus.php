@@ -34,9 +34,9 @@ final class GenericCommandBus implements CommandBus
     private function getCallable(CommandHandler $commandHandler): Closure
     {
         $callable = function (object $command) use ($commandHandler): void {
-            $commandHandler->handler->invoke(
+            $commandHandler->handler->invokeArgs(
                 $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
-                $command,
+                [$command],
             );
 
             $this->history[] = $command;

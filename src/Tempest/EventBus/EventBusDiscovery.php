@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus;
 
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionNamedType;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class EventBusDiscovery implements Discovery
 {
@@ -21,16 +18,16 @@ final readonly class EventBusDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $eventHandler = Attributes::find(EventHandler::class)->in($method)->first();
+        foreach ($class->getPublicMethods() as $method) {
+            $eventHandler = $method->getAttribute(EventHandler::class);
 
             if (! $eventHandler) {
                 continue;
             }
 
-            $parameters = $method->getParameters();
+            $parameters = iterator_to_array($method->getParameters());
 
             if (count($parameters) !== 1) {
                 continue;
@@ -38,11 +35,7 @@ final readonly class EventBusDiscovery implements Discovery
 
             $type = $parameters[0]->getType();
 
-            if (! $type instanceof ReflectionNamedType) {
-                continue;
-            }
-
-            if (! class_exists($type->getName())) {
+            if (! $type->isClass()) {
                 continue;
             }
 

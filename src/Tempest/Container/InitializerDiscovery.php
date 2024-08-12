@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use ReflectionClass;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class InitializerDiscovery implements Discovery
 {
@@ -17,16 +17,9 @@ final readonly class InitializerDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        if (! $class->isInstantiable()) {
-            return;
-        }
-
-        if (
-            ! $class->implementsInterface(Initializer::class)
-            && ! $class->implementsInterface(DynamicInitializer::class)
-        ) {
+        if (! $class->implements(Initializer::class) && ! $class->implements(DynamicInitializer::class)) {
             return;
         }
 

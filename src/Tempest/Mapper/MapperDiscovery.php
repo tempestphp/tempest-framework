@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class MapperDiscovery implements Discovery
 {
@@ -18,15 +18,13 @@ final readonly class MapperDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        if (! $class->isInstantiable()) {
+        if (! $class->implements(Mapper::class)) {
             return;
         }
 
-        if ($class->implementsInterface(Mapper::class)) {
-            $this->config->mappers[] = $class->getName();
-        }
+        $this->config->mappers[] = $class->getName();
     }
 
     public function createCachePayload(): string

@@ -6,7 +6,7 @@ namespace Tempest\Support\Reflection;
 
 use Generator;
 use ReflectionClass as PHPReflectionClass;
-use ReflectionProperty;
+use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
 
 /**
@@ -46,9 +46,17 @@ final readonly class ClassReflector implements Reflector
         }
     }
 
+    /** @return Generator|\Tempest\Support\Reflection\MethodReflector[] */
+    public function getPublicMethods(): Generator
+    {
+        foreach ($this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC) as $method) {
+            yield new MethodReflector($method);
+        }
+    }
+
     public function getProperty(string $name): PropertyReflector
     {
-        return new PropertyReflector(new ReflectionProperty($this->reflectionClass->getName(), $name));
+        return new PropertyReflector(new PHPReflectionProperty($this->reflectionClass->getName(), $name));
     }
 
     /**
@@ -110,5 +118,10 @@ final readonly class ClassReflector implements Reflector
     public function is(string $className): bool
     {
         return $this->getType()->matches($className);
+    }
+
+    public function implements(string $interface): bool
+    {
+        return $this->isInstantiable() && $this->getType()->matches($interface);
     }
 }

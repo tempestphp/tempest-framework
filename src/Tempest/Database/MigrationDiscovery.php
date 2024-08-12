@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Support\Reflection\ClassReflector;
 
 final class MigrationDiscovery implements Discovery
 {
@@ -18,13 +18,9 @@ final class MigrationDiscovery implements Discovery
     {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        if (! $class->isInstantiable()) {
-            return;
-        }
-
-        if (! $class->implementsInterface(Migration::class)) {
+        if (! $class->implements(Migration::class)) {
             return;
         }
 

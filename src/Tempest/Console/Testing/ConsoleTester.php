@@ -25,7 +25,7 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Framework\Application\AppConfig;
 use Tempest\Highlight\Highlighter;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class ConsoleTester
 {
@@ -81,11 +81,9 @@ final class ConsoleTester
             }
 
             if (is_array($command) || class_exists($command)) {
-                $handler = new ReflectionMethod(...$command);
+                $handler = new MethodReflector(new ReflectionMethod(...$command));
 
-                $attribute = Attributes::find(ConsoleCommand::class)
-                    ->in($handler)
-                    ->first();
+                $attribute = $handler->getAttribute(ConsoleCommand::class);
 
                 if (! $attribute) {
                     throw new Exception("Could not resolve console command from {$command[0]}::{$command[1]}");

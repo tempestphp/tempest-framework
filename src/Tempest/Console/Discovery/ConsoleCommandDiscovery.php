@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Discovery;
 
-use ReflectionClass;
-use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {
@@ -22,10 +20,10 @@ final readonly class ConsoleCommandDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $consoleCommand = Attributes::find(ConsoleCommand::class)->in($method)->first();
+        foreach ($class->getPublicMethods() as $method) {
+            $consoleCommand = $method->getAttribute(ConsoleCommand::class);
 
             if (! $consoleCommand) {
                 continue;

@@ -30,9 +30,9 @@ final readonly class GenericEventBus implements EventBus
     private function getCallable(EventHandler $eventHandler): Closure
     {
         $callable = function (object $event) use ($eventHandler): void {
-            $eventHandler->handler->invoke(
+            $eventHandler->handler->invokeArgs(
                 $this->container->get($eventHandler->handler->getDeclaringClass()->getName()),
-                $event,
+                [$event],
             );
         };
 

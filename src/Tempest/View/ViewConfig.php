@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use ReflectionClass;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Exceptions\DuplicateViewComponent;
 use Tempest\View\Renderers\TempestViewRenderer;
@@ -20,7 +20,7 @@ final class ViewConfig
     ) {
     }
 
-    public function addViewComponent(string $name, ReflectionClass|AnonymousViewComponent $viewComponent): void
+    public function addViewComponent(string $name, ClassReflector|AnonymousViewComponent $viewComponent): void
     {
         if (! str_starts_with($name, 'x-')) {
             $name = "x-{$name}";
@@ -34,7 +34,7 @@ final class ViewConfig
             );
         }
 
-        if ($viewComponent instanceof ReflectionClass) {
+        if ($viewComponent instanceof ClassReflector) {
             $viewComponent = $viewComponent->getName();
         }
 

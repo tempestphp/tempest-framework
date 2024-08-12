@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus;
 
-use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class EventBusConfig
 {
@@ -17,7 +17,7 @@ final class EventBusConfig
     ) {
     }
 
-    public function addHandler(EventHandler $eventHandler, string $eventName, ReflectionMethod $reflectionMethod): self
+    public function addHandler(EventHandler $eventHandler, string $eventName, MethodReflector $reflectionMethod): self
     {
         $handlerKey = $reflectionMethod->getDeclaringClass()->getName() . '::' . $reflectionMethod->getName();
 

@@ -6,13 +6,14 @@ namespace Tempest\CommandBus;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
 final class CommandHandler
 {
     public string $commandName;
 
-    public ReflectionMethod $handler;
+    public MethodReflector $handler;
 
     public function setCommandName(string $commandName): self
     {
@@ -21,7 +22,7 @@ final class CommandHandler
         return $this;
     }
 
-    public function setHandler(ReflectionMethod $handler): self
+    public function setHandler(MethodReflector $handler): self
     {
         $this->handler = $handler;
 
@@ -40,9 +41,11 @@ final class CommandHandler
     public function __unserialize(array $data): void
     {
         $this->commandName = $data['commandName'];
-        $this->handler = new ReflectionMethod(
-            objectOrMethod: $data['handler_class'],
-            method: $data['handler_method'],
+        $this->handler = new MethodReflector(
+            new ReflectionMethod(
+                objectOrMethod: $data['handler_class'],
+                method: $data['handler_method'],
+            ),
         );
     }
 }

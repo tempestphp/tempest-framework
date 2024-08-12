@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-use ReflectionMethod;
 use Tempest\Console\Middleware\ConsoleExceptionMiddleware;
 use Tempest\Console\Middleware\HelpMiddleware;
 use Tempest\Console\Middleware\InvalidCommandMiddleware;
 use Tempest\Console\Middleware\OverviewMiddleware;
 use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class ConsoleConfig
 {
@@ -31,7 +31,7 @@ final class ConsoleConfig
     ) {
     }
 
-    public function addCommand(ReflectionMethod $handler, ConsoleCommand $consoleCommand): self
+    public function addCommand(MethodReflector $handler, ConsoleCommand $consoleCommand): self
     {
         $consoleCommand->setHandler($handler);
 

@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use ReflectionClass;
-use ReflectionMethod;
-use function Tempest\attribute;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\VarExport\VarExportPhpFile;
 
 final readonly class RouteDiscovery implements Discovery
@@ -23,10 +21,10 @@ final readonly class RouteDiscovery implements Discovery
         $this->routeCacheFile = new VarExportPhpFile(self::CACHE_PATH);
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            $routeAttribute = attribute(Route::class)->in($method)->first();
+        foreach ($class->getPublicMethods() as $method) {
+            $routeAttribute = $method->getAttribute(Route::class);
 
             if (! $routeAttribute) {
                 continue;

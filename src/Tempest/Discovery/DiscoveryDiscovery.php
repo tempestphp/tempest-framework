@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Framework\Application\AppConfig;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
@@ -17,13 +17,13 @@ final readonly class DiscoveryDiscovery implements Discovery
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        if (
-            ! $class->isInstantiable()
-            || ! $class->implementsInterface(Discovery::class)
-            || $class->getName() === self::class
-        ) {
+        if ($class->getName() === self::class) {
+            return;
+        }
+
+        if (! $class->implements(Discovery::class)) {
             return;
         }
 

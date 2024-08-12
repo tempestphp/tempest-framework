@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use ReflectionClass;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
 final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
@@ -20,13 +20,9 @@ final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
     ) {
     }
 
-    public function discover(ReflectionClass $class): void
+    public function discover(ClassReflector $class): void
     {
-        if (! $class->isInstantiable()) {
-            return;
-        }
-
-        if (! $class->implementsInterface(ViewComponent::class)) {
+        if (! $class->implements(ViewComponent::class)) {
             return;
         }
 

@@ -9,18 +9,19 @@ use ReflectionMethod;
 use Tempest\Console\Commands\ScheduleTaskCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
+use Tempest\Support\Reflection\MethodReflector;
 
 final readonly class ScheduledInvocation
 {
     public function __construct(
         public Schedule $schedule,
-        public ConsoleCommand|ReflectionMethod $handler,
+        public ConsoleCommand|MethodReflector $handler,
     ) {
     }
 
     public function getCommandName(): string
     {
-        if ($this->handler instanceof ReflectionMethod) {
+        if ($this->handler instanceof MethodReflector) {
             return ScheduleTaskCommand::NAME
                 . ' '
                 . str_replace('\\', '\\\\', $this->handler->getDeclaringClass()->getName())
@@ -48,7 +49,7 @@ final readonly class ScheduledInvocation
             'schedule' => $this->schedule,
         ];
 
-        if ($this->handler instanceof ReflectionMethod) {
+        if ($this->handler instanceof MethodReflector) {
             $data['handler_class'] = $this->handler->getDeclaringClass()->getName();
             $data['handler_method'] = $this->handler->getName();
         } else {
@@ -63,10 +64,10 @@ final readonly class ScheduledInvocation
         $this->schedule = $data['schedule'];
 
         if (isset($data['handler_class'])) {
-            $this->handler = new ReflectionMethod(
+            $this->handler = new MethodReflector(new ReflectionMethod(
                 objectOrMethod: $data['handler_class'],
                 method: $data['handler_method'],
-            );
+            ));
         } else {
             $this->handler = $data['handler'];
         }

@@ -30,6 +30,21 @@ final readonly class ParameterReflector implements Reflector
         return new TypeReflector($this->reflectionParameter);
     }
 
+    public function isOptional(): bool
+    {
+        return $this->reflectionParameter->isOptional();
+    }
+
+    public function isDefaultValueAvailable(): bool
+    {
+        return $this->reflectionParameter->isDefaultValueAvailable();
+    }
+
+    public function getPosition(): int
+    {
+        return $this->reflectionParameter->getPosition();
+    }
+
     public function hasDefaultValue(): bool
     {
         return $this->reflectionParameter->isDefaultValueAvailable();

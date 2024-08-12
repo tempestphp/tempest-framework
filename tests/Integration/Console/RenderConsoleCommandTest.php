@@ -13,6 +13,7 @@ use Tempest\Console\Highlight\TextTerminalTheme;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Highlight\Highlighter;
+use Tempest\Support\Reflection\MethodReflector;
 use Tests\Tempest\Integration\Console\Fixtures\MyConsole;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -24,9 +25,9 @@ class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_render(): void
     {
-        $handler = new ReflectionMethod(new MyConsole(), 'handle');
+        $handler = new MethodReflector(new ReflectionMethod(new MyConsole(), 'handle'));
 
-        $consoleCommand = $handler->getAttributes(ConsoleCommand::class)[0]->newInstance();
+        $consoleCommand = $handler->getAttributes(ConsoleCommand::class)[0];
 
         $consoleCommand->setHandler($handler);
 

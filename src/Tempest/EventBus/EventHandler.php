@@ -6,13 +6,14 @@ namespace Tempest\EventBus;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
 final class EventHandler
 {
     public string $eventName;
 
-    public ReflectionMethod $handler;
+    public MethodReflector $handler;
 
     public function setEventName(string $eventName): self
     {
@@ -21,7 +22,7 @@ final class EventHandler
         return $this;
     }
 
-    public function setHandler(ReflectionMethod $handler): self
+    public function setHandler(MethodReflector $handler): self
     {
         $this->handler = $handler;
 
@@ -40,9 +41,9 @@ final class EventHandler
     public function __unserialize(array $data): void
     {
         $this->eventName = $data['eventName'];
-        $this->handler = new ReflectionMethod(
+        $this->handler = new MethodReflector(new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
-        );
+        ));
     }
 }

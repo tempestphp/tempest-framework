@@ -6,11 +6,12 @@ namespace Tempest\Http;
 
 use Attribute;
 use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
 class Route
 {
-    public ReflectionMethod $handler;
+    public MethodReflector $handler;
 
     /** @var string The Regex used for matching this route against a request URI */
     public readonly string $matchingRegex;
@@ -39,7 +40,7 @@ class Route
         $this->isDynamic = $this->matchingRegex !== $this->uri;
     }
 
-    public function setHandler(ReflectionMethod $handler): self
+    public function setHandler(MethodReflector $handler): self
     {
         $this->handler = $handler;
 
@@ -64,10 +65,10 @@ class Route
         $this->uri = $data['uri'];
         $this->method = $data['method'];
         $this->middleware = $data['middleware'];
-        $this->handler = new ReflectionMethod(
+        $this->handler = new MethodReflector(new ReflectionMethod(
             objectOrMethod: $data['handler_class'],
             method: $data['handler_method'],
-        );
+        ));
         $this->matchingRegex = $data['matchingRegex'];
         $this->isDynamic = $data['isDynamic'];
     }

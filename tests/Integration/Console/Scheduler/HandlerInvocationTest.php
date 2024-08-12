@@ -9,6 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\ScheduledInvocation;
+use Tempest\Support\Reflection\MethodReflector;
 
 /**
  * @internal
@@ -20,10 +21,10 @@ final class HandlerInvocationTest extends TestCase
     {
         $invocation = new ScheduledInvocation(
             schedule: new Schedule(Every::DAY),
-            handler: new ReflectionMethod(
+            handler: new MethodReflector(new ReflectionMethod(
                 objectOrMethod: $this,
                 method: 'handler',
-            )
+            ))
         );
 
         $this->assertSame('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Scheduler\\\\HandlerInvocationTest::handler', $invocation->getCommandName());

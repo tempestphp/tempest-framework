@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Input;
 
-use ReflectionNamedType;
-use ReflectionParameter;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Support\Reflection\ParameterReflector;
 
 final readonly class ConsoleArgumentDefinition
 {
@@ -22,24 +21,15 @@ final readonly class ConsoleArgumentDefinition
     ) {
     }
 
-    public static function fromParameter(ReflectionParameter $parameter): ConsoleArgumentDefinition
+    public static function fromParameter(ParameterReflector $parameter): ConsoleArgumentDefinition
     {
-        $attributes = $parameter->getAttributes(ConsoleArgument::class);
-
-        /** @var ?ConsoleArgument $attribute */
-        $attribute = ($attributes[0] ?? null)?->newInstance();
+        $attribute = $parameter->getAttribute(ConsoleArgument::class);
 
         $type = $parameter->getType();
 
-        if ($type instanceof ReflectionNamedType) {
-            $typeName = $type->getName();
-        } else {
-            $typeName = '';
-        }
-
         return new ConsoleArgumentDefinition(
             name: $parameter->getName(),
-            type: $typeName,
+            type: $type->getName(),
             default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
             hasDefault: $parameter->isDefaultValueAvailable(),
             position: $parameter->getPosition(),

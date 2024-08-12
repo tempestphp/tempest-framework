@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use ReflectionMethod;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class RouteConfig
 {
@@ -22,7 +22,7 @@ final class RouteConfig
     ) {
     }
 
-    public function addRoute(ReflectionMethod $handler, Route $route): self
+    public function addRoute(MethodReflector $handler, Route $route): self
     {
         $route->setHandler($handler);
 
