@@ -43,11 +43,4 @@ final class MigrateDownCommand
         $this->console->writeln("- Rollback {$event->name}");
         $this->count += 1;
     }
-
-    #[EventHandler]
-    public function onMigrationFailed(MigrationFailed $event): void
-    {
-        $this->console->error(sprintf("Error while executing migration: %s", $event->name ?? 'command'));
-        $this->console->error($event->exception->getMessage());
-    }
 }
