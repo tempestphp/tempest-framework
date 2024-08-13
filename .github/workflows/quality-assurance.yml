@@ -2,7 +2,8 @@ name: Quality Assurance
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -23,17 +24,17 @@ jobs:
       - name: Validate Composer
         run: composer validate
 
-  style:
+  check-style:
     name: Check Styling
     runs-on: ubuntu-latest
     steps:
-      -   name: Checkout code
-          uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      -   name: Run PHP-CS-Fixer
-          uses: docker://oskarstark/php-cs-fixer-ga
-          with:
-            args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+      - name: Run PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
 
   phpstan:
     name: Perform Static Analysis
@@ -58,9 +59,13 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.3]
-        database: [sqlite]
+        os:
+          - ubuntu-latest
+          - windows-latest
+        php:
+          - 8.3
+        database:
+          - sqlite
         stability:
           - prefer-stable
 

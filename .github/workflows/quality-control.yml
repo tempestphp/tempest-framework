@@ -2,7 +2,8 @@ name: Quality Control
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -23,22 +24,22 @@ jobs:
       - name: Validate Composer
         run: composer validate
 
-  style:
+  fix-style:
     name: Fix Styling
     runs-on: ubuntu-latest
     steps:
-      -   name: Checkout code
-          uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      -   name: Run PHP-CS-Fixer
-          uses: docker://oskarstark/php-cs-fixer-ga
-          with:
-            args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v
+      - name: Run PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v
 
-      -   name: Commit Changes
-          uses: stefanzweifel/git-auto-commit-action@v5
-          with:
-            commit_message: Fixes styling.
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Fixes styling.
 
   phpstan:
     name: Perform Static Analysis
@@ -63,10 +64,15 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.3]
-        database: [sqlite]
-        stability: [prefer-stable]
+        os:
+          - ubuntu-latest
+          - windows-latest
+        php:
+          - 8.3
+        database:
+          - sqlite
+        stability:
+          - prefer-stable
 
     name: Run Tests - P${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
