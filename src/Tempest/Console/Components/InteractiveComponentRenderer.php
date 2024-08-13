@@ -12,6 +12,7 @@ use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
@@ -101,7 +102,7 @@ final class InteractiveComponentRenderer
 
             $return = null;
 
-            /** @var \Tempest\Support\Reflection\MethodReflector $handler */
+            /** @var MethodReflector $handler */
             if ($handlersForKey = $keyBindings[$key] ?? null) {
                 // Apply specific key handlers
                 foreach ($handlersForKey as $handler) {
