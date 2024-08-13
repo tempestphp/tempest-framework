@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Session\Managers;
 
-use RuntimeException;
 use Tempest\Clock\Clock;
 use function Tempest\event;
 use Tempest\Http\Session\Session;
@@ -111,8 +110,8 @@ final readonly class FileSessionManager implements SessionManager
         $path = $this->getPath($id);
         $dir = dirname($path);
 
-        if (! is_dir($dir) && ! mkdir($dir, recursive: true) && ! is_dir($dir)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        if (! is_dir($dir)) {
+            mkdir($dir, recursive: true);
         }
 
         if ($data !== null) {
