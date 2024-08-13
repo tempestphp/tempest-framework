@@ -49,8 +49,6 @@ namespace Tempest {
 
     use ReflectionClass as PHPReflectionClass;
     use ReflectionProperty as PHPReflectionProperty;
-    use ReflectionType;
-    use Reflector;
     use Tempest\CommandBus\CommandBus;
     use Tempest\Container\GenericContainer;
     use Tempest\EventBus\EventBus;
@@ -64,7 +62,6 @@ namespace Tempest {
     use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\ClassReflector;
     use Tempest\Support\Reflection\PropertyReflector;
-    use Tempest\Support\Reflection\TypeName;
     use Tempest\View\GenericView;
     use Tempest\View\View;
 
@@ -114,11 +111,6 @@ namespace Tempest {
         $factory = get(ObjectFactory::class);
 
         return $factory->withData($data);
-    }
-
-    function type(Reflector|ReflectionType $reflector): string
-    {
-        return (new TypeName())->resolve($reflector);
     }
 
     function path(string ...$parts): string
