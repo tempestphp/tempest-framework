@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Reflection;
 
-use ReflectionAttribute;
+use ReflectionAttribute as PHPReflectionAttribute;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionParameter as PHPReflectionParameter;
@@ -26,7 +26,7 @@ trait HasAttributes
      */
     public function getAttribute(string $attributeClass): object|null
     {
-        $attribute = $this->getReflection()->getAttributes($attributeClass, ReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
+        $attribute = $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
 
         return $attribute?->newInstance();
     }
@@ -39,8 +39,8 @@ trait HasAttributes
     public function getAttributes(string $attributeClass): array
     {
         return array_map(
-            fn (ReflectionAttribute $attribute) => $attribute->newInstance(),
-            $this->getReflection()->getAttributes($attributeClass, ReflectionAttribute::IS_INSTANCEOF)
+            fn (PHPReflectionAttribute $attribute) => $attribute->newInstance(),
+            $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)
         );
     }
 }
