@@ -10,7 +10,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseDriver;
-use Tempest\Database\DatabaseFactory;
+use Tempest\Database\DatabaseDriverFactory;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
@@ -40,9 +40,9 @@ final class DatabaseDriverTest extends TestCase
         ];
 
         yield 'sqlite factor' => [
-            DatabaseFactory::make(DatabaseDialect::SQLITE, [
+            DatabaseDriverFactory::make(DatabaseDialect::SQLITE, [
                 'path' => '/usr/local/db.sqlite',
-            ])->driver(),
+            ]),
             'sqlite:/usr/local/db.sqlite',
             null,
             null,
@@ -62,13 +62,13 @@ final class DatabaseDriverTest extends TestCase
         ];
 
         yield 'mysql factory' => [
-            DatabaseFactory::make(DatabaseDialect::MYSQL, [
+            DatabaseDriverFactory::make(DatabaseDialect::MYSQL, [
                 'host' => 'localhost',
                 'port' => '3307',
                 'username' => 'user',
                 'password' => 'secret',
                 'database' => 'tempest',
-            ])->driver(),
+            ]),
             'mysql:host=localhost:3307;dbname=tempest',
             'user',
             'secret',
@@ -88,13 +88,13 @@ final class DatabaseDriverTest extends TestCase
         ];
 
         yield 'postgresql factory' => [
-            DatabaseFactory::make(DatabaseDialect::POSTGRESQL, [
+            DatabaseDriverFactory::make(DatabaseDialect::POSTGRESQL, [
                 'host' => 'localhost',
                 'port' => '5432',
                 'username' => 'postgres',
                 'password' => 'secret',
                 'database' => 'tempest',
-            ])->driver(),
+            ]),
             'postgresql:localhost:5432/tempest',
             'postgres',
             'secret',
