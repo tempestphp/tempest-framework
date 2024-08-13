@@ -10,8 +10,6 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionProperty;
-use function Tempest\attribute;
 use function Tempest\get;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Casters\BooleanCaster;
@@ -25,6 +23,8 @@ use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
+use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\PropertyReflector;
 use function Tempest\type;
 use Tempest\Validation\Validator;
 use Throwable;
@@ -38,7 +38,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         try {
-            $class = new ReflectionClass($to);
+            $class = new ClassReflector($to);
 
             return $class->isInstantiable();
         } catch (Throwable) {
@@ -50,22 +50,22 @@ final readonly class ArrayToObjectMapper implements Mapper
     {
         $object = $this->resolveObject($to);
 
-        $class = new ReflectionClass($to);
+        $class = new ClassReflector($to);
 
         $missingValues = [];
         $unsetProperties = [];
 
         $from = (new ArrayHelper())->unwrap($from);
 
-        $isStrictClass = attribute(Strict::class)->in($class)->exists();
+        $isStrictClass = $class->hasAttribute(Strict::class);
 
-        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($class->getPublicProperties() as $property) {
             $propertyName = $property->getName();
 
             if (! array_key_exists($propertyName, $from)) {
-                $isStrictProperty = $isStrictClass || attribute(Strict::class)->in($property)->exists();
+                $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
 
-                if ($this->hasDefaultValue($property)) {
+                if ($property->hasDefaultValue()) {
                     continue;
                 }
 
@@ -116,21 +116,17 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    private function getCaster(ReflectionProperty $property): ?Caster
+    private function getCaster(PropertyReflector $property): ?Caster
     {
-        $type = type($property);
-
         // Get CastWith from the property
-        $castWith = attribute(CastWith::class)
-            ->in($property)
-            ->first();
+        $castWith = $property->getAttribute(CastWith::class);
+
+        $type = $property->getType();
 
         // Get CastWith from the property's type
         if (! $castWith) {
             try {
-                $castWith = attribute(CastWith::class)
-                    ->in($type)
-                    ->first();
+                $castWith = $type->asClass()->getAttribute(CastWith::class);
             } catch (ReflectionException) {
                 // Could not resolve CastWith from the type
             }
@@ -142,12 +138,12 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         // Check if backed enum
-        if (is_a($type, BackedEnum::class, true)) {
-            return new EnumCaster($type);
+        if ($type->matches(BackedEnum::class)) {
+            return new EnumCaster($type->getName());
         }
 
         // Get Caster from built-in casters
-        return match ($type) {
+        return match ($type->getName()) {
             'int' => new IntegerCaster(),
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
@@ -167,12 +163,12 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     private function resolveValueFromType(
         mixed $data,
-        ReflectionProperty $property,
+        PropertyReflector $property,
         object $parent,
     ): mixed {
-        $type = $this->resolveType($property);
+        $type = $property->getType();
 
-        if (! $type) {
+        if ($type === null || $type->isBuiltIn()) {
             return new UnknownValue();
         }
 
@@ -183,23 +179,23 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         $data = $this->withParentRelations(
-            new ReflectionClass($type),
+            $type->asClass(),
             $parent,
             $data,
         );
 
         return $this->map(
             from: $caster?->cast($data) ?? $data,
-            to: $type,
+            to: $type->getName(),
         );
     }
 
     private function resolveValueFromArray(
         mixed $data,
-        ReflectionProperty $property,
+        PropertyReflector $property,
         object $parent,
     ): UnknownValue|array {
-        $type = $this->resolveTypeForArray($property);
+        $type = $property->getIterableType();
 
         if (! $type) {
             return new UnknownValue();
@@ -217,69 +213,18 @@ final readonly class ArrayToObjectMapper implements Mapper
             }
 
             $item = $this->withParentRelations(
-                new ReflectionClass($type),
+                $type->asClass(),
                 $parent,
                 $item,
             );
 
             $values[] = $this->map(
                 from: $caster?->cast($item) ?? $item,
-                to: $type,
+                to: $type->getName(),
             );
         }
 
         return $values;
-    }
-
-    private function resolveType(ReflectionProperty $property): ?string
-    {
-        $type = $property->getType();
-
-        if ($type === null) {
-            return null;
-        }
-
-        // PhpStan does a weird thing here, saying that ReflectionType::isBuiltin doesn't exist.
-        // It's late, and I don't want to figure it out atm…
-        /** @phpstan-ignore-next-line */
-        if ($type->isBuiltin()) {
-            return null;
-        }
-
-        return type($type);
-    }
-
-    private function resolveTypeForArray(ReflectionProperty $property): ?string
-    {
-        $doc = $property->getDocComment();
-
-        if (! $doc) {
-            return null;
-        }
-
-        preg_match('/@var ([\\\\\w]+)\[]/', $doc, $match);
-
-        if (! isset($match[1])) {
-            return null;
-        }
-
-        return ltrim($match[1], '\\');
-    }
-
-    private function hasDefaultValue(ReflectionProperty $property): bool
-    {
-        $constructorParameters = [];
-
-        foreach (($property->getDeclaringClass()->getConstructor()?->getParameters() ?? []) as $parameter) {
-            $constructorParameters[$parameter->getName()] = $parameter;
-        }
-
-        $hasDefaultValue = $property->hasDefaultValue();
-
-        $hasPromotedDefaultValue = $property->isPromoted()
-            && $constructorParameters[$property->getName()]->isDefaultValueAvailable();
-
-        return $hasDefaultValue || $hasPromotedDefaultValue;
     }
 
     private function validate(mixed $object): void
@@ -290,16 +235,16 @@ final readonly class ArrayToObjectMapper implements Mapper
     }
 
     private function withParentRelations(
-        ReflectionClass $child,
+        ClassReflector $child,
         object $parent,
         array $data,
     ): array {
-        foreach ($child->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            if (type($property) === $parent::class) {
+        foreach ($child->getPublicProperties() as $property) {
+            if ($property->getType()->getName() === $parent::class) {
                 $data[$property->getName()] = $parent;
             }
 
-            if ($this->resolveTypeForArray($property) === $parent::class) {
+            if ($property->getIterableType()?->getName() === $parent::class) {
                 $data[$property->getName()] = [$parent];
             }
         }

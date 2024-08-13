@@ -31,8 +31,12 @@ final readonly class TypeReflector implements Reflector
         return new ClassReflector($this->definition);
     }
 
-    public function equals(TypeReflector $type): bool
+    public function equals(string|TypeReflector $type): bool
     {
+        if (is_string($type)) {
+            $type = new TypeReflector($type);
+        }
+
         return $this->definition === $type->definition;
     }
 

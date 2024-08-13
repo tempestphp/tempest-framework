@@ -29,7 +29,7 @@ final readonly class Debug
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
     {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $callPath = "Called in " . $trace[1]['file'] . ':' . $trace[1]['line'];
+        $callPath = $trace[1]['file'] . ':' . $trace[1]['line'];
 
         if ($writeToLog) {
             $this->writeToLog($items, $callPath);
@@ -56,24 +56,8 @@ final readonly class Debug
             return;
         }
 
-        $cloner = new VarCloner();
-
         foreach ($items as $key => $item) {
-            $output = '';
-
-            $dumper = new CliDumper(function ($line, $depth) use (&$output): void {
-                if ($depth < 0) {
-                    return;
-                }
-
-                $output .= str_repeat(' ', $depth) . $line . "\n";
-            });
-
-            $dumper->setColors(true);
-
-            $dumper->dump($cloner->cloneVar($item));
-
-            $output .= $callPath;
+            $output = $this->createDump($item) . $callPath;
 
             fwrite($handle, "{$key} " . $output . PHP_EOL);
         }
@@ -86,13 +70,42 @@ final readonly class Debug
         foreach ($items as $key => $item) {
             if (defined('STDOUT')) {
                 fwrite(STDOUT, TerminalStyle::BG_BLUE(" {$key} ") . ' ');
-            }
 
-            VarDumper::dump($item);
+                $output = $this->createDump($item);
+
+                fwrite(STDOUT, $output);
+            } else {
+                VarDumper::dump($item);
+            }
         }
 
         if (defined('STDOUT')) {
             fwrite(STDOUT, $callPath . PHP_EOL);
         }
+    }
+
+    private function createDump(mixed $input): string
+    {
+        $cloner = new VarCloner();
+
+        $output = '';
+
+        $dumper = new CliDumper(function ($line, $depth) use (&$output): void {
+            if ($depth < 0) {
+                return;
+            }
+
+            $output .= str_repeat(' ', $depth) . $line . "\n";
+        });
+
+        $dumper->setColors(true);
+
+        $dumper->dump($cloner->cloneVar($input));
+
+        return preg_replace(
+            pattern: '/\e](.*)\e]8;;\e/',
+            replacement: '',
+            subject: $output
+        );
     }
 }

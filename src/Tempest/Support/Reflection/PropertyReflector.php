@@ -56,6 +56,11 @@ final readonly class PropertyReflector implements Reflector
         return $this->getType()->isIterable();
     }
 
+    public function isPromoted(): bool
+    {
+        return $this->reflectionProperty->isPromoted();
+    }
+
     public function getIterableType(): ?TypeReflector
     {
         $doc = $this->reflectionProperty->getDocComment();
@@ -100,5 +105,21 @@ final readonly class PropertyReflector implements Reflector
     public function getName(): string
     {
         return $this->reflectionProperty->getName();
+    }
+
+    public function hasDefaultValue(): bool
+    {
+        $constructorParameters = [];
+
+        foreach (($this->getClass()->getConstructor()?->getParameters() ?? []) as $parameter) {
+            $constructorParameters[$parameter->getName()] = $parameter;
+        }
+
+        $hasDefaultValue = $this->reflectionProperty->hasDefaultValue();
+
+        $hasPromotedDefaultValue = $this->isPromoted()
+            && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
+
+        return $hasDefaultValue || $hasPromotedDefaultValue;
     }
 }

@@ -8,10 +8,8 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
-use ReflectionProperty;
-use function Tempest\attribute;
 use Tempest\Mapper\Caster;
-use function Tempest\type;
+use Tempest\Support\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class DateTimeCaster implements Caster
@@ -22,14 +20,11 @@ final readonly class DateTimeCaster implements Caster
     ) {
     }
 
-    public static function fromProperty(ReflectionProperty $property)
+    public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {
-        $format = attribute(DateTimeFormat::class)
-            ->in($property)
-            ->first()
-            ?->format ?? 'Y-m-d H:i:s';
+        $format = $property->getAttribute(DateTimeFormat::class)?->format ?? 'Y-m-d H:i:s';
 
-        return match (type($property)) {
+        return match ($property->getType()->getName()) {
             DateTime::class => new DateTimeCaster($format, immutable: false),
             default => new DateTimeCaster($format, immutable: true),
         };
