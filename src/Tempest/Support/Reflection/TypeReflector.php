@@ -6,13 +6,13 @@ namespace Tempest\Support\Reflection;
 
 use Exception;
 use Generator;
-use ReflectionClass;
-use ReflectionIntersectionType;
-use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionProperty;
+use ReflectionClass as PHPReflectionClass;
+use ReflectionIntersectionType as PHPReflectionIntersectionType;
+use ReflectionNamedType as PHPReflectionNamedType;
+use ReflectionParameter as PHPReflectionParameter;
+use ReflectionProperty as PHPReflectionProperty;
 use ReflectionType as PHPReflectionType;
-use ReflectionUnionType;
+use ReflectionUnionType as PHPReflectionUnionType;
 use Reflector as PHPReflector;
 use TypeError;
 
@@ -57,6 +57,13 @@ final readonly class TypeReflector implements Reflector
     public function getName(): string
     {
         return $this->definition;
+    }
+
+    public function getShortName(): string
+    {
+        $parts = explode('\\', $this->definition);
+
+        return $parts[array_key_last($parts)];
     }
 
     public function isBuiltIn(): bool
@@ -108,28 +115,28 @@ final readonly class TypeReflector implements Reflector
         }
 
         if (
-            $reflector instanceof ReflectionParameter
-            || $reflector instanceof ReflectionProperty
+            $reflector instanceof PHPReflectionParameter
+            || $reflector instanceof PHPReflectionProperty
         ) {
             return $this->resolveDefinition($reflector->getType());
         }
 
-        if ($reflector instanceof ReflectionClass) {
+        if ($reflector instanceof PHPReflectionClass) {
             return $reflector->getName();
         }
 
-        if ($reflector instanceof ReflectionNamedType) {
+        if ($reflector instanceof PHPReflectionNamedType) {
             return $reflector->getName();
         }
 
-        if ($reflector instanceof ReflectionUnionType) {
+        if ($reflector instanceof PHPReflectionUnionType) {
             return implode('|', array_map(
                 fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
                 $reflector->getTypes(),
             ));
         }
 
-        if ($reflector instanceof ReflectionIntersectionType) {
+        if ($reflector instanceof PHPReflectionIntersectionType) {
             return implode('&', array_map(
                 fn (PHPReflectionType $reflectionType) => $this->resolveDefinition($reflectionType),
                 $reflector->getTypes(),

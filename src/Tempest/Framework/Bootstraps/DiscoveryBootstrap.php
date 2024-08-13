@@ -7,7 +7,6 @@ namespace Tempest\Framework\Bootstraps;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use ReflectionClass;
 use SplFileInfo;
 use Tempest\Container\Container;
 use Tempest\Discovery\DiscoversPath;
@@ -82,7 +81,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                         );
 
                         try {
-                            $input = new ClassReflector(new ReflectionClass($className));
+                            $input = new ClassReflector($className);
                         } catch (Throwable) {
                             continue;
                         }

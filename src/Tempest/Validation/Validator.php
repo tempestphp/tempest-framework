@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation;
 
-use ReflectionClass;
-use ReflectionProperty;
-use Tempest\Support\Reflection\Attributes;
+use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
 
@@ -14,12 +12,12 @@ final readonly class Validator
 {
     public function validate(object $object): void
     {
-        $class = new ReflectionClass($object);
+        $class = new ClassReflector($object);
 
         $failingRules = [];
 
-        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            $rules = Attributes::find(Rule::class)->in($property)->all();
+        foreach ($class->getPublicProperties() as $property) {
+            $rules = $property->getAttributes(Rule::class);
 
             if (! $property->isInitialized($object)) {
                 continue;

@@ -6,15 +6,11 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
-use ReflectionClass;
-use ReflectionFunction;
-use ReflectionMethod;
-use ReflectionParameter;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
-use Tempest\Support\Reflection\Attributes;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\FunctionReflector;
 use Tempest\Support\Reflection\MethodReflector;
 use Tempest\Support\Reflection\ParameterReflector;
 use Tempest\Support\Reflection\TypeReflector;
@@ -102,12 +98,8 @@ final class GenericContainer implements Container
         return $dependency;
     }
 
-    public function invoke(MethodReflector|ReflectionMethod $method, mixed ...$params): mixed
+    public function invoke(MethodReflector $method, mixed ...$params): mixed
     {
-        if ($method instanceof ReflectionMethod) {
-            $method = new MethodReflector($method);
-        }
-
         $this->resolveChain();
 
         $object = $this->get($method->getDeclaringClass()->getName());
@@ -119,7 +111,7 @@ final class GenericContainer implements Container
         return $method->invokeArgs($object, $parameters);
     }
 
-    public function addInitializer(ClassReflector|ReflectionClass|string $initializerClass): Container
+    public function addInitializer(ClassReflector|string $initializerClass): Container
     {
         if (! $initializerClass instanceof ClassReflector) {
             $initializerClass = new ClassReflector($initializerClass);
@@ -162,30 +154,31 @@ final class GenericContainer implements Container
                 $this->singletons[$className] = $instance;
             }
 
-            $this->resolveChain()->add(new ReflectionClass($className));
+            $this->resolveChain()->add($class);
 
             return $instance;
         }
 
         // Check if a callable has been registered to resolve this class.
         if ($definition = $this->definitions[$dependencyName] ?? null) {
-            $this->resolveChain()->add(new ReflectionFunction($definition));
+            $this->resolveChain()->add(new FunctionReflector($definition));
 
             return $definition($this);
         }
 
         // Next we check if any of our default initializers can initialize this class.
         if (($initializer = $this->initializerFor($class, $tag)) !== null) {
-            $this->resolveChain()->add(new ReflectionClass($initializer));
+            $initializerClass = new ClassReflector($initializer);
+
+            $this->resolveChain()->add($initializerClass);
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
             };
 
-            // Check whether the initializer's result should be registered as a singleton
-            $singleton = Attributes::find(Singleton::class)->in($initializer::class)->first()
-                ?? Attributes::find(Singleton::class)->in((new ReflectionClass($initializer))->getMethod('initialize'))->first();
+            $singleton = $initializerClass->getAttribute(Singleton::class)
+                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singleton($className, $object, $tag);
@@ -264,11 +257,11 @@ final class GenericContainer implements Container
     }
 
     /**
-     * @return ReflectionParameter[]
+     * @return ParameterReflector[]
      */
     private function autowireDependencies(MethodReflector $method, array $parameters = []): array
     {
-        $this->resolveChain()->add($method->getReflection());
+        $this->resolveChain()->add($method);
 
         $dependencies = [];
 
@@ -319,7 +312,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter->getReflection()));
+        throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
     private function autowireObjectDependency(TypeReflector $type, ?string $tag, mixed $providedValue): mixed
@@ -364,7 +357,7 @@ final class GenericContainer implements Container
 
         // At this point, there is nothing else we can do; we don't know
         // how to autowire this dependency.
-        throw new CannotAutowireException($this->chain, new Dependency($parameter->getReflection()));
+        throw new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
     private function clone(): self

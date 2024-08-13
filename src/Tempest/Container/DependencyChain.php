@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Closure;
-use ReflectionType;
-use Reflector;
 use Tempest\Container\Exceptions\CircularDependencyException;
+use Tempest\Support\Reflection\Reflector;
 
 final class DependencyChain
 {
@@ -20,7 +19,7 @@ final class DependencyChain
     {
     }
 
-    public function add(Reflector|ReflectionType|Closure|string $dependency): self
+    public function add(Reflector|Closure|string $dependency): self
     {
         $dependency = new Dependency($dependency);
 

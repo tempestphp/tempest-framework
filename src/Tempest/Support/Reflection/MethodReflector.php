@@ -48,4 +48,19 @@ final readonly class MethodReflector implements Reflector
     {
         return $this->reflectionMethod->getName();
     }
+
+    public function getShortName(): string
+    {
+        $string = $this->getDeclaringClass()->getShortName() . '::' . $this->getName() . '(';
+
+        $parameters = [];
+
+        foreach ($this->getParameters() as $parameter) {
+            $parameters[] = $parameter->getType()->getShortName() . ' $' . $parameter->getName();
+        }
+
+        $string .= implode(', ', $parameters);
+
+        return $string . ')';
+    }
 }

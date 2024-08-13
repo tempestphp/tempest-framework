@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Closure;
-use ReflectionClass;
-use ReflectionFunction;
-use ReflectionIntersectionType;
-use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionType;
-use ReflectionUnionType;
-use Reflector;
+use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\FunctionReflector;
+use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Support\Reflection\ParameterReflector;
+use Tempest\Support\Reflection\Reflector;
+use Tempest\Support\Reflection\TypeReflector;
 
 final readonly class Dependency
 {
     public function __construct(
-        public Reflector|ReflectionType|Closure|string $dependency,
+        public Reflector|Closure|string $dependency,
     ) {
     }
 
@@ -48,93 +45,43 @@ final readonly class Dependency
         }
 
         return match($dependency::class) {
-            ReflectionClass::class => $dependency->getShortName(),
-            ReflectionMethod::class => $dependency->getDeclaringClass()->getShortName(),
-            ReflectionParameter::class => $this->resolveName($dependency->getType()),
-            ReflectionNamedType::class => $dependency->getName(),
-            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
-            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            ClassReflector::class => $dependency->getType()->getShortName(),
+            MethodReflector::class => $dependency->getDeclaringClass()->getType()->getShortName(),
+            ParameterReflector::class => $dependency->getType()->getShortName(),
+            TypeReflector::class => $dependency->getShortName(),
             default => 'unknown',
         };
     }
 
-    private function resolveName(ReflectionType|Reflector|string|Closure $dependency): string
+    private function resolveName(Reflector|Closure|string $dependency): string
     {
         if (is_string($dependency)) {
             return $dependency;
         }
 
         return match($dependency::class) {
-            ReflectionFunction::class => $dependency->getName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
-            ReflectionClass::class => $dependency->getName(),
-            ReflectionMethod::class => $dependency->getDeclaringClass()->getName() . '::' . $dependency->getName(),
-            ReflectionParameter::class => $this->resolveName($dependency->getType()),
-            ReflectionNamedType::class => $dependency->getName(),
-            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
-            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            FunctionReflector::class => $dependency->getName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
+            ClassReflector::class => $dependency->getName(),
+            MethodReflector::class => $dependency->getDeclaringClass()->getName() . '::' . $dependency->getName(),
+            ParameterReflector::class => $dependency->getType()->getName(),
+            TypeReflector::class => $dependency->getName(),
             default => 'unknown',
         };
     }
 
-    private function resolveShortName(ReflectionType|Reflector|string|Closure $dependency): string
+    private function resolveShortName(Reflector|Closure|string $dependency): string
     {
         if (is_string($dependency)) {
             return $dependency;
         }
 
         return match($dependency::class) {
-            ReflectionFunction::class => $dependency->getShortName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
-            ReflectionClass::class => $dependency->getShortName(),
-            ReflectionMethod::class => $this->reflectionMethodToShortString($dependency),
-            ReflectionParameter::class => $this->resolveShortName($dependency->getType()),
-            ReflectionNamedType::class => $this->reflectionNameTypeToShortString($dependency),
-            ReflectionIntersectionType::class => $this->intersectionTypeToString($dependency),
-            ReflectionUnionType::class => $this->unionTypeToString($dependency),
+            FunctionReflector::class => $dependency->getShortName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
+            ClassReflector::class => $dependency->getShortName(),
+            MethodReflector::class => $dependency->getShortName(),
+            ParameterReflector::class => $dependency->getType()->getShortName(),
+            TypeReflector::class => $dependency->getShortName(),
             default => 'unknown',
         };
-    }
-
-    private function intersectionTypeToString(ReflectionIntersectionType $type): string
-    {
-        return implode(
-            '&',
-            array_map(
-                fn (ReflectionType $subType) => $this->resolveName($subType),
-                $type->getTypes(),
-            ),
-        );
-    }
-
-    private function unionTypeToString(ReflectionUnionType $type): string
-    {
-        return implode(
-            '|',
-            array_map(
-                fn (ReflectionType $subType) => $this->resolveName($subType),
-                $type->getTypes(),
-            ),
-        );
-    }
-
-    private function reflectionMethodToShortString(ReflectionMethod $method): string
-    {
-        $string = $method->getDeclaringClass()->getShortName() . '::' . $method->getName() . '(';
-
-        $parameters = [];
-
-        foreach ($method->getParameters() as $parameter) {
-            $parameters[] = $this->resolveShortName($parameter) . ' $' . $parameter->getName();
-        }
-
-        $string .= implode(', ', $parameters);
-
-        return $string . ')';
-    }
-
-    private function reflectionNameTypeToShortString(ReflectionNamedType $type): string
-    {
-        $parts = explode('\\', $type->getName());
-
-        return $parts[array_key_last($parts)] ?? $type->getName();
     }
 }
