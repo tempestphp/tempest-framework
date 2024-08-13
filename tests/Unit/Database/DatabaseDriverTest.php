@@ -39,11 +39,18 @@ final class DatabaseDriverTest extends TestCase
             null,
         ];
 
-        yield 'sqlite factor' => [
+        yield 'sqlite factory' => [
             DatabaseDriverFactory::make(DatabaseDialect::SQLITE, [
                 'path' => '/usr/local/db.sqlite',
             ]),
             'sqlite:/usr/local/db.sqlite',
+            null,
+            null,
+        ];
+
+        yield 'sqlite factory without options' => [
+            DatabaseDriverFactory::make(DatabaseDialect::SQLITE, []),
+            'sqlite:localhost',
             null,
             null,
         ];
@@ -74,6 +81,13 @@ final class DatabaseDriverTest extends TestCase
             'secret',
         ];
 
+        yield 'mysql factory without options' => [
+            DatabaseDriverFactory::make(DatabaseDialect::MYSQL, []),
+            'mysql:host=localhost:3306;dbname=app',
+            'root',
+            '',
+        ];
+
         yield 'postgresql' => [
             new PostgreSqlDriver(
                 host: 'localhost',
@@ -98,6 +112,13 @@ final class DatabaseDriverTest extends TestCase
             'postgresql:localhost:5432/tempest',
             'postgres',
             'secret',
+        ];
+
+        yield 'postgresql factory without options' => [
+            DatabaseDriverFactory::make(DatabaseDialect::POSTGRESQL, []),
+            'postgresql:localhost:5432/app',
+            'postgres',
+            '',
         ];
     }
 }
