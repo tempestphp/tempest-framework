@@ -8,7 +8,9 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseDriver;
+use Tempest\Database\DatabaseFactory;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
@@ -37,6 +39,15 @@ final class DatabaseDriverTest extends TestCase
             null,
         ];
 
+        yield 'sqlite factor' => [
+            DatabaseFactory::make(DatabaseDialect::SQLITE, [
+                'path' => '/usr/local/db.sqlite',
+            ])->driver(),
+            'sqlite:/usr/local/db.sqlite',
+            null,
+            null,
+        ];
+
         yield 'mysql' => [
             new MySqlDriver(
                 host: 'localhost',
@@ -50,6 +61,19 @@ final class DatabaseDriverTest extends TestCase
             'secret',
         ];
 
+        yield 'mysql factory' => [
+            DatabaseFactory::make(DatabaseDialect::MYSQL, [
+                'host' => 'localhost',
+                'port' => '3307',
+                'username' => 'user',
+                'password' => 'secret',
+                'database' => 'tempest',
+            ])->driver(),
+            'mysql:host=localhost:3307;dbname=tempest',
+            'user',
+            'secret',
+        ];
+
         yield 'postgresql' => [
             new PostgreSqlDriver(
                 host: 'localhost',
@@ -58,6 +82,19 @@ final class DatabaseDriverTest extends TestCase
                 password: 'secret',
                 database: 'tempest'
             ),
+            'postgresql:localhost:5432/tempest',
+            'postgres',
+            'secret',
+        ];
+
+        yield 'postgresql factory' => [
+            DatabaseFactory::make(DatabaseDialect::POSTGRESQL, [
+                'host' => 'localhost',
+                'port' => '5432',
+                'username' => 'postgres',
+                'password' => 'secret',
+                'database' => 'tempest',
+            ])->driver(),
             'postgresql:localhost:5432/tempest',
             'postgres',
             'secret',
