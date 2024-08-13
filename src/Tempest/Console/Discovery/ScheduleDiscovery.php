@@ -6,6 +6,8 @@ namespace Tempest\Console\Discovery;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
+use Tempest\Console\Scheduler\Interval;
+use Tempest\Console\Scheduler\ScheduledInvocation;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
@@ -47,7 +49,14 @@ final class ScheduleDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $scheduledInvocations = unserialize($payload);
+        $scheduledInvocations = unserialize($payload, [
+            'allowed_classes' => [
+                ScheduledInvocation::class,
+                Schedule::class,
+                Interval::class,
+                ConsoleCommand::class,
+            ],
+        ]);
 
         $this->schedulerConfig->scheduledInvocations = $scheduledInvocations;
     }

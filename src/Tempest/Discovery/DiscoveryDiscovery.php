@@ -42,7 +42,9 @@ final readonly class DiscoveryDiscovery implements Discovery
 
     public function restoreCache(Container $container): void
     {
-        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH));
+        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH), [
+            'allowed_classes' => true,
+        ]);
 
         $this->appConfig->discoveryClasses = $discoveryClasses;
     }

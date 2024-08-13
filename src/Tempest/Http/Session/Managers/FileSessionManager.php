@@ -63,11 +63,7 @@ final readonly class FileSessionManager implements SessionManager
 
         $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
 
-        if ($validUntil - $this->clock->time() <= 0) {
-            return false;
-        }
-
-        return true;
+        return $validUntil - $this->clock->time() > 0;
     }
 
     private function getPath(SessionId $id): string
@@ -82,7 +78,7 @@ final readonly class FileSessionManager implements SessionManager
         try {
             $content = @file_get_contents($path);
 
-            return unserialize($content);
+            return unserialize($content, ['allowed_classes' => true]);
         } catch (Throwable) {
             return null;
         }

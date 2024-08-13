@@ -85,7 +85,7 @@ final class ConsoleTester
 
                 $attribute = $handler->getAttribute(ConsoleCommand::class);
 
-                if (! $attribute) {
+                if ($attribute === null) {
                     throw new Exception("Could not resolve console command from {$command[0]}::{$command[1]}");
                 }
 
