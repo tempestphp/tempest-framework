@@ -25,7 +25,6 @@ use Tempest\Mapper\UnknownValue;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
-use function Tempest\type;
 use Tempest\Validation\Validator;
 use Throwable;
 
