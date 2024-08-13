@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
-use ReflectionClass;
-use ReflectionProperty;
 use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
-use function Tempest\type;
+use Tempest\Support\Reflection\ClassReflector;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
@@ -88,11 +86,11 @@ final readonly class ModelToQueryMapper implements Mapper
 
     private function relations(Model $model): array
     {
-        $class = new ReflectionClass($model);
+        $class = new ClassReflector($model);
 
         $fields = [];
 
-        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($class->getPublicProperties() as $property) {
             if (! $property->isInitialized($model)) {
                 continue;
             }
@@ -112,24 +110,24 @@ final readonly class ModelToQueryMapper implements Mapper
 
     private function fields(Model $model): array
     {
-        $class = new ReflectionClass($model);
+        $class = new ClassReflector($model);
 
         $fields = [];
 
-        foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($class->getPublicProperties() as $property) {
             if (! $property->isInitialized($model)) {
                 continue;
             }
 
-            $type = type($property);
-
             // 1:1 or n:1 relations
-            if (is_a($type, Model::class, true)) {
+            $type = $property->getType();
+
+            if ($type->matches(Model::class)) {
                 continue;
             }
 
             // 1:n relations
-            if ($type === 'array') {
+            if ($type->isIterable()) {
                 continue;
             }
 

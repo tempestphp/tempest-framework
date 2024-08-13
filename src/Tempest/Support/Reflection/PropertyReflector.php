@@ -31,6 +31,11 @@ final readonly class PropertyReflector implements Reflector
         $this->reflectionProperty->setValue($object, $value);
     }
 
+    public function isInitialized(object $object): bool
+    {
+        return $this->reflectionProperty->isInitialized($object);
+    }
+
     public function accepts(mixed $input): bool
     {
         return $this->getType()->accepts($input);

@@ -38,7 +38,7 @@ final readonly class ClassReflector implements Reflector
         return $this->reflectionClass;
     }
 
-    /** @return Generator|PropertyReflector[] */
+    /** @return Generator<PropertyReflector> */
     public function getPublicProperties(): Generator
     {
         foreach ($this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC) as $property) {
@@ -46,7 +46,7 @@ final readonly class ClassReflector implements Reflector
         }
     }
 
-    /** @return Generator|\Tempest\Support\Reflection\MethodReflector[] */
+    /** @return Generator<MethodReflector> */
     public function getPublicMethods(): Generator
     {
         foreach ($this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC) as $method) {
