@@ -49,6 +49,44 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_elseif_attribute(): void
+    {
+        $this->assertSame(
+            '<div :if="$this->a">A</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: true)),
+        );
+
+        $this->assertSame(
+            '<div :if="$this->a">A</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: false)),
+        );
+
+        $this->assertSame(
+            '<div :elseif="$this->b">B</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: true)),
+        );
+
+        $this->assertSame(
+            '<div :else>None</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: false)),
+        );
+
+        $this->assertSame(
+            '<div :elseif="$this->c">C</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: true)),
+        );
+
+        $this->assertSame(
+            '<div :elseif="$this->b">B</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: true, c: true)),
+        );
+
+        $this->assertSame(
+            '<div :else>None</div>',
+            $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: false)),
+        );
+    }
+
     public function test_else_attribute(): void
     {
         $this->assertSame(
