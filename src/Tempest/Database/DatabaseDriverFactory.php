@@ -15,9 +15,9 @@ final class DatabaseDriverFactory
         $instance = new self();
 
         return match ($dialect) {
-            DatabaseDialect::MYSQL => new MySqlDriver(...$instance->formatOptions($dialect, $options)),
-            DatabaseDialect::POSTGRESQL => new PostgreSqlDriver(...$instance->formatOptions($dialect, $options)),
-            DatabaseDialect::SQLITE => new SQLiteDriver(...$instance->formatOptions($dialect, $options)),
+            DatabaseDialect::MYSQL => new MySqlDriver(...array_filter($instance->formatOptions($dialect, $options))),
+            DatabaseDialect::POSTGRESQL => new PostgreSqlDriver(...array_filter($instance->formatOptions($dialect, $options))),
+            DatabaseDialect::SQLITE => new SQLiteDriver(...array_filter($instance->formatOptions($dialect, $options))),
         };
     }
 
