@@ -59,7 +59,6 @@ namespace Tempest {
     use Tempest\Http\Router;
     use Tempest\Http\Status;
     use Tempest\Mapper\ObjectFactory;
-    use Tempest\Support\Reflection\Attributes;
     use Tempest\Support\Reflection\ClassReflector;
     use Tempest\Support\Reflection\PropertyReflector;
     use Tempest\View\GenericView;
@@ -82,16 +81,6 @@ namespace Tempest {
         $eventBus = get(EventBus::class);
 
         $eventBus->dispatch($event);
-    }
-
-    /**
-     * @template T of object
-     * @param class-string<T> $attributeName
-     * @return \Tempest\Support\Reflection\Attributes<T>
-     */
-    function attribute(string $attributeName): Attributes
-    {
-        return Attributes::find($attributeName);
     }
 
     /**
