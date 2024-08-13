@@ -8,7 +8,6 @@ use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use ReflectionClass;
 use ReflectionException;
 use function Tempest\get;
 use Tempest\Mapper\Caster;
@@ -47,9 +46,9 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
-        $object = $this->resolveObject($to);
-
         $class = new ClassReflector($to);
+
+        $object = $this->resolveObject($to);
 
         $missingValues = [];
         $unsetProperties = [];
@@ -157,7 +156,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             return $objectOrClass;
         }
 
-        return (new ReflectionClass($objectOrClass))->newInstanceWithoutConstructor();
+        return (new ClassReflector($objectOrClass))->newInstanceWithoutConstructor();
     }
 
     private function resolveValueFromType(

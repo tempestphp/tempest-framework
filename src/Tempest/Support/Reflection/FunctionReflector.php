@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Reflection;
 
 use Closure;
+use Generator;
 use ReflectionFunction as PHPReflectionFunction;
 
 final readonly class FunctionReflector implements Reflector
@@ -17,6 +18,14 @@ final readonly class FunctionReflector implements Reflector
         $this->reflectionFunction = $function instanceof Closure
             ? new PHPReflectionFunction($function)
             : $function;
+    }
+
+    /** @return Generator|\Tempest\Support\Reflection\ParameterReflector[] */
+    public function getParameters(): Generator
+    {
+        foreach ($this->reflectionFunction->getParameters() as $parameter) {
+            yield new ParameterReflector($parameter);
+        }
     }
 
     public function getName(): string

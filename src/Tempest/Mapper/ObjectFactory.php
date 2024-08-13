@@ -6,10 +6,9 @@ namespace Tempest\Mapper;
 
 use Closure;
 use ReflectionException;
-use ReflectionFunction;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
-use function Tempest\type;
+use Tempest\Support\Reflection\FunctionReflector;
 
 /** @template ClassType */
 final class ObjectFactory
@@ -109,14 +108,14 @@ final class ObjectFactory
 
         foreach ($mappers as $mapper) {
             if ($mapper instanceof Closure) {
-                $closure = new ReflectionFunction($mapper);
+                $function = new FunctionReflector($mapper);
 
                 $data = [
                     'from' => $result,
                 ];
 
-                foreach ($closure->getParameters() as $parameter) {
-                    $data[$parameter->getName()] ??= $this->container->get(type($parameter->getType()));
+                foreach ($function->getParameters() as $parameter) {
+                    $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName());
                 }
 
                 $result = $mapper(...$data);
