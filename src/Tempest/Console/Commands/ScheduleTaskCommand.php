@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Container\Container;
+use Tempest\Support\Reflection\MethodReflector;
 use Throwable;
 
 final readonly class ScheduleTaskCommand
@@ -41,14 +41,14 @@ final readonly class ScheduleTaskCommand
         $method = $parts[1];
 
         try {
-            $reflectionMethod = new ReflectionMethod($class, $method);
+            $reflectionMethod = MethodReflector::fromString($class, $method);
         } catch (Throwable $throwable) {
             $console->error($throwable->getMessage());
 
             return;
         }
 
-        $reflectionMethod->invoke(
+        $reflectionMethod->invokeArgs(
             $this->container->get($class, console: $console),
         );
 

@@ -10,6 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {
@@ -40,7 +41,7 @@ final readonly class ConsoleCommandDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $commands = unserialize($payload, ['allowed_classes' => [ConsoleCommand::class]]);
+        $commands = unserialize($payload, ['allowed_classes' => [ConsoleCommand::class, MethodReflector::class]]);
 
         $this->consoleConfig->commands = $commands;
     }

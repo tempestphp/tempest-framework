@@ -8,6 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 
 final readonly class CommandBusDiscovery implements Discovery
 {
@@ -54,7 +55,7 @@ final readonly class CommandBusDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $handlers = unserialize($payload, ['allowed_classes' => [CommandHandler::class]]);
+        $handlers = unserialize($payload, ['allowed_classes' => [CommandHandler::class, MethodReflector::class]]);
 
         $this->commandBusConfig->handlers = $handlers;
     }

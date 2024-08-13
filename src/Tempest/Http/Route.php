@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Attribute;
-use ReflectionMethod;
 use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
@@ -45,31 +44,5 @@ class Route
         $this->handler = $handler;
 
         return $this;
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'uri' => $this->uri,
-            'method' => $this->method,
-            'middleware' => $this->middleware,
-            'handler_class' => $this->handler->getDeclaringClass()->getName(),
-            'handler_method' => $this->handler->getName(),
-            'matchingRegex' => $this->matchingRegex,
-            'isDynamic' => $this->isDynamic,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->uri = $data['uri'];
-        $this->method = $data['method'];
-        $this->middleware = $data['middleware'];
-        $this->handler = new MethodReflector(new ReflectionMethod(
-            objectOrMethod: $data['handler_class'],
-            method: $data['handler_method'],
-        ));
-        $this->matchingRegex = $data['matchingRegex'];
-        $this->isDynamic = $data['isDynamic'];
     }
 }

@@ -5,18 +5,23 @@ declare(strict_types=1);
 namespace Tempest\Support\Reflection;
 
 use Generator;
-use ReflectionMethod;
+use ReflectionMethod as PHPReflectionMethod;
 
 final readonly class MethodReflector implements Reflector
 {
     use HasAttributes;
 
     public function __construct(
-        private ReflectionMethod $reflectionMethod,
+        private PHPReflectionMethod $reflectionMethod,
     ) {
     }
 
-    public function getReflection(): ReflectionMethod
+    public static function fromString(string $class, string $name): self
+    {
+        return new self(new PHPReflectionMethod($class, $name));
+    }
+
+    public function getReflection(): PHPReflectionMethod
     {
         return $this->reflectionMethod;
     }
@@ -62,5 +67,21 @@ final readonly class MethodReflector implements Reflector
         $string .= implode(', ', $parameters);
 
         return $string . ')';
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'class' => $this->getReflection()->getDeclaringClass()->getName(),
+            'method' => $this->getReflection()->getName(),
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->reflectionMethod = new PHPReflectionMethod(
+            objectOrMethod: $data['class'],
+            method: $data['method'],
+        );
     }
 }

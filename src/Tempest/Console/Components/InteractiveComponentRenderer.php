@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Fiber;
-use ReflectionMethod;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
@@ -178,7 +177,7 @@ final class InteractiveComponentRenderer
 
     private function resolveHandlers(InteractiveComponent $component): array
     {
-        /** @var ReflectionMethod[][] $keyBindings */
+        /** @var \Tempest\Support\Reflection\MethodReflector[][] $keyBindings */
         $keyBindings = [];
 
         $inputHandlers = [];

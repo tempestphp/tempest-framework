@@ -13,6 +13,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 
 final class ScheduleDiscovery implements Discovery
 {
@@ -55,6 +56,7 @@ final class ScheduleDiscovery implements Discovery
                 Schedule::class,
                 Interval::class,
                 ConsoleCommand::class,
+                MethodReflector::class,
             ],
         ]);
 

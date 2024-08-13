@@ -8,6 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Support\Reflection\MethodReflector;
 
 final readonly class EventBusDiscovery implements Discovery
 {
@@ -54,7 +55,7 @@ final readonly class EventBusDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $handlers = unserialize($payload, ['allowed_classes' => [EventHandler::class]]);
+        $handlers = unserialize($payload, ['allowed_classes' => [EventHandler::class, MethodReflector::class]]);
 
         $this->eventBusConfig->handlers = $handlers;
     }

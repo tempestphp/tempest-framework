@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Attribute;
-use ReflectionMethod;
 use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
@@ -27,23 +26,5 @@ final class EventHandler
         $this->handler = $handler;
 
         return $this;
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'eventName' => $this->eventName,
-            'handler_class' => $this->handler->getDeclaringClass()->getName(),
-            'handler_method' => $this->handler->getName(),
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->eventName = $data['eventName'];
-        $this->handler = new MethodReflector(new ReflectionMethod(
-            objectOrMethod: $data['handler_class'],
-            method: $data['handler_method'],
-        ));
     }
 }

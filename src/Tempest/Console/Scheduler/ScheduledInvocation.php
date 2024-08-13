@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
-use ReflectionMethod;
 use Tempest\Console\Commands\ScheduleTaskCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
@@ -41,35 +40,5 @@ final readonly class ScheduledInvocation
         $secondsInterval = $this->schedule->interval->inSeconds();
 
         return $date->getTimestamp() - $lastRunTimestamp >= $secondsInterval;
-    }
-
-    public function __serialize(): array
-    {
-        $data = [
-            'schedule' => $this->schedule,
-        ];
-
-        if ($this->handler instanceof MethodReflector) {
-            $data['handler_class'] = $this->handler->getDeclaringClass()->getName();
-            $data['handler_method'] = $this->handler->getName();
-        } else {
-            $data['handler'] = $this->handler;
-        }
-
-        return $data;
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->schedule = $data['schedule'];
-
-        if (isset($data['handler_class'])) {
-            $this->handler = new MethodReflector(new ReflectionMethod(
-                objectOrMethod: $data['handler_class'],
-                method: $data['handler_method'],
-            ));
-        } else {
-            $this->handler = $data['handler'];
-        }
     }
 }

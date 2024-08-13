@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Attribute;
-use ReflectionMethod;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Support\Reflection\MethodReflector;
 
@@ -47,36 +46,6 @@ final class ConsoleCommand
         return $this->handler->getName() === '__invoke'
             ? strtolower($this->handler->getDeclaringClass()->getShortName())
             : strtolower($this->handler->getDeclaringClass()->getShortName() . ':' . $this->handler->getName());
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'name' => $this->name,
-            'description' => $this->description,
-            'handler_class' => $this->handler->getDeclaringClass()->getName(),
-            'handler_method' => $this->handler->getName(),
-            'aliases' => $this->aliases,
-            'help' => $this->help,
-            'middleware' => $this->middleware,
-            'hidden' => $this->hidden,
-            'complete' => $this->complete,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->name = $data['name'];
-        $this->description = $data['description'];
-        $this->handler = new MethodReflector(new ReflectionMethod(
-            objectOrMethod: $data['handler_class'],
-            method: $data['handler_method'],
-        ));
-        $this->aliases = $data['aliases'];
-        $this->help = $data['help'];
-        $this->middleware = $data['middleware'];
-        $this->hidden = $data['hidden'];
-        $this->complete = $data['complete'];
     }
 
     /**

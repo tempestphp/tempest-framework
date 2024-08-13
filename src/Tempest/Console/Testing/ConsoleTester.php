@@ -8,7 +8,6 @@ use Closure;
 use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
-use ReflectionMethod;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
@@ -81,7 +80,7 @@ final class ConsoleTester
             }
 
             if (is_array($command) || class_exists($command)) {
-                $handler = new MethodReflector(new ReflectionMethod(...$command));
+                $handler = MethodReflector::fromString(...$command);
 
                 $attribute = $handler->getAttribute(ConsoleCommand::class);
 
