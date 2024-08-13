@@ -80,7 +80,7 @@ final class ConsoleTester
             }
 
             if (is_array($command) || class_exists($command)) {
-                $handler = MethodReflector::fromString(...$command);
+                $handler = MethodReflector::fromParts(...$command);
 
                 $attribute = $handler->getAttribute(ConsoleCommand::class);
 

@@ -16,7 +16,7 @@ final readonly class MethodReflector implements Reflector
     ) {
     }
 
-    public static function fromString(string $class, string $name): self
+    public static function fromParts(string|object $class, string $name): self
     {
         return new self(new PHPReflectionMethod($class, $name));
     }

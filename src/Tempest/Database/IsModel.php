@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use ReflectionProperty;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
@@ -18,7 +17,7 @@ trait IsModel
 
     public function __get(string $name)
     {
-        $property = new PropertyReflector(new ReflectionProperty($this, $name));
+        $property = PropertyReflector::fromParts($this, $name);
 
         if ($property->hasAttribute(Lazy::class)) {
             $this->load($name);

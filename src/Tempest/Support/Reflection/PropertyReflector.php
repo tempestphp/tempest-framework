@@ -16,6 +16,11 @@ final readonly class PropertyReflector implements Reflector
     ) {
     }
 
+    public static function fromParts(string|object $class, string $name): self
+    {
+        return new self(new PHPReflectionProperty($class, $name));
+    }
+
     public function getReflection(): PHPReflectionProperty
     {
         return $this->reflectionProperty;
