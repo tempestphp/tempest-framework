@@ -26,13 +26,15 @@ final class DatabaseDriverFactory
         return match ($dialect) {
             DatabaseDialect::MYSQL,
             DatabaseDialect::POSTGRESQL => [
-                'host' => $options['host'],
-                'port' => $options['port'],
-                'username' => $options['username'],
-                'password' => $options['password'],
-                'database' => $options['database'],
+                'host' => $options['host'] ?? null,
+                'port' => $options['port'] ?? null,
+                'username' => $options['username'] ?? null,
+                'password' => $options['password'] ?? null,
+                'database' => $options['database'] ?? null,
             ],
-            DatabaseDialect::SQLITE => ['path' => $options['path']],
+            DatabaseDialect::SQLITE => [
+                'path' => $options['path'] ?? null,
+            ],
         };
     }
 }
