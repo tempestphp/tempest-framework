@@ -101,15 +101,16 @@ final class InteractiveComponentRenderer
 
             $return = null;
 
+            /** @var \Tempest\Support\Reflection\MethodReflector $handler */
             if ($handlersForKey = $keyBindings[$key] ?? null) {
                 // Apply specific key handlers
                 foreach ($handlersForKey as $handler) {
-                    $return ??= $handler->invoke($component);
+                    $return ??= $handler->invokeArgs($component);
                 }
             } else {
                 // Apply catch-all key handlers
                 foreach ($inputHandlers as $handler) {
-                    $return ??= $handler->invoke($component, $key);
+                    $return ??= $handler->invokeArgs($component, [$key]);
                 }
             }
 
