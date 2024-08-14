@@ -73,6 +73,7 @@ final class ModelQueryBuilder
         return $this;
     }
 
+    /** @return self<TModelClass> */
     public function orderBy(string $statement): self
     {
         $this->orderBy[] = $statement;
@@ -80,6 +81,7 @@ final class ModelQueryBuilder
         return $this;
     }
 
+    /** @return self<TModelClass> */
     public function limit(int $limit): self
     {
         $this->limit = $limit;
@@ -87,6 +89,7 @@ final class ModelQueryBuilder
         return $this;
     }
 
+    /** @return self<TModelClass> */
     public function raw(string $raw): self
     {
         $this->raw[] = $raw;
