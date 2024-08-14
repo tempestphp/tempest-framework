@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -8,6 +10,10 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_order_by(): void
