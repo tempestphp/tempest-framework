@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Migrations;
 
 use Tempest\Database\Migration;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
@@ -15,7 +16,7 @@ final readonly class CreateBookTable implements Migration
         return '0000-00-00_create_book_table';
     }
 
-    public function up(): CreateTableStatement|null
+    public function up(): QueryStatement|null
     {
         return (new CreateTableStatement('Book'))
             ->primary()
@@ -23,7 +24,7 @@ final readonly class CreateBookTable implements Migration
             ->belongsTo('Book.author_id', 'Author.id', nullable: true);
     }
 
-    public function down(): DropTableStatement|null
+    public function down(): QueryStatement|null
     {
         return new DropTableStatement('Book');
     }
