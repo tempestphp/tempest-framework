@@ -12,10 +12,8 @@ use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
-use Tempest\Database\QueryStatements\BelongsToStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\OnDelete;
-use Tempest\Database\QueryStatements\OnUpdate;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 
