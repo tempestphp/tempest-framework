@@ -30,7 +30,7 @@
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
         "friendsofphp/php-cs-fixer": "^3.21",
-        "larapack/dd": "^1.1",
+        "symfony/var-dumper": "^7.1",
         "nyholm/psr7": "^1.8",
         "php-http/mock-client": "^1.6",
         "phpat/phpat": "^0.10.14",
