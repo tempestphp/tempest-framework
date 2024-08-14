@@ -8,11 +8,16 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Drivers\MySqlDriver;
 use Tempest\Database\Drivers\PostgreSqlDriver;
 use Tempest\Database\Drivers\SQLiteDriver;
+use Tempest\Database\QueryStatements\BelongsToStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\OnDelete;
+use Tempest\Database\QueryStatements\OnUpdate;
+use Tempest\Database\QueryStatements\PrimaryKeyStatement;
+use Tempest\Database\QueryStatements\RawStatement;
 
 /**
  * @internal
@@ -24,12 +29,12 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_create_table_database_drivers')]
     public function it_can_create_a_table(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = $driver->dialect()->createQueryStatement('Migration')
-            ->createTable()
-            ->primary()
-            ->createColumn('name', 'VARCHAR(255)');
+        $statement = (new CreateTableStatement('Migration', [
+            new PrimaryKeyStatement(),
+            new RawStatement('name VARCHAR(255) NOT NULL'),
+        ]))->compile($driver->dialect());
 
-        $this->assertSame($validSql, (string) $statement);
+        $this->assertSame($validSql, $statement);
     }
 
     public static function provide_create_table_database_drivers(): Generator
@@ -54,14 +59,14 @@ final class DatabaseQueryStatementTest extends TestCase
     #[DataProvider('provide_fk_create_table_database_drivers')]
     public function it_can_create_a_foreign_key_constraint(DatabaseDriver $driver, string $validSql): void
     {
-        $statement = $driver->dialect()->createQueryStatement('Book')
-            ->createTable()
+        $statement = (new CreateTableStatement('Book'))
             ->primary()
-            ->createColumn('author_id', 'INTEGER UNSIGNED')
-            ->createForeignKey('author_id', 'Author')
-            ->createColumn('name', 'VARCHAR(255)');
+            ->integer('author_id', unsigned: true)
+            ->belongsTo('Book.author_id', 'Author.id', OnDelete::CASCADE)
+            ->varchar('name')
+            ->compile($driver->dialect());
 
-        $this->assertSame($validSql, (string) $statement);
+        $this->assertSame($validSql, $statement);
     }
 
     public static function provide_fk_create_table_database_drivers(): Generator
@@ -80,30 +85,6 @@ final class DatabaseQueryStatementTest extends TestCase
             new SQLiteDriver(),
             'CREATE TABLE Book (id INTEGER PRIMARY KEY AUTOINCREMENT, author_id INTEGER UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL);',
         ];
-    }
-
-    #[Test]
-    #[DataProvider('provide_database_driver')]
-    public function it_throws_a_exception_when_a_create_statement_is_called_second(DatabaseDriver $driver): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $driver->dialect()->createQueryStatement('Book')
-            ->statement('SELECT VERSION()')
-            ->createTable()
-            ->primary();
-    }
-
-    #[Test]
-    #[DataProvider('provide_database_driver')]
-    public function it_throws_a_exception_when_a_alter_statement_is_called_second(DatabaseDriver $driver): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $driver->dialect()->createQueryStatement('Book')
-            ->statement('SELECT VERSION()')
-            ->alterTable('DELETE')
-            ->statement('KEY');
     }
 
     public static function provide_database_driver(): Generator

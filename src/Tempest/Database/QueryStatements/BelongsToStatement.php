@@ -12,8 +12,8 @@ final readonly class BelongsToStatement implements QueryStatement
     public function __construct(
         private string $local,
         private string $foreign,
-        private string $onDelete = 'ON DELETE CASCADE',
-        private string $onUpdate = 'ON UPDATE NO ACTION'
+        private OnDelete $onDelete = OnDelete::RESTRICT,
+        private OnUpdate $onUpdate = OnUpdate::NO_ACTION
     ) {
     }
 
@@ -33,8 +33,8 @@ final readonly class BelongsToStatement implements QueryStatement
                 $localKey,
                 $foreignTable,
                 $foreignKey,
-                $this->onDelete,
-                $this->onUpdate,
+                'ON DELETE ' . $this->onDelete->value,
+                'ON UPDATE ' . $this->onUpdate->value,
             ),
             DatabaseDialect::SQLITE => '',
         };

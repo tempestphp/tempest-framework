@@ -7,8 +7,6 @@ namespace Tempest\Database\Migrations;
 use Tempest\Database\Migration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
-use Tempest\Database\QueryStatements\PrimaryKeyStatement;
-use Tempest\Database\QueryStatements\RawStatement;
 
 final readonly class CreateMigrationsTable implements Migration
 {
@@ -19,13 +17,9 @@ final readonly class CreateMigrationsTable implements Migration
 
     public function up(): CreateTableStatement|null
     {
-        return new CreateTableStatement(
-            tableName: 'Migration',
-            statements: [
-                new PrimaryKeyStatement('id'),
-                new RawStatement('name TEXT NOT NULL'),
-            ],
-        );
+        return (new CreateTableStatement('Migration'))
+            ->primary()
+            ->text('name');
     }
 
     public function down(): DropTableStatement|null
