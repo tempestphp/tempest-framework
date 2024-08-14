@@ -8,11 +8,12 @@ use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
-use Tempest\Database\UnsupportedDialect;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
+use Tempest\Database\QueryStatements\ShowTablesStatement;
 use function Tempest\event;
 use function Tempest\map;
 use Throwable;
@@ -98,25 +99,14 @@ final readonly class MigrationManager
 
         try {
             // Get all tables
-            $tables = map((new Query(match ($dialect) {
-                DatabaseDialect::MYSQL => "SHOW FULL TABLES WHERE table_type = 'BASE TABLE'",
-                DatabaseDialect::SQLITE => "select type, name from sqlite_master where type = 'table' and name not like 'sqlite_%'",
-                default => throw new UnsupportedDialect(),
-            }))->fetch())->collection()->to(TableDefinition::class);
+            $tables = map((new ShowTablesStatement())->fetch($dialect))->collection()->to(TableDefinition::class);
 
             // Disable foreign key checks
-            (new Query(match ($dialect) {
-                DatabaseDialect::MYSQL => 'SET FOREIGN_KEY_CHECKS=0',
-                DatabaseDialect::SQLITE => 'PRAGMA foreign_keys = 0',
-                default => throw new UnsupportedDialect(),
-            }))->execute();
+            (new SetForeignKeyChecksStatement(enable: false))->execute($dialect);
 
             // Drop each table
             foreach ($tables as $table) {
-                (new Query(match ($dialect) {
-                    DatabaseDialect::MYSQL, DatabaseDialect::SQLITE => sprintf('DROP TABLE IF EXISTS %s', $table->name),
-                    default => throw new UnsupportedDialect(),
-                }))->execute();
+                (new DropTableStatement($table->name))->execute($dialect);
 
                 event(new TableDropped($table->name));
             }
@@ -124,11 +114,7 @@ final readonly class MigrationManager
             event(new FreshMigrationFailed($throwable));
         } finally {
             // Enable foreign key checks
-            (new Query(match ($dialect) {
-                DatabaseDialect::MYSQL => 'SET FOREIGN_KEY_CHECKS=1',
-                DatabaseDialect::SQLITE => 'PRAGMA foreign_keys = 1',
-                default => throw new UnsupportedDialect(),
-            }))->execute();
+            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
         }
     }
 

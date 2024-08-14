@@ -9,6 +9,8 @@ use Tempest\Database\QueryStatement;
 
 final readonly class DropTableStatement implements QueryStatement
 {
+    use CanExecuteStatement;
+
     public function __construct(
         private string $tableName
     ) {
