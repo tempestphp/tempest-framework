@@ -10,11 +10,6 @@ enum DatabaseDialect: string
     case MYSQL = 'mysql';
     case POSTGRESQL = 'pgsql';
 
-    public function createQueryStatement(string $table): QueryStatementOld
-    {
-        return new QueryStatementOld($this, $table);
-    }
-
     public function tableNotFoundCode(): string
     {
         return match ($this) {
