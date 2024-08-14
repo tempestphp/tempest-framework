@@ -15,11 +15,11 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^10.2",
-        "larapack/dd": "^1.1",
         "phpstan/phpstan": "^1.10.0",
         "friendsofphp/php-cs-fixer": "^3.21",
         "phpat/phpat": "^0.10.14",
         "spaze/phpstan-disallowed-calls": "^3.1",
+        "symfony/var-dumper": "^7.1",
         "php-http/mock-client": "^1.6",
         "aidan-casey/mock-client": "dev-master",
         "nyholm/psr7": "^1.8"
