@@ -4,37 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Migrations;
 
-use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
-use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\PrimaryKeyStatement;
+use Tempest\Database\QueryStatements\TextStatement;
 
 final readonly class CreateCTable implements Migration
 {
-    public function __construct(
-        private DatabaseDriver $driver,
-    ) {
-    }
-
     public function getName(): string
     {
         return '100-create-c';
     }
 
-    public function up(): Query|null
+    public function up(): CreateTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('C')
-            ->createTable()
-            ->primary()
-            ->createColumn('name', 'TEXT')
-            ->toQuery();
+        return new CreateTableStatement('C', [
+            new PrimaryKeyStatement(),
+            new TextStatement('name'),
+        ]);
     }
 
-    public function down(): Query|null
+    public function down(): DropTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('C')
-            ->dropTable()
-            ->toQuery();
+        return new DropTableStatement('C');
     }
 }

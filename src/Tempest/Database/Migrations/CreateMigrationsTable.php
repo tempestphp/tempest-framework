@@ -4,37 +4,26 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
-use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
 
 final readonly class CreateMigrationsTable implements Migration
 {
-    public function __construct(
-        private DatabaseDriver $driver,
-    ) {
-    }
-
     public function getName(): string
     {
         return '0000-00-00_create_migrations_table';
     }
 
-    public function up(): Query|null
+    public function up(): CreateTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('Migration')
-            ->createTable()
+        return (new CreateTableStatement('Migration'))
             ->primary()
-            ->createColumn('name', 'TEXT')
-            ->toQuery();
+            ->text('name');
     }
 
-    public function down(): Query|null
+    public function down(): DropTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('Migration')
-            ->dropTable()
-            ->toQuery();
+        return new DropTableStatement('Migration');
     }
 }
