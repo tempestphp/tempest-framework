@@ -18,6 +18,12 @@ final class ModelQueryBuilder
 
     private array $where = [];
 
+    private array $orderBy = [];
+
+    private ?int $limit = null;
+
+    private array $raw = [];
+
     private array $relations = [];
 
     private array $bindings = [];
@@ -63,6 +69,27 @@ final class ModelQueryBuilder
         $this->where[] = $where;
 
         $this->bind(...$bindings);
+
+        return $this;
+    }
+
+    public function orderBy(string $statement): self
+    {
+        $this->orderBy[] = $statement;
+
+        return $this;
+    }
+
+    public function limit(int $limit): self
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function raw(string $raw): self
+    {
+        $this->raw[] = $raw;
 
         return $this;
     }
@@ -130,6 +157,21 @@ final class ModelQueryBuilder
                 'WHERE %s',
                 implode(' AND ', $this->where),
             );
+        }
+
+        if ($this->orderBy !== []) {
+            $statements[] = sprintf(
+                'ORDER BY %s',
+                implode(', ', $this->orderBy),
+            );
+        }
+
+        if ($this->limit) {
+            $statements[] = sprintf('LIMIT %s', $this->limit);
+        }
+
+        if ($this->raw !== []) {
+            $statements[] = implode(', ', $this->raw);
         }
 
         return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
