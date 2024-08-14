@@ -4,40 +4,36 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Migrations;
 
-use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migration;
-use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\BelongsToStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\PrimaryKeyStatement;
+use Tempest\Database\QueryStatements\RawStatement;
+use Tempest\Database\QueryStatements\TextStatement;
 
 final readonly class CreateBookTable implements Migration
 {
-    public function __construct(
-        private DatabaseDriver $driver,
-    ) {
-    }
-
     public function getName(): string
     {
         return '0000-00-00_create_book_table';
     }
 
-    public function up(): Query|null
+    public function up(): CreateTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('Book')
-            ->createTable()
-            ->primary()
-            ->createColumn('title', 'TEXT')
-            ->createColumn('author_id', 'INTEGER', nullable: true)
-            ->createForeignKey('author_id', 'Author')
-            ->toQuery();
+        return new CreateTableStatement(
+            'Book',
+            [
+                new PrimaryKeyStatement(),
+                new TextStatement('title'),
+                new RawStatement('author_id INTEGER'),
+                new BelongsToStatement('Book.author_id', 'Author.id'),
+            ]
+        );
     }
 
-    public function down(): Query|null
+    public function down(): DropTableStatement|null
     {
-        return $this->driver->dialect()
-            ->createQueryStatement('Book')
-            ->dropForeignKeyFor('Author')
-            ->dropTable()
-            ->toQuery();
+        return new DropTableStatement('Book');
     }
 }

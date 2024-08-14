@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-use Exception;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Database;
@@ -33,7 +32,7 @@ final readonly class MigrationManager
         try {
             $existingMigrations = Migration::all();
         } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable($this->databaseConfig->driver()));
+            $this->executeUp(new CreateMigrationsTable());
 
             $existingMigrations = Migration::all();
         }
@@ -135,11 +134,15 @@ final readonly class MigrationManager
 
     public function executeUp(MigrationInterface $migration): void
     {
-        $query = $migration->up();
+        $statement = $migration->up();
 
-        if ($query === null) {
+        if ($statement === null) {
             return;
         }
+
+        $dialect = $this->databaseConfig->driver()->dialect();
+
+        $query = new Query($statement->compile($dialect));
 
         try {
             $this->database->execute($query);
@@ -158,11 +161,15 @@ final readonly class MigrationManager
 
     public function executeDown(MigrationInterface $migration): void
     {
-        $query = $migration->down();
+        $statement = $migration->down();
 
-        if ($query === null) {
+        if ($statement === null) {
             return;
         }
+
+        $dialect = $this->databaseConfig->driver()->dialect();
+
+        $query = new Query($statement->compile($dialect));
 
         try {
             $this->database->execute($query);

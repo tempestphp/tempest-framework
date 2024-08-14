@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use Tempest\Database\Migration;
-use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Database\QueryStatements\PrimaryKeyStatement;
+use Tempest\Database\QueryStatements\TextStatement;
 
 class ObjectFactoryAMigration implements Migration
 {
@@ -14,15 +17,18 @@ class ObjectFactoryAMigration implements Migration
         return 'object-a';
     }
 
-    public function up(): Query|null
+    public function up(): CreateTableStatement|null
     {
-        return new Query("CREATE TABLE ObjectFactoryA (
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-            `prop` TEXT
-        )");
+        return new CreateTableStatement(
+            'ObjectFactoryA',
+            [
+                new PrimaryKeyStatement(),
+                new TextStatement('prop'),
+            ]
+        );
     }
 
-    public function down(): Query|null
+    public function down(): DropTableStatement|null
     {
         return null;
     }
