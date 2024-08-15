@@ -61,6 +61,13 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
+    public function drop(QueryStatement $statement): self
+    {
+        $this->statements[] = new AlterActionStatement(AlterStatement::DROP, $statement);
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
