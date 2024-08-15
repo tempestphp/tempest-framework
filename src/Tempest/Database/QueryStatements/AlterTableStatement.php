@@ -36,6 +36,17 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
+    public function constraint(string $constraintName, ?QueryStatement $statement = null): self
+    {
+        $this->statements[] = new ConstraintStatement($constraintName, $statement);
+
+        if ($statement !== null) {
+            $this->statements[] = $statement;
+        }
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
