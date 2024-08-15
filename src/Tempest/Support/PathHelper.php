@@ -11,8 +11,8 @@ final readonly class PathHelper
         $path = implode('/', $parts);
 
         return str_replace(
-            ['//', '\\', '\\\\'],
-            ['/', '/', '/'],
+            ['//', '\\'],
+            DIRECTORY_SEPARATOR,
             $path,
         );
     }
