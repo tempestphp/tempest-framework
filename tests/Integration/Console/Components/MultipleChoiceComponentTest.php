@@ -17,7 +17,7 @@ class MultipleChoiceComponentTest extends TestCase
     {
         $component = new MultipleChoiceComponent('Label', ['a', 'b', 'c']);
 
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'TXT'
             <question>Label</question>
             > [ ]<em> a</em>

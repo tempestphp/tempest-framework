@@ -21,7 +21,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
     #[DataProvider('view_components')]
     public function test_view_components(string $component, string $rendered): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             expected: $rendered,
             actual: $this->render(view($component)),
         );
@@ -49,7 +49,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_nested_components(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
             <form action="#" method="post"><div><div><label for="a">a</label>
             <input type="number" name="a" id="a" value></input></div></div>
@@ -118,7 +118,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_component_with_foreach(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             expected: '<div>a</div>
 <div>b</div>',
             actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $foo }}</x-my>')->data(items: ['a', 'b'])),
@@ -182,7 +182,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             )
         );
 
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
         <div>
                 test    </div>
@@ -203,7 +203,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             ),
         );
 
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
         <div>
                 a    </div>

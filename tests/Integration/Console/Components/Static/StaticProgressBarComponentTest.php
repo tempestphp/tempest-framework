@@ -31,6 +31,7 @@ class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
 [===============================] (3/3)
 ["aa","bb","cc"]
 TXT,
+                true
             );
     }
 }

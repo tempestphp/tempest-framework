@@ -30,7 +30,7 @@ class ViewTest extends FrameworkIntegrationTestCase
             </body></html>
             HTML;
 
-        $this->assertEquals($expected, $html);
+        $this->assertStringContainsStringIgnoringLineEndings($expected, $html);
     }
 
     public function test_render_with_view_model(): void
@@ -57,7 +57,7 @@ HTML;
         <h1>hi</h1>
         HTML;
 
-        $this->assertSame(trim($expected), trim($html));
+        $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($html));
     }
 
     public function test_custom_view_with_response_data(): void

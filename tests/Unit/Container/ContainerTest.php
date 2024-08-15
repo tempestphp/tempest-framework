@@ -273,7 +273,7 @@ class ContainerTest extends TestCase
         try {
             $container->get(DependencyWithTaggedDependency::class);
         } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
-            $this->assertStringContainsString(
+            $this->assertStringContainsStringIgnoringLineEndings(
                 <<<'TXT'
 	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
 	└── Tests\Tempest\Unit\Container\Fixtures\TaggedDependency

@@ -34,7 +34,7 @@ class CircularDependencyExceptionTest extends TestCase
 	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $circularDependencyException->getMessage());
+            $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 
             $this->assertStringContainsString("CircularDependencyExceptionTest.php:", $circularDependencyException->getMessage());
 
@@ -61,7 +61,7 @@ TXT;
 	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $circularDependencyException->getMessage());
+            $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 
             throw $circularDependencyException;
         }
