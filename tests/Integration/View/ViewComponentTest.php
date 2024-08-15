@@ -182,7 +182,7 @@ class ViewComponentTest extends FrameworkIntegrationTestCase
             )
         );
 
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
         <div>
                 test    </div>

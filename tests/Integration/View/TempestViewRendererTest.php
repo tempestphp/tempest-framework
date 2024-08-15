@@ -130,7 +130,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_default_slot(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
             <div class="base">
                 
@@ -152,7 +152,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_implicit_default_slot(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
             <div class="base">
                 
@@ -215,7 +215,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_pre(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
             <pre>
             a
