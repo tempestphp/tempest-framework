@@ -47,6 +47,13 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
+    public function index(string $indexName): self
+    {
+        $this->statements[] = new IndexStatement($indexName);
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
