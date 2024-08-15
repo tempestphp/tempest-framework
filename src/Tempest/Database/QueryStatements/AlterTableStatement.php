@@ -47,6 +47,13 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
+    public function unique(string $columnName): self
+    {
+        $this->statements[] = new UniqueStatement($columnName);
+
+        return $this;
+    }
+
     public function index(string $indexName): self
     {
         $this->statements[] = new IndexStatement($indexName);
