@@ -71,7 +71,7 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run Rector
-        run: vendor/bin/rector process --no-ansi --dry-run --no-diffs --no-progress-bar
+        run: vendor/bin/rector process --no-ansi --dry-run --no-progress-bar
 
   phpunit:
     runs-on: ${{ matrix.os }}
