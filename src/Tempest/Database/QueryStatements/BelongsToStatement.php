@@ -25,17 +25,24 @@ final readonly class BelongsToStatement implements QueryStatement
 
         return match ($dialect) {
             DatabaseDialect::MYSQL,
-            DatabaseDialect::POSTGRESQL => sprintf(
-                'CONSTRAINT fk_%s_%s FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
-                strtolower($foreignTable),
-                strtolower($localTable),
-                $localTable,
-                $localKey,
-                $foreignTable,
-                $foreignKey,
-                'ON DELETE ' . $this->onDelete->value,
-                'ON UPDATE ' . $this->onUpdate->value,
-            ),
+            DatabaseDialect::POSTGRESQL => (new ConstraintStatement(
+                sprintf(
+                    'fk_%s_%s',
+                    strtolower($foreignTable),
+                    strtolower($localTable),
+                ),
+                new RawStatement( // need to let the FK statement handle this
+                    sprintf(
+                        'FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
+                        $localTable,
+                        $localKey,
+                        $foreignTable,
+                        $foreignKey,
+                        'ON DELETE ' . $this->onDelete->value,
+                        'ON UPDATE ' . $this->onUpdate->value,
+                    )
+                )
+            ))->compile($dialect),
             DatabaseDialect::SQLITE => '',
         };
     }
