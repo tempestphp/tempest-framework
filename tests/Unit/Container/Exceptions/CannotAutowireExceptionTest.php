@@ -33,7 +33,7 @@ class CannotAutowireExceptionTest extends TestCase
 	                                                    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
 TXT;
 
-            $this->assertStringContainsString($expected, $cannotAutowireException->getMessage());
+            $this->assertStringContainsStringIgnoringLineEndings($expected, $cannotAutowireException->getMessage());
             $this->assertStringContainsString("CannotAutowireExceptionTest.php:25", $cannotAutowireException->getMessage());
 
             throw $cannotAutowireException;

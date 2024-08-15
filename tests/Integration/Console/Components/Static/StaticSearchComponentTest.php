@@ -32,6 +32,7 @@ class StaticSearchComponentTest extends FrameworkIntegrationTestCase
 - [2] Aidan
 - [3] Roman
 TXT,
+                true
             )
             ->submit(0)
             ->submit('b')
@@ -40,6 +41,7 @@ TXT,
 - [0] Search again
 - [1] Brent
 TXT,
+                true
             )
             ->submit(1)
             ->assertContains("Hello Brent");

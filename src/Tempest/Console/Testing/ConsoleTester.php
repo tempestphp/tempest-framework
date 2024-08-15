@@ -177,9 +177,10 @@ final class ConsoleTester
         return $this->assertDoesNotContain($text);
     }
 
-    public function assertContains(string $text): self
+    public function assertContains(string $text, bool $ignoreLineEndings = false): self
     {
-        Assert::assertStringContainsString(
+        $method = $ignoreLineEndings ? 'assertStringContainsStringIgnoringLineEndings' : 'assertStringContainsString';
+        Assert::$method(
             $text,
             $this->output->asUnformattedString(),
             sprintf(

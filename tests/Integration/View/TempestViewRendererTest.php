@@ -102,7 +102,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_foreach_attribute(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
             <div :foreach="$this->items as $foo">a</div>
             <div :foreach="$this->items as $foo">b</div>
@@ -172,7 +172,7 @@ class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_slots(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
             injected scripts
                 
