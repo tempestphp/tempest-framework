@@ -17,8 +17,9 @@ use Throwable;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
-    public function __construct(private CasterFactory $casterFactory)
-    {
+    public function __construct(
+        private CasterFactory $casterFactory,
+    ) {
     }
 
     public function canMap(mixed $from, mixed $to): bool
@@ -151,7 +152,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     ): UnknownValue|array {
         $type = $property->getIterableType();
 
-        if (! $type) {
+        if ($type === null) {
             return new UnknownValue();
         }
 
