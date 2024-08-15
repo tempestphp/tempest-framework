@@ -1,9 +1,11 @@
 .cache/
 .idea/
+.vscode/
 build/
 sessions/
 vendor/
 src/Tempest/database.sqlite
+src/Tempest/Framework/database.sqlite
 tests/Fixtures/database.sqlite
 tests/Unit/Console/test-console.log
 .env

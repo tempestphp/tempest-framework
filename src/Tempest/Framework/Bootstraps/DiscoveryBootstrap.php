@@ -45,17 +45,8 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                 /** @var SplFileInfo $file */
                 foreach ($files as $file) {
                     $fileName = $file->getFilename();
-                    if ($fileName === '') {
-                        continue;
-                    }
 
-                    if ($fileName === '.') {
-                        continue;
-                    }
-
-                    if ($fileName === '..') {
-                        continue;
-                    }
+                    // Removed redundant conditionals
 
                     $input = $file->getPathname();
 

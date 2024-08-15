@@ -18,7 +18,7 @@ function getPackageNameFromComposerFile(string $composerFile)
     $composer = json_decode(file_get_contents($composerFile), true);
 
     $name = $composer['name'] ?? throw new UnexpectedValueException(
-        'The referenced package is invalid because it is missing a name: ' . $composerFile
+        "The referenced package is invalid because it is missing a name: $composerFile"
     );
 
     return str_replace('tempest/', '', $name);
@@ -33,7 +33,8 @@ function getPackageNameFromComposerFile(string $composerFile)
  *     repository: string
  * }>
  */
-function getPackages(): array {
+function getPackages(): array
+{
     $packages = [];
     $directoryIterator = new DirectoryIterator(realpath(PACKAGES_DIRECTORY));
 
@@ -55,7 +56,7 @@ function getPackages(): array {
         $packages[] = [
             'directory'  => $directory->getRealPath(),
             'name' => $name,
-            'package' => 'tempest/' . $name,
+            'package' => "tempest/$name",
             'organization' => 'tempestphp',
             'repository' => sprintf('tempest-%s', $name),
         ];

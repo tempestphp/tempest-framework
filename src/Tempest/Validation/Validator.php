@@ -32,7 +32,7 @@ final readonly class Validator
             }
         }
 
-        if ($failingRules !== []) {
+        if (count($failingRules) !== 0) {
             throw new ValidationException($object, $failingRules);
         }
     }
@@ -52,7 +52,7 @@ final readonly class Validator
             }
         }
 
-        if ($failingRules !== []) {
+        if (count($failingRules) !== 0) {
             throw new InvalidValueException($value, $failingRules);
         }
     }

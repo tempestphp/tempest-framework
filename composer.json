@@ -105,5 +105,7 @@
         "tempest/validation": "self.version",
         "tempest/view": "self.version"
     },
-    "bin": ["tempest"]
+    "bin": [
+        "tempest"
+    ]
 }

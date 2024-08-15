@@ -30,7 +30,10 @@ final readonly class GenericResponseSender implements ResponseSender
 
     private function sendHeaders(Response $response): void
     {
-        // TODO: Handle SAPI/FastCGI
+        if (preg_match('|cgi|', PHP_SAPI)) {
+            // TODO: Handle SAPI/FastCGI
+        }
+
         if (headers_sent()) {
             return;
         }
