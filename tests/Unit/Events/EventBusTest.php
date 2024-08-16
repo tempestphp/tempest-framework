@@ -35,7 +35,7 @@ class EventBusTest extends TestCase
                 ],
             ],
             middleware: [
-                new MyEventBusMiddleware(),
+                MyEventBusMiddleware::class,
             ]
         );
 

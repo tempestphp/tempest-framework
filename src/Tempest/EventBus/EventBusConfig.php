@@ -12,7 +12,7 @@ final class EventBusConfig
         /** @var \Tempest\EventBus\EventHandler[][] */
         public array $handlers = [],
 
-        /** @var \Tempest\EventBus\EventBusMiddleware[] */
+        /** @var array<array-key, class-string<\Tempest\EventBus\EventBusMiddleware>> */
         public array $middleware = [],
     ) {
     }
@@ -28,9 +28,10 @@ final class EventBusConfig
         return $this;
     }
 
-    public function addMiddleware(EventBusMiddleware $middleware): self
+    /** @param class-string<\Tempest\EventBus\EventBusMiddleware> $middlewareClass */
+    public function addMiddleware(string $middlewareClass): self
     {
-        $this->middleware[] = $middleware;
+        $this->middleware[] = $middlewareClass;
 
         return $this;
     }

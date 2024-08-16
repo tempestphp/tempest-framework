@@ -38,8 +38,8 @@ final readonly class GenericEventBus implements EventBus
 
         $middlewareStack = $this->eventBusConfig->middleware;
 
-        while ($middleware = array_pop($middlewareStack)) {
-            $callable = fn (object $event) => $this->container->get($middleware::class)($event, $callable);
+        while ($middlewareClass = array_pop($middlewareStack)) {
+            $callable = fn (object $event) => $this->container->get($middlewareClass)($event, $callable);
         }
 
         return $callable;

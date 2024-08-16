@@ -12,7 +12,7 @@ final class CommandBusConfig
         /** @var \Tempest\CommandBus\CommandHandler[] */
         public array $handlers = [],
 
-        /** @var \Tempest\CommandBus\CommandBusMiddleware[] */
+        /** @var array<array-key, class-string<\Tempest\CommandBus\CommandBusMiddleware>> */
         public array $middleware = [],
     ) {
     }
@@ -26,9 +26,10 @@ final class CommandBusConfig
         return $this;
     }
 
-    public function addMiddleware(CommandBusMiddleware $middleware): self
+    /** @param class-string<\Tempest\CommandBus\CommandBusMiddleware> $middlewareClass */
+    public function addMiddleware(string $middlewareClass): self
     {
-        $this->middleware[] = $middleware;
+        $this->middleware[] = $middlewareClass;
 
         return $this;
     }
