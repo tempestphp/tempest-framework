@@ -6,15 +6,15 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
+use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
-use Tempest\Database\Model;
 use Tempest\Support\Reflection\ClassReflector;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class): bool
     {
-        return $class->getType()->matches(Model::class);
+        return $class->getType()->matches(DatabaseModel::class);
     }
 
     public function initialize(ClassReflector $class, Container $container): object

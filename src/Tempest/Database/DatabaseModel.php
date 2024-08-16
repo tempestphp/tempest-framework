@@ -7,7 +7,7 @@ namespace Tempest\Database;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 
-interface Model
+interface DatabaseModel
 {
     public static function table(): TableName;
 

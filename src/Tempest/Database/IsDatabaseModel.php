@@ -11,7 +11,7 @@ use function Tempest\make;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
-trait IsModel
+trait IsDatabaseModel
 {
     public ?Id $id = null;
 

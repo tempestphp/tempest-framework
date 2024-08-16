@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-use Tempest\Database\IsModel;
-use Tempest\Database\Model;
+use Tempest\Database\DatabaseModel;
+use Tempest\Database\IsDatabaseModel;
 
-final class Migration implements Model
+final class Migration implements DatabaseModel
 {
-    use IsModel;
+    use IsDatabaseModel;
 
     public string $name;
 }

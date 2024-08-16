@@ -26,7 +26,7 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
  * @internal
  * @small
  */
-class IsModelTest extends FrameworkIntegrationTestCase
+class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 {
     public function test_create_and_update_model(): void
     {

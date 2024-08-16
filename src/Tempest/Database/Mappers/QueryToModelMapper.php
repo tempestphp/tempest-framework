@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\Mappers;
 
 use BackedEnum;
+use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
-use Tempest\Database\Model;
 use Tempest\Database\Query;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Reflection\ClassReflector;
@@ -39,7 +39,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $this->makeLazyCollection($models);
     }
 
-    private function parse(ClassReflector $class, Model $model, array $row): Model
+    private function parse(ClassReflector $class, DatabaseModel $model, array $row): DatabaseModel
     {
         foreach ($row as $key => $value) {
             $keyParts = explode('.', $key);
@@ -93,7 +93,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseProperty(PropertyReflector $property, Model $model, mixed $value): Model
+    private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
         $type = $property->getType();
 
@@ -108,7 +108,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseBelongsTo(PropertyReflector $property, Model $model, string $childProperty, mixed $value): Model
+    private function parseBelongsTo(PropertyReflector $property, DatabaseModel $model, string $childProperty, mixed $value): DatabaseModel
     {
         $childModel = $property->get(
             $model,
@@ -129,7 +129,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseHasMany(PropertyReflector $property, Model $model, string $childId, string $childProperty, mixed $value): Model
+    private function parseHasMany(PropertyReflector $property, DatabaseModel $model, string $childId, string $childProperty, mixed $value): DatabaseModel
     {
         $collection = $property->get($model, []);
 
@@ -162,7 +162,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $lazy;
     }
 
-    private function makeLazyModel(Model $model): Model
+    private function makeLazyModel(DatabaseModel $model): DatabaseModel
     {
         $classReflector = new ClassReflector($model);
 

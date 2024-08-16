@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
-use Tempest\Database\Model;
+use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
@@ -14,13 +14,13 @@ final readonly class ModelToQueryMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === Query::class && $from instanceof Model;
+        return $to === Query::class && $from instanceof DatabaseModel;
     }
 
     // TODO: refactor to ModelQueryBuilder
     public function map(mixed $from, mixed $to): array|object
     {
-        /** @var Model $model */
+        /** @var DatabaseModel $model */
         $model = $from;
 
         $fields = $this->fields($model);
@@ -32,7 +32,7 @@ final readonly class ModelToQueryMapper implements Mapper
         return $this->updateQuery($model, $fields);
     }
 
-    private function createQuery(Model $model, array $fields): Query
+    private function createQuery(DatabaseModel $model, array $fields): Query
     {
         unset($fields['id']);
 
@@ -65,7 +65,7 @@ final readonly class ModelToQueryMapper implements Mapper
         );
     }
 
-    private function updateQuery(Model $model, array $fields): Query
+    private function updateQuery(DatabaseModel $model, array $fields): Query
     {
         unset($fields['id']);
 
@@ -84,7 +84,7 @@ final readonly class ModelToQueryMapper implements Mapper
         );
     }
 
-    private function relations(Model $model): array
+    private function relations(DatabaseModel $model): array
     {
         $class = new ClassReflector($model);
 
@@ -97,7 +97,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
             $value = $property->getValue($model);
 
-            if (! $value instanceof Model) {
+            if (! $value instanceof DatabaseModel) {
                 continue;
             }
 
@@ -108,7 +108,7 @@ final readonly class ModelToQueryMapper implements Mapper
         return $fields;
     }
 
-    private function fields(Model $model): array
+    private function fields(DatabaseModel $model): array
     {
         $class = new ClassReflector($model);
 
@@ -122,7 +122,7 @@ final readonly class ModelToQueryMapper implements Mapper
             // 1:1 or n:1 relations
             $type = $property->getType();
 
-            if ($type->matches(Model::class)) {
+            if ($type->matches(DatabaseModel::class)) {
                 continue;
             }
 

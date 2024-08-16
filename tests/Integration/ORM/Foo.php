@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM;
 
-use Tempest\Database\IsModel;
-use Tempest\Database\Model;
+use Tempest\Database\DatabaseModel;
+use Tempest\Database\IsDatabaseModel;
 
-class Foo implements Model
+class Foo implements DatabaseModel
 {
-    use IsModel;
+    use IsDatabaseModel;
 
     public string $bar;
 }

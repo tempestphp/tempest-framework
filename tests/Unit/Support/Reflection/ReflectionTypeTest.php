@@ -7,7 +7,7 @@ namespace Tests\Tempest\Unit\Support\Reflection;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\Model;
+use Tempest\Database\DatabaseModel;
 use Tempest\Support\Reflection\TypeReflector;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\B;
@@ -34,7 +34,7 @@ class ReflectionTypeTest extends TestCase
         yield ['string', [], false];
         yield ['string', 1, false];
         yield ['string|int', 1, true];
-        yield [Model::class, new A(new B(new C('test'))), true];
+        yield [DatabaseModel::class, new A(new B(new C('test'))), true];
         yield [self::class, new A(new B(new C('test'))), false];
         yield ['string', null, false];
         yield ['?string', null, true];

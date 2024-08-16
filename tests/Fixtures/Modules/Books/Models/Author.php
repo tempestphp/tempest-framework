@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
-use Tempest\Database\IsModel;
-use Tempest\Database\Model;
+use Tempest\Database\DatabaseModel;
+use Tempest\Database\IsDatabaseModel;
 
-class Author implements Model
+class Author implements DatabaseModel
 {
-    use IsModel;
+    use IsDatabaseModel;
 
     public function __construct(
         public string $name,

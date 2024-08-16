@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
-use Tempest\Database\Model;
 use Tempest\Database\Query;
 use function Tempest\map;
 
 /**
- * @template TModelClass of Model
+ * @template TModelClass of DatabaseModel
  */
 final class ModelQueryBuilder
 {
@@ -36,7 +36,7 @@ final class ModelQueryBuilder
     }
 
     /** @return TModelClass|null */
-    public function first(mixed ...$bindings): ?Model
+    public function first(mixed ...$bindings): ?DatabaseModel
     {
         $query = $this->build($bindings);
 
@@ -50,7 +50,7 @@ final class ModelQueryBuilder
     }
 
     /** @return TModelClass|null */
-    public function find(Id $id): ?Model
+    public function find(Id $id): ?DatabaseModel
     {
         return $this
             ->whereField('id', $id)

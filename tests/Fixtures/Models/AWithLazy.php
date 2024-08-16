@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\IsModel;
+use Tempest\Database\DatabaseModel;
+use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Lazy;
-use Tempest\Database\Model;
 
-final class AWithLazy implements Model
+final class AWithLazy implements DatabaseModel
 {
-    use IsModel;
+    use IsDatabaseModel;
 
     public static function table(): TableName
     {

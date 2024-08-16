@@ -14,7 +14,7 @@ use Tempest\Support\Reflection\ClassReflector;
 readonly class ModelDefinition
 {
     public function __construct(
-        /** @var class-string<\Tempest\Database\Model> $modelClass */
+        /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */
         protected string $modelClass,
     ) {
     }
