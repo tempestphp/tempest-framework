@@ -59,7 +59,6 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         $statement = (new CreateTableStatement('Book'))
             ->primary()
-            ->integer('author_id', unsigned: true)
             ->belongsTo('Book.author_id', 'Author.id', OnDelete::CASCADE)
             ->varchar('name')
             ->compile($driver->dialect());

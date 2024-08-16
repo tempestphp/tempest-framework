@@ -20,8 +20,7 @@ final readonly class CreateBookTable implements Migration
         return (new CreateTableStatement('Book'))
             ->primary()
             ->text('title')
-            ->integer('author_id', nullable: true)
-            ->belongsTo('Book.author_id', 'Author.id');
+            ->belongsTo('Book.author_id', 'Author.id', nullable: true);
     }
 
     public function down(): DropTableStatement|null

@@ -26,8 +26,13 @@ final class CreateTableStatement implements QueryStatement
         string $local,
         string $foreign,
         OnDelete $onDelete = OnDelete::RESTRICT,
-        OnUpdate $onUpdate = OnUpdate::NO_ACTION
+        OnUpdate $onUpdate = OnUpdate::NO_ACTION,
+        bool $nullable = false,
     ): self {
+        [$localTable, $localKey] = explode('.', $local);
+
+        $this->integer($localKey, unsigned: true, nullable: $nullable);
+
         $this->statements[] = new BelongsToStatement(
             local: $local,
             foreign: $foreign,
