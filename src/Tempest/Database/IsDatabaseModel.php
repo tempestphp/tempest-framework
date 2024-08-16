@@ -58,12 +58,9 @@ trait IsDatabaseModel
         return new ModelQueryBuilder(self::class);
     }
 
-    /**
-     * @return static[]
-     */
+    /** @return self[] */
     public static function all(array $relations = []): array
     {
-        /** @phpstan-ignore-next-line */
         return self::query()
             ->with(...$relations)
             ->all();

@@ -14,7 +14,7 @@ interface DatabaseModel
     /** @return \Tempest\Database\Builder\ModelQueryBuilder<self> */
     public static function query(): ModelQueryBuilder;
 
-    /** @return static[] */
+    /** @return self[] */
     public static function all(): array;
 
     public static function new(mixed ...$params): self;
