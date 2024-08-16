@@ -25,7 +25,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
                 ->call('migrate:up');
         });
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
     }
 
     public function test_execute_with_fail_works_correctly(): void

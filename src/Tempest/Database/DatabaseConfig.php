@@ -18,9 +18,9 @@ final class DatabaseConfig
         return $this->driver;
     }
 
-    public function addMigration(string $className): self
+    public function addMigration(Migration|string $migration): self
     {
-        $this->migrations[$className] = $className;
+        $this->migrations[] = $migration;
 
         return $this;
     }

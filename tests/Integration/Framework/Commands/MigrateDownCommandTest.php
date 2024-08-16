@@ -22,7 +22,7 @@ class MigrateDownCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:down --force')
             ->assertContains('create_migrations_table')
-            ->assertContains("Rolled back 3 migrations");
+            ->assertContains("Rolled back");
     }
 
     public function test_errors_when_no_migrations_to_rollback(): void

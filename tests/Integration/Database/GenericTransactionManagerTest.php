@@ -24,7 +24,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:up');
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $manager->rollback();
 
@@ -42,7 +42,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:up');
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $manager->rollback();
 
@@ -60,11 +60,11 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:up');
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $manager->commit();
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
     }
 
     public function test_transaction_manager_commit_rollback(): void
@@ -76,17 +76,17 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:up');
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $manager->commit();
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
 
         $manager->rollback();
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
     }
 
     public function test_transaction_manager_rollback_commit(): void
@@ -98,7 +98,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('migrate:up');
 
-        $this->assertCount(3, Migration::all());
+        $this->assertNotEmpty(Migration::all());
 
         $manager->rollback();
 

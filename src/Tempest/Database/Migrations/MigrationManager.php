@@ -43,12 +43,9 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        $migrations = $this->databaseConfig->getMigrations();
-        ksort($migrations);
-        foreach ($migrations as $migrationClassName) {
-            /** @var MigrationInterface $migration */
-            $migration = $this->container->get($migrationClassName, driver: $this->databaseConfig->driver());
+        $migrations = $this->getSortedMigrations();
 
+        foreach ($migrations as $migration) {
             if (in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
             }
@@ -78,12 +75,9 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        $migrations = $this->databaseConfig->getMigrations();
-        krsort($migrations);
-        foreach ($migrations as $migrationClassName) {
-            /** @var MigrationInterface $migration */
-            $migration = $this->container->get($migrationClassName);
+        $migrations = $this->getSortedMigrations();
 
+        foreach ($migrations as $migration) {
             /* If the migration is not in the existing migrations, it means it has not been executed */
             if (! in_array($migration->getName(), $existingMigrations, strict: true)) {
                 continue;
@@ -182,5 +176,21 @@ final readonly class MigrationManager
         }
 
         event(new MigrationRolledBack($migration->getName()));
+    }
+
+    /**
+     * @return MigrationInterface[]
+     */
+    private function getSortedMigrations(): array
+    {
+        /** @var MigrationInterface[] $migrations */
+        $migrations = array_map(
+            fn (string|MigrationInterface $migration) => is_string($migration) ? $this->container->get($migration) : $migration,
+            $this->databaseConfig->getMigrations()
+        );
+
+        usort($migrations, fn (MigrationInterface $a, MigrationInterface $b) => $a->getName() <=> $b->getName());
+
+        return $migrations;
     }
 }

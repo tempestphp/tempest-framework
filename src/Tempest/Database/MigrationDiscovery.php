@@ -6,11 +6,12 @@ namespace Tempest\Database;
 
 use Tempest\Container\Container;
 use Tempest\Database\Migrations\Migration as MigrationModel;
+use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
 
-final class MigrationDiscovery implements Discovery
+final class MigrationDiscovery implements Discovery, DiscoversPath
 {
     use HandlesDiscoveryCache;
 
@@ -24,7 +25,35 @@ final class MigrationDiscovery implements Discovery
             return;
         }
 
+        if ($class->is(GenericMigration::class)) {
+            return;
+        }
+
         $this->databaseConfig->addMigration($class->getName());
+    }
+
+    public function discoverPath(string $path): void
+    {
+        if (! str_ends_with($path, '.sql')) {
+            return;
+        }
+
+        $fileName = pathinfo($path, PATHINFO_FILENAME);
+
+        $contents = explode(';', file_get_contents($path));
+
+        foreach ($contents as $i => $content) {
+            if (! $content) {
+                continue;
+            }
+
+            $migration = new GenericMigration(
+                fileName: "{$fileName}_{$i}",
+                content: $content,
+            );
+
+            $this->databaseConfig->addMigration($migration);
+        }
     }
 
     public function createCachePayload(): string
@@ -34,7 +63,7 @@ final class MigrationDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $migrations = unserialize($payload, ['allowed_classes' => [MigrationModel::class]]);
+        $migrations = unserialize($payload, ['allowed_classes' => [MigrationModel::class, GenericMigration::class]]);
 
         $this->databaseConfig->setMigrations($migrations);
     }

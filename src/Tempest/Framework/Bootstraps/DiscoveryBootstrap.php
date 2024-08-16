@@ -45,6 +45,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                 /** @var SplFileInfo $file */
                 foreach ($files as $file) {
                     $fileName = $file->getFilename();
+
                     if ($fileName === '') {
                         continue;
                     }
@@ -83,7 +84,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                         try {
                             $input = new ClassReflector($className);
                         } catch (Throwable) {
-                            continue;
+                            // Nothing should happen
                         }
                     }
 
