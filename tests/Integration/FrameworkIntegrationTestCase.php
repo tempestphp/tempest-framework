@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
+use RuntimeException;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -43,6 +44,11 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         @unlink(DiscoveryDiscovery::CACHE_PATH);
         @unlink($databasePath);
         copy($cleanDatabasePath, $databasePath);
+
+        $filename = __DIR__ . '/../Fixtures/Config/database.php';
+        if (! file_exists($filename)) {
+            throw new RuntimeException('No database driver is configured.');
+        }
 
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
