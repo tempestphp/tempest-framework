@@ -16,6 +16,24 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
 {
+    public function test_where_statement(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        (Book::new(title: 'A'))->save();
+        (Book::new(title: 'B'))->save();
+        (Book::new(title: 'C'))->save();
+        (Book::new(title: 'D'))->save();
+
+        $book = Book::query()->where('title = ?', 'B')->first();
+
+        $this->assertSame('B', $book->title);
+    }
+
     public function test_order_by(): void
     {
         $this->migrate(
