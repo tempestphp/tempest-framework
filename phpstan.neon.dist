@@ -33,6 +33,9 @@ parameters:
 		-
 			message: '#.*eval*#'
 			path:  src/Tempest/Support/Reflection/TypeReflector.php
+		-
+			message: '#.*exec*#'
+			path:  src/Tempest/Console/Commands/InstallCommand.php
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'

@@ -100,6 +100,8 @@ final readonly class InstallCommand
 
         copy(__DIR__ . '/../../../../tempest', $path);
 
+        exec("chmod +x {$path}");
+
         $this->console->success("{$path} created");
     }
 
