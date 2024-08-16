@@ -90,6 +90,26 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function datetime(string $name, bool $nullable = false): self
+    {
+        $this->statements[] = new DatetimeStatement(
+            name: $name,
+            nullable: $nullable,
+        );
+
+        return $this;
+    }
+
+    public function date(string $name, bool $nullable = false): self
+    {
+        $this->statements[] = new DateStatement(
+            name: $name,
+            nullable: $nullable,
+        );
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
