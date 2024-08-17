@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use Tempest\Database\Migration;
@@ -8,12 +10,15 @@ use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {
-        $migration = new class implements Migration
-        {
+        $migration = new class () implements Migration {
             public function getName(): string
             {
                 return '0';
