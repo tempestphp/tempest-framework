@@ -51,12 +51,14 @@ abstract class IntegrationTest extends TestCase
         $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 
-    protected function migrate(string ...$migrationClasses): void
+    protected function migrate(string|object ...$migrationClasses): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
         foreach ($migrationClasses as $migrationClass) {
-            $migrationManager->executeUp($this->container->get($migrationClass));
+            $migration = is_string($migrationClass) ? $this->container->get($migrationClass) : $migrationClass;
+
+            $migrationManager->executeUp($migration);
         }
     }
 

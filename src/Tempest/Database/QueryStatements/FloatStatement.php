@@ -12,14 +12,16 @@ final readonly class FloatStatement implements QueryStatement
     public function __construct(
         private string $name,
         private bool $nullable = false,
+        private ?float $default = null,
     ) {
     }
 
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '%s FLOAT %s',
+            '`%s` FLOAT %s %s',
             $this->name,
+            $this->default ? "DEFAULT {$this->default}" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }

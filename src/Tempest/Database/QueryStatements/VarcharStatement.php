@@ -13,15 +13,17 @@ final readonly class VarcharStatement implements QueryStatement
         private string $name,
         private int $size = 255,
         private bool $nullable = false,
+        private ?string $default = null,
     ) {
     }
 
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            '%s VARCHAR(%s) %s',
+            '`%s` VARCHAR(%s) %s %s',
             $this->name,
             $this->size,
+            $this->default ? "DEFAULT \"{$this->default}\"" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }
