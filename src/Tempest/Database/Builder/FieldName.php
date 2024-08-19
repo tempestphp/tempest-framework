@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
-use BackedEnum;
 use Stringable;
-use Tempest\Mapper\CastWith;
+use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Support\Reflection\ClassReflector;
 
 final class FieldName implements Stringable
@@ -21,30 +20,26 @@ final class FieldName implements Stringable
     /** @return \Tempest\Database\Builder\FieldName[] */
     public static function make(ClassReflector $class, ?TableName $tableName = null): array
     {
+        $casterFactory = new CasterFactory();
         $fieldNames = [];
         $tableName ??= $class->callStatic('table');
 
         foreach ($class->getPublicProperties() as $property) {
-            $type = $property->getType();
+            $caster = $casterFactory->forProperty($property);
 
-            if ($type->matches(BackedEnum::class)) {
+            if ($caster) {
                 $fieldNames[] = new FieldName($tableName, $property->getName());
 
                 continue;
             }
 
-            if (! $type->isBuiltin()) {
-                $castWith = $property->getAttribute(CastWith::class)
-                    ?? $type->asClass()->getAttribute(CastWith::class);
+            $type = $property->getType();
 
-                if ($castWith) {
-                    $fieldNames[] = new FieldName($tableName, $property->getName());
-                }
-
+            if ($type->isIterable()) {
                 continue;
             }
 
-            if ($type->isIterable()) {
+            if (! $type->isBuiltIn()) {
                 continue;
             }
 

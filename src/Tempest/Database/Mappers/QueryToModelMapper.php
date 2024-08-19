@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
-use BackedEnum;
 use Tempest\Database\DatabaseModel;
-use Tempest\Database\Id;
 use Tempest\Database\Query;
+use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
 final readonly class QueryToModelMapper implements Mapper
 {
+    public function __construct(private CasterFactory $casterFactory)
+    {
+    }
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return $from instanceof Query;
@@ -95,13 +98,9 @@ final readonly class QueryToModelMapper implements Mapper
 
     private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
-        $type = $property->getType();
-
-        $value = match (true) {
-            $type->matches(BackedEnum::class) => $value ? $type->asClass()->callStatic('tryFrom', $value) : null,
-            $type->matches(Id::class) => new Id($value),
-            default => $value,
-        };
+        if ($caster = $this->casterFactory->forProperty($property)) {
+            $value = $caster->cast($value);
+        }
 
         $property->set($model, $value);
 
