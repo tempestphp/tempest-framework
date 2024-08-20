@@ -47,6 +47,15 @@ final class Session
         return $value;
     }
 
+    public function consume(string $key, mixed $default = null): mixed
+    {
+        $value = $this->get($key, $default);
+
+        $this->remove($key);
+
+        return $value;
+    }
+
     public function all(): array
     {
         return $this->getSessionManager()->all($this->id);
