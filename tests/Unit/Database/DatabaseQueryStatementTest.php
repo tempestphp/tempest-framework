@@ -83,52 +83,60 @@ final class DatabaseQueryStatementTest extends TestCase
     }
 
     #[Test]
-    #[DataProvider('provide_alter_table_syntax')]
-    public function it_can_create_an_alter_table_add_statement(DatabaseDialect $dialect, string $operation, string $validSql): void
+    #[DataProvider('provide_alter_table_add_syntax')]
+    public function it_can_create_an_alter_table_add_statement(DatabaseDialect $dialect, string $validSql): void
     {
         $query = (new AlterTableStatement('Author'))
-            ->$operation(new VarcharStatement('name'))
+            ->add(new VarcharStatement('name'))
             ->compile($dialect);
 
         $this->assertSame($validSql, $query);
     }
 
-    public static function provide_alter_table_syntax(): Generator
+    #[Test]
+    #[DataProvider('provide_alter_table_delete_syntax')]
+    public function it_can_create_an_alter_table_delete_statement(DatabaseDialect $dialect, string $validSql): void
+    {
+        $query = (new AlterTableStatement('Author'))
+            ->delete('name')
+            ->compile($dialect);
+
+        $this->assertSame($validSql, $query);
+    }
+
+    public static function provide_alter_table_add_syntax(): Generator
     {
         yield 'mysql add statement' => [
             DatabaseDialect::MYSQL,
-            'add',
             'ALTER TABLE Author ADD name VARCHAR(255) NOT NULL;',
         ];
 
         yield 'postgresql add statement' => [
             DatabaseDialect::POSTGRESQL,
-            'add',
             'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL;',
         ];
 
         yield 'sqlite add statement' => [
             DatabaseDialect::SQLITE,
-            'add',
             'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL;',
         ];
+    }
 
+    public static function provide_alter_table_delete_syntax(): Generator
+    {
         yield 'mysql delete statement' => [
             DatabaseDialect::MYSQL,
-            'delete',
-            'ALTER TABLE Author DELETE name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE Author DELETE name;',
         ];
 
         yield 'postgresql delete statement' => [
             DatabaseDialect::POSTGRESQL,
-            'delete',
-            'ALTER TABLE Author DELETE COLUMN name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE Author DELETE COLUMN name;',
         ];
 
         yield 'sqlite delete statement' => [
             DatabaseDialect::SQLITE,
-            'delete',
-            'ALTER TABLE Author DELETE COLUMN name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE Author DELETE COLUMN name;',
         ];
     }
 }
