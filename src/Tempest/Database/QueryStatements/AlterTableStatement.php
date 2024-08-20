@@ -29,9 +29,12 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function delete(QueryStatement $statement): self
+    public function delete(string $table): self
     {
-        $this->statements[] = new AlterActionStatement(AlterStatement::DELETE, $statement);
+        $this->statements[] = new AlterActionStatement(
+            AlterStatement::DELETE,
+            new RawStatement($table)
+        );
 
         return $this;
     }
