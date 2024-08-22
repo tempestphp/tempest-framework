@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
+use Tempest\Database\Builder\TableName;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
@@ -75,7 +76,7 @@ final class AlterTableStatement implements QueryStatement
     {
         return sprintf(
             'ALTER TABLE %s %s;',
-            $this->tableName,
+            new TableName($this->tableName),
             implode(
                 ' ',
                 array_filter(

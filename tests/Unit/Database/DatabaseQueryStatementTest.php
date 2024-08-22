@@ -37,17 +37,17 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
-            'CREATE TABLE Migration (id INTEGER PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Migration` (id INTEGER PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
-            'CREATE TABLE Migration (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Migration` (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
-            'CREATE TABLE Migration (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Migration` (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(255) NOT NULL);',
         ];
     }
 
@@ -68,17 +68,17 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             DatabaseDialect::MYSQL,
-            'CREATE TABLE Book (id INTEGER PRIMARY KEY AUTO_INCREMENT, author_id INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (id INTEGER PRIMARY KEY AUTO_INCREMENT, author_id INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
             DatabaseDialect::POSTGRESQL,
-            'CREATE TABLE Book (id SERIAL PRIMARY KEY, author_id INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (id SERIAL PRIMARY KEY, author_id INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, name VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [
             DatabaseDialect::SQLITE,
-            'CREATE TABLE Book (id INTEGER PRIMARY KEY AUTOINCREMENT, author_id INTEGER UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (id INTEGER PRIMARY KEY AUTOINCREMENT, author_id INTEGER UNSIGNED NOT NULL, name VARCHAR(255) NOT NULL);',
         ];
     }
 
@@ -108,17 +108,17 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql add statement' => [
             DatabaseDialect::MYSQL,
-            'ALTER TABLE Author ADD name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE `Author` ADD name VARCHAR(255) NOT NULL;',
         ];
 
         yield 'postgresql add statement' => [
             DatabaseDialect::POSTGRESQL,
-            'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE `Author` ADD COLUMN name VARCHAR(255) NOT NULL;',
         ];
 
         yield 'sqlite add statement' => [
             DatabaseDialect::SQLITE,
-            'ALTER TABLE Author ADD COLUMN name VARCHAR(255) NOT NULL;',
+            'ALTER TABLE `Author` ADD COLUMN name VARCHAR(255) NOT NULL;',
         ];
     }
 
@@ -126,17 +126,17 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql delete statement' => [
             DatabaseDialect::MYSQL,
-            'ALTER TABLE Author DELETE name;',
+            'ALTER TABLE `Author` DELETE name;',
         ];
 
         yield 'postgresql delete statement' => [
             DatabaseDialect::POSTGRESQL,
-            'ALTER TABLE Author DELETE COLUMN name;',
+            'ALTER TABLE `Author` DELETE COLUMN name;',
         ];
 
         yield 'sqlite delete statement' => [
             DatabaseDialect::SQLITE,
-            'ALTER TABLE Author DELETE COLUMN name;',
+            'ALTER TABLE `Author` DELETE COLUMN name;',
         ];
     }
 }
