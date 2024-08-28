@@ -9,7 +9,7 @@ final class DatabaseConfig
     private array $migrations = [];
 
     public function __construct(
-        public readonly DatabaseDriver $driver,
+        public DatabaseDriver $driver,
     ) {
     }
 

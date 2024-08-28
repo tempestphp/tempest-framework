@@ -97,7 +97,7 @@ jobs:
         run: composer show -D
 
       - name: Set database config - ${{ matrix.database }}
-        run: php -r "file_exists('tests/Fixtures/Config/database.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.php');"
+        run: php -r "file_exists('tests/Fixtures/Config/database.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}', 'tests/Fixtures/Config/database.php');"
 
       - name: List Discovered Locations
         run: php ./tempest discovery:status

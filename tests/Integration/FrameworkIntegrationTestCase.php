@@ -12,8 +12,10 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
+use Tempest\Database\DatabaseConfig;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseDriver;
+use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Application\AppConfig;
@@ -28,12 +30,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
-
-        if (! file_exists($databaseConfigPath)) {
-            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
-        }
-
+        // App config
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
             enableExceptionHandling: true,
@@ -46,22 +43,24 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         parent::setUp();
 
-        $driver = $this->container->get(DatabaseDriver::class);
-
-        if ($driver->dialect() === DatabaseDialect::SQLITE) {
-            $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
-            $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
-
-            @unlink(DiscoveryDiscovery::CACHE_PATH);
-            @unlink($databasePath);
-            copy($cleanDatabasePath, $databasePath);
-        }
-
+        // Console
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
-
         $this->console = new ConsoleTester($this->container);
+
+        // Database
+        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
+
+        if (! file_exists($databaseConfigPath)) {
+            copy(__DIR__ . '/../Fixtures/Config/database.sqlite', $databaseConfigPath);
+        }
+
+        $driver = (require $databaseConfigPath)->driver();
+        $config = $this->container->get(DatabaseConfig::class);
+        $config->driver = $driver;
+
+        $this->rollbackDatabase();
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application
@@ -97,5 +96,25 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $view->data(...$params);
 
         return $this->container->get(ViewRenderer::class)->render($view);
+    }
+
+    protected function rollbackDatabase(): void
+    {
+        $driver = $this->container->get(DatabaseDriver::class);
+
+        if ($driver->dialect() === DatabaseDialect::SQLITE) {
+            $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
+            $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
+
+            @unlink(DiscoveryDiscovery::CACHE_PATH);
+            @unlink($databasePath);
+            copy($cleanDatabasePath, $databasePath);
+
+            return;
+        }
+
+        $migrationManager = $this->container->get(MigrationManager::class);
+
+        $migrationManager->dropAll();
     }
 }
