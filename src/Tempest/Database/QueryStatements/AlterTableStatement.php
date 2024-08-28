@@ -16,6 +16,12 @@ final class AlterTableStatement implements QueryStatement
     ) {
     }
 
+    /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
+    public static function forModel(string $modelClass): self
+    {
+        return new self($modelClass::table()->tableName);
+    }
+
     public function add(QueryStatement $statement): self
     {
         $this->statements[] = new AlterStatement(Alter::ADD, $statement);

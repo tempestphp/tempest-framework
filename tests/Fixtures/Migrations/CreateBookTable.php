@@ -8,6 +8,7 @@ use Tempest\Database\Migration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 
 final readonly class CreateBookTable implements Migration
 {
@@ -18,7 +19,7 @@ final readonly class CreateBookTable implements Migration
 
     public function up(): QueryStatement|null
     {
-        return (new CreateTableStatement('Book'))
+        return CreateTableStatement::forModel(Book::class)
             ->primary()
             ->text('title')
             ->belongsTo('Book.author_id', 'Author.id', nullable: true);
@@ -26,6 +27,6 @@ final readonly class CreateBookTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return new DropTableStatement('Book');
+        return DropTableStatement::forModel(Book::class);
     }
 }

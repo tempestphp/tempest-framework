@@ -17,6 +17,12 @@ final readonly class DropTableStatement implements QueryStatement
     ) {
     }
 
+    /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
+    public static function forModel(string $modelClass): self
+    {
+        return new self($modelClass::table()->tableName);
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $statements = [];

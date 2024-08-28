@@ -73,7 +73,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement|null
             {
-                return (new AlterTableStatement('User'))
+                return AlterTableStatement::forModel(User::class)
                     ->add(new VarcharStatement('email'));
             }
 
