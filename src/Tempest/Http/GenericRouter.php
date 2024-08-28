@@ -131,8 +131,21 @@ final class GenericRouter implements Router
 
         $uri = $routeAttribute->uri;
 
+        $queryParams = [];
+
         foreach ($params as $key => $value) {
+            if (! str_contains($uri, "{$key}")) {
+                $queryParams[$key] = $value;
+
+                continue;
+            }
+
             $uri = str_replace('{' . $key . '}', "{$value}", $uri);
+        }
+
+
+        if ($queryParams !== []) {
+            $uri = $uri . '?' . http_build_query($queryParams);
         }
 
         return $uri;

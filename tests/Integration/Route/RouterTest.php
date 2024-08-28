@@ -49,6 +49,8 @@ class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
         $this->assertEquals('/test', $router->toUri(TestController::class));
+
+        $this->assertEquals('/test/1/a?q=hi&i=test', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a', q: 'hi', i: 'test'));
     }
 
     public function test_with_view(): void
