@@ -8,6 +8,7 @@ use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Migration as MigrationInterface;
 use Tempest\Database\Query;
@@ -15,7 +16,6 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
 use function Tempest\event;
-use function Tempest\map;
 use Throwable;
 use UnhandledMatchError;
 
@@ -93,7 +93,7 @@ final readonly class MigrationManager
 
         try {
             // Get all tables
-            $tables = map((new ShowTablesStatement())->fetch($dialect))->collection()->to(TableDefinition::class);
+            $tables = $this->getTableDefinitions($dialect);
 
             // Disable foreign key checks
             (new SetForeignKeyChecksStatement(enable: false))->execute($dialect);
@@ -186,11 +186,25 @@ final readonly class MigrationManager
         /** @var MigrationInterface[] $migrations */
         $migrations = array_map(
             fn (string|MigrationInterface $migration) => is_string($migration) ? $this->container->get($migration) : $migration,
-            $this->databaseConfig->getMigrations()
+            $this->databaseConfig->getMigrations(),
         );
 
         usort($migrations, fn (MigrationInterface $a, MigrationInterface $b) => $a->getName() <=> $b->getName());
 
         return $migrations;
+    }
+
+    /**
+     * @return \Tempest\Database\Migrations\TableDefinition[]
+     */
+    private function getTableDefinitions(DatabaseDialect $dialect): array
+    {
+        return array_map(
+            fn (array $item) => match ($dialect) {
+                DatabaseDialect::SQLITE => new TableDefinition($item['name']),
+                default => new TableDefinition(array_values($item)[0]),
+            },
+            (new ShowTablesStatement())->fetch($dialect),
+        );
     }
 }

@@ -38,7 +38,7 @@ final class CreateTableStatement implements QueryStatement
     ): self {
         [$localTable, $localKey] = explode('.', $local);
 
-        $this->integer($localKey, unsigned: true, nullable: $nullable);
+        $this->integer($localKey, nullable: $nullable);
 
         $this->statements[] = new BelongsToStatement(
             local: $local,

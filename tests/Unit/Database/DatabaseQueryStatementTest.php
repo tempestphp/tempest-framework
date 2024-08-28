@@ -70,17 +70,17 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MySqlDriver(),
-            'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
             new PostgreSqlDriver(),
-            'CREATE TABLE `Book` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER UNSIGNED NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [
             new SQLiteDriver(),
-            'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `author_id` INTEGER UNSIGNED NOT NULL, `name` VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `author_id` INTEGER  NOT NULL, `name` VARCHAR(255) NOT NULL);',
         ];
     }
 

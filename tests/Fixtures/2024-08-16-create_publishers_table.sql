@@ -1,11 +1,11 @@
 CREATE TABLE Foo
 (
-    `id`   INTEGER PRIMARY KEY AUTOINCREMENT,
+    `id`   INTEGER,
     `name` TEXT NOT NULL
 );
 
 CREATE TABLE Publisher
 (
-    `id`   INTEGER PRIMARY KEY AUTOINCREMENT,
+    `id`   INTEGER,
     `name` TEXT NOT NULL
 );
