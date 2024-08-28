@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Migrations;
 
 use Tempest\Database\Migration;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
@@ -17,7 +18,7 @@ final readonly class CreateAuthorTable implements Migration
         return '0000-00-00_create_author_table';
     }
 
-    public function up(): CreateTableStatement|null
+    public function up(): QueryStatement|null
     {
         return new CreateTableStatement(
             'Author',
@@ -29,7 +30,7 @@ final readonly class CreateAuthorTable implements Migration
         );
     }
 
-    public function down(): DropTableStatement|null
+    public function down(): QueryStatement|null
     {
         return new DropTableStatement('Author');
     }

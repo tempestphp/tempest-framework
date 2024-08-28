@@ -2,30 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Fixtures\Migrations;
+namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use Tempest\Database\Migration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final readonly class CreateBookTable implements Migration
+final class CreateUserMigration implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_book_table';
+        return '0000-01-01_create_users_table';
     }
 
     public function up(): QueryStatement|null
     {
-        return (new CreateTableStatement('Book'))
-            ->primary()
-            ->text('title')
-            ->belongsTo('Book.author_id', 'Author.id', nullable: true);
+        return (new CreateTableStatement('User'))
+            ->varchar('name');
     }
 
     public function down(): QueryStatement|null
     {
-        return new DropTableStatement('Book');
+        return (new DropTableStatement('User'));
     }
 }

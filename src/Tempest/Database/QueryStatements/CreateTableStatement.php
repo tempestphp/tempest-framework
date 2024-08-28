@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
+use Tempest\Database\Builder\TableName;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
@@ -119,7 +120,7 @@ final class CreateTableStatement implements QueryStatement
     {
         return sprintf(
             'CREATE TABLE %s (%s);',
-            $this->tableName,
+            new TableName($this->tableName),
             implode(
                 ', ',
                 array_filter(
