@@ -20,7 +20,6 @@ final readonly class BelongsToStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         [$localTable, $localKey] = explode('.', $this->local);
-
         [$foreignTable, $foreignKey] = explode('.', $this->foreign);
 
         return match ($dialect) {

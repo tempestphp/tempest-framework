@@ -10,6 +10,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 
 final readonly class CreateAuthorTable implements Migration
 {
@@ -32,6 +33,6 @@ final readonly class CreateAuthorTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return new DropTableStatement('Author');
+        return DropTableStatement::forModel(Author::class);
     }
 }

@@ -7,14 +7,22 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
-final readonly class DropTableStatement implements QueryStatement
+final class DropTableStatement implements QueryStatement
 {
     use CanExecuteStatement;
 
     public function __construct(
-        private string $tableName,
-        private array $constraints = [],
+        private readonly string $tableName,
+        /** @var \Tempest\Database\QueryStatements\DropConstraintStatement[] $dropReferences */
+        private array $dropReferences = [],
     ) {
+    }
+
+    public function dropReference(string $foreign): self
+    {
+        $this->dropReferences[] = new DropConstraintStatement($this->tableName, $foreign);
+
+        return $this;
     }
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
@@ -27,11 +35,11 @@ final readonly class DropTableStatement implements QueryStatement
     {
         $statements = [];
 
-        foreach ($this->constraints as $constraint) {
-            $statements[] = $constraint->compile($dialect);
+        foreach ($this->dropReferences as $dropReference) {
+            $statements[] = $dropReference->compile($dialect);
         }
 
-        $statements[] = sprintf('DROP TABLE IF EXISTS %s', $this->tableName);
+        $statements[] = sprintf('DROP TABLE IF EXISTS `%s`', $this->tableName);
 
         return implode('; ', $statements) . ';';
     }

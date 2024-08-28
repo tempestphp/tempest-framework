@@ -152,8 +152,19 @@ final readonly class MigrationManager
         $query = new Query($statement->compile($dialect));
 
         try {
+            // TODO: don't just disable FK checking when executing down
+
+            // Disable foreign key checks
+            (new SetForeignKeyChecksStatement(enable: false))->execute($dialect);
+
             $this->database->execute($query);
+
+            // Disable foreign key checks
+            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
         } catch (PDOException $pdoException) {
+            // Disable foreign key checks
+            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
+
             event(new MigrationFailed($migration->getName(), $pdoException));
 
             throw $pdoException;
