@@ -212,7 +212,7 @@ final class TempestViewRenderer implements ViewRenderer
         return preg_replace_callback(
             pattern: '/{{\s*(?<eval>\$.*?)\s*}}/',
             callback: function (array $matches) use ($element, $view): string {
-                $eval = $matches['eval'] ?? '';
+                $eval = $matches['eval'];
 
                 if (str_starts_with($eval, '$this->')) {
                     return $view->eval($eval) ?? '';
