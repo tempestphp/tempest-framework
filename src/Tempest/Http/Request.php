@@ -12,7 +12,7 @@ interface Request
 
     public function getUri(): string;
 
-    public function get(string $key): mixed;
+    public function get(string $key, mixed $default = null): mixed;
 
     public function getBody(): array;
 

@@ -25,11 +25,17 @@ trait IsRequest
         $this->query ??= $this->resolveQuery();
     }
 
-    public function get(string $key): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        return $this->query[$key]
-            ?? $this->body[$key]
-            ?? null;
+        if (array_key_exists($key, $this->body)) {
+            return $this->body[$key];
+        }
+
+        if (array_key_exists($key, $this->query)) {
+            return $this->query[$key];
+        }
+
+        return $default;
     }
 
     public function getMethod(): Method

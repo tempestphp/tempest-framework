@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
@@ -22,6 +23,45 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 class RequestTest extends FrameworkIntegrationTestCase
 {
+    public function test_request_get(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            body: []
+        );
+
+        $this->assertSame('default', $request->get('a', 'default'));
+
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/?a=1',
+            body: []
+        );
+
+        $this->assertSame('1', $request->get('a', 'default'));
+
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/?a=1',
+            body: [
+                'a' => '2',
+            ]
+        );
+
+        $this->assertSame('2', $request->get('a', 'default'));
+
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/',
+            body: [
+                'a' => '2',
+            ]
+        );
+
+        $this->assertSame('2', $request->get('a', 'default'));
+    }
+
     public function test_from_factory(): void
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
