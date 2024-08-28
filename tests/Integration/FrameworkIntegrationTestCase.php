@@ -48,7 +48,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $driver = $this->container->get(DatabaseDriver::class);
 
-        if ($driver->dialect()->value === DatabaseDialect::SQLITE->value) {
+        if ($driver->dialect() === DatabaseDialect::SQLITE) {
             $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
             $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
 
