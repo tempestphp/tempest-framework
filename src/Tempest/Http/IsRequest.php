@@ -9,6 +9,7 @@ use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 
+/** @phpstan-require-implements \Tempest\Http\Request */
 trait IsRequest
 {
     public string $path;

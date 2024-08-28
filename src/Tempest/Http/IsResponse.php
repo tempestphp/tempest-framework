@@ -11,6 +11,7 @@ use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tempest\View\View;
 
+/** @phpstan-require-implements \Tempest\Http\Response */
 trait IsResponse
 {
     private Status $status = Status::OK;

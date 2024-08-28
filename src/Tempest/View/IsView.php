@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+/** @phpstan-require-implements \Tempest\View\View */
 trait IsView
 {
     public string $path;

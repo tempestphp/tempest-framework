@@ -11,6 +11,7 @@ use function Tempest\make;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
+/** @phpstan-require-implements \Tempest\Database\DatabaseModel */
 trait IsDatabaseModel
 {
     public ?Id $id = null;
