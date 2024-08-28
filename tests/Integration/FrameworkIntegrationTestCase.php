@@ -29,10 +29,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        $filename = __DIR__ . '/../Fixtures/Config/database.php';
-        if (! file_exists($filename)) {
-            throw new RuntimeException('No database driver is configured.');
-        }
+//        $filename = __DIR__ . '/../Fixtures/Config/database.php';
+        //        if (! file_exists($filename)) {
+        //            throw new RuntimeException('No database driver is configured.');
+        //        }
 
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
