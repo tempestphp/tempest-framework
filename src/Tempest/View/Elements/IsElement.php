@@ -6,6 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 
+/** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
 {
     /** @var Element[] */

@@ -49,6 +49,8 @@ class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
         $this->assertEquals('/test', $router->toUri(TestController::class));
+
+        $this->assertEquals('/test/1/a?q=hi&i=test', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a', q: 'hi', i: 'test'));
     }
 
     public function test_with_view(): void
@@ -91,5 +93,16 @@ class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertEquals(['from-dependency'], $response->getHeader('middleware')->values);
         $this->assertEquals(['yes'], $response->getHeader('global-middleware')->values);
+    }
+
+    public function test_trailing_slash(): void
+    {
+        $this->http
+            ->get('/test')
+            ->assertOk();
+
+        $this->http
+            ->get('/test/1/a/')
+            ->assertOk();
     }
 }

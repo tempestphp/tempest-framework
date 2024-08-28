@@ -7,10 +7,12 @@ namespace Tempest\Database;
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
+use Tempest\Database\Exceptions\MissingValue;
 use function Tempest\make;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\PropertyReflector;
 
+/** @phpstan-require-implements \Tempest\Database\DatabaseModel */
 trait IsDatabaseModel
 {
     public ?Id $id = null;
@@ -23,6 +25,16 @@ trait IsDatabaseModel
             $this->load($name);
 
             return $property->getValue($this);
+        }
+
+        $type = $property->getType();
+
+        if ($type->isIterable()) {
+            throw new MissingRelation($this, $name);
+        }
+
+        if ($type->isBuiltIn()) {
+            throw new MissingValue($this, $name);
         }
 
         throw new MissingRelation($this, $name);

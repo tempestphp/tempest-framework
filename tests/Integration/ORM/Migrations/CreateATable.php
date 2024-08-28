@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM\Migrations;
 
 use Tempest\Database\Migration;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
@@ -17,7 +18,7 @@ final readonly class CreateATable implements Migration
         return '100-create-a';
     }
 
-    public function up(): CreateTableStatement|null
+    public function up(): QueryStatement|null
     {
         return new CreateTableStatement(
             'A',
@@ -28,7 +29,7 @@ final readonly class CreateATable implements Migration
         );
     }
 
-    public function down(): DropTableStatement|null
+    public function down(): QueryStatement|null
     {
         return new DropTableStatement('A');
     }

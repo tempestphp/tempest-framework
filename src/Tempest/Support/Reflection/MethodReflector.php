@@ -72,8 +72,8 @@ final readonly class MethodReflector implements Reflector
     public function __serialize(): array
     {
         return [
-            'class' => $this->getReflection()->getDeclaringClass()->getName(),
-            'method' => $this->getReflection()->getName(),
+            'class' => $this->reflectionMethod->getDeclaringClass()->getName(),
+            'method' => $this->reflectionMethod->getName(),
         ];
     }
 

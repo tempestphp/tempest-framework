@@ -6,6 +6,7 @@ namespace Tempest\Discovery;
 
 use Tempest\Container\Container;
 
+/** @phpstan-require-implements \Tempest\Discovery\Discovery */
 trait HandlesDiscoveryCache
 {
     public function getCachePath(): string

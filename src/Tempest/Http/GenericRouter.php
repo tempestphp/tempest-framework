@@ -131,8 +131,21 @@ final class GenericRouter implements Router
 
         $uri = $routeAttribute->uri;
 
+        $queryParams = [];
+
         foreach ($params as $key => $value) {
+            if (! str_contains($uri, "{$key}")) {
+                $queryParams[$key] = $value;
+
+                continue;
+            }
+
             $uri = str_replace('{' . $key . '}', "{$value}", $uri);
+        }
+
+
+        if ($queryParams !== []) {
+            $uri = $uri . '?' . http_build_query($queryParams);
         }
 
         return $uri;
@@ -201,6 +214,7 @@ final class GenericRouter implements Router
 
         // First we get the Routing-Regex for the request method
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
+
         // Then we'll use this regex to see whether we have a match or not
         $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $matches);
 

@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM;
 
 use Tempest\Database\Exceptions\MissingRelation;
+use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use function Tempest\map;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Models\AWithLazy;
+use Tests\Tempest\Fixtures\Models\AWithValue;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -155,6 +158,15 @@ class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->expectException(MissingRelation::class);
 
         $b = $a->b;
+    }
+
+    public function test_missing_value_exception(): void
+    {
+        $a = map([])->to(AWithValue::class);
+
+        $this->expectException(MissingValue::class);
+
+        $name = $a->name;
     }
 
     public function test_nested_relations(): void

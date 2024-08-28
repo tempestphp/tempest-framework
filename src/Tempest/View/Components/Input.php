@@ -40,13 +40,23 @@ final readonly class Input implements ViewComponent
             )) . '</div>';
         }
 
-        return <<<HTML
+        if ($type === 'textarea') {
+            return <<<HTML
+<div>
+    <label for="{$name}">{$label}</label>
+    <textarea name="{$name}" id="{$name}">{$this->original($name, $default)}</textarea>
+    {$errorHtml}
+</div>
+HTML;
+        } else {
+            return <<<HTML
 <div>
     <label for="{$name}">{$label}</label>
     <input type="{$type}" name="{$name}" id="{$name}" value="{$this->original($name, $default)}" />
     {$errorHtml}
 </div>
 HTML;
+        }
     }
 
     public function original(string $name, mixed $default = ''): mixed

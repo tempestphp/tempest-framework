@@ -4,19 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use BackedEnum;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use ReflectionException;
-use function Tempest\get;
-use Tempest\Mapper\Caster;
-use Tempest\Mapper\Casters\BooleanCaster;
-use Tempest\Mapper\Casters\DateTimeCaster;
-use Tempest\Mapper\Casters\EnumCaster;
-use Tempest\Mapper\Casters\FloatCaster;
-use Tempest\Mapper\Casters\IntegerCaster;
-use Tempest\Mapper\CastWith;
+use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
@@ -29,6 +17,11 @@ use Throwable;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
+    public function __construct(
+        private CasterFactory $casterFactory,
+    ) {
+    }
+
     public function canMap(mixed $from, mixed $to): bool
     {
         if (! is_array($from)) {
@@ -91,7 +84,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             }
 
             if ($value instanceof UnknownValue) {
-                $caster = $this->getCaster($property);
+                $caster = $this->casterFactory->forProperty($property);
 
                 $value = $caster?->cast($from[$propertyName]) ?? $from[$propertyName];
             }
@@ -114,42 +107,6 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    private function getCaster(PropertyReflector $property): ?Caster
-    {
-        // Get CastWith from the property
-        $castWith = $property->getAttribute(CastWith::class);
-
-        $type = $property->getType();
-
-        // Get CastWith from the property's type
-        if (! $castWith) {
-            try {
-                $castWith = $type->asClass()->getAttribute(CastWith::class);
-            } catch (ReflectionException) {
-                // Could not resolve CastWith from the type
-            }
-        }
-
-        if ($castWith) {
-            // Resolve the caster from the container
-            return get($castWith->className);
-        }
-
-        // Check if backed enum
-        if ($type->matches(BackedEnum::class)) {
-            return new EnumCaster($type->getName());
-        }
-
-        // Get Caster from built-in casters
-        return match ($type->getName()) {
-            'int' => new IntegerCaster(),
-            'float' => new FloatCaster(),
-            'bool' => new BooleanCaster(),
-            DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
-            default => null,
-        };
-    }
-
     private function resolveObject(mixed $objectOrClass): object
     {
         if (is_object($objectOrClass)) {
@@ -170,7 +127,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             return new UnknownValue();
         }
 
-        $caster = $this->getCaster($property);
+        $caster = $this->casterFactory->forProperty($property);
 
         if (! is_array($data)) {
             return $caster?->cast($data) ?? $data;
@@ -195,13 +152,13 @@ final readonly class ArrayToObjectMapper implements Mapper
     ): UnknownValue|array {
         $type = $property->getIterableType();
 
-        if (! $type) {
+        if ($type === null) {
             return new UnknownValue();
         }
 
         $values = [];
 
-        $caster = $this->getCaster($property);
+        $caster = $this->casterFactory->forProperty($property);
 
         foreach ($data as $item) {
             if (! is_array($item)) {

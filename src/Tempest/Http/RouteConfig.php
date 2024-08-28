@@ -16,9 +16,9 @@ final class RouteConfig
 
     public function __construct(
         /** @var array<string, array<string, \Tempest\Http\Route>> */
-        public array  $staticRoutes = [],
+        public array $staticRoutes = [],
         /** @var array<string, array<string, \Tempest\Http\Route>> */
-        public array  $dynamicRoutes = [],
+        public array $dynamicRoutes = [],
     ) {
     }
 
@@ -30,11 +30,12 @@ final class RouteConfig
             $this->regexMark = str_increment($this->regexMark);
             $this->dynamicRoutes[$route->method->value][$this->regexMark] = $route;
             $this->addToMatchingRegex($route, $this->regexMark);
-
         } else {
-            $this->staticRoutes[$route->method->value][$route->uri] = $route;
-        }
+            $uriWithTrailingSlash = rtrim($route->uri, '/');
 
+            $this->staticRoutes[$route->method->value][$uriWithTrailingSlash] = $route;
+            $this->staticRoutes[$route->method->value][$uriWithTrailingSlash . '/'] = $route;
+        }
 
         return $this;
     }
@@ -47,9 +48,9 @@ final class RouteConfig
     {
         // Each route, say "/posts/{postId}", which would have the regex "/posts/[^/]+", is marked.
         // e.g "/posts/[^/]+ (*MARK:a)".
-        // This mark can than be used to find the matched route via a hashmap-lookup.
+        // This mark can then be used to find the matched route via a hashmap-lookup.
+        $routeRegexPart = "{$route->matchingRegex} (*" . GenericRouter::REGEX_MARK_TOKEN . ":{$routeMark})";
 
-        $routeRegexPart = "$route->matchingRegex (*" . GenericRouter::REGEX_MARK_TOKEN . ":{$routeMark})";
         if (! array_key_exists($route->method->value, $this->matchingRegexes)) {
             // initialize matching regex for method
             $this->matchingRegexes[$route->method->value] = "#^(?|{$routeRegexPart})$#x";

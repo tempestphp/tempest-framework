@@ -36,7 +36,7 @@ final class GenericElement implements Element
             || array_key_exists(":{$name}", $this->attributes);
     }
 
-    public function getAttribute(string $name, bool $eval = true): bool|string|null
+    public function getAttribute(string $name, bool $eval = true): mixed
     {
         $name = ltrim($name, ':');
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
+use RuntimeException;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -12,6 +13,8 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
+use Tempest\Database\DatabaseDialect;
+use Tempest\Database\DatabaseDriver;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Application\AppConfig;
@@ -26,6 +29,12 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
+        // This breaks local tests
+        //        $filename = __DIR__ . '/../Fixtures/Config/database.php';
+        //        if (! file_exists($filename)) {
+        //            throw new RuntimeException('No database driver is configured.');
+        //        }
+
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
             enableExceptionHandling: true,
@@ -37,12 +46,16 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         );
 
         parent::setUp();
-        $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
-        $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
 
-        @unlink(DiscoveryDiscovery::CACHE_PATH);
-        @unlink($databasePath);
-        copy($cleanDatabasePath, $databasePath);
+        $driver = $this->container->get(DatabaseDriver::class);
+        if ($driver->dialect()->value === DatabaseDialect::SQLITE->value) {
+            $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
+            $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
+
+            @unlink(DiscoveryDiscovery::CACHE_PATH);
+            @unlink($databasePath);
+            copy($cleanDatabasePath, $databasePath);
+        }
 
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
