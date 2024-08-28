@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-enum AlterStatement: string
+use Tempest\Database\DatabaseDialect;
+use Tempest\Database\QueryStatement;
+
+final readonly class AlterStatement implements QueryStatement
 {
-    case ADD = 'ADD';
-    case DROP = 'DROP';
-    case DELETE = 'DELETE';
-    case UPDATE = 'UPDATE';
-    case REPLACE = 'REPLACE';
-    case RENAME = 'RENAME';
+    public function __construct(
+        private Alter $type,
+        private QueryStatement $statement,
+    ) {
+    }
+
+    public function compile(DatabaseDialect $dialect): string
+    {
+        return sprintf(
+            '%s %s',
+            $this->type->compile($dialect),
+            $this->statement->compile($dialect)
+        );
+    }
 }

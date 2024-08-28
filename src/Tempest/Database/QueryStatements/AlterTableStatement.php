@@ -18,22 +18,22 @@ final class AlterTableStatement implements QueryStatement
 
     public function add(QueryStatement $statement): self
     {
-        $this->statements[] = new AlterActionStatement(AlterStatement::ADD, $statement);
+        $this->statements[] = new AlterStatement(Alter::ADD, $statement);
 
         return $this;
     }
 
     public function update(QueryStatement $statement): self
     {
-        $this->statements[] = new AlterActionStatement(AlterStatement::UPDATE, $statement);
+        $this->statements[] = new AlterStatement(Alter::UPDATE, $statement);
 
         return $this;
     }
 
     public function delete(string $table): self
     {
-        $this->statements[] = new AlterActionStatement(
-            AlterStatement::DELETE,
+        $this->statements[] = new AlterStatement(
+            Alter::DELETE,
             new RawStatement($table)
         );
 
@@ -67,7 +67,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function drop(QueryStatement $statement): self
     {
-        $this->statements[] = new AlterActionStatement(AlterStatement::DROP, $statement);
+        $this->statements[] = new AlterStatement(Alter::DROP, $statement);
 
         return $this;
     }

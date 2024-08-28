@@ -31,7 +31,7 @@ final readonly class BelongsToStatement implements QueryStatement
                     strtolower($foreignTable),
                     strtolower($localTable),
                 ),
-                new RawStatement( // need to let the FK statement handle this
+                new RawStatement(
                     sprintf(
                         'FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
                         $localTable,

@@ -9,6 +9,7 @@ use Tempest\Database\QueryStatement;
 
 final readonly class ForeignKeyStatement implements QueryStatement
 {
+    // TODO @treggats: not used yet
     public function __construct(
         private string $local,
         private string $foreign,
