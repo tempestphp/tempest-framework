@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
-use RuntimeException;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -29,11 +28,11 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        // This breaks local tests
-        //        $filename = __DIR__ . '/../Fixtures/Config/database.php';
-        //        if (! file_exists($filename)) {
-        //            throw new RuntimeException('No database driver is configured.');
-        //        }
+        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
+
+        if (! file_exists($databaseConfigPath)) {
+            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
+        }
 
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
@@ -48,6 +47,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         parent::setUp();
 
         $driver = $this->container->get(DatabaseDriver::class);
+
         if ($driver->dialect()->value === DatabaseDialect::SQLITE->value) {
             $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
             $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
