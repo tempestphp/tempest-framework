@@ -30,13 +30,16 @@ class Route
     ) {
         // Routes can have parameters in the form of "/{PARAM}/",
         // these parameters are replaced with a regex matching group
-        $this->matchingRegex = preg_replace(
+        $matchingRegex = preg_replace(
             '#\{(\w+)}#',
             '([^/]++)',
             $uri
         );
 
-        $this->isDynamic = $this->matchingRegex !== $this->uri;
+        $this->isDynamic = $matchingRegex !== $this->uri;
+
+        // Allow for optional trailing slashes
+        $this->matchingRegex = $matchingRegex . '\/?';
     }
 
     public function setHandler(MethodReflector $handler): self

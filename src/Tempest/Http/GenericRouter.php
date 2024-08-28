@@ -214,6 +214,7 @@ final class GenericRouter implements Router
 
         // First we get the Routing-Regex for the request method
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
+
         // Then we'll use this regex to see whether we have a match or not
         $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $matches);
 

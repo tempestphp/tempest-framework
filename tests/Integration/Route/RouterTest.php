@@ -94,4 +94,15 @@ class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals(['from-dependency'], $response->getHeader('middleware')->values);
         $this->assertEquals(['yes'], $response->getHeader('global-middleware')->values);
     }
+
+    public function test_trailing_slash(): void
+    {
+        $this->http
+            ->get('/test')
+            ->assertOk();
+
+        $this->http
+            ->get('/test/1/a/')
+            ->assertOk();
+    }
 }
