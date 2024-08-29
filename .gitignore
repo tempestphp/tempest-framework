@@ -10,4 +10,3 @@ tests/Unit/Console/test-console.log
 composer.lock
 debug.log
 tempest.log
-.cache
