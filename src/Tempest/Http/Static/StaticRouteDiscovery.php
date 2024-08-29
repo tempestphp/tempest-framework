@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Static;
 
 use Tempest\Container\Container;
@@ -14,7 +16,8 @@ final readonly class StaticRouteDiscovery implements Discovery
 
     public function __construct(
         private StaticRouteConfig $staticRouteConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(ClassReflector $class): void
     {

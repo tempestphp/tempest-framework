@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Static;
 
 use Tempest\Console\Console;
@@ -7,17 +9,17 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Framework\Application\AppConfig;
+use Tempest\Http\DataProvider;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
-use Tempest\Http\RouteConfig;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use Tempest\View\View;
-use Tempest\View\ViewRenderer;
 use function Tempest\map;
 use function Tempest\path;
 use function Tempest\uri;
+use Tempest\View\View;
+use Tempest\View\ViewRenderer;
 
 final readonly class StaticGenerateCommand
 {
@@ -30,7 +32,8 @@ final readonly class StaticGenerateCommand
         private StaticRouteConfig $staticRouteConfig,
         private Router $router,
         private ViewRenderer $viewRenderer,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'static:generate'
@@ -40,7 +43,7 @@ final readonly class StaticGenerateCommand
         $publicPath = path($this->appConfig->root, 'public');
 
         foreach ($this->staticRouteConfig->staticRoutes as $staticRoute) {
-            /** @var \Tempest\Http\DataProvider $dataProvider */
+            /** @var DataProvider $dataProvider */
             $dataProvider = $this->container->get($staticRoute->dataProviderClass ?? GenericDataProvider::class);
 
             foreach ($dataProvider->provide() as $params) {
@@ -55,32 +58,33 @@ final readonly class StaticGenerateCommand
                     map(new GenericRequest(
                         method: Method::GET,
                         uri: $uri,
-                        
                     ))->with(RequestToPsrRequestMapper::class),
                 );
-                
+
                 if ($response->getStatus() !== Status::OK) {
                     $this->writeln("- <error>{$uri}</error> > {$response->getStatus()->value}");
+
                     continue;
                 }
-                
+
                 $body = $response->getBody();
-                
+
                 $content = $body instanceof View
                     ? $this->viewRenderer->render($body)
                     : $body;
-                
+
                 if (! is_string($content)) {
                     $this->writeln("- <error>{$uri}</error> > No textual body");
+
                     continue;
                 }
-                
+
                 $directory = pathinfo($file, PATHINFO_DIRNAME);
-                
+
                 if (! is_dir($directory)) {
                     mkdir($directory, recursive: true);
                 }
-                
+
                 file_put_contents($file, $content);
 
                 $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");

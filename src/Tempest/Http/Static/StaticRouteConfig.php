@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Static;
 
 use Tempest\Http\StaticRoute;
@@ -10,7 +12,8 @@ final class StaticRouteConfig
     public function __construct(
         /** @var StaticRoute[] $staticRoutes */
         public array $staticRoutes = [],
-    ) {}
+    ) {
+    }
 
     public function addHandler(StaticRoute $staticRoute, MethodReflector $methodReflector): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http;
 
 use Attribute;
@@ -13,7 +15,8 @@ final readonly class StaticRoute
     public function __construct(
         /** @var class-string<\Tempest\Http\DataProvider> */
         public ?string $dataProviderClass = null,
-    ) {}
+    ) {
+    }
 
     public function setHandler(MethodReflector $handler): void
     {
