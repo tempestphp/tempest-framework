@@ -5,37 +5,37 @@ namespace Tempest\Http\Static;
 use Tempest\Container\Container;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\HandlesDiscoveryCache;
-use Tempest\Http\StaticRoute;
+use Tempest\Http\StaticPage;
 use Tempest\Support\Reflection\ClassReflector;
 
-final readonly class StaticRouteDiscovery implements Discovery
+final readonly class StaticPageDiscovery implements Discovery
 {
     use HandlesDiscoveryCache;
 
     public function __construct(
-        private StaticRouteConfig $staticRouteConfig,
+        private StaticPageConfig $staticPageConfig,
     ) {}
 
     public function discover(ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $staticRoute = $method->getAttribute(StaticRoute::class);
+            $staticPage = $method->getAttribute(StaticPage::class);
 
-            if (! $staticRoute) {
+            if (! $staticPage) {
                 continue;
             }
 
-            $this->staticRouteConfig->addHandler($staticRoute, $method);
+            $this->staticPageConfig->addHandler($staticPage, $method);
         }
     }
 
     public function createCachePayload(): string
     {
-        return serialize($this->staticRouteConfig->staticRoutes);
+        return serialize($this->staticPageConfig->staticPages);
     }
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $this->staticRouteConfig->staticRoutes = unserialize($payload);
+        $this->staticPageConfig->staticPages = unserialize($payload);
     }
 }

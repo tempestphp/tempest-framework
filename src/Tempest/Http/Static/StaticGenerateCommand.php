@@ -27,7 +27,7 @@ final readonly class StaticGenerateCommand
         private Console $console,
         private AppConfig $appConfig,
         private Container $container,
-        private StaticRouteConfig $staticRouteConfig,
+        private StaticPageConfig $staticPageConfig,
         private Router $router,
         private ViewRenderer $viewRenderer,
     ) {}
@@ -39,14 +39,14 @@ final readonly class StaticGenerateCommand
     {
         $publicPath = path($this->appConfig->root, 'public');
 
-        foreach ($this->staticRouteConfig->staticRoutes as $staticRoute) {
+        foreach ($this->staticPageConfig->staticPages as $staticPage) {
             /** @var \Tempest\Http\DataProvider $dataProvider */
-            $dataProvider = $this->container->get($staticRoute->dataProviderClass ?? GenericDataProvider::class);
+            $dataProvider = $this->container->get($staticPage->dataProviderClass ?? GenericDataProvider::class);
 
             foreach ($dataProvider->provide() as $params) {
                 $uri = uri([
-                    $staticRoute->handler->getDeclaringClass()->getName(),
-                    $staticRoute->handler->getName(),
+                    $staticPage->handler->getDeclaringClass()->getName(),
+                    $staticPage->handler->getName(),
                 ], ...$params);
 
                 $file = path($publicPath, $uri . '.html');

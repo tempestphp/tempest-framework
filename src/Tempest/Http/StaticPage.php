@@ -6,7 +6,7 @@ use Attribute;
 use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
-final readonly class StaticRoute
+final readonly class StaticPage
 {
     public MethodReflector $handler;
 
