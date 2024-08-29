@@ -19,7 +19,7 @@ trait IsRequest
     public function __construct(
         public Method $method,
         public string $uri,
-        public array $body,
+        public array $body = [],
         public array $headers = [],
     ) {
         $this->path ??= $this->resolvePath();
