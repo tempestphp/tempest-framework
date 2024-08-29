@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Static;
 
 use Tempest\Console\Console;
@@ -7,15 +9,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Framework\Application\AppConfig;
-use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
-use Tempest\Http\Method;
-use Tempest\Http\RouteConfig;
-use Tempest\Http\Router;
-use Tempest\Http\Status;
-use Tempest\View\View;
-use Tempest\View\ViewRenderer;
-use function Tempest\map;
+use Tempest\Http\DataProvider;
 use function Tempest\path;
 use function Tempest\uri;
 
@@ -28,9 +22,8 @@ final readonly class StaticCleanCommand
         private AppConfig $appConfig,
         private Container $container,
         private StaticPageConfig $staticPageConfig,
-        private Router $router,
-        private ViewRenderer $viewRenderer,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'static:clean'
@@ -40,7 +33,7 @@ final readonly class StaticCleanCommand
         $publicPath = path($this->appConfig->root, 'public');
 
         foreach ($this->staticPageConfig->staticPages as $staticPage) {
-            /** @var \Tempest\Http\DataProvider $dataProvider */
+            /** @var DataProvider $dataProvider */
             $dataProvider = $this->container->get($staticPage->dataProviderClass ?? GenericDataProvider::class);
 
             foreach ($dataProvider->provide() as $params) {
@@ -54,7 +47,7 @@ final readonly class StaticCleanCommand
                 if (! file_exists($file)) {
                     continue;
                 }
-                
+
                 unlink($file);
 
                 $this->writeln("- <u>{$file}</u> removed");

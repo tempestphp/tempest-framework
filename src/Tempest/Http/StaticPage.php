@@ -8,13 +8,13 @@ use Attribute;
 use Tempest\Support\Reflection\MethodReflector;
 
 #[Attribute]
-final readonly class StaticPage
+final class StaticPage
 {
-    public MethodReflector $handler;
+    public ?MethodReflector $handler = null;
 
     public function __construct(
         /** @var class-string<\Tempest\Http\DataProvider> */
-        public ?string $dataProviderClass = null,
+        public readonly ?string $dataProviderClass = null,
     ) {
     }
 

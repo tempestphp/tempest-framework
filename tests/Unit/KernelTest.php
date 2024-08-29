@@ -34,9 +34,7 @@ class KernelTest extends TestCase
 
         $appConfig = $container->get(AppConfig::class);
 
-
-        // TODO: Clean this up, it doesn't scale well.
-        $this->assertCount(10, $appConfig->discoveryClasses);
+        $this->assertNotEmpty($appConfig->discoveryClasses);
 
         /**
          * This was commented by Aidan Casey on July 19, 2024. As my previous

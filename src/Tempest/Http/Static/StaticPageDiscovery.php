@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Http\Static;
 
 use Tempest\Container\Container;
@@ -14,7 +16,8 @@ final readonly class StaticPageDiscovery implements Discovery
 
     public function __construct(
         private StaticPageConfig $staticPageConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(ClassReflector $class): void
     {
