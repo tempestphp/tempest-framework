@@ -66,8 +66,8 @@ class RouterTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateBookTable::class,
             CreateAuthorTable::class,
+            CreateBookTable::class,
         );
 
         Book::create(

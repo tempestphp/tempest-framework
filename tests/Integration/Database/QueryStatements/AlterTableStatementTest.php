@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Id;
 use Tempest\Database\Migration;
@@ -43,7 +44,13 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 email: 'test@example.com'
             );
         } catch (QueryException $exception) {
-            $this->assertStringContainsString('table User has no column named email', $exception->getMessage());
+            $message = match($this->container->get(DatabaseDialect::class)) {
+                DatabaseDialect::MYSQL => "Unknown column 'email'",
+                DatabaseDialect::SQLITE => 'table User has no column named email',
+                DatabaseDialect::POSTGRESQL => 'table User has no column named email',
+            };
+
+            $this->assertStringContainsString($message, $exception->getMessage());
         }
 
         $this->migrate($migration::class);

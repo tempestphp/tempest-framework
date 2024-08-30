@@ -18,11 +18,18 @@ final readonly class TextStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf(
-            '`%s` TEXT %s %s',
-            $this->name,
-            $this->default ? "DEFAULT \"{$this->default}\"" : '',
-            $this->nullable ? '' : 'NOT NULL',
-        );
+        return match($dialect) {
+            DatabaseDialect::MYSQL => sprintf(
+                '`%s` TEXT %s',
+                $this->name,
+                $this->nullable ? '' : 'NOT NULL',
+            ),
+            default => sprintf(
+                '`%s` TEXT %s %s',
+                $this->name,
+                $this->default ? "DEFAULT \"{$this->default}\"" : '',
+                $this->nullable ? '' : 'NOT NULL',
+            )
+        };
     }
 }

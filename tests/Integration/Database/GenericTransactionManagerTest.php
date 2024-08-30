@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use PDOException;
-use Tempest\Database\Migrations\Migration;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Transactions\TransactionManager;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -17,97 +19,51 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager(): void
     {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
         $manager = $this->container->get(TransactionManager::class);
 
         $manager->begin();
 
-        $this->console
-            ->call('migrate:up');
-
-        $this->assertNotEmpty(Migration::all());
+        (new Author(name: 'test'))->save();
+        $this->assertCount(1, Author::all());
 
         $manager->rollback();
 
-        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
-
-        $this->assertCount(0, Migration::all());
-    }
-
-    public function test_transaction_manager_rollback(): void
-    {
-        $manager = $this->container->get(TransactionManager::class);
-
-        $manager->begin();
-
-        $this->console
-            ->call('migrate:up');
-
-        $this->assertNotEmpty(Migration::all());
-
-        $manager->rollback();
-
-        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
-
-        $this->assertCount(0, Migration::all());
+        $this->assertCount(0, Author::all());
     }
 
     public function test_transaction_manager_commit(): void
     {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
         $manager = $this->container->get(TransactionManager::class);
 
         $manager->begin();
 
-        $this->console
-            ->call('migrate:up');
-
-        $this->assertNotEmpty(Migration::all());
+        (new Author(name: 'test'))->save();
+        $this->assertCount(1, Author::all());
 
         $manager->commit();
 
-        $this->assertNotEmpty(Migration::all());
+        $this->assertCount(1, Author::all());
     }
 
     public function test_transaction_manager_commit_rollback(): void
     {
+
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
         $manager = $this->container->get(TransactionManager::class);
 
         $manager->begin();
 
-        $this->console
-            ->call('migrate:up');
-
-        $this->assertNotEmpty(Migration::all());
+        (new Author(name: 'test'))->save();
 
         $manager->commit();
 
-        $this->assertNotEmpty(Migration::all());
-
-        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
+        $this->expectException(PDOException::class);
 
         $manager->rollback();
-
-        $this->assertNotEmpty(Migration::all());
-    }
-
-    public function test_transaction_manager_rollback_commit(): void
-    {
-        $manager = $this->container->get(TransactionManager::class);
-
-        $manager->begin();
-
-        $this->console
-            ->call('migrate:up');
-
-        $this->assertNotEmpty(Migration::all());
-
-        $manager->rollback();
-
-        $this->expectException(PDOException::class); // Migration::all() will throw since the table doesn't exist
-
-        $this->assertCount(0, Migration::all());
-
-        $manager->commit();
-
-        $this->assertCount(0, Migration::all());
     }
 }

@@ -61,7 +61,7 @@ final readonly class QueryToModelMapper implements Mapper
                 $property->set($model, $this->parse(
                     $class->getProperty($propertyName)->getType()->asClass(),
                     $childModel,
-                    [implode('.', $keyParts) => $value]
+                    [implode('.', $keyParts) => $value],
                 ));
             } elseif ($count === 3) {
                 if (str_contains($keyParts[1], '[]')) {
@@ -166,16 +166,18 @@ final readonly class QueryToModelMapper implements Mapper
         $classReflector = new ClassReflector($model);
 
         foreach ($classReflector->getPublicProperties() as $property) {
+            if ($property->isUninitialized($model)) {
+                $property->unset($model);
+
+                continue;
+            }
+
             if ($property->isIterable()) {
                 foreach ($property->get($model) as $childModel) {
                     $this->makeLazyModel($childModel);
                 }
 
                 break;
-            }
-
-            if ($property->isUninitialized($model)) {
-                $property->unset($model);
             }
         }
 

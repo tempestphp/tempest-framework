@@ -60,7 +60,9 @@ final readonly class GenericDatabase implements Database
             $callback();
 
             $this->transactionManager->commit();
-        } catch (Throwable) {
+        } catch(PDOException) {
+            return false;
+        } catch(Throwable) {
             $this->transactionManager->rollback();
 
             return false;

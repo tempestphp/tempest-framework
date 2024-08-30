@@ -28,7 +28,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $request = new GenericRequest(
             method: Method::GET,
             uri: '/',
-            body: []
+            body: [],
         );
 
         $this->assertSame('default', $request->get('a', 'default'));
@@ -36,7 +36,7 @@ class RequestTest extends FrameworkIntegrationTestCase
         $request = new GenericRequest(
             method: Method::GET,
             uri: '/?a=1',
-            body: []
+            body: [],
         );
 
         $this->assertSame('1', $request->get('a', 'default'));
@@ -46,7 +46,7 @@ class RequestTest extends FrameworkIntegrationTestCase
             uri: '/?a=1',
             body: [
                 'a' => '2',
-            ]
+            ],
         );
 
         $this->assertSame('2', $request->get('a', 'default'));
@@ -56,7 +56,7 @@ class RequestTest extends FrameworkIntegrationTestCase
             uri: '/',
             body: [
                 'a' => '2',
-            ]
+            ],
         );
 
         $this->assertSame('2', $request->get('a', 'default'));
@@ -111,7 +111,11 @@ class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_custom_request_test_with_validation(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateBookTable::class);
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
 
         $this->http
             ->post(
@@ -131,8 +135,8 @@ class RequestTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateBookTable::class,
             CreateAuthorTable::class,
+            CreateBookTable::class,
         );
 
         $this->http

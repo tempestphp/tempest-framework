@@ -28,7 +28,7 @@ class CreateTableStatementTest extends FrameworkIntegrationTestCase
             {
                 return (new CreateTableStatement('table'))
                     ->text('text', default: 'default')
-                    ->char('char', default: 'default')
+                    ->char('char', default: 'd')
                     ->varchar('varchar', default: 'default')
                     ->float('float', default: 0.1)
                     ->integer('integer', default: 1)
