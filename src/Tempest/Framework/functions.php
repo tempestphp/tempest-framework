@@ -107,8 +107,8 @@ namespace Tempest {
         $path = implode('/', $parts);
 
         return str_replace(
-            ['//', '\\', '\\\\'],
-            ['/', '/', '/'],
+            ['///', '//', '\\', '\\\\'],
+            '/',
             $path,
         );
     }

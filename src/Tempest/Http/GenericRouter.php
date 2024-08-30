@@ -244,10 +244,9 @@ final class GenericRouter implements Router
 
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
-            // TODO: support unions
 
             // If the parameter's type is an instance of Request…
-            if (is_a($parameter->getType()->getName(), Request::class, true)) {
+            if ($parameter->getType()->matches(Request::class)) {
                 // We'll use that specific request class
                 $requestClass = $parameter->getType()->getName();
 

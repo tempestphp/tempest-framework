@@ -19,6 +19,16 @@ final readonly class Kernel
 
     public function init(): Container
     {
+        register_shutdown_function(function () {
+            $error = error_get_last();
+
+            $message = $error['message'] ?? '';
+
+            if (str_contains($message, 'Cannot declare class')) {
+                echo "Does this class have the right namespace?" . PHP_EOL;
+            }
+        });
+
         $container = $this->createContainer();
 
         $bootstraps = [
