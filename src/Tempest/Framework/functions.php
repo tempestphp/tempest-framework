@@ -60,6 +60,7 @@ namespace Tempest {
     use Tempest\Http\Status;
     use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\ClassReflector;
+    use Tempest\Support\Reflection\MethodReflector;
     use Tempest\Support\Reflection\PropertyReflector;
     use Tempest\View\GenericView;
     use Tempest\View\View;
@@ -123,8 +124,15 @@ namespace Tempest {
         return new GenericResponse($status, $body);
     }
 
-    function uri(array|string $action, ...$params): string
+    function uri(array|string|MethodReflector $action, ...$params): string
     {
+        if ($action instanceof MethodReflector) {
+            $action = [
+                $action->getDeclaringClass()->getName(),
+                $action->getName(),
+            ];
+        }
+
         $router = get(Router::class);
 
         return $router->toUri(

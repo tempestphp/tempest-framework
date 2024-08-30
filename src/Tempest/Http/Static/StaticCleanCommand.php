@@ -37,10 +37,7 @@ final readonly class StaticCleanCommand
             $dataProvider = $this->container->get($staticPage->dataProviderClass ?? GenericDataProvider::class);
 
             foreach ($dataProvider->provide() as $params) {
-                $uri = uri([
-                    $staticPage->handler->getDeclaringClass()->getName(),
-                    $staticPage->handler->getName(),
-                ], ...$params);
+                $uri = uri($staticPage->handler, ...$params);
 
                 $file = path($publicPath, $uri . '.html');
 
