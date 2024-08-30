@@ -58,7 +58,7 @@ final class DatabaseDriverTest extends TestCase
                 password: 'secret',
                 database: 'tempest'
             ),
-            'postgresql:localhost:5432/tempest',
+            'pgsql:host=localhost;port=5432;dbname=tempest;user=postgres;password=secret',
             'postgres',
             'secret',
         ];
