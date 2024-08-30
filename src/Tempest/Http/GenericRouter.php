@@ -10,6 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
+use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
@@ -34,8 +35,12 @@ final class GenericRouter implements Router
     ) {
     }
 
-    public function dispatch(PsrRequest $request): Response
+    public function dispatch(Request|PsrRequest $request): Response
     {
+        if (! $request instanceof PsrRequest) {
+            $request = map($request)->with(RequestToPsrRequestMapper::class);
+        }
+
         $matchedRoute = $this->matchRoute($request);
 
         if ($matchedRoute === null) {

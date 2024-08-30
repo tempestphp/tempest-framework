@@ -11,11 +11,9 @@ use Tempest\Container\Container;
 use Tempest\Framework\Application\AppConfig;
 use Tempest\Http\DataProvider;
 use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use function Tempest\map;
 use function Tempest\path;
 use function Tempest\uri;
 use Tempest\View\View;
@@ -52,10 +50,10 @@ final readonly class StaticGenerateCommand
                 $file = path($publicPath, $uri . '.html');
 
                 $response = $this->router->dispatch(
-                    map(new GenericRequest(
+                    new GenericRequest(
                         method: Method::GET,
                         uri: $uri,
-                    ))->with(RequestToPsrRequestMapper::class),
+                    )
                 );
 
                 if ($response->getStatus() !== Status::OK) {
