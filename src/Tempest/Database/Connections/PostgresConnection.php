@@ -12,21 +12,30 @@ final class PostgresConnection implements DatabaseConnection
 {
     public function __construct(
         #[SensitiveParameter]
-        public string $host = 'localhost',
+        public string $host = '127.0.0.1',
         #[SensitiveParameter]
         public string $port = '5432',
         #[SensitiveParameter]
-        public string $username = 'postgres',
+        public string $username = '',
         #[SensitiveParameter]
         public string $password = '',
         #[SensitiveParameter]
-        public string $database = 'app',
+        public string $database = 'postgres',
     ) {
     }
 
     public function getDsn(): string
     {
-        return "postgresql:{$this->host}:{$this->port}/{$this->database}";
+        //DATABASE_URL="postgresql://postgres:postgres@postgres:5432/mydb?schema=public"
+
+        return sprintf(
+            'pgsql:host=%s;port=%s;dbname=%s;user=%s;password=%s',
+            $this->host,
+            $this->port,
+            $this->database,
+            $this->username,
+            $this->password,
+        );
     }
 
     public function getUsername(): ?string

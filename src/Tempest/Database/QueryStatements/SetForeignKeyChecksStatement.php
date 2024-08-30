@@ -22,7 +22,7 @@ final readonly class SetForeignKeyChecksStatement implements QueryStatement
         return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf('SET FOREIGN_KEY_CHECKS = %s', $this->enable ? '1' : '0'),
             DatabaseDialect::SQLITE => sprintf('PRAGMA foreign_keys = %s', $this->enable ? '1' : '0'),
-            default => throw new UnsupportedDialect(),
+            DatabaseDialect::POSTGRESQL => sprintf("SET session_replication_role = '%s';", $this->enable ? 'origin' : 'replica'),
         };
     }
 }
