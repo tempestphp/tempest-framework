@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use Tempest\Database\Connections\SQLiteConnection;
 use Tempest\Database\DatabaseConfig;
-use Tempest\Database\Drivers\SQLiteDriver;
 
 return new DatabaseConfig(
-    driver: new SQLiteDriver(
+    connection: new SQLiteConnection(
         path: __DIR__ . '/../database.sqlite',
     ),
 );

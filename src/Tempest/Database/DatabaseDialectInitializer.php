@@ -11,6 +11,6 @@ final readonly class DatabaseDialectInitializer implements Initializer
 {
     public function initialize(Container $container): DatabaseDialect
     {
-        return $container->get(DatabaseDriver::class)->dialect();
+        return $container->get(DatabaseConnection::class)->dialect();
     }
 }

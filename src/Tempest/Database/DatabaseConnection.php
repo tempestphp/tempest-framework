@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-interface DatabaseDriver
+interface DatabaseConnection
 {
     public function getDsn(): string;
 

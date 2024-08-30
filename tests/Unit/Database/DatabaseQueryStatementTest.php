@@ -8,10 +8,10 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\DatabaseDriver;
-use Tempest\Database\Drivers\MySqlDriver;
-use Tempest\Database\Drivers\PostgreSqlDriver;
-use Tempest\Database\Drivers\SQLiteDriver;
+use Tempest\Database\Connections\MySqlConnection;
+use Tempest\Database\Connections\PostgresConnection;
+use Tempest\Database\Connections\SQLiteConnection;
+use Tempest\Database\DatabaseConnection;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\OnDelete;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
@@ -25,7 +25,7 @@ final class DatabaseQueryStatementTest extends TestCase
 {
     #[Test]
     #[DataProvider('provide_create_table_database_drivers')]
-    public function it_can_create_a_table(DatabaseDriver $driver, string $validSql): void
+    public function it_can_create_a_table(DatabaseConnection $driver, string $validSql): void
     {
         $statement = (new CreateTableStatement('Migration', [
             new PrimaryKeyStatement(),
@@ -38,24 +38,24 @@ final class DatabaseQueryStatementTest extends TestCase
     public static function provide_create_table_database_drivers(): Generator
     {
         yield 'mysql' => [
-            new MySqlDriver(),
+            new MySqlConnection(),
             'CREATE TABLE `Migration` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
-            new PostgreSqlDriver(),
+            new PostgresConnection(),
             'CREATE TABLE `Migration` (`id` SERIAL PRIMARY KEY, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [
-            new SQLiteDriver(),
+            new SQLiteConnection(),
             'CREATE TABLE `Migration` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` VARCHAR(255) NOT NULL);',
         ];
     }
 
     #[Test]
     #[DataProvider('provide_fk_create_table_database_drivers')]
-    public function it_can_create_a_foreign_key_constraint(DatabaseDriver $driver, string $validSql): void
+    public function it_can_create_a_foreign_key_constraint(DatabaseConnection $driver, string $validSql): void
     {
         $statement = (new CreateTableStatement('Book'))
             ->primary()
@@ -69,17 +69,17 @@ final class DatabaseQueryStatementTest extends TestCase
     public static function provide_fk_create_table_database_drivers(): Generator
     {
         yield 'mysql' => [
-            new MySqlDriver(),
+            new MySqlConnection(),
             'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
-            new PostgreSqlDriver(),
+            new PostgresConnection(),
             'CREATE TABLE `Book` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_author_book FOREIGN KEY Book(author_id) REFERENCES Author(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [
-            new SQLiteDriver(),
+            new SQLiteConnection(),
             'CREATE TABLE `Book` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `author_id` INTEGER  NOT NULL, `name` VARCHAR(255) NOT NULL);',
         ];
     }
@@ -87,52 +87,52 @@ final class DatabaseQueryStatementTest extends TestCase
     public static function provide_database_driver(): Generator
     {
         yield 'mysql' => [
-            new MySqlDriver(),
+            new MySqlConnection(),
         ];
 
         yield 'postgresql' => [
-            new PostgreSqlDriver(),
+            new PostgresConnection(),
         ];
 
         yield 'sqlite' => [
-            new SQLiteDriver(),
+            new SQLiteConnection(),
         ];
     }
 
     public static function provide_alter_table_syntax(): Generator
     {
         yield 'mysql add statement' => [
-            new MySqlDriver(),
+            new MySqlConnection(),
             'ADD',
             'ALTER TABLE `Author` ADD `name` VARCHAR(255) NOT NULL;',
         ];
 
         yield 'postgresql add statement' => [
-            new PostgreSqlDriver(),
+            new PostgresConnection(),
             'ADD',
             'ALTER TABLE `Author` ADD COLUMN `name` VARCHAR(255) NOT NULL;',
         ];
 
         yield 'sqlite add statement' => [
-            new SQLiteDriver(),
+            new SQLiteConnection(),
             'ADD',
             'ALTER TABLE `Author` ADD COLUMN `name` VARCHAR(255) NOT NULL;',
         ];
 
         yield 'mysql delete statement' => [
-            new MySqlDriver(),
+            new MySqlConnection(),
             'DELETE',
             'ALTER TABLE `Author` DELETE `name` VARCHAR(255) NOT NULL;',
         ];
 
         yield 'postgresql delete statement' => [
-            new PostgreSqlDriver(),
+            new PostgresConnection(),
             'DELETE',
             'ALTER TABLE `Author` DELETE COLUMN `name` VARCHAR(255) NOT NULL;',
         ];
 
         yield 'sqlite delete statement' => [
-            new SQLiteDriver(),
+            new SQLiteConnection(),
             'DELETE',
             'ALTER TABLE `Author` DELETE COLUMN `name` VARCHAR(255) NOT NULL;',
         ];

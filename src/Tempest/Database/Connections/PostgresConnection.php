@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Drivers;
+namespace Tempest\Database\Connections;
 
 use SensitiveParameter;
+use Tempest\Database\DatabaseConnection;
 use Tempest\Database\DatabaseDialect;
-use Tempest\Database\DatabaseDriver;
 
-final class PostgreSqlDriver implements DatabaseDriver
+final class PostgresConnection implements DatabaseConnection
 {
     public function __construct(
         #[SensitiveParameter]

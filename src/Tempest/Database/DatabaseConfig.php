@@ -9,13 +9,13 @@ final class DatabaseConfig
     private array $migrations = [];
 
     public function __construct(
-        public DatabaseDriver $driver,
+        public DatabaseConnection $connection,
     ) {
     }
 
-    public function driver(): DatabaseDriver
+    public function connection(): DatabaseConnection
     {
-        return $this->driver;
+        return $this->connection;
     }
 
     public function addMigration(Migration|string $migration): self

@@ -8,10 +8,10 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Database\DatabaseDriver;
-use Tempest\Database\Drivers\MySqlDriver;
-use Tempest\Database\Drivers\PostgreSqlDriver;
-use Tempest\Database\Drivers\SQLiteDriver;
+use Tempest\Database\Connections\MySqlConnection;
+use Tempest\Database\Connections\PostgresConnection;
+use Tempest\Database\Connections\SQLiteConnection;
+use Tempest\Database\DatabaseConnection;
 
 /**
  * @internal
@@ -21,7 +21,7 @@ final class DatabaseDriverTest extends TestCase
 {
     #[Test]
     #[DataProvider('provide_database_drivers')]
-    public function driver_has_the_correct_dsn(DatabaseDriver $driver, string $dsn, ?string $username, ?string $password): void
+    public function driver_has_the_correct_dsn(DatabaseConnection $driver, string $dsn, ?string $username, ?string $password): void
     {
         $this->assertSame($dsn, $driver->getDsn());
         $this->assertSame($username, $driver->getUsername());
@@ -31,14 +31,14 @@ final class DatabaseDriverTest extends TestCase
     public static function provide_database_drivers(): Generator
     {
         yield 'sqlite' => [
-            new SQLiteDriver(path: '/usr/local/db.sqlite'),
+            new SQLiteConnection(path: '/usr/local/db.sqlite'),
             'sqlite:/usr/local/db.sqlite',
             null,
             null,
         ];
 
         yield 'mysql' => [
-            new MySqlDriver(
+            new MySqlConnection(
                 host: 'localhost',
                 port: '3307',
                 username: 'user',
@@ -51,7 +51,7 @@ final class DatabaseDriverTest extends TestCase
         ];
 
         yield 'postgresql' => [
-            new PostgreSqlDriver(
+            new PostgresConnection(
                 host: 'localhost',
                 port: '5432',
                 username: 'postgres',

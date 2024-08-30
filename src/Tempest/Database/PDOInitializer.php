@@ -16,12 +16,12 @@ final readonly class PDOInitializer implements Initializer
     {
         $databaseConfig = $container->get(DatabaseConfig::class);
 
-        $driver = $databaseConfig->driver();
+        $connection = $databaseConfig->connection();
 
         return new PDO(
-            $driver->getDsn(),
-            $driver->getUsername(),
-            $driver->getPassword(),
+            $connection->getDsn(),
+            $connection->getUsername(),
+            $connection->getPassword(),
         );
     }
 }

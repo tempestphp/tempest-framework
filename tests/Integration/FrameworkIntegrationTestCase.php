@@ -13,8 +13,8 @@ use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Database\DatabaseConfig;
+use Tempest\Database\DatabaseConnection;
 use Tempest\Database\DatabaseDialect;
-use Tempest\Database\DatabaseDriver;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryDiscovery;
 use Tempest\Discovery\DiscoveryLocation;
@@ -56,9 +56,9 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             copy(__DIR__ . '/../Fixtures/Config/database.sqlite', $databaseConfigPath);
         }
 
-        $driver = (require $databaseConfigPath)->driver();
+        $connection = (require $databaseConfigPath)->connection();
         $config = $this->container->get(DatabaseConfig::class);
-        $config->driver = $driver;
+        $config->connection = $connection;
 
         $this->rollbackDatabase();
     }
@@ -100,9 +100,9 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function rollbackDatabase(): void
     {
-        $driver = $this->container->get(DatabaseDriver::class);
+        $connection = $this->container->get(DatabaseConnection::class);
 
-        if ($driver->dialect() === DatabaseDialect::SQLITE) {
+        if ($connection->dialect() === DatabaseDialect::SQLITE) {
             $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
             $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
 

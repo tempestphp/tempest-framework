@@ -61,7 +61,7 @@ final readonly class MigrationManager
         } catch (PDOException $pdoException) {
             /** @throw UnhandledMatchError */
             match ((string)$pdoException->getCode()) {
-                $this->databaseConfig->driver()->dialect()->tableNotFoundCode() => event(
+                $this->databaseConfig->connection()->dialect()->tableNotFoundCode() => event(
                     event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
@@ -89,7 +89,7 @@ final readonly class MigrationManager
 
     public function dropAll(): void
     {
-        $dialect = $this->databaseConfig->driver()->dialect();
+        $dialect = $this->databaseConfig->connection()->dialect();
 
         try {
             // Get all tables
@@ -120,7 +120,7 @@ final readonly class MigrationManager
             return;
         }
 
-        $dialect = $this->databaseConfig->driver()->dialect();
+        $dialect = $this->databaseConfig->connection()->dialect();
 
         $query = new Query($statement->compile($dialect));
 
@@ -147,7 +147,7 @@ final readonly class MigrationManager
             return;
         }
 
-        $dialect = $this->databaseConfig->driver()->dialect();
+        $dialect = $this->databaseConfig->connection()->dialect();
 
         $query = new Query($statement->compile($dialect));
 

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Tempest\Database\DatabaseConfig;
-use Tempest\Database\Drivers\MySqlDriver;
+use Tempest\Database\Connections\MySqlConnection;
 
 return new DatabaseConfig(
-    driver: new MySqlDriver(),
+    connection: new MySqlConnection(),
 );
