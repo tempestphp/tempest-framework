@@ -15,7 +15,6 @@
         "laminas/laminas-diactoros": "^3.3",
         "monolog/monolog": "^3.7.0",
         "php": "^8.3",
-        "php-http/discovery": "^1.19.2",
         "psr/clock": "^1.0.0",
         "psr/http-client": "^1.0.0",
         "psr/http-factory": "^1.0",
@@ -83,11 +82,6 @@
         ]
     },
     "license": "MIT",
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
     "replace": {
         "tempest/core": "self.version",
         "tempest/clock": "self.version",
@@ -105,5 +99,10 @@
         "tempest/validation": "self.version",
         "tempest/view": "self.version"
     },
-    "bin": ["tempest"]
+    "bin": ["tempest"],
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
 }
