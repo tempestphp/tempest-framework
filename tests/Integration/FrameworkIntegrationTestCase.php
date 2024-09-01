@@ -54,7 +54,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
 
         if (! file_exists($databaseConfigPath)) {
-            copy(__DIR__ . '/../Fixtures/Config/database.sqlite', $databaseConfigPath);
+            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
         }
 
         $connection = (require $databaseConfigPath)->connection();
