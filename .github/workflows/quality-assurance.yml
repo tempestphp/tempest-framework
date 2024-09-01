@@ -85,6 +85,7 @@ jobs:
           - 8.3
         database:
           - sqlite
+          - mysql
         stability:
           - prefer-stable
 
@@ -98,7 +99,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: pcov
 
       - name: Setup problem matchers
@@ -113,6 +114,13 @@ jobs:
 
       - name: List Installed Dependencies
         run: composer show -D
+
+      - name: 'Setup MySQL'
+        if: ${{ matrix.database == 'mysql' }}
+        uses: ankane/setup-mysql@v1
+        with:
+          mysql-version: 8.0
+          database: 'app'
 
       - name: Set database config - ${{ matrix.database }}
         run: php -r "file_exists('tests/Fixtures/Config/database.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.php');"
