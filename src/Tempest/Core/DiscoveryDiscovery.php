@@ -36,6 +36,12 @@ final readonly class DiscoveryDiscovery implements Discovery
 
     public function storeCache(): void
     {
+        $directory = pathinfo(self::CACHE_PATH, PATHINFO_DIRNAME);
+
+        if (! is_dir($directory)) {
+            mkdir($directory, recursive: true);
+        }
+
         file_put_contents(self::CACHE_PATH, serialize($this->appConfig->discoveryClasses));
     }
 
