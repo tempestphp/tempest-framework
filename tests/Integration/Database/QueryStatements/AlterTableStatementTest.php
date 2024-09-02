@@ -43,14 +43,14 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 name: 'Test',
                 email: 'test@example.com'
             );
-        } catch (QueryException $exception) {
+        } catch (QueryException $queryException) {
             $message = match($this->container->get(DatabaseDialect::class)) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table User has no column named email',
                 DatabaseDialect::POSTGRESQL => 'table User has no column named email',
             };
 
-            $this->assertStringContainsString($message, $exception->getMessage());
+            $this->assertStringContainsString($message, $queryException->getMessage());
         }
 
         $this->migrate($migration::class);

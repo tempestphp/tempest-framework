@@ -47,6 +47,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
+
         $this->console = new ConsoleTester($this->container);
 
         // Database

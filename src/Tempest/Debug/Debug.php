@@ -19,11 +19,11 @@ final readonly class Debug
 
     public static function resolve(): self
     {
-        if (! class_exists('\Tempest\Container\GenericContainer')) {
+        if (! class_exists(GenericContainer::class)) {
             return new self();
         }
 
-        if (! class_exists('\Tempest\Log\LogConfig')) {
+        if (! class_exists(LogConfig::class)) {
             return new self();
         }
 

@@ -48,15 +48,15 @@ final readonly class Input implements ViewComponent
     {$errorHtml}
 </div>
 HTML;
-        } else {
-            return <<<HTML
+        }
+
+        return <<<HTML
 <div>
     <label for="{$name}">{$label}</label>
     <input type="{$type}" name="{$name}" id="{$name}" value="{$this->original($name, $default)}" />
     {$errorHtml}
 </div>
 HTML;
-        }
     }
 
     public function original(string $name, mixed $default = ''): mixed

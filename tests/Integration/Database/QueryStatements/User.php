@@ -12,5 +12,6 @@ final class User implements DatabaseModel
     use IsDatabaseModel;
 
     public string $name;
+
     public string $email;
 }

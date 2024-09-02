@@ -98,7 +98,7 @@ final readonly class QueryToModelMapper implements Mapper
 
     private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
-        if ($caster = $this->casterFactory->forProperty($property)) {
+        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
             $value = $caster->cast($value);
         }
 
