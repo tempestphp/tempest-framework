@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use Tempest\Framework\Application\Environment;
-
 final class AppConfig
 {
     public function __construct(

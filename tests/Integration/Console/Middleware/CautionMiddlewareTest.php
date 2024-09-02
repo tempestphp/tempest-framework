@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Middleware;
 
 use Tempest\Core\AppConfig;
-use Tempest\Framework\Application\Environment;
+use Tempest\Core\Environment;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
