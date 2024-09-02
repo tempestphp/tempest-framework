@@ -93,7 +93,6 @@
         "tempest/database": "self.version",
         "tempest/debug": "self.version",
         "tempest/event-bus": "self.version",
-        "tempest/framework": "self.version",
         "tempest/http": "self.version",
         "tempest/http-client": "self.version",
         "tempest/log": "self.version",
