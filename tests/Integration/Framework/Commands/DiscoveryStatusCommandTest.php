@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

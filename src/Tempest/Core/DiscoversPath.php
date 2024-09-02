@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Discovery;
+namespace Tempest\Core;
 
 interface DiscoversPath
 {

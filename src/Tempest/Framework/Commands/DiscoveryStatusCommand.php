@@ -6,7 +6,7 @@ namespace Tempest\Framework\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 
 final readonly class DiscoveryStatusCommand
 {

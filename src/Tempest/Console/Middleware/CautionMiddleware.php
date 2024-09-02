@@ -8,7 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 
 final readonly class CautionMiddleware implements ConsoleMiddleware
 {

@@ -1,14 +1,13 @@
 {
-    "name": "tempest/discovery",
+    "name": "tempest/core",
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "ext-pdo": "*",
         "tempest/container": "self.version"
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Discovery\\": ""
+            "Tempest\\Core\\": ""
         }
     }
 }

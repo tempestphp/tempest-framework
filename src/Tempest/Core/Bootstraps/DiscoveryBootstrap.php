@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Bootstraps;
+namespace Tempest\Core\Bootstraps;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Tempest\Container\Container;
-use Tempest\Discovery\DiscoversPath;
-use Tempest\Discovery\Discovery;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
+use Tempest\Core\DiscoversPath;
+use Tempest\Core\Discovery;
 use Tempest\Support\Reflection\ClassReflector;
 use Throwable;
 

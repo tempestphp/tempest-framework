@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Bootstraps;
+namespace Tempest\Core\Bootstraps;
 
 use Tempest\Container\Container;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 use Tempest\Support\PathHelper;
 
 final readonly class ConfigBootstrap implements Bootstrap

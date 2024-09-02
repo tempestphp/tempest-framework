@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Discovery;
+namespace Tempest\Core;
 
 use Tempest\Container\Container;
 
-/** @phpstan-require-implements \Tempest\Discovery\Discovery */
+/** @phpstan-require-implements \Tempest\Core\Discovery */
 trait HandlesDiscoveryCache
 {
     public function getCachePath(): string

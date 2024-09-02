@@ -15,7 +15,7 @@ final readonly class Count implements Rule
         private ?int $min = null,
         private ?int $max = null,
     ) {
-        if($min === null && $max === null) {
+        if ($min === null && $max === null) {
             throw new InvalidArgumentException("At least one of min or max must be provided");
         }
     }

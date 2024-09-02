@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Container\Container;
+use Tempest\Core\DiscoversPath;
+use Tempest\Core\Discovery;
+use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Database\Migrations\Migration as MigrationModel;
-use Tempest\Discovery\DiscoversPath;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
 
 final class MigrationDiscovery implements Discovery, DiscoversPath

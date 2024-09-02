@@ -9,7 +9,7 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 use Throwable;
 
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware

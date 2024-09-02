@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Core\Discovery;
+use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
 
 /**

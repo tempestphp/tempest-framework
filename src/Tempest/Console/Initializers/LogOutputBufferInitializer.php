@@ -9,7 +9,7 @@ use Tempest\Console\Output\LogOutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 use Tempest\Support\PathHelper;
 
 final readonly class LogOutputBufferInitializer implements Initializer

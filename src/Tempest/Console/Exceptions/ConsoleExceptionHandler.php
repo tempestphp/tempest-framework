@@ -6,7 +6,7 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Framework\Application\ExceptionHandler;
+use Tempest\Core\ExceptionHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Throwable;

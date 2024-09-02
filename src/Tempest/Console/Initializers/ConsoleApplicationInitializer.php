@@ -9,7 +9,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Framework\Application\Application;
+use Tempest\Core\Application;
 
 final readonly class ConsoleApplicationInitializer implements Initializer
 {

@@ -1,0 +1,15 @@
+{
+    "name": "tempest/debug",
+    "descripton": "Debug functions for Tempest",
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "tempest/highlight": "^2.0",
+        "symfony/var-exporter": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Debug\\": ""
+        }
+    }
+}

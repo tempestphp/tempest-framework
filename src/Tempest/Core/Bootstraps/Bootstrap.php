@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Bootstraps;
+namespace Tempest\Core\Bootstraps;
 
 interface Bootstrap
 {

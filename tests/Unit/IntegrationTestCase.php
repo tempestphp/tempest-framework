@@ -6,9 +6,9 @@ namespace Tests\Tempest\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
-use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Framework\Application\AppConfig;
-use Tempest\Framework\Application\Kernel;
+use Tempest\Core\AppConfig;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\Kernel;
 
 abstract class IntegrationTestCase extends TestCase
 {

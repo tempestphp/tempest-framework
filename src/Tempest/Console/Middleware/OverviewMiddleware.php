@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 
 final readonly class OverviewMiddleware implements ConsoleMiddleware
 {

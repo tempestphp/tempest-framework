@@ -9,6 +9,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\AppConfig;
+use Tempest\Core\Application;
 
 final readonly class ApplicationInitializer implements Initializer
 {

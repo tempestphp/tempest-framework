@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Application;
+namespace Tempest\Core;
 
-use Tempest\Discovery\DiscoveryDiscovery;
+use Tempest\Framework\Application\Environment;
 
 final class AppConfig
 {
@@ -19,12 +19,12 @@ final class AppConfig
             DiscoveryDiscovery::class,
         ],
 
-        /** @var \Tempest\Discovery\DiscoveryLocation[] */
+        /** @var \Tempest\Core\DiscoveryLocation[] */
         public array $discoveryLocations = [
             // …,
         ],
 
-        /** @var \Tempest\Framework\Application\ExceptionHandler[] */
+        /** @var \Tempest\Core\ExceptionHandler[] */
         public array $exceptionHandlers = [
             // …,
         ],

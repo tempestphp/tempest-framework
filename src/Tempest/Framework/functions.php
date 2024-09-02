@@ -2,49 +2,6 @@
 
 declare(strict_types=1);
 
-namespace {
-
-    use Tempest\Support\VarExport\Debug;
-
-    if (! function_exists('lw')) {
-        function lw(mixed ...$input): void
-        {
-            Debug::resolve()->log($input);
-        }
-    }
-
-    if (! function_exists('ld')) {
-        function ld(mixed ...$input): void
-        {
-            Debug::resolve()->log($input);
-            die();
-        }
-    }
-
-    if (! function_exists('ll')) {
-        function ll(mixed ...$input): void
-        {
-            Debug::resolve()->log($input, writeToOut: false);
-        }
-    }
-
-    // Alias dd to ld
-    if (! function_exists('dd')) {
-        function dd(mixed ...$input): void
-        {
-            ld(...$input);
-        }
-    }
-
-    // Alias dump to lw
-    if (! function_exists('dump')) {
-        function dump(mixed ...$input): void
-        {
-            lw(...$input);
-        }
-    }
-}
-
 namespace Tempest {
 
     use ReflectionClass as PHPReflectionClass;
@@ -53,7 +10,6 @@ namespace Tempest {
     use Tempest\Container\GenericContainer;
     use Tempest\EventBus\EventBus;
     use Tempest\Http\GenericResponse;
-
     use Tempest\Http\Response;
     use Tempest\Http\Responses\Redirect;
     use Tempest\Http\Router;

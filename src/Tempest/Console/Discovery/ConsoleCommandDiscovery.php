@@ -7,8 +7,8 @@ namespace Tempest\Console\Discovery;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Container\Container;
-use Tempest\Discovery\Discovery;
-use Tempest\Discovery\HandlesDiscoveryCache;
+use Tempest\Core\Discovery;
+use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Support\Reflection\ClassReflector;
 use Tempest\Support\Reflection\MethodReflector;
 

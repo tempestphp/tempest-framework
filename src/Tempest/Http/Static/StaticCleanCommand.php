@@ -8,7 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Tempest\Framework\Application\AppConfig;
+use Tempest\Core\AppConfig;
 use Tempest\Http\DataProvider;
 use function Tempest\path;
 use function Tempest\uri;

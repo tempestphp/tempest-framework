@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Discovery;
+namespace Tempest\Core;
 
 use Tempest\Container\Container;
 use Tempest\Support\Reflection\ClassReflector;

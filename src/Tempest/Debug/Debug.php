@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\VarExport;
+namespace Tempest\Debug;
 
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
@@ -13,12 +13,20 @@ use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    private function __construct(private ?LogConfig $logConfig)
+    private function __construct(private ?LogConfig $logConfig = null)
     {
     }
 
     public static function resolve(): self
     {
+        if (! class_exists('\Tempest\Container\GenericContainer')) {
+            return new self();
+        }
+
+        if (! class_exists('\Tempest\Log\LogConfig')) {
+            return new self();
+        }
+
         $container = GenericContainer::instance();
 
         $logConfig = $container?->get(LogConfig::class);
@@ -105,7 +113,7 @@ final readonly class Debug
         return preg_replace(
             pattern: '/\e](.*)\e]8;;\e/',
             replacement: '',
-            subject: $output
+            subject: $output,
         );
     }
 }

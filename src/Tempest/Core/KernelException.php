@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Application;
+namespace Tempest\Core;
 
 use Exception;
 

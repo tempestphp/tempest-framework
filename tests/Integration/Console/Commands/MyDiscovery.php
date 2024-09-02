@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\Container\Container;
-use Tempest\Discovery\Discovery;
+use Tempest\Core\Discovery;
 use Tempest\Support\Reflection\ClassReflector;
 
 class MyDiscovery implements Discovery
