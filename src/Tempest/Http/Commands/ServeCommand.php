@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Commands;
+namespace Tempest\Http\Commands;
 
 use Tempest\Console\ConsoleCommand;
 
