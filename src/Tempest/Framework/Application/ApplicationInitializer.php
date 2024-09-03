@@ -11,6 +11,7 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
+use Tempest\Http\HttpApplication;
 
 final readonly class ApplicationInitializer implements Initializer
 {

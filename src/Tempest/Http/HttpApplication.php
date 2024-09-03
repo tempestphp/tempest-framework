@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Application;
+namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
-use Tempest\Http\RequestFactory;
-use Tempest\Http\ResponseSender;
-use Tempest\Http\Router;
 use Throwable;
 
 final readonly class HttpApplication implements Application
