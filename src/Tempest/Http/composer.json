@@ -3,7 +3,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "tempest/discovery": "self.version",
+        "tempest/core": "self.version",
         "tempest/container": "self.version",
         "laminas/laminas-diactoros": "^3.3",
         "psr/http-factory": "^1.0",
