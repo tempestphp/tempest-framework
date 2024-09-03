@@ -38,13 +38,14 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         $discoveredLocations = [];
 
         foreach ($packages as $package) {
-            $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
-            $packageName = ($package['name'] ?? null);
+            $packageName = ($package['name'] ?? '');
             $isTempest = str_starts_with($packageName, 'tempest');
 
             if (! $isTempest) {
                 continue;
             }
+
+            $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
 
             foreach ($package['autoload']['psr-4'] as $namespace => $namespacePath) {
                 $namespacePath = PathHelper::make($packagePath, $namespacePath);
@@ -87,6 +88,13 @@ final readonly class DiscoveryLocationBootstrap implements Bootstrap
         $discoveredLocations = [];
 
         foreach ($packages as $package) {
+            $packageName = ($package['name'] ?? '');
+            $isTempest = str_starts_with($packageName, 'tempest');
+
+            if ($isTempest) {
+                continue;
+            }
+
             $packagePath = PathHelper::make($composerPath, $package['install-path'] ?? '');
             $requiresTempest = isset($package['require']['tempest/framework']) || isset($package['require']['tempest/core']);
             $hasPsr4Namespaces = isset($package['autoload']['psr-4']);
