@@ -30,8 +30,7 @@ final readonly class StaticGenerateCommand
         private StaticPageConfig $staticPageConfig,
         private Router $router,
         private ViewRenderer $viewRenderer,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'static:generate'
@@ -45,7 +44,15 @@ final readonly class StaticGenerateCommand
             $dataProvider = $this->container->get($staticPage->dataProviderClass ?? GenericDataProvider::class);
 
             foreach ($dataProvider->provide() as $params) {
+                if (! is_array($params)) {
+                    $params = [$params];
+                }
+
                 $uri = uri($staticPage->handler, ...$params);
+
+                if ($uri === '/') {
+                    $uri = 'index';
+                }
 
                 $file = path($publicPath, $uri . '.html');
 
@@ -53,7 +60,7 @@ final readonly class StaticGenerateCommand
                     new GenericRequest(
                         method: Method::GET,
                         uri: $uri,
-                    )
+                    ),
                 );
 
                 if ($response->getStatus() !== Status::OK) {
