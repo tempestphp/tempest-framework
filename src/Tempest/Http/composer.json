@@ -14,6 +14,7 @@
         "vlucas/phpdotenv": "^5.6",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0|^2.0",
+        "ramsey/uuid": "^4.7",
         "symfony/var-exporter": "^7.1"
     },
     "autoload": {
