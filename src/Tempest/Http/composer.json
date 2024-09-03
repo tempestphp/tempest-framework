@@ -6,6 +6,7 @@
         "tempest/core": "self.version",
         "tempest/console": "self.version",
         "tempest/view": "self.version",
+        "tempest/mapper": "self.version",
         "tempest/container": "self.version",
         "tempest/highlight": "^2.0",
         "laminas/laminas-diactoros": "^3.3",
