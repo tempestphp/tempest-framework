@@ -8,6 +8,9 @@
     "autoload": {
         "psr-4": {
             "Tempest\\Core\\": ""
-        }
+        },
+        "files": [
+            "functions.php"
+        ]
     }
 }

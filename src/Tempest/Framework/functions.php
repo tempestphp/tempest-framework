@@ -109,22 +109,6 @@ namespace Tempest {
         $commandBus->dispatch($command);
     }
 
-    function env(string $key, mixed $default = null): mixed
-    {
-        $value = getenv($key);
-
-        if ($value === false) {
-            return $default;
-        }
-
-        return match (strtolower($value)) {
-            'true' => true,
-            'false' => false,
-            'null', '' => null,
-            default => $value,
-        };
-    }
-
     function reflect(mixed $classOrProperty, ?string $propertyName = null): ClassReflector|PropertyReflector
     {
         if ($classOrProperty instanceof PHPReflectionClass) {

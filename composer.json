@@ -43,6 +43,7 @@
     },
     "autoload": {
         "files": [
+            "src/Tempest/Core/functions.php",
             "src/Tempest/Debug/functions.php",
             "src/Tempest/Framework/functions.php"
         ],
