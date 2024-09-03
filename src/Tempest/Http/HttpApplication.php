@@ -4,10 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Dotenv\Dotenv;
+use Tempest\Console\ConsoleApplication;
+use Tempest\Console\ConsoleConfig;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
+use Tempest\Core\Environment;
+use Tempest\Core\Kernel;
+use Tempest\Framework\Exceptions\HttpExceptionHandler;
+use Tempest\Log\Channels\AppendLogChannel;
+use Tempest\Log\LogConfig;
+use Tempest\Support\PathHelper;
 use Throwable;
+use function Tempest\env;
 
 final readonly class HttpApplication implements Application
 {
@@ -15,6 +26,47 @@ final readonly class HttpApplication implements Application
         private Container $container,
         private AppConfig $appConfig,
     ) {
+    }
+
+    public static function boot(?AppConfig $appConfig = null): self
+    {
+        // Env
+        $root = $appConfig?->root ?? getcwd();
+        $dotenv = Dotenv::createUnsafeImmutable($root);
+        $dotenv->safeLoad();
+
+        // AppConfig
+        $appConfig ??= new AppConfig(
+            root: $root,
+            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
+            discoveryCache: env('DISCOVERY_CACHE', false),
+        );
+
+        // Kernel
+        $kernel = new Kernel(
+            appConfig: $appConfig,
+        );
+
+        $container = $kernel->init();
+        $appConfig = $container->get(AppConfig::class);
+
+        // Application
+        $application = new HttpApplication(
+            container: $container,
+            appConfig: $appConfig,
+        );
+
+        $container->singleton(Application::class, fn () => $application);
+
+        // Application-specific setup
+        $logConfig = $container->get(LogConfig::class);
+        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
+        $logConfig->serverLogPath = env('SERVER_LOG');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
+        $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
+
+        return $application;
     }
 
     public function run(): void
