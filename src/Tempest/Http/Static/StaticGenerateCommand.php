@@ -30,7 +30,8 @@ final readonly class StaticGenerateCommand
         private StaticPageConfig $staticPageConfig,
         private Router $router,
         private ViewRenderer $viewRenderer,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'static:generate'
