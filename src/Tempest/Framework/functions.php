@@ -14,7 +14,6 @@ namespace Tempest {
     use Tempest\Http\Responses\Redirect;
     use Tempest\Http\Router;
     use Tempest\Http\Status;
-    use Tempest\Mapper\ObjectFactory;
     use Tempest\Support\Reflection\ClassReflector;
     use Tempest\Support\Reflection\MethodReflector;
     use Tempest\Support\Reflection\PropertyReflector;
@@ -38,25 +37,6 @@ namespace Tempest {
         $eventBus = get(EventBus::class);
 
         $eventBus->dispatch($event);
-    }
-
-    /**
-     * @template T of object
-     * @param T|class-string<T> $objectOrClass
-     * @return ObjectFactory<T>
-     */
-    function make(object|string $objectOrClass): ObjectFactory
-    {
-        $factory = get(ObjectFactory::class);
-
-        return $factory->forClass($objectOrClass);
-    }
-
-    function map(mixed $data): ObjectFactory
-    {
-        $factory = get(ObjectFactory::class);
-
-        return $factory->withData($data);
     }
 
     function path(string ...$parts): string
