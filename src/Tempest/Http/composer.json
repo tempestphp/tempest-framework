@@ -16,6 +16,9 @@
         "symfony/var-exporter": "^7.1"
     },
     "autoload": {
+        "files": [
+            "functions.php"
+        ],
         "psr-4": {
             "Tempest\\Http\\": ""
         }

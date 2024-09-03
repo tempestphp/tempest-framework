@@ -9,16 +9,8 @@ namespace Tempest {
     use Tempest\CommandBus\CommandBus;
     use Tempest\Container\GenericContainer;
     use Tempest\EventBus\EventBus;
-    use Tempest\Http\GenericResponse;
-    use Tempest\Http\Response;
-    use Tempest\Http\Responses\Redirect;
-    use Tempest\Http\Router;
-    use Tempest\Http\Status;
     use Tempest\Support\Reflection\ClassReflector;
-    use Tempest\Support\Reflection\MethodReflector;
     use Tempest\Support\Reflection\PropertyReflector;
-    use Tempest\View\GenericView;
-    use Tempest\View\View;
 
     /**
      * @template TClassName of object
@@ -48,38 +40,6 @@ namespace Tempest {
             '/',
             $path,
         );
-    }
-
-    function view(string $path): View
-    {
-        return new GenericView($path);
-    }
-
-    function response(string $body = '', Status $status = Status::OK): Response
-    {
-        return new GenericResponse($status, $body);
-    }
-
-    function uri(array|string|MethodReflector $action, ...$params): string
-    {
-        if ($action instanceof MethodReflector) {
-            $action = [
-                $action->getDeclaringClass()->getName(),
-                $action->getName(),
-            ];
-        }
-
-        $router = get(Router::class);
-
-        return $router->toUri(
-            $action,
-            ...$params,
-        );
-    }
-
-    function redirect(string|array $action, ...$params): Response
-    {
-        return new Redirect(uri($action, ...$params));
     }
 
     function command(object $command): void
