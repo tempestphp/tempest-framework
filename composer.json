@@ -44,10 +44,13 @@
     "autoload": {
         "files": [
             "src/Tempest/Core/functions.php",
+            "src/Tempest/CommandBus/functions.php",
+            "src/Tempest/Container/functions.php",
+            "src/Tempest/EventBus/functions.php",
             "src/Tempest/Http/functions.php",
             "src/Tempest/Mapper/functions.php",
             "src/Tempest/Debug/functions.php",
-            "src/Tempest/Framework/functions.php"
+            "src/Tempest/Support/functions.php"
         ],
         "psr-4": {
             "Tempest\\Framework\\": "src/Tempest/Framework/",

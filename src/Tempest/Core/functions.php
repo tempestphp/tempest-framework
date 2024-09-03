@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 namespace Tempest {
+    function path(string ...$parts): string
+    {
+        $path = implode('/', $parts);
+
+        return str_replace(
+            ['///', '//', '\\', '\\\\'],
+            '/',
+            $path,
+        );
+    }
+
     function env(string $key, mixed $default = null): mixed
     {
         $value = getenv($key);

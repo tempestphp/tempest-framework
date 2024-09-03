@@ -9,8 +9,9 @@ use Tempest\Http\Post;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Responses\Redirect;
 use function Tempest\map;
-use function Tempest\redirect;
+use function Tempest\uri;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 
@@ -27,7 +28,7 @@ final readonly class BookController
     {
         $book = map($request)->to(Book::class)->save();
 
-        return redirect([BookController::class, 'show'], book: $book->id);
+        return new Redirect(uri([BookController::class, 'show'], book: $book->id));
     }
 
     #[Post('/books-with-author')]
@@ -35,7 +36,7 @@ final readonly class BookController
     {
         $book = map($request)->to(Book::class)->save();
 
-        return redirect([BookController::class, 'show'], book: $book->id);
+        return new Redirect(uri([BookController::class, 'show'], book: $book->id));
     }
 
     #[Post('/books/{book}')]
@@ -43,6 +44,6 @@ final readonly class BookController
     {
         $book = map($request)->to($book)->save();
 
-        return redirect([BookController::class, 'show'], book: $book->id);
+        return new Redirect(uri([BookController::class, 'show'], book: $book->id));
     }
 }

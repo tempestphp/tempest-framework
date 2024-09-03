@@ -6,6 +6,9 @@
         "tempest/support": "self.version"
     },
     "autoload": {
+        "files": [
+            "functions.php"
+        ],
         "psr-4": {
             "Tempest\\Container\\": ""
         }
