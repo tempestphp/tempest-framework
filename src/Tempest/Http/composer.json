@@ -7,6 +7,7 @@
         "tempest/console": "self.version",
         "tempest/view": "self.version",
         "tempest/container": "self.version",
+        "tempest/highlight": "self.version",
         "laminas/laminas-diactoros": "^3.3",
         "vlucas/phpdotenv": "^5.6",
         "psr/http-factory": "^1.0",
