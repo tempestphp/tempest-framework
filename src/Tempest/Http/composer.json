@@ -4,6 +4,7 @@
     "require": {
         "php": "^8.3",
         "tempest/core": "self.version",
+        "tempest/view": "self.version",
         "tempest/container": "self.version",
         "laminas/laminas-diactoros": "^3.3",
         "vlucas/phpdotenv": "^5.6",

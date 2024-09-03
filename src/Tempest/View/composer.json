@@ -4,6 +4,7 @@
     "require": {
         "php": "^8.3",
         "masterminds/html5": "^2.9",
+        "tempest/core": "self.version",
         "tempest/container": "self.version",
         "tempest/validation": "self.version"
     },
