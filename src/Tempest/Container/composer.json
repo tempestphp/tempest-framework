@@ -3,7 +3,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "tempest/discovery": "self.version",
         "tempest/support": "self.version"
     },
     "autoload": {
