@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Exceptions;
+namespace Tempest\Http\Exceptions;
 
 use Tempest\Container\Tag;
 use Tempest\Core\ExceptionHandler;
