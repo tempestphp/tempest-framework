@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-use Tempest\Framework\Tempest;
+use Tempest\Console\ConsoleApplication;
 
 require_once getcwd() . '/vendor/autoload.php';
 
-Tempest::boot(getcwd())->console()->run();
+ConsoleApplication::boot()->run();
 
 exit;
