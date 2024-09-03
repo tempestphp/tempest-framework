@@ -13,13 +13,13 @@ use Tempest\Core\Application;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Environment;
 use Tempest\Core\Kernel;
+use function Tempest\env;
 use Tempest\Http\Exceptions\HttpExceptionHandler;
 use Tempest\Http\HttpApplication;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use Tempest\Support\PathHelper;
-use function Tempest\env;
 use function Tempest\path;
+use Tempest\Support\PathHelper;
 
 final readonly class Tempest
 {
