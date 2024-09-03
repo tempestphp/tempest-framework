@@ -25,10 +25,9 @@ final readonly class HttpApplication implements Application
     ) {
     }
 
-    public static function boot(?AppConfig $appConfig = null): self
+    public static function boot(string $root, ?AppConfig $appConfig = null): self
     {
         // Env
-        $root = $appConfig?->root ?? getcwd();
         $dotenv = Dotenv::createUnsafeImmutable($root);
         $dotenv->safeLoad();
 
