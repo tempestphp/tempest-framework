@@ -51,11 +51,11 @@ final readonly class StaticGenerateCommand
 
                 $uri = uri($staticPage->handler, ...$params);
 
-                if ($uri === '/') {
-                    $uri = 'index';
-                }
+                $fileName = $uri === '/'
+                    ? 'index.html'
+                    : $uri . '.html';
 
-                $file = path($publicPath, $uri . '.html');
+                $file = path($publicPath, $fileName);
 
                 $response = $this->router->dispatch(
                     new GenericRequest(
