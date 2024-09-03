@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Dotenv\Dotenv;
-use Tempest\Console\ConsoleApplication;
-use Tempest\Console\ConsoleConfig;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\Environment;
 use Tempest\Core\Kernel;
+use function Tempest\env;
 use Tempest\Framework\Exceptions\HttpExceptionHandler;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
 use Throwable;
-use function Tempest\env;
 
 final readonly class HttpApplication implements Application
 {
