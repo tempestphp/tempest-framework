@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Dotenv\Dotenv;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
-use Tempest\Core\Environment;
-use Tempest\Core\Kernel;
+use Tempest\Core\Tempest;
 use function Tempest\env;
 use Tempest\Http\Exceptions\HttpExceptionHandler;
 use Tempest\Log\Channels\AppendLogChannel;
@@ -27,27 +25,13 @@ final readonly class HttpApplication implements Application
 
     public static function boot(string $root, ?AppConfig $appConfig = null): self
     {
-        // Env
-        $dotenv = Dotenv::createUnsafeImmutable($root);
-        $dotenv->safeLoad();
+        $container = Tempest::boot($root, $appConfig);
 
-        // AppConfig
-        $appConfig ??= new AppConfig(
-            root: $root,
-            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
-            discoveryCache: env('DISCOVERY_CACHE', false),
-        );
-
-        // Kernel
-        $kernel = new Kernel(
-            appConfig: $appConfig,
-        );
-
-        $container = $kernel->init();
+        // TODO: check if we need this
         $appConfig = $container->get(AppConfig::class);
 
-        // Application
+        // Application,
+        // TODO: can be refactored to resolve via the container
         $application = new HttpApplication(
             container: $container,
             appConfig: $appConfig,

@@ -1,9 +1,9 @@
 <?php
 
-use Tempest\Framework\Tempest;
+use Tempest\Http\HttpApplication;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-Tempest::boot(__DIR__ . '/../')->http()->run();
+HttpApplication::boot(__DIR__ . '/../')->run();
 
 exit;

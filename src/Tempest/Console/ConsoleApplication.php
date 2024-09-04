@@ -10,7 +10,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
-use Tempest\Core\Kernel;
+use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
@@ -25,13 +25,9 @@ final readonly class ConsoleApplication implements Application
 
     public static function boot(string $name = 'Tempest', ?AppConfig $appConfig = null): self
     {
-        $appConfig ??= new AppConfig(root: getcwd());
-
-        $kernel = new Kernel(
-            appConfig: $appConfig,
-        );
-
-        $container = $kernel->init();
+        $root = $appConfig->root ?? getcwd();
+        $appConfig ??= new AppConfig(root: $root);
+        $container = Tempest::boot($root, $appConfig);
 
         $application = $container->get(ConsoleApplication::class);
 
