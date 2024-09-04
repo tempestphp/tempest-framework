@@ -165,7 +165,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $data = $view->getData();
 
-        extract($data);
+        extract($data, flags: EXTR_SKIP);
 
         include $path;
 
