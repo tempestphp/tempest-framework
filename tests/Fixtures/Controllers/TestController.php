@@ -32,7 +32,7 @@ final readonly class TestController
     #[Get(uri: '/view')]
     public function withView(): View
     {
-        return view('Views/overview.php', name: 'Brent');
+        return view(__DIR__ . '/../Views/overview.view.php', name: 'Brent');
     }
 
     #[Get(uri: '/redirect')]

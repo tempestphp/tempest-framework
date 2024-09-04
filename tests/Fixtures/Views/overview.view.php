@@ -1,3 +1,3 @@
 <x-index>
-    Hello <?= $this->name ?? 'World' ?>!
+    Hello <?= $name ?? 'World' ?>!
 </x-index>

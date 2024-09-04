@@ -163,6 +163,10 @@ final class TempestViewRenderer implements ViewRenderer
 
         ob_start();
 
+        $data = $view->getData();
+
+        extract($data);
+
         include $path;
 
         return ob_get_clean();
