@@ -51,6 +51,7 @@ final readonly class StaticGenerateCommand
 
                 $uri = uri($staticPage->handler, ...$params);
 
+                // TODO: test!
                 $fileName = $uri === '/'
                     ? 'index.html'
                     : $uri . '.html';
