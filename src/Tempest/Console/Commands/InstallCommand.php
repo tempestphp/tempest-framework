@@ -126,7 +126,7 @@ final readonly class InstallCommand
             mkdir(dirname($path), recursive: true);
         }
 
-        copy(__DIR__ . '/../../../../public/index.php', $path);
+        copy(__DIR__ . '/index.php', $path);
 
         $this->console->success("{$path} created");
     }

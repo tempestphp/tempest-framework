@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Exception;
 use Tempest\Container\Container;
 use Tempest\Support\Reflection\ClassReflector;
 
