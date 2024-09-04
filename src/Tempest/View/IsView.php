@@ -58,7 +58,7 @@ trait IsView
         return $this->{$key} ?? $this->data[$key] ?? null;
     }
 
-    public function data(...$params): self
+    public function data(mixed ...$params): self
     {
         $this->rawData = [...$this->rawData, ...$params];
         $this->data = [...$this->data, ...$this->escape($params)];
