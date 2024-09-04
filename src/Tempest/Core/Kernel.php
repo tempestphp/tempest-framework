@@ -19,7 +19,7 @@ final readonly class Kernel
 
     public function init(): Container
     {
-        register_shutdown_function(function () {
+        register_shutdown_function(function (): void {
             $error = error_get_last();
 
             $message = $error['message'] ?? '';

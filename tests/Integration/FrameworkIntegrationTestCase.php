@@ -47,13 +47,14 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(OutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
+
         $this->console = new ConsoleTester($this->container);
 
         // Database
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
 
         if (! file_exists($databaseConfigPath)) {
-            copy(__DIR__ . '/../Fixtures/Config/database.sqlite', $databaseConfigPath);
+            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
         }
 
         $connection = (require $databaseConfigPath)->connection();

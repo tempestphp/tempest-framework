@@ -27,7 +27,7 @@ final class FieldName implements Stringable
         foreach ($class->getPublicProperties() as $property) {
             $caster = $casterFactory->forProperty($property);
 
-            if ($caster) {
+            if ($caster !== null) {
                 $fieldNames[] = new FieldName($tableName, $property->getName());
 
                 continue;

@@ -84,6 +84,7 @@
         "rector": "vendor/bin/rector process --no-ansi",
         "qa": [
             "./tempest discovery:clear",
+            "vendor/bin/rector process --no-ansi --no-progress-bar",
             "composer csfixer",
             "composer phpstan",
             "composer phpunit"

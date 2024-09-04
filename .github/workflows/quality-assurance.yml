@@ -2,7 +2,8 @@ name: Quality Assurance
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -23,17 +24,17 @@ jobs:
       - name: Validate Composer
         run: composer validate
 
-  style:
+  check-style:
     name: Check Styling
     runs-on: ubuntu-latest
     steps:
-      -   name: Checkout code
-          uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      -   name: Run PHP-CS-Fixer
-          uses: docker://oskarstark/php-cs-fixer-ga
-          with:
-            args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+      - name: Run PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
 
   phpstan:
     name: Perform Static Analysis
@@ -53,14 +54,39 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan --error-format=github
 
+  rector:
+    name: Run Rector
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run Rector
+        run: vendor/bin/rector process --no-ansi --dry-run --no-progress-bar
+
   phpunit:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.3]
-        database: [sqlite]
+        os:
+          - ubuntu-latest
+          - windows-latest
+        php:
+          - 8.3
+        database:
+          - sqlite
+          - mysql
+          - postgres
         stability:
           - prefer-stable
 
@@ -74,7 +100,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: pcov
 
       - name: Setup problem matchers
@@ -90,8 +116,19 @@ jobs:
       - name: List Installed Dependencies
         run: composer show -D
 
+      - name: 'Setup MySQL'
+        if: ${{ matrix.database == 'mysql' }}
+        uses: ankane/setup-mysql@v1
+        with:
+          mysql-version: 8.0
+          database: 'app'
+
+      - name: 'Setup PostgreSQL'
+        if: ${{ matrix.database == 'postgres' }}
+        uses: ankane/setup-postgres@v1
+
       - name: Set database config - ${{ matrix.database }}
-        run: php -r "file_exists('tests/Fixtures/Config/database.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}', 'tests/Fixtures/Config/database.php');"
+        run: php -r "file_exists('tests/Fixtures/Config/database.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.php');"
 
       - name: List Discovered Locations
         run: php ./tempest discovery:status

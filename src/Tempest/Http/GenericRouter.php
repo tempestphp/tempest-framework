@@ -150,7 +150,7 @@ final class GenericRouter implements Router
 
 
         if ($queryParams !== []) {
-            $uri = $uri . '?' . http_build_query($queryParams);
+            return $uri . '?' . http_build_query($queryParams);
         }
 
         return $uri;

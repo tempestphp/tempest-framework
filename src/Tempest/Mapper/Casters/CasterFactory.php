@@ -24,7 +24,7 @@ final readonly class CasterFactory
         $type = $property->getType();
 
         // Get CastWith from the property's type
-        if (! $castWith) {
+        if ($castWith === null) {
             try {
                 $castWith = $type->asClass()->getAttribute(CastWith::class);
             } catch (ReflectionException) {
@@ -32,7 +32,7 @@ final readonly class CasterFactory
             }
         }
 
-        if ($castWith) {
+        if ($castWith !== null) {
             // Resolve the caster from the container
             return get($castWith->className);
         }
