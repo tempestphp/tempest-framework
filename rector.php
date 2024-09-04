@@ -62,7 +62,8 @@ return RectorConfig::configure()
         EncapsedStringsToSprintfRector::class,
         AddArrowFunctionReturnTypeRector::class,
     ])
-    ->withSkipPath('src/Tempest/Framework/Exceptions/')
+    ->withSkipPath(__DIR__  .'/src/Tempest/Http/Exceptions/HttpExceptionHandler.php')
+    ->withSkipPath(__DIR__  .'/src/Tempest/Http/Exceptions/exception.php')
     ->withParallel(300, 10, 10)
     ->withPreparedSets(
         codeQuality: false,
