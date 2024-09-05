@@ -21,6 +21,7 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         // Production web
         if ($appConfig->environment->isProduction()) {
             set_exception_handler($this->renderErrorPage(...));
+            /** @phpstan-ignore-next-line  */
             set_error_handler($this->renderErrorPage(...));
 
             return;
