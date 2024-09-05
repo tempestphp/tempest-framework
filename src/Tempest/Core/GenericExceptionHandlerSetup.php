@@ -22,6 +22,7 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         if ($appConfig->environment->isProduction()) {
             set_exception_handler($this->renderErrorPage(...));
             set_error_handler($this->renderErrorPage(...));
+
             return;
         }
 
