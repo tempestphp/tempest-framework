@@ -6,5 +6,5 @@ namespace Tempest\Core;
 
 interface ExceptionHandlerSetup
 {
-    public function initialize(): void;
+    public function setup(AppConfig $appConfig): void;
 }

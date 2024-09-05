@@ -38,7 +38,7 @@ final readonly class Tempest
             discoveryCache: env('DISCOVERY_CACHE', false),
         );
 
-        $appConfig->exceptionHandlerSetup->initialize();
+        $appConfig->exceptionHandlerSetup->setup($appConfig);
 
         // Kernel
         return (new Kernel(
