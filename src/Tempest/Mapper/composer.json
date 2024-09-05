@@ -2,7 +2,8 @@
     "name": "tempest/mapper",
     "license": "MIT",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "tempest/core": "self.version"
     },
     "autoload": {
         "files": [
