@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Home;
 
+use Exception;
 use Tempest\Http\Get;
 use Tempest\Http\Request;
 use Tempest\Log\Logger;
@@ -18,6 +19,7 @@ final readonly class HomeController
     #[Get(uri: '/')]
     public function __invoke(Request $request): View
     {
+        //        throw new Exception('Home');
         ll('ll');
         $this->logger->debug('logger');
 

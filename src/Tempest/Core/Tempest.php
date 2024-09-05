@@ -35,9 +35,10 @@ final readonly class Tempest
         $appConfig ??= new AppConfig(
             root: $root,
             environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-            enableExceptionHandling: env('EXCEPTION_HANDLING', false),
             discoveryCache: env('DISCOVERY_CACHE', false),
         );
+
+        $appConfig->exceptionHandlerSetup->initialize();
 
         // Kernel
         return (new Kernel(

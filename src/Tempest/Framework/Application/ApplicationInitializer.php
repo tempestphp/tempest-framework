@@ -21,6 +21,7 @@ final readonly class ApplicationInitializer implements Initializer
         if (isset($_SERVER['argv'])) {
             return new ConsoleApplication(
                 container: $container,
+                appConfig: $container->get(AppConfig::class),
                 argumentBag: new ConsoleArgumentBag(['argv']),
             );
         }

@@ -9,6 +9,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 
 final readonly class ConsoleApplicationInitializer implements Initializer
@@ -22,6 +23,7 @@ final readonly class ConsoleApplicationInitializer implements Initializer
 
         $application = new ConsoleApplication(
             container: $container,
+            appConfig: $container->get(AppConfig::class),
             argumentBag: $argumentBag,
         );
 

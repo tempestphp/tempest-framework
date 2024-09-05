@@ -9,7 +9,6 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\Tempest;
 use function Tempest\env;
-use Tempest\Http\Exceptions\HttpExceptionHandler;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
@@ -44,7 +43,6 @@ final readonly class HttpApplication implements Application
         $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
         $logConfig->serverLogPath = env('SERVER_LOG');
         $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
-        $appConfig->exceptionHandlers[] = $container->get(HttpExceptionHandler::class);
 
         return $application;
     }
@@ -62,13 +60,11 @@ final readonly class HttpApplication implements Application
                 $router->dispatch($psrRequest),
             );
         } catch (Throwable $throwable) {
-            if (! $this->appConfig->enableExceptionHandling) {
-                throw $throwable;
-            }
-
             foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);
             }
+
+            throw $throwable;
         }
     }
 }

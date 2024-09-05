@@ -9,8 +9,8 @@ final class AppConfig
     public function __construct(
         public string $root,
         public Environment $environment = Environment::LOCAL,
-        public bool $enableExceptionHandling = false,
         public bool $discoveryCache = false,
+        public ExceptionHandlerSetup $exceptionHandlerSetup = new GenericExceptionHandlerSetup(),
 
         /** @var class-string[] */
         public array $discoveryClasses = [

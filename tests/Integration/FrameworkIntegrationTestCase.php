@@ -33,7 +33,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         // App config
         $this->appConfig = new AppConfig(
             root: __DIR__ . '/../../',
-            enableExceptionHandling: true,
             discoveryCache: true,
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
@@ -68,6 +67,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         $application = new ConsoleApplication(
             container: $this->container,
+            appConfig: $this->container->get(AppConfig::class),
             argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
         );
 

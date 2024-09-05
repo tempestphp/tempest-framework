@@ -14,11 +14,13 @@ use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
+use Throwable;
 
 final readonly class ConsoleApplication implements Application
 {
     public function __construct(
         private Container $container,
+        private AppConfig $appConfig,
         private ConsoleArgumentBag $argumentBag,
     ) {
     }
@@ -46,8 +48,16 @@ final readonly class ConsoleApplication implements Application
 
     public function run(): void
     {
-        $exitCode = ($this->container->get(ExecuteConsoleCommand::class))($this->argumentBag->getCommandName());
+        try {
+            $exitCode = ($this->container->get(ExecuteConsoleCommand::class))($this->argumentBag->getCommandName());
 
-        exit($exitCode->value);
+            exit($exitCode->value);
+        } catch (Throwable $throwable) {
+            foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
+                $exceptionHandler->handle($throwable);
+            }
+
+            throw $throwable;
+        }
     }
 }
