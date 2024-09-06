@@ -161,13 +161,15 @@ final class TempestViewRenderer implements ViewRenderer
             throw new Exception("View {$path} not found");
         }
 
-        ob_start();
+        return $this->y($path, $view->getData());
+    }
 
-        $_data = $view->getData();
+    private function resolveContentIsolated(string $_path, array $_data): string {
+        ob_start();
 
         extract($_data, flags: EXTR_SKIP);
 
-        include $path;
+        include $_path;
 
         return ob_get_clean();
     }
