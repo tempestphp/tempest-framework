@@ -32,8 +32,13 @@ final class Upload extends SplFileInfo
         } elseif(!is_writable($directory)) {
             throw new \Exception("Unable to write in the {$directory} directory.");
         }
-        $name ??= $this->getFilename();
+        $name ??= $this->getBasename();
         $dest = $directory . DIRECTORY_SEPARATOR . $name;
+
+        $result = move_uploaded_file($this->getPathname(), $dest);
+        if (!$result) {
+            throw new \Exception("Could not move the file {$this->getPathname()} to {$dest}");
+        }
 
         return new self($dest, $name);
     }
