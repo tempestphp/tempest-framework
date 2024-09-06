@@ -23,15 +23,15 @@ final readonly class ConsoleApplication implements Application
         private Container $container,
         private AppConfig $appConfig,
         private ConsoleArgumentBag $argumentBag,
-    ) {}
+    ) {
+    }
 
     /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
     public static function boot(
         string $name = 'Tempest',
         ?string $root = null,
         array $discoveryLocations = [],
-    ): self
-    {
+    ): self {
         $container = Tempest::boot($root ?? getcwd(), $discoveryLocations);
 
         $application = $container->get(ConsoleApplication::class);

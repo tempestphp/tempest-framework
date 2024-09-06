@@ -9,7 +9,6 @@ use Tempest\Console\Output\LogOutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
 use Tempest\Support\PathHelper;
 

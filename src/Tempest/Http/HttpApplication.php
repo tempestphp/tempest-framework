@@ -17,14 +17,15 @@ use Throwable;
 
 final readonly class HttpApplication implements Application
 {
-    public function __construct(private Container $container) {}
+    public function __construct(private Container $container)
+    {
+    }
 
     /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
     public static function boot(
         string $root,
         array $discoveryLocations = [],
-    ): self
-    {
+    ): self {
         $container = Tempest::boot($root, $discoveryLocations);
 
         // Application,

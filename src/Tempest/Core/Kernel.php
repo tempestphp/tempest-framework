@@ -13,39 +13,27 @@ use Tempest\EventBus\EventBus;
 
 final class Kernel
 {
-    public readonly string $root;
-
     public readonly Container $container;
-
-    public readonly EventBus $eventBus;
-
-    public array $discoveryLocations = [];
 
     public array $discoveryClasses = [
         DiscoveryDiscovery::class,
     ];
 
-    public bool $discoveryCache = false;
-
     public function __construct(
-        string $root,
+        public readonly string $root,
         ?Container $container = null,
-        array $discoveryLocations = [],
-        bool $discoveryCache = false,
+        public array $discoveryLocations = [],
+        public bool $discoveryCache = false,
     ) {
-        $this->root = $root;
         $this->container = $container ?? $this->createContainer();
-        $this->discoveryLocations = $discoveryLocations;
-        $this->discoveryCache = $discoveryCache;
 
         $this
             ->registerKernel()
             ->loadDiscoveryLocations()
             ->loadConfig()
-            ->loadDiscovery()
-            ->resolveEventBus();
+            ->loadDiscovery();
 
-        $this->eventBus->dispatch(KernelEvent::BOOTED);
+        $this->container->get(EventBus::class)->dispatch(KernelEvent::BOOTED);
     }
 
     public static function boot(string $root, ?Container $container = null): self
@@ -59,13 +47,6 @@ final class Kernel
     private function registerKernel(): self
     {
         $this->container->singleton(self::class, $this);
-
-        return $this;
-    }
-
-    private function resolveEventBus(): self
-    {
-        $this->eventBus = $this->container->get(EventBus::class);
 
         return $this;
     }

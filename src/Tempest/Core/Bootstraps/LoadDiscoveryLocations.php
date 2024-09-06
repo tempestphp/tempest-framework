@@ -12,7 +12,8 @@ final readonly class LoadDiscoveryLocations
 {
     public function __construct(
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): void
     {
@@ -115,9 +116,7 @@ final readonly class LoadDiscoveryLocations
     private function loadJsonFile(string $path): array
     {
         if (! file_exists($path)) {
-            $relativePath = str_replace($this->kernel->root, '.', $path);
-
-            throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $relativePath));
+            throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $path));
         }
 
         return json_decode(file_get_contents($path), true);

@@ -14,8 +14,7 @@ final readonly class Tempest
         ?string $root = null,
         /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
         array $discoveryLocations = [],
-    ): Container
-    {
+    ): Container {
         // Fix for classes that don't have a proper PSR-4 namespace,
         // they break discovery with an unrecoverable error,
         // but you don't know why because PHP simply says "duplicate classname" instead of something reasonable.
@@ -34,15 +33,15 @@ final readonly class Tempest
         // Env
         $dotenv = Dotenv::createUnsafeImmutable($root);
         $dotenv->safeLoad();
-//
-//        // AppConfig
-//        $appConfig ??= new AppConfig(
-//            root: $root,
-//            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
-//            discoveryCache: env('DISCOVERY_CACHE', false),
-//        );
-//
-//        $appConfig->exceptionHandlerSetup->setup($appConfig);
+        //
+        //        // AppConfig
+        //        $appConfig ??= new AppConfig(
+        //            root: $root,
+        //            environment: Environment::from(env('ENVIRONMENT', Environment::LOCAL->value)),
+        //            discoveryCache: env('DISCOVERY_CACHE', false),
+        //        );
+        //
+        //        $appConfig->exceptionHandlerSetup->setup($appConfig);
 
         // Kernel
         return (new Kernel(

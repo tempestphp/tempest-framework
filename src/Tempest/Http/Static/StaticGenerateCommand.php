@@ -8,7 +8,6 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
 use Tempest\Http\DataProvider;
 use Tempest\Http\GenericRequest;
