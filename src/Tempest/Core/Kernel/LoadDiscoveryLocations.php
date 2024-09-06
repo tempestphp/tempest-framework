@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Bootstraps;
+namespace Tempest\Core\Kernel;
 
+use Tempest\Core\DiscoveryException;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel;
 use Tempest\Support\PathHelper;
@@ -116,7 +117,7 @@ final readonly class LoadDiscoveryLocations
     private function loadJsonFile(string $path): array
     {
         if (! file_exists($path)) {
-            throw new BootstrapException(sprintf('Could not locate %s, try running "composer install"', $path));
+            throw new DiscoveryException(sprintf('Could not locate %s, try running "composer install"', $path));
         }
 
         return json_decode(file_get_contents($path), true);

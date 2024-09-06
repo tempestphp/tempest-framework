@@ -6,9 +6,9 @@ namespace Tempest\Core;
 
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\Bootstraps\LoadConfig;
-use Tempest\Core\Bootstraps\LoadDiscoveryClasses;
-use Tempest\Core\Bootstraps\LoadDiscoveryLocations;
+use Tempest\Core\Kernel\LoadConfig;
+use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
 
 final class Kernel
