@@ -20,6 +20,13 @@ use Tempest\Http\Request;
 
 abstract class IntegrationTest extends TestCase
 {
+    protected string $root;
+
+    protected bool $discoveryCache = false;
+
+    /** @var \Tempest\Core\DiscoveryLocation[] */
+    protected array $discoveryLocations = [];
+
     protected AppConfig $appConfig;
 
     protected Kernel $kernel;
@@ -34,14 +41,15 @@ abstract class IntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this->appConfig ??= new AppConfig(
-            root: __DIR__ . '/../../',
-            discoveryCache: true,
+        $this->root ??= __DIR__ . '/../../';
+
+        $this->kernel ??= new Kernel(
+            root: $this->root,
+            discoveryLocations: $this->discoveryLocations,
+            discoveryCache: $this->discoveryCache,
         );
 
-        $this->kernel ??= new Kernel($this->appConfig);
-
-        $this->container = $this->kernel->init();
+        $this->container = $this->kernel->container;
 
         $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);

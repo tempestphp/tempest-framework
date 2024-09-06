@@ -22,18 +22,17 @@ abstract class IntegrationTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->appConfig = new AppConfig(
+        $this->kernel = new Kernel(
             root: getcwd(),
-            discoveryCache: true,
             discoveryLocations: [
                 new DiscoveryLocation(
                     'Tests\\Tempest\\Fixtures\\',
                     __DIR__ . '/../Fixtures/',
                 ),
             ],
+            discoveryCache: true,
         );
 
-        $this->kernel = new Kernel($this->appConfig);
-        $this->container = $this->kernel->init();
+        $this->container = ($this->kernel)->container;
     }
 }

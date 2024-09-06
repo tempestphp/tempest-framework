@@ -20,7 +20,7 @@ class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('/static/a/b')
             ->assertContains('/static/c/d');
 
-        $root = $this->appConfig->root;
+        $root = $this->kernel->root;
 
         $this->assertFileExists(path($root, '/public/static/a/b.html'));
         $this->assertFileExists(path($root, '/public/static/c/d.html'));

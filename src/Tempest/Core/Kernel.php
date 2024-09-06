@@ -6,36 +6,64 @@ namespace Tempest\Core;
 
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\Bootstraps\ConfigBootstrap;
-use Tempest\Core\Bootstraps\DiscoveryBootstrap;
-use Tempest\Core\Bootstraps\DiscoveryLocationBootstrap;
+use Tempest\Core\Bootstraps\LoadDiscoveryClasses;
+use Tempest\Core\Bootstraps\LoadDiscoveryLocations;
+use Tempest\EventBus\EventBus;
 
-final readonly class Kernel
+final class Kernel
 {
+    public readonly string $root;
+
+    public readonly Container $container;
+
+    public readonly EventBus $eventBus;
+
+    public array $discoveryLocations = [];
+
+    public array $discoveryClasses = [
+        DiscoveryDiscovery::class,
+    ];
+
+    public bool $discoveryCache = false;
+
     public function __construct(
-        private AppConfig $appConfig,
+        string $root,
+        ?Container $container = null,
+        array $discoveryLocations = [],
+        bool $discoveryCache = false,
     ) {
+        $this->root = $root;
+        $this->container = $container ?? $this->createContainer();
+        $this->discoveryLocations = $discoveryLocations;
+        $this->discoveryCache = $discoveryCache;
+
+        $this
+            ->registerKernel()
+            ->initDiscovery()
+            ->resolveEventBus()
+            ->init();
     }
 
-    public function init(): Container
+    public static function boot(string $root, ?Container $container = null): self
     {
-        $container = $this->createContainer();
+        return new self(
+            root: $root,
+            container: $container,
+        );
+    }
 
-        $bootstraps = [
-            DiscoveryLocationBootstrap::class,
-            ConfigBootstrap::class,
-            DiscoveryBootstrap::class,
-        ];
+    private function registerKernel(): self
+    {
+        $this->container->singleton(self::class, $this);
 
-        foreach ($bootstraps as $bootstrap) {
-            $container->get(
-                $bootstrap,
-                kernel: $this,
-                appConfig: $this->appConfig,
-            )->boot();
-        }
+        return $this;
+    }
 
-        return $container;
+    private function resolveEventBus(): self
+    {
+        $this->eventBus = $this->container->get(EventBus::class);
+
+        return $this;
     }
 
     private function createContainer(): Container
@@ -44,11 +72,48 @@ final readonly class Kernel
 
         GenericContainer::setInstance($container);
 
-        $container
-            ->config($this->appConfig)
-            ->singleton(self::class, fn () => $this)
-            ->singleton(Container::class, fn () => $container);
+        $container->singleton(Container::class, fn () => $container);
 
         return $container;
     }
+
+    private function initDiscovery(): self
+    {
+        $this->discoveryLocations = $this->container->get(LoadDiscoveryLocations::class)();
+
+        $this->discoveryClasses = $this->container->get(LoadDiscoveryClasses::class)();
+
+        return $this;
+    }
+
+    private function init(): self
+    {
+        $this->eventBus->dispatch(KernelEvent::BOOTED);
+
+        return $this;
+    }
+
+//
+//    public function init(): Container
+//    {
+//        $container = $this->createContainer();
+//
+//        $bootstraps = [
+//            DiscoveryLocationBootstrap::class,
+//            ConfigBootstrap::class,
+//            DiscoveryBootstrap::class,
+//        ];
+//
+//        foreach ($bootstraps as $bootstrap) {
+//            $container->get(
+//                $bootstrap,
+//                kernel: $this,
+//                appConfig: $this->appConfig,
+//            )->boot();
+//        }
+//
+//        return $container;
+//    }
+
+
 }

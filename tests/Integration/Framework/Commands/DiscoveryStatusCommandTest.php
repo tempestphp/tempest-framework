@@ -17,13 +17,11 @@ class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
     {
         $output = $this->console->call('discovery:status');
 
-        $appConfig = $this->container->get(AppConfig::class);
-
-        foreach ($appConfig->discoveryClasses as $discoveryClass) {
+        foreach ($this->kernel->discoveryClasses as $discoveryClass) {
             $output->assertContains($discoveryClass);
         }
 
-        foreach ($appConfig->discoveryLocations as $discoveryLocation) {
+        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
             $output->assertContains($discoveryLocation->path);
         }
     }

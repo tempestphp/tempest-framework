@@ -16,11 +16,9 @@ class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_it_clears_discovery_cache(): void
     {
-        $appConfig = $this->container->get(AppConfig::class);
-
         MyDiscovery::$cacheCleared = false;
 
-        $appConfig->discoveryClasses = [MyDiscovery::class];
+        $this->kernel->discoveryClasses = [MyDiscovery::class];
 
         $this->console->call('discovery:clear');
 

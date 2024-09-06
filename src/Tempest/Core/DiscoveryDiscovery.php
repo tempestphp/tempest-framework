@@ -12,7 +12,7 @@ final readonly class DiscoveryDiscovery implements Discovery
     public const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/discovery-discovery.cache.php';
 
     public function __construct(
-        private AppConfig $appConfig,
+        private Kernel $kernel,
     ) {
     }
 
@@ -26,7 +26,7 @@ final readonly class DiscoveryDiscovery implements Discovery
             return;
         }
 
-        $this->appConfig->discoveryClasses[] = $class->getName();
+        $this->kernel->discoveryClasses[] = $class->getName();
     }
 
     public function hasCache(): bool
@@ -42,7 +42,7 @@ final readonly class DiscoveryDiscovery implements Discovery
             mkdir($directory, recursive: true);
         }
 
-        file_put_contents(self::CACHE_PATH, serialize($this->appConfig->discoveryClasses));
+        file_put_contents(self::CACHE_PATH, serialize($this->kernel->discoveryClasses));
     }
 
     public function restoreCache(Container $container): void
@@ -51,7 +51,7 @@ final readonly class DiscoveryDiscovery implements Discovery
             'allowed_classes' => true,
         ]);
 
-        $this->appConfig->discoveryClasses = $discoveryClasses;
+        $this->kernel->discoveryClasses = $discoveryClasses;
     }
 
     public function destroyCache(): void
