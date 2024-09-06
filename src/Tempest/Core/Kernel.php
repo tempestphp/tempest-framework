@@ -6,6 +6,7 @@ namespace Tempest\Core;
 
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Bootstraps\LoadConfig;
 use Tempest\Core\Bootstraps\LoadDiscoveryClasses;
 use Tempest\Core\Bootstraps\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
@@ -39,9 +40,12 @@ final class Kernel
 
         $this
             ->registerKernel()
-            ->initDiscovery()
-            ->resolveEventBus()
-            ->init();
+            ->loadDiscoveryLocations()
+            ->loadConfig()
+            ->loadDiscovery()
+            ->resolveEventBus();
+
+        $this->eventBus->dispatch(KernelEvent::BOOTED);
     }
 
     public static function boot(string $root, ?Container $container = null): self
@@ -77,43 +81,24 @@ final class Kernel
         return $container;
     }
 
-    private function initDiscovery(): self
+    private function loadDiscoveryLocations(): self
     {
-        $this->discoveryLocations = $this->container->get(LoadDiscoveryLocations::class)();
-
-        $this->discoveryClasses = $this->container->get(LoadDiscoveryClasses::class)();
+        ($this->container->get(LoadDiscoveryLocations::class))();
 
         return $this;
     }
 
-    private function init(): self
+    private function loadDiscovery(): self
     {
-        $this->eventBus->dispatch(KernelEvent::BOOTED);
+        ($this->container->get(LoadDiscoveryClasses::class))();
 
         return $this;
     }
 
-//
-//    public function init(): Container
-//    {
-//        $container = $this->createContainer();
-//
-//        $bootstraps = [
-//            DiscoveryLocationBootstrap::class,
-//            ConfigBootstrap::class,
-//            DiscoveryBootstrap::class,
-//        ];
-//
-//        foreach ($bootstraps as $bootstrap) {
-//            $container->get(
-//                $bootstrap,
-//                kernel: $this,
-//                appConfig: $this->appConfig,
-//            )->boot();
-//        }
-//
-//        return $container;
-//    }
+    private function loadConfig(): self
+    {
+        $this->container->get(LoadConfig::class)();
 
-
+        return $this;
+    }
 }

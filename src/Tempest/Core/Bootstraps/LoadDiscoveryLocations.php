@@ -14,13 +14,15 @@ final readonly class LoadDiscoveryLocations
         private Kernel $kernel,
     ) {}
 
-    public function __invoke(): array
+    public function __invoke(): void
     {
-        return [
-            ...$this->discoverCorePackages(),
-            ...$this->discoverAppNamespaces(),
-            ...$this->discoverVendorPackages(),
-        ];
+        $this->kernel->discoveryLocations =
+            [
+                ...$this->kernel->discoveryLocations,
+                ...$this->discoverCorePackages(),
+                ...$this->discoverAppNamespaces(),
+                ...$this->discoverVendorPackages(),
+            ];
     }
 
     /**
