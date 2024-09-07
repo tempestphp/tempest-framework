@@ -10,8 +10,8 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
-use Tempest\EventBus\EventBus;
 use function Tempest\env;
+use Tempest\EventBus\EventBus;
 
 final class Kernel
 {
@@ -28,8 +28,7 @@ final class Kernel
         public array $discoveryLocations = [],
         ?bool $discoveryCache = null,
         ?Container $container = null,
-    )
-    {
+    ) {
         $this->container = $container ?? $this->createContainer();
 
         $this

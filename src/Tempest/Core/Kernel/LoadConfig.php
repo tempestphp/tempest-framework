@@ -7,6 +7,7 @@ namespace Tempest\Core\Kernel;
 use Tempest\Core\Kernel;
 use Tempest\Support\PathHelper;
 
+/** @internal */
 final readonly class LoadConfig
 {
     public function __construct(

@@ -9,6 +9,7 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel;
 use Tempest\Support\PathHelper;
 
+/** @internal */
 final readonly class LoadDiscoveryLocations
 {
     public function __construct(

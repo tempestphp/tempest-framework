@@ -15,6 +15,7 @@ use Tempest\Core\Kernel;
 use Tempest\Support\Reflection\ClassReflector;
 use Throwable;
 
+/** @internal */
 final readonly class LoadDiscoveryClasses
 {
     public function __construct(
