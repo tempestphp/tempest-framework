@@ -23,7 +23,7 @@ final readonly class DiscoveryStatusCommand
     )]
     public function __invoke(): void
     {
-        $this->console->info('Loaded Discovery classes');
+        $this->console->writeln('<h2>Registered discovery classes</h2>');
 
         foreach ($this->kernel->discoveryClasses as $discoveryClass) {
             $this->console->writeln('- ' . $discoveryClass);
@@ -31,10 +31,15 @@ final readonly class DiscoveryStatusCommand
 
         $this->console->writeln();
 
-        $this->console->info('Folders included in Tempest');
+        $this->console->writeln('<h2>Discovery locations loaded by Tempest</h2>');
 
         foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
             $this->console->writeln('- '. $discoveryLocation->path);
         }
+
+        $this->console
+            ->writeln()
+            ->when($this->kernel->discoveryCache, fn (Console $console) => $console->success('Discovery cache enabled'))
+            ->when(! $this->kernel->discoveryCache, fn (Console $console) => $console->error('Discovery cache disabled'));
     }
 }

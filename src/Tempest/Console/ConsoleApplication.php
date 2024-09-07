@@ -32,7 +32,7 @@ final readonly class ConsoleApplication implements Application
         ?string $root = null,
         array $discoveryLocations = [],
     ): self {
-        $container = Tempest::boot($root ?? getcwd(), $discoveryLocations);
+        $container = Tempest::boot($root, $discoveryLocations);
 
         $application = $container->get(ConsoleApplication::class);
 
