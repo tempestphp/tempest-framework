@@ -6,7 +6,7 @@ namespace Tempest {
 
     use Tempest\EventBus\EventBus;
 
-    function event(object $event): void
+    function event(string|object $event): void
     {
         $eventBus = get(EventBus::class);
 
