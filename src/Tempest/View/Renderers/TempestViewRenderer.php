@@ -306,7 +306,8 @@ final class TempestViewRenderer implements ViewRenderer
         return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
     }
 
-    private function resolveContentIsolated(string $_path, array $_data): string {
+    private function resolveContentIsolated(string $_path, array $_data): string
+    {
         ob_start();
 
         extract($_data, flags: EXTR_SKIP);
