@@ -161,15 +161,7 @@ final class TempestViewRenderer implements ViewRenderer
             throw new Exception("View {$path} not found");
         }
 
-        ob_start();
-
-        $_data = $view->getData();
-
-        extract($_data, flags: EXTR_SKIP);
-
-        include $path;
-
-        return ob_get_clean();
+        return $this->resolveContentIsolated($path, $view->getData());
     }
 
     private function resolveViewComponent(GenericElement $element): ?ViewComponent
@@ -312,5 +304,15 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
+    }
+
+    private function resolveContentIsolated(string $_path, array $_data): string {
+        ob_start();
+
+        extract($_data, flags: EXTR_SKIP);
+
+        include $_path;
+
+        return ob_get_clean();
     }
 }
