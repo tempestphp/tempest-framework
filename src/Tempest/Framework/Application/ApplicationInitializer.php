@@ -28,7 +28,6 @@ final readonly class ApplicationInitializer implements Initializer
 
         return new HttpApplication(
             container: $container,
-            appConfig: $container->get(AppConfig::class),
         );
     }
 }

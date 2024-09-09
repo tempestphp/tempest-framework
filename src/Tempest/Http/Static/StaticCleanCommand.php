@@ -8,7 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Kernel;
 use Tempest\Http\DataProvider;
 use function Tempest\path;
 use function Tempest\uri;
@@ -19,7 +19,7 @@ final readonly class StaticCleanCommand
 
     public function __construct(
         private Console $console,
-        private AppConfig $appConfig,
+        private Kernel $kernel,
         private Container $container,
         private StaticPageConfig $staticPageConfig,
     ) {
@@ -30,7 +30,7 @@ final readonly class StaticCleanCommand
     )]
     public function __invoke(): void
     {
-        $publicPath = path($this->appConfig->root, 'public');
+        $publicPath = path($this->kernel->root, 'public');
 
         foreach ($this->staticPageConfig->staticPages as $staticPage) {
             /** @var DataProvider $dataProvider */

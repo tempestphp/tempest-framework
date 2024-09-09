@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Bootstraps;
+namespace Tempest\Core\Kernel;
 
-use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Kernel;
 use Tempest\Support\PathHelper;
 
-final readonly class ConfigBootstrap implements Bootstrap
+/** @internal */
+final readonly class LoadConfig
 {
     public function __construct(
-        private Container $container,
+        private Kernel $kernel,
     ) {
     }
 
-    public function boot(): void
+    public function __invoke(): void
     {
         // Scan for config files in all discovery locations
-        foreach ($this->container->get(AppConfig::class)->discoveryLocations as $discoveryLocation) {
+        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
             $configFiles = glob(PathHelper::make($discoveryLocation->path, 'Config/**.php'));
 
             foreach ($configFiles as $configFile) {
                 $configFile = require $configFile;
 
-                $this->container->config($configFile);
+                $this->kernel->container->config($configFile);
             }
         }
     }

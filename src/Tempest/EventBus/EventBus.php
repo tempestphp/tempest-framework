@@ -6,5 +6,5 @@ namespace Tempest\EventBus;
 
 interface EventBus
 {
-    public function dispatch(object $event): void;
+    public function dispatch(string|object $event): void;
 }

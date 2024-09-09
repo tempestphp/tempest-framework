@@ -21,7 +21,7 @@ class StaticCleanCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('/public/static/a/b.html')
             ->assertContains('/public/static/c/d.html');
 
-        $root = $this->appConfig->root;
+        $root = $this->kernel->root;
 
         $this->assertFileDoesNotExist(path($root, '/public/static/a/b.html'));
         $this->assertFileDoesNotExist(path($root, '/public/static/c/d.html'));

@@ -60,7 +60,7 @@ final class ObjectFactory
     /**
      * @return ClassType
      */
-    public function from(mixed $data)
+    public function from(mixed $data): mixed
     {
         return $this->mapObject(
             from: $data,

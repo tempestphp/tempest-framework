@@ -12,11 +12,11 @@ use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 
-final readonly class GenericDatabase implements Database
+final class GenericDatabase implements Database
 {
     public function __construct(
         private PDO $pdo,
-        private TransactionManager $transactionManager,
+        private readonly TransactionManager $transactionManager,
     ) {
     }
 

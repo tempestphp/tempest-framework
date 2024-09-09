@@ -30,15 +30,12 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        // App config
-        $this->appConfig = new AppConfig(
-            root: __DIR__ . '/../../',
-            discoveryCache: true,
-            discoveryLocations: [
-                new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
-                new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
-            ],
-        );
+        $this->root = __DIR__ . '/../../';
+        $this->discoveryCache = true;
+        $this->discoveryLocations = [
+            new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
+            new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
+        ];
 
         parent::setUp();
 
@@ -80,7 +77,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         $application = new HttpApplication(
             $this->container,
-            $this->container->get(AppConfig::class),
         );
 
         $this->container->singleton(Application::class, fn () => $application);

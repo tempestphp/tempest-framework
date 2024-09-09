@@ -10,13 +10,13 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Core\AppConfig;
+use Tempest\Core\Kernel;
 
 final readonly class OverviewMiddleware implements ConsoleMiddleware
 {
     public function __construct(
         private Console $console,
-        private AppConfig $appConfig,
+        private Kernel $kernel,
         private ConsoleConfig $consoleConfig,
     ) {
     }
@@ -37,7 +37,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         $this->console
             ->writeln("<h1>{$this->consoleConfig->name}</h1>")
             ->when(
-                expression: $this->appConfig->discoveryCache,
+                expression: $this->kernel->discoveryCache,
                 callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
             );
 

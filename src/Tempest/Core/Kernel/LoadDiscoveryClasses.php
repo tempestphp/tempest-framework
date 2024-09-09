@@ -2,43 +2,44 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Bootstraps;
+namespace Tempest\Core\Kernel;
 
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Tempest\Container\Container;
-use Tempest\Core\AppConfig;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
+use Tempest\Core\Kernel;
 use Tempest\Support\Reflection\ClassReflector;
 use Throwable;
 
-final readonly class DiscoveryBootstrap implements Bootstrap
+/** @internal */
+final readonly class LoadDiscoveryClasses
 {
     public function __construct(
-        private AppConfig $appConfig,
+        private Kernel $kernel,
         private Container $container,
     ) {
     }
 
-    public function boot(): void
+    public function __invoke(): void
     {
-        reset($this->appConfig->discoveryClasses);
+        reset($this->kernel->discoveryClasses);
 
-        while ($discoveryClass = current($this->appConfig->discoveryClasses)) {
+        while ($discoveryClass = current($this->kernel->discoveryClasses)) {
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
-            if ($this->appConfig->discoveryCache && $discovery->hasCache()) {
+            if ($this->kernel->discoveryCache && $discovery->hasCache()) {
                 $discovery->restoreCache($this->container);
-                next($this->appConfig->discoveryClasses);
+                next($this->kernel->discoveryClasses);
 
                 continue;
             }
 
-            foreach ($this->appConfig->discoveryLocations as $discoveryLocation) {
+            foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
                 $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
                 $files = new RecursiveIteratorIterator($directories);
 
@@ -96,7 +97,7 @@ final readonly class DiscoveryBootstrap implements Bootstrap
                 }
             }
 
-            next($this->appConfig->discoveryClasses);
+            next($this->kernel->discoveryClasses);
 
             $discovery->storeCache();
         }

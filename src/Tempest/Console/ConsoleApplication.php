@@ -10,6 +10,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
+use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
@@ -25,11 +26,13 @@ final readonly class ConsoleApplication implements Application
     ) {
     }
 
-    public static function boot(string $name = 'Tempest', ?AppConfig $appConfig = null): self
-    {
-        $root = $appConfig->root ?? getcwd();
-        $appConfig ??= new AppConfig(root: $root);
-        $container = Tempest::boot($root, $appConfig);
+    /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+    public static function boot(
+        string $name = 'Tempest',
+        ?string $root = null,
+        array $discoveryLocations = [],
+    ): self {
+        $container = Tempest::boot($root, $discoveryLocations);
 
         $application = $container->get(ConsoleApplication::class);
 
@@ -38,10 +41,10 @@ final readonly class ConsoleApplication implements Application
         $consoleConfig->name = $name;
 
         $logConfig = $container->get(LogConfig::class);
-        $logConfig->debugLogPath = PathHelper::make($appConfig->root, '/log/debug.log');
-        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($appConfig->root, '/log/tempest.log'));
+        $logConfig->debugLogPath = PathHelper::make($container->get(Kernel::class)->root, '/log/debug.log');
+        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($container->get(Kernel::class)->root, '/log/tempest.log'));
 
-        $appConfig->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
+        $container->get(AppConfig::class)->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
 
         return $application;
     }
