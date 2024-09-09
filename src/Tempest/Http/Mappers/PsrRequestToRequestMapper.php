@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Http\Mappers;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use Psr\Http\Message\UploadedFileInterface;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Http\Upload;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
 use Tempest\Validation\Validator;
@@ -29,7 +31,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             $requestClass = GenericRequest::class;
         }
 
-        $data = (array) $from->getParsedBody();
+        $data = (array)$from->getParsedBody();
 
         $headersAsString = array_map(
             fn (array $items) => implode(',', $items),
@@ -38,13 +40,19 @@ final readonly class PsrRequestToRequestMapper implements Mapper
 
         parse_str($from->getUri()->getQuery(), $query);
 
+        $uploads = array_map(
+            fn (UploadedFileInterface $uploadedFile) => new Upload($uploadedFile),
+            $from->getUploadedFiles(),
+        );
+
         $newRequest = map([
             'method' => Method::from($from->getMethod()),
-            'uri' => (string) $from->getUri(),
+            'uri' => (string)$from->getUri(),
             'body' => $data,
             'headers' => $headersAsString,
             'path' => $from->getUri()->getPath(),
             'query' => $query,
+            'files' => $uploads,
             ...$data,
         ])->to($requestClass);
 

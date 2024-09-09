@@ -60,6 +60,7 @@ final class HttpRouterTester
         array $body = [],
         array $headers = [],
         array $cookies = [],
+        array $files = [],
     ): PsrRequest {
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['REQUEST_METHOD'] = $method->value;
@@ -73,6 +74,6 @@ final class HttpRouterTester
         $_COOKIE = $cookies;
         $_POST = $body;
 
-        return ServerRequestFactory::fromGlobals();
+        return ServerRequestFactory::fromGlobals()->withUploadedFiles($files);
     }
 }

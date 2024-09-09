@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use Laminas\Diactoros\UploadedFile;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
+use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -73,5 +75,23 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertInstanceOf(GenericRequest::class, $request);
+    }
+
+    public function test_files(): void
+    {
+        $mapper = new PsrRequestToRequestMapper();
+
+        /** @var GenericRequest $request */
+        $request = $mapper->map(
+            from: $this->http->makePsrRequest('/', files: [new UploadedFile(
+                __DIR__ . '/Fixtures/upload.txt',
+                size: null,
+                errorStatus: UPLOAD_ERR_OK,
+            )]),
+            to: Request::class,
+        );
+
+        $this->assertCount(1, $request->getFiles());
+        $this->assertInstanceOf(Upload::class, $request->getFiles()[0]);
     }
 }

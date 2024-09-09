@@ -16,6 +16,9 @@ trait IsRequest
 
     public array $query;
 
+    /** @var \Tempest\Http\Upload[] */
+    public array $files;
+
     public function __construct(
         public Method $method,
         public string $uri,
@@ -67,6 +70,12 @@ trait IsRequest
     public function getQuery(): array
     {
         return $this->query;
+    }
+
+    /** @return \Tempest\Http\Upload[] */
+    public function getFiles(): array
+    {
+        return $this->files;
     }
 
     public function getSessionValue(string $name): mixed
