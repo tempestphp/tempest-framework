@@ -97,19 +97,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function rollbackDatabase(): void
     {
-        $connection = $this->container->get(DatabaseConnection::class);
-
-        if ($connection->dialect() === DatabaseDialect::SQLITE) {
-            $databasePath = __DIR__ . '/../Fixtures/database.sqlite';
-            $cleanDatabasePath = __DIR__ . '/../Fixtures/database-clean.sqlite';
-
-            @unlink(DiscoveryDiscovery::CACHE_PATH);
-            @unlink($databasePath);
-            copy($cleanDatabasePath, $databasePath);
-
-            return;
-        }
-
         $migrationManager = $this->container->get(MigrationManager::class);
 
         $migrationManager->dropAll();
