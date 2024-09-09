@@ -78,4 +78,18 @@ abstract class IntegrationTest extends TestCase
 
         return $clock;
     }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        unset($this->root);
+        unset($this->discoveryCache);
+        unset($this->discoveryLocations);
+        unset($this->appConfig);
+        unset($this->kernel);
+        unset($this->container);
+        unset($this->console);
+        unset($this->http);
+    }
 }
