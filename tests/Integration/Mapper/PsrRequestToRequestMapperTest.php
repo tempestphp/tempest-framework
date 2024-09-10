@@ -79,19 +79,39 @@ class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
     public function test_files(): void
     {
+        $currentPath = __DIR__ . '/Fixtures/upload-current.txt';
+
+        copy(__DIR__ . '/Fixtures/upload.txt', $currentPath);
+
         $mapper = new PsrRequestToRequestMapper();
 
         /** @var GenericRequest $request */
         $request = $mapper->map(
             from: $this->http->makePsrRequest('/', files: [new UploadedFile(
-                __DIR__ . '/Fixtures/upload.txt',
-                size: null,
+                streamOrFile: $currentPath,
+                size: 1,
                 errorStatus: UPLOAD_ERR_OK,
+                clientFilename: 'hello',
+                clientMediaType: 'application/octet-stream',
             )]),
             to: Request::class,
         );
 
         $this->assertCount(1, $request->getFiles());
         $this->assertInstanceOf(Upload::class, $request->getFiles()[0]);
+
+        $upload = $request->getFiles()[0];
+
+        $this->assertSame('hello', $upload->getStream()->getContents());
+        $movePath = __DIR__ . '/Fixtures/upload-moved.txt';
+        $upload->moveTo($movePath);
+
+        $this->assertFalse(file_exists($currentPath));
+        $this->assertTrue(file_exists($movePath));
+
+        $this->assertSame(1, $upload->getSize());
+        $this->assertSame(UPLOAD_ERR_OK, $upload->getError());
+        $this->assertSame('hello', $upload->getClientFilename());
+        $this->assertSame('application/octet-stream', $upload->getClientMediaType());
     }
 }

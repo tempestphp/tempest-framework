@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Home;
 
-use Exception;
 use Tempest\Http\Get;
 use Tempest\Http\Request;
 use Tempest\Log\Logger;
