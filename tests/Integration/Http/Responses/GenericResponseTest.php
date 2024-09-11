@@ -8,6 +8,7 @@ use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Session\Session;
+use Tempest\Http\Status;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -46,5 +47,12 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
         $response->removeCookie('test');
 
         $this->assertSame(-1, $cookieManager->get('test')->expiresAt);
+    }
+
+    public function test_set_status(): void
+    {
+        $response = (new Ok())->setStatus(Status::ACCEPTED);
+
+        $this->assertSame(Status::ACCEPTED, $response->getStatus());
     }
 }
