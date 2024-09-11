@@ -33,7 +33,7 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
 
         $response->destroySession();
 
-        $this->assertNull($session->get('test'));
+        $this->assertNull($session->get('original'));
     }
 
     public function test_cookies(): void
