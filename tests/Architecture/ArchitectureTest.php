@@ -118,4 +118,17 @@ class ArchitectureTest
             )
             ->because('Integration tests should not rely on unit test fixtures.');
     }
+
+    public function test_unit_tests_should_not_depend_on_framework_fixtures(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Unit')
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Fixtures')
+            )
+            ->because('Unit tests should test objects in isolation, so they should not depend on framework fixtures.');
+    }
 }
