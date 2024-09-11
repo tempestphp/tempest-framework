@@ -9,6 +9,7 @@ use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Validator;
+use Tests\Tempest\Integration\Console\Fixtures\ArrayInputCommand;
 use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
 
 /**

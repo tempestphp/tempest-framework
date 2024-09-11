@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
+use Tests\Tempest\Unit\Validation\Fixtures\ObjectToBeValidated;
 use function Tempest\command;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;

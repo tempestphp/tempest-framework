@@ -92,4 +92,30 @@ class ArchitectureTest
             )
             ->because('Unit tests should test classes in isolation without booting the framework.');
     }
+
+    public function test_unit_tests_should_not_depend_on_integration_tests(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Unit')
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration')
+            )
+            ->because('Unit tests should not rely on integration fixtures.');
+    }
+
+    public function test_integration_tests_should_not_depend_on_unit_tests(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration')
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Unit')
+            )
+            ->because('Integration tests should not rely on unit test fixtures.');
+    }
 }
