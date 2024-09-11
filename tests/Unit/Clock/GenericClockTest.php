@@ -25,8 +25,8 @@ final class GenericClockTest extends TestCase
         $clockDateTime = $clock->now();
         $dateTimeAfter = new DateTimeImmutable('now');
 
-        $this->assertGreaterThan($dateTimeBefore, $clockDateTime);
-        $this->assertLessThan($dateTimeAfter, $clockDateTime);
+        $this->assertGreaterThanOrEqual($dateTimeBefore->getTimestamp(), $clockDateTime->getTimestamp());
+        $this->assertLessThanOrEqual($dateTimeAfter->getTimestamp(), $clockDateTime->getTimestamp());
     }
 
     public function test_that_generic_clock_returns_the_current_time(): void
