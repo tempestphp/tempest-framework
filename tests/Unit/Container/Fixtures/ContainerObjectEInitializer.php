@@ -6,7 +6,7 @@ namespace Tests\Tempest\Unit\Container\Fixtures;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 class ContainerObjectEInitializer implements DynamicInitializer
 {

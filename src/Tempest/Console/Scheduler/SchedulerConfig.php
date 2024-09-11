@@ -6,7 +6,7 @@ namespace Tempest\Console\Scheduler;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class SchedulerConfig
 {

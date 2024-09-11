@@ -7,8 +7,8 @@ namespace Tempest\Database\Builder;
 use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
 use Tempest\Database\Eager;
+use Tempest\Reflection\ClassReflector;
 use function Tempest\reflect;
-use Tempest\Support\Reflection\ClassReflector;
 
 /** @phpstan-ignore-next-line */
 readonly class ModelDefinition

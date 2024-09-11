@@ -6,7 +6,7 @@ namespace Tempest\Console;
 
 use Attribute;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 #[Attribute]
 final class ConsoleCommand

@@ -9,7 +9,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
 use Tempest\Mapper\Caster;
-use Tempest\Support\Reflection\PropertyReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class DateTimeCaster implements Caster

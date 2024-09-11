@@ -14,10 +14,10 @@ use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
-use function Tempest\map;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
+use function Tempest\map;
 
 /**
  * @template MiddlewareClass of \Tempest\Http\HttpMiddleware

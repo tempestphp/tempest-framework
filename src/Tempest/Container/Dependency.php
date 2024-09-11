@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Closure;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\FunctionReflector;
-use Tempest\Support\Reflection\MethodReflector;
-use Tempest\Support\Reflection\ParameterReflector;
-use Tempest\Support\Reflection\Reflector;
-use Tempest\Support\Reflection\TypeReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\FunctionReflector;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\ParameterReflector;
+use Tempest\Reflection\Reflector;
+use Tempest\Reflection\TypeReflector;
 
 final readonly class Dependency
 {

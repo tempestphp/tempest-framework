@@ -10,7 +10,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\EventHandler;
 use Tempest\EventBus\GenericEventBus;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Fixtures\Events\ItHappened;
 use Tests\Tempest\Fixtures\Events\MyEventHandler;
 use Tests\Tempest\Unit\Events\Fixtures\MyEventBusMiddleware;

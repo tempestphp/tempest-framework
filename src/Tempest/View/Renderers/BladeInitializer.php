@@ -8,7 +8,7 @@ use Jenssegers\Blade\Blade;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final readonly class BladeInitializer implements DynamicInitializer
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Static;
 
 use Tempest\Http\StaticPage;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class StaticPageConfig
 {

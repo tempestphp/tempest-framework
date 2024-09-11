@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
 final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath

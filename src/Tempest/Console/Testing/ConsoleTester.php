@@ -24,7 +24,7 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Highlight\Highlighter;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class ConsoleTester
 {

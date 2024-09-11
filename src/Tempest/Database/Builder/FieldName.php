@@ -6,7 +6,7 @@ namespace Tempest\Database\Builder;
 
 use Stringable;
 use Tempest\Mapper\Casters\CasterFactory;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final class FieldName implements Stringable
 {

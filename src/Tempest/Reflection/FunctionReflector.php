@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Reflection;
+namespace Tempest\Reflection;
 
 use Closure;
 use Generator;
@@ -20,7 +20,7 @@ final readonly class FunctionReflector implements Reflector
             : $function;
     }
 
-    /** @return Generator|\Tempest\Support\Reflection\ParameterReflector[] */
+    /** @return Generator|\Tempest\Reflection\ParameterReflector[] */
     public function getParameters(): Generator
     {
         foreach ($this->reflectionFunction->getParameters() as $parameter) {

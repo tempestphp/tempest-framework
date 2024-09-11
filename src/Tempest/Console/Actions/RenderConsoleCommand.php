@@ -6,7 +6,7 @@ namespace Tempest\Console\Actions;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Support\Reflection\ParameterReflector;
+use Tempest\Reflection\ParameterReflector;
 
 final readonly class RenderConsoleCommand
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Reflection;
+namespace Tempest\Reflection;
 
 use Generator;
 use ReflectionMethod as PHPReflectionMethod;
@@ -26,7 +26,7 @@ final readonly class MethodReflector implements Reflector
         return $this->reflectionMethod;
     }
 
-    /** @return Generator|\Tempest\Support\Reflection\ParameterReflector[] */
+    /** @return Generator|\Tempest\Reflection\ParameterReflector[] */
     public function getParameters(): Generator
     {
         foreach ($this->reflectionMethod->getParameters() as $parameter) {

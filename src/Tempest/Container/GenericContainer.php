@@ -9,11 +9,11 @@ use Closure;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\FunctionReflector;
-use Tempest\Support\Reflection\MethodReflector;
-use Tempest\Support\Reflection\ParameterReflector;
-use Tempest\Support\Reflection\TypeReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\FunctionReflector;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\ParameterReflector;
+use Tempest\Reflection\TypeReflector;
 use Throwable;
 
 final class GenericContainer implements Container

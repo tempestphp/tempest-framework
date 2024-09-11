@@ -12,8 +12,8 @@ use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class ScheduleDiscovery implements Discovery
 {
