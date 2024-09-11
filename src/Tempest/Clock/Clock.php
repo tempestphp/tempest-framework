@@ -11,7 +11,7 @@ interface Clock extends ClockInterface
 {
     public function now(): DateTimeImmutable;
 
-    public function time(): int;
+    public function time(): int|float;
 
     public function sleep(int $seconds): void;
 }
