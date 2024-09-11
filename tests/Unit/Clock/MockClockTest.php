@@ -32,8 +32,6 @@ final class MockClockTest extends TestCase
         $clockDateTime = $clock->now();
         $afterDateTime = new DateTimeImmutable('now');
 
-        dump($beforeDateTime);
-
         $this->assertGreaterThanOrEqual($beforeDateTime->getTimestamp(), $clockDateTime->getTimestamp());
         $this->assertLessThanOrEqual($afterDateTime->getTimestamp(), $clockDateTime->getTimestamp());
     }

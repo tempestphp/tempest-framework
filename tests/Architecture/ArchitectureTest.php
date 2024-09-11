@@ -10,7 +10,7 @@ use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\Route;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 class ArchitectureTest
 {

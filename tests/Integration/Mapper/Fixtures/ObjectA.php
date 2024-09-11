@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Mapper\Fixtures;
+namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use Tempest\Mapper\Strict;
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Mapper\Mappers;
+namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\MapTo;
-use Tests\Tempest\Unit\IntegrationTestCase;
-use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
+use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal

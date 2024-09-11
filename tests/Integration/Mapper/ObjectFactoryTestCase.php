@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Unit\Mapper;
+namespace Tests\Tempest\Integration\Mapper;
 
 use function Tempest\make;
 use function Tempest\map;
@@ -11,8 +11,8 @@ use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
-use Tests\Tempest\Unit\IntegrationTestCase;
-use Tests\Tempest\Unit\Mapper\Fixtures\ObjectA;
+use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal
