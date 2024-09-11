@@ -10,6 +10,7 @@ use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\Route;
+use Tests\Tempest\Unit\IntegrationTestCase;
 
 class ArchitectureTest
 {
@@ -74,5 +75,21 @@ class ArchitectureTest
                 Selector::NOT(Selector::classname(IntegrationTest::class)),
             ))
             ->shouldBeFinal();
+    }
+
+    public function test_unit_tests_should_not_depend_on_infrastructure_test_tools(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Unit')
+            )
+            ->shouldNotExtend()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration'),
+                Selector::inNamespace('Tempest\Console\Testing'),
+                Selector::inNamespace('Tempest\Framework\Testing'),
+                Selector::classname(IntegrationTestCase::class),
+            )
+            ->because('Unit tests should test classes in isolation without booting the framework.');
     }
 }
