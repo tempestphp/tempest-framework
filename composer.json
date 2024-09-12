@@ -94,6 +94,16 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Tempest\\Container\\Tests\\": "src/Tempest/Container/tests",
+            "Tempest\\Core\\Tests\\": "src/Tempest/Core/tests",
+            "Tempest\\Database\\Tests\\": "src/Tempest/Database/tests",
+            "Tempest\\EventBus\\Tests\\": "src/Tempest/EventBus/tests",
+            "Tempest\\HttpClient\\Tests\\": "src/Tempest/HttpClient/tests",
+            "Tempest\\Http\\Tests\\": "src/Tempest/Http/tests",
+            "Tempest\\Log\\Tests\\": "src/Tempest/Log/tests",
+            "Tempest\\Mapper\\Tests\\": "src/Tempest/Mapper/tests",
+            "Tempest\\Support\\Tests\\": "src/Tempest/Support/tests",
+            "Tempest\\Validation\\Tests\\": "src/Tempest/Validation/tests",
             "Tests\\Tempest\\": "tests/"
         }
     },

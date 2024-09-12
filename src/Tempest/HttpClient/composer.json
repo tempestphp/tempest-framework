@@ -13,6 +13,11 @@
             "Tempest\\HttpClient\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\HttpClient\\Tests\\": "tests"
+        }
+    },
     "config": {
         "allow-plugins": {
             "php-http/discovery": true

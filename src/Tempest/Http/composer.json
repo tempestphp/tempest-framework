@@ -23,5 +23,10 @@
         "psr-4": {
             "Tempest\\Http\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Http\\Tests\\": "tests"
+        }
     }
 }
