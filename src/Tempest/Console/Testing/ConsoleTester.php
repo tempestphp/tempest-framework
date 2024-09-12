@@ -7,6 +7,7 @@ namespace Tempest\Console\Testing;
 use Closure;
 use Exception;
 use Fiber;
+use const PHP_EOL;
 use PHPUnit\Framework\Assert;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
@@ -147,7 +148,8 @@ final class ConsoleTester
 
     public function print(): self
     {
-        echo "OUTPUT:\n";
+        echo "OUTPUT:" . PHP_EOL;
+
         echo $this->output->asUnformattedString();
 
         return $this;
