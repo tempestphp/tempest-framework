@@ -10,7 +10,7 @@ enum Key: string
     case DOWN = "\e[B";
     case LEFT = "\e[D";
     case RIGHT = "\e[C";
-    case ENTER = "\r\n";
+    case ENTER = "\n";
     case BACKSPACE = "\x7F";
     case DELETE = "\e[3~";
     case SPACE = " ";
