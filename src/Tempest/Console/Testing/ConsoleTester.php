@@ -148,7 +148,6 @@ final class ConsoleTester
     public function print(): self
     {
         echo "OUTPUT:\n";
-
         echo $this->output->asUnformattedString();
 
         return $this;
