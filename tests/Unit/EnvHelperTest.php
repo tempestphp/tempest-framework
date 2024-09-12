@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Tempest\env;
 
+/**
+ * @internal
+ * @small
+ */
 class EnvHelperTest extends IntegrationTestCase
 {
     public function test_env_fallback_value()
