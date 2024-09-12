@@ -13,7 +13,7 @@ use function Tempest\env;
  */
 class EnvHelperTest extends IntegrationTestCase
 {
-    public function test_env_fallback_value()
+    public function test_env_fallback_value(): void
     {
         $this->assertTrue(env('missing', true));
     }
