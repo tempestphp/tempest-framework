@@ -72,6 +72,7 @@
             "Tempest\\Database\\": "src/Tempest/Database/src",
             "Tempest\\Debug\\": "src/Tempest/Debug/src",
             "Tempest\\EventBus\\": "src/Tempest/EventBus/src",
+            "Tempest\\Framework\\": "src/Tempest/Framework",
             "Tempest\\HttpClient\\": "src/Tempest/HttpClient/src",
             "Tempest\\Http\\": "src/Tempest/Http/src",
             "Tempest\\Log\\": "src/Tempest/Log/src",
