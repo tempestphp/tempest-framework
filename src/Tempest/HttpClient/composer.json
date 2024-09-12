@@ -12,5 +12,10 @@
         "psr-4": {
             "Tempest\\HttpClient\\": ""
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
