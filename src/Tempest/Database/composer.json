@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Database\\": ""
+            "Tempest\\Database\\": "src"
         }
     }
 }

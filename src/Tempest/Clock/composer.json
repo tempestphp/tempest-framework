@@ -6,7 +6,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Clock\\": ""
+            "Tempest\\Clock\\": "src/"
         }
     },
     "license": "MIT"

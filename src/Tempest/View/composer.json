@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\View\\": ""
+            "Tempest\\View\\": "src"
         }
     }
 }

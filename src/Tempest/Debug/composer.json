@@ -9,10 +9,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Debug\\": ""
+            "Tempest\\Debug\\": "src"
         },
         "files": [
-            "functions.php"
+            "src/functions.php"
         ]
     }
 }
