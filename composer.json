@@ -110,7 +110,7 @@
         "tempest/validation": "self.version",
         "tempest/view": "self.version"
     },
-    "bin": ["tempest"],
+    "bin": ["src/Tempest/Console/tempest"],
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
