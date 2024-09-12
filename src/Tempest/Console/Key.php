@@ -18,4 +18,5 @@ enum Key: string
     case CTRL_D = "\x04";
     case HOME = "\x01";
     case END = "\x05";
+
 }
