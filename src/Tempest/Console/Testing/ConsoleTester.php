@@ -147,7 +147,7 @@ final class ConsoleTester
 
     public function print(): self
     {
-        echo "OUTPUT:\n";
+        echo "OUTPUT:" . PHP_EOL;
         echo $this->output->asUnformattedString();
 
         return $this;
@@ -177,7 +177,7 @@ final class ConsoleTester
         return $this->assertDoesNotContain($text);
     }
 
-    public function assertContains(string $text, bool $ignoreLineEndings = false): self
+    public function assertContains(string $text, bool $ignoreLineEndings = true): self
     {
         $method = $ignoreLineEndings ? 'assertStringContainsStringIgnoringLineEndings' : 'assertStringContainsString';
         Assert::$method(
