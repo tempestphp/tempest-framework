@@ -17,7 +17,7 @@ final readonly class BookController
 
 final readonly class RssSyncCommand
 {
-    public function __construct(private Console $console) {}
+    use HasConsole;
 
     #[ConsoleCommand('rss:sync')]
     public function __invoke(bool $force = false)  { /* … */ }
