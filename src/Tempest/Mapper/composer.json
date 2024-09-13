@@ -13,5 +13,10 @@
         "psr-4": {
             "Tempest\\Mapper\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Mapper\\Tests\\": "tests"
+        }
     }
 }

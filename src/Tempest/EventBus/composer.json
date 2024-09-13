@@ -13,5 +13,10 @@
             "Tempest\\EventBus\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\EventBus\\Tests\\": "tests"
+        }
+    },
     "license": "MIT"
 }
