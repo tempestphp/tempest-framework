@@ -3,7 +3,7 @@
 Tempest is a PHP framework that gets out of your way . Its design philosophy is that developers should write as little framework-related code as possible, so that they can focus on application code instead. Zero config, zero overhead. This is Tempest:
 
 ```php
-final readonly class BookController
+final class BookController
 {
     #[Get('/books/{book}')]
     public function show(Book $book): Response
@@ -24,7 +24,7 @@ final readonly class BookController
 ```
 
 ```php
-final readonly class MigrateUpCommand
+final class MigrateUpCommand
 {
     public function __construct(
         private Console $console,
