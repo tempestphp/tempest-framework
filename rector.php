@@ -28,7 +28,6 @@ use Rector\TypeDeclaration\Rector\Empty_\EmptyOnNullableObjectToInstanceOfRector
 return RectorConfig::configure()
     ->withCache('./.cache/rector', FileCacheStorage::class)
     ->withPaths([
-        __DIR__ . '/public',
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
