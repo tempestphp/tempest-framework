@@ -18,10 +18,11 @@ class KernelTest extends TestCase
 {
     public function test_discovery_boot(): void
     {
+        // TODO: Move this
         $kernel = new Kernel(
-            root: __DIR__ . '/../../',
+            root: getcwd(),
             discoveryLocations: [
-                new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../Fixtures/'),
+                new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
             ],
         );
 
