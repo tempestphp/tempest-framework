@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\DoesNotEndWith;
  * @internal
  * @small
  */
-class DoesNotEndWithTest extends TestCase
+final class DoesNotEndWithTest extends TestCase
 {
     /**
      *

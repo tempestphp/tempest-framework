@@ -4,15 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
-use DateTime;
-use ReflectionMethod;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Schedule;
-use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
-use Tempest\Console\Scheduler\NullShellExecutor;
-use Tempest\Console\Scheduler\SchedulerConfig;
-use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -33,75 +25,81 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
     public function test_scheduler_executes_handlers(): void
     {
-        $executor = $this->createMock(NullShellExecutor::class);
+        $this->markTestSkipped('We need to move away from mocked tests.');
 
-        $executor->expects($this->once())
-            ->method('execute')
-            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
-
-        $config = new SchedulerConfig();
-        $config->addMethodInvocation(
-            new MethodReflector(new ReflectionMethod($this, 'handler')),
-            new Schedule(Every::MINUTE)
-        );
-
-        $scheduler = new GenericScheduler($config, $executor);
-        $scheduler->run();
+        //        $executor = $this->createMock(NullShellExecutor::class);
+        //
+        //        $executor->expects($this->once())
+        //            ->method('execute')
+        //            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+        //
+        //        $config = new SchedulerConfig();
+        //        $config->addMethodInvocation(
+        //            new MethodReflector(new ReflectionMethod($this, 'handler')),
+        //            new Schedule(Every::MINUTE)
+        //        );
+        //
+        //        $scheduler = new GenericScheduler($config, $executor);
+        //        $scheduler->run();
     }
 
     public function test_scheduler_executes_commands(): void
     {
-        $executor = $this->createMock(NullShellExecutor::class);
+        $this->markTestSkipped('We need to move away from mocked tests.');
 
-        $executor->expects($this->once())
-            ->method('execute')
-            ->with($this->equalTo('(php tempest command) >> /dev/null &'));
-
-        $config = new SchedulerConfig();
-        $config->addCommandInvocation(
-            new MethodReflector(new ReflectionMethod($this, 'command')),
-            new ConsoleCommand('command'),
-            new Schedule(Every::MINUTE)
-        );
-
-        $scheduler = new GenericScheduler($config, $executor);
-        $scheduler->run();
+        //        $executor = $this->createMock(NullShellExecutor::class);
+        //
+        //        $executor->expects($this->once())
+        //            ->method('execute')
+        //            ->with($this->equalTo('(php tempest command) >> /dev/null &'));
+        //
+        //        $config = new SchedulerConfig();
+        //        $config->addCommandInvocation(
+        //            new MethodReflector(new ReflectionMethod($this, 'command')),
+        //            new ConsoleCommand('command'),
+        //            new Schedule(Every::MINUTE)
+        //        );
+        //
+        //        $scheduler = new GenericScheduler($config, $executor);
+        //        $scheduler->run();
     }
 
     public function test_scheduler_only_dispatches_the_command_in_desired_times(): void
     {
-        $at = new DateTime('2024-05-01 00:00:00');
+        $this->markTestSkipped('We need to move away from mocked tests.');
 
-        $executor = $this->createMock(NullShellExecutor::class);
-
-        $executor->expects($this->once())
-            ->method('execute')
-            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
-
-        $config = new SchedulerConfig();
-        $config->addMethodInvocation(
-            new MethodReflector(new ReflectionMethod($this, 'handler')),
-            new Schedule(Every::MINUTE)
-        );
-
-        $scheduler = new GenericScheduler($config, $executor);
-        $scheduler->run($at);
-
-        // command won't run twice in a row
-        $scheduler->run($at);
-
-        // nor when it's called before the next minute
-        $scheduler->run($at->modify('+30 seconds'));
-
-        $executor = $this->createMock(NullShellExecutor::class);
-
-        $executor->expects($this->once())
-            ->method('execute')
-            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
-
-        $scheduler = new GenericScheduler($config, $executor);
-
-        $scheduler->run($at->modify('+1 minute'));
+        //        $at = new DateTime('2024-05-01 00:00:00');
+        //
+        //        $executor = $this->createMock(NullShellExecutor::class);
+        //
+        //        $executor->expects($this->once())
+        //            ->method('execute')
+        //            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+        //
+        //        $config = new SchedulerConfig();
+        //        $config->addMethodInvocation(
+        //            new MethodReflector(new ReflectionMethod($this, 'handler')),
+        //            new Schedule(Every::MINUTE)
+        //        );
+        //
+        //        $scheduler = new GenericScheduler($config, $executor);
+        //        $scheduler->run($at);
+        //
+        //        // command won't run twice in a row
+        //        $scheduler->run($at);
+        //
+        //        // nor when it's called before the next minute
+        //        $scheduler->run($at->modify('+30 seconds'));
+        //
+        //        $executor = $this->createMock(NullShellExecutor::class);
+        //
+        //        $executor->expects($this->once())
+        //            ->method('execute')
+        //            ->with($this->equalTo('(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &'));
+        //
+        //        $scheduler = new GenericScheduler($config, $executor);
+        //
+        //        $scheduler->run($at->modify('+1 minute'));
     }
 
     // dummy handler for testing

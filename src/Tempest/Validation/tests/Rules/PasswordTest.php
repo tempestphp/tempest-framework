@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Password;
  * @internal
  * @small
  */
-class PasswordTest extends TestCase
+final class PasswordTest extends TestCase
 {
     public function test_defaults(): void
     {

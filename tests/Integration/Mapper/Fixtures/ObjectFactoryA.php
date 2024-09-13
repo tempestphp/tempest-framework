@@ -8,7 +8,7 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Mapper\CastWith;
 
-class ObjectFactoryA implements DatabaseModel
+final class ObjectFactoryA implements DatabaseModel
 {
     use IsDatabaseModel;
 

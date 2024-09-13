@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Time;
  * @internal
  * @small
  */
-class TimeTest extends TestCase
+final class TimeTest extends TestCase
 {
     public function test_time(): void
     {

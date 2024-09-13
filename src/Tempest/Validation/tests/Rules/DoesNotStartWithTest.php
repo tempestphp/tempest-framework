@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\DoesNotStartWith;
  * @internal
  * @small
  */
-class DoesNotStartWithTest extends TestCase
+final class DoesNotStartWithTest extends TestCase
 {
     /**
      *

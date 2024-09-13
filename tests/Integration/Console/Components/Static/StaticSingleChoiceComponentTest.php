@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
+final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_with_options(): void
     {

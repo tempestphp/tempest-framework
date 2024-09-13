@@ -12,7 +12,7 @@ use Tempest\Validation\Rules\Length;
  * @internal
  * @small
  */
-class LengthTest extends TestCase
+final class LengthTest extends TestCase
 {
     /**
      * @dataProvider provide_length_cases

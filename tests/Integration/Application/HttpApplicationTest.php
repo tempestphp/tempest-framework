@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class HttpApplicationTest extends FrameworkIntegrationTestCase
+final class HttpApplicationTest extends FrameworkIntegrationTestCase
 {
     public function test_http_application_run(): void
     {

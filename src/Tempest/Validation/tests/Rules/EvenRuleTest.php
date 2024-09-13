@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Even;
  * @internal
  * @small
  */
-class EvenRuleTest extends TestCase
+final class EvenRuleTest extends TestCase
 {
     public function test_it_works(): void
     {

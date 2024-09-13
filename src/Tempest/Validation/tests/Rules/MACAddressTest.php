@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\MACAddress;
  * @internal
  * @small
  */
-class MACAddressTest extends TestCase
+final class MACAddressTest extends TestCase
 {
     public function test_ip_address(): void
     {

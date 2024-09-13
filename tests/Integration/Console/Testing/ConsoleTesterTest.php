@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ConsoleTesterTest extends FrameworkIntegrationTestCase
+final class ConsoleTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_call_with_invokable(): void
     {

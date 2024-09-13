@@ -12,7 +12,7 @@ use Tempest\Validation\Rules\Count;
  * @internal
  * @small
  */
-class CountTest extends TestCase
+final class CountTest extends TestCase
 {
     /**
      * @dataProvider provide_count_cases

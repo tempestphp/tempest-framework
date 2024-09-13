@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Reflection\ClassReflector;
 
-class ContainerObjectEInitializer implements DynamicInitializer
+final class ContainerObjectEInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class): bool
     {

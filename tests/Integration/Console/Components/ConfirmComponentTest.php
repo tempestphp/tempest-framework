@@ -13,7 +13,7 @@ use Tempest\Console\Point;
  * @internal
  * @small
  */
-class ConfirmComponentTest extends TestCase
+final class ConfirmComponentTest extends TestCase
 {
     public function test_confirm_component(): void
     {

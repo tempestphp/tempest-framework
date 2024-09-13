@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\ORM;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 
-class Foo implements DatabaseModel
+final class Foo implements DatabaseModel
 {
     use IsDatabaseModel;
 

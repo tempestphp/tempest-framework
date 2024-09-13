@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class MigrateDownCommandTest extends FrameworkIntegrationTestCase
+final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rollback_command(): void
     {

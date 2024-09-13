@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
+final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_confirm(): void
     {

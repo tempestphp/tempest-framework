@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CautionMiddlewareTest extends FrameworkIntegrationTestCase
+final class CautionMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_in_local(): void
     {

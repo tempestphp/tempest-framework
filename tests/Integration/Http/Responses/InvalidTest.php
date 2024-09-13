@@ -18,7 +18,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class InvalidTest extends FrameworkIntegrationTestCase
+final class InvalidTest extends FrameworkIntegrationTestCase
 {
     public function test_invalid(): void
     {

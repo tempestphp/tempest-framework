@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticCleanCommandTest extends FrameworkIntegrationTestCase
+final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_generate(): void
     {

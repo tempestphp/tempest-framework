@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class SearchComponentTest extends FrameworkIntegrationTestCase
+final class SearchComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_search_component(): void
     {

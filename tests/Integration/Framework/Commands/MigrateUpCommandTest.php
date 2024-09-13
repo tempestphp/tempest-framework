@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class MigrateUpCommandTest extends FrameworkIntegrationTestCase
+final class MigrateUpCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_command(): void
     {

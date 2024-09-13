@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\CommandBus\Fixtures;
 
 use Tempest\CommandBus\CommandBusMiddleware;
 
-class MyCommandBusMiddleware implements CommandBusMiddleware
+final class MyCommandBusMiddleware implements CommandBusMiddleware
 {
     public static bool $hit = false;
 

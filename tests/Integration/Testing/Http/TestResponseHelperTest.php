@@ -14,7 +14,7 @@ use Tempest\Http\Status;
  * @internal
  * @small
  */
-class TestResponseHelperTest extends TestCase
+final class TestResponseHelperTest extends TestCase
 {
     public function test_get_response(): void
     {

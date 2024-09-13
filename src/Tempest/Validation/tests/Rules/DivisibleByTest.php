@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\DivisibleBy;
  * @internal
  * @small
  */
-class DivisibleByTest extends TestCase
+final class DivisibleByTest extends TestCase
 {
     public function test_it_works(): void
     {

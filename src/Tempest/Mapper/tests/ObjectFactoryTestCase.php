@@ -18,7 +18,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class ObjectFactoryTestCase extends IntegrationTestCase
+final class ObjectFactoryTestCase extends IntegrationTestCase
 {
     public function test_single_object(): void
     {

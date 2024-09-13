@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\ShouldBeTrue;
  * @internal
  * @small
  */
-class ShouldBeTrueTest extends TestCase
+final class ShouldBeTrueTest extends TestCase
 {
     public function test_should_be_true(): void
     {

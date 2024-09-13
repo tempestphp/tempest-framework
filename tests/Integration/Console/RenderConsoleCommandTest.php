@@ -21,7 +21,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
+final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_render(): void
     {

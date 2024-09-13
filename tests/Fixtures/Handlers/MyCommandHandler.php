@@ -7,7 +7,7 @@ namespace Tests\Tempest\Fixtures\Handlers;
 use Tempest\CommandBus\CommandHandler;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
 
-class MyCommandHandler
+final class MyCommandHandler
 {
     #[CommandHandler]
     public function __invoke(MyCommand $command): void

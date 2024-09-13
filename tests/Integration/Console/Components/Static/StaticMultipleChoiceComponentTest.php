@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
+final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_ask(): void
     {

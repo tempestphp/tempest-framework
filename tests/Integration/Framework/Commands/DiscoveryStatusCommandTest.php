@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
+final class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_discovery_status_command(): void
     {

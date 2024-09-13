@@ -16,7 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ViewComponentTest extends FrameworkIntegrationTestCase
+final class ViewComponentTest extends FrameworkIntegrationTestCase
 {
     #[DataProvider('view_components')]
     public function test_view_components(string $component, string $rendered): void

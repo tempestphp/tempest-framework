@@ -12,7 +12,7 @@ use Tempest\Validation\Rules\Timezone;
  * @internal
  * @small
  */
-class TimezoneTest extends TestCase
+final class TimezoneTest extends TestCase
 {
     public function test_timezone(): void
     {

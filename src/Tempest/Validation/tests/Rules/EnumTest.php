@@ -14,7 +14,7 @@ use UnexpectedValueException;
  * @internal
  * @small
  */
-class EnumTest extends TestCase
+final class EnumTest extends TestCase
 {
     public function test_validating_enums(): void
     {

@@ -19,10 +19,10 @@ return (new PhpCsFixer\Config())
         'array_syntax' => ['syntax' => 'short'],
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'no_unused_imports' => true,
+        'no_unneeded_import_alias' => true,
         'blank_line_between_import_groups' => false,
         'single_import_per_statement' => true,
         'no_leading_import_slash' => true,
-        'no_unneeded_import_alias' => true,
         'fully_qualified_strict_types' => [
             'import_symbols' => true,
         ],

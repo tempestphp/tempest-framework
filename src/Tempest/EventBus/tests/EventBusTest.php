@@ -19,7 +19,7 @@ use Tests\Tempest\Fixtures\Events\MyEventHandler;
  * @internal
  * @small
  */
-class EventBusTest extends TestCase
+final class EventBusTest extends TestCase
 {
     public function test_it_works(): void
     {

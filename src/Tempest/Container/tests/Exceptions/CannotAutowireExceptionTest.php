@@ -13,7 +13,7 @@ use Tempest\Container\Tests\Fixtures\AutowireA;
  * @internal
  * @small
  */
-class CannotAutowireExceptionTest extends TestCase
+final class CannotAutowireExceptionTest extends TestCase
 {
     public function test_autowire_without_exception(): void
     {

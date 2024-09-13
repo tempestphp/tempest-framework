@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class NotFoundTest extends FrameworkIntegrationTestCase
+final class NotFoundTest extends FrameworkIntegrationTestCase
 {
     public function test_not_found(): void
     {

@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class JsonToObjectMapperTestCase extends IntegrationTestCase
+final class JsonToObjectMapperTestCase extends IntegrationTestCase
 {
     public function test_json_to_object(): void
     {

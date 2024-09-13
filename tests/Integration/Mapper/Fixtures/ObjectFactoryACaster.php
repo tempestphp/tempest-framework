@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use Tempest\Mapper\Caster;
 
-class ObjectFactoryACaster implements Caster
+final class ObjectFactoryACaster implements Caster
 {
     public function cast(mixed $input): string
     {

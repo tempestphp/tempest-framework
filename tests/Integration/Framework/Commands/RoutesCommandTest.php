@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class RoutesCommandTest extends FrameworkIntegrationTestCase
+final class RoutesCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_command(): void
     {

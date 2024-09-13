@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ViewTest extends FrameworkIntegrationTestCase
+final class ViewTest extends FrameworkIntegrationTestCase
 {
     public function test_render(): void
     {

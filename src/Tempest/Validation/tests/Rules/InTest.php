@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\In;
  * @internal
  * @small
  */
-class InTest extends TestCase
+final class InTest extends TestCase
 {
     public function test_it_works(): void
     {

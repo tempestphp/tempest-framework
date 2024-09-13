@@ -11,7 +11,7 @@ use Tempest\Http\Status;
  * @internal
  * @small
  */
-class StatusTest extends TestCase
+final class StatusTest extends TestCase
 {
     private function descriptionToStatus(string $description): Status
     {

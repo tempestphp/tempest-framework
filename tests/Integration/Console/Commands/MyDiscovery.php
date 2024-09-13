@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Reflection\ClassReflector;
 
-class MyDiscovery implements Discovery
+final class MyDiscovery implements Discovery
 {
     public static bool $cacheCleared = false;
 

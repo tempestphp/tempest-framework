@@ -11,7 +11,7 @@ use Tempest\Console\Input\ConsoleInputArgument;
  * @internal
  * @small
  */
-class ConsoleInputArgumentTest extends TestCase
+final class ConsoleInputArgumentTest extends TestCase
 {
     public function test_parse_named_arguments(): void
     {

@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Between;
  * @internal
  * @small
  */
-class BetweenTest extends TestCase
+final class BetweenTest extends TestCase
 {
     public function test_between(): void
     {

@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\EndsWith;
  * @internal
  * @small
  */
-class EndsWithTest extends TestCase
+final class EndsWithTest extends TestCase
 {
     public function test_ends_with(): void
     {

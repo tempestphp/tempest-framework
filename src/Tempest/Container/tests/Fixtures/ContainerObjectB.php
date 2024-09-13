@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-class ContainerObjectB
+final class ContainerObjectB
 {
     public function __construct(public ContainerObjectA $a)
     {

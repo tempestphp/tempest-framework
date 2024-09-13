@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
+final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_where_statement(): void
     {

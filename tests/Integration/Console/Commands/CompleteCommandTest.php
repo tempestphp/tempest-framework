@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CompleteCommandTest extends FrameworkIntegrationTestCase
+final class CompleteCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_complete_commands(): void
     {

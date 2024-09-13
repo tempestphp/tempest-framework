@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Odd;
  * @internal
  * @small
  */
-class OddRuleTest extends TestCase
+final class OddRuleTest extends TestCase
 {
     public function test_it_works(): void
     {

@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Ulid;
  * @internal
  * @small
  */
-class UlidTest extends TestCase
+final class UlidTest extends TestCase
 {
     public function test_ulid(): void
     {

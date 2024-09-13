@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class GenericResponseSenderTest extends FrameworkIntegrationTestCase
+final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 {
     public function test_sending(): void
     {

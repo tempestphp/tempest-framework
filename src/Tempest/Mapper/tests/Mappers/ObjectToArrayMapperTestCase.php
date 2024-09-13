@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class ObjectToArrayMapperTestCase extends IntegrationTestCase
+final class ObjectToArrayMapperTestCase extends IntegrationTestCase
 {
     public function test_object_to_array(): void
     {

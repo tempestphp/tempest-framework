@@ -8,7 +8,7 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Validation\Rules\Length;
 
-class ObjectFactoryWithValidation implements DatabaseModel
+final class ObjectFactoryWithValidation implements DatabaseModel
 {
     use IsDatabaseModel;
 

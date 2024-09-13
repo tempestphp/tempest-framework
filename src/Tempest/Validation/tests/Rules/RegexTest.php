@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\RegEx;
  * @internal
  * @small
  */
-class RegexTest extends TestCase
+final class RegexTest extends TestCase
 {
     public function test_regex_rule(): void
     {

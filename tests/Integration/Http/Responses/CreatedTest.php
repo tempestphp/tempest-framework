@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CreatedTest extends FrameworkIntegrationTestCase
+final class CreatedTest extends FrameworkIntegrationTestCase
 {
     public function test_create(): void
     {

@@ -11,7 +11,7 @@ use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\Route;
 
-class ArchitectureTest
+final class ArchitectureTest
 {
     public function test_validation_rules_implement_rule_interface(): Rule
     {

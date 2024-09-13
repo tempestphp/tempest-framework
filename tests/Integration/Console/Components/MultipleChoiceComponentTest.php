@@ -11,7 +11,7 @@ use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
  * @internal
  * @small
  */
-class MultipleChoiceComponentTest extends TestCase
+final class MultipleChoiceComponentTest extends TestCase
 {
     public function test_multiple_choice_component(): void
     {

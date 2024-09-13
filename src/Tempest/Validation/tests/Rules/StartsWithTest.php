@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\StartsWith;
  * @internal
  * @small
  */
-class StartsWithTest extends TestCase
+final class StartsWithTest extends TestCase
 {
     public function test_starts_with(): void
     {

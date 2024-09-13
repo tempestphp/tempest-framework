@@ -13,7 +13,7 @@ use Tempest\Console\Point;
  * @internal
  * @small
  */
-class PasswordComponentTest extends TestCase
+final class PasswordComponentTest extends TestCase
 {
     public function test_password_component(): void
     {

@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class JsonToArrayMapperTestCase extends IntegrationTestCase
+final class JsonToArrayMapperTestCase extends IntegrationTestCase
 {
     public function test_mapper(): void
     {

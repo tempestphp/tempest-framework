@@ -23,7 +23,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class ArrayToObjectMapperTestCase extends IntegrationTestCase
+final class ArrayToObjectMapperTestCase extends IntegrationTestCase
 {
     public function test_missing_values(): void
     {
