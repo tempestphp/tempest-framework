@@ -12,7 +12,7 @@ use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Mapper\Tests\Fixtures\ObjectA;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal

@@ -15,7 +15,7 @@ final class GenericClock implements Clock
 
     public function time(): int
     {
-        return time();
+        return hrtime(true);
     }
 
     public function sleep(int $seconds): void

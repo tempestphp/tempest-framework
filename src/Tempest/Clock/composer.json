@@ -6,7 +6,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Clock\\": "src/"
+            "Tempest\\Clock\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Clock\\Tests\\": "tests"
         }
     },
     "license": "MIT"

@@ -6,7 +6,7 @@ namespace Tempest\Mapper\Tests\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\MapTo;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal
