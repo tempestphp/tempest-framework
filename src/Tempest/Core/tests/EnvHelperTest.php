@@ -6,7 +6,7 @@ namespace Tempest\Core\Tests;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Tempest\env;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal

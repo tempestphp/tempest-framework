@@ -75,4 +75,59 @@ class ArchitectureTest
             ))
             ->shouldBeFinal();
     }
+
+    public function test_unit_tests_should_not_depend_on_infrastructure_test_tools(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+            )
+            ->shouldNotExtend()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration'),
+                Selector::inNamespace('Tempest\Console\Testing'),
+                Selector::inNamespace('Tempest\Framework\Testing'),
+                Selector::classname(IntegrationTest::class),
+            )
+            ->because('Unit tests should test classes in isolation without booting the framework.');
+    }
+
+    public function test_unit_tests_should_not_depend_on_integration_tests(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration')
+            )
+            ->because('Unit tests should not rely on integration fixtures.');
+    }
+
+    public function test_integration_tests_should_not_depend_on_unit_tests(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Integration')
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+            )
+            ->because('Integration tests should not rely on unit test fixtures.');
+    }
+
+    public function test_unit_tests_should_not_depend_on_framework_fixtures(): Rule
+    {
+        return PHPat::rule()
+            ->classes(
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+            )
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::inNamespace('Tests\Tempest\Fixtures')
+            )
+            ->because('Unit tests should test objects in isolation, so they should not depend on framework fixtures.');
+    }
 }

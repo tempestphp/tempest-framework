@@ -7,7 +7,7 @@ namespace Tempest\EventBus\Tests;
 use function Tempest\event;
 use Tests\Tempest\Fixtures\Events\ItHappened;
 use Tests\Tempest\Fixtures\Events\MyEventHandler;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal

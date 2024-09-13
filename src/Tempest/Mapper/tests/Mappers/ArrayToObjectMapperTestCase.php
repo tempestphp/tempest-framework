@@ -17,7 +17,7 @@ use Tempest\Mapper\Tests\Fixtures\ObjectWithMagicGetter;
 use Tempest\Mapper\Tests\Fixtures\ObjectWithMyObject;
 use Tempest\Mapper\Tests\Fixtures\ParentObject;
 use Tempest\Mapper\Tests\Fixtures\ParentWithChildrenObject;
-use Tests\Tempest\Unit\IntegrationTestCase;
+use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal
