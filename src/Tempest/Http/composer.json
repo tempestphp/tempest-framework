@@ -18,10 +18,15 @@
     },
     "autoload": {
         "files": [
-            "functions.php"
+            "src/functions.php"
         ],
         "psr-4": {
-            "Tempest\\Http\\": ""
+            "Tempest\\Http\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Http\\Tests\\": "tests"
         }
     }
 }

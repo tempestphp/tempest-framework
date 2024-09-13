@@ -8,10 +8,15 @@
     },
     "autoload": {
         "files": [
-            "functions.php"
+            "src/functions.php"
         ],
         "psr-4": {
-            "Tempest\\Mapper\\": ""
+            "Tempest\\Mapper\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Mapper\\Tests\\": "tests"
         }
     }
 }

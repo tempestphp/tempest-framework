@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
+<<<<<<<< HEAD:tests/Integration/Mapper/Mappers/ArrayToObjectMapperTestCase.php
 namespace Tests\Tempest\Integration\Mapper\Mappers;
+========
+namespace Tempest\Mapper\Tests\Mappers;
+>>>>>>>> main:src/Tempest/Mapper/tests/Mappers/ArrayToObjectMapperTestCase.php
 
 use InvalidArgumentException;
 use Tempest\Http\Method;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+<<<<<<<< HEAD:tests/Integration/Mapper/Mappers/ArrayToObjectMapperTestCase.php
 use Tests\Tempest\Integration\IntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
@@ -18,6 +23,18 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
+========
+use Tempest\Mapper\Tests\Fixtures\ObjectA;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithBuiltInCasters;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithDefaultValues;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithDoubleStringCaster;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithEnum;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithMagicGetter;
+use Tempest\Mapper\Tests\Fixtures\ObjectWithMyObject;
+use Tempest\Mapper\Tests\Fixtures\ParentObject;
+use Tempest\Mapper\Tests\Fixtures\ParentWithChildrenObject;
+use Tests\Tempest\Unit\IntegrationTestCase;
+>>>>>>>> main:src/Tempest/Mapper/tests/Mappers/ArrayToObjectMapperTestCase.php
 
 /**
  * @internal

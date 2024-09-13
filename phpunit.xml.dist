@@ -12,19 +12,20 @@
 >
   <testsuites>
     <testsuite name="Integration">
-      <directory suffix="Test.php">./tests/Integration</directory>
+      <directory suffix="Test.php">tests/Integration</directory>
     </testsuite>
     <testsuite name="Unit">
-      <directory suffix="Test.php">./tests/Unit</directory>
+      <directory suffix="Test.php">src/Tempest/**/tests</directory>
     </testsuite>
   </testsuites>
   <coverage />
   <source>
     <include>
-      <directory suffix=".php">./src</directory>
+      <directory suffix=".php">src</directory>
     </include>
     <exclude>
-      <directory suffix=".cache.php">./src</directory>
+      <directory suffix="Test.php">src</directory>
+      <directory suffix=".cache.php">src</directory>
     </exclude>
   </source>
 </phpunit>

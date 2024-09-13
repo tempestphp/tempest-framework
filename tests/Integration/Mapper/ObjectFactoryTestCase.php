@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+<<<<<<<< HEAD:tests/Integration/Mapper/ObjectFactoryTestCase.php
 namespace Tests\Tempest\Integration\Mapper;
+========
+namespace Tempest\Mapper\Tests;
+>>>>>>>> main:src/Tempest/Mapper/tests/ObjectFactoryTestCase.php
 
 use function Tempest\make;
 use function Tempest\map;
@@ -11,8 +15,13 @@ use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
+<<<<<<<< HEAD:tests/Integration/Mapper/ObjectFactoryTestCase.php
 use Tests\Tempest\Integration\IntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+========
+use Tempest\Mapper\Tests\Fixtures\ObjectA;
+use Tests\Tempest\Unit\IntegrationTestCase;
+>>>>>>>> main:src/Tempest/Mapper/tests/ObjectFactoryTestCase.php
 
 /**
  * @internal

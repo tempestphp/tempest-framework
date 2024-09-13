@@ -7,10 +7,15 @@
     },
     "autoload": {
         "files": [
-            "functions.php"
+            "src/functions.php"
         ],
         "psr-4": {
-            "Tempest\\Container\\": ""
+            "Tempest\\Container\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Container\\Tests\\": "tests"
         }
     }
 }

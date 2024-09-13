@@ -7,10 +7,15 @@
     },
     "autoload": {
         "files": [
-            "functions.php"
+            "src/functions.php"
         ],
         "psr-4": {
-            "Tempest\\EventBus\\": ""
+            "Tempest\\EventBus\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\EventBus\\Tests\\": "tests"
         }
     },
     "license": "MIT"

@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+<<<<<<<< HEAD:tests/Integration/EventBus/EventIntegrationTestCase.php
 namespace Tests\Tempest\Integration\EventBus;
+========
+namespace Tempest\EventBus\Tests;
+>>>>>>>> main:src/Tempest/EventBus/tests/EventIntegrationTestCase.php
 
 use function Tempest\event;
 use Tests\Tempest\Fixtures\Events\ItHappened;

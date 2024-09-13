@@ -2,12 +2,21 @@
 
 declare(strict_types=1);
 
+<<<<<<<< HEAD:tests/Integration/Mapper/Mappers/JsonToObjectMapperTestCase.php
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tests\Tempest\Integration\IntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+========
+namespace Tempest\Mapper\Tests\Mappers;
+
+use function Tempest\map;
+use Tempest\Mapper\Mappers\JsonToObjectMapper;
+use Tempest\Mapper\Tests\Fixtures\ObjectA;
+use Tests\Tempest\Unit\IntegrationTestCase;
+>>>>>>>> main:src/Tempest/Mapper/tests/Mappers/JsonToObjectMapperTestCase.php
 
 /**
  * @internal
