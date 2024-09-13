@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class CommandBusConfig
 {

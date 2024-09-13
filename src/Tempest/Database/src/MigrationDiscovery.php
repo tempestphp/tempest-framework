@@ -9,7 +9,7 @@ use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Database\Migrations\Migration as MigrationModel;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final class MigrationDiscovery implements Discovery, DiscoversPath
 {

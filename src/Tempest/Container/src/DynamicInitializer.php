@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 interface DynamicInitializer
 {

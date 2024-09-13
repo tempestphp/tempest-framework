@@ -12,7 +12,7 @@ use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\Scheduler\SchedulerConfig;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

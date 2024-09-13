@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Exceptions;
 
 use Exception;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
 final class DuplicateViewComponent extends Exception

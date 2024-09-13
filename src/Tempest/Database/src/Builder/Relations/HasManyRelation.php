@@ -6,8 +6,8 @@ namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\PropertyReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 
 final readonly class HasManyRelation implements Relation
 {

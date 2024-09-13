@@ -6,7 +6,7 @@ namespace Tempest\Container;
 
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 /**
  * @property GenericContainer $container

@@ -8,7 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Http\StaticPage;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final readonly class StaticPageDiscovery implements Discovery
 {

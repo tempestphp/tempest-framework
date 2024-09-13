@@ -8,8 +8,8 @@ use BackedEnum;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
 use UnitEnum;
 
 final readonly class EventBusDiscovery implements Discovery

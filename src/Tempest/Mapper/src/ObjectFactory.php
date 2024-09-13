@@ -8,7 +8,7 @@ use Closure;
 use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
-use Tempest\Support\Reflection\FunctionReflector;
+use Tempest\Reflection\FunctionReflector;
 
 /** @template ClassType */
 final class ObjectFactory

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Tempest\Http\Router;
-    use Tempest\Support\Reflection\MethodReflector;
+    use Tempest\Reflection\MethodReflector;
     use Tempest\View\GenericView;
     use Tempest\View\View;
 

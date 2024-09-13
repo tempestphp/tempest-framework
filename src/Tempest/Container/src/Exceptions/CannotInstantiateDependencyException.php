@@ -6,7 +6,7 @@ namespace Tempest\Container\Exceptions;
 
 use Exception;
 use Tempest\Container\DependencyChain;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final class CannotInstantiateDependencyException extends Exception
 {

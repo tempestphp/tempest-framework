@@ -9,9 +9,9 @@ use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\ArrayHelper;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\PropertyReflector;
 use Tempest\Validation\Validator;
 use Throwable;
 

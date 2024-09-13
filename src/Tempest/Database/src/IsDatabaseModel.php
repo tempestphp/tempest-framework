@@ -9,8 +9,8 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use function Tempest\make;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\PropertyReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 
 /** @phpstan-require-implements \Tempest\Database\DatabaseModel */
 trait IsDatabaseModel

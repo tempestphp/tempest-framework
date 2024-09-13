@@ -8,7 +8,7 @@ use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
 use Tempest\Database\Eager;
 use function Tempest\reflect;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 /** @phpstan-ignore-next-line */
 readonly class ModelDefinition

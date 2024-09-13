@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final readonly class MapperDiscovery implements Discovery
 {

@@ -6,7 +6,7 @@ namespace Tempest\Container;
 
 use Closure;
 use Tempest\Container\Exceptions\CircularDependencyException;
-use Tempest\Support\Reflection\Reflector;
+use Tempest\Reflection\Reflector;
 
 final class DependencyChain
 {

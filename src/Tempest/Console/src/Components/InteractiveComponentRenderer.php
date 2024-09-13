@@ -11,8 +11,8 @@ use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
@@ -179,7 +179,7 @@ final class InteractiveComponentRenderer
 
     private function resolveHandlers(InteractiveComponent $component): array
     {
-        /** @var \Tempest\Support\Reflection\MethodReflector[][] $keyBindings */
+        /** @var \Tempest\Reflection\MethodReflector[][] $keyBindings */
         $keyBindings = [];
 
         $inputHandlers = [];

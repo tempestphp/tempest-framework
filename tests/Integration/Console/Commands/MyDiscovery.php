@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 class MyDiscovery implements Discovery
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Tests\Reflection;
+namespace Tempest\Reflection\Tests;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\DatabaseModel;
-use Tempest\Support\Reflection\TypeReflector;
+use Tempest\Reflection\TypeReflector;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;

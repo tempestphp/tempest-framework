@@ -8,7 +8,7 @@ use DateTime;
 use Tempest\Console\Commands\ScheduleTaskCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final readonly class ScheduledInvocation
 {
