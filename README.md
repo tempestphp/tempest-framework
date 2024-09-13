@@ -31,7 +31,7 @@ composer require tempest/framework
 or 
 
 ```
-composer create-project tempest/app
+composer create-project tempest/app <name>
 ```
 
 # Contributing
