@@ -24,7 +24,7 @@ final readonly class RssSyncCommand
 
 Read how to get started with Tempest [here](https://tempest.stitcher.io).
 
-# Installation
+## Installation
 
 Install Tempest in any project, including existing projects:
 
@@ -40,7 +40,7 @@ composer create-project tempest/app:dev-main <name>
 
 Continue to read how Tempest works in [the docs](https://tempest.stitcher.io).
 
-# Contributing
+## Contributing
 We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](.github/CONTRIBUTING.md) and then head on over to the issues page to see some ways you might help out!
 
-[Join the Tempest Discord](https://discord.gg/pPhpTGUMPQ)
+For more information, [join the Tempest Discord](https://discord.gg/pPhpTGUMPQ)
