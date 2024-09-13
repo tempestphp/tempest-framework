@@ -9,8 +9,8 @@ use Tempest\Console\ConsoleConfig;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
 
 final readonly class ConsoleCommandDiscovery implements Discovery
 {

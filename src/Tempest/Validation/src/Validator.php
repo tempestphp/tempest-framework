@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation;
 
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
 

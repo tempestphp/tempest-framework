@@ -12,7 +12,7 @@ use ReflectionException;
 use function Tempest\get;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\CastWith;
-use Tempest\Support\Reflection\PropertyReflector;
+use Tempest\Reflection\PropertyReflector;
 
 final readonly class CasterFactory
 {

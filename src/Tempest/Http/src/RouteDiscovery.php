@@ -6,7 +6,7 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Support\VarExport\VarExportPhpFile;
 
 final readonly class RouteDiscovery implements Discovery

@@ -5,9 +5,6 @@
         "php": "^8.3"
     },
     "autoload": {
-        "files": [
-            "src/functions.php"
-        ],
         "psr-4": {
             "Tempest\\Support\\": "src"
         }

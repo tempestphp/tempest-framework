@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\Exceptions\DuplicateViewComponent;
 use Tempest\View\Renderers\TempestViewRenderer;

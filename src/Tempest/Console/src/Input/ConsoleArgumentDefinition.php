@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Input;
 
 use Tempest\Console\ConsoleArgument;
-use Tempest\Support\Reflection\ParameterReflector;
+use Tempest\Reflection\ParameterReflector;
 
 final readonly class ConsoleArgumentDefinition
 {

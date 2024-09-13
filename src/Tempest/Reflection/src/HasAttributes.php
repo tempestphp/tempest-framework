@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Reflection;
+namespace Tempest\Reflection;
 
 use ReflectionAttribute as PHPReflectionAttribute;
 use ReflectionClass as PHPReflectionClass;

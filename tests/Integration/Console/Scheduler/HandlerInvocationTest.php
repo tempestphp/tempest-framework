@@ -9,7 +9,7 @@ use ReflectionMethod;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\ScheduledInvocation;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 /**
  * @internal

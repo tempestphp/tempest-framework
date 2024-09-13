@@ -6,8 +6,8 @@ namespace Tempest {
 
     use ReflectionClass as PHPReflectionClass;
     use ReflectionProperty as PHPReflectionProperty;
-    use Tempest\Support\Reflection\ClassReflector;
-    use Tempest\Support\Reflection\PropertyReflector;
+    use Tempest\Reflection\ClassReflector;
+    use Tempest\Reflection\PropertyReflector;
 
     function reflect(mixed $classOrProperty, ?string $propertyName = null): ClassReflector|PropertyReflector
     {

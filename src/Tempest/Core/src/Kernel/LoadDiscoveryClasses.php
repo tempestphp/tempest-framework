@@ -12,7 +12,7 @@ use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
 use Tempest\Core\Kernel;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 use Throwable;
 
 /** @internal */

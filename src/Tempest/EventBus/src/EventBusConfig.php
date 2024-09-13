@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus;
 
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class EventBusConfig
 {

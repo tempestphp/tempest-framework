@@ -8,7 +8,7 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
-use Tempest\Support\Reflection\ClassReflector;
+use Tempest\Reflection\ClassReflector;
 
 final readonly class ModelToQueryMapper implements Mapper
 {

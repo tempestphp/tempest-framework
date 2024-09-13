@@ -9,7 +9,7 @@ use Tempest\Console\Middleware\HelpMiddleware;
 use Tempest\Console\Middleware\InvalidCommandMiddleware;
 use Tempest\Console\Middleware\OverviewMiddleware;
 use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 final class ConsoleConfig
 {

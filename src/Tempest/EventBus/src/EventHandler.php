@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Attribute;
-use Tempest\Support\Reflection\MethodReflector;
+use Tempest\Reflection\MethodReflector;
 
 #[Attribute]
 final class EventHandler

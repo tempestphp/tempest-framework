@@ -8,8 +8,8 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
-use Tempest\Support\Reflection\ClassReflector;
-use Tempest\Support\Reflection\PropertyReflector;
+use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 
 final readonly class QueryToModelMapper implements Mapper
 {
