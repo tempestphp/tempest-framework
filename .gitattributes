@@ -1,7 +1,6 @@
 # Exclude build/test files from the release
+/bin/                     export-ignore
 .github/                  export-ignore
-bin/                      export-ignore
-!src/Tempest/**/bin/**    export-ignore
 tests/                    export-ignore
 .gitattributes            export-ignore
 .gitignore                export-ignore
