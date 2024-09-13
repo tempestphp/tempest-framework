@@ -3,23 +3,51 @@
 Tempest is a PHP framework that gets out of your way . Its design philosophy is that developers should write as little framework-related code as possible, so that they can focus on application code instead. Zero config, zero overhead. This is Tempest:
 
 ```php
-final class BookController
+final readonly class BookController
 {
-    #[Get('/blog')]
-    public function index() { /* … */ }
+    #[Get('/books/{book}')]
+    public function show(Book $book): Response
+    {
+        return new Ok($book);
+    }
+
+    #[Post('/books')]
+    public function store(CreateBookRequest $request): Response
+    {
+        $book = map($request)->to(Book::class)->save();
+
+        return new Redirect([self::class, 'show'], book: $book->id);
+    }
     
-    #[Get('/blog/{post}')]
-    public function show(Post $post) { /* … */ }
+    // …
 }
 ```
 
 ```php
-final class RssSyncCommand
+final readonly class MigrateUpCommand
 {
-    use HasConsole;
+    public function __construct(
+        private Console $console,
+        private MigrationManager $migrationManager,
+    ) {}
 
-    #[ConsoleCommand('rss:sync')]
-    public function __invoke(bool $force = false)  { /* … */ }
+    #[ConsoleCommand(
+        name: 'migrate:up',
+        description: 'Run all new migrations',
+        middleware: [ForceMiddleware::class, CautionMiddleware::class],
+    )]
+    public function __invoke(): void
+    {
+        $this->migrationManager->up();
+
+        $this->console->success("Everything migrated");
+    }
+
+    #[EventHandler]
+    public function onMigrationMigrated(MigrationMigrated $migrationMigrated): void
+    {
+        $this->console->writeln("- {$migrationMigrated->name}");
+    }
 }
 ```
 
