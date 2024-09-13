@@ -98,7 +98,7 @@
         }
     },
     "bin": [
-        "src/Tempest/Console/tempest"
+        "src/Tempest/Console/bin/tempest"
     ],
     "config": {
         "allow-plugins": {
