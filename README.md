@@ -24,6 +24,16 @@ final readonly class RssSyncCommand
 }
 ```
 
+```
+composer require tempest/framework
+```
+
+or 
+
+```
+composer create-project tempest/app
+```
+
 # Contributing
 We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](.github/CONTRIBUTING.md) and then head on over to the issues page to see some ways you might help out!
 
