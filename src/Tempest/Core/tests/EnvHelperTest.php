@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class EnvHelperTest extends IntegrationTestCase
+final class EnvHelperTest extends IntegrationTestCase
 {
     public function test_env_fallback_value(): void
     {

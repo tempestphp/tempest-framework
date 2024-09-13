@@ -7,7 +7,7 @@ namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 
-class Author implements DatabaseModel
+final class Author implements DatabaseModel
 {
     use IsDatabaseModel;
 

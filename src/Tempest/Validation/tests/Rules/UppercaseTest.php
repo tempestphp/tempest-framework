@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Uppercase;
  * @internal
  * @small
  */
-class UppercaseTest extends TestCase
+final class UppercaseTest extends TestCase
 {
     public function test_uppercase(): void
     {

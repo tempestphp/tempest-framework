@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ServerErrorTest extends FrameworkIntegrationTestCase
+final class ServerErrorTest extends FrameworkIntegrationTestCase
 {
     public function test_server_error(): void
     {

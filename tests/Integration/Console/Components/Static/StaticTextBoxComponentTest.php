@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
+final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_text_box(): void
     {

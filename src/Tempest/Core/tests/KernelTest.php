@@ -14,7 +14,7 @@ use Tests\Tempest\Fixtures\TestDependency;
  * @internal
  * @small
  */
-class KernelTest extends TestCase
+final class KernelTest extends TestCase
 {
     public function test_discovery_boot(): void
     {

@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class RunTaskCommandTest extends FrameworkIntegrationTestCase
+final class RunTaskCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_run_task(): void
     {

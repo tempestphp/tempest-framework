@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class QueryMapperTest extends FrameworkIntegrationTestCase
+final class QueryMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_create_query(): void
     {

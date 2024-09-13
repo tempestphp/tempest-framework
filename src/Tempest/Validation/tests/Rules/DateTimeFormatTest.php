@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\DateTimeFormat;
  * @internal
  * @small
  */
-class DateTimeFormatTest extends TestCase
+final class DateTimeFormatTest extends TestCase
 {
     public function test_datetime_format(): void
     {

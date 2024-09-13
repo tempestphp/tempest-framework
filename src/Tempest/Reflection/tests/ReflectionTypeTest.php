@@ -17,7 +17,7 @@ use Tests\Tempest\Fixtures\Models\C;
  * @internal
  * @small
  */
-class ReflectionTypeTest extends TestCase
+final class ReflectionTypeTest extends TestCase
 {
     #[DataProvider('data')]
     public function test_accepts(string $type, mixed $input, bool $expected): void

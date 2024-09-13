@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
+final class StaticProgressBarComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_progress_bar(): void
     {

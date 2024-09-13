@@ -42,6 +42,7 @@ final readonly class TypeReflector implements Reflector
 
     public function accepts(mixed $input): bool
     {
+        // TODO: We really need to get rid of this.
         $test = eval(sprintf('return fn (%s $input) => $input;', $this->definition));
 
         try {

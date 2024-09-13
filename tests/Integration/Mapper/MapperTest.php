@@ -23,7 +23,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
  * @internal
  * @small
  */
-class MapperTest extends FrameworkIntegrationTestCase
+final class MapperTest extends FrameworkIntegrationTestCase
 {
     public function test_make_object_from_class_string(): void
     {

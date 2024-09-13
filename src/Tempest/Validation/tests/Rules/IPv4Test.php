@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\IPv4;
  * @internal
  * @small
  */
-class IPv4Test extends TestCase
+final class IPv4Test extends TestCase
 {
     public function test_ipv4_address(): void
     {

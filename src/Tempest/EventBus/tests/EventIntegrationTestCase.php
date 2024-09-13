@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-class EventIntegrationTestCase extends IntegrationTestCase
+final class EventIntegrationTestCase extends IntegrationTestCase
 {
     public function test_event(): void
     {

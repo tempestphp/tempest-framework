@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\AlphaNumeric;
  * @internal
  * @small
  */
-class AlphaNumericTest extends TestCase
+final class AlphaNumericTest extends TestCase
 {
     public function test_alphanumeric(): void
     {

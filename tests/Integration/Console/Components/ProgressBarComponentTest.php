@@ -11,7 +11,7 @@ use Tempest\Console\Components\Interactive\ProgressBarComponent;
  * @internal
  * @small
  */
-class ProgressBarComponentTest extends TestCase
+final class ProgressBarComponentTest extends TestCase
 {
     public function test_progress_bar_component(): void
     {

@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CommandBusTest extends FrameworkIntegrationTestCase
+final class CommandBusTest extends FrameworkIntegrationTestCase
 {
     public function test_command_handlers_are_auto_discovered(): void
     {

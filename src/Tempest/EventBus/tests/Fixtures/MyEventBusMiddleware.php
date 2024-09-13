@@ -6,7 +6,7 @@ namespace Tempest\EventBus\Tests\Fixtures;
 
 use Tempest\EventBus\EventBusMiddleware;
 
-class MyEventBusMiddleware implements EventBusMiddleware
+final class MyEventBusMiddleware implements EventBusMiddleware
 {
     public static bool $hit = false;
 

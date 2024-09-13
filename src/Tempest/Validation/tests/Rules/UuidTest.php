@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Uuid;
  * @internal
  * @small
  */
-class UuidTest extends TestCase
+final class UuidTest extends TestCase
 {
     public function test_uuid(): void
     {

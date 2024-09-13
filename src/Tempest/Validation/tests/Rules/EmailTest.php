@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Email;
  * @internal
  * @small
  */
-class EmailTest extends TestCase
+final class EmailTest extends TestCase
 {
     public function test_email(): void
     {

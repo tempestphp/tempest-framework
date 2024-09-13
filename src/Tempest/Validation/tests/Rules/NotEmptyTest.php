@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\NotEmpty;
  * @internal
  * @small
  */
-class NotEmptyTest extends TestCase
+final class NotEmptyTest extends TestCase
 {
     public function test_not_empty(): void
     {

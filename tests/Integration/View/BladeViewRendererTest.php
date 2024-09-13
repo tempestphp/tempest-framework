@@ -15,7 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class BladeViewRendererTest extends FrameworkIntegrationTestCase
+final class BladeViewRendererTest extends FrameworkIntegrationTestCase
 {
     public function test_blade(): void
     {

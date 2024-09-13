@@ -8,7 +8,7 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Validation\Rules\Length;
 
-class Book implements DatabaseModel
+final class Book implements DatabaseModel
 {
     use IsDatabaseModel;
 

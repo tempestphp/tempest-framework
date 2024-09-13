@@ -21,7 +21,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class RequestTest extends FrameworkIntegrationTestCase
+final class RequestTest extends FrameworkIntegrationTestCase
 {
     public function test_request_get(): void
     {

@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class TextBoxComponentTest extends FrameworkIntegrationTestCase
+final class TextBoxComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_text_question_component(): void
     {

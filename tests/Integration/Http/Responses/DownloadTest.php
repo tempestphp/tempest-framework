@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class DownloadTest extends FrameworkIntegrationTestCase
+final class DownloadTest extends FrameworkIntegrationTestCase
 {
     public function test_download(): void
     {

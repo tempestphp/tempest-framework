@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
+final class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_it_clears_discovery_cache(): void
     {

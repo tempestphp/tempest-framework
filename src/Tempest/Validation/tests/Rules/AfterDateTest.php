@@ -13,7 +13,7 @@ use Tempest\Validation\Rules\AfterDate;
  * @internal
  * @small
  */
-class AfterDateTest extends TestCase
+final class AfterDateTest extends TestCase
 {
     public function test_it_works_without_inclusive_param(): void
     {

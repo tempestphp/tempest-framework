@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-class ContainerObjectD
+final class ContainerObjectD
 {
     public function __construct(public string $prop)
     {

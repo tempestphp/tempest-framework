@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Console\Fixtures;
 
 use Tempest\Console\ConsoleCommand;
 
-class MyConsole
+final class MyConsole
 {
     #[ConsoleCommand(
         name: 'test',
@@ -16,6 +16,6 @@ class MyConsole
         string $path,
         int    $times = 1,
         bool   $force = false,
-    ) {
+    ): void {
     }
 }

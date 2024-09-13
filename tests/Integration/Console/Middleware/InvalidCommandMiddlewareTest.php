@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
+final class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_provide_missing_input(): void
     {

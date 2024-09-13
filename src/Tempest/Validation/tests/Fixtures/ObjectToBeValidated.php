@@ -6,7 +6,7 @@ namespace Tempest\Validation\Tests\Fixtures;
 
 use Tempest\Validation\Rules\Length;
 
-class ObjectToBeValidated
+final class ObjectToBeValidated
 {
     public function __construct(
         #[Length(min: 2, max: 3)]

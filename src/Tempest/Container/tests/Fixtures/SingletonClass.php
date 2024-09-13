@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-class SingletonClass
+final class SingletonClass
 {
     public static int $count = 0;
 

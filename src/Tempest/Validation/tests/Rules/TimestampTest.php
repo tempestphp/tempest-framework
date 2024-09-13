@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Timestamp;
  * @internal
  * @small
  */
-class TimestampTest extends TestCase
+final class TimestampTest extends TestCase
 {
     public function test_timestamp(): void
     {

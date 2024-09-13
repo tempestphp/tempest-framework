@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\PhoneNumber;
  * @internal
  * @small
  */
-class PhoneNumberTest extends TestCase
+final class PhoneNumberTest extends TestCase
 {
     public function test_phone_number(): void
     {

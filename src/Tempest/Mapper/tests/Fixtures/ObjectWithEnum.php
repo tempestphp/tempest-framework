@@ -6,7 +6,7 @@ namespace Tempest\Mapper\Tests\Fixtures;
 
 use Tempest\Http\Method;
 
-class ObjectWithEnum
+final class ObjectWithEnum
 {
     public Method $method;
 }

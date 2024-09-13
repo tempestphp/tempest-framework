@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Lowercase;
  * @internal
  * @small
  */
-class LowercaseTest extends TestCase
+final class LowercaseTest extends TestCase
 {
     public function test_lowercase(): void
     {

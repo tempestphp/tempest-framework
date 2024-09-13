@@ -10,7 +10,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
 
-readonly class FooMigration implements Migration
+final readonly class FooMigration implements Migration
 {
     public function getName(): string
     {

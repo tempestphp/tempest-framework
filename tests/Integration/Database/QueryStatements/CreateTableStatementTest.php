@@ -14,7 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CreateTableStatementTest extends FrameworkIntegrationTestCase
+final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {

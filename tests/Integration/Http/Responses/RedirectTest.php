@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class RedirectTest extends FrameworkIntegrationTestCase
+final class RedirectTest extends FrameworkIntegrationTestCase
 {
     public function test_redirect(): void
     {

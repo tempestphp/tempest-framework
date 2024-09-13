@@ -40,7 +40,7 @@ use function Tempest\reflect;
  * @internal
  * @small
  */
-class ContainerTest extends TestCase
+final class ContainerTest extends TestCase
 {
     public function test_get_with_autowire(): void
     {

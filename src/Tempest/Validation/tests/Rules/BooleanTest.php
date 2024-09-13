@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Boolean;
  * @internal
  * @small
  */
-class BooleanTest extends TestCase
+final class BooleanTest extends TestCase
 {
     public function test_boolean(): void
     {

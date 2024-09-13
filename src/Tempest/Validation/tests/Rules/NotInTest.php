@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\NotIn;
  * @internal
  * @small
  */
-class NotInTest extends TestCase
+final class NotInTest extends TestCase
 {
     public function test_it_works(): void
     {

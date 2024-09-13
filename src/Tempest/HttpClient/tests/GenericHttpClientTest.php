@@ -17,7 +17,7 @@ use Tempest\HttpClient\HttpClient;
  * @internal
  * @small
  */
-class GenericHttpClientTest extends TestCase
+final class GenericHttpClientTest extends TestCase
 {
     private HttpClient $client;
 

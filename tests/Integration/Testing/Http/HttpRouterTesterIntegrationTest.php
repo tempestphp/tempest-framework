@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
+final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
 {
     public function test_get_requests(): void
     {

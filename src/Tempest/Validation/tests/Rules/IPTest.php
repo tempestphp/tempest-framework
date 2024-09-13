@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\IP;
  * @internal
  * @small
  */
-class IPTest extends TestCase
+final class IPTest extends TestCase
 {
     public function test_ip_address(): void
     {

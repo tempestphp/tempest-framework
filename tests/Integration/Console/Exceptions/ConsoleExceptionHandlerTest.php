@@ -19,7 +19,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
+final class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
 {
     public function test_render_console_exception(): void
     {

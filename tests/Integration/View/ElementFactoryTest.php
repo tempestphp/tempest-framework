@@ -15,7 +15,7 @@ use Tempest\View\Elements\TextElement;
  * @internal
  * @small
  */
-class ElementFactoryTest extends TestCase
+final class ElementFactoryTest extends TestCase
 {
     public function test_parental_relations(): void
     {

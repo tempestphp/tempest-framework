@@ -11,7 +11,7 @@ use function Tempest\reflect;
 use Tempest\Reflection\ClassReflector;
 
 /** @phpstan-ignore-next-line */
-readonly class ModelDefinition
+final readonly class ModelDefinition
 {
     public function __construct(
         /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */

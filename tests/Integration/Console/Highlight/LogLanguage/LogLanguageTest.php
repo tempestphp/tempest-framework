@@ -13,7 +13,7 @@ use Tempest\Highlight\Highlighter;
  * @internal
  * @small
  */
-class LogLanguageTest extends TestCase
+final class LogLanguageTest extends TestCase
 {
     public function test_language(): void
     {

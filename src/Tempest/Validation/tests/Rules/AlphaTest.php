@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Alpha;
  * @internal
  * @small
  */
-class AlphaTest extends TestCase
+final class AlphaTest extends TestCase
 {
     public function test_alpha(): void
     {

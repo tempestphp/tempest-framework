@@ -15,7 +15,7 @@ use Tempest\Validation\Validator;
  * @internal
  * @small
  */
-class ValidatorTest extends TestCase
+final class ValidatorTest extends TestCase
 {
     public function test_validate(): void
     {

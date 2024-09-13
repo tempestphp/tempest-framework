@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\Url;
  * @internal
  * @small
  */
-class UrlTest extends TestCase
+final class UrlTest extends TestCase
 {
     public function test_url(): void
     {

@@ -11,7 +11,7 @@ use Tempest\Validation\Rules\MultipleOf;
  * @internal
  * @small
  */
-class MultipleOfTest extends TestCase
+final class MultipleOfTest extends TestCase
 {
     public function test_it_works(): void
     {

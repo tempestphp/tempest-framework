@@ -14,7 +14,7 @@ use Tempest\Container\Tests\Fixtures\CircularZ;
  * @internal
  * @small
  */
-class CircularDependencyExceptionTest extends TestCase
+final class CircularDependencyExceptionTest extends TestCase
 {
     public function test_circular_dependency_test(): void
     {

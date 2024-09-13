@@ -11,7 +11,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class QuestionComponentTest extends FrameworkIntegrationTestCase
+final class QuestionComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_question_component(): void
     {

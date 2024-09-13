@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
+final class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_command_specific_middleware(): void
     {

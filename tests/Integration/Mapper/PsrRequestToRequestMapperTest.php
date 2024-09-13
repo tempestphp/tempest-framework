@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
+final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_can_map(): void
     {

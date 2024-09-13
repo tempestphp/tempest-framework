@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
+final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_overview(): void
     {

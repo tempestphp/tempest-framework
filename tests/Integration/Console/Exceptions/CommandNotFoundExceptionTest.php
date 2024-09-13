@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  * @internal
  * @small
  */
-class CommandNotFoundExceptionTest extends FrameworkIntegrationTestCase
+final class CommandNotFoundExceptionTest extends FrameworkIntegrationTestCase
 {
     public function test_console_exception_handler(): void
     {
