@@ -26,7 +26,7 @@ Read how to get started with Tempest [here](https://tempest.stitcher.io).
 
 # Installation
 
-Install Tempest in any project:
+Install Tempest in any project, including existing projects:
 
 ```
 composer require tempest/framework:dev-main
