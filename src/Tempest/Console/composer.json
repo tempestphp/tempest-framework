@@ -8,7 +8,7 @@
         "tempest/container": "self.version",
         "tempest/highlight": "^2.0",
         "tempest/log": "self.version",
-        "tempest/reflector": "self.version",
+        "tempest/reflection": "self.version",
         "tempest/support": "self.version",
         "tempest/validation": "self.version",
         "ext-readline": "*"
