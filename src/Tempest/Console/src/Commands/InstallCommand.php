@@ -54,7 +54,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../../.env.example', $path);
+        copy(__DIR__ . '/../../../../../.env.example', $path);
 
         $this->console->success("{$path} created");
     }
@@ -76,7 +76,7 @@ final readonly class InstallCommand
             return;
         }
 
-        copy(__DIR__ . '/../../../../.env.example', $path);
+        copy(__DIR__ . '/../../../../../.env.example', $path);
 
         $this->console->success("{$path} created");
     }
