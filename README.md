@@ -1,5 +1,4 @@
 # The PHP framework that gets out of your way.
-[![Coverage Status](https://coveralls.io/repos/github/tempestphp/tempest-framework/badge.svg?branch=main)](https://coveralls.io/github/tempestphp/tempest-framework?branch=main)
 
 Tempest is a PHP framework that gets out of your way . Its design philosophy is that developers should write as little framework-related code as possible, so that they can focus on application code instead. Zero config, zero overhead. This is Tempest:
 
