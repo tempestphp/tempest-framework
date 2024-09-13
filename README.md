@@ -11,7 +11,9 @@ final readonly class BookController
     #[Get('/blog/{post}')]
     public function show(Post $post) { /* … */ }
 }
+```
 
+```php
 final readonly class RssSyncCommand
 {
     use HasConsole;
