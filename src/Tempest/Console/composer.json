@@ -14,8 +14,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\Console\\": ""
+            "Tempest\\Console\\": "src"
         }
     },
-    "bin": ["tempest"]
+    "bin": ["bin/tempest"]
 }

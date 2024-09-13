@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tempest\\HttpClient\\": ""
+            "Tempest\\HttpClient\\": "src"
         }
     },
     "config": {
