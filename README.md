@@ -25,13 +25,13 @@ final readonly class RssSyncCommand
 ```
 
 ```
-composer require tempest/framework
+composer require tempest/framework:dev-main
 ```
 
 or 
 
 ```
-composer create-project tempest/app <name>
+composer create-project tempest/app:dev-main <name>
 ```
 
 # Contributing
