@@ -63,7 +63,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require -g phpunit/phpunit
+          composer global require phpunit/phpunit
           cd "${{ matrix.package.directory }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
