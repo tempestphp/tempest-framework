@@ -107,6 +107,8 @@ Whenever possible, classes should be `final` and `readonly`. This practice promo
 _Resources_
 * [Why I use final](https://www.youtube.com/watch?v=HiD6CwWq5Ds&ab_channel=PHPAnnotated)
 
+---
+
 #### Acronym Casing
 Tempest uses a modified version of the [.NET best practices](https://learn.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms229043(v=vs.100)?redirectedfrom=MSDN) for acronym casing. Please see below for our guidelines:
 
@@ -118,6 +120,8 @@ A class named `UuidGenerator` is an example of a long acronym (Uuid) used as the
 
 __Do not capitalize any of the characters of any acronyms, whatever their length, at the beginning of a camel-cased identifier.__
 A class named `Uuid` is an example of a long acronym (Uuid) used as the first word of a camel-cased identifier. A parameter named `dbUsername` is an example of a short acronym (db) used as the first word of a camel-cased identifier.
+
+---
 
 #### Validaton Class Formatting
 1. __Use of `final` and `readonly`__: Ensure that validation rules are declared as [final and readonly](#final-and-readonly-as-a-default) whenever possible. This practice promotes immutability and prevents inadvertent changes to the validation logic.
