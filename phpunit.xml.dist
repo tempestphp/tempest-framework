@@ -24,7 +24,7 @@
       <directory suffix=".php">src</directory>
     </include>
     <exclude>
-      <directory suffix="Test.php">src</directory>
+      <directory suffix=".php">src/Tempest/**/tests</directory>
       <directory suffix=".cache.php">src</directory>
     </exclude>
   </source>
