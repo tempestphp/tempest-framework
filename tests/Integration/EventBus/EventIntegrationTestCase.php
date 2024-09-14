@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\EventBus\Tests;
+namespace Tests\Tempest\Integration\EventBus;
 
 use function Tempest\event;
+use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tests\Tempest\Fixtures\Events\ItHappened;
-use Tests\Tempest\Fixtures\Events\MyEventHandler;
 use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**

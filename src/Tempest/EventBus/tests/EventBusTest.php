@@ -11,9 +11,9 @@ use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\EventHandler;
 use Tempest\EventBus\GenericEventBus;
 use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
+use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Fixtures\Events\ItHappened;
-use Tests\Tempest\Fixtures\Events\MyEventHandler;
 
 /**
  * @internal

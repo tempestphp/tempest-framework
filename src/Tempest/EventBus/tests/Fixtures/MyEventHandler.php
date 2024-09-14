@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Fixtures\Events;
+namespace Tempest\EventBus\Tests\Fixtures;
 
 use Tempest\EventBus\EventHandler;
+use Tests\Tempest\Fixtures\Events\ItHappened;
 
 final class MyEventHandler
 {
