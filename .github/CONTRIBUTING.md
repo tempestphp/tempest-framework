@@ -3,15 +3,15 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
 
 ## How do I...
 * Ask about...
-  * [An Error or Bug 🐞](#report-an-error-or-bug)
-  * [A Feature 💡](#request-a-feature)
+  * [🐞 An Error or Bug](#report-an-error-or-bug)
+  * [💡 A Feature](#request-a-feature)
 * Make...
-  * [A Contribution to Documentation 📖]()
-  * [A Contribution to the Code 🔨]()
+  * [📖 A Contribution to Documentation]()
+  * [🔨 A Contribution to the Code]()
 * Manage...
-  * [Issues and Pull Requests ❓]()
-  * [Sub-split packages 📦]()
-  * [Releases ✅]()
+  * [❓ Issues and Pull Requests]()
+  * [📦 Sub-split packages]()
+  * [✅ Releases]()
 
 ## Report an Error or Bug
 To report an error or a bug, please:
