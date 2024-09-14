@@ -44,7 +44,7 @@ jobs:
         stability:
           - prefer-stable
 
-    name: Run Tests - P${{ matrix.php }} - ${{ matrix.package }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: Run Tests - P${{ matrix.php }} - ${{ matrix.package.name }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
