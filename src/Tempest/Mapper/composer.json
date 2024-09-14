@@ -1,7 +1,7 @@
 {
     "name": "tempest/mapper",
     "license": "MIT",
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
         "tempest/validation": "self.version",
