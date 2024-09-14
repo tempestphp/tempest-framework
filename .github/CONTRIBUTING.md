@@ -88,17 +88,26 @@ Once a pull request has been opened, the Tempest team will:
 * Install Composer
 * [Fork the Tempest repository.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
  
-Then in your terminal:
-* `cd /path/to/your/clone`
-* `composer update`
+Then in your terminal run:
+```shell
+cd /path/to/your/clone
+composer update
+```
 
 You're ready to get started!
 
----
+### Styling Decisions
+Tempest uses a modified version of PSR-12. We automate the entire styling process because we know everyone is used to different standards and workflows. To see some of the rules we enforce, check out our [CS-Fixer](https://github.com/tempestphp/tempest-framework/blob/main/.php-cs-fixer.dist.php) and [Rector](https://github.com/tempestphp/tempest-framework/blob/main/rector.php) configurations. 
 
-Please see below for some general guidelines relating to specific components of the framework.
+The following outlines some other guidelines we have established for Tempest.
 
-## Acronym Casing
+#### Final and Readonly as a default
+Whenever possible, classes should be `final` and `readonly`. This practice promotes immutability and prevents inadvertent changes to logic.
+
+**Resources**
+* [Why I use final](https://www.youtube.com/watch?v=HiD6CwWq5Ds&ab_channel=PHPAnnotated)
+
+#### Acronym Casing
 Tempest uses a modified version of the [.NET best practices](https://learn.microsoft.com/en-us/previous-versions/dotnet/netframework-4.0/ms229043(v=vs.100)?redirectedfrom=MSDN) for acronym casing. Please see below for our guidelines:
 
 __Do capitalize all characters of two to three character acronyms, except the first word of a camel-cased identifier.__
@@ -110,12 +119,8 @@ A class named `UuidGenerator` is an example of a long acronym (Uuid) used as the
 __Do not capitalize any of the characters of any acronyms, whatever their length, at the beginning of a camel-cased identifier.__
 A class named `Uuid` is an example of a long acronym (Uuid) used as the first word of a camel-cased identifier. A parameter named `dbUsername` is an example of a short acronym (db) used as the first word of a camel-cased identifier.
 
-## Validation Rules
-Validation rules should be `final` and `readonly`. The message returned by a validation rule should not include ending
-punctuation.
-
-### Best Practices
-1. __Use of `final` and `readonly`__: Ensure that validation rules are declared as final and readonly whenever possible. This practice promotes immutability and prevents inadvertent changes to the validation logic.
+#### Validaton Class Formatting
+1. __Use of `final` and `readonly`__: Ensure that validation rules are declared as [final and readonly](#final-and-readonly-as-a-default) whenever possible. This practice promotes immutability and prevents inadvertent changes to the validation logic.
 2. __Error Message Formatting__:
     - __Avoid Ending Punctuation__: When crafting error messages for validation rules, refrain from including ending punctuation such as periods, exclamation marks, or question marks. This helps in maintaining a uniform style and prevents inconsistency in error message presentation.
 
