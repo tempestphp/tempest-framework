@@ -1,0 +1,70 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  get_packages:
+    name: Get Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - uses: actions/checkout@v2
+
+      - name: Get Packages
+        id: get_json
+        run: echo "::set-output name=json::$(bin/get-packages)"
+
+      - name: Output Packages
+        run: echo "${{ steps.get_json.outputs.json }}"
+    outputs:
+      matrix: ${{ steps.get_json.outputs.json }}
+
+  phpunit:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+        package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
+        php:
+          - 8.3
+          - 8.4
+        stability:
+          - prefer-stable
+
+    name: Run Tests - P${{ matrix.php }} - ${{ matrix.package }} - ${{ matrix.stability }} - ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          coverage: pcov
+
+      - name: Setup problem matchers
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Install dependencies
+        run: |
+          cd "${{ matrix.package.directory }}"
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
