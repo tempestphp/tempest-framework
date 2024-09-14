@@ -8,10 +8,14 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
 * Make...
   * [📖  A Contribution to Documentation](#contribute-documentation)
   * [🔨  A Contribution to the Code](#contribute-code)
+
+<!--
+TODO: Add these sections.
 * Manage...
   * [❓  Issues and Pull Requests]()
   * [📦  Sub-split packages]()
   * [✅  Releases]()
+-->
 
 ## Report an Error or Bug
 To report an error or a bug, please:
