@@ -53,7 +53,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
           coverage: pcov
 
       - name: Setup problem matchers
@@ -63,9 +63,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          composer require -g phpunit/phpunit
           cd "${{ matrix.package.directory }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: ~/vendor/bin/phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
+        run: phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
