@@ -32,7 +32,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: get_packages
     strategy:
-      fail-fast: true
       matrix:
         os:
           - ubuntu-latest
