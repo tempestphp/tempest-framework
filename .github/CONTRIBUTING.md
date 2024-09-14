@@ -6,7 +6,7 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
   * [🐞  An Error or Bug](#report-an-error-or-bug)
   * [💡  A Feature](#request-a-feature)
 * Make...
-  * [📖  A Contribution to Documentation]()
+  * [📖  A Contribution to Documentation](#contribute-documentation)
   * [🔨  A Contribution to the Code]()
 * Manage...
   * [❓  Issues and Pull Requests]()
@@ -43,8 +43,26 @@ Once the feature request has been opened, the Tempest team will:
 * Ask any clarifying question to help better understand the use case.
 * If the feature requested is accepted, the Tempest team will assign the "Uncharted Waters" label. A Tempest team member or a member of the community can contribute the code for this.
 
-> [!NOTE]
+> [!IMPORTANT]
 > We welcome all contributions and greatly value your time and effort. To ensure your work aligns with Tempest's vision and avoids unnecessary effort, we aim to provide clear guidance and feedback throughout the process.
+
+## Contribute Documentation
+Documentation is how users learn about the framework, and developers begin to understand how Tempest works under the hood. It's critical to everything we do! Thank you in advance for your assistance in ensuring Tempest documentation is extensive, user-friendly, and up-to-date.
+
+> [!NOTE]
+> We welcome contributions of any size! Feel free to submit a pull request, even if it's just fixing a typo or adding a sentence.
+
+To contribute to Tempest's documentation, please:
+- Head over to the [Tempest docs repository](https://github.com/tempestphp/tempest-docs) to fork the project.
+- Add or edit any relevant documentation in a manner consistent with the rest of the documentation.
+- Re-read what you wrote and run it through a spell checker.
+- Open a pull request with your changes.
+
+Once a pull request has been opened, the Tempest team will:
+* Use GitHub reviews to review your pull request.
+* If necessary, ask for revisions.
+* If we decide to pass on your pull request, we thank you for your contribution and explain our decision. We appreciate all the time contributors put into Tempest!
+* If your pull request is accepted, we will mark it as such and merge it into the project.
 
 ---
 
