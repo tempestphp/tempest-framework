@@ -3,7 +3,8 @@
     "require": {
         "php": "^8.3",
         "tempest/core": "self.version",
-        "tempest/container": "self.version"
+        "tempest/container": "self.version",
+        "tempest/reflection": "self.version"
     },
     "autoload": {
         "files": [
