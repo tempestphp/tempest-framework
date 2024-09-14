@@ -2,8 +2,9 @@
 Welcome aboard! We're excited that you are interested in contributing to the Tempest framework. We value all contributions to the project and have assembled the following resources to help you get started. Thanks for being a contributor!
 
 ## How do I...
-* 🐞 [Report an Error or Bug](#report-an-error-or-bug)
-* 💡 [Suggest a Feature](#request-a-feature)
+* Ask or Say Something
+  * 🐞 [Report an Error or Bug](#report-an-error-or-bug)
+  * 💡 [Suggest a Feature](#request-a-feature)
 
 ## Report an Error or Bug
 To report an error or a bug, please:
