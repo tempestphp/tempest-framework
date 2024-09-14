@@ -13,6 +13,11 @@
             "Tempest\\CommandBus\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\CommandBus\\Tests\\": "tests"
+        }
+    },
     "license": "MIT",
     "minimum-stability": "dev"
 }
