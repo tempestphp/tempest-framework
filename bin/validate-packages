@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+$packages = json_decode(
+    json: exec('./get-packages'),
+    associative: true
+);
+
+function joinPaths(string $path, string $part): string
+{
+    return $path . DIRECTORY_SEPARATOR . $part;
+}
+
+function checkPackage(array $package): void
+{
+    $expectedFiles = [
+        '.gitattributes',
+        'composer.json',
+        'LICENCE.md',
+    ];
+
+    foreach ($expectedFiles as $file) {
+        $realPath = joinPaths($package['directory'], $file);
+
+        if (! file_exists($realPath)) {
+            throw new LogicException(
+                sprintf('Expecting [%s] to exist for package [%s].', $file, $package['package'])
+            );
+        }
+    }
+}
+
+foreach ($packages as $package) {
+    checkPackage($package);
+}
