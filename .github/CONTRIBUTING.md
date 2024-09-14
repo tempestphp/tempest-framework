@@ -7,7 +7,7 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
   * [💡  A Feature](#request-a-feature)
 * Make...
   * [📖  A Contribution to Documentation](#contribute-documentation)
-  * [🔨  A Contribution to the Code]()
+  * [🔨  A Contribution to the Code](#contribute-code)
 * Manage...
   * [❓  Issues and Pull Requests]()
   * [📦  Sub-split packages]()
@@ -62,23 +62,39 @@ Once a pull request has been opened, the Tempest team will:
 * Use GitHub reviews to review your pull request.
 * If necessary, ask for revisions.
 * If we decide to pass on your pull request, we will thank you for your contribution and explain our decision. We appreciate all the time contributors put into Tempest!
-* If your pull request is accepted, we will mark it as such and merge it into the project.
+* If your pull request is accepted, we will mark it as such and merge it into the project. It will be released in the next tagged version! 🎉
 
 ## Contribute Code
-We cannot wait to get your pull request! To make the most of your time, please ensure that any contributions pertain to an approved feature request or a confirmed bug. This helps us focus on the vision for Tempest and ensuring the best developer experience.
+So you want to dive into the code! We cannot wait to get your pull request! To make the most of your time, please ensure that any contributions pertain to an approved feature request or a confirmed bug. This helps us focus on the vision for Tempest and ensuring the best developer experience.
 
 To contribute to Tempest's code, please:
-* [Setup Tempest Locally](#setup-tempest-locally)
+* [Setup Tempest Locally](#setting-up-tempest-locally)
 * Make the relevant code changes.
-* Run `composer qa` to ensure you are meeting the necessary style guidelines.
-* Push your changes to your fork and make a pull request.
+* Write tests that verify that your contribution works as expected.
+* Run `composer qa` to ensure you are adhering to our style guidelines.
+* Document your changes in the CHANGELOG following the [Keep a Changelog](https://keepachangelog.com) format.
+* Go to https://github.com/tempestphp/tempest-framework/pulls and create a pull request with your changes.
+* If your pull request is connected to an open issue, add a line in your description that says `Fixes: #xxx`, where `#xxx` is the number of the issue you're fixing.
 
-### Setup Tempest Locally
-* Go to the [Tempest GitHub repository](https://github.com/tempestphp/tempest-framework) and click the **Fork** button in the top-right corner of the page. This creates a copy of the project on your GitHub account.
-  * See the [GitHub Documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) for more information on forking a repository.
-* Clone your forked repository by running `git clone git@github.com:{my_github_username}/tempest-framework.git`.
-* Enter the Tempest directory (`cd tempest-framework`) and install the composer dependencies (`composer update`).
-* You're ready to get started!
+Once a pull request has been opened, the Tempest team will:
+* Use GitHub reviews to review your pull request.
+* Ensure all CI pipelines are passing.
+* If necessary, ask for revisions.
+* If we decide to pass on your pull request, we will thank you for your contribution and explain our decision. We appreciate all the time contributors put into Tempest!
+* If your pull request is accepted, we will mark it as such and merge it into the project. It will be released in the next tagged version! 🎉
+
+### Setting up Tempest Locally
+* Install PHP
+* Install Composer
+* [Fork the Tempest repository.](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo)
+ 
+Then in your terminal:
+* `cd /path/to/your/clone`
+* `composer update`
+
+You're ready to get started!
+
+---
 
 Please see below for some general guidelines relating to specific components of the framework.
 
