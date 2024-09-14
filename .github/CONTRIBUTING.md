@@ -3,8 +3,8 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
 
 ## How do I...
 * Ask or Say Something
-  * [Report an Error or Bug 🐞](#report-an-error-or-bug)
-  * [Suggest a Feature 💡](#request-a-feature)
+  * [🐞 Report an Error or Bug](#report-an-error-or-bug)
+  * [💡 Suggest a Feature](#request-a-feature)
 
 ## Report an Error or Bug
 To report an error or a bug, please:
