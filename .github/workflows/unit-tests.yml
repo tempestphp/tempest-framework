@@ -63,9 +63,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
           cd "${{ matrix.package.directory }}"
+          composer global require phpunit/phpunit
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: ./vendor/bin/phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
+        run: phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
