@@ -8,6 +8,10 @@ Welcome aboard! We're excited that you are interested in contributing to the Tem
 * Make...
   * [A Contribution to Documentation 📖]()
   * [A Contribution to the Code 🔨]()
+* Manage...
+  * [Issues and Pull Requests ❓]()
+  * [Sub-split packages 📦]()
+  * [Releases ✅]()
 
 ## Report an Error or Bug
 To report an error or a bug, please:
