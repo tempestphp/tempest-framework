@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core\Tests;
+namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Tempest\env;
