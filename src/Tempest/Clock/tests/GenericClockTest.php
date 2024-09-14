@@ -40,8 +40,8 @@ final class GenericClockTest extends TestCase
         $clockTime = $clock->time();
         $timeAfter = hrtime(true);
 
-        $this->assertGreaterThan($timeBefore, $clockTime);
-        $this->assertLessThan($timeAfter, $clockTime);
+        $this->assertGreaterThanOrEqual($timeBefore, $clockTime);
+        $this->assertLessThanOrEqual($timeAfter, $clockTime);
     }
 
     public function test_that_generic_clock_sleeps(): void

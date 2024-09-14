@@ -63,6 +63,7 @@
         "tempest/validation": "self.version",
         "tempest/view": "self.version"
     },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Tempest\\Clock\\": "src/Tempest/Clock/src/",
