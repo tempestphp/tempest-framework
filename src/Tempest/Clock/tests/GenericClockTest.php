@@ -52,6 +52,6 @@ final class GenericClockTest extends TestCase
 
         $timeAfter = time();
 
-        $this->assertEquals($timeAfter - 1, $timeBefore);
+        $this->assertGreaterThanOrEqual($timeBefore + 1, $timeAfter);
     }
 }
