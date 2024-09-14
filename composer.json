@@ -40,7 +40,7 @@
         "php-http/mock-client": "^1.6",
         "phpat/phpat": "^0.10.14",
         "phpstan/phpstan": "^1.10.0",
-        "phpunit/phpunit": "^10.2",
+        "phpunit/phpunit": "^11.3.5",
         "rector/rector": "^1.2",
         "spaze/phpstan-disallowed-calls": "^3.1",
         "symplify/monorepo-builder": "^11.2"
