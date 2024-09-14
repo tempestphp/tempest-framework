@@ -34,6 +34,7 @@
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
         "friendsofphp/php-cs-fixer": "^3.21",
+        "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
         "nyholm/psr7": "^1.8",
