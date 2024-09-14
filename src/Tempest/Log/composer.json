@@ -1,6 +1,7 @@
 {
     "name": "tempest/log",
     "license": "MIT",
+    "minimum-stability": "dev"
     "require": {
         "php": "^8.3",
         "monolog/monolog": "^3.7.0",

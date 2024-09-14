@@ -1,6 +1,6 @@
 {
     "name": "tempest/http-client",
-    "license": "MIT",
+    ,
     "require": {
         "php": "^8.3",
         "php-http/discovery": "^1.19.2",

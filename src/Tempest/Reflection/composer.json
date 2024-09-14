@@ -1,6 +1,7 @@
 {
     "name": "tempest/reflection",
     "license": "MIT",
+    "minimum-stability": "dev"
     "require": {
         "php": "^8.3"
     },

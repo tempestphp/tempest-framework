@@ -1,6 +1,7 @@
 {
     "name": "tempest/validation",
     "license": "MIT",
+    "minimum-stability": "dev"
     "require": {
         "php": "^8.3",
         "egulias/email-validator": "^4.0.2",

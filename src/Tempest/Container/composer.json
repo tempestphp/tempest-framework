@@ -1,6 +1,6 @@
 {
     "name": "tempest/container",
-    "license": "MIT",
+    ,
     "require": {
         "php": "^8.3",
         "tempest/support": "self.version"

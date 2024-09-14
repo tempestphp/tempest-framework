@@ -18,5 +18,6 @@
             "Tempest\\EventBus\\Tests\\": "tests"
         }
     },
-    "license": "MIT"
+    "license": "MIT",
+    "minimum-stability": "dev"
 }
