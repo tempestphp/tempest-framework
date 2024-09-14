@@ -104,7 +104,7 @@ The following outlines some other guidelines we have established for Tempest.
 #### Final and Readonly as a default
 Whenever possible, classes should be `final` and `readonly`. This practice promotes immutability and prevents inadvertent changes to logic.
 
-**Resources**
+_Resources_
 * [Why I use final](https://www.youtube.com/watch?v=HiD6CwWq5Ds&ab_channel=PHPAnnotated)
 
 #### Acronym Casing
