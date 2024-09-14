@@ -52,8 +52,9 @@ function getPackages(): array {
 
         $file = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'composer.json';
         $testFile = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'phpunit.xml';
+        $testDir = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'tests';
 
-        if (! file_exists($file) || ! file_exists($testFile)) {
+        if (! file_exists($file) || ! file_exists($testFile) || ! is_dir($testDir)) {
             continue;
         }
 
