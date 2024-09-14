@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\EventBus\Tests\Fixtures;
 
 use Tempest\EventBus\EventHandler;
-use Tests\Tempest\Fixtures\Events\ItHappened;
 
 final class MyEventHandler
 {
