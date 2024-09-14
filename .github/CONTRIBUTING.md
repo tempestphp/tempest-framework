@@ -35,6 +35,11 @@ Once the feature request has been opened, the Tempest team will:
 * Ask any clarifying question to help better understand the use case.
 * If the feature requested is accepted, the Tempest team will assign the "Uncharted Waters" label. A Tempest team member or a member of the community can contribute the code for this.
 
+> [!NOTE]
+> We welcome all contributions and greatly value your time and effort. To ensure your work aligns with Tempest's vision and avoids unnecessary effort, we aim to provide clear guidance and feedback throughout the process.
+
+---
+
 We welcome your PRs and contributions. If you have any feature requests or bug reports, head over to the [issue page](https://github.com/tempestphp/tempest-framework/issues) and feel free to create an issue.
 
 If you'd like to send PRs, you can check out and run Tempest locally like so:
