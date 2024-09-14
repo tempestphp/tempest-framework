@@ -64,6 +64,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
           cd "${{ matrix.package.directory }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
