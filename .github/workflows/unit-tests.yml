@@ -68,4 +68,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
+        run: "$HOME/vendor/bin/phpunit" -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
