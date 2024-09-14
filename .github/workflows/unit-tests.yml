@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Packages
         id: get_json
-        run: echo "::set-output name=json::$(bin/get-packages)"
+        run: echo "json=$(bin/get-packages)" >> $GITHUB_OUTPUT
 
       - name: Output Packages
         run: echo "${{ steps.get_json.outputs.json }}"
@@ -62,7 +62,10 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+        run: |
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          cd "${{ matrix.package.directory }}"
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
         run: ./vendor/bin/phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
