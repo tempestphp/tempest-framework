@@ -7,7 +7,8 @@
         "php-http/discovery": "^1.19.2",
         "psr/http-client": "^1.0.0",
         "psr/http-message": "^1.0|^2.0",
-        "tempest/container": "self.version"
+        "tempest/container": "self.version",
+        "tempest/http": "self.version"
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
