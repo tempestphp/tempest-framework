@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Tests\Fixtures;
+namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 final class ChildObject
 {
@@ -10,6 +10,6 @@ final class ChildObject
 
     public ParentObject $parent;
 
-    /** @var \Tempest\Mapper\Tests\Fixtures\ParentObject[] */
+    /** @var \Tests\Tempest\Integration\Mapper\Fixtures\ParentObject[] */
     public array $parentCollection;
 }

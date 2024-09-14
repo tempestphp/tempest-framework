@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Tests\Mappers;
+namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use InvalidArgumentException;
 use Tempest\Http\Method;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use Tempest\Mapper\Tests\Fixtures\ObjectA;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithBuiltInCasters;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithDefaultValues;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithDoubleStringCaster;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithEnum;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithMagicGetter;
-use Tempest\Mapper\Tests\Fixtures\ObjectWithMyObject;
-use Tempest\Mapper\Tests\Fixtures\ParentObject;
-use Tempest\Mapper\Tests\Fixtures\ParentWithChildrenObject;
 use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDoubleStringCaster;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithEnum;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
+use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
 /**
  * @internal

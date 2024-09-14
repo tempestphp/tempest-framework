@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Tests\Mappers;
+namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\MapTo;
@@ -12,12 +12,12 @@ use Tests\Tempest\Integration\IntegrationTestCase;
  * @internal
  * @small
  */
-final class ArrayToJsonMapperTestCase extends IntegrationTestCase
+final class JsonToArrayMapperTestCase extends IntegrationTestCase
 {
     public function test_mapper(): void
     {
-        $json = map(['a'])->to(MapTo::JSON);
+        $array = map('["a"]')->to(MapTo::ARRAY);
 
-        $this->assertSame('["a"]', $json);
+        $this->assertSame(['a'], $array);
     }
 }

@@ -73,7 +73,7 @@ parameters:
 		-
 			message: "#^Calling eval\\(\\) is forbidden\\.$#"
 			count: 1
-			path: src/Tempest/Support/src/Reflection/TypeReflector.php
+			path: src/Tempest/Reflection/src/TypeReflector.php
 
 		-
 			message: "#^Access to an undefined property Tempest\\\\View\\\\GenericView\\:\\:\\$property\\.$#"

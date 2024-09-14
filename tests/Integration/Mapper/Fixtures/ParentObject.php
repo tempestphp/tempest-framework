@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Tests\Fixtures;
+namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 final class ParentObject
 {
