@@ -1,4 +1,4 @@
-name: "Pull Request Workflow"
+name: "Check the Changelog"
 on:
   pull_request:
     # The specific activity types are listed here to include "labeled" and "unlabeled"
