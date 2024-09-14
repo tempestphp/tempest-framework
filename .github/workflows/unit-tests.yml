@@ -64,7 +64,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd "${{ matrix.package.directory }}"
-          composer global require phpunit/phpunit:^10.2
+          composer global require phpunit/phpunit:^11.3
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
