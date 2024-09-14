@@ -28,15 +28,15 @@ Tempest is a work in progress! We recognize that some features you might benefit
 * Head over to the [issue page](https://github.com/tempestphp/tempest-framework/issues) to open an issue.
 * Provide as much detail about the feature you are looking for and how it might benefit you and others.
 
-> [!NOTE]
-> We welcome all contributions and greatly value your time and effort. To ensure your work aligns with Tempest's vision and avoids unnecessary effort, we aim to provide clear guidance and feedback throughout the process.
-
 Once the feature request has been opened, the Tempest team will:
 
 <!-- TODO: Update this section with some links -->
 * Label the issue appropriately.
 * Ask any clarifying question to help better understand the use case.
 * If the feature requested is accepted, the Tempest team will assign the "Uncharted Waters" label. A Tempest team member or a member of the community can contribute the code for this.
+
+> [!NOTE]
+> We welcome all contributions and greatly value your time and effort. To ensure your work aligns with Tempest's vision and avoids unnecessary effort, we aim to provide clear guidance and feedback throughout the process.
 
 ---
 
