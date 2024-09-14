@@ -1,4 +1,39 @@
-# Welcome to Tempest contributing guide! 🌊🌊🌊
+# Contributing to Tempest 🌊🌊🌊
+Welcome aboard! We're excited that you are interested in contributing to the Tempest framework. We value all contributions to the project and have assembled the following resources to help you get started. Thanks for being a contributor!
+
+## How do I...
+* [Report an Error or Bug 🐞](#report-an-error-or-bug)
+* [Suggest a Feature 💡](#request-a-feature)
+
+## Report an Error or Bug
+To report an error or a bug, please:
+
+* Head over to the [issue page](https://github.com/tempestphp/tempest-framework/issues) to open an issue.
+* Provide as much context about the problem you are running into and the environment you are running Tempest in.
+* Provide the version and, if relevant, the component you are running into issues with.
+* For a shot at getting our "Perfect Storm" label, submit a PR with a failing test!
+
+Once the issue has been opened, the Tempest team will:
+
+<!-- TODO: Update this section with some links -->
+* Label the issue appropriately.
+* Assign the issue to the appropriate team member.
+* Try and get a response to you as quickly as possible.
+
+In the event that an issue is opened, but we get no response within 30 days, the issue will be closed.
+
+## Request a Feature
+Tempest is a work in progress! We recognize that some features you might benefit from or expect may be missing. If you do have a feature request, please:
+
+* Head over to the [issue page](https://github.com/tempestphp/tempest-framework/issues) to open an issue.
+* Provide as much detail about the feature you are looking for and how it might benefit you and others.
+
+Once the feature request has been opened, the Tempest team will:
+
+<!-- TODO: Update this section with some links -->
+* Label the issue appropriately.
+* Ask any clarifying question to help better understand the use case.
+* If the feature requested is accepted, the Tempest team will assign the "Uncharted Waters" label. A Tempest team member or a member of the community can contribute the code for this.
 
 We welcome your PRs and contributions. If you have any feature requests or bug reports, head over to the [issue page](https://github.com/tempestphp/tempest-framework/issues) and feel free to create an issue.
 
