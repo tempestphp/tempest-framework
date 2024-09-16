@@ -34,4 +34,6 @@ body:
 - type: textarea
   attributes:
     label: Steps to Reproduce
-    description: Please provide detailed steps on how we can reproduce the issue you are reporting.
+    description: Please provide detailed steps on how we can reproduce the issue you are reporting. For a shot at getting our "Perfect Storm" label, submit a PR with a failing test!
+  validations:
+    required: true
