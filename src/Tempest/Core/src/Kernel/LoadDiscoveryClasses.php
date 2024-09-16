@@ -99,7 +99,9 @@ final readonly class LoadDiscoveryClasses
 
             next($this->kernel->discoveryClasses);
 
-            $discovery->storeCache();
+            if ($this->kernel->discoveryCache) {
+                $discovery->storeCache();
+            }
         }
     }
 }
