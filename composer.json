@@ -2,6 +2,7 @@
     "name": "tempest/framework",
     "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
+    "version": "1.0-alpha1",
     "require": {
         "egulias/email-validator": "^4.0.2",
         "ext-dom": "*",
