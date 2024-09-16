@@ -1,0 +1,37 @@
+name: Bug Report
+about:
+title:
+body:
+- type: input
+  attributes:
+    label: Tempest Version
+    description: Provide the Tempest version that you are using.
+    value: 1.0-alpha1
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: PHP Version
+    description: Provide the PHP version that you are using.
+    options: ['8.3']
+    multiple: true
+  validations:
+    required: true
+- type: dropdown
+  attributes:
+    label: Operating System
+    description: Provide the operating system that you are using.
+    options: ['Linux', 'MacOS', 'Windows', 'Other']
+    multiple: true
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Description
+    description: Please provide a detailed description of the issue you are running into.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Steps to Reproduce
+    description: Please provide detailed steps on how we can reproduce the issue you are reporting.
