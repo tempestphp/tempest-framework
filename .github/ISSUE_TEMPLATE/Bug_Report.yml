@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug or error, providing details about the issue, steps to reproduce, and your environment setup.
-title: [Bug]: 
+title: "[Bug]: "
 body:
 - type: input
   attributes:
