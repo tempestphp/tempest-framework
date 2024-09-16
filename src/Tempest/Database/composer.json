@@ -5,9 +5,9 @@
     "require": {
         "php": "^8.3",
         "ext-pdo": "*",
-        "tempest/container": "self.version",
-        "tempest/event-bus": "self.version",
-        "tempest/mapper": "self.version"
+        "tempest/container": "1.0-alpha1",
+        "tempest/event-bus": "1.0-alpha1",
+        "tempest/mapper": "1.0-alpha1"
     },
     "autoload": {
         "psr-4": {
