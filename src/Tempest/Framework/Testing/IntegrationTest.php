@@ -14,9 +14,9 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Http\Request;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\Request;
 
 abstract class IntegrationTest extends TestCase
 {

@@ -18,7 +18,7 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\IntegrationTest;
-use Tempest\Http\HttpApplication;
+use Tempest\Router\HttpApplication;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;

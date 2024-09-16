@@ -7,10 +7,10 @@ namespace Tempest\Framework\Testing\Http;
 use Closure;
 use PHPUnit\Framework\Assert;
 use function Tempest\get;
-use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Response;
-use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Router\Cookie\CookieManager;
+use Tempest\Router\Response;
+use Tempest\Router\Session\Session;
 
 final readonly class TestResponseHelper
 {

@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
-use Tempest\Http\Cookie\Cookie;
-use Tempest\Http\Cookie\CookieManager;
-use Tempest\Http\Cookie\SameSite;
+use Tempest\Router\Cookie\Cookie;
+use Tempest\Router\Cookie\CookieManager;
+use Tempest\Router\Cookie\SameSite;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

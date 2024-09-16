@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Http\GenericResponse;
-use Tempest\Http\GenericResponseSender;
-use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
+use Tempest\Router\GenericResponse;
+use Tempest\Router\GenericResponseSender;
+use Tempest\Router\Responses\Ok;
 use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

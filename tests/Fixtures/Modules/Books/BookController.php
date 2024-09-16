@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Books;
 
-use Tempest\Http\Get;
-use Tempest\Http\Post;
-use Tempest\Http\Request;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Ok;
-use Tempest\Http\Responses\Redirect;
 use function Tempest\map;
+use Tempest\Router\Get;
+use Tempest\Router\Post;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
+use Tempest\Router\Responses\Ok;
+use Tempest\Router\Responses\Redirect;
 use function Tempest\uri;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;

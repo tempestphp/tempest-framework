@@ -60,6 +60,7 @@
         "tempest/log": "self.version",
         "tempest/mapper": "self.version",
         "tempest/reflection": "self.version",
+        "tempest/router": "self.version",
         "tempest/support": "self.version",
         "tempest/validation": "self.version",
         "tempest/view": "self.version"
@@ -81,6 +82,7 @@
             "Tempest\\Log\\": "src/Tempest/Log/src",
             "Tempest\\Mapper\\": "src/Tempest/Mapper/src",
             "Tempest\\Reflection\\": "src/Tempest/Reflection/src",
+            "Tempest\\Router\\": "src/Tempest/Router/src",
             "Tempest\\Support\\": "src/Tempest/Support/src",
             "Tempest\\Validation\\": "src/Tempest/Validation/src",
             "Tempest\\View\\": "src/Tempest/View/src"
@@ -91,9 +93,9 @@
             "src/Tempest/Core/src/functions.php",
             "src/Tempest/Debug/src/functions.php",
             "src/Tempest/EventBus/src/functions.php",
-            "src/Tempest/Http/src/functions.php",
             "src/Tempest/Mapper/src/functions.php",
-            "src/Tempest/Reflection/src/functions.php"
+            "src/Tempest/Reflection/src/functions.php",
+            "src/Tempest/Router/src/functions.php"
         ]
     },
     "autoload-dev": {
@@ -109,6 +111,7 @@
             "Tempest\\Log\\Tests\\": "src/Tempest/Log/tests",
             "Tempest\\Mapper\\Tests\\": "src/Tempest/Mapper/tests",
             "Tempest\\Reflection\\Tests\\": "src/Tempest/Reflection/tests",
+            "Tempest\\Router\\Tests\\": "src/Tempest/Router/tests",
             "Tempest\\Support\\Tests\\": "src/Tempest/Support/tests",
             "Tempest\\Validation\\Tests\\": "src/Tempest/Validation/tests",
             "Tests\\Tempest\\": "tests/"

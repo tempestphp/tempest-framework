@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionId;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Router\Session\SessionConfig;
+use Tempest\Router\Session\SessionId;
+use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

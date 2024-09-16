@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-use Tempest\Http\Session\Session;
+use Tempest\Router\Session\Session;
 use Tempest\Validation\Rule;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\ViewComponent;

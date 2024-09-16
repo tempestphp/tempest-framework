@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\Get;
-use Tempest\Http\StaticPage;
+use Tempest\Router\Get;
+use Tempest\Router\StaticPage;
 use function Tempest\view;
 use Tempest\View\View;
 

@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Tempest\Http\Session\Session;
+use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
 use function Tempest\view;

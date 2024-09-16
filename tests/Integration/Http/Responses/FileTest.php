@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http\Responses;
 
 use Generator;
-use Tempest\Http\Responses\File;
+use Tempest\Router\Responses\File;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
