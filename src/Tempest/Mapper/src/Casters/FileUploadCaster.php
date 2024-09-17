@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Mapper\Casters;
+namespace Tempest\Mapper\Casters;
 
 use InvalidArgumentException;
 use Tempest\Http\Upload;
