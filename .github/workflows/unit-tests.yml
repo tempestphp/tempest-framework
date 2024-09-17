@@ -19,6 +19,8 @@ jobs:
           coverage: none
 
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Get Packages
         id: get_json
