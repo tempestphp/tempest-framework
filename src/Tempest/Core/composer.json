@@ -4,7 +4,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/container": "self.version",
+        "tempest/container": "dev-main",
         "vlucas/phpdotenv": "^5.6",
         "filp/whoops": "^2.15",
         "nunomaduro/collision": "^8.4"

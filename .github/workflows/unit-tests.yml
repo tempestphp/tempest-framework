@@ -54,6 +54,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
+          tools: phpunit
           coverage: pcov
 
       - name: Setup problem matchers
@@ -64,7 +65,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd "${{ matrix.package.directory }}"
-          composer global require phpunit/phpunit:^11.3
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
