@@ -11,17 +11,11 @@ jobs:
     name: Get Packages
     runs-on: ubuntu-latest
     steps:
-      - name: Set Up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.3
-          coverage: none
-
       - uses: actions/checkout@v4
 
       - name: Get Packages
         id: get_json
-        run: echo "json=$(bin/get-packages-with-tests)" >> $GITHUB_OUTPUT
+        run: echo "json=$(source bin/package-utils.sh && get_packages)" >> $GITHUB_OUTPUT
 
       - name: Output Packages
         run: echo "${{ steps.get_json.outputs.json }}"
