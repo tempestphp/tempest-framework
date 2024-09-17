@@ -18,6 +18,8 @@ final readonly class RequestToObjectMapper implements Mapper
     public function map(mixed $from, mixed $to): array|object
     {
         /** @var Request $from */
-        return map($from->getBody())->to($to);
+        $data = array_merge($from->getBody(), $from->getFiles());
+
+        return map($data)->to($to);
     }
 }
