@@ -18,7 +18,7 @@ final class AppConfig
         ],
     ) {
         $this->environment = $environment
-            ?? Environment::tryFrom(\Tempest\env('ENVIRONMENT'))
+            ?? Environment::tryFrom(\Tempest\env('ENVIRONMENT', 'local'))
             ?? Environment::LOCAL;
     }
 }
