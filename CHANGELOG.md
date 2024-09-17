@@ -11,4 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Unit tests for the CommandBus `dispatch` method.
 - Replaced Ignition with Whoops.
-- Properly detect environment from `.env` when present. 
+- Properly detect environment from `.env` when present.
