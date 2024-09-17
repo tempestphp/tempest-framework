@@ -51,23 +51,23 @@ final class MigrateUpCommand
 }
 ```
 
-Read how to get started with Tempest [here](https://tempest.stitcher.io).
+Read how to get started with Tempest [here](https://tempestphp.com).
 
 ## Installation
 
 Install Tempest in any project, including existing projects:
 
 ```
-composer require tempest/framework:dev-main
+composer require tempest/framework:1.0-alpha1
 ```
 
 Or create a Tempest project from scratch:
 
 ```
-composer create-project tempest/app:dev-main <name>
+composer create-project tempest/app:1.0-alpha1 <name>
 ```
 
-Continue to read how Tempest works in [the docs](https://tempest.stitcher.io).
+Continue to read how Tempest works in [the docs](https://tempestphp.com).
 
 ## Contributing
 We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](.github/CONTRIBUTING.md) and then head on over to the issues page to see some ways you might help out!
