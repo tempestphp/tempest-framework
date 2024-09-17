@@ -67,7 +67,7 @@ function getPackages(): array {
     return $packages;
 }
 
-$changedPackages = shell_exec("git diff --name-only HEAD~1 | sed -n 's|^src/Tempest/\([^/]*\)/.*|\\1|p' | sort -u");
+$changedPackages = shell_exec("git diff --name-only HEAD~1 origin/main | sed -n 's|^src/Tempest/\([^/]*\)/.*|\\1|p' | sort -u");
 $changedPackages = array_filter(explode("\n", $changedPackages));
 
 $packages = array_filter(getPackages(), function ($package) use ($changedPackages) {
