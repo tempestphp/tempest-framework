@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
+use App\Mapper\Casters\FileUploadCaster;
 use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use FileUploadCaster;
 use ReflectionException;
 use function Tempest\get;
 use Tempest\Http\Upload;

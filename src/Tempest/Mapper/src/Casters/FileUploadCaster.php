@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Casters;
+namespace App\Mapper\Casters;
 
 use Tempest\Http\Upload;
 use Tempest\Mapper\Caster;
 
-class FileUploadCaster implements Caster
+final readonly class FileUploadCaster implements Caster
 {
     public function cast(mixed $input): ?string
     {
         if (! $input instanceof Upload) {
-            throw new InvalidArgumentException('Expected an instance of Tempest\Http\Upload');
+            throw new \InvalidArgumentException('Expected an instance of Tempest\Http\Upload');
         }
 
-        if ($value->getError() === UPLOAD_ERR_OK) {
+        if ($input->getError() === UPLOAD_ERR_OK) {
             return $input->getClientFilename();
         }
 
