@@ -38,6 +38,7 @@ final class Kernel
             ->registerKernel()
             ->loadDiscoveryLocations()
             ->loadConfig()
+            ->loadExceptionHandler()
             ->loadDiscovery();
 
         $this->container->get(EventBus::class)->dispatch(KernelEvent::BOOTED);
@@ -123,6 +124,15 @@ final class Kernel
     private function loadConfig(): self
     {
         $this->container->get(LoadConfig::class)();
+
+        return $this;
+    }
+
+    private function loadExceptionHandler(): self
+    {
+        $appConfig = $this->container->get(AppConfig::class);
+
+        $appConfig->exceptionHandlerSetup->setup($appConfig);
 
         return $this;
     }
