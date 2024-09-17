@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use NunoMaduro\Collision\Provider as Collision;
-use Spatie\Ignition\Ignition;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSetup
 {
@@ -27,8 +28,10 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
             return;
         }
 
-        // Production dev
-        Ignition::make()->register();
+        // Local web
+        $whoops = new Run;
+        $whoops->pushHandler(new PrettyPageHandler);
+        $whoops->register();
     }
 
     public function renderErrorPage(): void

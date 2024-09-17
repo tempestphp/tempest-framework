@@ -6,8 +6,10 @@ namespace Tempest\Core;
 
 final class AppConfig
 {
+    public Environment $environment;
+
     public function __construct(
-        public Environment $environment = Environment::LOCAL,
+        ?Environment $environment = null,
         public ExceptionHandlerSetup $exceptionHandlerSetup = new GenericExceptionHandlerSetup(),
 
         /** @var \Tempest\Core\ExceptionHandler[] */
@@ -15,5 +17,8 @@ final class AppConfig
             // …,
         ],
     ) {
+        $this->environment = $environment
+            ?? Environment::tryFrom(\Tempest\env('ENVIRONMENT'))
+            ?? Environment::LOCAL;
     }
 }
