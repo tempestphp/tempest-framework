@@ -12,6 +12,10 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
 {
     public function setup(AppConfig $appConfig): void
     {
+        if ($appConfig->environment->isTesting()) {
+            return;
+        }
+
         // Console
         if ($_SERVER['argv'] ?? null) {
             (new Collision())->register();

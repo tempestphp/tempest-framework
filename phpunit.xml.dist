@@ -28,4 +28,7 @@
       <directory suffix=".cache.php">src</directory>
     </exclude>
   </source>
+  <php>
+    <env name="ENVIRONMENT" value="testing" />
+  </php>
 </phpunit>
