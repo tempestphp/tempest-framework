@@ -15,7 +15,7 @@ trait HandlesDiscoveryCache
 
         $name = array_pop($parts) . '.cache.php';
 
-        return __DIR__ . '/../../../.cache/tempest/' . $name;
+        return __DIR__ . '/../../../../.cache/tempest/' . $name;
     }
 
     abstract public function createCachePayload(): string;

@@ -9,7 +9,7 @@ use Tempest\Reflection\ClassReflector;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
-    public const string CACHE_PATH = __DIR__ . '/../../../.cache/tempest/discovery-discovery.cache.php';
+    public const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/discovery-discovery.cache.php';
 
     public function __construct(
         private Kernel $kernel,
