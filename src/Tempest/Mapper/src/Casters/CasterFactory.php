@@ -13,6 +13,7 @@ use function Tempest\get;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\CastWith;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Http\Upload;
 
 final readonly class CasterFactory
 {
@@ -48,6 +49,7 @@ final readonly class CasterFactory
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
+            Upload::class => new \FileUploadCaster(),
             default => null,
         };
     }
