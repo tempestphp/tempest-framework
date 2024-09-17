@@ -39,7 +39,9 @@ get_packages() {
         packages+=("{\"directory\":\"$directory\",\"name\":\"$package_name\",\"package\":\"tempest/$package_name\",\"organization\":\"tempestphp\",\"repository\":\"tempest-$package_name\"}")
     done
 
-    echo "[${packages[*]}]"
+    package_string=$(IFS=,; echo "${packages[*]}")
+
+    echo "[$package_string]"
 }
 
 get_packages_with_tests() {
@@ -58,5 +60,7 @@ get_packages_with_tests() {
         packages+=("{\"directory\":\"$directory\",\"name\":\"$package_name\",\"package\":\"tempest/$package_name\",\"organization\":\"tempestphp\",\"repository\":\"tempest-$package_name\"}")
     done
 
-    echo "[${packages[*]}]"
+    package_string=$(IFS=,; echo "${packages[*]}")
+
+    echo "[$package_string]"
 }
