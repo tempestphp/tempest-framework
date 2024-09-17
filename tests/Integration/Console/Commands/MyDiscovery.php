@@ -12,6 +12,8 @@ final class MyDiscovery implements Discovery
 {
     public static bool $cacheCleared = false;
 
+    public static bool $cached = false;
+
     public function discover(ClassReflector $class): void
     {
         // TODO: Implement discover() method.
@@ -24,7 +26,7 @@ final class MyDiscovery implements Discovery
 
     public function storeCache(): void
     {
-        // TODO: Implement storeCache() method.
+        self::$cached = true;
     }
 
     public function restoreCache(Container $container): void

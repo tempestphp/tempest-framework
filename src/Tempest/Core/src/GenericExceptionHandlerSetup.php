@@ -33,8 +33,8 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         }
 
         // Local web
-        $whoops = new Run;
-        $whoops->pushHandler(new PrettyPageHandler);
+        $whoops = new Run();
+        $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
     }
 
