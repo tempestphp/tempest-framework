@@ -24,7 +24,7 @@ final readonly class DiscoveryCacheCommand
 
     #[ConsoleCommand(
         name: 'discovery:cache',
-        description: 'Generate and store the discovery cached',
+        description: 'Generate and store the discovery cache',
         aliases: ['discovery:store', 'discovery:warm'],
     )]
     public function __invoke(): void
