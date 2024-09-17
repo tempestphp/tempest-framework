@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use App\Mapper\Casters\FileUploadCaster;
 use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
