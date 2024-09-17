@@ -22,7 +22,7 @@ jobs:
 
       - name: Get Packages
         id: get_json
-        run: echo "json=$(bin/get-packages-with-tests)" >> $GITHUB_OUTPUT
+        run: echo "json=$(bin/get-changed-packages)" >> $GITHUB_OUTPUT
 
       - name: Output Packages
         run: echo "${{ steps.get_json.outputs.json }}"

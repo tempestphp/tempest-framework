@@ -1,0 +1,77 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * The following is heavily borrowed from Ecotone.
+ *
+ * This script allows us to dynamically retrieve the package namespace
+ * and directory from our composer file. This is then used by our GitHub
+ * action to publish the packages to their appropriate repositories.
+ *
+ * @link https://github.com/ecotoneframework/ecotone-dev/blob/main/bin/get-packages
+ */
+
+const PACKAGES_DIRECTORY = __DIR__ . '/../src/Tempest/';
+
+function getPackageNameFromComposerFile(string $composerFile)
+{
+    $composer = json_decode(file_get_contents($composerFile), true);
+
+    $name = $composer['name'] ?? throw new UnexpectedValueException(
+        'The referenced package is invalid because it is missing a name: ' . $composerFile
+    );
+
+    return str_replace('tempest/', '', $name);
+}
+
+/**
+ * @return array<array-key, array{
+ *     directory: string,
+ *     name: string,
+ *     package: string,
+ *     organization: string,
+ *     repository: string
+ * }>
+ */
+function getPackages(): array {
+    $packages = [];
+    $directoryIterator = new DirectoryIterator(realpath(PACKAGES_DIRECTORY));
+
+    /**
+     * @var DirectoryIterator $directory
+     */
+    foreach ($directoryIterator as $directory) {
+        if ($directory->isDot()) {
+            continue;
+        }
+
+        $file = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'composer.json';
+        $testFile = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'phpunit.xml';
+        $testDir = $directory->getRealPath() . DIRECTORY_SEPARATOR . 'tests';
+
+        if (! file_exists($file) || ! file_exists($testFile) || ! is_dir($testDir)) {
+            continue;
+        }
+
+        $name = getPackageNameFromComposerFile($file);
+        $packages[] = [
+            'basename' => $directory->getBasename(),
+            'directory'  => $directory->getRealPath(),
+            'name' => $name,
+            'package' => 'tempest/' . $name,
+            'organization' => 'tempestphp',
+            'repository' => sprintf('tempest-%s', $name),
+        ];
+    }
+
+    return $packages;
+}
+
+$changedPackages = shell_exec("git diff --name-only HEAD~1 | sed -n 's|^src/Tempest/\([^/]*\)/.*|\\1|p' | sort -u");
+$changedPackages = array_filter(explode("\n", $changedPackages));
+
+$packages = array_filter(getPackages(), function ($package) use ($changedPackages) {
+    return in_array($package['basename'], $changedPackages);
+});
+
+echo json_encode($packages);
