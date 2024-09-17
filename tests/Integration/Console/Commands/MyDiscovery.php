@@ -11,6 +11,7 @@ use Tempest\Reflection\ClassReflector;
 final class MyDiscovery implements Discovery
 {
     public static bool $cacheCleared = false;
+
     public static bool $cached = false;
 
     public function discover(ClassReflector $class): void
