@@ -11,7 +11,7 @@ class FileUploadCaster implements Caster
 {
     public function cast(mixed $input): ?string
     {
-        if (!$input instanceof Upload) {
+        if (! $input instanceof Upload) {
             throw new InvalidArgumentException('Expected an instance of Tempest\Http\Upload');
         }
 
