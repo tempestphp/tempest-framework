@@ -14,3 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced Ignition with Whoops.
 - Properly detect environment from `.env` when present.
 - `discovery:cache` command that will generate the discovery cache
+- Separate CI actions for isolated tests
+- Separate CI actions for integration tests
+- Separate CI actions for code conventions
