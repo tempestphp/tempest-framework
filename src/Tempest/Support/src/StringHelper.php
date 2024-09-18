@@ -45,7 +45,8 @@ final readonly class StringHelper
     public static function pascal(string $value): string
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $value));
-        $studlyWords = array_map(static fn (string $word) => mb_ucfirst($word), $words);
+        // TODO: use `mb_ucfirst` when it has landed in PHP 8.4
+        $studlyWords = array_map(static fn (string $word) => ucfirst($word), $words);
 
         return implode('', $studlyWords);
     }
