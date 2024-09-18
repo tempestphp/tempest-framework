@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http\Commands;
+namespace Tempest\Routing;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Routing\RouteConfig;
 
 final readonly class RoutesCommand
 {
