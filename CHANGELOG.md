@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Separate CI actions for isolated tests
 - Separate CI actions for integration tests
 - Separate CI actions for code conventions
+- GitHub action to check for necessary files in packages
 
 ### Changed
 - Quality control does not run when pushing to main
