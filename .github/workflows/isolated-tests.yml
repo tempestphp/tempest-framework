@@ -1,9 +1,6 @@
-name: Unit Tests
+name: Isolated Tests
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
   workflow_dispatch:
 
@@ -44,7 +41,7 @@ jobs:
           - prefer-stable
           - prefer-lowest
 
-    name: Run Tests - P${{ matrix.php }} - ${{ matrix.package.name }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: "Test: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
 
     steps:
       - name: Checkout code
@@ -72,7 +69,7 @@ jobs:
         run: phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml" --coverage-clover build/reports/clover.xml
 
       # Only upload coverage once
-      - if: matrix.php == '8.3'&& matrix.stability == 'prefer-stable'
+      - if: matrix.php == '8.3' && matrix.stability == 'prefer-stable'
         name: Upload coverage results to Coveralls
         uses: coverallsapp/github-action@v2
         with:
