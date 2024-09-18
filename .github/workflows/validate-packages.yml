@@ -1,0 +1,33 @@
+name: Validate Packages
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate-composer:
+    name: Validate Composer Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
+          coverage: none
+
+      - name: Validate Framework Composer File
+        run: composer validate
+
+      - name: Validate Package Composer Files
+        run: |
+          json=$(bin/get-packages)
+          directories=$(echo $json | jq -r '.[].directory')
+          for dir in $directories; do
+            echo "Validating package in $dir"
+            cd "$dir" && composer validate
+            cd -
+          done
