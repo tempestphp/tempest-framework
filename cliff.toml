@@ -1,0 +1,66 @@
+[bump]
+initial_tag = "1.0-alpha1"
+
+[changelog]
+header = """
+# Changelog\n
+All notable changes to this project will be documented in this file.\n
+"""
+body = """
+{%- macro remote_url() -%}
+  https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
+{%- endmacro -%}
+
+{% macro print_commit(commit) -%}
+    - {% if commit.scope %}**{{ commit.scope }}**: {% endif %}\
+        {% if commit.breaking %}[**breaking**] {% endif %}\
+        {{ commit.message }} \
+        ([{{ commit.id | truncate(length=7, end="") }}]({{ self::remote_url() }}/commit/{{ commit.id }}))\
+{% endmacro -%}
+
+{% if version %}\
+    {% if previous.version %}\
+        ## [{{ version | trim_start_matches(pat="v") }}]\
+          ({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }})  —  {{ timestamp | date(format="%Y-%m-%d") }}
+    {% else %}\
+        ## {{ version | trim_start_matches(pat="v") }}  —  {{ timestamp | date(format="%Y-%m-%d") }}
+    {% endif %}\
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | striptags | trim | upper_first }}
+    {% for commit in commits | filter(attribute="scope") | sort(attribute="scope") %}
+        {{ self::print_commit(commit=commit) }}
+    {%- endfor %}
+    {% for commit in commits %}
+        {%- if not commit.scope -%}
+            {{ self::print_commit(commit=commit) }}
+        {% endif -%}
+    {% endfor -%}
+{% endfor %}
+
+
+"""
+
+[git]
+skip_tags = "(0\\.0\\.\\d)|(1\\.0-alpha1)"
+commit_parsers = [
+  { field = "breaking", pattern = "true", group = "<!-- -1 -->🚨 Breaking changes" },
+  { message = "^feat", group = "<!-- 0 -->🚀 Features" },
+  { message = "^fix", group = "<!-- 1 -->🐛 Bug fixes" },
+  { message = "^doc", group = "<!-- 3 -->📚 Documentation" },
+  { message = "^perf", group = "<!-- 4 -->⚡ Performance" },
+  { message = "^refactor", group = "<!-- 2 -->🚜 Refactor" },
+  { message = "^style", skip = true },
+  { message = "^test", group = "<!-- 6 -->🧪 Tests" },
+  { message = "^chore\\(release\\): prepare for", skip = true },
+  { message = "^chore\\(deps.*\\)", skip = true },
+  { message = "^chore\\(pr\\)", skip = true },
+  { message = "^chore\\(pull\\)", skip = true },
+  { message = "^chore: update changelog", skip = true },
+  { message = "^chore|^ci", skip = true },
+  { body = ".*security", group = "<!-- 8 -->🛡️ Security" },
+  { message = "^revert", group = "<!-- 9 -->⏪ Revert" },
+]
