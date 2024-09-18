@@ -1,5 +1,6 @@
 {
     "name": "tempest/support",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
