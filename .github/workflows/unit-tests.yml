@@ -42,7 +42,7 @@ jobs:
           - 8.3
         stability:
           - prefer-stable
-          - prefer-dev
+          - prefer-lowest
 
     name: Run Tests - P${{ matrix.php }} - ${{ matrix.package.name }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
