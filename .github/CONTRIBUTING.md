@@ -165,3 +165,50 @@ __:x: Bad Example__
    - The `symplify/monorepo-split-github-action@v2.3.0` GitHub action is called for every package and provided the necessary information (destination repo, directory, etc.).
    - This action takes any changes and pushes them to the sub-split repository determined by combining the "Organization" and "Repository" values returned in step 2.
    - Depending on whether a tag is found or not, a tag is also supplied so the repository is tagged appropriately.
+
+# Commit and merge conventions
+
+Commits must all respect the [conventional commit specification](https://www.conventionalcommits.org/en/), so the changelog and release notes are generated using the commit history.
+
+## Commit descriptions
+
+Commit descriptions **should not** start with an uppercase letter and should use [imperative mood](https://git.kernel.org/pub/scm/git/git.git/tree/Documentation/SubmittingPatches?h=v2.36.1#n181):
+
+```diff
+- feat(support): Adds some cool feature
++ feat(support): add some cool feature
+```
+
+## Commit scopes
+
+Scopes are not mandatory, but are highly recommended for consistency and easy of read. The following scopes are the most commonly used:
+
+- `feat` — for a new feature
+- `fix` — for a bug fix
+- `refactor` — for changes in code that are neither bug fixes or new features
+- `docs` — for any change related to the documentation
+- `perf` — for code refactoring that improves performance
+- `test` — for code related to automatic testing
+- `style` — for refactoring related to the code style (not for CSS)
+- `ci` — for changes related to our continuous integration pipeline
+- `chore` — for anything else
+
+Here are some commit examples:
+
+```
+feat(support): add `StringHelper` class
+feat(support/string): add `uuid` method
+perf(discovery): improve cache efficiency
+refactor(highlight): improve code readability
+docs: mention new `highlight` package
+chore: update dependencies
+style: apply php-cs-fixer
+```
+
+## Pull requests
+
+Pull request titles and descriptions should be as explicit as possible to ease the review process.
+
+Contributors are not required to respect conventional commits within pull requests, but doing so will ease the review process by removing some overhead for core contributors.
+
+All pull requests will be renamed to the conventional commit convention if necessary before being squash-merged to keep the commit history and changelog clean.
