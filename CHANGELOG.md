@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add `LanguageHelper::pluralize` and `LanguageHelper::singularize`
 - Unit tests for the CommandBus `dispatch` method.
 - Replaced Ignition with Whoops.
 - Properly detect environment from `.env` when present.
