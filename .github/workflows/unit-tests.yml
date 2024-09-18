@@ -78,6 +78,7 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel: true
           file: build/reports/clover.xml
           flag-name: "tempest/${{ matrix.package.name }}"
 
