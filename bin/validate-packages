@@ -23,7 +23,7 @@ function checkPackageLicense(array $package): void
 {
     $licenseFile = $package['directory'] . DIRECTORY_SEPARATOR . 'LICENCE.md';
     $composerFile = $package['directory'] . DIRECTORY_SEPARATOR . 'composer.json';
-    $composer = json_decode($composerFile, true);
+    $composer = json_decode(file_get_contents($composerFile), true);
 
     if (! isset($composer['license']) || $composer['license'] !== 'MIT') {
         throw new UnexpectedValueException(
