@@ -1,6 +1,6 @@
 {
     "name": "tempest/debug",
-    "descripton": "Debug functions for Tempest",
+    "description": "Debug functions for Tempest",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
