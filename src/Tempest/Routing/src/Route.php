@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Routing;
 
 use Attribute;
+use Tempest\Http\HttpMiddleware;
 use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
 
@@ -25,7 +26,7 @@ class Route
 
         /**
          * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
-         * @var class-string<\Tempest\Http\HttpMiddleware>[] $middleware
+         * @var class-string<HttpMiddleware>[] $middleware
          */
         public array $middleware = [],
     ) {
