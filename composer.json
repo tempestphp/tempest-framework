@@ -132,6 +132,7 @@
         "merge": "vendor/bin/monorepo-builder merge",
         "qa": [
             "composer merge",
+            "./bin/validate-packages",
             "./tempest discovery:clear",
             "vendor/bin/rector process",
             "composer csfixer",
