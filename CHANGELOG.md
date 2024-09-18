@@ -18,5 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Separate CI actions for integration tests
 - Separate CI actions for code conventions
 
+### Changed
+- Quality control does not run when pushing to main
+
 ### Fixed
 - Missing descriptions in composer files
