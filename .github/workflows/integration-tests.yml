@@ -22,7 +22,7 @@ jobs:
           - prefer-stable
           - prefer-lowest
 
-    name: "Run Tests: P${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
+    name: "Run Tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
     steps:
       - name: Checkout code
@@ -63,8 +63,10 @@ jobs:
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
-      - name: Upload coverage results to Coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          php-coveralls --coverage_clover=build/reports/clover.xml --json_path=build/reports/coveralls-upload.json -v
+      # Only upload coverage once.
+      - if: matrix.php == '8.3' && matrix.database == 'sqlite' && matrix.os == 'ubuntu-latest' && matrix.stability == 'prefer-stable'
+        name: Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          file: build/reports/clover.xml
