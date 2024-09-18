@@ -47,7 +47,7 @@ final readonly class StringHelper
         $words = explode(' ', str_replace(['-', '_'], ' ', $value));
         $studlyWords = array_map(static fn (string $word) => mb_ucfirst($word), $words);
 
-        return implode($studlyWords);
+        return implode('', $studlyWords);
     }
 
     public static function deduplicate(string $string, string|array $characters = ' '): string

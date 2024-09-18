@@ -14,7 +14,7 @@ use Tempest\Support\StringHelper;
  */
 final class StringHelperTest extends TestCase
 {
-    public function test_title()
+    public function test_title(): void
     {
         $this->assertSame('Jefferson Costella', StringHelper::title('jefferson costella'));
         $this->assertSame('Jefferson Costella', StringHelper::title('jefFErson coSTella'));
@@ -31,7 +31,7 @@ final class StringHelperTest extends TestCase
         $this->assertSame($expectedResult, StringHelper::title($longString));
     }
 
-    public function test_deduplicate()
+    public function test_deduplicate(): void
     {
         $this->assertSame('/some/odd/path/', StringHelper::deduplicate('/some//odd//path/', '/'));
         $this->assertSame(' tempest php framework ', StringHelper::deduplicate(' tempest   php  framework '));
@@ -97,12 +97,12 @@ final class StringHelperTest extends TestCase
     #[TestWith([0])]
     #[TestWith([16])]
     #[TestWith([100])]
-    public function test_random(int $length)
+    public function test_random(int $length): void
     {
         $this->assertEquals($length, strlen(StringHelper::random($length)));
     }
 
-    public function test_finish()
+    public function test_finish(): void
     {
         $this->assertSame('foo/', StringHelper::finish('foo', '/'));
         $this->assertSame('foo/', StringHelper::finish('foo/', '/'));
@@ -110,7 +110,7 @@ final class StringHelperTest extends TestCase
         $this->assertSame('abcbbc', StringHelper::finish('abcbbcbc', 'bc'));
     }
 
-    public function test_str_after()
+    public function test_str_after(): void
     {
         $this->assertSame('nah', StringHelper::after('hannah', 'han'));
         $this->assertSame('nah', StringHelper::after('hannah', 'n'));
@@ -122,7 +122,7 @@ final class StringHelperTest extends TestCase
         $this->assertSame('nah', StringHelper::after('han2nah', 2));
     }
 
-    public function test_str_after_last()
+    public function test_str_after_last(): void
     {
         $this->assertSame('tte', StringHelper::afterLast('yvette', 'yve'));
         $this->assertSame('e', StringHelper::afterLast('yvette', 't'));
