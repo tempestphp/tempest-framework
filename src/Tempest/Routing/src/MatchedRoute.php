@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Routing;
 
 final readonly class MatchedRoute
 {

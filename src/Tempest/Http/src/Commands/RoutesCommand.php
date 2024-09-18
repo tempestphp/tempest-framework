@@ -6,7 +6,7 @@ namespace Tempest\Http\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Http\RouteConfig;
+use Tempest\Routing\RouteConfig;
 
 final readonly class RoutesCommand
 {

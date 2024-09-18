@@ -11,8 +11,8 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Http\Router;
 use function Tempest\map;
+use Tempest\Routing\Router;
 
 final class HttpRouterTester
 {

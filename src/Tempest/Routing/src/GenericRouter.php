@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Routing;
 
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
@@ -10,7 +10,11 @@ use Tempest\Container\Container;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\HttpMiddleware;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Attribute;
+use Tempest\Routing\Route;
 
 #[Attribute]
 final class Get extends Route

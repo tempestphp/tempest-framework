@@ -7,7 +7,8 @@
         "masterminds/html5": "^2.9",
         "tempest/core": "self.version",
         "tempest/container": "self.version",
-        "tempest/validation": "self.version"
+        "tempest/validation": "self.version",
+        "tempest/routing": "self.version"
     },
     "autoload": {
         "psr-4": {

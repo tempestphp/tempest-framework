@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Http\RouteConfig;
+use Tempest\Routing\RouteConfig;
 
 return new RouteConfig();

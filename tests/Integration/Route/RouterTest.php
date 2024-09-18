@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Router;
 use Tempest\Http\Status;
+use Tempest\Routing\GenericRouter;
+use Tempest\Routing\Router;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;

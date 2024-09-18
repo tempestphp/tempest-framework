@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Routing;
 
 use Tempest\Reflection\MethodReflector;
 
@@ -15,9 +15,9 @@ final class RouteConfig
     public array $matchingRegexes = [];
 
     public function __construct(
-        /** @var array<string, array<string, \Tempest\Http\Route>> */
+        /** @var array<string, array<string, \Tempest\Routing\Route>> */
         public array $staticRoutes = [],
-        /** @var array<string, array<string, \Tempest\Http\Route>> */
+        /** @var array<string, array<string, \Tempest\Routing\Route>> */
         public array $dynamicRoutes = [],
     ) {
     }

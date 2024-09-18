@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Routing;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;

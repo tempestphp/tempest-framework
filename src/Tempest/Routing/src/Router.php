@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http;
+namespace Tempest\Routing;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 
 interface Router
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Exceptions;
 
 use Exception;
-use Tempest\Http\Route;
+use Tempest\Routing\Route;
 
 final class ControllerActionHasNoReturn extends Exception
 {

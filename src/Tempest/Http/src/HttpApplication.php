@@ -12,6 +12,7 @@ use Tempest\Core\Tempest;
 use function Tempest\env;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
+use Tempest\Routing\Router;
 use Tempest\Support\PathHelper;
 use Throwable;
 
