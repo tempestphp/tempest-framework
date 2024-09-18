@@ -66,7 +66,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd "${{ matrix.package.directory }}"
+          cd "src/Tempest/${{ matrix.package.basename }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
@@ -79,7 +79,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           file: build/reports/clover.xml
-          flag-name: "Unit-${{ matrix.package.name }}"
+          flag-name: "tempest/${{ matrix.package.name }}"
 
   rollup-parallel-coverage:
     needs: phpunit
