@@ -1,0 +1,66 @@
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  get_packages:
+    name: Get Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - uses: actions/checkout@v4
+
+      - name: Get Packages
+        id: get_json
+        run: echo "json=$(bin/get-packages)" >> $GITHUB_OUTPUT
+
+      - name: Output Packages
+        run: echo "${{ steps.get_json.outputs.json }}"
+    outputs:
+      matrix: ${{ steps.get_json.outputs.json }}
+
+  validate-framework-composer:
+    name: Validate Framework Composer File
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate
+
+  validate-package-composer-files:
+    runs-on: ubuntu-latest
+    needs: get_packages
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
+          coverage: none
+
+      - name: Validate Composer Files
+        run: |
+          packages="${{ needs.get_packages.outputs.matrix }}"
+          
+          for directory in $(jq -r '.[].directory' $packages); do
+            echo "Validating $directory"
+            cd "$directory" && composer validate
+            cd -
+          done
