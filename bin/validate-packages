@@ -1,33 +1,57 @@
 #!/usr/bin/env php
 <?php
 
+define('LICENSE_TEMPLATE', file_get_contents(__DIR__ . '/../LICENCE.md'));
+
 $packages = json_decode(
-    json: exec('./get-packages'),
+    json: exec(__DIR__  . '/get-packages'),
     associative: true
 );
 
-function joinPaths(string $path, string $part): string
+function checkPackageFile(array $package, string $file): void
 {
-    return $path . DIRECTORY_SEPARATOR . $part;
+    $filePath = $package['directory'] . DIRECTORY_SEPARATOR . $file;
+
+    if (! file_exists($filePath)) {
+        throw new UnexpectedValueException(
+            sprintf('Package [tempest/%s] is missing the expected file [%s].', $package['name'], $file)
+        );
+    }
+}
+
+function checkPackageLicense(array $package): void
+{
+    $licenseFile = $package['directory'] . DIRECTORY_SEPARATOR . 'LICENCE.md';
+    $composerFile = $package['directory'] . DIRECTORY_SEPARATOR . 'composer.json';
+    $composer = json_decode($composerFile, true);
+
+    if (! isset($composer['license']) || $composer['license'] !== 'MIT') {
+        throw new UnexpectedValueException(
+            sprintf('Package [tempest/%s] is missing the MIT from it\'s composer file.', $package['name'])
+        );
+    }
+
+    if (! file_exists($licenseFile)) {
+        throw new UnexpectedValueException(
+            sprintf('Package [tempest/%s] is missing it\'s license.', $package['name'])
+        );
+    }
+
+    if (file_get_contents($licenseFile) !== LICENSE_TEMPLATE) {
+        throw new UnexpectedValueException(
+            sprintf('Package [tempest/%s] license does not match the template.', $package['name'])
+        );
+    }
 }
 
 function checkPackage(array $package): void
 {
-    $expectedFiles = [
-        '.gitattributes',
-        'composer.json',
-        'LICENCE.md',
-    ];
-
-    foreach ($expectedFiles as $file) {
-        $realPath = joinPaths($package['directory'], $file);
-
-        if (! file_exists($realPath)) {
-            throw new LogicException(
-                sprintf('Expecting [%s] to exist for package [%s].', $file, $package['package'])
-            );
-        }
-    }
+    checkPackageFile($package, '.gitattributes');
+    checkPackageFile($package, 'composer.json');
+    checkPackageFile($package, 'phpunit.xml');
+    // TODO: Issue #426
+    // checkPackageFile($package, 'README.md');
+    checkPackageLicense($package);
 }
 
 foreach ($packages as $package) {
