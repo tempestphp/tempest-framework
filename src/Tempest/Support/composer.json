@@ -3,7 +3,9 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "doctrine/inflector": "^2.0",
+        "tempest/container": "self.version"
     },
     "autoload": {
         "psr-4": {

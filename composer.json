@@ -3,6 +3,7 @@
     "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "require": {
+        "doctrine/inflector": "^2.0",
         "egulias/email-validator": "^4.0.2",
         "ext-dom": "*",
         "ext-fileinfo": "*",
