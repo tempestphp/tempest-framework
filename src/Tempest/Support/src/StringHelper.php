@@ -98,7 +98,7 @@ final readonly class StringHelper
             return $subject;
         }
 
-        return head(array_reverse(explode((string) $search, $subject, limit: 2)));
+        return array_reverse(explode((string) $search, $subject, limit: 2))[0];
     }
 
     public static function afterLast(string $subject, string|int $search): string
