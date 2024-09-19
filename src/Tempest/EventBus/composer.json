@@ -1,10 +1,11 @@
 {
     "name": "tempest/event-bus",
+    "description": "The PHP framework that gets out of your way.",
     "require": {
         "php": "^8.3",
-        "tempest/core": "self.version",
-        "tempest/container": "self.version",
-        "tempest/reflection": "self.version"
+        "tempest/core": "dev-main",
+        "tempest/container": "dev-main",
+        "tempest/reflection": "dev-main"
     },
     "autoload": {
         "files": [

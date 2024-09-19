@@ -1,13 +1,14 @@
 {
     "name": "tempest/validation",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
         "egulias/email-validator": "^4.0.2",
         "giggsey/libphonenumber-for-php": "^8.13.40",
-        "tempest/reflection": "self.version",
-        "tempest/support": "self.version"
+        "tempest/reflection": "dev-main",
+        "tempest/support": "dev-main"
     },
     "autoload": {
         "psr-4": {

@@ -1,10 +1,10 @@
-name: Unit Tests
+name: Isolated Tests
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   get_packages:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Packages
         id: get_json
-        run: echo "json=$(bin/get-packages-with-tests)" >> $GITHUB_OUTPUT
+        run: echo "json=$(bin/get-packages)" >> $GITHUB_OUTPUT
 
       - name: Output Packages
         run: echo "${{ steps.get_json.outputs.json }}"
@@ -41,8 +41,9 @@ jobs:
           - 8.3
         stability:
           - prefer-stable
+          - prefer-lowest
 
-    name: Run Tests - P${{ matrix.php }} - ${{ matrix.package.name }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: "Run Tests: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
 
     steps:
       - name: Checkout code
@@ -53,6 +54,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
+          tools: phpunit
           coverage: pcov
 
       - name: Setup problem matchers
@@ -62,9 +64,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd "${{ matrix.package.directory }}"
-          composer global require phpunit/phpunit:^11.3
+          cd "src/Tempest/${{ matrix.package.basename }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: phpunit -c "${{ matrix.package.directory }}/phpunit.xml" --coverage-clover build/reports/clover.xml
+        run: phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml"

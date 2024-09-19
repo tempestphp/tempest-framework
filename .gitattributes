@@ -13,6 +13,7 @@ phpunit.xml               export-ignore
 phpunit.xml.dist          export-ignore
 README.md                 export-ignore
 rector.php                export-ignore
+cliff.toml                export-ignore
 
 # Configure diff output for .php and .phar files.
 *.php diff=php

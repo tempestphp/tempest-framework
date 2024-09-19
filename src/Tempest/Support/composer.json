@@ -1,14 +1,20 @@
 {
     "name": "tempest/support",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "doctrine/inflector": "^2.0",
+        "tempest/container": "dev-main"
     },
     "autoload": {
         "psr-4": {
             "Tempest\\Support\\": "src"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

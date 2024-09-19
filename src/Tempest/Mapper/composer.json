@@ -1,11 +1,12 @@
 {
     "name": "tempest/mapper",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/validation": "self.version",
-        "tempest/core": "self.version"
+        "tempest/validation": "dev-main",
+        "tempest/core": "dev-main"
     },
     "autoload": {
         "files": [

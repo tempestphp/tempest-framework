@@ -1,13 +1,14 @@
 {
     "name": "tempest/database",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
         "ext-pdo": "*",
-        "tempest/container": "self.version",
-        "tempest/event-bus": "self.version",
-        "tempest/mapper": "self.version"
+        "tempest/container": "dev-main",
+        "tempest/event-bus": "dev-main",
+        "tempest/mapper": "dev-main"
     },
     "autoload": {
         "psr-4": {

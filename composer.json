@@ -3,6 +3,7 @@
     "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "require": {
+        "doctrine/inflector": "^2.0",
         "egulias/email-validator": "^4.0.2",
         "ext-dom": "*",
         "ext-fileinfo": "*",
@@ -95,7 +96,8 @@
             "src/Tempest/EventBus/src/functions.php",
             "src/Tempest/Http/src/functions.php",
             "src/Tempest/Mapper/src/functions.php",
-            "src/Tempest/Reflection/src/functions.php"
+            "src/Tempest/Reflection/src/functions.php",
+            "src/Tempest/Support/src/functions.php"
         ]
     },
     "autoload-dev": {
@@ -135,6 +137,7 @@
         "merge": "vendor/bin/monorepo-builder merge",
         "qa": [
             "composer merge",
+            "./bin/validate-packages",
             "./tempest discovery:clear",
             "vendor/bin/rector process",
             "composer csfixer",

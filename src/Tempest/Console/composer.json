@@ -5,13 +5,13 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/core": "self.version",
-        "tempest/container": "self.version",
+        "tempest/core": "dev-main",
+        "tempest/container": "dev-main",
         "tempest/highlight": "^2.0",
-        "tempest/log": "self.version",
-        "tempest/reflection": "self.version",
-        "tempest/support": "self.version",
-        "tempest/validation": "self.version",
+        "tempest/log": "dev-main",
+        "tempest/reflection": "dev-main",
+        "tempest/support": "dev-main",
+        "tempest/validation": "dev-main",
         "ext-readline": "*"
     },
     "autoload": {
@@ -19,5 +19,7 @@
             "Tempest\\Console\\": "src"
         }
     },
-    "bin": ["bin/tempest"]
+    "bin": [
+        "bin/tempest"
+    ]
 }

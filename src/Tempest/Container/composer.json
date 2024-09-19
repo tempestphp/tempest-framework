@@ -1,10 +1,11 @@
 {
     "name": "tempest/container",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/reflection": "self.version"
+        "tempest/reflection": "dev-main"
     },
     "autoload": {
         "files": [

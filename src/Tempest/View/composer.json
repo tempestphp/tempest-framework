@@ -1,13 +1,14 @@
 {
     "name": "tempest/view",
+    "description": "The PHP framework that gets out of your way.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
         "masterminds/html5": "^2.9",
-        "tempest/core": "self.version",
-        "tempest/container": "self.version",
-        "tempest/validation": "self.version"
+        "tempest/core": "dev-main",
+        "tempest/container": "dev-main",
+        "tempest/validation": "dev-main"
     },
     "autoload": {
         "psr-4": {
