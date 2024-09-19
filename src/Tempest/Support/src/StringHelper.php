@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Support;
 
 use Countable;
@@ -7,11 +9,14 @@ use function ltrim;
 use function preg_quote;
 use function preg_replace;
 use function rtrim;
+use Stringable;
 use function trim;
 
-final readonly class StringHelper
+final readonly class StringHelper implements Stringable
 {
-    public function __construct(private string $string = '') {}
+    public function __construct(private string $string = '')
+    {
+    }
 
     public function __toString(): string
     {

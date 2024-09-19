@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Support;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\Support\str;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ * @small
+ */
 final class StringHelperTest extends FrameworkIntegrationTestCase
 {
     public function test_plural_studly(): void
