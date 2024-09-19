@@ -5,75 +5,106 @@ declare(strict_types=1);
 namespace Tempest\Support;
 
 use Countable;
+use function ltrim;
+use function preg_quote;
+use function preg_replace;
+use function rtrim;
+use Stringable;
+use function trim;
 
-final readonly class StringHelper
+final readonly class StringHelper implements Stringable
 {
-    public static function title(string $value): string
-    {
-        return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
+    public function __construct(
+        private string $string = '',
+    ) {
     }
 
-    public static function lower(string $value): string
+    public function __toString(): string
     {
-        return mb_strtolower($value, 'UTF-8');
+        return $this->string;
     }
 
-    public static function upper(string $value): string
+    public function equals(string|self $other): bool
     {
-        return mb_strtoupper($value, 'UTF-8');
+        $string = is_string($other) ? $other : $other->string;
+
+        return $this->string === $string;
     }
 
-    public static function snake(string $value, string $delimiter = '_'): string
+    public function title(): self
     {
-        if (ctype_lower($value)) {
-            return $value;
+        return new self(mb_convert_case($this->string, MB_CASE_TITLE, 'UTF-8'));
+    }
+
+    public function lower(): self
+    {
+        return new self(mb_strtolower($this->string, 'UTF-8'));
+    }
+
+    public function upper(): self
+    {
+        return new self(mb_strtoupper($this->string, 'UTF-8'));
+    }
+
+    public function snake(string $delimiter = '_'): self
+    {
+        $string = $this->string;
+
+        if (ctype_lower($string)) {
+            return $this;
         }
 
-        $value = preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value);
-        $value = preg_replace('![^'.preg_quote($delimiter).'\pL\pN\s]+!u', $delimiter, static::lower($value));
-        $value = preg_replace('/\s+/u', $delimiter, $value);
-        $value = trim($value, $delimiter);
+        $string = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string);
+        $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
+        $string = preg_replace('/\s+/u', $delimiter, $string);
+        $string = trim($string, $delimiter);
 
-        return static::deduplicate($value, $delimiter);
+        return (new self($string))->deduplicate($delimiter);
     }
 
-    public static function kebab(string $value): string
+    public function kebab(): self
     {
-        return static::snake($value, '-');
+        return $this->snake('-');
     }
 
-    public static function pascal(string $value): string
+    public function pascal(): self
     {
-        $words = explode(' ', str_replace(['-', '_'], ' ', $value));
+        $words = explode(' ', str_replace(['-', '_'], ' ', $this->string));
+
         // TODO: use `mb_ucfirst` when it has landed in PHP 8.4
         $studlyWords = array_map(static fn (string $word) => ucfirst($word), $words);
 
-        return implode('', $studlyWords);
+        return new self(implode('', $studlyWords));
     }
 
-    public static function deduplicate(string $string, string|array $characters = ' '): string
+    public function deduplicate(string|array $characters = ' '): self
     {
+        $string = $this->string;
+
         foreach (ArrayHelper::wrap($characters) as $character) {
-            $string = preg_replace('/'.preg_quote($character, '/').'+/u', $character, $string);
+            $string = preg_replace('/' . preg_quote($character, '/') . '+/u', $character, $string);
         }
 
-        return $string;
+        return new self($string);
     }
 
-    public static function pluralize(string $value, int|array|Countable $count = 2): string
+    public function pluralize(int|array|Countable $count = 2): self
     {
-        return LanguageHelper::pluralize($value, $count);
+        return new self(LanguageHelper::pluralize($this->string, $count));
     }
 
-    public static function pluralizeLast(string $value, int|array|Countable $count = 2): string
+    public function pluralizeLast(int|array|Countable $count = 2): self
     {
-        $parts = preg_split('/(.)(?=[A-Z])/u', $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $parts = preg_split('/(.)(?=[A-Z])/u', $this->string, -1, PREG_SPLIT_DELIM_CAPTURE);
+
         $lastWord = array_pop($parts);
 
-        return implode('', $parts) . self::pluralize($lastWord, $count);
+        $string = implode('', $parts) . (new self($lastWord))->pluralize($count);
+
+        return new self($string);
     }
 
-    public static function random(int $length = 16): string
+    public function random(int $length = 16): self
     {
         $string = '';
 
@@ -84,74 +115,100 @@ final readonly class StringHelper
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), offset: 0, length: $size);
         }
 
-        return $string;
+        return new self($string);
     }
 
-    public static function finish(string $value, string $cap): string
+    public function finish(string $cap): self
     {
-        return preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $value) . $cap;
+        return new self(preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap);
     }
 
-    public static function after(string $subject, string|int $search): string
-    {
-        if ($search === '') {
-            return $subject;
-        }
-
-        return array_reverse(explode((string) $search, $subject, limit: 2))[0];
-    }
-
-    public static function afterLast(string $subject, string|int $search): string
+    public function after(string|int $search): self
     {
         if ($search === '') {
-            return $subject;
+            return $this;
         }
 
-        $position = strrpos($subject, (string) $search);
+        $string = array_reverse(explode((string) $search, $this->string, limit: 2))[0];
+
+        return new self($string);
+    }
+
+    public function afterLast(string|int $search): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        $position = strrpos($this->string, (string) $search);
 
         if ($position === false) {
-            return $subject;
+            return $this;
         }
 
-        return substr($subject, $position + strlen((string) $search));
+        $string = substr($this->string, $position + strlen((string) $search));
+
+        return new self($string);
     }
 
-    public static function before(string $subject, string|int $search): string
+    public function before(string|int $search): self
     {
         if ($search === '') {
-            return $subject;
+            return $this;
         }
 
-        $result = strstr($subject, (string) $search, before_needle: true);
+        $string = strstr($this->string, (string) $search, before_needle: true);
 
-        if ($result === false) {
-            return $subject;
+        if ($string === false) {
+            return $this;
         }
 
-        return $result;
+        return new self($string);
     }
 
-    public static function beforeLast(string $subject, string|int $search): string
+    public function beforeLast(string|int $search): self
     {
         if ($search === '') {
-            return $subject;
+            return $this;
         }
 
-        $pos = mb_strrpos($subject, (string) $search);
+        $pos = mb_strrpos($this->string, (string) $search);
 
         if ($pos === false) {
-            return $subject;
+            return $this;
         }
 
-        return mb_substr($subject, start: 0, length: $pos);
+        $string = mb_substr($this->string, start: 0, length: $pos);
+
+        return new self($string);
     }
 
-    public static function between(string $subject, int|string $from, int|string $to): string
+    public function between(int|string $from, int|string $to): self
     {
         if ($from === '' || $to === '') {
-            return $subject;
+            return $this;
         }
 
-        return static::beforeLast(static::after($subject, $from), $to);
+        return $this->after($from)->beforeLast($to);
+    }
+
+    public function trim(string $characters = " \n\r\t\v\0"): self
+    {
+        return new self(trim($this->string, $characters));
+    }
+
+    public function ltrim(string $characters = " \n\r\t\v\0"): self
+    {
+        return new self(ltrim($this->string, $characters));
+    }
+
+    public function rtrim(string $characters = " \n\r\t\v\0"): self
+    {
+        return new self(rtrim($this->string, $characters));
+    }
+
+    public function length(): int
+    {
+        return mb_strlen($this->string);
     }
 }

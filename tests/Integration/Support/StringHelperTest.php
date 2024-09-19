@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
-use Tempest\Support\StringHelper;
+use function Tempest\Support\str;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -15,9 +15,9 @@ final class StringHelperTest extends FrameworkIntegrationTestCase
 {
     public function test_plural_studly(): void
     {
-        $this->assertSame('RealHumans', StringHelper::pluralizeLast('RealHuman'));
-        $this->assertSame('Models', StringHelper::pluralizeLast('Model'));
-        $this->assertSame('VortexFields', StringHelper::pluralizeLast('VortexField'));
-        $this->assertSame('MultipleWordsInOneStrings', StringHelper::pluralizeLast('MultipleWordsInOneString'));
+        $this->assertTrue(str('RealHuman')->pluralizeLast()->equals('RealHumans'));
+        $this->assertTrue(str('Model')->pluralizeLast()->equals('Models'));
+        $this->assertTrue(str('VortexField')->pluralizeLast()->equals('VortexFields'));
+        $this->assertTrue(str('MultipleWordsInOneString')->pluralizeLast()->equals('MultipleWordsInOneStrings'));
     }
 }
