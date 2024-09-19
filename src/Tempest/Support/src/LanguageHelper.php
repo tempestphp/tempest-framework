@@ -13,12 +13,12 @@ final class LanguageHelper
     /**
      * @param string[] $parts
      */
-    public static function join(array $parts): string
+    public static function join(array|ArrayHelper $parts): string
     {
-        $last = array_pop($parts);
+        $parts = arr($parts)->pop($last);
 
-        if ($parts) {
-            return implode(', ', $parts) . ' ' . 'and' . ' ' . $last;
+        if ($parts->isNotEmpty()) {
+            return $parts->implode(', ') . ' ' . 'and' . ' ' . $last;
         }
 
         return $last;
