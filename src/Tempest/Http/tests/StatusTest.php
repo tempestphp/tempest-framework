@@ -9,7 +9,6 @@ use Tempest\Http\Status;
 
 /**
  * @internal
- * @small
  */
 final class StatusTest extends TestCase
 {

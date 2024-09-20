@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Uuid;
 
 /**
  * @internal
- * @small
  */
 final class UuidTest extends TestCase
 {

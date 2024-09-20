@@ -21,7 +21,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 
 /**
  * @internal
- * @small
  */
 final class MapperTest extends FrameworkIntegrationTestCase
 {

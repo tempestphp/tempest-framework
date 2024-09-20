@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\DoesNotEndWith;
 
 /**
  * @internal
- * @small
  */
 final class DoesNotEndWithTest extends TestCase
 {

@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\PhoneNumber;
 
 /**
  * @internal
- * @small
  */
 final class PhoneNumberTest extends TestCase
 {

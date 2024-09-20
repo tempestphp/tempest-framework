@@ -12,7 +12,6 @@ use Tests\Tempest\Fixtures\TestDependency;
 
 /**
  * @internal
- * @small
  */
 final class KernelTest extends TestCase
 {

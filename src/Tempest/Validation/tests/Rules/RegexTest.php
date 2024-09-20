@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\RegEx;
 
 /**
  * @internal
- * @small
  */
 final class RegexTest extends TestCase
 {

@@ -10,7 +10,6 @@ use Tempest\Validation\Rules\Length;
 
 /**
  * @internal
- * @small
  */
 final class LengthTest extends TestCase
 {

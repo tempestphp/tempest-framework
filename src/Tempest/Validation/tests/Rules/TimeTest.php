@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Time;
 
 /**
  * @internal
- * @small
  */
 final class TimeTest extends TestCase
 {

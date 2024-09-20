@@ -10,7 +10,6 @@ use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class ArrayToJsonMapperTestCase extends IntegrationTestCase
 {

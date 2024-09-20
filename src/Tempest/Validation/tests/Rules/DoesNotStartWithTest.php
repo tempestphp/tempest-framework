@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\DoesNotStartWith;
 
 /**
  * @internal
- * @small
  */
 final class DoesNotStartWithTest extends TestCase
 {

@@ -9,7 +9,6 @@ use Tempest\Console\Components\Interactive\ProgressBarComponent;
 
 /**
  * @internal
- * @small
  */
 final class ProgressBarComponentTest extends TestCase
 {

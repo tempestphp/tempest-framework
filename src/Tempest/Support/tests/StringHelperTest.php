@@ -10,7 +10,6 @@ use function Tempest\Support\str;
 
 /**
  * @internal
- * @small
  */
 final class StringHelperTest extends TestCase
 {

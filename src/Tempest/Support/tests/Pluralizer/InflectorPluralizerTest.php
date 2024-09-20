@@ -11,7 +11,6 @@ use Tempest\Support\Pluralizer\InflectorPluralizer;
 
 /**
  * @internal
- * @small
  */
 final class InflectorPluralizerTest extends TestCase
 {

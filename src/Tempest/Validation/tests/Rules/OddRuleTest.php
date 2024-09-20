@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Odd;
 
 /**
  * @internal
- * @small
  */
 final class OddRuleTest extends TestCase
 {

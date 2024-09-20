@@ -18,7 +18,6 @@ use Tempest\Reflection\ClassReflector;
 
 /**
  * @internal
- * @small
  */
 final class GenericCommandBusTest extends TestCase
 {

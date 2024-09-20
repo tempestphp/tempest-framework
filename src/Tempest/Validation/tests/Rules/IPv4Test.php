@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\IPv4;
 
 /**
  * @internal
- * @small
  */
 final class IPv4Test extends TestCase
 {

@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Timestamp;
 
 /**
  * @internal
- * @small
  */
 final class TimestampTest extends TestCase
 {

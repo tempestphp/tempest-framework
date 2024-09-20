@@ -10,7 +10,6 @@ use Tempest\Support\LanguageHelper;
 
 /**
  * @internal
- * @small
  */
 final class LanguageHelperTest extends TestCase
 {

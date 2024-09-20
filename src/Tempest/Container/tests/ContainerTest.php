@@ -38,7 +38,6 @@ use function Tempest\reflect;
 
 /**
  * @internal
- * @small
  */
 final class ContainerTest extends TestCase
 {

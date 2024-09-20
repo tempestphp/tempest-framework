@@ -10,7 +10,6 @@ use Tempest\Validation\Rules\Count;
 
 /**
  * @internal
- * @small
  */
 final class CountTest extends TestCase
 {

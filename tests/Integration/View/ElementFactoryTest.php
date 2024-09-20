@@ -13,7 +13,6 @@ use Tempest\View\Elements\TextElement;
 
 /**
  * @internal
- * @small
  */
 final class ElementFactoryTest extends TestCase
 {

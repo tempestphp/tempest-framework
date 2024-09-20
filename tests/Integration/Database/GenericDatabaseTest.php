@@ -14,7 +14,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 {
