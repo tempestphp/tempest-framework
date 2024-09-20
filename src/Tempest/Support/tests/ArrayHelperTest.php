@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\InvalidMapWithKeysUsage;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
+use Tempest\Support\InvalidMapWithKeysUsage;
 
 /**
  * @internal
- * @small
  */
 final class ArrayHelperTest extends TestCase
 {

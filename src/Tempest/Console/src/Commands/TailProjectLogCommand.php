@@ -8,6 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Highlight\LogLanguage\LogLanguage;
 use Tempest\Console\Output\TailReader;
+use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
@@ -17,6 +18,7 @@ final readonly class TailProjectLogCommand
     public function __construct(
         private Console $console,
         private LogConfig $logConfig,
+        #[Tag('console')]
         private Highlighter $highlighter,
     ) {
     }
