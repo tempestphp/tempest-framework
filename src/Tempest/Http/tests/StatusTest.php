@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Status;
 
@@ -21,9 +22,7 @@ final class StatusTest extends TestCase
         return Status::{$description};
     }
 
-    /**
-     * @dataProvider provide_status_code_cases
-     */
+    #[DataProvider('provide_status_code_cases')]
     public function test_status_code(int $code, string $description): void
     {
         $status = Status::code($code);

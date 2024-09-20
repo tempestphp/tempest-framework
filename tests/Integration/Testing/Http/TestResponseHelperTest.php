@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Framework\Testing\Http\TestResponseHelper;
 use Tempest\Http\GenericResponse;
@@ -162,9 +163,7 @@ final class TestResponseHelperTest extends TestCase
         $helper->assertNotFound();
     }
 
-    /**
-     * @dataProvider provide_assert_status_cases
-     */
+    #[DataProvider('provide_assert_status_cases')]
     public function test_assert_status(Status $expectedStatus, GenericResponse $response): void
     {
         $helper = new TestResponseHelper($response);
@@ -172,9 +171,7 @@ final class TestResponseHelperTest extends TestCase
         $helper->assertStatus($expectedStatus);
     }
 
-    /**
-     * @dataProvider provide_assert_status_fails_when_status_does_not_match_cases
-     */
+    #[DataProvider('provide_assert_status_fails_when_status_does_not_match_cases')]
     public function test_assert_status_fails_when_status_does_not_match(Status $expectedStatus, GenericResponse $response): void
     {
         $helper = new TestResponseHelper($response);
