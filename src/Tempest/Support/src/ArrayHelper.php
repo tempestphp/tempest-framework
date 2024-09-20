@@ -19,8 +19,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public function __construct(
         mixed $input = [],
-    )
-    {
+    ) {
         if (is_array($input)) {
             $this->array = $input;
         } elseif ($input instanceof self) {

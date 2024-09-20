@@ -6,6 +6,7 @@ namespace Tempest\Console\Exceptions;
 
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Container\Tag;
 use Tempest\Core\ExceptionHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
@@ -15,6 +16,7 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
         private Console $console,
+        #[Tag('console')]
         private Highlighter $highlighter,
         private ConsoleArgumentBag $argumentBag,
     ) {

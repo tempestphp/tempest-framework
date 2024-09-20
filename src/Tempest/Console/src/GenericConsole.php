@@ -16,6 +16,7 @@ use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
+use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 
 final class GenericConsole implements Console
@@ -29,6 +30,7 @@ final class GenericConsole implements Console
     public function __construct(
         private readonly OutputBuffer $output,
         private readonly InputBuffer $input,
+        #[Tag('console')]
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
     ) {

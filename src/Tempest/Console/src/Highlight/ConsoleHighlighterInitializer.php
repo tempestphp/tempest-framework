@@ -9,9 +9,9 @@ use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Highlight\Highlighter;
 
-final readonly class HighlighterInitializer implements Initializer
+final readonly class ConsoleHighlighterInitializer implements Initializer
 {
-    #[Singleton]
+    #[Singleton(tag: 'console')]
     public function initialize(Container $container): Highlighter
     {
         return new Highlighter(new TempestTerminalTheme());
