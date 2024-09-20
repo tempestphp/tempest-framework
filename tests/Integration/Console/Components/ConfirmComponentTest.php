@@ -11,7 +11,6 @@ use Tempest\Console\Point;
 
 /**
  * @internal
- * @small
  */
 final class ConfirmComponentTest extends TestCase
 {

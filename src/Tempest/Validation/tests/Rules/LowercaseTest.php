@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Lowercase;
 
 /**
  * @internal
- * @small
  */
 final class LowercaseTest extends TestCase
 {

@@ -19,7 +19,6 @@ use Tempest\Database\QueryStatements\RawStatement;
 
 /**
  * @internal
- * @small
  */
 final class DatabaseQueryStatementTest extends TestCase
 {

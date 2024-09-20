@@ -10,7 +10,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class ResponseSenderInitializerTest extends FrameworkIntegrationTestCase
 {

@@ -4,7 +4,7 @@ includes:
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
 services:
 	-
-		class: Tests\Tempest\Architecture\ArchitectureTest
+		class: Tests\Tempest\Architecture\ArchitectureTestCase
 		tags:
 			- phpat.test
 parameters:

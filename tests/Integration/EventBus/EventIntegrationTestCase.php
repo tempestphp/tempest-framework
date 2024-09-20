@@ -11,7 +11,6 @@ use Tests\Tempest\Integration\IntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class EventIntegrationTestCase extends IntegrationTestCase
 {

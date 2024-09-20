@@ -5,26 +5,22 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Length;
 
 /**
  * @internal
- * @small
  */
 final class LengthTest extends TestCase
 {
-    /**
-     * @dataProvider provide_length_cases
-     */
+    #[DataProvider('provide_length_cases')]
     public function test_length(Length $rule, string $stringToTest, bool $expected): void
     {
         $this->assertEquals($expected, $rule->isValid($stringToTest));
     }
 
-    /**
-     * @dataProvider provide_returns_the_proper_message_based_on_min_and_max_arguments_cases
-     */
+    #[DataProvider('provide_returns_the_proper_message_based_on_min_and_max_arguments_cases')]
     public function test_returns_the_proper_message_based_on_min_and_max_arguments(
         Length $rule,
         string $expectedMessage

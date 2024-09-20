@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Even;
 
 /**
  * @internal
- * @small
  */
 final class EvenRuleTest extends TestCase
 {

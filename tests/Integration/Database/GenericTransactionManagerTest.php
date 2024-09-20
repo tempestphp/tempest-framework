@@ -13,7 +13,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {

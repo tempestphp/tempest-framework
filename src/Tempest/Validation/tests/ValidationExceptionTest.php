@@ -11,7 +11,6 @@ use Tempest\Validation\Rule;
 
 /**
  * @internal
- * @small
  */
 final class ValidationExceptionTest extends TestCase
 {

@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\NotIn;
 
 /**
  * @internal
- * @small
  */
 final class NotInTest extends TestCase
 {

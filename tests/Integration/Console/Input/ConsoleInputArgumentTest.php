@@ -9,7 +9,6 @@ use Tempest\Console\Input\ConsoleInputArgument;
 
 /**
  * @internal
- * @small
  */
 final class ConsoleInputArgumentTest extends TestCase
 {

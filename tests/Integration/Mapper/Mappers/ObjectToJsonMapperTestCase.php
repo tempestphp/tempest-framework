@@ -11,7 +11,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal
- * @small
  */
 final class ObjectToJsonMapperTestCase extends IntegrationTestCase
 {

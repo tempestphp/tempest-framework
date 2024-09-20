@@ -21,7 +21,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 
 /**
  * @internal
- * @small
  */
 final class ArrayToObjectMapperTestCase extends IntegrationTestCase
 {

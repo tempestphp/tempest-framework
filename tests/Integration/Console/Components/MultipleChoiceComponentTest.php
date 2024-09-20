@@ -9,7 +9,6 @@ use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 
 /**
  * @internal
- * @small
  */
 final class MultipleChoiceComponentTest extends TestCase
 {

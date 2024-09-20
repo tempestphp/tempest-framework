@@ -11,7 +11,6 @@ use Tempest\Highlight\Highlighter;
 
 /**
  * @internal
- * @small
  */
 final class LogLanguageTest extends TestCase
 {

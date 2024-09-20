@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Boolean;
 
 /**
  * @internal
- * @small
  */
 final class BooleanTest extends TestCase
 {

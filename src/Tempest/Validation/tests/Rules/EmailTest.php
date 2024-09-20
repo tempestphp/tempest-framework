@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\Email;
 
 /**
  * @internal
- * @small
  */
 final class EmailTest extends TestCase
 {

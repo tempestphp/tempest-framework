@@ -9,7 +9,6 @@ use Tempest\Validation\Rules\DivisibleBy;
 
 /**
  * @internal
- * @small
  */
 final class DivisibleByTest extends TestCase
 {

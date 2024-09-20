@@ -8,7 +8,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
 {

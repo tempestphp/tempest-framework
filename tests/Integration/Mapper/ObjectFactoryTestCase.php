@@ -16,7 +16,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal
- * @small
  */
 final class ObjectFactoryTestCase extends IntegrationTestCase
 {

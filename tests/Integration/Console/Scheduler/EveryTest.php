@@ -9,7 +9,6 @@ use Tempest\Console\Scheduler\Every;
 
 /**
  * @internal
- * @small
  */
 final class EveryTest extends TestCase
 {

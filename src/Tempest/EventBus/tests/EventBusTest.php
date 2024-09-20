@@ -17,7 +17,6 @@ use Tempest\Reflection\MethodReflector;
 
 /**
  * @internal
- * @small
  */
 final class EventBusTest extends TestCase
 {

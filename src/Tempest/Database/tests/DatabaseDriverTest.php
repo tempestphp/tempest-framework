@@ -15,7 +15,6 @@ use Tempest\Database\DatabaseConnection;
 
 /**
  * @internal
- * @small
  */
 final class DatabaseDriverTest extends TestCase
 {

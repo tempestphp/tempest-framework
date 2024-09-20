@@ -11,7 +11,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
- * @small
  */
 final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 {
