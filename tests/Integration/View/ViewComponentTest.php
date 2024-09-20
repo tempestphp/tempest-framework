@@ -176,7 +176,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_with_passed_variable(): void
     {
         $rendered = $this->render(
-            view('<x-with-variable :variable="$variable"></x-with-variable:>')->data(
+            view('<x-with-variable :variable="$variable"></x-with-variable>')->data(
                 variable: 'test'
             )
         );
@@ -185,6 +185,38 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <<<HTML
         <div>
                 test    </div>
+        HTML,
+            $rendered
+        );
+    }
+
+    public function test_with_passed_data(): void
+    {
+        $rendered = $this->render(
+            view('<x-with-variable variable="test"></x-with-variable>')
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<HTML
+        <div>
+                test    </div>
+        HTML,
+            $rendered
+        );
+    }
+
+    public function test_with_passed_php_data(): void
+    {
+        $rendered = $this->render(
+            view(<<<HTML
+            <x-with-variable :variable="strtoupper('test')"></x-with-variable:>'
+            HTML)
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<HTML
+        <div>
+                TEST    </div>
         HTML,
             $rendered
         );

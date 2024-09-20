@@ -86,6 +86,8 @@ trait IsView
 
     public function eval(string $eval): mixed
     {
+        extract($this->data, flags: EXTR_SKIP);
+
         /** @phpstan-ignore-next-line */
         return eval("return {$eval};");
     }
