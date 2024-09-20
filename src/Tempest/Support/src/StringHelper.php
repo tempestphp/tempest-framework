@@ -81,7 +81,7 @@ final readonly class StringHelper implements Stringable
     {
         $string = $this->string;
 
-        foreach (ArrayHelper::wrap($characters) as $character) {
+        foreach (arr($characters) as $character) {
             $string = preg_replace('/' . preg_quote($character, '/') . '+/u', $character, $string);
         }
 

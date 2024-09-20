@@ -11,7 +11,7 @@ use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Support\ArrayHelper;
+use function Tempest\Support\arr;
 use Tempest\Validation\Validator;
 use Throwable;
 
@@ -46,7 +46,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $missingValues = [];
         $unsetProperties = [];
 
-        $from = (new ArrayHelper())->unwrap($from);
+        $from = arr($from)->unwrap()->toArray();
 
         $isStrictClass = $class->hasAttribute(Strict::class);
 

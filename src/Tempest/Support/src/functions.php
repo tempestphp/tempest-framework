@@ -7,4 +7,9 @@ namespace Tempest\Support {
     {
         return new StringHelper($string);
     }
+
+    function arr(mixed $input = []): ArrayHelper
+    {
+        return new ArrayHelper($input);
+    }
 }
