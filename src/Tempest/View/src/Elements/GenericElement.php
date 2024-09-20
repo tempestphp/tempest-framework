@@ -47,7 +47,7 @@ final class GenericElement implements Element
 
             if ($attributeName === ":{$name}") {
                 if (! $value) {
-                    return null; // TODO: should return true?
+                    return null;
                 }
 
                 if (! $eval) {
