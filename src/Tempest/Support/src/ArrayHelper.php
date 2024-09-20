@@ -69,14 +69,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return null;
     }
 
-    public function pop(&$value): self
+    /** @param mixed $value The popped value will be stored in this variable */
+    public function pop(mixed &$value): self
     {
         $value = $this->last();
 
         return new self(array_slice($this->array, 0, -1));
     }
 
-    public function unshift(&$value): self
+    /** @param mixed $value The unshifted value will be stored in this variable */
+    public function unshift(mixed &$value): self
     {
         $value = $this->first();
 
