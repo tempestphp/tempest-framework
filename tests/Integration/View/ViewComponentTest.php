@@ -52,10 +52,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-            <form action="#" method="post"><div><div><label for="a">a</label>
-            <input type="number" name="a" id="a" value></input></div></div>
-            <div><label for="b">b</label>
-            <input type="text" name="b" id="b" value></input></div></form>
+            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></input></div></form>
             HTML,
             actual: $this->render(view(
                 <<<'HTML'
@@ -140,8 +137,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         yield [
             '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p>
-<p>b</p></div>',
+            '<div><p>a</p><p>b</p></div>',
         ];
 
         yield [

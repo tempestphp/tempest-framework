@@ -285,7 +285,7 @@ final class TempestViewRenderer implements ViewRenderer
             $content[] = $this->renderElement($view, $child);
         }
 
-        $content = implode(PHP_EOL, $content);
+        $content = implode('', $content);
 
         $attributes = [];
 
