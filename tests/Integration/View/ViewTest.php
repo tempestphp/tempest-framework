@@ -23,8 +23,7 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->render($view);
 
         $expected = <<<HTML
-            <html lang="en"><head><title></title></head>
-            <body>
+            <html lang="en"><head><title></title></head><body>
                 Hello Brent!
             </body></html>
             HTML;
