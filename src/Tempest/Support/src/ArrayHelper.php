@@ -19,7 +19,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public function __construct(
         mixed $input = [],
-    ) {
+    )
+    {
         if (is_array($input)) {
             $this->array = $input;
         } elseif ($input instanceof self) {
@@ -150,6 +151,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
         foreach ($this->array as $key => $value) {
             $generator = $map($value, $key);
+
+            if (! $generator instanceof Generator) {
+                throw new InvalidMapWithKeysUsage();
+            }
 
             $array[$generator->key()] = $generator->current();
         }

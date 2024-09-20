@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Support\InvalidMapWithKeysUsage;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
 
@@ -180,6 +181,20 @@ final class ArrayHelperTest extends TestCase
                 ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value => $value)
                 ->equals(['a' => 'a', 'b' => 'b']),
         );
+
+        $this->assertTrue(
+            arr(['a' => 'a', 'b' => 'b'])
+                ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value)
+                ->equals(['b']),
+        );
+    }
+
+    public function test_map_with_keys_without_generator(): void
+    {
+        $this->expectException(InvalidMapWithKeysUsage::class);
+
+        arr(['a', 'b'])
+            ->mapWithKeys(fn (mixed $value, mixed $key) => $value);
     }
 
     public function test_values(): void
