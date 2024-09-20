@@ -47,7 +47,7 @@ final class GenericElement implements Element
 
             if ($attributeName === ":{$name}") {
                 if (! $value) {
-                    return null;
+                    return null; // TODO: should return true?
                 }
 
                 if (! $eval) {
@@ -55,15 +55,15 @@ final class GenericElement implements Element
                 }
 
                 // TODO: possible refactor with TextElement:25-29 ?
-                if (str_starts_with($value, '$this->')) {
-                    $result = $this->view->eval($value);
+                //                if (str_starts_with($value, '$this->')) {
+                $result = $this->eval($value);
 
-                    if (is_bool($result) || is_string($result)) {
-                        return $result;
-                    }
-
-                    return (bool) $result;
+                if (is_bool($result) || is_string($result)) {
+                    return $result;
                 }
+
+                //                    return (bool) $result;
+                //                }
 
                 return $this->getData()[ltrim($value, '$')] ?? '';
             }
@@ -112,5 +112,20 @@ final class GenericElement implements Element
         }
 
         return $data;
+    }
+
+    private function eval(string $eval): mixed
+    {
+        $data = $this->getData();
+
+        extract($data, flags: EXTR_SKIP);
+
+        /** @phpstan-ignore-next-line */
+        return eval("return {$eval};");
+    }
+
+    public function __get(string $name)
+    {
+        return $this->getData($name);
     }
 }
