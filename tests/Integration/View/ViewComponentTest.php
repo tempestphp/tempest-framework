@@ -10,6 +10,8 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
 use function Tempest\view;
+use Tests\Tempest\Fixtures\Views\Chapter;
+use Tests\Tempest\Fixtures\Views\DocsView;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -176,7 +178,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_with_passed_variable(): void
     {
         $rendered = $this->render(
-            view('<x-with-variable :variable="$variable"></x-with-variable>')->data(
+            view('<x-with-variable :variable="$variable"></x-with-variable:>')->data(
                 variable: 'test'
             )
         );
@@ -220,6 +222,24 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML,
             $rendered
         );
+    }
+
+    public function test_view_component_with_nested_property_to_view(): void
+    {
+        $view = new DocsView(new Chapter('Current Title'));
+
+        $html = $this->render($view);
+
+        $this->assertStringContainsString('Current Title', $html);
+    }
+
+    public function test_view_component_with_nested_call_to_view(): void
+    {
+        $view = new DocsView(new Chapter('Current Title'));
+
+        $html = $this->render($view);
+
+        $this->assertStringContainsString('Next Title', $html);
     }
 
     public function test_with_passed_variable_within_loop(): void

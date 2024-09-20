@@ -47,25 +47,16 @@ final class GenericElement implements Element
 
             if ($attributeName === ":{$name}") {
                 if (! $value) {
-                    return null; // TODO: should return true?
+                    return null;
                 }
 
                 if (! $eval) {
                     return $value;
                 }
 
-                // TODO: possible refactor with TextElement:25-29 ?
-                //                if (str_starts_with($value, '$this->')) {
-                $result = $this->eval($value);
-
-                if (is_bool($result) || is_string($result)) {
-                    return $result;
-                }
-
-                //                    return (bool) $result;
-                //                }
-
-                return $this->getData()[ltrim($value, '$')] ?? '';
+                return $this->eval($value)
+                    ?? $this->getData()[ltrim($value, '$')]
+                    ?? '';
             }
         }
 
@@ -126,6 +117,11 @@ final class GenericElement implements Element
 
     public function __get(string $name)
     {
-        return $this->getData($name);
+        return $this->getData($name) ?? $this->view->{$name};
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->view->{$name}(...$arguments);
     }
 }
