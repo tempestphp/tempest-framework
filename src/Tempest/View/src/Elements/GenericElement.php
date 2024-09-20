@@ -126,6 +126,11 @@ final class GenericElement implements Element
 
     public function __get(string $name)
     {
-        return $this->getData($name);
+        return $this->getData($name) ?? $this->view->{$name};
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->view->{$name}(...$arguments);
     }
 }
