@@ -18,12 +18,12 @@ final class CreateUserMigration implements Migration
 
     public function up(): QueryStatement|null
     {
-        return (new CreateTableStatement('User'))
+        return (new CreateTableStatement('users'))
             ->varchar('name');
     }
 
     public function down(): QueryStatement|null
     {
-        return (new DropTableStatement('User'));
+        return (new DropTableStatement('users'));
     }
 }

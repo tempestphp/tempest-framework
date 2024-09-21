@@ -62,7 +62,7 @@ final readonly class MigrationManager
             /** @throw UnhandledMatchError */
             match ((string)$pdoException->getCode()) {
                 $this->databaseConfig->connection()->dialect()->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: 'Migration', exception: MigrationException::noTable()),
+                    event: new MigrationFailed(name: Migration::table()->tableName, exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
             };

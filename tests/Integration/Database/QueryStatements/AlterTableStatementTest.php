@@ -22,7 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function it_can_alter_a_table_definition(): void
+    public function test_it_can_alter_a_table_definition(): void
     {
         $migration = $this->getAlterTableMigration();
 
@@ -45,8 +45,8 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         } catch (QueryException $queryException) {
             $message = match($this->container->get(DatabaseDialect::class)) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
-                DatabaseDialect::SQLITE => 'table User has no column named email',
-                DatabaseDialect::POSTGRESQL => 'table User has no column named email',
+                DatabaseDialect::SQLITE => 'table users has no column named email',
+                DatabaseDialect::POSTGRESQL => 'table users has no column named email',
             };
 
             $this->assertStringContainsString($message, $queryException->getMessage());
