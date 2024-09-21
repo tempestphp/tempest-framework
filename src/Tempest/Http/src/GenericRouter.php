@@ -7,6 +7,7 @@ namespace Tempest\Http;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
+use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
@@ -32,6 +33,7 @@ final class GenericRouter implements Router
     public function __construct(
         private readonly Container $container,
         private readonly RouteConfig $routeConfig,
+        private readonly AppConfig $appConfig,
     ) {
     }
 
@@ -148,6 +150,7 @@ final class GenericRouter implements Router
             $uri = str_replace('{' . $key . '}', "{$value}", $uri);
         }
 
+        $uri = rtrim($this->appConfig->baseUri, '/') . $uri;
 
         if ($queryParams !== []) {
             return $uri . '?' . http_build_query($queryParams);

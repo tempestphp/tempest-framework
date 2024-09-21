@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
@@ -50,6 +51,11 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('/test', $router->toUri(TestController::class));
 
         $this->assertEquals('/test/1/a?q=hi&i=test', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a', q: 'hi', i: 'test'));
+
+        $appConfig = new AppConfig(baseUri: 'https://test.com');
+        $this->container->config($appConfig);
+        $router = $this->container->get(GenericRouter::class);
+        $this->assertEquals('https://test.com/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
     }
 
     public function test_with_view(): void

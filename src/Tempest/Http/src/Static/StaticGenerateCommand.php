@@ -49,7 +49,7 @@ final readonly class StaticGenerateCommand
                     $params = [$params];
                 }
 
-                $uri = uri($staticPage->handler, ...$params);
+                $uri = parse_url(uri($staticPage->handler, ...$params), PHP_URL_PATH);
 
                 // TODO: test!
                 $fileName = $uri === '/'
