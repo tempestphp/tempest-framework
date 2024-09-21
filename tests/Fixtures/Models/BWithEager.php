@@ -13,14 +13,14 @@ final class BWithEager implements DatabaseModel
 {
     use IsDatabaseModel;
 
-    public static function table(): TableName
-    {
-        return new TableName('B');
-    }
-
     public function __construct(
         #[Eager]
         public C $c,
     ) {
+    }
+
+    public static function table(): TableName
+    {
+        return new TableName('b');
     }
 }

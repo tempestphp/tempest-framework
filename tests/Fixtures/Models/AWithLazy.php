@@ -13,14 +13,14 @@ final class AWithLazy implements DatabaseModel
 {
     use IsDatabaseModel;
 
-    public static function table(): TableName
-    {
-        return new TableName('A');
-    }
-
     public function __construct(
         #[Lazy]
         public B $b,
     ) {
+    }
+
+    public static function table(): TableName
+    {
+        return new TableName('a');
     }
 }

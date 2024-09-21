@@ -14,13 +14,13 @@ final readonly class FooMigration implements Migration
 {
     public function getName(): string
     {
-        return 'foo';
+        return 'foos';
     }
 
     public function up(): QueryStatement|null
     {
         return new CreateTableStatement(
-            tableName: 'Foo',
+            tableName: 'foos',
             statements: [
                 new PrimaryKeyStatement(),
                 new TextStatement('bar'),
