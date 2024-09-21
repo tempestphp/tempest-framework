@@ -1,4 +1,4 @@
-# Frictionless command line interfaces with PHP
+# A revolutionary way of building console applications in PHP.
 
 ```
 composer require tempest/console
@@ -17,6 +17,6 @@ final readonly class Hello
 }
 ```
 
-Read the docs: [https://tempest.stitcher.io/console/01-getting-started](https://tempest.stitcher.io/console/01-getting-started).
+[Get started here](https://tempestphp.com/console)
 
 [Join the Tempest Discord](https://discord.gg/pPhpTGUMPQ)
