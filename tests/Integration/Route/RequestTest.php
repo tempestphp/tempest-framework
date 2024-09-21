@@ -153,4 +153,25 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertSame('a', $book->title);
         $this->assertSame('b', $book->author->name);
     }
+
+    public function test_has(): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/?bar',
+            body: [
+                'foo' => false,
+            ],
+        );
+
+        $this->assertTrue($request->hasBody('foo'));
+        $this->assertTrue($request->hasQuery('bar'));
+        $this->assertTrue($request->has('bar'));
+        $this->assertTrue($request->has('foo'));
+        $this->assertFalse($request->hasQuery('foo'));
+        $this->assertFalse($request->hasBody('bar'));
+        $this->assertFalse($request->hasBody('unknown'));
+        $this->assertFalse($request->hasQuery('unknown'));
+        $this->assertFalse($request->has('unknown'));
+    }
 }

@@ -12,6 +12,12 @@ interface Request
 
     public function getUri(): string;
 
+    public function has(string $key): bool;
+
+    public function hasBody(string $key): bool;
+
+    public function hasQuery(string $key): bool;
+
     public function get(string $key, mixed $default = null): mixed;
 
     public function getBody(): array;
