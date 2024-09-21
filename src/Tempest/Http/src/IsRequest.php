@@ -125,4 +125,23 @@ trait IsRequest
 
         return $query;
     }
+
+    public function has(string $key): bool
+    {
+        if ($this->hasBody($key)) {
+            return true;
+        }
+
+        return (bool) $this->hasQuery($key);
+    }
+
+    public function hasBody(string $key): bool
+    {
+        return array_key_exists($key, $this->body);
+    }
+
+    public function hasQuery(string $key): bool
+    {
+        return array_key_exists($key, $this->query);
+    }
 }
