@@ -62,12 +62,12 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         string $errFile,
         int $errLine,
     ): void {
+        ll("{$errFile}:{$errLine} {$errstr} ({$errNo})");
+
         if (
             $errNo === E_USER_WARNING
             || $errNo === E_DEPRECATED
         ) {
-            ll("{$errFile}:{$errLine} {$errstr} ({$errNo})");
-
             return;
         }
 
