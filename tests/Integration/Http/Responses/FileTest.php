@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
-use Generator;
 use Tempest\Http\Responses\File;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -23,10 +22,6 @@ final class FileTest extends FrameworkIntegrationTestCase
         $this->assertSame('application/pdf', $response->getHeader('Content-Type')->values[0]);
         $this->assertNull($response->getHeader('Transfer-Encoding'));
         $this->assertSame((string) filesize($path), $response->getHeader('Content-Length')->values[0]);
-        $this->assertInstanceOf(Generator::class, $response->getBody());
-
-        $handle = fopen($path, 'r');
-        $firstPart = fread($handle, 1024);
-        $this->assertSame($firstPart, $response->getBody()->current());
+        $this->assertSame($path, $response->getBody());
     }
 }

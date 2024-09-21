@@ -6,6 +6,8 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\GenericResponse;
 use Tempest\Http\GenericResponseSender;
+use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\File;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use function Tempest\view;
@@ -31,6 +33,44 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $this->assertSame($response, $responseSender->send($response));
 
         ob_get_clean();
+    }
+
+    public function test_file_response(): void
+    {
+        ob_start();
+
+        $path = __DIR__ . '/Fixtures/sample.png';
+
+        $response = new File(
+            path: $path,
+        );
+
+        $responseSender = $this->container->get(GenericResponseSender::class);
+
+        $responseSender->send($response);
+
+        $content = ob_get_clean();
+
+        $this->assertSame(file_get_contents($path), $content);
+    }
+
+    public function test_download_response(): void
+    {
+        ob_start();
+
+        $path = __DIR__ . '/Fixtures/sample.png';
+
+        $response = new Download(
+            path: $path,
+        );
+
+        $responseSender = $this->container->get(GenericResponseSender::class);
+
+        $responseSender->send($response);
+
+        $content = ob_get_clean();
+
+        $this->assertSame(file_get_contents($path), $content);
     }
 
     public function test_sending_of_array_to_json(): void
