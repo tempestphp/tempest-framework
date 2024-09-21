@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Static;
 
+use Tempest\Core\AppConfig;
 use function Tempest\path;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -14,9 +15,13 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_generate(): void
     {
+        $appConfig = new AppConfig(baseUri: 'https://test.com');
+        $this->container->config($appConfig);
+
         $this->console
             ->call('static:generate')
             ->assertContains('/static/a/b')
+            ->assertDoesNotContain('https://test.com/static/a/b')
             ->assertContains('/static/c/d');
 
         $root = $this->kernel->root;

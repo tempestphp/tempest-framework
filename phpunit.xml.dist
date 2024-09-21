@@ -30,5 +30,6 @@
   </source>
   <php>
     <env name="ENVIRONMENT" value="testing" />
+    <env name="BASE_URI" value="" />
   </php>
 </phpunit>
