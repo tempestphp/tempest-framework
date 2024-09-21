@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures\Controllers;
 
 use Exception;
 use Tempest\Http\Get;
+use Tempest\Http\Responses\Ok;
 
 final readonly class FailController
 {
@@ -13,5 +14,13 @@ final readonly class FailController
     public function __invoke(): void
     {
         throw new Exception('Hi!');
+    }
+
+    #[Get('/warning')]
+    public function warning(): Ok
+    {
+        trigger_error('warning', E_USER_WARNING);
+
+        return new Ok('ok');
     }
 }
