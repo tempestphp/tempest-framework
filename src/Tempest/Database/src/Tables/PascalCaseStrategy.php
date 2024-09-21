@@ -10,6 +10,8 @@ final class PascalCaseStrategy implements NamingStrategy
 {
     public function getName(string $model): string
     {
-        return (string) str(class_basename($model))->pascal();
+        return (string) str($model)
+            ->classBasename()
+            ->pascal();
     }
 }
