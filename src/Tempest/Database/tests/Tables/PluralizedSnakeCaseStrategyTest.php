@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Database\Tables;
+namespace Tempest\Database\Tests\Tables;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\TestCase;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class PluralizedSnakeCaseStrategyTest extends FrameworkIntegrationTestCase
+final class PluralizedSnakeCaseStrategyTest extends TestCase
 {
     #[TestWith([Migration::class, 'migrations'])]
     #[TestWith(['App\\Models\\PersonalAccessToken', 'personal_access_tokens'])]

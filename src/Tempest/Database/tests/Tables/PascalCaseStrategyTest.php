@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Database\Tables;
+namespace Tempest\Database\Tests\Tables;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\TestCase;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Tables\PascalCaseStrategy;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class PascalCaseStrategyTest extends FrameworkIntegrationTestCase
+final class PascalCaseStrategyTest extends TestCase
 {
     #[TestWith([Migration::class, 'Migration'])]
     #[TestWith(['App\\Models\\PersonalAccessToken', 'PersonalAccessToken'])]
