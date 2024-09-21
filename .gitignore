@@ -11,3 +11,4 @@ composer.lock
 debug.log
 tempest.log
 public/static
+tests/Unit/Log
