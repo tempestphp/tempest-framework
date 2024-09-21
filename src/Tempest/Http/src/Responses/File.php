@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Responses;
 
-use Generator;
 use Tempest\Http\ContentType;
 use Tempest\Http\IsResponse;
 use Tempest\Http\Response;
@@ -26,17 +25,6 @@ final class File implements Response
             $this->addHeader('Content-Length', "{$filesize}");
         }
 
-        $this->body = $this->readFile($path);
-    }
-
-    private function readFile(string $path): Generator
-    {
-        $handle = fopen($path, 'r');
-
-        while ($content = fread($handle, 1024)) {
-            yield $content;
-        }
-
-        fclose($handle);
+        $this->body = $path;
     }
 }

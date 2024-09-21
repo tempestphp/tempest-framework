@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
+use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\File;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
@@ -60,25 +62,18 @@ final readonly class GenericResponseSender implements ResponseSender
 
     private function sendContent(Response $response): void
     {
-        foreach ($this->resolveBody($response) as $content) {
-            echo $content;
-            ob_flush();
-        }
-    }
-
-    private function resolveBody(Response $response): Generator
-    {
         $body = $response->getBody();
-        if ($body instanceof Generator) {
-            return $body;
+
+        if ($response instanceof File || $response instanceof Download) {
+            readfile($body);
+        } elseif (is_array($body)) {
+            echo json_encode($body);
+        } elseif ($body instanceof View) {
+            echo $this->viewRenderer->render($body);
+        } else {
+            echo $body;
         }
 
-        if (is_array($body)) {
-            yield json_encode($body);
-        } elseif ($body instanceof View) {
-            yield $this->viewRenderer->render($body);
-        } else {
-            yield $body;
-        }
+        ob_flush();
     }
 }
