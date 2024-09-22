@@ -58,6 +58,11 @@ trait IsView
         return $this->{$key} ?? $this->data[$key] ?? null;
     }
 
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->data) || property_exists($this, $key);
+    }
+
     public function data(mixed ...$params): self
     {
         $this->rawData = [...$this->rawData, ...$params];

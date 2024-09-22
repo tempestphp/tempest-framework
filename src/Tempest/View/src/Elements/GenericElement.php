@@ -94,9 +94,13 @@ final class GenericElement implements Element
 
     public function getData(?string $key = null): mixed
     {
+        if ($key && $this->hasAttribute($key)) {
+            return $this->getAttribute($key);
+        }
+
         $parentData = $this->getParent()?->getData() ?? [];
 
-        $data = [...$this->view->getData(), ...$parentData, ...$this->data];
+        $data = [...$this->attributes, ...$this->view->getData(), ...$parentData, ...$this->data];
 
         if ($key) {
             return $data[$key] ?? null;

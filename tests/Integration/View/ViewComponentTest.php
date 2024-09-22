@@ -262,4 +262,54 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             $rendered
         );
     }
+
+    public function test_inline_view_variables_passed_to_component(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        fromPHP
+        fromString
+        nothing
+        HTML, $html);
+    }
+
+    public function test_view_component_attribute_variables_without_this(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-attribute-without-this-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        fromString
+        HTML, $html);
+    }
+
+    public function test_view_component_slots_without_self_closing_tags(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-non-self-closing-slot-b.view.php'));
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
+        A: other slot
+            B: other slot
+            C: other slot
+        
+            A: 
+            main slot
+            
+            B: 
+            main slot
+            
+            C: 
+            main slot
+        HTML, $html);
+    }
+
+    public function test_view_component_with_camelcase_attribute(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        test
+        test
+        HTML, $html);
+    }
 }
