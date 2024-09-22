@@ -8,6 +8,7 @@ use const DIRECTORY_SEPARATOR;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 use SplFileInfo;
 use Tempest\Filesystem\LocalFilesystem;
 
@@ -35,8 +36,12 @@ final class LocalFilesystemTest extends TestCase
                 continue;
             }
 
-            unlink($file->getRealPath());
+            @unlink($file->getRealPath());
         }
+
+        // Remove testing directories.
+        @rmdir(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'test-directory'. DIRECTORY_SEPARATOR . 'nested-test-directory');
+        @rmdir(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'test-directory');
     }
 
     public function test_writing_files(): void
@@ -94,5 +99,29 @@ final class LocalFilesystemTest extends TestCase
 
         $this->assertFileDoesNotExist(__DIR__ . '/Fixtures/test.txt');
         $this->assertStringEqualsFile(__DIR__ . '/Fixtures/test2.txt', 'Hello world!');
+    }
+
+    public function test_making_a_directory(): void
+    {
+        (new LocalFilesystem())->makeDirectory(__DIR__ . '/Fixtures/test-directory');
+
+        $this->assertDirectoryExists(__DIR__ . '/Fixtures/test-directory');
+    }
+
+    public function test_making_a_directory_recursively(): void
+    {
+        (new LocalFilesystem())->makeDirectory(__DIR__ . '/Fixtures/test-directory/nested-test-directory');
+
+        $this->assertDirectoryExists(__DIR__ . '/Fixtures/test-directory/nested-test-directory');
+    }
+
+    public function test_making_a_directory_recursively_without_recursive_enabled_fails(): void
+    {
+        $this->expectExceptionObject(new RuntimeException());
+
+        (new LocalFilesystem())->makeDirectory(
+            path: __DIR__ . '/Fixtures/test-directory/nested-test-directory',
+            recursive: false
+        );
     }
 }
