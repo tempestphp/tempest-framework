@@ -36,7 +36,8 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly Kernel $kernel,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {

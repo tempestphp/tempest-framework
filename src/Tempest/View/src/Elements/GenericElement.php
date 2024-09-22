@@ -15,7 +15,8 @@ final class GenericElement implements Element
         private readonly View $view,
         private readonly string $tag,
         private readonly array $attributes,
-    ) {}
+    ) {
+    }
 
     public function getTag(): string
     {

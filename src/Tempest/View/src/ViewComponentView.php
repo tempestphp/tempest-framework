@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\View\Elements\GenericElement;
-
 final class ViewComponentView implements View
 {
     use IsView;
