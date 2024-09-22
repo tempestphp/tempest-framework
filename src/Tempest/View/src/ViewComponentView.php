@@ -16,6 +16,11 @@ final class ViewComponentView implements View
         $this->path = $content;
     }
 
+    public function getData(): array
+    {
+        return $this->wrappingElement->getData();
+    }
+
     public function __get(string $name): mixed
     {
         return $this->wrappingElement->getData($name);

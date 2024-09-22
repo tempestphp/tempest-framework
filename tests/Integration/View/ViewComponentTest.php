@@ -273,4 +273,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         nothing
         HTML, $html);
     }
+
+    public function test_view_component_attribute_variables_without_this(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-attribute-without-this-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        fromString
+        HTML, $html);
+    }
 }

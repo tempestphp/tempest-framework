@@ -100,7 +100,7 @@ final class GenericElement implements Element
 
         $parentData = $this->getParent()?->getData() ?? [];
 
-        $data = [...$this->view->getData(), ...$parentData, ...$this->data];
+        $data = [...$this->attributes, ...$this->view->getData(), ...$parentData, ...$this->data];
 
         if ($key) {
             return $data[$key] ?? null;
