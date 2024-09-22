@@ -282,4 +282,24 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         fromString
         HTML, $html);
     }
+
+    public function test_view_component_slots_without_self_closing_tags(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-non-self-closing-slot-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        A: other slot
+            B: other slot
+            C: other slot
+        
+            A: 
+            main slot
+            
+            B: 
+            main slot
+            
+            C: 
+            main slot
+        HTML, $html);
+    }
 }

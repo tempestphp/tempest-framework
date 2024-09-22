@@ -227,9 +227,9 @@ final class TempestViewRenderer implements ViewRenderer
     private function renderViewComponent(View $view, ViewComponent $viewComponent, GenericElement $element): string
     {
         $renderedContent = preg_replace_callback(
-            pattern: '/<x-slot\s*(name="(?<name>\w+)")?\s*\/>/',
+            pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
             callback: function ($matches) use ($view, $element) {
-                $name = $matches['name'] ?? 'slot';
+                $name = $matches['name'] ?: 'slot';
 
                 $slot = $element->getSlot($name);
 
