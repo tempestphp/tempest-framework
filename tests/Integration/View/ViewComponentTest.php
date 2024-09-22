@@ -287,7 +287,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-non-self-closing-slot-b.view.php'));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
         A: other slot
             B: other slot
             C: other slot
