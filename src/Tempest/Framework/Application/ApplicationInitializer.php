@@ -18,7 +18,7 @@ final readonly class ApplicationInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): Application
     {
-        if (isset($_SERVER['argv'])) {
+        if (PHP_SAPI === 'cli') {
             return new ConsoleApplication(
                 container: $container,
                 appConfig: $container->get(AppConfig::class),

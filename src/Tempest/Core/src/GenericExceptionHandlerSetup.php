@@ -18,7 +18,7 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         }
 
         // Console
-        if ($_SERVER['argv'] ?? null) {
+        if (PHP_SAPI === 'cli') {
             (new Collision())->register();
 
             return;
