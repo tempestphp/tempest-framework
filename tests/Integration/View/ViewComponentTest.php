@@ -302,4 +302,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             main slot
         HTML, $html);
     }
+
+    public function test_view_component_with_camelcase_attribute(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        test
+        test
+        HTML, $html);
+    }
 }

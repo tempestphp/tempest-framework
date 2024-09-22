@@ -77,6 +77,11 @@ final readonly class StringHelper implements Stringable
         return new self(implode('', $studlyWords));
     }
 
+    public function camel(): self
+    {
+        return new self(lcfirst((string) $this->pascal()));
+    }
+
     public function deduplicate(string|array $characters = ' '): self
     {
         $string = $this->string;
