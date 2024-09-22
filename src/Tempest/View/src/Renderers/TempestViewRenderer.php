@@ -36,8 +36,7 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly Kernel $kernel,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -161,7 +160,7 @@ final class TempestViewRenderer implements ViewRenderer
             throw new Exception("View {$path} not found");
         }
 
-        return $this->resolveContentIsolated($path, $view->getData());
+        return $this->resolveContentIsolated($view, $path);
     }
 
     private function resolveViewComponent(GenericElement $element): ?ViewComponent
@@ -306,14 +305,25 @@ final class TempestViewRenderer implements ViewRenderer
         return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
     }
 
-    private function resolveContentIsolated(string $_path, array $_data): string
+    private function resolveContentIsolated(View $_view, string $_path): string
     {
         ob_start();
+
+        $_data = $_view->getData();
 
         extract($_data, flags: EXTR_SKIP);
 
         include $_path;
 
-        return ob_get_clean();
+        $content = ob_get_clean();
+
+        // If the view defines local variables, we add them here to the view object as well
+        foreach (get_defined_vars() as $key => $value) {
+            if (! $_view->has($key)) {
+                $_view->data(...[$key => $value]);
+            }
+        }
+
+        return $content;
     }
 }

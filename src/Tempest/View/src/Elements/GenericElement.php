@@ -15,8 +15,7 @@ final class GenericElement implements Element
         private readonly View $view,
         private readonly string $tag,
         private readonly array $attributes,
-    ) {
-    }
+    ) {}
 
     public function getTag(): string
     {
@@ -94,6 +93,10 @@ final class GenericElement implements Element
 
     public function getData(?string $key = null): mixed
     {
+        if ($key && $this->hasAttribute($key)) {
+            return $this->getAttribute($key);
+        }
+
         $parentData = $this->getParent()?->getData() ?? [];
 
         $data = [...$this->view->getData(), ...$parentData, ...$this->data];

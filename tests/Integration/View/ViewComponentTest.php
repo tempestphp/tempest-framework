@@ -262,4 +262,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             $rendered
         );
     }
+    
+    public function test_inline_view_variables_passed_to_component(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
+
+        $this->assertSame(<<<HTML
+        fromPHP
+        fromString
+        nothing
+        HTML, $html);
+    }
 }

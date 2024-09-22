@@ -20,13 +20,7 @@ final class ViewComponentView implements View
 
     public function __get(string $name): mixed
     {
-        $value = null;
-
-        if ($this->wrappingElement instanceof GenericElement) {
-            $value = $this->wrappingElement->getAttribute($name);
-        }
-
-        return $value ?? $this->wrappingElement->getData($name);
+        return $this->wrappingElement->getData($name);
     }
 
     public function __call(string $name, array $arguments)
