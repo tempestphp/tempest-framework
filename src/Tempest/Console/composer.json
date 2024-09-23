@@ -7,6 +7,7 @@
         "php": "^8.3",
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
+        "tempest/debug": "dev-main",
         "tempest/highlight": "^2.0",
         "tempest/log": "dev-main",
         "tempest/reflection": "dev-main",
