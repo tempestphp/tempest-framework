@@ -11,6 +11,9 @@
         "tempest/validation": "dev-main"
     },
     "autoload": {
+        "files": [
+            "src/functions.php"
+        ],
         "psr-4": {
             "Tempest\\View\\": "src"
         }

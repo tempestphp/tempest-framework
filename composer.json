@@ -95,7 +95,8 @@
             "src/Tempest/Http/src/functions.php",
             "src/Tempest/Mapper/src/functions.php",
             "src/Tempest/Reflection/src/functions.php",
-            "src/Tempest/Support/src/functions.php"
+            "src/Tempest/Support/src/functions.php",
+            "src/Tempest/View/src/functions.php"
         ]
     },
     "autoload-dev": {
