@@ -19,7 +19,7 @@ final readonly class CreateBookTable implements Migration
 
     public function up(): QueryStatement|null
     {
-        return CreateTableStatement::forModel(Book::class)
+        return (new CreateTableStatement(Book::table()->tableName))
             ->primary()
             ->text('title')
             ->belongsTo('Book.author_id', 'Author.id', nullable: true);
@@ -27,6 +27,6 @@ final readonly class CreateBookTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return DropTableStatement::forModel(Book::class);
+        return new DropTableStatement(Book::table()->tableName);
     }
 }

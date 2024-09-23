@@ -33,6 +33,6 @@ final readonly class CreateAuthorTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return DropTableStatement::forModel(Author::class);
+        return new DropTableStatement(Author::table()->tableName);
     }
 }
