@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -11,7 +12,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
 {
-    public function test_finds_single_similar_command(): void
+    #[Test]
+    public function it_can_find_a_single_similar_command(): void
     {
         $this->console
             ->call('discovery:sta')
@@ -22,7 +24,8 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertSee('Did you mean discovery:status?');
     }
 
-    public function test_finds_multiple_similar_commands(): void
+    #[Test]
+    public function it_can_find_multiple_similar_commands(): void
     {
         $this->console
             ->call('discovery')
