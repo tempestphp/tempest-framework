@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;

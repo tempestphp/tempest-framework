@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Closure;
@@ -11,7 +13,8 @@ final readonly class Cache
 {
     public function __construct(
         private CacheItemPoolInterface $pool,
-    ) {}
+    ) {
+    }
 
     public function put(string $key, mixed $value, ?DateTimeInterface $expiresAt = null): CacheItem
     {
@@ -19,7 +22,7 @@ final readonly class Cache
             ->getItem($key)
             ->set($value);
 
-        if ($expiresAt) {
+        if ($expiresAt !== null) {
             $item = $item->expiresAt($expiresAt);
         }
 

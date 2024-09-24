@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
@@ -13,5 +15,6 @@ final readonly class CacheConfig
             defaultLifetime: 0,
             directory: __DIR__ . '/../../../../.cache',
         ),
-    ) {}
+    ) {
+    }
 }

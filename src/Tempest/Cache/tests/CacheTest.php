@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache\Tests;
 
 use DateInterval;
@@ -8,6 +10,9 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Clock\MockClock;
 
+/**
+ * @internal
+ */
 final class CacheTest extends TestCase
 {
     public function test_put(): void
