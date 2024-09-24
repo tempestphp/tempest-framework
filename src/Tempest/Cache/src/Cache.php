@@ -13,20 +13,28 @@ final readonly class Cache
         private CacheItemPoolInterface $pool,
     ) {}
 
-    public function put(string $key, mixed $value, DateTimeInterface $expiresAt): CacheItem
+    public function put(string $key, mixed $value, ?DateTimeInterface $expiresAt = null): CacheItem
     {
         $item = $this->pool
             ->getItem($key)
-            ->set($value)
-            ->expiresAt($expiresAt);
+            ->set($value);
+
+        if ($expiresAt) {
+            $item = $item->expiresAt($expiresAt);
+        }
 
         $this->pool->save($item);
 
         return $item;
     }
 
+    public function get(string $key): mixed
+    {
+        return $this->pool->getItem($key)->get();
+    }
+
     /** @param Closure(): mixed $cache */
-    public function get(string $key, Closure $cache, DateTimeInterface $expiresAt = null): mixed
+    public function resolve(string $key, Closure $cache, DateTimeInterface $expiresAt = null): mixed
     {
         $item = $this->pool->getItem($key);
 
