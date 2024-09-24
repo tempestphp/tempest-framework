@@ -57,7 +57,7 @@ final class LocalFilesystem implements Filesystem
         $this->delete($sourcePath);
     }
 
-    public function makeDirectory(string $path, int $permissions = 0777, bool $recursive = true): void
+    public function makeDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void
     {
         if (@mkdir($path, $permissions, $recursive) === false) {
             // TODO: Update exception

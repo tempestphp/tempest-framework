@@ -84,7 +84,7 @@ final class PermissionTest extends TestCase
             [0744, Permission::OWNER_ALL->with(Permission::GROUP_READ, Permission::OTHERS_READ)],
             [0444, Permission::OWNER_READ->with(Permission::GROUP_READ, Permission::OTHERS_READ)],
 
-            [0744, Permission::FULL->without(Permission::GROUP_WRITE_EXECUTE, Permission::OTHERS_WRITE_EXECUTE)]
+            [0744, Permission::FULL->without(Permission::GROUP_WRITE_EXECUTE, Permission::OTHERS_WRITE_EXECUTE)],
         ];
     }
 }
