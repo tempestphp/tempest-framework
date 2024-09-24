@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.3",
         "psr/cache": "^3.0",
-        "symfony/cache": "^7.0"
+        "symfony/cache": "^7.2"
     },
     "autoload": {
         "psr-4": {
