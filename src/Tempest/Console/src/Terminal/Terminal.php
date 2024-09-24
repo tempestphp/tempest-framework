@@ -8,7 +8,7 @@ use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
-use Tempest\Console\InteractiveComponent;
+use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
 
 final class Terminal
@@ -64,7 +64,7 @@ final class Terminal
     }
 
     public function render(
-        InteractiveComponent $component,
+        InteractiveConsoleComponent $component,
         array $footerLines = []
     ): Generator {
         $rendered = $component->render();
