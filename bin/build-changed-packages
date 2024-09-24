@@ -47,3 +47,5 @@ foreach ($tempestPackages as $package) {
 }
 
 file_put_contents(__DIR__ . '/../packages.json', json_encode($composerPackages, JSON_PRETTY_PRINT));
+
+var_dump(__DIR__ . '/../packages.json');
