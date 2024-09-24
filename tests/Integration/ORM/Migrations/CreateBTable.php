@@ -21,7 +21,7 @@ final readonly class CreateBTable implements Migration
     public function up(): QueryStatement|null
     {
         return new CreateTableStatement(
-            'B',
+            'b',
             [
                 new PrimaryKeyStatement(),
                 new RawStatement('c_id INTEGER'),
@@ -31,6 +31,6 @@ final readonly class CreateBTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return new DropTableStatement('B');
+        return new DropTableStatement('b');
     }
 }

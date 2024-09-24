@@ -14,7 +14,7 @@ final readonly class CreateBookTable implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_book_table';
+        return '0000-00-00_create_books_table';
     }
 
     public function up(): QueryStatement|null
@@ -22,7 +22,7 @@ final readonly class CreateBookTable implements Migration
         return CreateTableStatement::forModel(Book::class)
             ->primary()
             ->text('title')
-            ->belongsTo('Book.author_id', 'Author.id', nullable: true);
+            ->belongsTo('books.author_id', 'authors.id', nullable: true);
     }
 
     public function down(): QueryStatement|null

@@ -216,4 +216,9 @@ final readonly class StringHelper implements Stringable
     {
         return mb_strlen($this->string);
     }
+
+    public function classBasename(): self
+    {
+        return new self(basename(str_replace('\\', '/', $this->string)));
+    }
 }

@@ -16,13 +16,13 @@ final readonly class CreateAuthorTable implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_author_table';
+        return '0000-00-00_create_authors_table';
     }
 
     public function up(): QueryStatement|null
     {
         return new CreateTableStatement(
-            'Author',
+            'authors',
             [
                 new PrimaryKeyStatement(),
                 new TextStatement('name'),
