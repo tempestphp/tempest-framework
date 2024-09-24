@@ -8,11 +8,11 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 
-final readonly class DefaultCacheInitializer implements Initializer
+final readonly class CacheInitializer implements Initializer
 {
     #[Singleton]
     public function initialize(Container $container): Cache
     {
-        return new Cache($container->get(CacheConfig::class)->pool);
+        return new GenericCache($container->get(CacheConfig::class)->pool);
     }
 }
