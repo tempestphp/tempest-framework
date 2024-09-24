@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Support\PathHelper;
 
 final readonly class InstallCommand
 {
@@ -39,7 +40,7 @@ final readonly class InstallCommand
 
     private function copyEnv(string $cwd, bool $force): void
     {
-        $path = $cwd . '/.env';
+        $path = PathHelper::make($cwd . '/.env');
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
@@ -61,7 +62,7 @@ final readonly class InstallCommand
 
     private function copyEnvExample(string $cwd, bool $force): void
     {
-        $path = $cwd . '/.env.example';
+        $path = PathHelper::make($cwd . '/.env.example');
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
@@ -83,7 +84,7 @@ final readonly class InstallCommand
 
     private function copyTempest(string $cwd, bool $force): void
     {
-        $path = $cwd . '/tempest';
+        $path = PathHelper::make($cwd . '/tempest');
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
@@ -100,14 +101,16 @@ final readonly class InstallCommand
 
         copy(__DIR__ . '/../../bin/tempest', $path);
 
-        exec("chmod +x {$path}");
+        if (PHP_OS_FAMILY !== 'Windows') {
+            exec("chmod +x {$path}");
+        }
 
         $this->console->success("{$path} created");
     }
 
     private function copyIndex(string $cwd, bool $force): void
     {
-        $path = $cwd . '/public/index.php';
+        $path = PathHelper::make($cwd . '/public/index.php');
 
         if (file_exists($path)) {
             $this->console->error("{$path} already exists, skipped.");
