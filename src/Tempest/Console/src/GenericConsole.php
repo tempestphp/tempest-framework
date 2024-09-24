@@ -122,7 +122,7 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function component(InteractiveComponent $component, array $validation = []): mixed
+    public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
         if ($this->interactiveSupported()) {
             return $this->componentRenderer->render($this, $component, $validation);
