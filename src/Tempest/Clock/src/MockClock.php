@@ -37,6 +37,16 @@ final class MockClock implements Clock
         );
     }
 
+    public function addInterval(DateInterval $interval): void
+    {
+        $this->now = $this->now->add($interval);
+    }
+
+    public function subInternal(DateInterval $interval): void
+    {
+        $this->now = $this->now->sub($interval);
+    }
+
     public function changeTime(int $seconds): void
     {
         if ($seconds < 0) {

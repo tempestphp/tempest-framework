@@ -21,12 +21,14 @@
         "nunomaduro/collision": "^8.4",
         "php": "^8.3",
         "php-http/discovery": "^1.19.2",
+        "psr/cache": "^3.0",
         "psr/clock": "^1.0.0",
         "psr/http-client": "^1.0.0",
         "psr/http-factory": "^1.0",
         "psr/http-message": "^1.0|^2.0",
         "psr/log": "^3.0.0",
         "ramsey/uuid": "^4.7",
+        "symfony/cache": "^7.2",
         "symfony/var-dumper": "^7.1",
         "symfony/var-exporter": "^7.1",
         "tempest/highlight": "^2.0",
@@ -48,6 +50,7 @@
         "symplify/monorepo-builder": "^11.2"
     },
     "replace": {
+        "tempest/cache": "self.version",
         "tempest/clock": "self.version",
         "tempest/command-bus": "self.version",
         "tempest/console": "self.version",
@@ -68,6 +71,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
+            "Tempest\\Cache\\": "src/Tempest/Cache/src/",
             "Tempest\\Clock\\": "src/Tempest/Clock/src/",
             "Tempest\\CommandBus\\": "src/Tempest/CommandBus/src",
             "Tempest\\Console\\": "src/Tempest/Console/src",
@@ -101,6 +105,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Tempest\\Cache\\Tests\\": "src/Tempest/Cache/tests",
             "Tempest\\Clock\\Tests\\": "src/Tempest/Clock/tests",
             "Tempest\\CommandBus\\Tests\\": "src/Tempest/CommandBus/tests",
             "Tempest\\Container\\Tests\\": "src/Tempest/Container/tests",
