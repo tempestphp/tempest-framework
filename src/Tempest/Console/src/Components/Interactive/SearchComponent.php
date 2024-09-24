@@ -10,12 +10,12 @@ use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
-use Tempest\Console\InteractiveComponent;
+use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tempest\Console\StaticComponent;
+use Tempest\Console\StaticConsoleComponent;
 
-final class SearchComponent implements InteractiveComponent, HasCursor, HasStaticComponent
+final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
     public Point $cursorPosition;
 
@@ -163,7 +163,7 @@ final class SearchComponent implements InteractiveComponent, HasCursor, HasStati
         return $this->selectedOption === $key;
     }
 
-    public function getStaticComponent(): StaticComponent
+    public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticSearchComponent(
             label: $this->label,

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
-interface StaticComponent
+interface StaticConsoleComponent
 {
     public function render(Console $console): mixed;
 }

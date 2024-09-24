@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
-use Tempest\Console\StaticComponent;
+use Tempest\Console\StaticConsoleComponent;
 
-final readonly class StaticMultipleChoiceComponent implements StaticComponent
+final readonly class StaticMultipleChoiceComponent implements StaticConsoleComponent
 {
     public function __construct(
         public string $question,

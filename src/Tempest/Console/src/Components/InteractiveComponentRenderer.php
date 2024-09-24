@@ -8,7 +8,7 @@ use Fiber;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
-use Tempest\Console\InteractiveComponent;
+use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Reflection\ClassReflector;
@@ -23,14 +23,14 @@ final class InteractiveComponentRenderer
 
     private bool $shouldRerender = true;
 
-    public function render(Console $console, InteractiveComponent $component, array $validation = []): mixed
+    public function render(Console $console, InteractiveConsoleComponent $component, array $validation = []): mixed
     {
         $clone = clone $this;
 
         return $clone->renderComponent($console, $component, $validation);
     }
 
-    private function renderComponent(Console $console, InteractiveComponent $component, array $validation = []): mixed
+    private function renderComponent(Console $console, InteractiveConsoleComponent $component, array $validation = []): mixed
     {
         $terminal = $this->createTerminal($console);
 
@@ -78,7 +78,7 @@ final class InteractiveComponentRenderer
         return null;
     }
 
-    private function applyKey(InteractiveComponent $component, Console $console, array $validation): mixed
+    private function applyKey(InteractiveConsoleComponent $component, Console $console, array $validation): mixed
     {
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
@@ -140,7 +140,7 @@ final class InteractiveComponentRenderer
         }
     }
 
-    private function renderFrames(InteractiveComponent $component, Terminal $terminal): mixed
+    private function renderFrames(InteractiveConsoleComponent $component, Terminal $terminal): mixed
     {
         while (true) {
             usleep(5000);
@@ -177,7 +177,7 @@ final class InteractiveComponentRenderer
         }
     }
 
-    private function resolveHandlers(InteractiveComponent $component): array
+    private function resolveHandlers(InteractiveConsoleComponent $component): array
     {
         /** @var \Tempest\Reflection\MethodReflector[][] $keyBindings */
         $keyBindings = [];
