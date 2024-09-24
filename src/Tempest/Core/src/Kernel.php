@@ -39,9 +39,8 @@ final class Kernel
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadExceptionHandler()
-            ->loadDiscovery();
-
-        $this->container->get(EventBus::class)->dispatch(KernelEvent::BOOTED);
+            ->loadDiscovery()
+            ->event(KernelEvent::BOOTED);
     }
 
     public static function boot(string $root, ?Container $container = null): self
@@ -133,6 +132,15 @@ final class Kernel
         $appConfig = $this->container->get(AppConfig::class);
 
         $appConfig->exceptionHandlerSetup->setup($appConfig);
+
+        return $this;
+    }
+
+    private function event(object $event): self
+    {
+        if (class_exists(EventBus::class)) {
+            $this->container->get(EventBus::class)->dispatch($event);
+        }
 
         return $this;
     }
