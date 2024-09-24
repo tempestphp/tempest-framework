@@ -64,6 +64,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          ./bin/build-changed-packages
           cd "src/Tempest/${{ matrix.package.basename }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
