@@ -51,10 +51,9 @@ final readonly class StaticGenerateCommand
 
                 $uri = parse_url(uri($staticPage->handler, ...$params), PHP_URL_PATH);
 
-                // TODO: test!
                 $fileName = $uri === '/'
                     ? 'index.html'
-                    : $uri . '.html';
+                    : $uri . '/index.html';
 
                 $file = path($publicPath, $fileName);
 
