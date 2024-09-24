@@ -16,7 +16,7 @@ $composerPackages = [];
 
 foreach ($tempestPackages as $package) {
     // Find out if there are changes in this package.
-    $diff = exec(sprintf('git diff --name-only HEAD -- %s', $package['directory']));
+    $diff = exec(sprintf('git diff --name-only HEAD^ -- %s', $package['directory']));
 
     // If there are not any changes, move on to the next package.
     if (empty($diff)) {
