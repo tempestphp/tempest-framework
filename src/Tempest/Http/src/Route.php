@@ -30,9 +30,12 @@ class Route
     ) {
         // Routes can have parameters in the form of "/{PARAM}/",
         // these parameters are replaced with a regex matching group
-        $matchingRegex = preg_replace(
-            '#\{(\w+)}#',
-            '([^/]++)',
+        $matchingRegex = preg_replace_callback(
+            '#\{(\w+)(?::([^}]+))?\}#',
+            static function ($matches) {
+                // If a custom regex is provided, use it; otherwise, use the default pattern
+                return isset($matches[2]) ? '(' . $matches[2] . ')' : '([^/]++)';
+            },
             $uri
         );
 

@@ -165,13 +165,13 @@ final class GenericRouter implements Router
             return [];
         }
 
-        $tokensResult = preg_match_all('#\{\w+}#', $route->uri, $tokens);
+        $tokensResult = preg_match_all('#\{(\w+)(?::[^}]*)?}#', $route->uri, $tokens);
 
         if (! $tokensResult) {
             return null;
         }
 
-        $tokens = $tokens[0];
+        $tokens = $tokens[1];
 
         $tokensResult = preg_match_all("#^$route->matchingRegex$#", $uri, $matches);
 
