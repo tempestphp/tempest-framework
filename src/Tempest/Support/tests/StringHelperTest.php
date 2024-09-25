@@ -189,4 +189,16 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('tempest framework')->beforeLast(' ')->equals('tempest'));
         $this->assertTrue(str("yvette\tyv0et0te")->beforeLast("\t")->equals('yvette'));
     }
+
+    public function test_starts_with(): void
+    {
+        $this->assertTrue(str('abc')->startsWith('a'));
+        $this->assertFalse(str('abc')->startsWith('c'));
+    }
+
+    public function test_ends_with(): void
+    {
+        $this->assertTrue(str('abc')->endsWith('c'));
+        $this->assertFalse(str('abc')->endsWith('a'));
+    }
 }
