@@ -17,7 +17,7 @@ final readonly class CacheClearCommand
         private Container $container,
     ) {}
 
-    #[ConsoleCommand(name: 'cache:clear')]
+    #[ConsoleCommand(name: 'cache:clear', aliases: ['cc'])]
     public function __invoke(bool $all = false): void
     {
         $caches = $this->cacheConfig->caches;
