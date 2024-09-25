@@ -37,6 +37,16 @@ final class RouterTest extends FrameworkIntegrationTestCase
     {
         $router = $this->container->get(GenericRouter::class);
 
+        $response = $router->dispatch($this->http->makePsrRequest('/test/1/a/extra'));
+
+        $this->assertEquals(Status::OK, $response->getStatus());
+        $this->assertEquals('1a/extra', $response->getBody());
+    }
+
+    public function test_dispatch_with_parameter_with_custom_regex(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
         $response = $router->dispatch($this->http->makePsrRequest('/test/1/a'));
 
         $this->assertEquals(Status::OK, $response->getStatus());
