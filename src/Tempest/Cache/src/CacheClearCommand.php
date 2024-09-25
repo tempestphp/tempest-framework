@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
+use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
-use Tempest\Console\Console;
 use Tempest\Container\Container;
 
 final readonly class CacheClearCommand
@@ -15,7 +17,8 @@ final readonly class CacheClearCommand
         private Console $console,
         private CacheConfig $cacheConfig,
         private Container $container,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'cache:clear', aliases: ['cc'])]
     public function __invoke(bool $all = false): void
@@ -31,7 +34,7 @@ final readonly class CacheClearCommand
         }
 
         foreach ($caches as $cacheClass) {
-            /** @var \Tempest\Cache\Cache $cache */
+            /** @var Cache $cache */
             $cache = $this->container->get($cacheClass);
 
             $cache->clear();

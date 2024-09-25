@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Cache;
 
 use Tempest\Container\Container;
@@ -13,7 +15,8 @@ final readonly class CacheDiscovery implements Discovery
 
     public function __construct(
         private CacheConfig $cacheConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(ClassReflector $class): void
     {
