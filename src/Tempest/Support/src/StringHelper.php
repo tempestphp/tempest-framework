@@ -221,4 +221,14 @@ final readonly class StringHelper implements Stringable
     {
         return new self(basename(str_replace('\\', '/', $this->string)));
     }
+
+    public function startsWith(string $needle): bool
+    {
+        return str_starts_with($this->string, $needle);
+    }
+
+    public function endsWith(string $needle): bool
+    {
+        return str_ends_with($this->string, $needle);
+    }
 }
