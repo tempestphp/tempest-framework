@@ -7,6 +7,7 @@ namespace Tempest\Core\Kernel;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionException;
 use SplFileInfo;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
@@ -32,11 +33,15 @@ final readonly class LoadDiscoveryClasses
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
-            if ($this->kernel->discoveryCache && $discovery->hasCache()) {
-                $discovery->restoreCache($this->container);
-                next($this->kernel->discoveryClasses);
+            try {
+                if ($this->kernel->discoveryCache && $discovery->hasCache()) {
+                    $discovery->restoreCache($this->container);
+                    next($this->kernel->discoveryClasses);
 
-                continue;
+                    continue;
+                }
+            } catch (ReflectionException) {
+                // Invalid cache
             }
 
             foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
