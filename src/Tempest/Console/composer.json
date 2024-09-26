@@ -1,6 +1,6 @@
 {
     "name": "tempest/console",
-    "description": "The PHP framework that gets out of your way.",
+    "description": "The console component provides a way to build commands within the framework or standalone command-line applications.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
