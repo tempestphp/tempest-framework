@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Fixtures\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
@@ -15,7 +17,8 @@ final class DummyCache implements Cache
 
     public bool $cleared = false;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->pool = new NullAdapter();
     }
 

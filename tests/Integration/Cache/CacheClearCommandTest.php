@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Cache;
 
 use Tempest\Cache\GenericCache;
 use Tests\Tempest\Fixtures\Cache\DummyCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class CacheClearCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_cache_clear(): void
