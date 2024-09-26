@@ -28,13 +28,13 @@ class Route
          */
         public array $middleware = [],
     ) {
-        // Routes can have parameters in the form of "/{PARAM}/",
-        // these parameters are replaced with a regex matching group
+        // Routes can have parameters in the form of "/{PARAM}/" or /{PARAM:CUSTOM_REGEX},
+        // these parameters are replaced with a regex matching group or with the custom regex
         $matchingRegex = preg_replace_callback(
-            '#\{(\w+)(?::([^}]+))?\}#',
+            '#\{(?<name>\w+)(?::(?<regex>[^}]+))?\}#',
             static function ($matches) {
                 // If a custom regex is provided, use it; otherwise, use the default pattern
-                return isset($matches[2]) ? '(' . $matches[2] . ')' : '([^/]++)';
+                return isset($matches['regex']) ? '(' . $matches['regex'] . ')' : '([^/]++)';
             },
             $uri
         );
