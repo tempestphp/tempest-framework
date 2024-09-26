@@ -18,7 +18,8 @@ final readonly class ScheduleRunCommand
     public function __construct(
         private Scheduler $scheduler,
         private Console $console,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand('schedule:run')]
     public function __invoke(): void
