@@ -39,7 +39,7 @@ final readonly class StaticCleanCommand
             foreach ($dataProvider->provide() as $params) {
                 $uri = parse_url(uri($staticPage->handler, ...$params), PHP_URL_PATH);
 
-                $file = path($publicPath, $uri . '.html');
+                $file = path($publicPath, $uri . '/index.html');
 
                 if (! file_exists($file)) {
                     continue;
