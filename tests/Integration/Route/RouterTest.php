@@ -58,6 +58,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $router = $this->container->get(GenericRouter::class);
 
         $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
+
+        $this->assertEquals('/test/1/a/b', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b'));
         $this->assertEquals('/test', $router->toUri(TestController::class));
 
         $this->assertEquals('/test/1/a?q=hi&i=test', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a', q: 'hi', i: 'test'));
@@ -66,6 +68,7 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->container->config($appConfig);
         $router = $this->container->get(GenericRouter::class);
         $this->assertEquals('https://test.com/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
+        $this->assertEquals('https://test.com/test/1/a/b/c/d', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
     }
 
     public function test_with_view(): void
