@@ -56,6 +56,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->container->config($appConfig);
         $router = $this->container->get(GenericRouter::class);
         $this->assertEquals('https://test.com/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
+
+        $this->assertSame('https://test.com/abc', $router->toUri('/abc'));
     }
 
     public function test_with_view(): void

@@ -6,6 +6,7 @@ namespace Tempest\Http;
 
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
@@ -120,23 +121,27 @@ final class GenericRouter implements Router
 
     public function toUri(array|string $action, ...$params): string
     {
-        if (is_array($action)) {
-            $controllerClass = $action[0];
-            $reflection = new ClassReflector($controllerClass);
-            $controllerMethod = $reflection->getMethod($action[1]);
-        } else {
-            $controllerClass = $action;
-            $reflection = new ClassReflector($controllerClass);
-            $controllerMethod = $reflection->getMethod('__invoke');
+        try {
+            if (is_array($action)) {
+                $controllerClass = $action[0];
+                $reflection = new ClassReflector($controllerClass);
+                $controllerMethod = $reflection->getMethod($action[1]);
+            } else {
+                $controllerClass = $action;
+                $reflection = new ClassReflector($controllerClass);
+                $controllerMethod = $reflection->getMethod('__invoke');
+            }
+
+            $routeAttribute = $controllerMethod->getAttribute(Route::class);
+
+            $uri = $routeAttribute->uri;
+        } catch (ReflectionException) {
+            if (is_array($action)) {
+                throw new InvalidRouteException($action[0], $action[1]);
+            }
+
+            $uri = $action;
         }
-
-        $routeAttribute = $controllerMethod->getAttribute(Route::class);
-
-        if ($routeAttribute === null) {
-            throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
-        }
-
-        $uri = $routeAttribute->uri;
 
         $queryParams = [];
 
