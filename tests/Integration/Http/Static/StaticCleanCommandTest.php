@@ -22,12 +22,12 @@ final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 
         $this->console->call('static:clean')
             ->assertDoesNotContain('https://test.com/static/a/b')
-            ->assertContains('/public/static/a/b.html')
-            ->assertContains('/public/static/c/d.html');
+            ->assertContains('/public/static/a/b/index.html')
+            ->assertContains('/public/static/c/d/index.html');
 
         $root = $this->kernel->root;
 
-        $this->assertFileDoesNotExist(path($root, '/public/static/a/b.html'));
-        $this->assertFileDoesNotExist(path($root, '/public/static/c/d.html'));
+        $this->assertFileDoesNotExist(path($root, '/public/static/a/b/index.html'));
+        $this->assertFileDoesNotExist(path($root, '/public/static/c/d/index.html'));
     }
 }
