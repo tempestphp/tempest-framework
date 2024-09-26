@@ -140,6 +140,7 @@ final class GenericRouter implements Router
 
         $queryParams = [];
 
+
         foreach ($params as $key => $value) {
             if (! str_contains($uri, "{$key}")) {
                 $queryParams[$key] = $value;
@@ -147,7 +148,8 @@ final class GenericRouter implements Router
                 continue;
             }
 
-            $uri = str_replace('{' . $key . '}', "{$value}", $uri);
+            $pattern = '#\{' . $key . '(?::[^}]+)?\}#';
+            $uri = preg_replace($pattern, (string)$value, $uri);
         }
 
         $uri = rtrim($this->appConfig->baseUri, '/') . $uri;
