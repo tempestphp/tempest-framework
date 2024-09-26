@@ -7,6 +7,7 @@ namespace Tempest\Console\Scheduler;
 use DateTime;
 use Tempest\Console\Scheduler;
 use Tempest\Console\ShellExecutor;
+use function Tempest\event;
 
 final readonly class GenericScheduler implements Scheduler
 {
@@ -26,6 +27,8 @@ final readonly class GenericScheduler implements Scheduler
 
         foreach ($commands as $command) {
             $this->execute($command);
+
+            event(new ScheduledInvocationRan($command));
         }
     }
 
@@ -47,6 +50,7 @@ final readonly class GenericScheduler implements Scheduler
         ]);
     }
 
+    /** @return \Tempest\Console\Scheduler\ScheduledInvocation[] */
     private function getInvocationsToRun(DateTime $date): array
     {
         $previousRuns = $this->getPreviousRuns();
