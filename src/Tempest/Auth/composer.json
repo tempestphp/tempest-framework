@@ -1,0 +1,12 @@
+{
+    "name": "tempest/auth",
+    "require": {
+        "php": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Auth\\": "src"
+        }
+    },
+    "license": "MIT"
+}
