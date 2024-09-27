@@ -1,5 +1,6 @@
 {
     "name": "tempest/auth",
+    "description": "Tempest authentication",
     "require": {
         "php": "^8.3"
     },
