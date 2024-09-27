@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Auth;
 
 use Tempest\Http\Session\Session;
@@ -10,7 +12,8 @@ final readonly class SessionAuthenticator implements Authenticator
 
     public function __construct(
         private Session $session,
-    ) {}
+    ) {
+    }
 
     public function login(User $user): void
     {

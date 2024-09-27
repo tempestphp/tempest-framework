@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Auth;
 
 use SensitiveParameter;
@@ -15,7 +17,8 @@ final class User implements DatabaseModel
     public function __construct(
         public string $name,
         public string $email,
-    ) {}
+    ) {
+    }
 
     /**
      * @param string $password The raw password, which will be encrypted as soon as it is set

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\Auth;
 
 use Tempest\Auth\Authenticator;
@@ -15,6 +17,9 @@ use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 {
     private string $path;
