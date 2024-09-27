@@ -6,9 +6,9 @@ namespace Tempest\Auth;
 
 interface Authenticator
 {
-    public function login(User $user): void;
+    public function login(CanAuthenticate $user): void;
 
     public function logout(): void;
 
-    public function currentUser(): ?User;
+    public function currentUser(): ?CanAuthenticate;
 }

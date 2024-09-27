@@ -63,14 +63,14 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
         $auth->login($user);
 
         // Current user via authenticator
-        $this->assertTrue($auth->currentUser()->id->equals($user->id));
+        $this->assertTrue($auth->currentUser()->getId()->equals($user->id));
 
         // Current user via session
         $session = $this->container->get(Session::class);
-        $this->assertTrue($auth->currentUser()->id->equals($session->get('tempest_session_user')));
+        $this->assertTrue($auth->currentUser()->getId()->equals($session->get('tempest_session_user')));
 
         // Current user via container
-        $this->assertTrue($auth->currentUser()->id->equals($this->container->get(User::class)->id));
+        $this->assertTrue($auth->currentUser()->getId()->equals($this->container->get(User::class)->id));
 
         $auth->logout();
 

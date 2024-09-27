@@ -8,7 +8,7 @@ use SensitiveParameter;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 
-final class User implements DatabaseModel
+final class User implements DatabaseModel, CanAuthenticate
 {
     use IsDatabaseModel;
 
