@@ -24,6 +24,12 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
+use Tests\Tempest\Integration\ORM\Models\ChildModel;
+use Tests\Tempest\Integration\ORM\Models\ParentModel;
+use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
 /**
  * @internal
@@ -240,6 +246,64 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $author = Author::query()->with('books')->first();
 
         $this->assertCount(2, $author->books);
+    }
+
+    public function test_has_many_through_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateHasManyParentTable::class,
+            CreateHasManyChildTable::class,
+            CreateHasManyThroughTable::class,
+        );
+
+        $parent = (new ParentModel(name: 'parent'))->save();
+
+        $childA = (new ChildModel(name: 'A'))->save();
+        $childB = (new ChildModel(name: 'B'))->save();
+
+        (new ThroughModel(parent: $parent, child: $childA))->save();
+        (new ThroughModel(parent: $parent, child: $childB))->save();
+
+        $parent = ParentModel::find($parent->id, ['through.child']);
+
+        $this->assertSame('A', $parent->through[1]->child->name);
+        $this->assertSame('B', $parent->through[2]->child->name);
+    }
+
+    public function test_empty_has_many_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateHasManyParentTable::class,
+            CreateHasManyChildTable::class,
+            CreateHasManyThroughTable::class,
+        );
+
+        $parent = (new ParentModel(name: 'parent'))->save();
+
+        $parent = ParentModel::find($parent->id, ['through.child']);
+
+        $this->assertInstanceOf(ParentModel::class, $parent);
+        $this->assertEmpty($parent->through);
+    }
+
+    public function test_has_one_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateHasManyParentTable::class,
+            CreateHasManyChildTable::class,
+            CreateHasManyThroughTable::class,
+        );
+
+        $parent = (new ParentModel(name: 'parent'))->save();
+
+        $childA = (new ChildModel(name: 'A'))->save();
+
+        (new ThroughModel(parent: $parent, child: $childA))->save();
+
+        $child = ChildModel::find($childA->id, ['through.parent']);
     }
 
     public function test_lazy_load(): void

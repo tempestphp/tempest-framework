@@ -249,4 +249,10 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame('012', $string);
     }
+
+    public function test_contains(): void
+    {
+        $this->assertTrue(arr(['a', 'b', 'c'])->contains('b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->contains('d'));
+    }
 }

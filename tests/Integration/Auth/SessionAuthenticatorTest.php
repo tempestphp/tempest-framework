@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Integration\Auth;
 
 use Tempest\Auth\Authenticator;
+use Tempest\Auth\CreatePermissionsTable;
+use Tempest\Auth\CreateUserPermissionTable;
 use Tempest\Auth\CreateUsersTable;
 use Tempest\Auth\CurrentUserNotLoggedIn;
 use Tempest\Auth\SessionAuthenticator;
@@ -39,7 +41,12 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
             )
         );
 
-        $this->migrate(CreateMigrationsTable::class, CreateUsersTable::class);
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateUsersTable::class,
+            CreatePermissionsTable::class,
+            CreateUserPermissionTable::class
+        );
     }
 
     protected function tearDown(): void

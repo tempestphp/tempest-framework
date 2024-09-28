@@ -202,6 +202,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return true;
     }
 
+    public function contains(mixed $search): bool
+    {
+        return $this->first(fn ($value) => $value === $search) !== null;
+    }
+
     public function set(string $key, mixed $value): self
     {
         $array = $this->array;

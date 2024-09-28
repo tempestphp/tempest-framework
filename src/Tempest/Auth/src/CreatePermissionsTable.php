@@ -8,25 +8,22 @@ use Tempest\Database\Migration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final readonly class CreateUsersTable implements Migration
+final readonly class CreatePermissionsTable implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_users_table';
+        return '0000-00-01_create_permissions_table';
     }
 
     public function up(): CreateTableStatement
     {
-        return (new CreateTableStatement('users'))
+        return (new CreateTableStatement('permissions'))
             ->primary()
-            ->varchar('name')
-            ->varchar('email')
-            ->datetime('emailValidatedAt', nullable: true)
-            ->text('password');
+            ->varchar('name');
     }
 
     public function down(): DropTableStatement
     {
-        return DropTableStatement::forModel(User::class);
+        return DropTableStatement::forModel(Permission::class);
     }
 }

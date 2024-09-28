@@ -7,8 +7,10 @@ namespace Tempest\Auth;
 use SensitiveParameter;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use function Tempest\Support\arr;
+use UnitEnum;
 
-final class User implements DatabaseModel, CanAuthenticate
+final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
 {
     use IsDatabaseModel;
 
@@ -17,6 +19,8 @@ final class User implements DatabaseModel, CanAuthenticate
     public function __construct(
         public string $name,
         public string $email,
+        /** @var \Tempest\Auth\UserPermission[] $userPermissions */
+        public array $userPermissions = [],
     ) {
     }
 
@@ -28,5 +32,15 @@ final class User implements DatabaseModel, CanAuthenticate
         $this->password = password_hash($password, PASSWORD_BCRYPT);
 
         return $this;
+    }
+
+    public function getPermissions(): array
+    {
+        return $this->permissions;
+    }
+
+    public function hasPermission(UnitEnum|string $permission): bool
+    {
+        return arr($this->permissions)->contains($permission);
     }
 }

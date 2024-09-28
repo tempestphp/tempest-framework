@@ -33,12 +33,12 @@ final readonly class ModelDefinition
             if ($property->getType()->isIterable()) {
                 $relations[] = new HasManyRelation($property, $alias);
                 $class = $property->getIterableType()->asClass();
+                $alias .= ".{$property->getName()}[]";
             } else {
                 $relations[] = new BelongsToRelation($property, $alias);
                 $class = $property->getType()->asClass();
+                $alias .= ".{$property->getName()}";
             }
-
-            $alias .= ".{$property->getName()}";
         }
 
         return $relations;

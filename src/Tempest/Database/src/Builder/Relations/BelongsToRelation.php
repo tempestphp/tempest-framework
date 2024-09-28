@@ -31,7 +31,7 @@ final readonly class BelongsToRelation implements Relation
     public function getStatement(): string
     {
         return sprintf(
-            'INNER JOIN %s ON %s = %s',
+            'LEFT JOIN %s ON %s = %s',
             $this->joinField->tableName,
             $this->localField,
             $this->joinField,

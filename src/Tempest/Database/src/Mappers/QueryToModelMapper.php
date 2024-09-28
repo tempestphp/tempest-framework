@@ -52,17 +52,38 @@ final readonly class QueryToModelMapper implements Mapper
             $count = count($keyParts);
 
             if ($count > 3) {
-                $property = $class->getProperty($propertyName);
+                $property = $class->getProperty(rtrim($propertyName, '[]'));
 
-                $childModel = $property->get($model, $property->getType()->asClass()->newInstanceWithoutConstructor());
+                if ($property->isIterable()) {
+                    $collection = $property->get($model, []);
+                    $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
 
-                unset($keyParts[0]);
+                    $iterableType = $property->getIterableType();
 
-                $property->set($model, $this->parse(
-                    $class->getProperty($propertyName)->getType()->asClass(),
-                    $childModel,
-                    [implode('.', $keyParts) => $value],
-                ));
+                    $childModel = $collection[$childId] ?? $iterableType->asClass()->newInstanceWithoutConstructor();
+
+                    unset($keyParts[0]);
+
+                    $collection[$childId] = $this->parse(
+                        $iterableType->asClass(),
+                        $childModel,
+                        [implode('.', $keyParts) => $value],
+                    );
+
+                    $property->set($model, $collection);
+                } else {
+                    $childModelType = $property->getType();
+
+                    $childModel = $property->get($model, $childModelType->asClass()->newInstanceWithoutConstructor());
+
+                    unset($keyParts[0]);
+
+                    $property->set($model, $this->parse(
+                        $childModelType->asClass(),
+                        $childModel,
+                        [implode('.', $keyParts) => $value],
+                    ));
+                }
             } elseif ($count === 3) {
                 if (str_contains($keyParts[1], '[]')) {
                     $property = $class->getProperty(rtrim($propertyName, '[]'));
@@ -131,6 +152,12 @@ final readonly class QueryToModelMapper implements Mapper
     private function parseHasMany(PropertyReflector $property, DatabaseModel $model, string $childId, string $childProperty, mixed $value): DatabaseModel
     {
         $collection = $property->get($model, []);
+
+        if (! $childId) {
+            $property->set($model, $collection);
+
+            return $model;
+        }
 
         $childModel = $collection[$childId] ?? $property->getIterableType()->asClass()->newInstanceWithoutConstructor();
 
