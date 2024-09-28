@@ -12,6 +12,15 @@ $tempestPackages = json_decode(
         associative: true
 );
 
+
+$changedPackagesString = sprintf("cd \"%s\" && git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\1|' | sort -u", __DIR__ . '/../');
+
+var_dump($changedPackagesString);die;
+
+$changedPackages = exec("git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\1|' | sort -u");
+
+var_dump($changedPackages);die;
+
 $composerPackages = [];
 
 foreach ($tempestPackages as $package) {
