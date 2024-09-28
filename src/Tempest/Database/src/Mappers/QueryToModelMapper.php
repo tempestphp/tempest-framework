@@ -51,6 +51,7 @@ final readonly class QueryToModelMapper implements Mapper
 
             $count = count($keyParts);
 
+            // TODO: clean up and document
             if ($count > 3) {
                 $property = $class->getProperty(rtrim($propertyName, '[]'));
 

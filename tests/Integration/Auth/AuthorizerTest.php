@@ -2,19 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Integration\Auth;
+namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\CreatePermissionsTable;
 use Tempest\Auth\CreateUserPermissionTable;
 use Tempest\Auth\CreateUsersTable;
-use Tempest\Auth\Permission;
 use Tempest\Auth\User;
-use Tempest\Auth\UserPermission;
-use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\Session\Managers\FileSessionManager;
-use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionManager;
+use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
+use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -22,22 +18,9 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class AuthorizerTest extends FrameworkIntegrationTestCase
 {
-    private string $path;
-
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->path = __DIR__ . '/sessions';
-
-        $this->container->config(new SessionConfig(path: $this->path));
-        $this->container->singleton(
-            SessionManager::class,
-            fn () => new FileSessionManager(
-                $this->container->get(Clock::class),
-                $this->container->get(SessionConfig::class),
-            ),
-        );
 
         $this->migrate(
             CreateMigrationsTable::class,
@@ -47,28 +30,45 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
         );
     }
 
-    protected function tearDown(): void
-    {
-        array_map(unlink(...), glob("{$this->path}/*"));
-        rmdir($this->path);
-    }
-
-    public function test_authorize(): void
+    public function test_grant_permission_string(): void
     {
         $user = (new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
         ))
             ->setPassword('password')
-            ->save();
+            ->save()
+            ->grantPermission('admin');
 
-        $permission = (new Permission(name: 'admin'))->save();
+        $this->assertTrue($user->hasPermission('admin'));
+        $this->assertFalse($user->hasPermission('guest'));
+    }
 
-        $userPermission = (new UserPermission(
-            user: $user,
-            permission: $permission
-        ))->save();
+    public function test_grant_permission_backed_enum(): void
+    {
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save()
+            ->grantPermission(UserPermissionBackedEnum::ADMIN);
 
-        $user->load('userPermissions.permission');
+        $this->assertTrue($user->hasPermission(UserPermissionBackedEnum::ADMIN));
+        $this->assertFalse($user->hasPermission(UserPermissionBackedEnum::GUEST));
+    }
+
+    public function test_grant_permission_unit_enum(): void
+    {
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save()
+            ->grantPermission(UserPermissionUnitEnum::ADMIN);
+
+        $this->assertTrue($user->hasPermission(UserPermissionUnitEnum::ADMIN));
+        $this->assertFalse($user->hasPermission(UserPermissionUnitEnum::GUEST));
     }
 }

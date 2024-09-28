@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Auth;
+namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Authenticator;
 use Tempest\Auth\CreatePermissionsTable;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
+use BackedEnum;
 use SensitiveParameter;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
@@ -34,13 +35,25 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         return $this;
     }
 
-    public function getPermissions(): array
+    public function grantPermission(string|UnitEnum $permission): self
     {
-        return $this->permissions;
+        $permission = match(true) {
+            is_string($permission) => $permission,
+            $permission instanceof BackedEnum => $permission->value,
+            $permission instanceof UnitEnum => $permission->name,
+        };
+
+        (new UserPermission(
+            user: $this,
+            permission: new Permission($permission)
+        ))->save();
+
+        return $this->load('userPermissions.permission');
     }
 
     public function hasPermission(UnitEnum|string $permission): bool
     {
-        return arr($this->permissions)->contains($permission);
+        return arr($this->userPermissions)
+                ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission)) !== null;
     }
 }
