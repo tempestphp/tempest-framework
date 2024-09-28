@@ -304,6 +304,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         (new ThroughModel(parent: $parent, child: $childA))->save();
 
         $child = ChildModel::find($childA->id, ['through.parent']);
+
+        $this->assertSame('parent', $child->through->parent->name);
     }
 
     public function test_lazy_load(): void

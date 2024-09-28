@@ -6,7 +6,9 @@ namespace Tempest\Database\Builder;
 
 use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
+use Tempest\Database\Builder\Relations\HasOneRelation;
 use Tempest\Database\Eager;
+use Tempest\Database\HasOne;
 use function Tempest\reflect;
 use Tempest\Reflection\ClassReflector;
 
@@ -34,6 +36,10 @@ final readonly class ModelDefinition
                 $relations[] = new HasManyRelation($property, $alias);
                 $class = $property->getIterableType()->asClass();
                 $alias .= ".{$property->getName()}[]";
+            } elseif ($property->hasAttribute(HasOne::class)) {
+                $relations[] = new HasOneRelation($property, $alias);
+                $class = $property->getType()->asClass();
+                $alias .= ".{$property->getName()}";
             } else {
                 $relations[] = new BelongsToRelation($property, $alias);
                 $class = $property->getType()->asClass();
