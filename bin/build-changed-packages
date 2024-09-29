@@ -12,36 +12,29 @@ $tempestPackages = json_decode(
         associative: true
 );
 
-
-$changedPackagesString = sprintf("cd \"%s\" && git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\1|' | sort -u", __DIR__ . '/../');
-
-var_dump($changedPackagesString);die;
-
-$changedPackages = exec("git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\1|' | sort -u");
-
-var_dump($changedPackages);die;
-
+$changedPackagesString = exec(
+    "git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\\1|' | sort -u"
+);
+$changedPackagesArray = explode("\n", $changedPackagesString);
 $composerPackages = [];
 
-foreach ($tempestPackages as $package) {
-    // Find out if there are changes in this package.
-    $diff = exec(sprintf('git diff --name-only HEAD^ -- %s', $package['directory']));
-
-    // If there are not any changes, move on to the next package.
-    if (empty($diff)) {
-        continue;
-    }
+// NOTE: We will need to change this if we ever have another level of packages.
+// I don't envision this though.
+foreach ($changedPackagesArray as $changedPackage) {
+    $changedPackage = trim($changedPackage);
+    $packageDirectory = __DIR__ . '/../src/Tempest/' . $changedPackage;
 
     // Bundle the current package as a tar file.
-    passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $package['directory']));
+    passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $packageDirectory));
 
-    $composerPath = sprintf('%s/composer.json', $package['directory']);
+    // Write this package information to "packages.json."
+    $composerPath = sprintf('%s/composer.json', $packageDirectory);
     $composerFile = json_decode(file_get_contents($composerPath), true);
 
     // TODO: Update this version.
     $composerFile['version'] = 'dev-main';
     $composerFile['dist']['type'] = 'tar';
-    $composerFile['dist']['source'] = $package['directory'] . '/package.tar';
+    $composerFile['dist']['source'] = $packageDirectory . '/package.tar';
 
     // Load the packages from the root "packages.json" file we will write in a second.
     $composerFile['repositories'] = [
@@ -50,6 +43,8 @@ foreach ($tempestPackages as $package) {
             'url' => realpath(__DIR__ . '/../'),
         ]
     ];
+
+//    file_put_contents($composerFile, json_encode($composerFile, JSON_PRETTY_PRINT));
 
     // Add the package details to the root "packages.json."
     $composerPackages[$composerFile['name']][$composerFile['version']] = $composerFile;
