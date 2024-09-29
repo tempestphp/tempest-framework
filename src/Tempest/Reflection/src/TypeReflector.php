@@ -104,6 +104,12 @@ final readonly class TypeReflector implements Reflector
         ]);
     }
 
+    public function isNullable(): bool
+    {
+        return str_contains('?', $this->definition)
+            || str_contains('null', $this->definition);
+    }
+
     /** @return self[] */
     public function split(): array
     {

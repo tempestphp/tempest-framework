@@ -24,13 +24,11 @@ final readonly class HasOneRelation implements Relation
 
         $currentModelClass = $property->getClass();
 
-        if ($inverseProperty === null) {
-            // TODO: handle reflection exceptions
-            foreach ($property->getType()->asClass()->getPublicProperties() as $possibleInverseProperty) {
-                if ($possibleInverseProperty->getType()->matches($currentModelClass->getName())) {
-                    $inverseProperty = $possibleInverseProperty;
-                    break;
-                }
+        foreach ($property->getType()->asClass()->getPublicProperties() as $possibleInverseProperty) {
+            if ($possibleInverseProperty->getType()->matches($currentModelClass->getName())) {
+                $inverseProperty = $possibleInverseProperty;
+
+                break;
             }
         }
 
@@ -47,8 +45,7 @@ final readonly class HasOneRelation implements Relation
         $this->joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
     }
 
-    public
-    function getStatement(): string
+    public function getStatement(): string
     {
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
@@ -58,14 +55,12 @@ final readonly class HasOneRelation implements Relation
         );
     }
 
-    public
-    function getRelationName(): string
+    public function getRelationName(): string
     {
         return $this->joinField->tableName->as;
     }
 
-    public
-    function getFieldNames(): array
+    public function getFieldNames(): array
     {
         return FieldName::make($this->relationModelClass, $this->joinField->tableName);
     }

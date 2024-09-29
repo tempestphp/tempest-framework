@@ -59,17 +59,19 @@ final readonly class QueryToModelMapper implements Mapper
                     $collection = $property->get($model, []);
                     $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
 
-                    $iterableType = $property->getIterableType();
+                    if ($childId) {
+                        $iterableType = $property->getIterableType();
 
-                    $childModel = $collection[$childId] ?? $iterableType->asClass()->newInstanceWithoutConstructor();
+                        $childModel = $collection[$childId] ?? $iterableType->asClass()->newInstanceWithoutConstructor();
 
-                    unset($keyParts[0]);
+                        unset($keyParts[0]);
 
-                    $collection[$childId] = $this->parse(
-                        $iterableType->asClass(),
-                        $childModel,
-                        [implode('.', $keyParts) => $value],
-                    );
+                        $collection[$childId] = $this->parse(
+                            $iterableType->asClass(),
+                            $childModel,
+                            [implode('.', $keyParts) => $value],
+                        );
+                    }
 
                     $property->set($model, $collection);
                 } else {
@@ -86,10 +88,10 @@ final readonly class QueryToModelMapper implements Mapper
                     ));
                 }
             } elseif ($count === 3) {
+                $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'] ?? null;
+
                 if (str_contains($keyParts[1], '[]')) {
                     $property = $class->getProperty(rtrim($propertyName, '[]'));
-
-                    $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
 
                     $model = $this->parseHasMany(
                         $property,
@@ -120,8 +122,12 @@ final readonly class QueryToModelMapper implements Mapper
 
     private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
-        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
+        if ($value && ($caster = $this->casterFactory->forProperty($property)) !== null) {
             $value = $caster->cast($value);
+        }
+
+        if ($value === null && ! $property->isNullable()) {
+            return $model;
         }
 
         $property->set($model, $value);
@@ -129,8 +135,12 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseBelongsTo(PropertyReflector $property, DatabaseModel $model, string $childProperty, mixed $value): DatabaseModel
-    {
+    private function parseBelongsTo(
+        PropertyReflector $property,
+        DatabaseModel $model,
+        string $childProperty,
+        mixed $value,
+    ): DatabaseModel {
         $childModel = $property->get(
             $model,
             $property->getType()->asClass()->newInstanceWithoutConstructor(),
@@ -150,8 +160,13 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseHasMany(PropertyReflector $property, DatabaseModel $model, string $childId, string $childProperty, mixed $value): DatabaseModel
-    {
+    private function parseHasMany(
+        PropertyReflector $property,
+        DatabaseModel $model,
+        ?string $childId,
+        string $childProperty,
+        mixed $value,
+    ): DatabaseModel {
         $collection = $property->get($model, []);
 
         if (! $childId) {
