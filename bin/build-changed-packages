@@ -43,7 +43,7 @@ foreach ($changedPackagesArray as $changedPackage) {
         ]
     ];
 
-//    file_put_contents($composerFile, json_encode($composerFile, JSON_PRETTY_PRINT));
+    file_put_contents($composerFile, json_encode($composerFile, JSON_PRETTY_PRINT));
 
     // Add the package details to the root "packages.json."
     $composerPackages[$composerFile['name']][$composerFile['version']] = $composerFile;
