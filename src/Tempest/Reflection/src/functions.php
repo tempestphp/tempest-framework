@@ -9,6 +9,11 @@ namespace Tempest {
     use Tempest\Reflection\ClassReflector;
     use Tempest\Reflection\PropertyReflector;
 
+    function testFunction(): string
+    {
+        return 'This is a test.';
+    }
+
     function reflect(mixed $classOrProperty, ?string $propertyName = null): ClassReflector|PropertyReflector
     {
         if ($classOrProperty instanceof PHPReflectionClass) {
