@@ -8,7 +8,5 @@ use UnitEnum;
 
 interface CanAuthorize
 {
-    public function grantPermission(string|UnitEnum $permission): self;
-
     public function hasPermission(string|UnitEnum $permission): bool;
 }

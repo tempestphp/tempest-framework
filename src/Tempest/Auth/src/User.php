@@ -51,6 +51,8 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         return $this->load('userPermissions.permission');
     }
 
+    // TODO: revokePermission
+
     public function hasPermission(UnitEnum|string $permission): bool
     {
         return arr($this->userPermissions)
