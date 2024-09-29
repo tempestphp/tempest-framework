@@ -12,10 +12,14 @@ $tempestPackages = json_decode(
         associative: true
 );
 
+$composerPackages = [];
+
 exec(
     "git diff --name-only origin/main...HEAD | grep src/Tempest | sed -E 's|^src/Tempest/([^/]+)/.*|\\1|' | sort -u",
     $changedPackagesArray
 );
+
+var_dump($changedPackagesArray);
 
 // NOTE: We will need to change this if we ever have another level of packages.
 // I don't envision this though.
@@ -24,7 +28,7 @@ foreach ($changedPackagesArray as $changedPackage) {
     $packageDirectory = __DIR__ . '/../src/Tempest/' . $changedPackage;
 
     // Bundle the current package as a tar file.
-    passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $packageDirectory));
+    passthru(sprintf("cd \"%s\" && tar -cf package.tar --exclude='package.tar' *", $packageDirectory));
 
     // Write this package information to "packages.json."
     $composerPath = sprintf('%s/composer.json', $packageDirectory);
