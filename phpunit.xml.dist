@@ -9,6 +9,7 @@
         displayDetailsOnTestsThatTriggerWarnings="true"
         bootstrap="./tests/bootstrap.php"
         cacheDirectory=".cache/phpunit"
+        executionOrder="random"
 >
   <testsuites>
     <testsuite name="Integration">
