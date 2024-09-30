@@ -29,7 +29,7 @@ final readonly class AdminController
 
     #[Get('/custom-authorizer')]
     #[HasPermission(CustomAuthorizer::class)]
-    public function custom_authorizer(): Response
+    public function customAuthorizer(): Response
     {
         return new Ok();
     }

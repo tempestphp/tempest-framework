@@ -82,14 +82,14 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
             ->assertForbidden();
 
         $this->http
-            ->get(uri([AdminController::class, 'custom_authorizer']))
+            ->get(uri([AdminController::class, 'customAuthorizer']))
             ->assertForbidden();
 
         $user->name = 'test';
         $user->save();
 
         $this->http
-            ->get(uri([AdminController::class, 'custom_authorizer']))
+            ->get(uri([AdminController::class, 'customAuthorizer']))
             ->assertOk();
     }
 }
