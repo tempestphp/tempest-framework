@@ -11,7 +11,7 @@ use Tempest\Reflection\ClassReflector;
 /**
  * @property GenericContainer $container
  */
-final class AutoDiscovery implements Discovery
+final class AutowireDiscovery implements Discovery
 {
     use HandlesDiscoveryCache;
 
@@ -28,8 +28,24 @@ final class AutoDiscovery implements Discovery
             return;
         }
 
-        $interfaces = $class->getReflection()->getInterfaceNames();
+        if ($class->getAttribute(Singleton::class) !== null) {
+            $this->discoverAsSingleton($class);
+        } else {
+            $this->discoverAsDefinition($class);
+        }
+    }
 
+    private function discoverAsSingleton(ClassReflector $class): void
+    {
+        $interfaces = $class->getReflection()->getInterfaceNames();
+        foreach ($interfaces as $interface) {
+            $this->container->singleton($interface, fn (Container $container) => $container->get($class->getName()));
+        }
+    }
+
+    private function discoverAsDefinition(ClassReflector $class): void
+    {
+        $interfaces = $class->getReflection()->getInterfaceNames();
         foreach ($interfaces as $interface) {
             $this->container->register($interface, fn (Container $container) => $container->get($class->getName()));
         }
