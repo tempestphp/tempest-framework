@@ -86,6 +86,11 @@ final readonly class TestResponseHelper
         return $this->assertStatus(Status::OK);
     }
 
+    public function assertForbidden(): self
+    {
+        return $this->assertStatus(Status::FORBIDDEN);
+    }
+
     public function assertNotFound(): self
     {
         return $this->assertStatus(Status::NOT_FOUND);

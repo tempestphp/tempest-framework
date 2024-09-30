@@ -6,5 +6,5 @@ namespace Tempest\Auth;
 
 interface Authorizer
 {
-    public function authorize(CanAuthorize $authenticate): bool;
+    public function authorize(CanAuthorize $user): bool;
 }
