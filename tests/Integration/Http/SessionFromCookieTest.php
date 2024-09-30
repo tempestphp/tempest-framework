@@ -36,6 +36,10 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $cookieManager->set('tempest_session_id', 'session_a');
         $sessionA = $this->container->get(Session::class);
         $this->assertEquals('a', $sessionA->get('test'));
+
+        // destroy session after tests
+        $sessionA->destroy();
+        $sessionB->destroy();
     }
 
     public function test_cookie_expiration(): void

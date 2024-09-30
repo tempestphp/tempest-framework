@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
 {
-    public function test_resolving_session_from_cookie(): void
+    public function test_resolving_session_from_header(): void
     {
         $this->container->config(new SessionConfig(
             path: __DIR__ . '/sessions',

@@ -32,7 +32,10 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $clock->changeTime(9);
 
-        $sessionManager->set(new SessionId('session_b'), 'test', 'value');
+
+        $sessionBId = new SessionId('session_b');
+
+        $sessionManager->set($sessionBId, 'test', 'value');
 
         $clock->changeTime(2);
 
@@ -43,5 +46,8 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $this->assertFileDoesNotExist(__DIR__ . '/sessions/session_a');
         $this->assertFileExists(__DIR__ . '/sessions/session_b');
+
+        //Make sure we clean up after so that we do not have state leaks from this test
+        $sessionManager->destroy($sessionBId);
     }
 }
