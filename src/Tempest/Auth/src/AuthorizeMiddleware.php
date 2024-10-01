@@ -25,7 +25,7 @@ final readonly class AuthorizeMiddleware implements HttpMiddleware
         $attribute = $this->matchedRoute
             ->route
             ->handler
-            ->getAttribute(HasPermission::class);
+            ->getAttribute(Allow::class);
 
         if ($attribute === null) {
             return $next($request);
