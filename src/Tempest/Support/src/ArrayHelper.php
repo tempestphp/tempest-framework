@@ -10,7 +10,12 @@ use Countable;
 use Generator;
 use Iterator;
 use Serializable;
+use function Tempest\map;
 
+/**
+ * @template TValueType
+ * @implements ArrayAccess<array-key, TValueType>
+ */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
     use IsIterable;
@@ -268,5 +273,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function toArray(): array
     {
         return $this->array;
+    }
+
+    /**
+     * @template T
+     * @param class-string<T> $to
+     * @return self<T>
+     */
+    public function mapTo(string $to): self
+    {
+        return new self(map($this->array)->collection()->to($to));
     }
 }

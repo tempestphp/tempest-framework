@@ -7,12 +7,12 @@ namespace Tests\Tempest\Integration\EventBus;
 use function Tempest\event;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tests\Tempest\Fixtures\Events\ItHappened;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class EventIntegrationTestCase extends IntegrationTestCase
+final class EventIntegrationTestCase extends FrameworkIntegrationTestCase
 {
     public function test_event(): void
     {
