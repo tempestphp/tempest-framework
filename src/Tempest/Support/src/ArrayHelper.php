@@ -278,6 +278,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function mapTo(string $to): self
     {
-        return new self(map($this->toArray())->collection()->to($to));
+        return new self(map($this->array)->collection()->to($to));
     }
 }

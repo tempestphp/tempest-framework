@@ -6,5 +6,8 @@ namespace Tests\Tempest\Integration\Support\Fixtures;
 
 final readonly class TestObject
 {
-    public string $name;
+    public function __construct(
+        public string $name,
+    ) {
+    }
 }
