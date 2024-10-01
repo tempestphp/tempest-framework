@@ -6,12 +6,12 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Tempest\env;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class EnvHelperTest extends IntegrationTestCase
+final class EnvHelperTest extends FrameworkIntegrationTestCase
 {
     public function test_env_fallback_value(): void
     {
