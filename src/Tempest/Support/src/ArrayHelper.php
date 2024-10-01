@@ -12,6 +12,10 @@ use Iterator;
 use Serializable;
 use function Tempest\map;
 
+/**
+ * @template TValueType
+ * @implements ArrayAccess<array-key, TValueType>
+ */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
     use IsIterable;
@@ -274,7 +278,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * @template T
      * @param class-string<T> $to
-     * @return self<T>|T[]
+     * @return self<T>
      */
     public function mapTo(string $to): self
     {
