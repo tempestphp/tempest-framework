@@ -45,7 +45,7 @@ final readonly class PublishCommand
             $originalPath = (new ReflectionClass($file))->getFileName();
             $targetPath = $this->console->ask(
                 question: sprintf('Where do you want to publish %s?', $file),
-                default: PathHelper::root($file), // TODO: This doesn't work?
+                default: PathHelper::root(), // TODO: This doesn't work?
                 validation: [new NotEmpty()]
             );
 

@@ -9,9 +9,9 @@ use function Tempest\get;
 
 final readonly class PathHelper
 {
-    public static function root(): string
+    public static function root(string ...$paths): string
     {
-        return static::make(get(Kernel::class)->root);
+        return static::make(get(Kernel::class)->root, ...$paths);
     }
 
     public static function make(string ...$paths): string
