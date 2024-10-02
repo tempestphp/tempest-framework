@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
@@ -21,7 +22,9 @@ final class InvalidTest extends FrameworkIntegrationTestCase
 {
     public function test_invalid(): void
     {
+        /** @var PsrRequest $request */
         $request = map(new GenericRequest(Method::GET, '/original', ['foo' => 'bar']))->with(RequestToPsrRequestMapper::class);
+        $request = $request->withHeader('Referer', '/original');
 
         $response = new Invalid(
             $request,
