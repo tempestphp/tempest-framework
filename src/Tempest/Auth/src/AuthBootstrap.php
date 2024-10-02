@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Auth;
 
 use Tempest\Core\KernelEvent;
@@ -10,7 +12,8 @@ final readonly class AuthBootstrap
 {
     public function __construct(
         private Router $router
-    ) {}
+    ) {
+    }
 
     #[EventHandler(KernelEvent::BOOTED)]
     public function __invoke(): void
