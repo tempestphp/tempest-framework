@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
+use Tempest\Core\KernelException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -89,5 +90,20 @@ final class ComposerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('App\\', $composer->mainNamespace->namespace);
         $this->assertSame('src/', $composer->mainNamespace->path);
+    }
+
+    #[Test]
+    public function errors_without_namespace(): void
+    {
+        $this->expectException(KernelException::class);
+        $this->initializeComposer([]);
+    }
+
+    #[Test]
+    public function errors_without_composer_file(): void
+    {
+        $this->expectException(KernelException::class);
+
+        new Composer(root: __DIR__);
     }
 }
