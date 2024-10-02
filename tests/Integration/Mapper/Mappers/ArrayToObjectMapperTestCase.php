@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
+use DateTimeImmutable;
 use InvalidArgumentException;
 use Tempest\Http\Method;
 use function Tempest\map;
@@ -64,6 +65,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
     public function test_built_in_casters(): void
     {
         $object = map([
+            'dateTimeObject' => new DateTimeImmutable('2024-01-01 10:10:10'),
             'dateTimeImmutable' => '2024-01-01 10:10:10',
             'dateTime' => '2024-01-01 10:10:10',
             'dateTimeWithFormat' => '01/12/2024 10:10:10',
@@ -72,6 +74,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
             'int' => '1',
         ])->to(ObjectWithBuiltInCasters::class);
 
+        $this->assertSame('2024-01-01 10:10:10', $object->dateTimeObject->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 10:10:10', $object->dateTimeImmutable->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 10:10:10', $object->dateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-12-01 10:10:10', $object->dateTimeWithFormat->format('Y-m-d H:i:s'));
