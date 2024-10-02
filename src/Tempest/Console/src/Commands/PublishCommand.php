@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\PathHelper;
@@ -16,6 +17,7 @@ final readonly class PublishCommand
 {
     public function __construct(
         private Kernel $kernel,
+        private Composer $composer,
         private Console $console
     ) {
     }
@@ -42,10 +44,14 @@ final readonly class PublishCommand
         foreach ($publish as $file) {
             $this->console->writeln();
 
-            $originalPath = (new ClassReflector($file))->getFilePath();
+            $suggestedPath = PathHelper::make(
+                $this->composer->mainNamespacePath,
+                basename($originalPath = (new ClassReflector($file))->getFilePath())
+            );
+
             $targetPath = $this->console->ask(
                 question: sprintf('Where do you want to publish %s?', $file),
-                default: PathHelper::root(), // TODO: This doesn't work?
+                default: $suggestedPath,
                 validation: [new NotEmpty()]
             );
 
@@ -71,7 +77,8 @@ final readonly class PublishCommand
             // TODO: transform final file's namespace and remove the publish attribute
             copy($originalPath, $targetPath);
 
-            $this->console->info(sprintf('%s published to %s.', $file, $targetPath));
+            $this->console->writeln();
+            $this->console->success(sprintf('Published %s.', $targetPath));
         }
     }
 }
