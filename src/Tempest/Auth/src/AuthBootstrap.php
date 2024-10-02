@@ -18,6 +18,6 @@ final readonly class AuthBootstrap
     #[EventHandler(KernelEvent::BOOTED)]
     public function __invoke(): void
     {
-        $this->router->addMiddleware(AuthorizeMiddleware::class);
+        $this->router->addMiddleware(AuthorizerMiddleware::class);
     }
 }

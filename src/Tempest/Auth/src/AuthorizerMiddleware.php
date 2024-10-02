@@ -11,7 +11,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Forbidden;
 
-final readonly class AuthorizeMiddleware implements HttpMiddleware
+final readonly class AuthorizerMiddleware implements HttpMiddleware
 {
     public function __construct(
         private Authenticator $authenticator,
