@@ -152,7 +152,7 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('[a]ab[b]')->between('[', ']')->equals('a]ab[b'));
         $this->assertTrue(str('foofoobar')->between('foo', 'bar')->equals('foo'));
         $this->assertTrue(str('foobarbar')->between('foo', 'bar')->equals('bar'));
-        $this->assertTrue(str('12345')->between(1, 5)->equals('234'));
+        $this->assertTrue(str('12345')->between('1', '5')->equals('234'));
         $this->assertTrue(str('123456789')->between('123', '6789')->equals('45'));
         $this->assertTrue(str('nothing')->between('foo', 'bar')->equals('nothing'));
     }
