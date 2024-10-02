@@ -9,7 +9,7 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-final readonly class BelongsToRelation implements Relation
+final readonly class HasOneRelation implements Relation
 {
     private ClassReflector $relationModelClass;
 
@@ -19,13 +19,30 @@ final readonly class BelongsToRelation implements Relation
 
     public function __construct(PropertyReflector $property, string $alias)
     {
+        // TODO: optionally allow property name on the attribute so that we don't have to resolve it
+        $inverseProperty = null;
+
+        $currentModelClass = $property->getClass();
+
+        foreach ($property->getType()->asClass()->getPublicProperties() as $possibleInverseProperty) {
+            if ($possibleInverseProperty->getType()->matches($currentModelClass->getName())) {
+                $inverseProperty = $possibleInverseProperty;
+
+                break;
+            }
+        }
+
+        if ($inverseProperty === null) {
+            // TODO exception
+        }
+
         $this->relationModelClass = $property->getType()->asClass();
 
         $localTable = TableName::for($property->getClass(), $alias);
-        $this->localField = new FieldName($localTable, $property->getName() . '_id');
+        $this->localField = new FieldName($localTable, 'id');
 
         $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
-        $this->joinField = new FieldName($joinTable, 'id');
+        $this->joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
     }
 
     public function getStatement(): string

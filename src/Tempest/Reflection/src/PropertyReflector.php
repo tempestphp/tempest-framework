@@ -66,6 +66,17 @@ final readonly class PropertyReflector implements Reflector
         return $this->reflectionProperty->isPromoted();
     }
 
+    public function isNullable(): bool
+    {
+        $type = $this->getType();
+
+        if ($type === null) {
+            return true;
+        }
+
+        return $type->isNullable();
+    }
+
     public function getIterableType(): ?TypeReflector
     {
         $doc = $this->reflectionProperty->getDocComment();
