@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 {
-    public function test_hidden_from_discovery()
+    public function test_hidden_from_discovery(): void
     {
         $this->kernel->discoveryClasses = [
             MigrationDiscovery::class,
