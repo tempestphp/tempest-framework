@@ -22,6 +22,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\DependencyWithTaggedIteratorDependency;
 use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
@@ -29,6 +30,8 @@ use Tempest\Container\Tests\Fixtures\SingletonInitializer;
 use Tempest\Container\Tests\Fixtures\TaggedDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyCliInitializer;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyWebInitializer;
+use Tempest\Container\Tests\Fixtures\TaggedIteratorA;
+use Tempest\Container\Tests\Fixtures\TaggedIteratorB;
 use Tempest\Container\Tests\Fixtures\UnionImplementation;
 use Tempest\Container\Tests\Fixtures\UnionInitializer;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceA;
@@ -293,5 +296,20 @@ TXT,
         $b = $container->get(ClassWithSingletonAttribute::class);
 
         $this->assertTrue($b->flag);
+    }
+
+    public function test_tagged_iterators(): void
+    {
+        $container = new GenericContainer();
+        $container->tag('tag', TaggedIteratorA::class);
+        $container->tag('tag', TaggedIteratorB::class);
+
+        /** @var DependencyWithTaggedIteratorDependency $a */
+        $a = $container->get(DependencyWithTaggedIteratorDependency::class);
+
+        $this->assertEquals([
+            $container->get(TaggedIteratorA::class),
+            $container->get(TaggedIteratorB::class),
+        ], $a->param);
     }
 }

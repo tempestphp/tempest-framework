@@ -30,6 +30,9 @@ final class GenericContainer implements Container
         /** @var ArrayIterator<array-key, class-string> $initializers */
         private ArrayIterator $initializers = new ArrayIterator(),
 
+        /** @var ArrayIterator<array-key, class-string[]> */
+        private ArrayIterator $taggedDefinitions = new ArrayIterator(),
+
         /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
         private ArrayIterator $dynamicInitializers = new ArrayIterator(),
         private ?DependencyChain $chain = null,
@@ -39,6 +42,13 @@ final class GenericContainer implements Container
     public function setDefinitions(array $definitions): self
     {
         $this->definitions = new ArrayIterator($definitions);
+
+        return $this;
+    }
+
+    public function setTaggedDefinitions(array $definitions): self
+    {
+        $this->taggedDefinitions = new ArrayIterator($definitions);
 
         return $this;
     }
@@ -62,6 +72,11 @@ final class GenericContainer implements Container
         return $this->definitions->getArrayCopy();
     }
 
+    public function getTaggedDefinitions(): array
+    {
+        return $this->taggedDefinitions->getArrayCopy();
+    }
+
     public function getInitializers(): array
     {
         return $this->initializers->getArrayCopy();
@@ -78,6 +93,16 @@ final class GenericContainer implements Container
 
         return $this;
     }
+
+    /** @param class-string $class */
+    public function tag(string $tag, string $class): self
+    {
+        $this->taggedDefinitions[$tag] = $this->taggedDefinitions[$tag] ?? [];
+        $this->taggedDefinitions[$tag][] = $class;
+
+        return $this;
+    }
+
 
     public function singleton(string $className, object|callable $definition, ?string $tag = null): self
     {
@@ -293,6 +318,13 @@ final class GenericContainer implements Container
     private function autowireDependency(ParameterReflector $parameter, ?string $tag, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
+
+        $tagged = $parameter->getAttribute(Tagged::class);
+        if ($tagged !== null) {
+            $definitions = $this->taggedDefinitions[$tagged->name];
+
+            return array_map(fn (string $class) => $this->resolve($class, $tag, $providedValue), $definitions);
+        }
 
         // If the parameter is a built-in type, immediately skip reflection
         // stuff and attempt to give it a default or null value.
