@@ -51,11 +51,21 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         return $this->load('userPermissions.permission');
     }
 
-    // TODO: revokePermission
+    public function revokePermission(string|UnitEnum $permission): self
+    {
+        $this->getPermission($permission)?->delete();
+
+        return $this->load('userPermissions.permission');
+    }
 
     public function hasPermission(UnitEnum|string $permission): bool
     {
+        return $this->getPermission($permission) !== null;
+    }
+
+    public function getPermission(UnitEnum|string $permission): ?UserPermission
+    {
         return arr($this->userPermissions)
-                ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission)) !== null;
+            ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission));
     }
 }

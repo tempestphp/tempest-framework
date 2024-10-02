@@ -71,4 +71,20 @@ final class UserModelTest extends FrameworkIntegrationTestCase
         $this->assertTrue($user->hasPermission(UserPermissionUnitEnum::ADMIN));
         $this->assertFalse($user->hasPermission(UserPermissionUnitEnum::GUEST));
     }
+
+    public function test_revoke_permission(): void
+    {
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save()
+            ->grantPermission(UserPermissionBackedEnum::ADMIN)
+            ->grantPermission(UserPermissionBackedEnum::GUEST)
+            ->revokePermission(UserPermissionBackedEnum::ADMIN);
+
+        $this->assertFalse($user->hasPermission(UserPermissionBackedEnum::ADMIN));
+        $this->assertTrue($user->hasPermission(UserPermissionBackedEnum::GUEST));
+    }
 }
