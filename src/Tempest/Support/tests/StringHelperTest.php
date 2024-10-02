@@ -205,4 +205,59 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('abc')->endsWith('c'));
         $this->assertFalse(str('abc')->endsWith('a'));
     }
+
+    public function test_replace(): void
+    {
+        $this->assertTrue(str('foo bar')->replace('bar', 'baz')->equals('foo baz'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane'], 'luke')->equals('luke doe'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], ['Jon', 'Jane', 'Doe'])->equals('Jon Doe'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>'));
+    }
+
+    public function test_replace_last(): void
+    {
+        $this->assertTrue(str('foobar foobar')->replaceLast('bar', 'qux')->equals('foobar fooqux'));
+        $this->assertTrue(str('foo/bar? foo/bar?')->replaceLast('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('bar', '')->equals('foobar foo'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceLast('ö', 'xxx')->equals('Malmö Jönkxxxping'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceLast('', 'yyy')->equals('Malmö Jönköping'));
+    }
+
+    public function test_replace_first(): void
+    {
+        $this->assertTrue(str('foobar foobar')->replaceFirst('bar', 'qux')->equals('fooqux foobar'));
+        $this->assertTrue(str('foo/bar? foo/bar?')->replaceFirst('bar?', 'qux?')->equals('foo/qux? foo/bar?'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('bar', '')->equals('foo foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('Jönköping Malmö')->replaceFirst('ö', 'xxx')->equals('Jxxxnköping Malmö'));
+        $this->assertTrue(str('Jönköping Malmö')->replaceFirst('', 'yyy')->equals('Jönköping Malmö'));
+
+    }
+
+    public function test_replace_end(): void
+    {
+        $this->assertTrue(str('foobar fooqux')->replaceEnd('bar', 'qux')->equals('foobar fooqux'));
+        $this->assertTrue(str('foo/bar? foo/qux?')->replaceEnd('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
+        $this->assertTrue(str('foobar foo')->replaceEnd('bar', '')->equals('foobar foo'));
+        $this->assertTrue(str('foobar foobar')->replaceEnd('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceEnd('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('fooxxx foobar')->replaceEnd('xxx', 'yyy')->equals('fooxxx foobar'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceEnd('ö', 'xxx')->equals('Malmö Jönköping'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceEnd('öping', 'yyy')->equals('Malmö Jönkyyy'));
+    }
+
+    public function test_append(): void
+    {
+        $this->assertTrue(str('foo')->append('bar')->equals('foobar'));
+        $this->assertTrue(str('foo')->append('bar', 'baz')->equals('foobarbaz'));
+    }
+
+    public function test_prepend(): void
+    {
+        $this->assertTrue(str('bar')->prepend('foo')->equals('foobar'));
+        $this->assertTrue(str('baz')->prepend('bar', 'foo')->equals('barfoobaz'));
+    }
 }

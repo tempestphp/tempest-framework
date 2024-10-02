@@ -275,4 +275,80 @@ final readonly class StringHelper implements Stringable
     {
         return str_ends_with($this->string, $needle);
     }
+
+    public function replaceFirst(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        $position = strpos($this->string, $search);
+
+        if ($position === false) {
+            return $this;
+        }
+
+        return new self(substr_replace($this->string, $replace, $position, strlen($search)));
+    }
+
+    public function replaceLast(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        $position = strrpos($this->string, $search);
+
+        if ($position === false) {
+            return $this;
+        }
+
+        return new self(substr_replace($this->string, $replace, $position, strlen($search)));
+    }
+
+    public function replaceEnd(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        if (! $this->endsWith($search)) {
+            return $this;
+        }
+
+        return $this->replaceLast($search, $replace);
+    }
+
+    public function replaceStart(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        if (! $this->startsWith($search)) {
+            return $this;
+        }
+
+        return $this->replaceFirst($search, $replace);
+    }
+
+    public function append(string ...$append): self
+    {
+        return new self($this->string . implode('', $append));
+    }
+
+    public function prepend(string ...$prepend): self
+    {
+        return new self(implode('', $prepend) . $this->string);
+    }
+
+    public function replace(string|array $search, string|array $replace): self
+    {
+        return new self(str_replace($search, $replace, $this->string));
+    }
+
+    public function dd(mixed ...$dd): never
+    {
+        dd($this->string, ...$dd);
+    }
 }
