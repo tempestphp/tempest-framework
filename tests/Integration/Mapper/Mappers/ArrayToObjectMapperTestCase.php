@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Tempest\Http\Method;
 use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBuiltInCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithDefaultValues;
@@ -22,7 +22,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
 /**
  * @internal
  */
-final class ArrayToObjectMapperTestCase extends IntegrationTestCase
+final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_missing_values(): void
     {

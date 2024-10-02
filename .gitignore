@@ -6,6 +6,7 @@ vendor/
 src/Tempest/database.sqlite
 tests/Fixtures/database.sqlite
 tests/Unit/Console/test-console.log
+src/Tempest/Database/src/database.sqlite
 .env
 composer.lock
 debug.log

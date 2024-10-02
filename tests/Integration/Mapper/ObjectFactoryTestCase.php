@@ -11,13 +11,13 @@ use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal
  */
-final class ObjectFactoryTestCase extends IntegrationTestCase
+final class ObjectFactoryTestCase extends FrameworkIntegrationTestCase
 {
     public function test_single_object(): void
     {

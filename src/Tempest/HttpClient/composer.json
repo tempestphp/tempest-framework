@@ -1,6 +1,6 @@
 {
     "name": "tempest/http-client",
-    "description": "The PHP framework that gets out of your way.",
+    "description": "A component for handle Http client requests.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {

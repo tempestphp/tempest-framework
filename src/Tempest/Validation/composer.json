@@ -1,6 +1,6 @@
 {
     "name": "tempest/validation",
-    "description": "The PHP framework that gets out of your way.",
+    "description": "A component for data validation handling.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {

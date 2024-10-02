@@ -50,6 +50,7 @@
         "symplify/monorepo-builder": "^11.2"
     },
     "replace": {
+        "tempest/auth": "self.version",
         "tempest/cache": "self.version",
         "tempest/clock": "self.version",
         "tempest/command-bus": "self.version",
@@ -71,6 +72,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
+            "Tempest\\Auth\\": "src/Tempest/Auth/src/",
             "Tempest\\Cache\\": "src/Tempest/Cache/src/",
             "Tempest\\Clock\\": "src/Tempest/Clock/src/",
             "Tempest\\CommandBus\\": "src/Tempest/CommandBus/src",
@@ -105,6 +107,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Tempest\\Auth\\Tests\\": "src/Tempest/Auth/tests",
             "Tempest\\Cache\\Tests\\": "src/Tempest/Cache/tests",
             "Tempest\\Clock\\Tests\\": "src/Tempest/Clock/tests",
             "Tempest\\CommandBus\\Tests\\": "src/Tempest/CommandBus/tests",

@@ -1,6 +1,6 @@
 {
     "name": "tempest/core",
-    "description": "The PHP framework that gets out of your way.",
+    "description": "The core component of the Tempest framework.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {

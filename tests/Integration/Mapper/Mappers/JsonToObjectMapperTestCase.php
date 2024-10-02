@@ -6,13 +6,13 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
 
 /**
  * @internal
  */
-final class JsonToObjectMapperTestCase extends IntegrationTestCase
+final class JsonToObjectMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_json_to_object(): void
     {
