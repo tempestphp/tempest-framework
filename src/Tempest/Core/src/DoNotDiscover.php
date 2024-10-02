@@ -7,6 +7,6 @@ namespace Tempest\Core;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class HideFromDiscovery
+final class DoNotDiscover
 {
 }
