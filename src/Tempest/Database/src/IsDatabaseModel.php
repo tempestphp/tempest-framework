@@ -157,5 +157,17 @@ trait IsDatabaseModel
         return $this;
     }
 
-    // TODO: delete
+    public function delete(): void
+    {
+        $table = self::table();
+
+        $query = new Query(sprintf(
+            "DELETE FROM %s WHERE `id` = :id",
+            $table,
+        ), [
+            'id' => $this->getId()->id,
+        ]);
+
+        $query->execute();
+    }
 }

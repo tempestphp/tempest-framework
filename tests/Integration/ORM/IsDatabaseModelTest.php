@@ -382,4 +382,25 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertNull(Book::query()->whereField('title', 'A')->first());
         $this->assertNotNull(Book::query()->whereField('title', 'B')->first());
     }
+
+    public function test_delete(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            FooMigration::class,
+        );
+
+        $foo = Foo::create(
+            bar: 'baz',
+        );
+
+        $bar = Foo::create(
+            bar: 'baz',
+        );
+
+        $foo->delete();
+
+        $this->assertNull(Foo::find($foo->getId()));
+        $this->assertNotNull(Foo::find($bar->getId()));
+    }
 }
