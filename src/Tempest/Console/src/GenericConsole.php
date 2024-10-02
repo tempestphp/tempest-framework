@@ -144,7 +144,7 @@ final class GenericConsole implements Console
         array $validation = [],
     ): string|array {
         if ($options === null || $options === []) {
-            $component = new TextBoxComponent($question);
+            $component = new TextBoxComponent($question, $default);
         } elseif ($multiple) {
             $component = new MultipleChoiceComponent(
                 question: $question,
