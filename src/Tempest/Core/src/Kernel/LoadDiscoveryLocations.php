@@ -68,10 +68,10 @@ final readonly class LoadDiscoveryLocations
     {
         $discoveredLocations = [];
 
-        foreach ($this->composer->namespaces as $namespace => $path) {
-            $path = PathHelper::make($this->kernel->root, $path);
+        foreach ($this->composer->namespaces as $namespace) {
+            $path = PathHelper::make($this->kernel->root, $namespace->path);
 
-            $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
+            $discoveredLocations[] = new DiscoveryLocation($namespace->namespace, $path);
         }
 
         return $discoveredLocations;

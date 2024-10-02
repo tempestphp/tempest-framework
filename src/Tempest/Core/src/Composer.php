@@ -4,39 +4,43 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use function Tempest\Support\arr;
 use Tempest\Support\PathHelper;
 
 final readonly class Composer
 {
+    /** @var array<ComposerNamespace> */
     public array $namespaces;
 
-    public string $mainNamespace;
+    public ?ComposerNamespace $mainNamespace;
 
-    public string $mainNamespacePath;
+    public array $composer;
 
     public function __construct(
         string $root,
     ) {
         $composerFilePath = PathHelper::make($root, 'composer.json');
-        $composer = $this->loadComposerFile($composerFilePath);
 
-        $this->namespaces = $composer['autoload']['psr-4'] ?? [];
+        $this->composer = $this->loadComposerFile($composerFilePath);
+        $this->namespaces = arr($this->composer)
+            ->get('autoload.psr-4', default: arr())
+            ->map(fn (string $path, string $namespace) => new ComposerNamespace($namespace, $path))
+            ->values()
+            ->toArray();
 
-        foreach ($this->namespaces as $namespace => $path) {
-            if (str_starts_with($path, 'app/') || str_starts_with($path, 'src/')) {
+        foreach ($this->namespaces as $namespace) {
+            if (str_starts_with($namespace->path, 'app/') || str_starts_with($namespace->path, 'src/')) {
                 $this->mainNamespace = $namespace;
-                $this->mainNamespacePath = $path;
 
                 break;
             }
         }
 
-        if (! $this->mainNamespace) {
-            $this->mainNamespace = array_key_first($this->namespaces);
-            $this->mainNamespacePath = $this->namespaces[$this->mainNamespace];
+        if (! isset($this->mainNamespace) && count($this->namespaces)) {
+            $this->mainNamespace = $this->namespaces[0];
         }
 
-        if (! $this->mainNamespace) {
+        if (! isset($this->mainNamespace)) {
             throw new KernelException("Tempest requires at least one PSR-4 namespace to be defined in composer.json.");
         }
     }
@@ -47,6 +51,6 @@ final readonly class Composer
             throw new KernelException("Could not locate composer.json.");
         }
 
-        return json_decode(file_get_contents($path), true);
+        return json_decode(file_get_contents($path), associative: true);
     }
 }
