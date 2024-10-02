@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use ReflectionClass;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\Kernel;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Support\PathHelper;
 use function Tempest\Support\str;
 use Tempest\Validation\Rules\NotEmpty;
@@ -42,7 +42,7 @@ final readonly class PublishCommand
         foreach ($publish as $file) {
             $this->console->writeln();
 
-            $originalPath = (new ReflectionClass($file))->getFileName();
+            $originalPath = (new ClassReflector($file))->getFilePath();
             $targetPath = $this->console->ask(
                 question: sprintf('Where do you want to publish %s?', $file),
                 default: PathHelper::root(), // TODO: This doesn't work?
