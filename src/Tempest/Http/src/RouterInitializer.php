@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Auth\AuthorizeMiddleware;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
@@ -20,7 +19,6 @@ final readonly class RouterInitializer implements Initializer
 
         $router->addMiddleware(SetCookieMiddleware::class);
         $router->addMiddleware(SessionMiddleware::class);
-        $router->addMiddleware(AuthorizeMiddleware::class);
 
         return $router;
     }
