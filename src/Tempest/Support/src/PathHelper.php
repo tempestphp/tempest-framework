@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
+use Tempest\Core\Kernel;
+use function Tempest\get;
+
 final readonly class PathHelper
 {
+    public static function root(): string
+    {
+        return static::make(get(Kernel::class)->root);
+    }
+
     public static function make(string ...$paths): string
     {
         // Split paths items on forward and backward slashes
