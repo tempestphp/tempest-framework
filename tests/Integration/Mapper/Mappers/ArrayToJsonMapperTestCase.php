@@ -6,12 +6,12 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\MapTo;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class ArrayToJsonMapperTestCase extends IntegrationTestCase
+final class ArrayToJsonMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_mapper(): void
     {

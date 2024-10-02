@@ -11,11 +11,14 @@ use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\View\View;
+use Tempest\View\ViewRenderer;
 
 final readonly class TestResponseHelper
 {
-    public function __construct(private Response $response)
-    {
+    public function __construct(
+        private Response $response,
+    ) {
     }
 
     public function getResponse(): Response
@@ -81,6 +84,11 @@ final readonly class TestResponseHelper
     public function assertOk(): self
     {
         return $this->assertStatus(Status::OK);
+    }
+
+    public function assertForbidden(): self
+    {
+        return $this->assertStatus(Status::FORBIDDEN);
     }
 
     public function assertNotFound(): self
@@ -177,8 +185,34 @@ final readonly class TestResponseHelper
             sprintf(
                 "There should be no validation errors, but there were: %s",
                 implode(', ', array_keys($validationErrors)),
-            )
+            ),
         );
+
+        return $this;
+    }
+
+    public function assertSee(string $search): self
+    {
+        $body = $this->response->getBody();
+
+        if ($body instanceof View) {
+            $body = get(ViewRenderer::class)->render($body);
+        }
+
+        Assert::assertStringContainsString($search, $body);
+
+        return $this;
+    }
+
+    public function assertNotSee(string $search): self
+    {
+        $body = $this->response->getBody();
+
+        if ($body instanceof View) {
+            $body = get(ViewRenderer::class)->render($body);
+        }
+
+        Assert::assertStringNotContainsString($search, $body);
 
         return $this;
     }
