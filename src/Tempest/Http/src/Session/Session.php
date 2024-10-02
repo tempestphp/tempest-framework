@@ -40,7 +40,7 @@ final class Session
         $value = $this->getSessionManager()->get($this->id, $key, $default);
 
         if ($value instanceof FlashValue) {
-            $this->expiredKeys[] = $key;
+            $this->expiredKeys[$key] = $key;
             $value = $value->value;
         }
 

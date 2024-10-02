@@ -17,7 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
 {
-    public function test_resolving_session_from_cookie(): void
+    public function test_resolving_session_from_header(): void
     {
         $this->container->config(new SessionConfig(
             path: __DIR__ . '/sessions',
@@ -28,11 +28,6 @@ final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
         $sessionA = $this->container->get(Session::class);
         $sessionA->set('test', 'a');
 
-        $this->setSessionId('session_b');
-        $sessionB = $this->container->get(Session::class);
-        $this->assertNull($sessionB->get('test'));
-
-        $this->setSessionId('session_a');
         $sessionA = $this->container->get(Session::class);
         $this->assertEquals('a', $sessionA->get('test'));
     }

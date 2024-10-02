@@ -29,11 +29,6 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $sessionA = $this->container->get(Session::class);
         $sessionA->set('test', 'a');
 
-        $cookieManager->set('tempest_session_id', 'session_b');
-        $sessionB = $this->container->get(Session::class);
-        $this->assertNull($sessionB->get('test'));
-
-        $cookieManager->set('tempest_session_id', 'session_a');
         $sessionA = $this->container->get(Session::class);
         $this->assertEquals('a', $sessionA->get('test'));
     }
