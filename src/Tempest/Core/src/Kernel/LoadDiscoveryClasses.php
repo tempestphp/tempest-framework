@@ -12,6 +12,7 @@ use SplFileInfo;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
+use Tempest\Core\HideFromDiscovery;
 use Tempest\Core\Kernel;
 use Tempest\Reflection\ClassReflector;
 use Throwable;
@@ -92,6 +93,10 @@ final readonly class LoadDiscoveryClasses
                         } catch (Throwable) {
                             // Nothing should happen
                         }
+                    }
+
+                    if ($input instanceof ClassReflector && $input->hasAttribute(HideFromDiscovery::class)) {
+                        continue;
                     }
 
                     if ($input instanceof ClassReflector) {
