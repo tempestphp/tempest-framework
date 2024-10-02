@@ -9,13 +9,15 @@ use Tempest\Support\PathHelper;
 final readonly class Composer
 {
     public array $namespaces;
+
     public string $mainNamespace;
+
     public string $mainNamespacePath;
 
     public function __construct(
-        private Kernel $kernel
+        string $root,
     ) {
-        $composerFilePath = PathHelper::make($kernel->root, 'composer.json');
+        $composerFilePath = PathHelper::make($root, 'composer.json');
         $composer = $this->loadComposerFile($composerFilePath);
 
         $this->namespaces = $composer['autoload']['psr-4'] ?? [];

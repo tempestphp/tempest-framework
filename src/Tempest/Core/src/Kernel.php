@@ -65,7 +65,7 @@ final class Kernel
 
     private function loadComposer(): self
     {
-        $this->container->singleton(Composer::class, new Composer($this));
+        $this->container->singleton(Composer::class, new Composer($this->root));
 
         return $this;
     }
