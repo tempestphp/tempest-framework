@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
+use Tempest\Core\CanBePublished;
 use Tempest\Database\Migration;
 use Tempest\Database\Migrations\Migration as Model;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
+#[CanBePublished]
 final readonly class CreateMigrationsTable implements Migration
 {
     public function getName(): string

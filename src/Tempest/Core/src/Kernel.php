@@ -23,6 +23,8 @@ final class Kernel
         DiscoveryDiscovery::class,
     ];
 
+    public array $publishFiles = [];
+
     public function __construct(
         public string $root,
         public array $discoveryLocations = [],
