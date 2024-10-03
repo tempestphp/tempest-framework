@@ -36,6 +36,7 @@ final class Kernel
             ->setDiscoveryCache($discoveryCache)
             ->registerShutdownFunction()
             ->registerKernel()
+            ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadExceptionHandler()
@@ -60,6 +61,13 @@ final class Kernel
         $container->singleton(Container::class, fn () => $container);
 
         return $container;
+    }
+
+    private function loadComposer(): self
+    {
+        $this->container->singleton(Composer::class, new Composer($this->root));
+
+        return $this;
     }
 
     private function loadEnv(): self
