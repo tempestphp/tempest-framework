@@ -95,12 +95,10 @@ final readonly class LoadDiscoveryClasses
                         }
                     }
 
-                    if ($input instanceof ClassReflector && $input->hasAttribute(DoNotDiscover::class)) {
-                        continue;
-                    }
-
                     if ($input instanceof ClassReflector) {
-                        $discovery->discover($input);
+                        if ($this->shouldDiscover($discovery, $input)) {
+                            $discovery->discover($input);
+                        }
                     } elseif ($discovery instanceof DiscoversPath) {
                         $discovery->discoverPath($input);
                     }
@@ -113,5 +111,14 @@ final readonly class LoadDiscoveryClasses
                 $discovery->storeCache();
             }
         }
+    }
+
+    private function shouldDiscover(Discovery $discovery, ClassReflector $input): bool
+    {
+        if (is_null($attribute = $input->getAttribute(DoNotDiscover::class))) {
+            return true;
+        }
+
+        return in_array($discovery::class, $attribute->except, strict: true);
     }
 }
