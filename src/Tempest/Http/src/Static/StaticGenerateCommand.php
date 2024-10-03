@@ -18,6 +18,7 @@ use function Tempest\path;
 use function Tempest\uri;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+use Throwable;
 
 final readonly class StaticGenerateCommand
 {
@@ -57,40 +58,48 @@ final readonly class StaticGenerateCommand
 
                 $file = path($publicPath, $fileName);
 
-                $response = $this->router->dispatch(
-                    new GenericRequest(
-                        method: Method::GET,
-                        uri: $uri,
-                    ),
-                );
+                try {
+                    $response = $this->router->dispatch(
+                        new GenericRequest(
+                            method: Method::GET,
+                            uri: $uri,
+                        ),
+                    );
 
-                if ($response->getStatus() !== Status::OK) {
-                    $this->writeln("- <error>{$uri}</error> > {$response->getStatus()->value}");
+                    if ($response->getStatus() !== Status::OK) {
+                        $this->writeln("- <error>{$uri}</error> > {$response->getStatus()->value}");
+
+                        continue;
+                    }
+
+                    $body = $response->getBody();
+
+                    $content = $body instanceof View
+                        ? $this->viewRenderer->render($body)
+                        : $body;
+
+                    if (! is_string($content)) {
+                        $this->writeln("- <error>{$uri}</error> > No textual body");
+
+                        continue;
+                    }
+
+                    $directory = pathinfo($file, PATHINFO_DIRNAME);
+
+                    if (! is_dir($directory)) {
+                        mkdir($directory, recursive: true);
+                    }
+
+                    file_put_contents($file, $content);
+
+                    $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");
+                } catch (Throwable $e) {
+                    $this->writeln("- <error>{$uri}</error> {$e->getMessage()}");
+
+                    ob_get_clean();
 
                     continue;
                 }
-
-                $body = $response->getBody();
-
-                $content = $body instanceof View
-                    ? $this->viewRenderer->render($body)
-                    : $body;
-
-                if (! is_string($content)) {
-                    $this->writeln("- <error>{$uri}</error> > No textual body");
-
-                    continue;
-                }
-
-                $directory = pathinfo($file, PATHINFO_DIRNAME);
-
-                if (! is_dir($directory)) {
-                    mkdir($directory, recursive: true);
-                }
-
-                file_put_contents($file, $content);
-
-                $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");
             }
         }
 
