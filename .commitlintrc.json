@@ -3,8 +3,8 @@
   "rules": {
     "subject-case": [
       2,
-      "always",
-      ["lower-case"]
+      "never",
+			["sentence-case", "start-case", "pascal-case", "upper-case"]
     ]
   }
 }
