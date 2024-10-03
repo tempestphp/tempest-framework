@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-use Closure;
 use Countable;
 use function ltrim;
 use function preg_quote;
@@ -352,9 +351,9 @@ final readonly class StringHelper implements Stringable
     {
         if (is_callable($replace)) {
             return new self(preg_replace_callback($regex, $replace, $this->string));
-        } else {
-            return new self(preg_replace($regex, $replace, $this->string));
         }
+
+        return new self(preg_replace($regex, $replace, $this->string));
     }
 
     public function match(string $regex): array
