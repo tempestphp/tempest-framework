@@ -21,8 +21,13 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
 
     public function __construct(
         public string $label,
+        public ?string $default = null,
     ) {
         $this->cursorPosition = new Point(2, 1);
+
+        foreach (str_split($default ?? '') as $character) {
+            $this->input($character);
+        }
     }
 
     public function render(): string

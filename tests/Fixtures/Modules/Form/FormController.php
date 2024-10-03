@@ -16,10 +16,10 @@ final readonly class FormController
     #[Get('/form')]
     public function index(): View
     {
-        return view('Modules/Form/form.view.php');
+        return view(__DIR__ . '/../../Modules/Form/form.view.php');
     }
 
-    #[Post('/form')]
+    #[Post('/form/store')]
     public function store(FormRequest $request): Response
     {
         return new Ok('Ok!');

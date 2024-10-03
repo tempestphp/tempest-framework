@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use Tempest\Core\Composer;
 use Tempest\Core\DiscoveryException;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel;
@@ -14,6 +15,7 @@ final readonly class LoadDiscoveryLocations
 {
     public function __construct(
         private Kernel $kernel,
+        private Composer $composer,
     ) {
     }
 
@@ -64,15 +66,12 @@ final readonly class LoadDiscoveryLocations
      */
     private function discoverAppNamespaces(): array
     {
-        $composer = $this->loadJsonFile(PathHelper::make($this->kernel->root, 'composer.json'));
-        $namespaceMap = $composer['autoload']['psr-4'] ?? [];
-
         $discoveredLocations = [];
 
-        foreach ($namespaceMap as $namespace => $path) {
-            $path = PathHelper::make($this->kernel->root, $path);
+        foreach ($this->composer->namespaces as $namespace) {
+            $path = PathHelper::make($this->kernel->root, $namespace->path);
 
-            $discoveredLocations[] = new DiscoveryLocation($namespace, $path);
+            $discoveredLocations[] = new DiscoveryLocation($namespace->namespace, $path);
         }
 
         return $discoveredLocations;
