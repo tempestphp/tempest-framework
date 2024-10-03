@@ -45,7 +45,9 @@ final readonly class StaticCleanCommand
         foreach ($files as $file) {
             unlink($file->getPathname());
 
-            $this->writeln("- <u>{$file->getPathname()}</u> removed");
+            $pathName = str_replace('\\', '/', $file->getPathname());
+
+            $this->writeln("- <u>{$pathName}</u> removed");
         }
 
         $this->success('Done');
