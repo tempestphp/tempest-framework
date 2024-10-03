@@ -7,8 +7,7 @@ namespace Tempest\Generation\Tests\Fixtures\Database;
 final class FakeCreateTableStatement implements FakeQueryStatement
 {
     public function __construct(
-        private readonly string $tableName,
-        private array $statements = [],
+        public readonly string $tableName,
     ) {
     }
 
