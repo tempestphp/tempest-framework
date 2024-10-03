@@ -7,6 +7,7 @@ namespace Tempest\Generation\Tests;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
+use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
 use Tests\Tempest\TestCase;
 
@@ -106,4 +107,12 @@ final class ClassGeneratorTest extends TestCase
         $this->assertMatchesSnapshot($class->print());
     }
 
+    #[Test]
+    public function set_aliases(): void
+    {
+        $class = new ClassManipulator(CreateMigrationsTable::class);
+        $class->setAlias(MigrationModel::class, 'Model');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
 }

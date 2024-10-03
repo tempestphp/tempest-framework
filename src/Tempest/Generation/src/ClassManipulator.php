@@ -19,6 +19,8 @@ final class ClassManipulator
 
     private bool $simplifyImplements = false;
 
+    private array $aliases = [];
+
     public function __construct(string|ReflectionClass $className)
     {
         $reflection = is_string($className)
@@ -93,6 +95,17 @@ final class ClassManipulator
         return $this;
     }
 
+    public function setAlias(string $class, string $alias): self
+    {
+        if (isset($this->aliases[$class])) {
+            unset($this->aliases[$class]);
+        }
+
+        $this->aliases[$class] = $alias;
+
+        return $this;
+    }
+
     private function simplifyClassNames(PhpFile $file): PhpFile
     {
         foreach ($file->getNamespaces() as $namespace) {
@@ -127,6 +140,10 @@ final class ClassManipulator
                 array_map(function ($param) use (&$types): void {
                     $types[] = $param->getType(true);
                 }, $class->getProperties());
+
+                foreach ($this->aliases as $class => $alias) {
+                    $namespace->addUse($class, $alias);
+                }
 
                 foreach (array_filter($types) as $type) {
                     if (is_string($type)) {
