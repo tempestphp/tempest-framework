@@ -96,4 +96,14 @@ final class ClassGeneratorTest extends TestCase
 
         $this->assertMatchesSnapshot($class->print());
     }
+
+    #[Test]
+    public function simplifies_implements(): void
+    {
+        $class = new ClassManipulator(CreateMigrationsTable::class);
+        $class->simplifyImplements();
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
 }
