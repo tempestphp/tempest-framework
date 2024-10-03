@@ -26,7 +26,7 @@ final class ClassManipulator
             : $className;
 
         $this->file = new PhpFile();
-        $this->classType = ClassType::from($reflection->getName(), withBodies: true);
+        $this->classType = ClassType::from($reflection->getName(), withBodies: true); // @phpstan-ignore-line
         $this->namespace = $reflection->getNamespaceName();
     }
 
