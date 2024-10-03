@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tests\Tempest\TestCase;
 
 /**
  * @internal
  */
 final class ClassGeneratorTest extends TestCase
 {
-    use MatchesSnapshots;
-
     #[Test]
     public function updates_namespace(): void
     {
