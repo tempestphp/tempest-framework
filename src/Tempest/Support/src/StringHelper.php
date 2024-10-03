@@ -128,62 +128,106 @@ final readonly class StringHelper implements Stringable
         return new self(preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap);
     }
 
-    public function after(string|int $search): self
+    public function after(string|array $search): self
     {
-        if ($search === '') {
+        if ($search === '' || $search === []) {
             return $this;
         }
 
-        $string = array_reverse(explode((string) $search, $this->string, limit: 2))[0];
+        $nearestPosition = mb_strlen($this->string); // Initialize with a large value
+        $foundSearch = '';
+
+        foreach (arr($search) as $term) {
+            $position = mb_strpos($this->string, $term);
+
+            if ($position !== false && $position < $nearestPosition) {
+                $nearestPosition = $position;
+                $foundSearch = $term;
+            }
+        }
+
+        if ($nearestPosition === mb_strlen($this->string)) {
+            return $this;
+        }
+
+        $string = mb_substr($this->string, $nearestPosition + mb_strlen($foundSearch));
 
         return new self($string);
     }
 
-    public function afterLast(string|int $search): self
+    public function afterLast(string|array $search): self
     {
-        if ($search === '') {
+        if ($search === '' || $search === []) {
             return $this;
         }
 
-        $position = strrpos($this->string, (string) $search);
+        $farthestPosition = -1;
+        $foundSearch = null;
 
-        if ($position === false) {
+        foreach (arr($search) as $term) {
+            $position = mb_strrpos($this->string, $term);
+
+            if ($position !== false && $position > $farthestPosition) {
+                $farthestPosition = $position;
+                $foundSearch = $term;
+            }
+        }
+
+        if ($farthestPosition === -1 || $foundSearch === null) {
             return $this;
         }
 
-        $string = substr($this->string, $position + strlen((string) $search));
+        $string = mb_substr($this->string, $farthestPosition + strlen($foundSearch));
 
         return new self($string);
     }
 
-    public function before(string|int $search): self
+    public function before(string|array $search): self
     {
-        if ($search === '') {
+        if ($search === '' || $search === []) {
             return $this;
         }
 
-        $string = strstr($this->string, (string) $search, before_needle: true);
+        $nearestPosition = mb_strlen($this->string);
 
-        if ($string === false) {
+        foreach (arr($search) as $char) {
+            $position = mb_strpos($this->string, $char);
+
+            if ($position !== false && $position < $nearestPosition) {
+                $nearestPosition = $position;
+            }
+        }
+
+        if ($nearestPosition === mb_strlen($this->string)) {
             return $this;
         }
+
+        $string = mb_substr($this->string, start: 0, length: $nearestPosition);
 
         return new self($string);
     }
 
-    public function beforeLast(string|int $search): self
+    public function beforeLast(string|array $search): self
     {
-        if ($search === '') {
+        if ($search === '' || $search === []) {
             return $this;
         }
 
-        $pos = mb_strrpos($this->string, (string) $search);
+        $farthestPosition = -1;
 
-        if ($pos === false) {
+        foreach (arr($search) as $char) {
+            $position = mb_strrpos($this->string, $char);
+
+            if ($position !== false && $position > $farthestPosition) {
+                $farthestPosition = $position;
+            }
+        }
+
+        if ($farthestPosition === -1) {
             return $this;
         }
 
-        $string = mb_substr($this->string, start: 0, length: $pos);
+        $string = mb_substr($this->string, start: 0, length: $farthestPosition);
 
         return new self($string);
     }
@@ -230,5 +274,81 @@ final readonly class StringHelper implements Stringable
     public function endsWith(string $needle): bool
     {
         return str_ends_with($this->string, $needle);
+    }
+
+    public function replaceFirst(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        $position = strpos($this->string, $search);
+
+        if ($position === false) {
+            return $this;
+        }
+
+        return new self(substr_replace($this->string, $replace, $position, strlen($search)));
+    }
+
+    public function replaceLast(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        $position = strrpos($this->string, $search);
+
+        if ($position === false) {
+            return $this;
+        }
+
+        return new self(substr_replace($this->string, $replace, $position, strlen($search)));
+    }
+
+    public function replaceEnd(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        if (! $this->endsWith($search)) {
+            return $this;
+        }
+
+        return $this->replaceLast($search, $replace);
+    }
+
+    public function replaceStart(string $search, string $replace): self
+    {
+        if ($search === '') {
+            return $this;
+        }
+
+        if (! $this->startsWith($search)) {
+            return $this;
+        }
+
+        return $this->replaceFirst($search, $replace);
+    }
+
+    public function append(string ...$append): self
+    {
+        return new self($this->string . implode('', $append));
+    }
+
+    public function prepend(string ...$prepend): self
+    {
+        return new self(implode('', $prepend) . $this->string);
+    }
+
+    public function replace(string|array $search, string|array $replace): self
+    {
+        return new self(str_replace($search, $replace, $this->string));
+    }
+
+    public function dd(mixed ...$dd): void
+    {
+        ld($this->string, ...$dd);
     }
 }

@@ -119,8 +119,10 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('hannah')->after('xxxx')->equals('hannah'));
         $this->assertTrue(str('hannah')->after('')->equals('hannah'));
         $this->assertTrue(str('han0nah')->after('0')->equals('nah'));
-        $this->assertTrue(str('han0nah')->after(0)->equals('nah'));
-        $this->assertTrue(str('han2nah')->after(2)->equals('nah'));
+        $this->assertTrue(str('han2nah')->after('2')->equals('nah'));
+        $this->assertTrue(str('@foo@bar.com')->after(['@', '.'])->equals('foo@bar.com'));
+        $this->assertTrue(str('foo@bar.com')->after(['@', '.'])->equals('bar.com'));
+        $this->assertTrue(str('foobar.com')->after(['@', '.'])->equals('com'));
     }
 
     public function test_str_after_last(): void
@@ -132,9 +134,9 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('yvette')->afterLast('xxxx')->equals('yvette'));
         $this->assertTrue(str('yvette')->afterLast('')->equals('yvette'));
         $this->assertTrue(str('yv0et0te')->afterLast('0')->equals('te'));
-        $this->assertTrue(str('yv0et0te')->afterLast(0)->equals('te'));
-        $this->assertTrue(str('yv2et2te')->afterLast(2)->equals('te'));
+        $this->assertTrue(str('yv2et2te')->afterLast('2')->equals('te'));
         $this->assertTrue(str('----foo')->afterLast('---')->equals('foo'));
+        $this->assertTrue(str('@foo@bar.com')->afterLast(['@', '.'])->equals('com'));
     }
 
     public function test_str_between(): void
@@ -150,7 +152,7 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('[a]ab[b]')->between('[', ']')->equals('a]ab[b'));
         $this->assertTrue(str('foofoobar')->between('foo', 'bar')->equals('foo'));
         $this->assertTrue(str('foobarbar')->between('foo', 'bar')->equals('bar'));
-        $this->assertTrue(str('12345')->between(1, 5)->equals('234'));
+        $this->assertTrue(str('12345')->between('1', '5')->equals('234'));
         $this->assertTrue(str('123456789')->between('123', '6789')->equals('45'));
         $this->assertTrue(str('nothing')->between('foo', 'bar')->equals('nothing'));
     }
@@ -163,14 +165,15 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('hannah')->before('xxxx')->equals('hannah'));
         $this->assertTrue(str('hannah')->before('')->equals('hannah'));
         $this->assertTrue(str('han0nah')->before('0')->equals('han'));
-        $this->assertTrue(str('han0nah')->before(0)->equals('han'));
-        $this->assertTrue(str('han2nah')->before(2)->equals('han'));
+        $this->assertTrue(str('han2nah')->before('2')->equals('han'));
         $this->assertTrue(str('')->before('')->equals(''));
         $this->assertTrue(str('')->before('a')->equals(''));
         $this->assertTrue(str('a')->before('a')->equals(''));
         $this->assertTrue(str('foo@bar.com')->before('@')->equals('foo'));
         $this->assertTrue(str('foo@@bar.com')->before('@')->equals('foo'));
         $this->assertTrue(str('@foo@bar.com')->before('@')->equals(''));
+        $this->assertTrue(str('foo@bar.com')->before(['@', '.'])->equals('foo'));
+        $this->assertTrue(str('@foo@bar.com')->before(['@', '.'])->equals(''));
     }
 
     public function test_str_before_last(): void
@@ -182,12 +185,13 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('yvette')->beforeLast('xxxx')->equals('yvette'));
         $this->assertTrue(str('yvette')->beforeLast('')->equals('yvette'));
         $this->assertTrue(str('yv0et0te')->beforeLast('0')->equals('yv0et'));
-        $this->assertTrue(str('yv0et0te')->beforeLast(0)->equals('yv0et'));
-        $this->assertTrue(str('yv2et2te')->beforeLast(2)->equals('yv2et'));
+        $this->assertTrue(str('yv2et2te')->beforeLast('2')->equals('yv2et'));
         $this->assertTrue(str('')->beforeLast('test')->equals(''));
         $this->assertTrue(str('yvette')->beforeLast('yvette')->equals(''));
         $this->assertTrue(str('tempest framework')->beforeLast(' ')->equals('tempest'));
         $this->assertTrue(str("yvette\tyv0et0te")->beforeLast("\t")->equals('yvette'));
+        $this->assertTrue(str('This is Tempest.')->beforeLast([' ', '.'])->equals('This is Tempest'));
+        $this->assertTrue(str('This is Tempest')->beforeLast([' ', '.'])->equals('This is'));
     }
 
     public function test_starts_with(): void
@@ -200,5 +204,60 @@ final class StringHelperTest extends TestCase
     {
         $this->assertTrue(str('abc')->endsWith('c'));
         $this->assertFalse(str('abc')->endsWith('a'));
+    }
+
+    public function test_replace(): void
+    {
+        $this->assertTrue(str('foo bar')->replace('bar', 'baz')->equals('foo baz'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane'], 'luke')->equals('luke doe'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], ['Jon', 'Jane', 'Doe'])->equals('Jon Doe'));
+        $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>'));
+    }
+
+    public function test_replace_last(): void
+    {
+        $this->assertTrue(str('foobar foobar')->replaceLast('bar', 'qux')->equals('foobar fooqux'));
+        $this->assertTrue(str('foo/bar? foo/bar?')->replaceLast('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('bar', '')->equals('foobar foo'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceLast('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceLast('ö', 'xxx')->equals('Malmö Jönkxxxping'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceLast('', 'yyy')->equals('Malmö Jönköping'));
+    }
+
+    public function test_replace_first(): void
+    {
+        $this->assertTrue(str('foobar foobar')->replaceFirst('bar', 'qux')->equals('fooqux foobar'));
+        $this->assertTrue(str('foo/bar? foo/bar?')->replaceFirst('bar?', 'qux?')->equals('foo/qux? foo/bar?'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('bar', '')->equals('foo foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('Jönköping Malmö')->replaceFirst('ö', 'xxx')->equals('Jxxxnköping Malmö'));
+        $this->assertTrue(str('Jönköping Malmö')->replaceFirst('', 'yyy')->equals('Jönköping Malmö'));
+
+    }
+
+    public function test_replace_end(): void
+    {
+        $this->assertTrue(str('foobar fooqux')->replaceEnd('bar', 'qux')->equals('foobar fooqux'));
+        $this->assertTrue(str('foo/bar? foo/qux?')->replaceEnd('bar?', 'qux?')->equals('foo/bar? foo/qux?'));
+        $this->assertTrue(str('foobar foo')->replaceEnd('bar', '')->equals('foobar foo'));
+        $this->assertTrue(str('foobar foobar')->replaceEnd('xxx', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceEnd('', 'yyy')->equals('foobar foobar'));
+        $this->assertTrue(str('fooxxx foobar')->replaceEnd('xxx', 'yyy')->equals('fooxxx foobar'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceEnd('ö', 'xxx')->equals('Malmö Jönköping'));
+        $this->assertTrue(str('Malmö Jönköping')->replaceEnd('öping', 'yyy')->equals('Malmö Jönkyyy'));
+    }
+
+    public function test_append(): void
+    {
+        $this->assertTrue(str('foo')->append('bar')->equals('foobar'));
+        $this->assertTrue(str('foo')->append('bar', 'baz')->equals('foobarbaz'));
+    }
+
+    public function test_prepend(): void
+    {
+        $this->assertTrue(str('bar')->prepend('foo')->equals('foobar'));
+        $this->assertTrue(str('baz')->prepend('bar', 'foo')->equals('barfoobaz'));
     }
 }
