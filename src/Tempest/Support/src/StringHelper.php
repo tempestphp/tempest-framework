@@ -347,8 +347,8 @@ final readonly class StringHelper implements Stringable
         return new self(str_replace($search, $replace, $this->string));
     }
 
-    public function dd(mixed ...$dd): void
+    public function ld(mixed ...$ld): void
     {
-        ld($this->string, ...$dd);
+        ld($this->string, ...$ld);
     }
 }
