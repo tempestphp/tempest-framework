@@ -5,7 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "nette/php-generator": "^4.1@dev",
+        "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3"
     },
     "autoload": {
