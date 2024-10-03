@@ -1,0 +1,30 @@
+<?php
+
+namespace Database;
+
+use Tempest\Database\Migrations\Migration;
+use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Generation\Tests\Fixtures\TestAttribute;
+
+#[TestAttribute]
+final readonly class CreateMigrationsTable implements \Tempest\Database\Migration
+{
+    public function getName(): string
+    {
+        return '0000-00-00_create_migrations_table';
+    }
+
+    public function up(): ?QueryStatement
+    {
+        return (new CreateTableStatement(Migration::table()->tableName))
+            ->primary()
+            ->text('name');
+    }
+
+    public function down(): ?QueryStatement
+    {
+        return new DropTableStatement(Migration::table()->tableName);
+    }
+}
