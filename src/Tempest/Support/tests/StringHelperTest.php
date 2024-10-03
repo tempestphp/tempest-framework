@@ -267,4 +267,20 @@ final class StringHelperTest extends TestCase
 
         $this->assertSame('10-', $match);
     }
+
+    public function test_matches(): void
+    {
+        $this->assertTrue(str('10-abc')->matches('/(?<id>\d+-)/'));
+        $this->assertTrue(str('10-abc')->matches('/(\d+-)/'));
+        $this->assertTrue(str('10-abc')->matches('/\d+-/'));
+        $this->assertFalse(str('10abc')->matches('/\d+-/'));
+        $this->assertFalse(str('abc')->matches('/\d+-/'));
+    }
+
+    public function test_replace_regex(): void
+    {
+        $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', '')->equals('abc'));
+        $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', fn () => '')->equals('abc'));
+        $this->assertTrue(str('10-abc')->replaceRegex(['/\d/', '/\w/'], ['#', 'X'])->equals('##-XXX'));
+    }
 }
