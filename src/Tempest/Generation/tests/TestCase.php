@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest;
+namespace Tempest\Generation\Tests;
 
-use PHPUnit\Framework\TestCase as FrameworkTestCase;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Spatie\Snapshots\Driver;
 use Spatie\Snapshots\MatchesSnapshots;
 
 /**
  * @internal
  */
-abstract class TestCase extends FrameworkTestCase
+abstract class TestCase extends PHPUnitTestCase
 {
     use MatchesSnapshots {
         assertMatchesSnapshot as baseAssertMatchesSnapshot;
