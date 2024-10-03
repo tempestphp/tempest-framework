@@ -4,29 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests\Fixtures;
 
-use Tempest\Database\Migration;
-use Tempest\Database\Migrations\Migration as Model;
-use Tempest\Database\QueryStatement;
-use Tempest\Database\QueryStatements\CreateTableStatement;
-use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement;
+use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
+use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
+use Tempest\Generation\Tests\Fixtures\Database\MigrationModel as Model;
 
 #[TestAttribute]
-final readonly class CreateMigrationsTable implements Migration
+final readonly class CreateMigrationsTable implements FakeMigration
 {
     public function getName(): string
     {
         return '0000-00-00_create_migrations_table';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): FakeQueryStatement|null
     {
-        return (new CreateTableStatement(Model::table()->tableName))
+        return (new FakeCreateTableStatement(Model::table()))
             ->primary()
             ->text('name');
-    }
-
-    public function down(): QueryStatement|null
-    {
-        return new DropTableStatement(Model::table()->tableName);
     }
 }
