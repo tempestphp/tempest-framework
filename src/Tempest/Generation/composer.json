@@ -17,5 +17,8 @@
         "psr-4": {
             "Tempest\\Generation\\Tests\\": "tests"
         }
+    },
+    "require-dev": {
+        "spatie/phpunit-snapshot-assertions": "^5.1.6"
     }
 }
