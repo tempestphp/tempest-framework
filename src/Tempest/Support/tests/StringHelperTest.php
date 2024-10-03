@@ -260,4 +260,11 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('bar')->prepend('foo')->equals('foobar'));
         $this->assertTrue(str('baz')->prepend('bar', 'foo')->equals('barfoobaz'));
     }
+
+    public function test_match(): void
+    {
+        $match = str('10-abc')->match('/(?<id>\d+-)/')['id'];
+
+        $this->assertSame('10-', $match);
+    }
 }
