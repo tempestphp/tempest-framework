@@ -347,11 +347,25 @@ final readonly class StringHelper implements Stringable
         return new self(str_replace($search, $replace, $this->string));
     }
 
+    public function replaceRegex(string|array $regex, string|array|callable $replace): self
+    {
+        if (is_callable($replace)) {
+            return new self(preg_replace_callback($regex, $replace, $this->string));
+        }
+
+        return new self(preg_replace($regex, $replace, $this->string));
+    }
+
     public function match(string $regex): array
     {
         preg_match($regex, $this->string, $matches);
 
         return $matches;
+    }
+
+    public function matches(string $regex): bool
+    {
+        return ($this->match($regex)[0] ?? null) !== null;
     }
 
     public function ld(mixed ...$ld): void
