@@ -10,6 +10,7 @@ use Countable;
 use Generator;
 use Iterator;
 use Serializable;
+use Stringable;
 use function Tempest\map;
 
 /**
@@ -32,6 +33,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         } else {
             $this->array = [$input];
         }
+    }
+
+    public static function explode(string|Stringable $string, string $separator = ' '): self
+    {
+        if ($separator === '') {
+            return new self([(string) $string]);
+        }
+
+        return new self(explode($separator, (string) $string));
     }
 
     public function equals(array|self $other): bool

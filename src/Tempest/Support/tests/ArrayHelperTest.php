@@ -255,4 +255,13 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr(['a', 'b', 'c'])->contains('b'));
         $this->assertFalse(arr(['a', 'b', 'c'])->contains('d'));
     }
+
+    public function test_explode(): void
+    {
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon doe')->toArray());
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode(str('jon doe'))->toArray());
+        $this->assertEquals(['jon doe'], ArrayHelper::explode('jon doe', ',')->toArray());
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon, doe', ', ')->toArray());
+        $this->assertEquals(['jon, doe'], ArrayHelper::explode('jon, doe', '')->toArray());
+    }
 }
