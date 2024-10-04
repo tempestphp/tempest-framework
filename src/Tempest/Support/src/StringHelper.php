@@ -371,7 +371,7 @@ final readonly class StringHelper implements Stringable
 
     public function matchAll(string $regex, int $flags = 0, int $offset = 0): array
     {
-        $result = preg_match_all($regex, $this->string, $matches);
+        $result = preg_match_all($regex, $this->string, $matches, $flags, $offset);
 
         if ($result === 0) {
             return [];
