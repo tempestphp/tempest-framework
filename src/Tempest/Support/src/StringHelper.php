@@ -19,6 +19,11 @@ final readonly class StringHelper implements Stringable
     ) {
     }
 
+    public function toString(): string
+    {
+        return $this->string;
+    }
+
     public function __toString(): string
     {
         return $this->string;
