@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\InvalidMapWithKeysUsage;
+use function Tempest\Support\str;
 
 /**
  * @internal

@@ -298,7 +298,7 @@ final readonly class StringHelper implements Stringable
             return $this;
         }
 
-        $position = strpos($this->string, $search);
+        $position = strpos($this->string, (string) $search);
 
         if ($position === false) {
             return $this;
@@ -315,7 +315,7 @@ final readonly class StringHelper implements Stringable
             return $this;
         }
 
-        $position = strrpos($this->string, $search);
+        $position = strrpos($this->string, (string) $search);
 
         if ($position === false) {
             return $this;
