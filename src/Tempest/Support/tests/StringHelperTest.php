@@ -324,7 +324,7 @@ final class StringHelperTest extends TestCase
         // Test for No Matches
         $regex = '/cat/';
         $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
-        $expected = [[]];
+        $expected = [];
         $this->assertSame($expected, $matches);
 
         // Test for Mixed Captures
