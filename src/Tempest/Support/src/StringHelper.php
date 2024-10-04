@@ -29,11 +29,9 @@ final readonly class StringHelper implements Stringable
         return $this->string;
     }
 
-    public function equals(string|self $other): bool
+    public function equals(string|Stringable $other): bool
     {
-        $string = is_string($other) ? $other : $other->string;
-
-        return $this->string === $string;
+        return $this->string === (string) $other;
     }
 
     public function title(): self
@@ -133,8 +131,10 @@ final readonly class StringHelper implements Stringable
         return new self(preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap);
     }
 
-    public function after(string|array $search): self
+    public function after(Stringable|string|array $search): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '' || $search === []) {
             return $this;
         }
@@ -160,8 +160,10 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
-    public function afterLast(string|array $search): self
+    public function afterLast(Stringable|string|array $search): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '' || $search === []) {
             return $this;
         }
@@ -187,8 +189,10 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
-    public function before(string|array $search): self
+    public function before(Stringable|string|array $search): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '' || $search === []) {
             return $this;
         }
@@ -212,8 +216,10 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
-    public function beforeLast(string|array $search): self
+    public function beforeLast(Stringable|string|array $search): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '' || $search === []) {
             return $this;
         }
@@ -237,8 +243,11 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
-    public function between(int|string $from, int|string $to): self
+    public function between(string|Stringable $from, string|Stringable $to): self
     {
+        $from = $this->normalizeString($from);
+        $to = $this->normalizeString($to);
+
         if ($from === '' || $to === '') {
             return $this;
         }
@@ -271,18 +280,20 @@ final readonly class StringHelper implements Stringable
         return new self(basename(str_replace('\\', '/', $this->string)));
     }
 
-    public function startsWith(string $needle): bool
+    public function startsWith(Stringable|string $needle): bool
     {
-        return str_starts_with($this->string, $needle);
+        return str_starts_with($this->string, (string) $needle);
     }
 
-    public function endsWith(string $needle): bool
+    public function endsWith(Stringable|string $needle): bool
     {
-        return str_ends_with($this->string, $needle);
+        return str_ends_with($this->string, (string) $needle);
     }
 
-    public function replaceFirst(string $search, string $replace): self
+    public function replaceFirst(Stringable|string $search, Stringable|string $replace): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '') {
             return $this;
         }
@@ -296,8 +307,10 @@ final readonly class StringHelper implements Stringable
         return new self(substr_replace($this->string, $replace, $position, strlen($search)));
     }
 
-    public function replaceLast(string $search, string $replace): self
+    public function replaceLast(Stringable|string $search, Stringable|string $replace): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '') {
             return $this;
         }
@@ -311,8 +324,10 @@ final readonly class StringHelper implements Stringable
         return new self(substr_replace($this->string, $replace, $position, strlen($search)));
     }
 
-    public function replaceEnd(string $search, string $replace): self
+    public function replaceEnd(Stringable|string $search, Stringable|string $replace): self
     {
+        $search = $this->normalizeString($search);
+
         if ($search === '') {
             return $this;
         }
@@ -324,7 +339,7 @@ final readonly class StringHelper implements Stringable
         return $this->replaceLast($search, $replace);
     }
 
-    public function replaceStart(string $search, string $replace): self
+    public function replaceStart(Stringable|string $search, Stringable|string $replace): self
     {
         if ($search === '') {
             return $this;
@@ -337,18 +352,21 @@ final readonly class StringHelper implements Stringable
         return $this->replaceFirst($search, $replace);
     }
 
-    public function append(string ...$append): self
+    public function append(string|Stringable ...$append): self
     {
         return new self($this->string . implode('', $append));
     }
 
-    public function prepend(string ...$prepend): self
+    public function prepend(string|Stringable ...$prepend): self
     {
         return new self(implode('', $prepend) . $this->string);
     }
 
-    public function replace(string|array $search, string|array $replace): self
+    public function replace(Stringable|string|array $search, Stringable|string|array $replace): self
     {
+        $search = $this->normalizeString($search);
+        $replace = $this->normalizeString($replace);
+
         return new self(str_replace($search, $replace, $this->string));
     }
 
@@ -376,5 +394,14 @@ final readonly class StringHelper implements Stringable
     public function dd(mixed ...$dd): void
     {
         dd($this->string, ...$dd); // @phpstan-ignore-line
+    }
+
+    private function normalizeString(mixed $value): mixed
+    {
+        if ($value instanceof Stringable) {
+            return (string) $value;
+        }
+
+        return $value;
     }
 }
