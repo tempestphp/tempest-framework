@@ -368,8 +368,8 @@ final readonly class StringHelper implements Stringable
         return ($this->match($regex)[0] ?? null) !== null;
     }
 
-    public function ld(mixed ...$ld): void
+    public function dd(mixed ...$dd): void
     {
-        ld($this->string, ...$ld);
+        dd($this->string, ...$dd); // @phpstan-ignore-line
     }
 }
