@@ -85,4 +85,5 @@ return (new PhpCsFixer\Config())
             'call_type' => 'this',
         ],
     ])
-    ->setFinder($finder);
+    ->setFinder($finder)
+    ->setRiskyAllowed(true);
