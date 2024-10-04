@@ -6,9 +6,11 @@ namespace Tempest\Container;
 
 use ArrayIterator;
 use Closure;
+use ReflectionFunction;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
+use Tempest\Container\Exceptions\InvalidCallableException;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
@@ -110,7 +112,49 @@ final class GenericContainer implements Container
         return $dependency;
     }
 
-    public function invoke(MethodReflector $method, mixed ...$params): mixed
+    public function invoke(MethodReflector|FunctionReflector|callable|string $callable, mixed ...$params): mixed
+    {
+        if ($callable instanceof MethodReflector) {
+            return $this->invokeMethod($callable, ...$params);
+        }
+
+        if ($callable instanceof FunctionReflector) {
+            return $this->invokeFunction($callable, ...$params);
+        }
+
+        if ($callable instanceof Closure) {
+            return $this->invokeClosure($callable, ...$params);
+        }
+
+        if (is_array($callable) && count($callable) === 2) {
+            return $this->invokeClosure(Closure::fromCallable($callable), ...$params);
+        }
+
+        if (method_exists($callable, '__invoke')) {
+            return $this->invokeClosure(
+                Closure::fromCallable([$this->get($callable), '__invoke']),
+                ...$params
+            );
+        }
+
+        throw new InvalidCallableException(new Dependency($callable));
+    }
+
+    private function invokeClosure(Closure $closure, mixed ...$params): mixed
+    {
+        $this->resolveChain();
+
+        $parameters = $this->autowireDependencies(
+            method: $reflector = new FunctionReflector($closure),
+            parameters: $params
+        );
+
+        $this->stopChain();
+
+        return $reflector->invokeArgs($parameters);
+    }
+
+    private function invokeMethod(MethodReflector $method, mixed ...$params): mixed
     {
         $this->resolveChain();
 
@@ -121,6 +165,22 @@ final class GenericContainer implements Container
         $this->stopChain();
 
         return $method->invokeArgs($object, $parameters);
+    }
+
+    private function invokeFunction(FunctionReflector|Closure $callback, mixed ...$params): mixed
+    {
+        $this->resolveChain();
+
+        $reflector = match(true) {
+            $callback instanceof FunctionReflector => $callback,
+            default => new ReflectionFunction($callback),
+        };
+
+        $parameters = $this->autowireDependencies($reflector, $params);
+
+        $this->stopChain();
+
+        return $reflector->invokeArgs($parameters);
     }
 
     public function addInitializer(ClassReflector|string $initializerClass): Container
@@ -271,7 +331,7 @@ final class GenericContainer implements Container
     /**
      * @return ParameterReflector[]
      */
-    private function autowireDependencies(MethodReflector $method, array $parameters = []): array
+    private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = []): array
     {
         $this->resolveChain()->add($method);
 
