@@ -26,7 +26,7 @@ final readonly class PathHelper
         // If the path is a to a PHP file, we exclude the file name. Otherwise,
         // it's a path to a directory, which should be included in the namespace.
         if ($normalized->endsWith('.php')) {
-            $normalized = $normalized->beforeLast(['/', '\\']);
+            return $normalized->beforeLast(['/', '\\']);
         }
 
         return $normalized;
