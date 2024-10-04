@@ -124,12 +124,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_values($this->array));
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
-    public function filter(Closure $filter): self
+    /** @param null|Closure(mixed $value, mixed $key): bool $filter */
+    public function filter(?Closure $filter = null): self
     {
         $array = [];
+        $filter ??= static fn (mixed $value, mixed $_) => ! in_array($value, [false, null], strict: true);
 
-        foreach ($this as $key => $value) {
+        foreach ($this->array as $key => $value) {
             if ($filter($value, $key)) {
                 $array[$key] = $value;
             }

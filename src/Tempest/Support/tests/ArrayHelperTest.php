@@ -207,6 +207,14 @@ final class ArrayHelperTest extends TestCase
 
     public function test_filter(): void
     {
+        $this->assertSame(
+            ['a', 'b', '-1', -1, '0', 0],
+            arr(['a', false, 'b', '-1', null, -1, '0', 0])
+                ->filter()
+                ->values()
+                ->toArray(),
+        );
+
         $this->assertTrue(
             arr(['a', 'b', 'c'])
                 ->filter(fn (mixed $value) => $value === 'b')
