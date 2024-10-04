@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Reflection;
 
 use Exception;
-use Generator;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionIntersectionType as PHPReflectionIntersectionType;
 use ReflectionNamedType as PHPReflectionNamedType;
@@ -14,16 +13,18 @@ use ReflectionProperty as PHPReflectionProperty;
 use ReflectionType as PHPReflectionType;
 use ReflectionUnionType as PHPReflectionUnionType;
 use Reflector as PHPReflector;
-use TypeError;
 
 final readonly class TypeReflector implements Reflector
 {
     private string $definition;
 
+    private TypeValidator $validator;
+
     public function __construct(
         private PHPReflector|PHPReflectionType|string $reflector,
     ) {
         $this->definition = $this->resolveDefinition($this->reflector);
+        $this->validator = new TypeValidator();
     }
 
     public function asClass(): ClassReflector
@@ -42,21 +43,12 @@ final readonly class TypeReflector implements Reflector
 
     public function accepts(mixed $input): bool
     {
-        // TODO: We really need to get rid of this.
-        $test = eval(sprintf('return fn (%s $input) => $input;', $this->definition));
-
-        try {
-            $test($input);
-        } catch (TypeError) {
-            return false;
-        }
-
-        return true;
+        return $this->validator->accepts($this->definition, $input);
     }
 
     public function matches(string $className): bool
     {
-        return is_a($this->definition, $className, true);
+        return $this->validator->matches($this->definition, $className);
     }
 
     public function getName(): string
@@ -73,49 +65,29 @@ final readonly class TypeReflector implements Reflector
 
     public function isBuiltIn(): bool
     {
-        return in_array($this->definition, [
-            'string',
-            'bool',
-            'float',
-            'int',
-            'array',
-            'null',
-            'object',
-            'callable',
-            'resource',
-            'never',
-            'void',
-            'true',
-            'false',
-        ]);
+        return $this->validator->isBuiltIn($this->definition);
     }
 
     public function isClass(): bool
     {
-        return class_exists($this->definition);
+        return $this->validator->isClass($this->definition);
     }
 
     public function isIterable(): bool
     {
-        return in_array($this->definition, [
-            'array',
-            'iterable',
-            Generator::class,
-        ]);
+        return $this->validator->isIterable($this->definition);
     }
 
     public function isNullable(): bool
     {
-        return str_contains('?', $this->definition)
-            || str_contains('null', $this->definition);
+        return $this->validator->isNullable($this->definition);
     }
 
-    /** @return self[] */
     public function split(): array
     {
         return array_map(
             fn (string $part) => new self($part),
-            preg_split('/[&|]/', $this->definition),
+            $this->validator->split($this->definition),
         );
     }
 
