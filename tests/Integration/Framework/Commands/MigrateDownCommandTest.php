@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\MigrationException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -14,6 +16,8 @@ final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rollback_command(): void
     {
+        $this->container->get(DatabaseConfig::class)->addMigration(CreateMigrationsTable::class);
+
         $this->console
             ->call('migrate:up --force')
             ->assertContains('create_migrations_table');
