@@ -211,7 +211,9 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('foo bar')->replace('bar', 'baz')->equals('foo baz'));
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane'], 'luke')->equals('luke doe'));
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], ['Jon', 'Jane', 'Doe'])->equals('Jon Doe'));
-        $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>'));
+        $this->assertTrue(
+            str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>')
+        );
     }
 
     public function test_replace_last(): void
@@ -234,7 +236,6 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('foobar foobar')->replaceFirst('', 'yyy')->equals('foobar foobar'));
         $this->assertTrue(str('Jönköping Malmö')->replaceFirst('ö', 'xxx')->equals('Jxxxnköping Malmö'));
         $this->assertTrue(str('Jönköping Malmö')->replaceFirst('', 'yyy')->equals('Jönköping Malmö'));
-
     }
 
     public function test_replace_end(): void
@@ -282,5 +283,83 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', '')->equals('abc'));
         $this->assertTrue(str('10-abc')->replaceRegex('/(?<id>\d+-)/', fn () => '')->equals('abc'));
         $this->assertTrue(str('10-abc')->replaceRegex(['/\d/', '/\w/'], ['#', 'X'])->equals('##-XXX'));
+    }
+
+    public function test_match_all(): void
+    {
+        // Test for Simple Pattern
+        $regex = '/Hello/';
+        $matches = str('Hello world, Hello universe')->matchAll($regex);
+        $expected = [['Hello', 'Hello']];
+        $this->assertSame($expected, $matches);
+
+        // Test for Named Capture Groups
+        $regex = '/(?<adjective>quick|lazy) (?<noun>brown|dog)/';
+        $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
+        $expectedAdjectives = [
+            [
+                'quick brown',
+                'lazy dog',
+            ],
+            'adjective' => [
+                'quick',
+                'lazy',
+            ],
+            1 => [
+                'quick',
+                'lazy',
+            ],
+            'noun' => [
+                'brown',
+                'dog',
+            ],
+            2 => [
+                'brown',
+                'dog',
+            ],
+        ];
+
+        $this->assertSame($expectedAdjectives, $matches);
+
+        // Test for No Matches
+        $regex = '/cat/';
+        $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
+        $expected = [[]];
+        $this->assertSame($expected, $matches);
+
+        // Test for Mixed Captures
+        $regex = '/(?<adjective>quick|lazy) (?<noun>brown|dog) (?<action>jumps|eats)?/';
+        $matches = str('The quick brown fox, then the lazy dog eats')->matchAll($regex);
+        $expected = [
+            [
+                'quick brown ',
+                'lazy dog eats',
+            ],
+            'adjective' => [
+                'quick',
+                'lazy',
+            ],
+            [
+                'quick',
+                'lazy',
+            ],
+            'noun' => [
+                'brown',
+                'dog',
+            ],
+            [
+                'brown',
+                'dog',
+            ],
+            'action' => [
+                '',
+                'eats',
+            ],
+            [
+                '',
+                'eats',
+            ],
+        ];
+        $this->assertSame($expected, $matches);
     }
 }
