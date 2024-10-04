@@ -363,6 +363,13 @@ final readonly class StringHelper implements Stringable
         return $matches;
     }
 
+    public function matchAll(string $regex): array
+    {
+        preg_match_all($regex, $this->string, $matches);
+
+        return $matches;
+    }
+
     public function matches(string $regex): bool
     {
         return ($this->match($regex)[0] ?? null) !== null;
