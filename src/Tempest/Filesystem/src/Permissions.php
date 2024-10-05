@@ -4,6 +4,7 @@ namespace Tempest\Filesystem;
 
 use UnexpectedValueException;
 
+// TODO: This file is experimental and a WIP.
 final class Permissions
 {
     private float|int $value;

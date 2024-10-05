@@ -110,8 +110,6 @@ final class LocalFilesystem implements Filesystem
             throw UnableToGetPermissions::forPath($path, $error->commit());
         }
 
-        var_dump($permissions);
-
         return (int) decoct($permissions & 0777);
     }
 }
