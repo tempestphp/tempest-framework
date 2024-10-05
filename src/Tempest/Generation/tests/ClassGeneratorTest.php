@@ -50,8 +50,8 @@ final class ClassGeneratorTest extends TestCase
             //
         PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
 
-        $this->assertMatchesSnapshot($class->print());
-    }
+        $class->simplifyImplements();
+        $class->addImplement(FakeMigration::class);
 
     #[Test]
     public function simplifies_implements(): void
