@@ -26,7 +26,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Highlight\Highlighter;
 use Tempest\Reflection\MethodReflector;
 
-final class ConsoleTester
+final class OldConsoleTester
 {
     private (OutputBuffer&MemoryOutputBuffer)|null $output = null;
 

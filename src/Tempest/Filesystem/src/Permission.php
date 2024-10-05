@@ -35,6 +35,11 @@ enum Permission: int
     case OTHERS_READ_WRITE = 0o006;
     case OTHERS_ALL = 0o007;
 
+    public static function has(int $permissions, Permission $expected): bool
+    {
+        return ($permissions & $expected->value) === $expected->value;
+    }
+
     public static function allow(Permission ...$permissions): int
     {
         if (empty($permissions)) {

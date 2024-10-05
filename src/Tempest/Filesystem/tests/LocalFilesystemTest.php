@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem\Tests;
 
+use Tempest\Filesystem\Permission;
 use const DIRECTORY_SEPARATOR;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
@@ -123,5 +124,22 @@ final class LocalFilesystemTest extends TestCase
             path: __DIR__ . '/Fixtures/test-directory/nested-test-directory',
             recursive: false
         );
+    }
+
+    public function test_getting_file_permissions()
+    {
+        $filesystem = new LocalFilesystem();
+        $directory = __DIR__ . '/Fixtures/test-directory/nested-test-directory';
+
+        $filesystem->makeDirectory(
+            path: $directory,
+            permissions: Permission::allow(
+                Permission::OWNER_ALL,
+                Permission::GROUP_READ_EXECUTE,
+                Permission::OTHERS_READ_EXECUTE
+            )
+        );
+
+        $this->assertSame(0755, $filesystem->getPermissions($directory));
     }
 }

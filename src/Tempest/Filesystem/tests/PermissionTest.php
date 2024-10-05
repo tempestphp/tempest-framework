@@ -52,6 +52,14 @@ final class PermissionTest extends TestCase
         $this->assertSame(decoct(0300), decoct($permissions));
     }
 
+    public function test_checking_whether_permission_has_other_permission()
+    {
+        $permissions = 0755;
+
+        $this->assertFalse(Permission::has($permissions, Permission::GROUP_WRITE));
+        $this->assertTrue(Permission::has($permissions, Permission::GROUP_READ_EXECUTE));
+    }
+
     public static function permissionDataProvider(): array
     {
         return [

@@ -11,6 +11,8 @@ use SplFileInfo;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
 use Tempest\Filesystem\Exceptions\UnableToCopyFile;
 use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
+use Tempest\Filesystem\Exceptions\UnableToGetPermissions;
+use Tempest\Filesystem\Exceptions\UnableToMakeDirectory;
 
 final class LocalFilesystem implements Filesystem
 {
@@ -59,9 +61,10 @@ final class LocalFilesystem implements Filesystem
 
     public function makeDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void
     {
+        $error = ErrorContext::reset();
+
         if (@mkdir($path, $permissions, $recursive) === false) {
-            // TODO: Update exception
-            throw new RuntimeException();
+            throw UnableToMakeDirectory::atPath($path, $error->commit());
         }
     }
 
@@ -96,5 +99,19 @@ final class LocalFilesystem implements Filesystem
         foreach ($iterator as $file) {
             $callable($file);
         }
+    }
+
+    public function getPermissions(string $path): int
+    {
+        $error = ErrorContext::reset();
+        $permissions = @fileperms($path);
+
+        if ($permissions === false) {
+            throw UnableToGetPermissions::forPath($path, $error->commit());
+        }
+
+        var_dump($permissions);
+
+        return (int) decoct($permissions & 0777);
     }
 }

@@ -8,7 +8,7 @@ use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
-use Tempest\Console\Testing\ConsoleTester;
+use Tempest\Console\Testing\OldConsoleTester;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
@@ -33,7 +33,7 @@ abstract class IntegrationTest extends TestCase
 
     protected Container $container;
 
-    protected ConsoleTester $console;
+    protected OldConsoleTester $console;
 
     protected HttpRouterTester $http;
 
@@ -51,7 +51,7 @@ abstract class IntegrationTest extends TestCase
 
         $this->container = $this->kernel->container;
 
-        $this->console = $this->container->get(ConsoleTester::class);
+        $this->console = $this->container->get(OldConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
 
         $request = new GenericRequest(Method::GET, '/', []);
