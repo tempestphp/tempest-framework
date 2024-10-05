@@ -55,7 +55,11 @@ final readonly class StringHelper implements Stringable
         }
 
         $string = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string);
-        $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
+        $string = preg_replace(
+            '![^' . preg_quote($delimiter) . '\pL\pN\s]+!u',
+            $delimiter,
+            mb_strtolower($string, 'UTF-8')
+        );
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
@@ -79,7 +83,7 @@ final readonly class StringHelper implements Stringable
 
     public function camel(): self
     {
-        return new self(lcfirst((string) $this->pascal()));
+        return new self(lcfirst((string)$this->pascal()));
     }
 
     public function deduplicate(string|array $characters = ' '): self
@@ -115,7 +119,7 @@ final readonly class StringHelper implements Stringable
 
         while (($len = strlen($string)) < $length) {
             $size = $length - $len;
-            $bytesSize = (int) ceil($size / 3) * 3;
+            $bytesSize = (int)ceil($size / 3) * 3;
             $bytes = random_bytes($bytesSize);
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), offset: 0, length: $size);
         }
@@ -125,7 +129,9 @@ final readonly class StringHelper implements Stringable
 
     public function finish(string $cap): self
     {
-        return new self(preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap);
+        return new self(
+            preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap
+        );
     }
 
     public function after(string|array $search): self
@@ -363,9 +369,13 @@ final readonly class StringHelper implements Stringable
         return $matches;
     }
 
-    public function matchAll(string $regex): array
+    public function matchAll(string $regex, int $flags = 0, int $offset = 0): array
     {
-        preg_match_all($regex, $this->string, $matches);
+        $result = preg_match_all($regex, $this->string, $matches, $flags, $offset);
+
+        if ($result === 0) {
+            return [];
+        }
 
         return $matches;
     }
