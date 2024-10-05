@@ -1,0 +1,136 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Composer\Semver\VersionParser;
+use Tempest\Console\Console;
+use Tempest\Console\ConsoleApplication;
+use Tempest\Console\Exceptions\InterruptException;
+use function Tempest\get;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
+
+require_once getcwd() . '/vendor/autoload.php';
+
+function ensureAccess(string $remote, string $branch): void
+{
+    if (! empty(shell_exec('git status --porcelain 2>&1'))) {
+        throw new Exception('Repository must be in a clean state to release.');
+    }
+
+    if (! str_starts_with(shell_exec('git rev-parse --abbrev-ref --symbolic-full-name @{u}'), "$remote/$branch")) {
+        throw new Exception("You must be on the $remote/$branch branch to release.");
+    }
+}
+
+function getCurrentVersion(): string
+{
+    return exec('git describe --tags --abbrev=0');
+}
+
+function normalizeVersion(string $version): string
+{
+    return preg_replace('/^(\d+\.\d+\.\d+)\.0(-|$|\+)/', '$1$2', (new VersionParser())->normalize($version));
+}
+
+function suggestNextVersions(string $current): array
+{
+    $version = normalizeVersion($current);
+
+    if (! preg_match('/^(\d+)\.(\d+)\.(\d+)(?:-(?:alpha|beta)\.?(\d+))?$/', $version, $matches)) {
+        throw new InvalidArgumentException('Version must be in format X.Y.Z or X.Y.Z-alpha.N or X.Y.Z-beta.N');
+    }
+
+    $isStable = ! isset($matches[4]);
+    $major = (int) $matches[1];
+    $minor = (int) $matches[2];
+    $patch = (int) $matches[3];
+
+    // Current version is stable
+    if ($isStable) {
+        return [
+            'next_patch' => sprintf('%d.%d.%d', $major, $minor, $patch + 1),
+            'next_minor' => sprintf('%d.%d.0', $major, $minor + 1),
+            'next_major' => sprintf('%d.0.0', $major + 1),
+            'next_alpha' => sprintf('%d.0.0-alpha.1', $major + 1),
+            'next_beta' => sprintf('%d.0.0-beta.1', $major + 1),
+        ];
+    }
+
+    // Current version is pre-release
+    $preRelease = $matches[4] ?? 0;
+    $isBeta = str_contains($version, 'beta');
+
+    return array_filter([
+        'next_alpha' => ! $isBeta ? sprintf('%d.%d.%d-alpha.%d', $major, $minor, $patch, $preRelease + 1) : null,
+        'next_beta' => sprintf('%d.%d.%d-beta.%d', $major, $minor, $patch, $isBeta ? ($preRelease + 1) : 1),
+        'next_major' => sprintf('%d.0.0', $major + 1),
+    ]);
+}
+
+function releaseTag(string $tag): void
+{
+    $commands = [
+        "git tag {$tag}",
+        "git push --tags",
+    ];
+
+    foreach ($commands as $command) {
+        exec($command, result_code: $code);
+
+        if ($code === 0) {
+            continue;
+        }
+
+        throw new Exception("Pushing of git tag failed.");
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Script starts here.
+|--------------------------------------------------------------------------
+*/
+
+try {
+    ConsoleApplication::boot();
+
+    ensureAccess('origin', 'main');
+
+    $console = get(Console::class);
+
+    $console->writeln();
+    $console->info(sprintf("Current version is <u><strong>%s</strong></u>", $current = getCurrentVersion()));
+
+    $console->writeln();
+    $new = $console->ask(
+        question: "What should the new version be?",
+        options: arr(suggestNextVersions($current))
+            ->map(fn (string $version, string $type) => (string) str($type)->replace('_', ' ')->append(': ', $version))
+            ->values()
+            ->toArray(),
+    );
+
+    $tag = (string) str($new)->afterLast(': ')->prepend('v');
+
+    $console->writeln();
+    if (! $console->confirm("The next tag will be <u><strong>{$tag}</strong></u><question>. Release?")) {
+        $console->error('Cancelled.');
+        exit;
+    }
+
+    $console->writeln();
+    $console->writeln();
+    $console->writeln();
+    $console->info('Releasing...');
+
+    releaseTag($tag);
+
+    $console->writeln();
+    $console->success("Released {$tag}");
+
+    exit;
+
+} catch (InterruptException) {
+}
