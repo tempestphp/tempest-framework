@@ -324,7 +324,7 @@ final class StringHelperTest extends TestCase
         // Test for No Matches
         $regex = '/cat/';
         $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
-        $expected = [[]];
+        $expected = [];
         $this->assertSame($expected, $matches);
 
         // Test for Mixed Captures
@@ -360,6 +360,36 @@ final class StringHelperTest extends TestCase
                 'eats',
             ],
         ];
+        $this->assertSame($expected, $matches);
+
+        // Test flags
+        $regex = '/(foo)(bar)/';
+        $matches = str('foobarbaz')->matchAll($regex, PREG_OFFSET_CAPTURE);
+        $expected = [
+            [
+                [
+                    'foobar',
+                    0,
+                ],
+            ],
+            [
+                [
+                    'foo',
+                    0,
+                ],
+            ],
+            [
+                [
+                    'bar',
+                    3,
+                ],
+            ],
+        ];
+        $this->assertSame($expected, $matches);
+
+        $regex = '/^def/';
+        $matches = str('abcdef')->matchAll(regex: $regex, offset: 3);
+        $expected = [];
         $this->assertSame($expected, $matches);
     }
 }
