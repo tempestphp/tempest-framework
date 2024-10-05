@@ -6,6 +6,7 @@ namespace Tempest\Http;
 
 use Attribute;
 use Tempest\Reflection\MethodReflector;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 #[Attribute]
@@ -34,7 +35,7 @@ class Route
         // these parameters are replaced with a regex matching group or with the custom regex
         $matchingRegex = (string)str($this->uri)->replaceRegex(
             '#\{(?<name>\w+)(?::(?<regex>[^}]+))?\}#',
-            fn ($matches) => isset($matches['regex']) ? '(' . $matches['regex'] . ')' : '([^/]++)'
+            fn ($matches) => '(' . arr($matches)->get('regex', '[^/]++') . ')'
         );
 
         $this->isDynamic = $matchingRegex !== $this->uri;
