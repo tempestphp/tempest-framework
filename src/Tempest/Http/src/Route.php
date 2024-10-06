@@ -34,8 +34,8 @@ class Route
         // Routes can have parameters in the form of "/{PARAM}/" or /{PARAM:CUSTOM_REGEX},
         // these parameters are replaced with a regex matching group or with the custom regex
         $matchingRegex = (string)str($this->uri)->replaceRegex(
-            '#\{(?<name>\w*)(?::(?<regex>(?:[^{}]|\{.*?\})*))?\}#',
-            fn ($matches) => '(' . arr($matches)->get('regex', '[^/]++') . ')'
+            '#\{(?<name>\w*)(?::(?<regex>([^{}]*(?:\{(?-1)\}[^{}]*)*)))?\}#',
+            fn ($matches) => '(' . trim(arr($matches)->get('regex', '[^/]++')). ')'
         );
 
         $this->isDynamic = $matchingRegex !== $this->uri;
