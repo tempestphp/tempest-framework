@@ -9,11 +9,11 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use Tempest\Log\FileHandlers\RotatingFileHandler;
 use Tempest\Log\LogChannel;
 
-final readonly class DailyLogChannel implements LogChannel
+final readonly class WeeklyLogChannel implements LogChannel
 {
     public function __construct(
         private string $path,
-        private int $maxFiles = 31,
+        private int $maxFiles = 5,
         private bool $bubble = true,
         private ?int $filePermission = null,
         private bool $useLocking = false,
@@ -30,7 +30,7 @@ final readonly class DailyLogChannel implements LogChannel
                 bubble: $this->bubble,
                 filePermission: $this->filePermission,
                 useLocking: $this->useLocking,
-                dateFormat: RotatingFileHandler::FILE_PER_DAY,
+                dateFormat: RotatingFileHandler::FILE_PER_WEEK,
             ),
         ];
     }
