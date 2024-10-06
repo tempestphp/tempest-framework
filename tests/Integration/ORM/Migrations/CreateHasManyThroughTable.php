@@ -20,7 +20,8 @@ final readonly class CreateHasManyThroughTable implements Migration
         return (new CreateTableStatement('through'))
             ->primary()
             ->belongsTo('through.parent_id', 'parent.id')
-            ->belongsTo('through.child_id', 'child.id');
+            ->belongsTo('through.child_id', 'child.id')
+            ->belongsTo('through.child2_id', 'child.id', nullable: true);
     }
 
     public function down(): QueryStatement|null
