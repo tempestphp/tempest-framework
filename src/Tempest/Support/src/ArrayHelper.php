@@ -41,6 +41,46 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Keep only the unique items in the array.
+     * 
+     * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
+     * @param bool $should_be_strict Whether the comparison should be strict, only used when giving a key parameter.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function unique( ?string $key = null, bool $should_be_strict = false ): self {
+        if ( is_null( $key ) && $should_be_strict === false ) {
+            return new self( array_unique( $this->array, flags: SORT_REGULAR ) );
+        }
+        
+        $uniqueItems          = [];
+        $uniqueFilteredValues = [];
+        foreach ( $this->array as $item ) {
+            // Ensure we don't check raw values with key filter
+            if ( ! is_null( $key ) && ! is_array( $item ) ) {
+                continue;
+            }
+
+            $filterValue = is_array( $item )
+                ? $item[$key] ?? null
+                : $item;
+
+            if ( is_null( $filterValue ) ) {
+                continue;
+            }
+
+            if ( in_array( $filterValue, $uniqueFilteredValues, strict: $should_be_strict ) ) {
+                continue;
+            }
+
+            $uniqueItems[]          = $item;
+            $uniqueFilteredValues[] = $filterValue;
+        }
+
+        return new self( $uniqueItems );
+    }
+
+    /**
      * Keep only the items that are not present in any of the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
@@ -52,6 +92,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
         return new self( array_diff( $this->toArray(), ...$arrays ) );
     }
+    
     /**
      * Keep only the items whose keys are not present in any of the given arrays.
      *

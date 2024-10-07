@@ -282,11 +282,11 @@ final class ArrayHelperTest extends TestCase
 
     public function test_explode(): void
     {
-        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon doe')->toArray());
-        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode(str('jon doe'))->toArray());
-        $this->assertEquals(['jon doe'], ArrayHelper::explode('jon doe', ',')->toArray());
-        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon, doe', ', ')->toArray());
-        $this->assertEquals(['jon, doe'], ArrayHelper::explode('jon, doe', '')->toArray());
+        $this->assertEquals(['john', 'doe'], ArrayHelper::explode('john doe')->toArray());
+        $this->assertEquals(['john', 'doe'], ArrayHelper::explode(str('john doe'))->toArray());
+        $this->assertEquals(['john doe'], ArrayHelper::explode('john doe', ',')->toArray());
+        $this->assertEquals(['john', 'doe'], ArrayHelper::explode('john, doe', ', ')->toArray());
+        $this->assertEquals(['john, doe'], ArrayHelper::explode('john, doe', '')->toArray());
     }
 
     public function test_combine_with_integers(): void {
@@ -310,12 +310,12 @@ final class ArrayHelperTest extends TestCase
         ]);
         $current = $collection
             ->combine([
-                'Jon',
+                'John',
                 'Doe'
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ];
 
@@ -330,13 +330,13 @@ final class ArrayHelperTest extends TestCase
         ]);
         $current = $collection
             ->combine([
-                4 => 'Jon',
+                4 => 'John',
                 5 => 'Doe',
                 6 => 50
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 50
         ];
@@ -346,12 +346,12 @@ final class ArrayHelperTest extends TestCase
 
     public function test_combine_with_collection(): void {
         $collection         = arr(['first_name', 'last_name']);
-        $another_collection = arr(['Jon', 'Doe']);
+        $another_collection = arr(['John', 'Doe']);
         $current            = $collection
             ->combine($another_collection)
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ];
 
@@ -360,7 +360,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_keys(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'framework'  => 'Tempest'
         ]);
@@ -378,7 +378,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_merge_array(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ]);
         $current = $collection
@@ -387,7 +387,7 @@ final class ArrayHelperTest extends TestCase
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'framework'  => 'Tempest'
         ];
@@ -397,7 +397,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_merge_collection(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ]);
         $current = $collection
@@ -406,7 +406,7 @@ final class ArrayHelperTest extends TestCase
             ]))
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'framework'  => 'Tempest'
         ];
@@ -416,13 +416,13 @@ final class ArrayHelperTest extends TestCase
 
     public function test_diff_values(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42
         ]);
         $current = $collection
             ->diff([
-                'Jon',
+                'John',
                 'Doe'
             ])
             ->toArray();
@@ -435,7 +435,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_diff_keys(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42
         ]);
@@ -445,7 +445,7 @@ final class ArrayHelperTest extends TestCase
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ];
 
@@ -454,18 +454,18 @@ final class ArrayHelperTest extends TestCase
 
     public function test_intersect(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42
         ]);
         $current = $collection
             ->intersect([
-                'Jon',
+                'John',
                 'Doe'
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ];
 
@@ -474,7 +474,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_intersect_keys(): void {
         $collection = arr([
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42
         ]);
@@ -485,10 +485,197 @@ final class ArrayHelperTest extends TestCase
             ])
             ->toArray();
         $expected = [
-            'first_name' => 'Jon',
+            'first_name' => 'John',
             'last_name'  => 'Doe'
         ];
 
         $this->assertSame($expected, $current);
+    }
+
+    public function test_unique_with_basic_item(): void {
+        $collection = arr([
+            'John',
+            'Doe',
+            'John',
+            'Doe',
+            'Jane',
+            'Doe'
+        ]);
+        $current = $collection
+            ->unique()
+            ->values()
+            ->toArray();
+        $expected = [
+            'John',
+            'Doe',
+            'Jane'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_unique_with_associative_array(): void {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+            'first_name' => 'Jane'
+        ]);
+        $current = $collection
+            ->unique()
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jane',
+            'last_name'  => 'Doe',
+            'age'        => 42
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_unique_with_arrays(): void {
+        $collection = arr([
+            ['John', 'Doe'],
+            ['John', 'Doe'],
+            [1, 2],
+            [1, 2],
+            [3, 4]
+        ]);
+        $current = $collection
+            ->unique()
+            ->values()
+            ->toArray();
+        $expected = [
+            ['John', 'Doe'],
+            [1, 2],
+            [3, 4]
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_unique_with_key(): void {
+        $collection = arr([
+            ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+            ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+            ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
+            ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate']
+        ]);
+
+        $this->assertSame(
+            actual: $collection
+                ->unique('first_name')
+                ->values()
+                ->toArray(),
+            expected: [
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe']
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->unique('last_name')
+                ->values()
+                ->toArray(),
+            expected: [
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate']
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->unique('id')
+                ->values()
+                ->toArray(),
+            expected: [
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe']
+            ],
+        );
+    }
+
+    public function test_unique_ensure_unnested_value_is_rejected_when_key_is_set(): void {
+        $collection = arr([
+            42,
+            'Hello World',
+            ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+            ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+            ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
+            ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate']
+        ]);
+
+        $this->assertSame(
+            actual: $collection
+                ->unique('id')
+                ->values()
+                ->toArray(),
+            expected: [
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe']
+            ],
+        );
+    }
+
+    public function test_unique_unstrict_check(): void {
+        $this->assertSame(
+            actual: arr([
+                42,
+                '42',
+                true,
+                'true',
+            ])
+                ->unique(should_be_strict: false)
+                ->values()
+                ->toArray(),
+            expected: [
+                42,
+                'true',
+            ],
+        );
+    }
+
+    public function test_unique_strict_check(): void {
+        $this->assertSame(
+            actual: arr([
+                42,
+                '42',
+                true,
+                'true',
+            ])
+                ->unique(should_be_strict: true)
+                ->values()
+                ->toArray(),
+            expected: [
+                42,
+                '42',
+                true,
+                'true',
+            ],
+        );
+    }
+
+    public function test_unique_with_key_and_strict_check(): void {
+        $this->assertSame(
+            actual: arr([
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => '1', 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate']
+            ])
+                ->unique('id', should_be_strict: true)
+                ->values()
+                ->toArray(),
+            expected: [
+                ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => '1', 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
+                ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe']
+            ],
+        );
     }
 }
