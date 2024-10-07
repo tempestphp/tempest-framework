@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Exceptions;
 
 use Exception;
-use Throwable;
 
 final class InvalidRelation extends Exception
 {
