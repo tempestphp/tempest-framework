@@ -9,6 +9,7 @@ use Masterminds\HTML5;
 use ParseError;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
+use Tempest\View\ViewCache;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
@@ -36,6 +37,7 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly Kernel $kernel,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
+        private readonly ViewCache $viewCache,
     ) {
     }
 
@@ -61,20 +63,26 @@ final class TempestViewRenderer implements ViewRenderer
 
         $this->currentView = $view;
 
-        $contents = $this->resolveContent($view);
+        $element = $this->viewCache->resolve(
+            key: (string) crc32($view->getPath()),
+            cache: function () use ($view) {
+                $contents = $this->resolveContent($view);
 
-        $html5 = new HTML5();
-        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
+                $html5 = new HTML5();
+                $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
 
-        $element = $this->elementFactory->make(
-            $view,
-            $dom->getElementById('tempest_render'),
+                return $this->elementFactory->make(
+                    $view,
+                    $dom->getElementById('tempest_render'),
+                );
+            }
         );
 
         $element = $this->applyAttributes(
             view: $view,
             element: $element,
         );
+
 
         return trim($this->renderElements($view, $element->getChildren()));
     }
