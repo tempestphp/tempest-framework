@@ -41,6 +41,44 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Keep only the items that are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diff( array|self ...$arrays ): self {
+        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+
+        return new self( array_diff( $this->toArray(), ...$arrays ) );
+    }
+    /**
+     * Keep only the items whose keys are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diffKeys( array|self ...$arrays ): self {
+        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+
+        return new self( array_diff_key( $this->toArray(), ...$arrays ) );
+    }
+
+    /**
+     * Merge the array with the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays The arrays to merge.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function merge( array|self ...$arrays ): self {
+        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+
+        return new self( array_merge( $this->toArray(), ...$arrays ) );
+    }
+
+    /**
      * Create a new array with this current array values as keys and the given values as values.
      *
      * @template TCombineValue

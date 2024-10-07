@@ -375,4 +375,80 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame($expected, $current);
     }
+
+    public function test_merge_array(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ]);
+        $current = $collection
+            ->merge([
+                'framework' => 'Tempest'
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'framework'  => 'Tempest'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_merge_collection(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ]);
+        $current = $collection
+            ->merge(arr([
+                'framework' => 'Tempest'
+            ]))
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'framework'  => 'Tempest'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_diff_values(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'age'        => 42
+        ]);
+        $current = $collection
+            ->diff([
+                'Jon',
+                'Doe'
+            ])
+            ->toArray();
+        $expected = [
+            'age' => 42
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_diff_keys(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'age'        => 42
+        ]);
+        $current = $collection
+            ->diffKeys([
+                'age' => 10
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
 }
