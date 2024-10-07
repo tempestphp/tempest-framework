@@ -301,11 +301,39 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $childA = (new ChildModel(name: 'A'))->save();
 
-        (new ThroughModel(parent: $parent, child: $childA))->save();
+        $childB = (new ChildModel(name: 'B'))->save();
+
+        (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
 
         $child = ChildModel::find($childA->id, ['through.parent']);
+        $child2 = ChildModel::find($childB->id, ['through2.parent']);
 
         $this->assertSame('parent', $child->through->parent->name);
+        $this->assertSame('parent', $child2->through2->parent->name);
+    }
+
+    public function test_invalid_has_one_relation(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateHasManyParentTable::class,
+            CreateHasManyChildTable::class,
+            CreateHasManyThroughTable::class,
+        );
+
+        $parent = (new ParentModel(name: 'parent'))->save();
+
+        $childA = (new ChildModel(name: 'A'))->save();
+
+        $childB = (new ChildModel(name: 'B'))->save();
+
+        (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
+
+        $child = ChildModel::find($childA->id, ['through.parent']);
+        $child2 = ChildModel::find($childB->id, ['through2.parent']);
+
+        $this->assertSame('parent', $child->through->parent->name);
+        $this->assertSame('parent', $child2->through2->parent->name);
     }
 
     public function test_lazy_load(): void

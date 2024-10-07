@@ -6,6 +6,8 @@ namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
+use Tempest\Database\Exceptions\InvalidRelation;
+use Tempest\Database\HasOne;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -19,22 +21,12 @@ final readonly class HasOneRelation implements Relation
 
     public function __construct(PropertyReflector $property, string $alias)
     {
-        // TODO: optionally allow property name on the attribute so that we don't have to resolve it
-        $inverseProperty = null;
+        $hasOneAttribute = $property->getAttribute(HasOne::class);
+        $inversePropertyName = $hasOneAttribute?->inversePropertyName;
 
-        $currentModelClass = $property->getClass();
-
-        foreach ($property->getType()->asClass()->getPublicProperties() as $possibleInverseProperty) {
-            if ($possibleInverseProperty->getType()->matches($currentModelClass->getName())) {
-                $inverseProperty = $possibleInverseProperty;
-
-                break;
-            }
-        }
-
-        if ($inverseProperty === null) {
-            // TODO exception
-        }
+        $inverseProperty = $inversePropertyName === null
+            ? $this->findInversePropertyByType($property)
+            : $this->findInversePropertyByName($property, $inversePropertyName);
 
         $this->relationModelClass = $property->getType()->asClass();
 
@@ -63,5 +55,54 @@ final readonly class HasOneRelation implements Relation
     public function getFieldNames(): array
     {
         return FieldName::make($this->relationModelClass, $this->joinField->tableName);
+    }
+
+    private function findInversePropertyByType(PropertyReflector $property): PropertyReflector
+    {
+        $currentModelClass = $property->getClass();
+        $propertyClass = $property->getType()->asClass();
+
+        foreach ($propertyClass->getPublicProperties() as $possibleInverseProperty) {
+            if ($possibleInverseProperty->getType()->matches($currentModelClass->getName())) {
+                return $possibleInverseProperty;
+            }
+        }
+
+        throw InvalidRelation::inversePropertyNotFound(
+            $currentModelClass->getName(),
+            $property->getName(),
+            $propertyClass->getName()
+        );
+    }
+
+    private function findInversePropertyByName(PropertyReflector $property, string $inversePropertyName): PropertyReflector
+    {
+        $currentModelClass = $property->getClass();
+        $relatedClass = $property->getType()->asClass();
+
+        if (! $relatedClass->hasProperty($inversePropertyName)) {
+            throw InvalidRelation::inversePropertyMissing(
+                $currentModelClass->getName(),
+                $property->getName(),
+                $relatedClass->getName(),
+                $inversePropertyName,
+            );
+        }
+
+        $inverseProperty = $relatedClass->getProperty($inversePropertyName);
+        $expectedType = $currentModelClass->getType();
+
+        if ($inverseProperty->getType() === null || ! $inverseProperty->getType()->matches($expectedType->getName())) {
+            throw InvalidRelation::inversePropertyInvalidType(
+                $currentModelClass->getName(),
+                $property->getName(),
+                $relatedClass->getName(),
+                $inversePropertyName,
+                $property->getType()->getName(),
+                $inverseProperty->getType()->getName(),
+            );
+        }
+
+        return $inverseProperty;
     }
 }
