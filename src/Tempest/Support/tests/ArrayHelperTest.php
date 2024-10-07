@@ -345,14 +345,32 @@ final class ArrayHelperTest extends TestCase
     }
 
     public function test_combine_with_collection(): void {
-        $collection        = arr(['first_name', 'last_name']);
+        $collection         = arr(['first_name', 'last_name']);
         $another_collection = arr(['Jon', 'Doe']);
-        $current           = $collection
+        $current            = $collection
             ->combine($another_collection)
             ->toArray();
-        $expected          = [
+        $expected = [
             'first_name' => 'Jon',
             'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_keys(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'framework'  => 'Tempest'
+        ]);
+        $current = $collection
+            ->keys()
+            ->toArray();
+        $expected = [
+            'first_name',
+            'last_name',
+            'framework'
         ];
 
         $this->assertSame($expected, $current);

@@ -140,6 +140,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return implode($glue, $this->array);
     }
 
+    /**
+     * Create a new array with the keys of this array as values.
+     * 
+     * @return self<array-key, TKey>
+     */
+    public function keys(): self {
+        return new self( array_keys( $this->array ) );
+    }
+
     public function values(): self
     {
         return new self(array_values($this->array));
