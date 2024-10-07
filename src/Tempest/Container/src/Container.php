@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 
 interface Container
 {
     public function register(string $className, callable $definition): self;
 
-    public function singleton(string $className, object|callable $definition, ?string $tag = null): self;
+    public function singleton(string $className, mixed $definition, ?string $tag = null): self;
 
     public function config(object $config): self;
 
@@ -22,7 +23,7 @@ interface Container
      */
     public function get(string $className, ?string $tag = null, mixed ...$params): object;
 
-    public function invoke(MethodReflector $method, mixed ...$params): mixed;
+    public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 
     /**
      * @template T of \Tempest\Container\Initializer

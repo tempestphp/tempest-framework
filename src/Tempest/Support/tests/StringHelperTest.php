@@ -114,6 +114,7 @@ final class StringHelperTest extends TestCase
     public function test_str_after(): void
     {
         $this->assertTrue(str('hannah')->after('han')->equals('nah'));
+        $this->assertTrue(str('hannah')->after(str('han'))->equals('nah'));
         $this->assertTrue(str('hannah')->after('n')->equals('nah'));
         $this->assertTrue(str('ééé hannah')->after('han')->equals('nah'));
         $this->assertTrue(str('hannah')->after('xxxx')->equals('hannah'));
@@ -128,6 +129,7 @@ final class StringHelperTest extends TestCase
     public function test_str_after_last(): void
     {
         $this->assertTrue(str('yvette')->afterLast('yve')->equals('tte'));
+        $this->assertTrue(str('yvette')->afterLast(str('yve'))->equals('tte'));
         $this->assertTrue(str('yvette')->afterLast('t')->equals('e'));
         $this->assertTrue(str('ééé yvette')->afterLast('t')->equals('e'));
         $this->assertTrue(str('yvette')->afterLast('tte')->equals(''));
@@ -145,6 +147,7 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('abc')->between('a', '')->equals('abc'));
         $this->assertTrue(str('abc')->between('', '')->equals('abc'));
         $this->assertTrue(str('abc')->between('a', 'c')->equals('b'));
+        $this->assertTrue(str('abc')->between(str('a'), str('c'))->equals('b'));
         $this->assertTrue(str('dddabc')->between('a', 'c')->equals('b'));
         $this->assertTrue(str('abcddd')->between('a', 'c')->equals('b'));
         $this->assertTrue(str('dddabcddd')->between('a', 'c')->equals('b'));
@@ -160,6 +163,7 @@ final class StringHelperTest extends TestCase
     public function test_str_before(): void
     {
         $this->assertTrue(str('hannah')->before('nah')->equals('han'));
+        $this->assertTrue(str('hannah')->before(str('nah'))->equals('han'));
         $this->assertTrue(str('hannah')->before('n')->equals('ha'));
         $this->assertTrue(str('ééé hannah')->before('han')->equals('ééé '));
         $this->assertTrue(str('hannah')->before('xxxx')->equals('hannah'));
@@ -179,6 +183,7 @@ final class StringHelperTest extends TestCase
     public function test_str_before_last(): void
     {
         $this->assertTrue(str('yvette')->beforeLast('tte')->equals('yve'));
+        $this->assertTrue(str('yvette')->beforeLast(str('tte'))->equals('yve'));
         $this->assertTrue(str('yvette')->beforeLast('t')->equals('yvet'));
         $this->assertTrue(str('ééé yvette')->beforeLast('yve')->equals('ééé '));
         $this->assertTrue(str('yvette')->beforeLast('yve')->equals(''));
@@ -197,18 +202,22 @@ final class StringHelperTest extends TestCase
     public function test_starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
+        $this->assertTrue(str('abc')->startsWith((str('a'))));
         $this->assertFalse(str('abc')->startsWith('c'));
     }
 
     public function test_ends_with(): void
     {
         $this->assertTrue(str('abc')->endsWith('c'));
+        $this->assertTrue(str('abc')->endsWith(str('c')));
         $this->assertFalse(str('abc')->endsWith('a'));
     }
 
     public function test_replace(): void
     {
         $this->assertTrue(str('foo bar')->replace('bar', 'baz')->equals('foo baz'));
+        $this->assertTrue(str('foo bar')->replace(str('bar'), 'baz')->equals('foo baz'));
+        $this->assertTrue(str('foo bar')->replace('bar', str('baz'))->equals('foo baz'));
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane'], 'luke')->equals('luke doe'));
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], ['Jon', 'Jane', 'Doe'])->equals('Jon Doe'));
         $this->assertTrue(
@@ -254,12 +263,14 @@ final class StringHelperTest extends TestCase
     {
         $this->assertTrue(str('foo')->append('bar')->equals('foobar'));
         $this->assertTrue(str('foo')->append('bar', 'baz')->equals('foobarbaz'));
+        $this->assertTrue(str('foo')->append(str('bar'), str('baz'))->equals('foobarbaz'));
     }
 
     public function test_prepend(): void
     {
         $this->assertTrue(str('bar')->prepend('foo')->equals('foobar'));
         $this->assertTrue(str('baz')->prepend('bar', 'foo')->equals('barfoobaz'));
+        $this->assertTrue(str('baz')->prepend(str('bar'), str('foo'))->equals('barfoobaz'));
     }
 
     public function test_match(): void

@@ -9,4 +9,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final readonly class HasOne
 {
+    public function __construct(public ?string $inversePropertyName = null)
+    {
+    }
 }
