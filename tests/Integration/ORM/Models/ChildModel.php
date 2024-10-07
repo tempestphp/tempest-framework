@@ -16,6 +16,9 @@ final class ChildModel implements DatabaseModel
     #[HasOne]
     public ThroughModel $through;
 
+    #[HasOne("child2")]
+    public ThroughModel $through2;
+
     public static function table(): TableName
     {
         return new TableName('child');
