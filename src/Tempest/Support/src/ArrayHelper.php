@@ -259,6 +259,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * @alias self::set()
+     */
+    public function put(string $key, mixed $value): self
+    {
+        return $this->set($key, $value);
+    }
+
     public function unwrap(): self
     {
         $unwrapValue = function (string|int $key, mixed $value) {

@@ -105,6 +105,21 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr($array)->set('a', 'c')->equals(['a' => 'c']));
     }
 
+    public function test_arr_put_is_alias_of_set(): void {
+        $array = [
+            'a' => [
+                'b' => [
+                    'c' => 'c',
+                ],
+            ],
+        ];
+
+        $this->assertTrue(arr()->set('a.b.c', 'c')->equals($array));
+        $this->assertTrue(arr()->put('a.b.c', 'c')->equals($array));
+        $this->assertTrue(arr($array)->set('a', 'c')->equals(['a' => 'c']));
+        $this->assertTrue(arr($array)->put('a', 'c')->equals(['a' => 'c']));
+    }
+
     public function test_unwrap(): void
     {
         $expected = [
