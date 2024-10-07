@@ -90,7 +90,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function diff( array|self ...$arrays ): self {
         $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
 
-        return new self( array_diff( $this->toArray(), ...$arrays ) );
+        return new self( array_diff( $this->array, ...$arrays ) );
     }
     
     /**
@@ -103,7 +103,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function diffKeys( array|self ...$arrays ): self {
         $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
 
-        return new self( array_diff_key( $this->toArray(), ...$arrays ) );
+        return new self( array_diff_key( $this->array, ...$arrays ) );
     }
 
     /**
@@ -116,7 +116,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function intersect( array|self ...$arrays ): self {
         $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
 
-        return new self( array_intersect( $this->toArray(), ...$arrays ) );
+        return new self( array_intersect( $this->array, ...$arrays ) );
     }
 
     /**
@@ -129,7 +129,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function intersectKeys( array|self ...$arrays ): self {
         $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
 
-        return new self( array_intersect_key( $this->toArray(), ...$arrays ) );
+        return new self( array_intersect_key( $this->array, ...$arrays ) );
     }
 
     /**
@@ -142,7 +142,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function merge( array|self ...$arrays ): self {
         $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
 
-        return new self( array_merge( $this->toArray(), ...$arrays ) );
+        return new self( array_merge( $this->array, ...$arrays ) );
     }
 
     /**
@@ -158,7 +158,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $values = $values instanceof self
             ? $values->toArray()
             : $values;
-        return new self( array_combine( $this->toArray(), $values ) );
+        return new self( array_combine( $this->array, $values ) );
     }
 
     public static function explode(string|Stringable $string, string $separator = ' '): self
