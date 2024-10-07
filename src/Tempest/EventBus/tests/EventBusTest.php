@@ -14,12 +14,18 @@ use Tempest\EventBus\Tests\Fixtures\ItHappened;
 use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\Reflection\MethodReflector;
+use function Tempest\testFunction;
 
 /**
  * @internal
  */
 final class EventBusTest extends TestCase
 {
+    public function test_function()
+    {
+        $this->assertSame('This is a test.', testFunction());
+    }
+
     public function test_it_works(): void
     {
         $container = new GenericContainer();

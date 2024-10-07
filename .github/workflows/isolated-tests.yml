@@ -18,8 +18,6 @@ jobs:
           coverage: none
 
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
       - name: Get Packages
         id: get_json
@@ -50,6 +48,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Fetch main branch
+        run: git fetch origin main --depth=1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
