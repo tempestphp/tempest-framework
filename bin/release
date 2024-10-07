@@ -73,7 +73,7 @@ function releaseTag(string $tag): void
 {
     $commands = [
         "git tag {$tag}",
-        "git push --tags",
+        "git push origin tag {$tag}",
     ];
 
     foreach ($commands as $command) {
