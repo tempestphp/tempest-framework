@@ -62,7 +62,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             }
 
             $filterValue = is_array( $item )
-                ? $item[$key] ?? null
+                ? arr($item)->get($key)
                 : $item;
 
             if ( is_null( $filterValue ) ) {

@@ -678,4 +678,68 @@ final class ArrayHelperTest extends TestCase
             ],
         );
     }
+
+    public function test_unique_key_dot_notation(): void {
+        $collection = arr([
+            [
+                'id'     => 1,
+                'title'  => 'First Post',
+                'author' => ['id' => 1, 'name' => 'John Doe']
+            ],
+            [
+                'id'     => 2,
+                'title'  => 'Second Post',
+                'author' => ['id' => 2, 'name' => 'Jane Smith']
+            ],
+            [
+                'id'     => 3,
+                'title'  => 'Third Post',
+                'author' => ['id' => 1, 'name' => 'John Doe']  // Duplicate author
+            ],
+            [
+                'id'     => 4,
+                'title'  => 'Fourth Post',
+                'author' => ['id' => 3, 'name' => 'Alice Johnson']
+            ],
+            [
+                'id'     => 5,
+                'title'  => 'Fifth Post',
+                'author' => ['id' => 2, 'name' => 'Jane Smith']  // Duplicate author
+            ],
+            [
+                'id'     => 6,
+                'title'  => 'Sixth Post',
+                'author' => ['id' => 4, 'name' => 'Bob Brown']
+            ]
+        ]);
+
+        $this->assertSame(
+            actual: $collection
+                ->unique('author.id')
+                ->values()
+                ->toArray(),
+            expected: [
+                [
+                    'id'     => 1,
+                    'title'  => 'First Post',
+                    'author' => ['id' => 1, 'name' => 'John Doe']
+                ],
+                [
+                    'id'     => 2,
+                    'title'  => 'Second Post',
+                    'author' => ['id' => 2, 'name' => 'Jane Smith']
+                ],
+                [
+                    'id'     => 4,
+                    'title'  => 'Fourth Post',
+                    'author' => ['id' => 3, 'name' => 'Alice Johnson']
+                ],
+                [
+                    'id'     => 6,
+                    'title'  => 'Sixth Post',
+                    'author' => ['id' => 4, 'name' => 'Bob Brown']
+                ]
+            ],
+        );
+    }
 }
