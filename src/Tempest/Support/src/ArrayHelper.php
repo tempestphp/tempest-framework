@@ -14,8 +14,10 @@ use Stringable;
 use function Tempest\map;
 
 /**
- * @template TValueType
- * @implements ArrayAccess<array-key, TValueType>
+ * @template TKey of array-key
+ * @template TValue
+ * @implements ArrayAccess<TKey, TValue>
+ * @implements Iterator<TKey, TValue>
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
@@ -23,6 +25,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     private array $array;
 
+    /**
+     * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
+     */
     public function __construct(
         mixed $input = [],
     ) {
@@ -33,6 +38,22 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         } else {
             $this->array = [$input];
         }
+    }
+
+    /**
+     * Create a new array with this current array values as keys and the given values as values.
+     *
+     * @template TCombineValue
+     * 
+     * @param array<array-key, TCombineValue>|self<array-key, TCombineValue> $values
+     *
+     * @return self<array-key, TCombineValue>
+     */
+    public function combine( array|self $values ): self {
+        $values = $values instanceof self
+            ? $values->toArray()
+            : $values;
+        return new self( array_combine( $this->toArray(), $values ) );
     }
 
     public static function explode(string|Stringable $string, string $separator = ' '): self
@@ -299,6 +320,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         dd($this->array, ...$dd); // @phpstan-ignore-line
     }
 
+    /**
+     * @return array<TKey, TValue>
+     */
     public function toArray(): array
     {
         return $this->array;

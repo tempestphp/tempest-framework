@@ -288,4 +288,73 @@ final class ArrayHelperTest extends TestCase
         $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon, doe', ', ')->toArray());
         $this->assertEquals(['jon, doe'], ArrayHelper::explode('jon, doe', '')->toArray());
     }
+
+    public function test_combine_with_integers(): void {
+        $collection = arr([1, 2, 3]);
+        $current    = $collection
+            ->combine([4, 5, 6])
+            ->toArray();
+        $expected = [
+            1 => 4,
+            2 => 5,
+            3 => 6,
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_combine_with_strings(): void {
+        $collection = arr([
+            'first_name',
+            'last_name'
+        ]);
+        $current = $collection
+            ->combine([
+                'Jon',
+                'Doe'
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_combine_with_associative_arrays(): void {
+        $collection = arr([
+            5      => 'first_name',
+            'test' => 'last_name',
+            42     => 'age'
+        ]);
+        $current = $collection
+            ->combine([
+                4 => 'Jon',
+                5 => 'Doe',
+                6 => 50
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'age'        => 50
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_combine_with_collection(): void {
+        $collection        = arr(['first_name', 'last_name']);
+        $another_collection = arr(['Jon', 'Doe']);
+        $current           = $collection
+            ->combine($another_collection)
+            ->toArray();
+        $expected          = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
 }
