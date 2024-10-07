@@ -451,4 +451,44 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame($expected, $current);
     }
+
+    public function test_intersect(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'age'        => 42
+        ]);
+        $current = $collection
+            ->intersect([
+                'Jon',
+                'Doe'
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
+
+    public function test_intersect_keys(): void {
+        $collection = arr([
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe',
+            'age'        => 42
+        ]);
+        $current = $collection
+            ->intersectKeys([
+                'first_name' => true,
+                'last_name'  => true
+            ])
+            ->toArray();
+        $expected = [
+            'first_name' => 'Jon',
+            'last_name'  => 'Doe'
+        ];
+
+        $this->assertSame($expected, $current);
+    }
 }

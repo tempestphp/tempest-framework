@@ -66,6 +66,32 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Keep only the items that are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersect( array|self ...$arrays ): self {
+        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+
+        return new self( array_intersect( $this->toArray(), ...$arrays ) );
+    }
+
+    /**
+     * Keep only the items whose keys are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersectKeys( array|self ...$arrays ): self {
+        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+
+        return new self( array_intersect_key( $this->toArray(), ...$arrays ) );
+    }
+
+    /**
      * Merge the array with the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays The arrays to merge.
