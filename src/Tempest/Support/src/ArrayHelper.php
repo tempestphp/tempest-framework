@@ -42,42 +42,43 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     /**
      * Keep only the unique items in the array.
-     * 
+     *
      * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
      * @param bool $should_be_strict Whether the comparison should be strict, only used when giving a key parameter.
      *
      * @return self<TKey, TValue>
      */
-    public function unique( ?string $key = null, bool $should_be_strict = false ): self {
-        if ( is_null( $key ) && $should_be_strict === false ) {
-            return new self( array_unique( $this->array, flags: SORT_REGULAR ) );
+    public function unique(?string $key = null, bool $should_be_strict = false): self
+    {
+        if (is_null($key) && $should_be_strict === false) {
+            return new self(array_unique($this->array, flags: SORT_REGULAR));
         }
-        
-        $uniqueItems          = [];
+
+        $uniqueItems = [];
         $uniqueFilteredValues = [];
-        foreach ( $this->array as $item ) {
+        foreach ($this->array as $item) {
             // Ensure we don't check raw values with key filter
-            if ( ! is_null( $key ) && ! is_array( $item ) ) {
+            if (! is_null($key) && ! is_array($item)) {
                 continue;
             }
 
-            $filterValue = is_array( $item )
+            $filterValue = is_array($item)
                 ? arr($item)->get($key)
                 : $item;
 
-            if ( is_null( $filterValue ) ) {
+            if (is_null($filterValue)) {
                 continue;
             }
 
-            if ( in_array( $filterValue, $uniqueFilteredValues, strict: $should_be_strict ) ) {
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $should_be_strict)) {
                 continue;
             }
 
-            $uniqueItems[]          = $item;
+            $uniqueItems[] = $item;
             $uniqueFilteredValues[] = $filterValue;
         }
 
-        return new self( $uniqueItems );
+        return new self($uniqueItems);
     }
 
     /**
@@ -87,12 +88,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function diff( array|self ...$arrays ): self {
-        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+    public function diff(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
-        return new self( array_diff( $this->array, ...$arrays ) );
+        return new self(array_diff($this->array, ...$arrays));
     }
-    
+
     /**
      * Keep only the items whose keys are not present in any of the given arrays.
      *
@@ -100,10 +102,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function diffKeys( array|self ...$arrays ): self {
-        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+    public function diffKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
-        return new self( array_diff_key( $this->array, ...$arrays ) );
+        return new self(array_diff_key($this->array, ...$arrays));
     }
 
     /**
@@ -113,10 +116,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function intersect( array|self ...$arrays ): self {
-        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+    public function intersect(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
-        return new self( array_intersect( $this->array, ...$arrays ) );
+        return new self(array_intersect($this->array, ...$arrays));
     }
 
     /**
@@ -126,10 +130,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function intersectKeys( array|self ...$arrays ): self {
-        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+    public function intersectKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
-        return new self( array_intersect_key( $this->array, ...$arrays ) );
+        return new self(array_intersect_key($this->array, ...$arrays));
     }
 
     /**
@@ -139,26 +144,29 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function merge( array|self ...$arrays ): self {
-        $arrays = array_map( fn( array|self $array ) => $array instanceof self ? $array->toArray() : $array, $arrays );
+    public function merge(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
-        return new self( array_merge( $this->array, ...$arrays ) );
+        return new self(array_merge($this->array, ...$arrays));
     }
 
     /**
      * Create a new array with this current array values as keys and the given values as values.
      *
      * @template TCombineValue
-     * 
+     *
      * @param array<array-key, TCombineValue>|self<array-key, TCombineValue> $values
      *
      * @return self<array-key, TCombineValue>
      */
-    public function combine( array|self $values ): self {
+    public function combine(array|self $values): self
+    {
         $values = $values instanceof self
             ? $values->toArray()
             : $values;
-        return new self( array_combine( $this->array, $values ) );
+
+        return new self(array_combine($this->array, $values));
     }
 
     public static function explode(string|Stringable $string, string $separator = ' '): self
@@ -247,11 +255,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     /**
      * Create a new array with the keys of this array as values.
-     * 
+     *
      * @return self<array-key, TKey>
      */
-    public function keys(): self {
-        return new self( array_keys( $this->array ) );
+    public function keys(): self
+    {
+        return new self(array_keys($this->array));
     }
 
     public function values(): self
@@ -429,12 +438,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    public function dump(mixed ...$dumps): self {
+    public function dump(mixed ...$dumps): self
+    {
         dump($this->array, ...$dumps); // @phpstan-ignore-line
 
         return $this;
     }
-    
+
     public function dd(mixed ...$dd): void
     {
         dd($this->array, ...$dd); // @phpstan-ignore-line
