@@ -18,6 +18,7 @@ use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use function Tempest\map;
 use Tempest\Reflection\ClassReflector;
+use function Tempest\Support\str;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -30,6 +31,7 @@ final class GenericRouter implements Router
 
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
+
 
     public function __construct(
         private readonly Container $container,
@@ -153,7 +155,7 @@ final class GenericRouter implements Router
                 continue;
             }
 
-            $pattern = '#\{' . $key . '(?::[^}]+)?\}#';
+            $pattern = '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
             $uri = preg_replace($pattern, (string)$value, $uri);
         }
 
@@ -172,17 +174,17 @@ final class GenericRouter implements Router
             return [];
         }
 
-        $tokensResult = preg_match_all('#\{(?<names>\w+)(?::[^}]*)?}#', $route->uri, $tokens);
+        $tokens = str($route->uri)->matchAll('#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#', );
 
-        if (! $tokensResult) {
+        if (empty($tokens)) {
             return null;
         }
 
-        $tokens = $tokens['names'];
+        $tokens = $tokens[1];
 
-        $tokensResult = preg_match_all("#^$route->matchingRegex$#", $uri, $matches);
+        $matches = str($uri)->matchAll("#^$route->matchingRegex$#");
 
-        if ($tokensResult === 0) {
+        if (empty($matches)) {
             return null;
         }
 
