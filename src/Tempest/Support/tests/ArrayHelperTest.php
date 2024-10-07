@@ -519,13 +519,13 @@ final class ArrayHelperTest extends TestCase
             'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42,
-            'first_name' => 'Jane'
+            'steal_name' => 'John'
         ]);
         $current = $collection
             ->unique()
             ->toArray();
         $expected = [
-            'first_name' => 'Jane',
+            'first_name' => 'John',
             'last_name'  => 'Doe',
             'age'        => 42
         ];
