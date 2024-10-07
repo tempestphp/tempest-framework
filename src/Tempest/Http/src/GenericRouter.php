@@ -32,7 +32,6 @@ final class GenericRouter implements Router
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
 
-
     public function __construct(
         private readonly Container $container,
         private readonly RouteConfig $routeConfig,

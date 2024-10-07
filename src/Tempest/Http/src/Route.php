@@ -21,7 +21,9 @@ class Route
     public readonly bool $isDynamic;
 
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
+
     public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
+
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
     public function __construct(
