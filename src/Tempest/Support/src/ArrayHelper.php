@@ -324,6 +324,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    public function dump(mixed ...$dumps): void {
+        dump($this->array, ...$dumps); // @phpstan-ignore-line
+    }
+    
     public function dd(mixed ...$dd): void
     {
         dd($this->array, ...$dd); // @phpstan-ignore-line
