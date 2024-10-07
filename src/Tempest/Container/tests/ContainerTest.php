@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Container\Exceptions\CircularDependencyException;
+use Tempest\Container\Exceptions\InvalidCallableException;
 use Tempest\Container\GenericContainer;
 use Tempest\Container\Tests\Fixtures\BuiltinArrayClass;
+use Tempest\Container\Tests\Fixtures\BuiltinDependencyArrayInitializer;
+use Tempest\Container\Tests\Fixtures\BuiltinDependencyBoolInitializer;
+use Tempest\Container\Tests\Fixtures\BuiltinDependencyStringInitializer;
 use Tempest\Container\Tests\Fixtures\BuiltinTypesWithDefaultsClass;
 use Tempest\Container\Tests\Fixtures\CallContainerObjectE;
 use Tempest\Container\Tests\Fixtures\CircularWithInitializerA;
@@ -21,8 +27,11 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectD;
 use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
+use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
 use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
+use Tempest\Container\Tests\Fixtures\InvokableClass;
+use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
 use Tempest\Container\Tests\Fixtures\SingletonInitializer;
@@ -293,5 +302,81 @@ TXT,
         $b = $container->get(ClassWithSingletonAttribute::class);
 
         $this->assertTrue($b->flag);
+    }
+
+    public function test_invoke_callable(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+
+        $this->assertEquals('foo', $container->invoke(InvokableClass::class));
+        $this->assertEquals('foobar', $container->invoke([new InvokableClass(), 'execute']));
+        $this->assertEquals('bar', $container->invoke(InvokableClassWithParameters::class, param: 'bar'));
+        $this->assertInstanceOf(ReflectionClass::class, $container->invoke(fn (SingletonClass $class) => new ReflectionClass($class)));
+    }
+
+    public function test_call_function_with_parameters(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+
+        $result = $container->invoke(
+            callable: fn (SingletonClass $class, string $prefix) => $prefix.$class::class,
+            prefix: 'My resolved class is ',
+        );
+
+        $this->assertEquals('My resolved class is Tempest\Container\Tests\Fixtures\SingletonClass', $result);
+    }
+
+    public function test_call_function_with_dependencies_and_parameters(): void
+    {
+        $container = new GenericContainer();
+
+        $result = $container->invoke(fn (string $param) => $param, param: 'foo');
+
+        $this->assertEquals('foo', $result);
+    }
+
+    public function test_call_function_with_unresolvable_parameters(): void
+    {
+        $this->expectException(CannotAutowireException::class);
+        $this->expectExceptionMessageMatches('/because string cannot be resolved/');
+
+        $container = new GenericContainer();
+        $container->invoke(fn (string $param) => $param);
+    }
+
+    public function test_call_invalid_closure(): void
+    {
+        $this->expectException(InvalidCallableException::class);
+        $this->expectExceptionMessage('[array_map] cannot be invoked through the container.');
+
+        $container = new GenericContainer();
+        $container->invoke('array_map');
+    }
+
+    public function test_invoke_closure_with_function(): void
+    {
+        GenericContainer::setInstance($container = new GenericContainer());
+        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+
+        $result = \Tempest\invoke(fn (SingletonClass $class) => $class::class);
+
+        $this->assertEquals(SingletonClass::class, $result);
+    }
+      
+    public function test_builtin_dependency_initializer(): void
+    {
+        $container = new GenericContainer();
+        $container->addInitializer(BuiltinDependencyArrayInitializer::class);
+        $container->addInitializer(BuiltinDependencyBoolInitializer::class);
+        $container->addInitializer(BuiltinDependencyStringInitializer::class);
+
+        /** @var DependencyWithBuiltinDependencies $a */
+        $a = $container->get(DependencyWithBuiltinDependencies::class);
+
+        $this->assertSame("Hallo dependency!", $a->stringValue);
+        $this->assertSame(["hallo", "array", 42], $a->arrayValue);
+        $this->assertTrue($a->boolValue);
     }
 }

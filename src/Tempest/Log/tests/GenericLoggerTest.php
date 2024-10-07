@@ -7,6 +7,7 @@ namespace Tempest\Log\Tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
+use Tempest\Log\Channels\WeeklyLogChannel;
 use Tempest\Log\GenericLogger;
 use Tempest\Log\LogConfig;
 
@@ -41,6 +42,25 @@ final class GenericLoggerTest extends TestCase
         $config = new LogConfig(
             channels: [
                 new DailyLogChannel(__DIR__ . '/logs/tempest.log'),
+            ],
+        );
+
+        $logger = new GenericLogger($config);
+
+        $logger->info('test');
+
+        $this->assertFileExists($filePath);
+
+        $this->assertStringContainsString('test', file_get_contents($filePath));
+    }
+
+    public function test_weekly_log_channel_works(): void
+    {
+        $filePath = __DIR__ . '/logs/tempest-' . date('Y-W') . '.log';
+
+        $config = new LogConfig(
+            channels: [
+                new WeeklyLogChannel(__DIR__ . '/logs/tempest.log'),
             ],
         );
 
