@@ -69,12 +69,12 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MySqlConnection(),
-            'CREATE TABLE `books` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `books` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'postgresql' => [
             new PostgresConnection(),
-            'CREATE TABLE `books` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+            'CREATE TABLE `books` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
         ];
 
         yield 'sqlite' => [

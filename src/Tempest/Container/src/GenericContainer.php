@@ -81,7 +81,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function singleton(string $className, object|callable $definition, ?string $tag = null): self
+    public function singleton(string $className, mixed $definition, ?string $tag = null): self
     {
         $className = $this->resolveTaggedName($className, $tag);
 
@@ -239,7 +239,7 @@ final class GenericContainer implements Container
         }
 
         // Next we check if any of our default initializers can initialize this class.
-        if (($initializer = $this->initializerFor($class, $tag)) !== null) {
+        if (($initializer = $this->initializerForClass($class, $tag)) !== null) {
             $initializerClass = new ClassReflector($initializer);
 
             $this->resolveChain()->add($initializerClass);
@@ -268,15 +268,24 @@ final class GenericContainer implements Container
         return $this->autowire($className, ...$params);
     }
 
-    private function initializerFor(ClassReflector $class, ?string $tag = null): null|Initializer|DynamicInitializer
+    private function initializerForBuiltin(TypeReflector $target, string $tag): null|Initializer
+    {
+        if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
+            return $this->resolve($initializerClass);
+        }
+
+        return null;
+    }
+
+    private function initializerForClass(ClassReflector $target, ?string $tag = null): null|Initializer|DynamicInitializer
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
-        if ($class->getType()->matches(Initializer::class) || $class->getType()->matches(DynamicInitializer::class)) {
+        if ($target->getType()->matches(Initializer::class) || $target->getType()->matches(DynamicInitializer::class)) {
             return null;
         }
 
-        if ($initializerClass = $this->initializers[$this->resolveTaggedName($class, $tag)] ?? null) {
+        if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
             return $this->resolve($initializerClass);
         }
 
@@ -286,7 +295,7 @@ final class GenericContainer implements Container
             /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($class)) {
+            if (! $initializer->canInitialize($target)) {
                 continue;
             }
 
@@ -354,14 +363,15 @@ final class GenericContainer implements Container
     {
         $parameterType = $parameter->getType();
 
-        // If the parameter is a built-in type, immediately skip reflection
-        // stuff and attempt to give it a default or null value.
+        // If the parameter is a built-in type, skip reflection and attempt to provide the value by
+        // tagged initializer, a default value or null value.
         if ($parameterType->isBuiltin()) {
             return $this->autowireBuiltinDependency($parameter, $providedValue);
         }
 
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
+
             try {
                 return $this->autowireObjectDependency(
                     type: $type,
@@ -402,6 +412,24 @@ final class GenericContainer implements Container
 
     private function autowireBuiltinDependency(ParameterReflector $parameter, mixed $providedValue): mixed
     {
+        $typeName = $parameter->getType()->getName();
+        $tag = $parameter->getAttribute(Tag::class);
+
+        if ($tag !== null && $initializer = $this->initializerForBuiltin($parameter->getType(), $tag->name)) {
+            $initializerClass = new ClassReflector($initializer);
+
+            $object = $initializer->initialize($this->clone());
+
+            $singleton = $initializerClass->getAttribute(Singleton::class)
+                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
+
+            if ($singleton !== null) {
+                $this->singleton($typeName, $object, $tag->name);
+            }
+
+            return $object;
+        }
+
         // Due to type coercion, the provided value may (or may not) work.
         // Here we give up trying to do type work for people. If they
         // didn't provide the right type, that's on them.
@@ -458,10 +486,8 @@ final class GenericContainer implements Container
         $this->chain = $this->chain?->clone();
     }
 
-    private function resolveTaggedName(string|ClassReflector $class, ?string $tag): string
+    private function resolveTaggedName(string $className, ?string $tag): string
     {
-        $className = is_string($class) ? $class : $class->getName();
-
         return $tag
             ? "{$className}#{$tag}"
             : $className;

@@ -26,9 +26,10 @@ final readonly class BelongsToStatement implements QueryStatement
             DatabaseDialect::MYSQL,
             DatabaseDialect::POSTGRESQL => (new ConstraintStatement(
                 sprintf(
-                    'fk_%s_%s',
+                    'fk_%s_%s_%s',
                     strtolower($foreignTable),
                     strtolower($localTable),
+                    strtolower($localKey)
                 ),
                 new RawStatement(
                     sprintf(
