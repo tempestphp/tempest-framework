@@ -53,11 +53,23 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('1a', $response->getBody());
     }
 
+    public function test_dispatch_with_parameter_with_complex_custom_regex(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $response = $router->dispatch($this->http->makePsrRequest('/test/1'));
+
+        $this->assertEquals(Status::OK, $response->getStatus());
+        $this->assertEquals('1', $response->getBody());
+    }
+
     public function test_generate_uri(): void
     {
         $router = $this->container->get(GenericRouter::class);
 
         $this->assertEquals('/test/1/a', $router->toUri([TestController::class, 'withParams'], id: 1, name: 'a'));
+
+        $this->assertEquals('/test/1', $router->toUri([TestController::class, 'withComplexCustomRegexParams'], id: 1));
 
         $this->assertEquals('/test/1/a/b', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b'));
         $this->assertEquals('/test', $router->toUri(TestController::class));

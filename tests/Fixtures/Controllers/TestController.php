@@ -29,6 +29,12 @@ final readonly class TestController
         return new Ok($id . $name);
     }
 
+    #[Get(uri: '/test/{id:\d{1,9}}')]
+    public function withComplexCustomRegexParams(string $id): Response
+    {
+        return new Ok($id);
+    }
+
     #[Get(uri: '/test')]
     public function __invoke(): Response
     {
