@@ -15,8 +15,7 @@ final readonly class ForelseAttribute implements Attribute
     {
         $previous = $element->getPrevious();
 
-        if (! $previous?->hasAttribute('foreach'))
-        {
+        if (! $previous?->hasAttribute('foreach')) {
             throw new Exception('No valid foreach loop found in preceding element');
         }
 

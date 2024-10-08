@@ -18,7 +18,8 @@ final class ElementFactory
     public function __construct(
         private ViewConfig $viewConfig,
         private Container $container,
-    ) {}
+    ) {
+    }
 
     public function make(DOMElement $node): ?Element
     {

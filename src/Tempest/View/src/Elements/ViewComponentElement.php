@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
@@ -12,7 +14,8 @@ final class ViewComponentElement implements Element
     public function __construct(
         private readonly ViewComponent $viewComponent,
         private readonly array $attributes,
-    ) {}
+    ) {
+    }
 
     public function getViewComponent(): ViewComponent
     {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures;
 
-use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;

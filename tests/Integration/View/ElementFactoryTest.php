@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\View;
 
 use Masterminds\HTML5;
 use PHPUnit\Framework\TestCase;
-use function Tempest\view;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;

@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
-use Tempest\View\ViewCache;
 use function Tempest\view;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -60,7 +60,18 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></input></div></form>
+            <form action="#" method="post" >
+                <div><div>
+                <label for="a">a</label>
+                <input type="number" name="a" id="a" value="" />
+                
+            </div></div>
+            <div>
+                <label for="b">b</label>
+                <input type="text" name="b" id="b" value="" />
+                
+            </div>
+            </form>
             HTML,
             actual: $this->render(view(
                 <<<'HTML'
@@ -145,7 +156,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         yield [
             '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p><p>b</p></div>',
+            '<div><p>a</p>
+<p>b</p></div>',
         ];
 
         yield [
@@ -215,7 +227,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $rendered = $this->render(
             view(<<<HTML
-            <x-with-variable :variable="strtoupper('test')"></x-with-variable>'
+            <x-with-variable :variable="strtoupper('test')"></x-with-variable>
             HTML)
         );
 

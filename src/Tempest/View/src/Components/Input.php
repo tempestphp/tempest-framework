@@ -6,7 +6,6 @@ namespace Tempest\View\Components;
 
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rule;
-use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;

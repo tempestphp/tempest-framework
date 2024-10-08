@@ -9,8 +9,8 @@ use Masterminds\HTML5;
 use ParseError;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
-use Tempest\View\Elements\ViewComponentElement;
 use function Tempest\path;
+use function Tempest\Support\arr;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\CollectionElement;
@@ -20,6 +20,7 @@ use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\RawElement;
 use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
@@ -28,7 +29,15 @@ use Tempest\View\ViewRenderer;
 
 final class TempestViewRenderer implements ViewRenderer
 {
+    private const array TOKEN_MAPPING = [
+        '<?php' => '__TOKEN_PHP_OPEN__',
+        '<?=' => '__TOKEN_PHP_SHORT_ECHO__',
+        '?>' => '__TOKEN_PHP_CLOSE__',
+    ];
+
     private ?View $currentView = null;
+
+    private ?Element $currentScope = null;
 
     public function __construct(
         private readonly ElementFactory $elementFactory,
@@ -37,11 +46,13 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
         private readonly ViewCache $viewCache,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
-        return $this->currentView?->get($name);
+        return $this->currentScope?->getData($name)
+            ?? $this->currentView?->get($name);
     }
 
     public function __call(string $name, array $arguments)
@@ -53,11 +64,17 @@ final class TempestViewRenderer implements ViewRenderer
     {
         $view = $this->resolveView($view);
 
-//        /** @var Element $element */
-//        $element = $this->viewCache->resolve(
-//            key: (string)crc32($view->getPath()),
-//            cache: function () use ($view) {
+        //        /** @var Element $element */
+        //        $element = $this->viewCache->resolve(
+        //            key: (string)crc32($view->getPath()),
+        //            cache: function () use ($view) {
         $contents = $this->resolveContent($view);
+
+        $contents = str_replace(
+            search: array_keys(self::TOKEN_MAPPING),
+            replace: array_values(self::TOKEN_MAPPING),
+            subject: $contents,
+        );
 
         $html5 = new HTML5();
         $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
@@ -66,9 +83,9 @@ final class TempestViewRenderer implements ViewRenderer
             $dom->getElementById('tempest_render'),
         );
 
-//                return $element;
-//            },
-//        );
+        //                return $element;
+        //            },
+        //        );
 
         $element->setView($view);
 
@@ -79,7 +96,15 @@ final class TempestViewRenderer implements ViewRenderer
 
         $rendered = $this->renderElements($view, $element->getChildren());
 
-        return trim($this->evalContentIsolated($view, $rendered));
+        $this->currentScope = null;
+
+        $rendered = str_replace(
+            search: array_values(self::TOKEN_MAPPING),
+            replace: array_keys(self::TOKEN_MAPPING),
+            subject: $rendered,
+        );
+
+        return $this->scopedEval($rendered);
     }
 
     /** @param \Tempest\View\Element[] $elements */
@@ -117,15 +142,14 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         if ($element instanceof ViewComponentElement) {
-            return $this->renderViewComponent(
-                view: $view,
-                element: $element,
-            );
+            return $this->renderViewComponentElement($view, $element);
         }
 
         if ($element instanceof GenericElement) {
             return $this->renderGenericElement($view, $element);
         }
+
+        $this->currentScope = null;
 
         throw new Exception("No rendered found");
     }
@@ -135,7 +159,7 @@ final class TempestViewRenderer implements ViewRenderer
         $path = $view->getPath();
 
         if (! str_ends_with($path, '.php')) {
-            return $this->evalContentIsolated($view, $path);
+            return $path;
         }
 
         $discoveryLocations = $this->kernel->discoveryLocations;
@@ -149,7 +173,7 @@ final class TempestViewRenderer implements ViewRenderer
             throw new Exception("View {$path} not found");
         }
 
-        return $this->resolveContentIsolated($view, $path);
+        return file_get_contents($path);
     }
 
     private function applyAttributes(View $view, Element $element): Element
@@ -204,8 +228,10 @@ final class TempestViewRenderer implements ViewRenderer
         return implode(PHP_EOL, $rendered);
     }
 
-    private function renderViewComponent(View $view, ViewComponentElement $element): string
+    private function renderViewComponentElement(View $view, ViewComponentElement $element): string
     {
+        $this->currentScope = $element;
+
         $renderedContent = preg_replace_callback(
             pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
             callback: function ($matches) use ($view, $element) {
@@ -222,7 +248,11 @@ final class TempestViewRenderer implements ViewRenderer
             subject: $element->getViewComponent()->render($element, $this),
         );
 
-        return $this->render($renderedContent);
+        $rendered = $this->scopedEval($renderedContent);
+
+        $this->currentScope = null;
+
+        return $rendered;
     }
 
     private function renderEmptyElement(): string
@@ -270,40 +300,24 @@ final class TempestViewRenderer implements ViewRenderer
         return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
     }
 
-    private function resolveContentIsolated(View $_view, string $_path): string
+    private function scopedEval(string $_content): string
     {
         ob_start();
 
-        $_data = $_view->getData();
+        // Extract data from current element and current view into local variables so that they can be accessed directly
+        $_data = arr([
+            ...($this->currentScope?->getData() ?? []),
+            ...$this->currentView?->getData(),
+        ])
+            ->mapWithKeys(fn (mixed $value, string $key) => yield ltrim($key, ':') => $value)
+            ->toArray();
 
         extract($_data, flags: EXTR_SKIP);
 
-        include $_path;
-
-        $content = ob_get_clean();
-
-        // If the view defines local variables, we add them here to the view object as well
-        foreach (get_defined_vars() as $key => $value) {
-            if (! $_view->has($key)) {
-                $_view->data(...[$key => $value]);
-            }
-        }
-
-        return $content;
-    }
-
-    private function evalContentIsolated(View $_view, string $_content): string
-    {
-        ob_start();
-
-        $_data = $_view->getData();
-
-        extract($_data, flags: EXTR_SKIP);
+        // Cleanup content before parsing
+        $_content = str_replace('declare(strict_types=1);', '', $_content);
 
         try {
-            // TODO: find a better way of dealing with views that declare strict types
-            $_content = str_replace('declare(strict_types=1);', '', $_content);
-
             /** @phpstan-ignore-next-line */
             eval('?>' . $_content . '<?php');
         } catch (ParseError) {
@@ -312,12 +326,12 @@ final class TempestViewRenderer implements ViewRenderer
 
         // If the view defines local variables, we add them here to the view object as well
         foreach (get_defined_vars() as $key => $value) {
-            if (! $_view->has($key)) {
-                $_view->data(...[$key => $value]);
+            if (! $this->currentView->has($key)) {
+                $this->currentView->data(...[$key => $value]);
             }
         }
 
-        return ob_get_clean();
+        return trim(ob_get_clean());
     }
 
     private function resolveView(View|string|null $view): View

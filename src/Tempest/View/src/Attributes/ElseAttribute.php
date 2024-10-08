@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Attributes;
 
-use Exception;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
-use Tempest\View\Elements\GenericElement;
 
 final readonly class ElseAttribute implements Attribute
 {
