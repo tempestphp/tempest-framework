@@ -1003,11 +1003,67 @@ final class ArrayHelperTest extends TestCase
             expected: [
                 1 => 'John Doe',
                 2 => 'Jane Smith',
-                1 => 'John Doe',
                 3 => 'Alice Johnson',
-                2 => 'Jane Smith',
                 4 => 'Bob Brown',
             ],
         );
+    }
+
+    public function test_random(): void {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        
+        $random = $collection->random();
+        $this->assertIsInt($random);
+        $this->assertContains($random, $collection->toArray());
+        
+        $randoms = $collection->random(3);
+        foreach ($randoms as $value) {
+            $this->assertIsInt($value);
+            $this->assertContains($value, $collection->toArray());
+        }
+        $this->assertCount(3, $randoms);
+    }
+
+    public function test_random_with_preserve_keys(): void {
+        $collection = arr([
+            'id'     => 1,
+            'title'  => 'First Post',
+            'author' => ['id' => 1, 'name' => 'John Doe'],
+        ]);
+
+        $randoms = $collection->random(3, preserveKey: true);
+
+        $this->assertCount(3, $randoms);
+        $this->assertArrayHasKey('id', $randoms);
+        $this->assertArrayHasKey('title', $randoms);
+        $this->assertArrayHasKey('author', $randoms);
+
+        $randoms = $collection->random(2, preserveKey: true);
+
+        $this->assertCount(2, array_intersect_key($collection->toArray(), $randoms->toArray()) );
+    }
+
+    public function test_random_on_empty_array(): void {
+        $collection = arr();
+        
+        $this->expectException(\InvalidArgumentException::class);
+
+        $collection->random();
+    }
+
+    public function test_random_with_count_superior_than_array_count(): void {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        
+        $this->expectException(\InvalidArgumentException::class);
+
+        $collection->random(15);
+    }
+
+    public function test_random_throw_exception_when_giving_negative_integer(): void {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+        
+        $this->expectException(\InvalidArgumentException::class);
+        
+        $collection->random(-1);
     }
 }

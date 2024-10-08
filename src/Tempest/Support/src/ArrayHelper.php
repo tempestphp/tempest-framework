@@ -9,6 +9,7 @@ use Closure;
 use Countable;
 use Generator;
 use Iterator;
+use Random\Randomizer;
 use Serializable;
 use Stringable;
 use function Tempest\map;
@@ -47,10 +48,47 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Get one or a specified number of random values from the array.
+     *
+     * @param integer $number The number of random values to get.
+     * @param boolean $preserveKey Whether to preserve the keys of the original array. ( won't work if $number is 1 as it will return a single value )
+     *
+     * @return self<TKey, TValue>|mixed The random values or single value if $number is 1.
+     */
+    public function random( int $number = 1, bool $preserveKey = false ): mixed {
+        $count = count( $this->array );
+
+        if ( $number > $count ) {
+            throw new \InvalidArgumentException( "Cannot retrive {$number} items from an array of {$count} items." );
+        }
+
+        if ( $number < 1 ) {
+            throw new \InvalidArgumentException( "Random value only accepts positive integers, {$number} requested." );
+        }
+
+        $keys = (new Randomizer)->pickArrayKeys( $this->array, $number );
+
+        $randomValues = [];
+        foreach ( $keys as $key ) {
+            $preserveKey
+                ? $randomValues[$key] = $this->array[$key]
+                : $randomValues[] = $this->array[$key];
+        }
+
+        if ( $preserveKey === false ) {
+            shuffle( $randomValues );
+        }
+
+        return count( $randomValues ) > 1
+            ? new self( $randomValues )
+            : $randomValues[0];
+    }
+
+    /**
      * Retrieve values from a given key in each sub-array of the current array.
      * Optionally, you can pass a second parameter to also get the keys following the same pattern.
      *
-     * @param array-key $value The key to assign the values from, support dot notation.
+     * @param string $value The key to assign the values from, support dot notation.
      * @param string|null $key The key to assign the keys from, support dot notation.
      *
      * @return self<TKey, TValue>
