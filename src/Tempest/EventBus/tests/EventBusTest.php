@@ -91,7 +91,7 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
-        $eventBus->listen('my-event', function (string $event) use (&$hasHappened) {
+        $eventBus->listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
@@ -109,7 +109,7 @@ final class EventBusTest extends TestCase
 
         $hasHappened = false;
 
-        listen('my-event', function (string $event) use (&$hasHappened) {
+        listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
