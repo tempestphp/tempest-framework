@@ -862,7 +862,7 @@ final class ArrayHelperTest extends TestCase
     }
 
     public function test_push_is_alias_of_add(): void {
-        $first_collection  = arr()
+        $first_collection = arr()
             ->add(42)
             ->add('Hello')
             ->add([])
@@ -876,5 +876,138 @@ final class ArrayHelperTest extends TestCase
             ->push(null);
 
         $this->assertTrue( $first_collection->equals($second_collection) );
+    }
+
+    public function test_pluck_without_arrays(): void {
+        $this->assertSame(
+            actual: arr([
+                'name' => 'John',
+                'age'  => 42,
+            ])
+                ->pluck('name')
+                ->toArray(),
+            expected: [],
+        );
+    }
+
+    public function test_pluck_basics(): void {
+        $collection = arr([
+            ['name' => 'John', 'age' => 42],
+            ['name' => 'Jane', 'age' => 35],
+            ['name' => 'Alice', 'age' => 28],
+        ]);
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('name')
+                ->toArray(),
+            expected: ['John', 'Jane', 'Alice'],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('age')
+                ->toArray(),
+            expected: [42, 35, 28],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('name', 'age')
+                ->toArray(),
+            expected: [
+                42 => 'John',
+                35 => 'Jane',
+                28 => 'Alice',
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('age', 'name')
+                ->toArray(),
+            expected: [
+                'John' => 42,
+                'Jane' => 35,
+                'Alice' => 28,
+            ],
+        );
+    }
+
+    public function test_pluck_dot_notation(): void {
+        $collection = arr([
+            [
+                'id' => 1,
+                'title' => 'First Post',
+                'author' => ['id' => 1, 'name' => 'John Doe'],
+            ],
+            [
+                'id' => 2,
+                'title' => 'Second Post',
+                'author' => ['id' => 2, 'name' => 'Jane Smith'],
+            ],
+            [
+                'id' => 3,
+                'title' => 'Third Post',
+                'author' => ['id' => 1, 'name' => 'John Doe'],
+            ],
+            [
+                'id' => 4,
+                'title' => 'Fourth Post',
+                'author' => ['id' => 3, 'name' => 'Alice Johnson'],
+            ],
+            [
+                'id' => 5,
+                'title' => 'Fifth Post',
+                'author' => ['id' => 2, 'name' => 'Jane Smith'],
+            ],
+            [
+                'id' => 6,
+                'title' => 'Sixth Post',
+                'author' => ['id' => 4, 'name' => 'Bob Brown'],
+            ],
+        ]);
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('author.name')
+                ->toArray(),
+            expected: [
+                'John Doe',
+                'Jane Smith',
+                'John Doe',
+                'Alice Johnson',
+                'Jane Smith',
+                'Bob Brown',
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('author.name', 'id')
+                ->toArray(),
+            expected: [
+                1 => 'John Doe',
+                2 => 'Jane Smith',
+                3 => 'John Doe',
+                4 => 'Alice Johnson',
+                5 => 'Jane Smith',
+                6 => 'Bob Brown',
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->pluck('author.name', 'author.id')
+                ->toArray(),
+            expected: [
+                1 => 'John Doe',
+                2 => 'Jane Smith',
+                1 => 'John Doe',
+                3 => 'Alice Johnson',
+                2 => 'Jane Smith',
+                4 => 'Bob Brown',
+            ],
+        );
     }
 }

@@ -47,7 +47,41 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * @alias of add
+     * Retrieve values from a given key in each sub-array of the current array.
+     * Optionally, you can pass a second parameter to also get the keys following the same pattern.
+     *
+     * @param array-key $value The key to assign the values from, support dot notation.
+     * @param string|null $key The key to assign the keys from, support dot notation.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pluck( string $value, ?string $key = null ): self {
+        $results = [];
+
+        foreach ( $this->array as $item ) {
+            if ( ! is_array( $item ) ) {
+                continue;
+            }
+            
+            $itemValue = arr($item)->get( $value );
+
+            /**
+             * Perform basic pluck if no key is given.
+             * Otherwise, also pluck the key as well.
+             */
+            if ( is_null( $key ) ) {
+                $results[] = $itemValue;
+            } else {
+                $itemKey           = arr($item)->get( $key );
+                $results[$itemKey] = $itemValue;
+            }
+        }
+
+        return new self( $results );
+    }
+    
+    /**
+     * @alias of add.
      */
     public function push(mixed $value): self
     {
