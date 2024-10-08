@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
@@ -764,22 +765,24 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_flip(): void {
+    public function test_flip(): void
+    {
         $this->assertSame(
             actual: arr([
                 'first_name' => 'John',
-                'last_name'  => 'Doe',
+                'last_name' => 'Doe',
             ])
                 ->flip()
                 ->toArray(),
             expected: [
                 'John' => 'first_name',
-                'Doe'  => 'last_name',
+                'Doe' => 'last_name',
             ],
         );
     }
 
-    public function test_pad(): void {
+    public function test_pad(): void
+    {
         $this->assertSame(
             actual: arr([1, 2, 3])
                 ->pad(4, 0)
@@ -809,7 +812,8 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_add(): void {
+    public function test_add(): void
+    {
         $collection = arr();
         $this->assertSame(
             actual: $collection
@@ -861,7 +865,8 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_push_is_alias_of_add(): void {
+    public function test_push_is_alias_of_add(): void
+    {
         $first_collection = arr()
             ->add(42)
             ->add('Hello')
@@ -875,14 +880,15 @@ final class ArrayHelperTest extends TestCase
             ->push(false)
             ->push(null);
 
-        $this->assertTrue( $first_collection->equals($second_collection) );
+        $this->assertTrue($first_collection->equals($second_collection));
     }
 
-    public function test_pluck_without_arrays(): void {
+    public function test_pluck_without_arrays(): void
+    {
         $this->assertSame(
             actual: arr([
                 'name' => 'John',
-                'age'  => 42,
+                'age' => 42,
             ])
                 ->pluck('name')
                 ->toArray(),
@@ -890,7 +896,8 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_pluck_basics(): void {
+    public function test_pluck_basics(): void
+    {
         $collection = arr([
             ['name' => 'John', 'age' => 42],
             ['name' => 'Jane', 'age' => 35],
@@ -934,7 +941,8 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_pluck_dot_notation(): void {
+    public function test_pluck_dot_notation(): void
+    {
         $collection = arr([
             [
                 'id' => 1,
@@ -1009,13 +1017,14 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_random(): void {
+    public function test_random(): void
+    {
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-        
+
         $random = $collection->random();
         $this->assertIsInt($random);
         $this->assertContains($random, $collection->toArray());
-        
+
         $randoms = $collection->random(3);
         foreach ($randoms as $value) {
             $this->assertIsInt($value);
@@ -1024,10 +1033,11 @@ final class ArrayHelperTest extends TestCase
         $this->assertCount(3, $randoms);
     }
 
-    public function test_random_with_preserve_keys(): void {
+    public function test_random_with_preserve_keys(): void
+    {
         $collection = arr([
-            'id'     => 1,
-            'title'  => 'First Post',
+            'id' => 1,
+            'title' => 'First Post',
             'author' => ['id' => 1, 'name' => 'John Doe'],
         ]);
 
@@ -1040,30 +1050,33 @@ final class ArrayHelperTest extends TestCase
 
         $randoms = $collection->random(2, preserveKey: true);
 
-        $this->assertCount(2, array_intersect_key($collection->toArray(), $randoms->toArray()) );
+        $this->assertCount(2, array_intersect_key($collection->toArray(), $randoms->toArray()));
     }
 
-    public function test_random_on_empty_array(): void {
+    public function test_random_on_empty_array(): void
+    {
         $collection = arr();
-        
-        $this->expectException(\InvalidArgumentException::class);
+
+        $this->expectException(InvalidArgumentException::class);
 
         $collection->random();
     }
 
-    public function test_random_with_count_superior_than_array_count(): void {
+    public function test_random_with_count_superior_than_array_count(): void
+    {
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-        
-        $this->expectException(\InvalidArgumentException::class);
+
+        $this->expectException(InvalidArgumentException::class);
 
         $collection->random(15);
     }
 
-    public function test_random_throw_exception_when_giving_negative_integer(): void {
+    public function test_random_throw_exception_when_giving_negative_integer(): void
+    {
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-        
-        $this->expectException(\InvalidArgumentException::class);
-        
+
+        $this->expectException(InvalidArgumentException::class);
+
         $collection->random(-1);
     }
 }

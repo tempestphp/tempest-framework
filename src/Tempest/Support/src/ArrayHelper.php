@@ -8,6 +8,7 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Generator;
+use InvalidArgumentException;
 use Iterator;
 use Random\Randomizer;
 use Serializable;
@@ -17,7 +18,7 @@ use function Tempest\map;
 /**
  * @template TKey of array-key
  * @template TValue
- * 
+ *
  * @implements ArrayAccess<TKey, TValue>
  * @implements Iterator<TKey, TValue>
  */
@@ -50,37 +51,38 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Get one or a specified number of random values from the array.
      *
-     * @param integer $number The number of random values to get.
-     * @param boolean $preserveKey Whether to preserve the keys of the original array. ( won't work if $number is 1 as it will return a single value )
+     * @param int $number The number of random values to get.
+     * @param bool $preserveKey Whether to preserve the keys of the original array. ( won't work if $number is 1 as it will return a single value )
      *
      * @return self<TKey, TValue>|mixed The random values or single value if $number is 1.
      */
-    public function random( int $number = 1, bool $preserveKey = false ): mixed {
-        $count = count( $this->array );
+    public function random(int $number = 1, bool $preserveKey = false): mixed
+    {
+        $count = count($this->array);
 
-        if ( $number > $count ) {
-            throw new \InvalidArgumentException( "Cannot retrive {$number} items from an array of {$count} items." );
+        if ($number > $count) {
+            throw new InvalidArgumentException("Cannot retrive {$number} items from an array of {$count} items.");
         }
 
-        if ( $number < 1 ) {
-            throw new \InvalidArgumentException( "Random value only accepts positive integers, {$number} requested." );
+        if ($number < 1) {
+            throw new InvalidArgumentException("Random value only accepts positive integers, {$number} requested.");
         }
 
-        $keys = (new Randomizer)->pickArrayKeys( $this->array, $number );
+        $keys = (new Randomizer())->pickArrayKeys($this->array, $number);
 
         $randomValues = [];
-        foreach ( $keys as $key ) {
+        foreach ($keys as $key) {
             $preserveKey
                 ? $randomValues[$key] = $this->array[$key]
                 : $randomValues[] = $this->array[$key];
         }
 
-        if ( $preserveKey === false ) {
-            shuffle( $randomValues );
+        if ($preserveKey === false) {
+            shuffle($randomValues);
         }
 
-        return count( $randomValues ) > 1
-            ? new self( $randomValues )
+        return count($randomValues) > 1
+            ? new self($randomValues)
             : $randomValues[0];
     }
 
@@ -93,31 +95,32 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function pluck( string $value, ?string $key = null ): self {
+    public function pluck(string $value, ?string $key = null): self
+    {
         $results = [];
 
-        foreach ( $this->array as $item ) {
-            if ( ! is_array( $item ) ) {
+        foreach ($this->array as $item) {
+            if (! is_array($item)) {
                 continue;
             }
-            
-            $itemValue = arr($item)->get( $value );
+
+            $itemValue = arr($item)->get($value);
 
             /**
              * Perform basic pluck if no key is given.
              * Otherwise, also pluck the key as well.
              */
-            if ( is_null( $key ) ) {
+            if (is_null($key)) {
                 $results[] = $itemValue;
             } else {
-                $itemKey           = arr($item)->get( $key );
+                $itemKey = arr($item)->get($key);
                 $results[$itemKey] = $itemValue;
             }
         }
 
-        return new self( $results );
+        return new self($results);
     }
-    
+
     /**
      * @alias of add.
      */
@@ -133,7 +136,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function add( mixed $value ): self {
+    public function add(mixed $value): self
+    {
         $this->array[] = $value;
 
         return $this;
@@ -142,12 +146,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Pad the array to the specified size with a value.
      *
-     * @param integer $size
+     * @param int $size
      * @param mixed $value
      *
      * @return self<TKey, TValue>
      */
-    public function pad(int $size, mixed $value): self {
+    public function pad(int $size, mixed $value): self
+    {
         return new self(array_pad($this->array, $size, $value));
     }
 
@@ -156,7 +161,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TValue&array-key, TKey>
      */
-    public function flip(): self {
+    public function flip(): self
+    {
         return new self(array_flip($this->array));
     }
 
