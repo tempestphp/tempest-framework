@@ -23,7 +23,7 @@ final readonly class ResolveRequestMiddleware implements HttpMiddleware
         try {
             $wantedRequestClass = $this->getRequestClassFromRoute($this->container->get(MatchedRoute::class));
 
-            if ($wantedRequestClass === null) {
+            if (! $wantedRequestClass) {
                 return $next($request);
             }
 
