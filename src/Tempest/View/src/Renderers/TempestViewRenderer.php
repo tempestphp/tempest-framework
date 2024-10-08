@@ -88,7 +88,7 @@ final class TempestViewRenderer implements ViewRenderer
         //        );
 
         $element->setView($view);
-
+lw($element);
         $element = $this->applyAttributes(
             view: $view,
             element: $element,

@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Masterminds\HTML5;
-use PHPUnit\Framework\TestCase;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class ElementFactoryTest extends TestCase
+final class ElementFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_parental_relations(): void
     {
@@ -32,7 +32,7 @@ final class ElementFactoryTest extends TestCase
         $html5 = new HTML5();
         $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
 
-        $elementFactory = new ElementFactory();
+        $elementFactory = $this->container->get(ElementFactory::class);
 
         $a = $elementFactory->make($dom->getElementById('tempest_render')->firstElementChild);
 
