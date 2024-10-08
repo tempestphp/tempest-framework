@@ -16,6 +16,7 @@ use function Tempest\map;
 /**
  * @template TKey of array-key
  * @template TValue
+ * 
  * @implements ArrayAccess<TKey, TValue>
  * @implements Iterator<TKey, TValue>
  */
@@ -23,6 +24,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 {
     use IsIterable;
 
+    /**
+     * The underlying array.
+     *
+     * @var array<TKey, TValue>
+     */
     private array $array;
 
     /**
@@ -38,6 +44,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         } else {
             $this->array = [$input];
         }
+    }
+
+    /**
+     * Reverse the keys and values of the array.
+     *
+     * @return self<TValue&array-key, TKey>
+     */
+    public function flip(): self {
+        return new self(array_flip($this->array));
     }
 
     /**

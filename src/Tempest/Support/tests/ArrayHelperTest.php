@@ -763,4 +763,19 @@ final class ArrayHelperTest extends TestCase
             ],
         );
     }
+
+    public function test_flip(): void {
+        $this->assertSame(
+            actual: arr([
+                'first_name' => 'John',
+                'last_name'  => 'Doe',
+            ])
+                ->flip()
+                ->toArray(),
+            expected: [
+                'John' => 'first_name',
+                'Doe'  => 'last_name',
+            ],
+        );
+    }
 }
