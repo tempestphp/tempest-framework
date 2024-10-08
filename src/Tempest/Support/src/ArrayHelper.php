@@ -47,6 +47,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * @alias of add
+     */
+    public function push(mixed $value): self
+    {
+        return $this->add($value);
+    }
+
+    /**
      * Add an item at the end of the array.
      *
      * @param mixed $value

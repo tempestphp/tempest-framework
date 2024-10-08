@@ -860,4 +860,21 @@ final class ArrayHelperTest extends TestCase
             expected: [1, 2, '', null, false, [], 'name'],
         );
     }
+
+    public function test_push_is_alias_of_add(): void {
+        $first_collection  = arr()
+            ->add(42)
+            ->add('Hello')
+            ->add([])
+            ->add(false)
+            ->add(null);
+        $second_collection = arr()
+            ->push(42)
+            ->push('Hello')
+            ->push([])
+            ->push(false)
+            ->push(null);
+
+        $this->assertTrue( $first_collection->equals($second_collection) );
+    }
 }
