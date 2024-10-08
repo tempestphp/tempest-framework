@@ -17,6 +17,11 @@ final readonly class GenericEventBus implements EventBus
     ) {
     }
 
+    public function listen(string|object $event, Closure $handler): void
+    {
+        $this->eventBusConfig->addClosureHandler($event, $handler);
+    }
+
     public function dispatch(string|object $event): void
     {
         $eventName = match(true) {
@@ -26,31 +31,29 @@ final readonly class GenericEventBus implements EventBus
             default => $event::class,
         };
 
-        /** @var \Tempest\EventBus\EventHandler[] $eventHandlers */
+        /** @var \Tempest\EventBus\CallableEventHandler[] $eventHandlers */
         $eventHandlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
         foreach ($eventHandlers as $eventHandler) {
-            $callable = $this->getCallable($eventHandler);
+            $callable = $eventHandler->normalizeCallable($this->container);
+            $callable = $this->applyMiddleware($callable);
 
             $callable($event);
         }
     }
 
-    private function getCallable(EventHandler $eventHandler): Closure
+    private function applyMiddleware(Closure $handler): Closure
     {
-        $callable = function (string|object $event) use ($eventHandler): void {
-            $eventHandler->handler->invokeArgs(
-                $this->container->get($eventHandler->handler->getDeclaringClass()->getName()),
-                [$event],
-            );
-        };
-
         $middlewareStack = $this->eventBusConfig->middleware;
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = fn (string|object $event) => $this->container->get($middlewareClass)($event, $callable);
+            $handler = fn (string|object $event) => $this->container->invoke(
+                $middlewareClass,
+                event: $event,
+                next: $handler
+            );
         }
 
-        return $callable;
+        return $handler;
     }
 }
