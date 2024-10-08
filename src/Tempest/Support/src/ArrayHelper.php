@@ -47,6 +47,19 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Add an item at the end of the array.
+     *
+     * @param mixed $value
+     *
+     * @return self<TKey, TValue>
+     */
+    public function add( mixed $value ): self {
+        $this->array[] = $value;
+
+        return $this;
+    }
+
+    /**
      * Pad the array to the specified size with a value.
      *
      * @param integer $size

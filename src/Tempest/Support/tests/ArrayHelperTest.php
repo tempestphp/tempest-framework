@@ -808,4 +808,56 @@ final class ArrayHelperTest extends TestCase
             expected: [1, 2, 3, 4, 5],
         );
     }
+
+    public function test_add(): void {
+        $collection = arr();
+        $this->assertSame(
+            actual: $collection
+                ->add(1)
+                ->toArray(),
+            expected: [1],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add(2)
+                ->toArray(),
+            expected: [1, 2],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add('')
+                ->toArray(),
+            expected: [1, 2, ''],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add(null)
+                ->toArray(),
+            expected: [1, 2, '', null],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add(false)
+                ->toArray(),
+            expected: [1, 2, '', null, false],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add([])
+                ->toArray(),
+            expected: [1, 2, '', null, false, []],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->add('name')
+                ->toArray(),
+            expected: [1, 2, '', null, false, [], 'name'],
+        );
+    }
 }
