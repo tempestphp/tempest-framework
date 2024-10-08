@@ -778,4 +778,34 @@ final class ArrayHelperTest extends TestCase
             ],
         );
     }
+
+    public function test_pad(): void {
+        $this->assertSame(
+            actual: arr([1, 2, 3])
+                ->pad(4, 0)
+                ->toArray(),
+            expected: [1, 2, 3, 0],
+        );
+
+        $this->assertSame(
+            actual: arr([1, 2, 3, 4, 5])
+                ->pad(4, 0)
+                ->toArray(),
+            expected: [1, 2, 3, 4, 5],
+        );
+
+        $this->assertSame(
+            actual: arr([1, 2, 3])
+                ->pad(-4, 0)
+                ->toArray(),
+            expected: [0, 1, 2, 3],
+        );
+
+        $this->assertSame(
+            actual: arr([1, 2, 3, 4, 5])
+                ->pad(-4, 0)
+                ->toArray(),
+            expected: [1, 2, 3, 4, 5],
+        );
+    }
 }

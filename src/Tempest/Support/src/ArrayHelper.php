@@ -47,6 +47,18 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Pad the array to the specified size with a value.
+     *
+     * @param integer $size
+     * @param mixed $value
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pad(int $size, mixed $value): self {
+        return new self(array_pad($this->array, $size, $value));
+    }
+
+    /**
      * Reverse the keys and values of the array.
      *
      * @return self<TValue&array-key, TKey>
