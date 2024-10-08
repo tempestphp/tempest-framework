@@ -21,15 +21,13 @@ parameters:
 		-
 			message: '#.*[Rr]eadonly.*#'
 			path: src/Tempest/Core/src/Composer.php
-		-
-			message: '#.*final#'
-			path:  src/Tempest/Generation/tests/TestCase.php
+
 		-
 			message: '#.*#'
 			path: src/Tempest/Http/Exceptions/HttpExceptionHandler.php
 		-
 			message: '#.*#'
-			path: src/Tempest/Http/Exceptions/exception.php
+			path: src/Tempest/Http/src/Exceptions/exception.php
 		-
 			message: '#Access to an undefined property.*#'
 			path: tests/**/**.view.php
@@ -42,6 +40,10 @@ parameters:
 		-
 			message: '#.*exec*#'
 			path:  src/Tempest/Console/src/Commands/InstallCommand.php
+		-
+		    message: '#.*exec*#'
+		    path: src/Tempest/Console/src/Terminal/Terminal.php
+
 	disallowedFunctionCalls:
 		-
 			function: 'exec()'
