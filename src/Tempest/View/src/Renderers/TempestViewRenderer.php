@@ -9,7 +9,7 @@ use Masterminds\HTML5;
 use ParseError;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
-use Tempest\View\ViewCache;
+use Tempest\View\Elements\ViewComponentElement;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
@@ -22,8 +22,7 @@ use Tempest\View\Elements\SlotElement;
 use Tempest\View\Elements\TextElement;
 use Tempest\View\GenericView;
 use Tempest\View\View;
-use Tempest\View\ViewComponent;
-use Tempest\View\ViewComponentView;
+use Tempest\View\ViewCache;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
@@ -38,8 +37,7 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -53,38 +51,35 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function render(string|View|null $view): string
     {
-        if ($view === null) {
-            return '';
-        }
+        $view = $this->resolveView($view);
 
-        if (is_string($view)) {
-            $view = new GenericView($view);
-        }
+//        /** @var Element $element */
+//        $element = $this->viewCache->resolve(
+//            key: (string)crc32($view->getPath()),
+//            cache: function () use ($view) {
+        $contents = $this->resolveContent($view);
 
-        $this->currentView = $view;
+        $html5 = new HTML5();
+        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
 
-        $element = $this->viewCache->resolve(
-            key: (string) crc32($view->getPath()),
-            cache: function () use ($view) {
-                $contents = $this->resolveContent($view);
-
-                $html5 = new HTML5();
-                $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
-
-                return $this->elementFactory->make(
-                    $view,
-                    $dom->getElementById('tempest_render'),
-                );
-            }
+        $element = $this->elementFactory->make(
+            $dom->getElementById('tempest_render'),
         );
+
+//                return $element;
+//            },
+//        );
+
+        $element->setView($view);
 
         $element = $this->applyAttributes(
             view: $view,
             element: $element,
         );
 
+        $rendered = $this->renderElements($view, $element->getChildren());
 
-        return trim($this->renderElements($view, $element->getChildren()));
+        return trim($this->evalContentIsolated($view, $rendered));
     }
 
     /** @param \Tempest\View\Element[] $elements */
@@ -121,18 +116,15 @@ final class TempestViewRenderer implements ViewRenderer
             return $this->renderRawElement($element);
         }
 
-        if ($element instanceof GenericElement) {
-            $viewComponent = $this->resolveViewComponent($element);
-
-            if ($viewComponent === null) {
-                return $this->renderGenericElement($view, $element);
-            }
-
+        if ($element instanceof ViewComponentElement) {
             return $this->renderViewComponent(
                 view: $view,
-                viewComponent: $viewComponent,
                 element: $element,
             );
+        }
+
+        if ($element instanceof GenericElement) {
+            return $this->renderGenericElement($view, $element);
         }
 
         throw new Exception("No rendered found");
@@ -160,28 +152,8 @@ final class TempestViewRenderer implements ViewRenderer
         return $this->resolveContentIsolated($view, $path);
     }
 
-    private function resolveViewComponent(GenericElement $element): ?ViewComponent
-    {
-        /** @var class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent|null $viewComponentClass */
-        $viewComponentClass = $this->viewConfig->viewComponents[$element->getTag()] ?? null;
-
-        if (! $viewComponentClass) {
-            return null;
-        }
-
-        if ($viewComponentClass instanceof ViewComponent) {
-            return $viewComponentClass;
-        }
-
-        return $this->container->get($viewComponentClass);
-    }
-
     private function applyAttributes(View $view, Element $element): Element
     {
-        if (! $element instanceof GenericElement) {
-            return $element;
-        }
-
         $children = [];
 
         foreach ($element->getChildren() as $child) {
@@ -232,7 +204,7 @@ final class TempestViewRenderer implements ViewRenderer
         return implode(PHP_EOL, $rendered);
     }
 
-    private function renderViewComponent(View $view, ViewComponent $viewComponent, GenericElement $element): string
+    private function renderViewComponent(View $view, ViewComponentElement $element): string
     {
         $renderedContent = preg_replace_callback(
             pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
@@ -247,14 +219,10 @@ final class TempestViewRenderer implements ViewRenderer
 
                 return $this->renderElement($view, $slot);
             },
-            subject: $viewComponent->render($element, $this),
+            subject: $element->getViewComponent()->render($element, $this),
         );
 
-        return $this->render(new ViewComponentView(
-            wrappingView: $view,
-            wrappingElement: $element,
-            content: $renderedContent,
-        ));
+        return $this->render($renderedContent);
     }
 
     private function renderEmptyElement(): string
@@ -350,5 +318,20 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         return ob_get_clean();
+    }
+
+    private function resolveView(View|string|null $view): View
+    {
+        if ($view === null) {
+            $view = '';
+        }
+
+        if (is_string($view)) {
+            $view = new GenericView($view);
+        }
+
+        $this->currentView = $view;
+
+        return $view;
     }
 }

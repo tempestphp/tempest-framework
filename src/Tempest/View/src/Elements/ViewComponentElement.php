@@ -1,24 +1,51 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\ViewComponent;
 
-final class GenericElement implements Element
+final class ViewComponentElement implements Element
 {
     use IsElement;
 
     public function __construct(
-        private readonly string $tag,
+        private readonly ViewComponent $viewComponent,
         private readonly array $attributes,
-    ) {
+    ) {}
+
+    public function getViewComponent(): ViewComponent
+    {
+        return $this->viewComponent;
     }
 
-    public function getTag(): string
+    public function getSlot(string $name = 'slot'): ?Element
     {
-        return $this->tag;
+        foreach ($this->getChildren() as $child) {
+            if (! $child instanceof SlotElement) {
+                continue;
+            }
+
+            if ($child->matches($name)) {
+                return $child;
+            }
+        }
+
+        if ($name === 'slot') {
+            $elements = [];
+
+            foreach ($this->getChildren() as $child) {
+                if ($child instanceof SlotElement) {
+                    continue;
+                }
+
+                $elements[] = $child;
+            }
+
+            return new CollectionElement($elements);
+        }
+
+        return null;
     }
 
     public function getAttributes(): array

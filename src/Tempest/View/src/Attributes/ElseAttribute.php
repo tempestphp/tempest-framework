@@ -15,19 +15,15 @@ final readonly class ElseAttribute implements Attribute
     public function apply(Element $element): Element
     {
         $previous = $element->getPrevious();
-        $previousCondition = false;
 
-        if (! $previous instanceof GenericElement) {
-            throw new Exception("Invalid preceding element before :else");
-        }
+        $previousCondition = false;
 
         // Check all :elseif and :if conditions for previous elements
         // If one of the previous element's conditions is true, we'll stop.
         // We won't have to render this :else element
         while (
             $previousCondition === false
-            && $previous instanceof GenericElement
-            && ($previous->hasAttribute('if') || $previous->hasAttribute('elseif'))
+            && ($previous?->hasAttribute('if') || $previous?->hasAttribute('elseif'))
         ) {
             $previousCondition = (bool) ($previous->getAttribute('if') ?? $previous->getAttribute('elseif'));
             $previous = $previous->getPrevious();

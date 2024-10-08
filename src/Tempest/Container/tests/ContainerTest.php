@@ -364,7 +364,7 @@ TXT,
 
         $this->assertEquals(SingletonClass::class, $result);
     }
-      
+
     public function test_builtin_dependency_initializer(): void
     {
         $container = new GenericContainer();

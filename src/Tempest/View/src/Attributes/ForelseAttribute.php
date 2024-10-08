@@ -8,7 +8,6 @@ use Exception;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\EmptyElement;
-use Tempest\View\Elements\GenericElement;
 
 final readonly class ForelseAttribute implements Attribute
 {
@@ -16,10 +15,8 @@ final readonly class ForelseAttribute implements Attribute
     {
         $previous = $element->getPrevious();
 
-        if (
-            ! $previous instanceof GenericElement
-            || ! $previous->hasAttribute('foreach')
-        ) {
+        if (! $previous?->hasAttribute('foreach'))
+        {
             throw new Exception('No valid foreach loop found in preceding element');
         }
 

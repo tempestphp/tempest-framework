@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\View\ViewCache;
 use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,6 +13,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->container->get(ViewCache::class)->clear();
+    }
+
     public function test_view_renderer(): void
     {
         $this->assertSame(

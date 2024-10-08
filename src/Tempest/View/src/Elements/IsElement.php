@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\View;
 
 /** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
 {
+    private View $view;
+
     /** @var Element[] */
     private array $children = [];
 
@@ -17,6 +20,32 @@ trait IsElement
     private ?Element $previous = null;
 
     private array $data = [];
+
+    public function setView(View $view): self
+    {
+        $this->view = $view;
+
+        foreach ($this->children as $child) {
+            $child->setView($view);
+        }
+
+        return $this;
+    }
+
+    public function getAttributes(): array
+    {
+        return [];
+    }
+
+    public function hasAttribute(string $name): bool
+    {
+        return false;
+    }
+
+    public function getAttribute(string $name, bool $eval = true): mixed
+    {
+        return null;
+    }
 
     public function setPrevious(?Element $previous): self
     {

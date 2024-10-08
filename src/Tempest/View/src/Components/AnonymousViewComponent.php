@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Components;
 
 use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewRenderer;
 
@@ -21,7 +22,7 @@ final readonly class AnonymousViewComponent implements ViewComponent
         return 'x-component';
     }
 
-    public function render(GenericElement $element, ViewRenderer $renderer): string
+    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
     {
         return $this->contents;
     }

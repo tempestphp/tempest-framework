@@ -35,7 +35,7 @@ final class ElementFactoryTest extends TestCase
 
         $elementFactory = new ElementFactory();
 
-        $a = $elementFactory->make(view(''), $dom->getElementById('tempest_render')->firstElementChild);
+        $a = $elementFactory->make($dom->getElementById('tempest_render')->firstElementChild);
 
         $this->assertInstanceOf(GenericElement::class, $a);
         $this->assertCount(1, $a->getChildren());

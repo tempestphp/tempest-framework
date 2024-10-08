@@ -6,6 +6,14 @@ namespace Tempest\View;
 
 interface Element
 {
+    public function getAttributes(): array;
+
+    public function hasAttribute(string $name): bool;
+
+    public function getAttribute(string $name, bool $eval = true): mixed;
+
+    public function setView(View $view): self;
+
     public function setPrevious(?Element $previous): self;
 
     public function getPrevious(): ?Element;

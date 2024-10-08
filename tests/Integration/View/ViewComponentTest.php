@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
+use Tempest\View\ViewCache;
 use function Tempest\view;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
@@ -19,6 +20,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViewComponentTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->container->get(ViewCache::class)->clear();
+    }
+
     #[DataProvider('view_components')]
     public function test_view_components(string $component, string $rendered): void
     {
@@ -174,7 +182,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_with_passed_variable(): void
     {
         $rendered = $this->render(
-            view('<x-with-variable :variable="$variable"></x-with-variable:>')->data(
+            view('<x-with-variable :variable="$variable"></x-with-variable>')->data(
                 variable: 'test'
             )
         );
@@ -207,7 +215,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $rendered = $this->render(
             view(<<<HTML
-            <x-with-variable :variable="strtoupper('test')"></x-with-variable:>'
+            <x-with-variable :variable="strtoupper('test')"></x-with-variable>'
             HTML)
         );
 
