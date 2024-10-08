@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Filesystem;
 
 final class ErrorContext
 {
-    private array $lastError;
+    private array $lastError = [];
 
     public function __construct()
     {
@@ -23,7 +25,7 @@ final class ErrorContext
 
     public function commit(): self
     {
-        $this->lastError = error_get_last();
+        $this->lastError = error_get_last() ?? [];
 
         return $this;
     }

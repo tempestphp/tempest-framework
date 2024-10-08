@@ -17,4 +17,10 @@ interface Filesystem
     public function copy(string $sourcePath, string $destinationPath): void;
 
     public function move(string $sourcePath, string $destinationPath): void;
+
+    public function createDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void;
+
+    public function deleteDirectory(string $path, bool $recursive = false): void;
+
+    public function isDirectory(string $path): bool;
 }

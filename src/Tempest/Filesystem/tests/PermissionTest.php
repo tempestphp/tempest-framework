@@ -52,7 +52,7 @@ final class PermissionTest extends TestCase
         $this->assertSame(decoct(0300), decoct($permissions));
     }
 
-    public function test_checking_whether_permission_has_other_permission()
+    public function test_checking_whether_permission_has_other_permission(): void
     {
         $permissions = 0755;
 

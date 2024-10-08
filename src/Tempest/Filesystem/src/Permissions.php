@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Filesystem;
 
+use Stringable;
 use UnexpectedValueException;
 
 // TODO: This file is experimental and a WIP.
-final class Permissions
+final class Permissions implements Stringable
 {
     private float|int $value;
 
@@ -23,22 +26,13 @@ final class Permissions
 
     private function setOctal(string $value): void
     {
-//        $value = substr(ltrim($value, '0'), -4);
+        //        $value = substr(ltrim($value, '0'), -4);
         $this->value = @octdec($value);
-    }
-
-    private function setInteger(int $value): void
-    {
-        if (strlen($value) !== 3) {
-            $value = $value & 0777;
-        }
-
-        $this->value = $value;
     }
 
     private function validate(): void
     {
-        if (preg_match('/^[0-7]{3}$/', $this->value) === false) {
+        if (preg_match('/^[0-7]{3}$/', (string) $this->value) === false) {
             throw new UnexpectedValueException();
         }
     }

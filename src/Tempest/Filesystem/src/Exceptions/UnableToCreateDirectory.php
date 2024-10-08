@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Filesystem\Exceptions;
 
 use RuntimeException;
 use Tempest\Filesystem\ErrorContext;
 
-final class UnableToMakeDirectory extends RuntimeException
+final class UnableToCreateDirectory extends RuntimeException
 {
     public static function atPath(string $path, ErrorContext $error): self
     {

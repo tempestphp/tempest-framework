@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem\Tests;
 
-use Tempest\Filesystem\Permission;
 use const DIRECTORY_SEPARATOR;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RuntimeException;
-use SplFileInfo;
+use Tempest\Filesystem\ErrorContext;
+use Tempest\Filesystem\Exceptions\FileDoesNotExist;
+use Tempest\Filesystem\Exceptions\UnableToCopyFile;
+use Tempest\Filesystem\Exceptions\UnableToCreateDirectory;
 use Tempest\Filesystem\LocalFilesystem;
 
 /**
@@ -18,128 +19,174 @@ use Tempest\Filesystem\LocalFilesystem;
  */
 final class LocalFilesystemTest extends TestCase
 {
+    private string $sandbox = __DIR__ . '/Sandbox';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        mkdir($this->sandbox);
+    }
+
     protected function tearDown(): void
     {
         parent::setUp();
 
-        $recursiveDirectoryIterator = new RecursiveDirectoryIterator(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures', RecursiveDirectoryIterator::SKIP_DOTS);
-        $recursiveIteratorIterator = new RecursiveIteratorIterator($recursiveDirectoryIterator, RecursiveIteratorIterator::SELF_FIRST);
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->sandbox, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
 
-        /**
-         * @var SplFileInfo $file
-         */
-        foreach ($recursiveIteratorIterator as $file) {
-            if (! $file->isFile()) {
-                continue;
-            }
-
-            if (str_starts_with($file->getFilename(), '.')) {
-                continue;
-            }
-
-            @unlink($file->getRealPath());
+        foreach ($files as $file) {
+            $todo = ($file->isDir() ? 'rmdir' : 'unlink');
+            $todo($file->getRealPath());
         }
 
-        // Remove testing directories.
-        @rmdir(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'test-directory'. DIRECTORY_SEPARATOR . 'nested-test-directory');
-        @rmdir(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . 'test-directory');
+        rmdir($this->sandbox);
+    }
+
+    private function path(string $path): string
+    {
+        return $this->sandbox . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
     }
 
     public function test_writing_files(): void
     {
-        (new LocalFilesystem())->write(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        $filePath = $this->path('test.txt');
 
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        (new LocalFilesystem())->write($filePath, 'Hello world!');
+
+        $this->assertStringEqualsFile($filePath, 'Hello world!');
     }
 
     public function test_reading_files(): void
     {
-        file_put_contents(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        $filePath = $this->path('test.txt');
 
-        $text = (new LocalFilesystem())->read(__DIR__ . '/Fixtures/test.txt');
+        file_put_contents($filePath, 'Hello world!');
+
+        $text = (new LocalFilesystem())->read($filePath);
 
         $this->assertSame('Hello world!', $text);
     }
 
     public function test_deleting_files(): void
     {
-        file_put_contents(__DIR__ . '/Fixtures/to-be-deleted.txt', 'Hello world!');
+        $filePath = $this->path('to-be-deleted.txt');
 
-        (new LocalFilesystem())->delete(__DIR__ . '/Fixtures/to-be-deleted.txt');
+        file_put_contents($filePath, 'Hello world!');
 
-        $this->assertFileDoesNotExist(__DIR__ . '/Fixtures/to-be-deleted.txt');
+        (new LocalFilesystem())->delete($filePath);
+
+        $this->assertFileDoesNotExist($filePath);
     }
 
     public function test_checking_file_existence(): void
     {
+        $filePath = $this->path('test.txt');
+
         $this->assertFalse(
-            (new LocalFilesystem())->exists(__DIR__ . '/Fixtures/test.txt')
+            (new LocalFilesystem())->exists($filePath)
         );
 
-        file_put_contents(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        file_put_contents($filePath, 'Hello world!');
 
         $this->assertTrue(
-            (new LocalFilesystem())->exists(__DIR__ . '/Fixtures/test.txt')
+            (new LocalFilesystem())->exists($filePath)
         );
     }
 
     public function test_copying_files(): void
     {
-        file_put_contents(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        $filePath1 = $this->path('test.txt');
+        $filePath2 = $this->path('test2.txt');
 
-        (new LocalFilesystem())->copy(__DIR__ . '/Fixtures/test.txt', __DIR__ . '/Fixtures/test2.txt');
+        file_put_contents($filePath1, 'Hello world!');
 
-        $this->assertFileEquals(__DIR__ . '/Fixtures/test2.txt', __DIR__ . '/Fixtures/test.txt');
+        (new LocalFilesystem())->copy($filePath1, $filePath2);
+
+        $this->assertFileEquals($filePath2, $filePath1);
+    }
+
+    public function test_exception_is_thrown_if_source_file_doesnt_exist_when_copying(): void
+    {
+        $filePath1 = $this->path('test.txt');
+        $filePath2 = $this->path('test2.txt');
+
+        $this->expectExceptionObject(
+            FileDoesNotExist::atPath($filePath1)
+        );
+
+        (new LocalFilesystem())->copy($filePath1, $filePath2);
+    }
+
+    public function test_exception_is_thrown_if_there_is_an_error_copying(): void
+    {
+        $filePath1 = $this->path('test.txt');
+        $filePath2 = $this->path('nested-dir/test2.txt');
+
+        $this->expectExceptionObject(
+            UnableToCopyFile::fromSourceToDestination($filePath1, $filePath2, new ErrorContext())
+        );
+
+        file_put_contents($filePath1, 'Hello world!');
+
+        (new LocalFilesystem())->copy($filePath1, $filePath2);
     }
 
     public function test_moving_files(): void
     {
-        file_put_contents(__DIR__ . '/Fixtures/test.txt', 'Hello world!');
+        $filePath1 = $this->path('test.txt');
+        $filePath2 = $this->path('test2.txt');
 
-        (new LocalFilesystem())->move(__DIR__ . '/Fixtures/test.txt', __DIR__ . '/Fixtures/test2.txt');
+        file_put_contents($filePath1, 'Hello world!');
 
-        $this->assertFileDoesNotExist(__DIR__ . '/Fixtures/test.txt');
-        $this->assertStringEqualsFile(__DIR__ . '/Fixtures/test2.txt', 'Hello world!');
+        (new LocalFilesystem())->move($filePath1, $filePath2);
+
+        $this->assertFileDoesNotExist($filePath1);
+        $this->assertStringEqualsFile($filePath2, 'Hello world!');
     }
 
     public function test_making_a_directory(): void
     {
-        (new LocalFilesystem())->makeDirectory(__DIR__ . '/Fixtures/test-directory');
+        $directoryPath = $this->path('test-directory');
 
-        $this->assertDirectoryExists(__DIR__ . '/Fixtures/test-directory');
+        (new LocalFilesystem())->createDirectory($directoryPath);
+
+        $this->assertDirectoryExists($directoryPath);
     }
 
     public function test_making_a_directory_recursively(): void
     {
-        (new LocalFilesystem())->makeDirectory(__DIR__ . '/Fixtures/test-directory/nested-test-directory');
+        $directoryPath = $this->path('test-directory/nested-test-directory');
 
-        $this->assertDirectoryExists(__DIR__ . '/Fixtures/test-directory/nested-test-directory');
+        (new LocalFilesystem())->createDirectory($directoryPath);
+
+        $this->assertDirectoryExists($directoryPath);
     }
 
     public function test_making_a_directory_recursively_without_recursive_enabled_fails(): void
     {
-        $this->expectExceptionObject(new RuntimeException());
+        $directoryPath = $this->path('test-directory/nested-test-directory');
 
-        (new LocalFilesystem())->makeDirectory(
-            path: __DIR__ . '/Fixtures/test-directory/nested-test-directory',
+        // Update
+        $this->expectException(UnableToCreateDirectory::class);
+
+        (new LocalFilesystem())->createDirectory(
+            path: $directoryPath,
             recursive: false
         );
     }
 
-    public function test_getting_file_permissions()
+    public function test_is_directory(): void
     {
         $filesystem = new LocalFilesystem();
-        $directory = __DIR__ . '/Fixtures/test-directory/nested-test-directory';
+        $directory = $this->path('test-directory/nested-test-directory');
 
-        $filesystem->makeDirectory(
-            path: $directory,
-            permissions: Permission::allow(
-                Permission::OWNER_ALL,
-                Permission::GROUP_READ_EXECUTE,
-                Permission::OTHERS_READ_EXECUTE
-            )
-        );
+        $this->assertFalse($filesystem->isDirectory($directory));
 
-        $this->assertSame(0755, $filesystem->getPermissions($directory));
+        $filesystem->createDirectory($directory);
+
+        $this->assertTrue($filesystem->isDirectory($directory));
     }
 }
