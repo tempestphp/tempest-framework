@@ -28,8 +28,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: 'Hello')),
+            '<h1>&lt;span&gt;Hello&lt;/span&gt;</h1>',
+            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: '<span>Hello</span>')),
         );
 
         $this->assertSame(
@@ -38,8 +38,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->raw("foo") }}</h1>')->data(foo: 'Hello')),
+            '<h1><span>Hello</span></h1>',
+            $this->render(view('<h1>{!! $this->foo !!}</h1>')->data(foo: '<span>Hello</span>')),
         );
     }
 
@@ -246,7 +246,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('/', $html);
     }
-    
+
     public function test_raw_and_escaped(): void
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));

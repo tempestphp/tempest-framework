@@ -106,7 +106,7 @@ final class TempestViewRenderer implements ViewRenderer
         return trim(ob_get_clean());
     }
 
-    public function escape(string|Stringable $value): string
+    public function escape(null|string|Stringable $value): string
     {
         return htmlentities((string) $value);
     }
