@@ -37,15 +37,10 @@ final class TempestViewRenderer implements ViewRenderer
 
         $path = $view->getPath();
 
-        //        $compiled = $this->viewCache->resolve(
-        //            key: (string) crc32($path),
-        //            cache: function () {
-
-        $compiled = $this->compiler->compile($path);
-
-        //                return $compiled;
-        //            }
-        //        );
+        $compiled = $this->viewCache->resolve(
+            key: (string)crc32($path),
+            cache: fn () => $this->compiler->compile($path),
+        );
 
         return $this->renderCompiled($view, $compiled);
     }
