@@ -12,6 +12,7 @@ use Tempest\Container\Container;
 use Tempest\View\Element;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+use function Tempest\Support\str;
 
 final class ElementFactory
 {
@@ -21,7 +22,7 @@ final class ElementFactory
     ) {
     }
 
-    public function make(DOMElement $node): ?Element
+    public function make(DOMNode $node): ?Element
     {
         return $this->makeElement(
             node: $node,
@@ -58,7 +59,7 @@ final class ElementFactory
 
             /** @var DOMAttr $attribute */
             foreach ($node->attributes as $attribute) {
-                $name = (string)\Tempest\Support\str($attribute->name)->camel();
+                $name = (string)str($attribute->name)->camel();
 
                 $attributes[$name] = $attribute->value;
             }
@@ -73,7 +74,7 @@ final class ElementFactory
 
             /** @var DOMAttr $attribute */
             foreach ($node->attributes as $attribute) {
-                $name = (string)\Tempest\Support\str($attribute->name)->camel();
+                $name = (string)str($attribute->name)->camel();
 
                 $attributes[$name] = $attribute->value;
             }

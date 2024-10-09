@@ -14,6 +14,8 @@ interface Element
 
     public function getAttribute(string $name): string|null;
 
+    public function setAttribute(string $name, string $value): self;
+
     public function setPrevious(?Element $previous): self;
 
     public function getPrevious(): ?Element;

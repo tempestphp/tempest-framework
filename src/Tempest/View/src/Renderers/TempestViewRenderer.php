@@ -51,11 +51,10 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function render(string|View|null $view): string
     {
-        // 1. retrieve template
+        // 1. Retrieve template
         $template = $this->retrieveTemplate($view);
 
         // 2. Parse as DOM
-        // TODO: return children directly
         $dom = $this->parseDom($template);
 
         // 3. Map to elements
@@ -68,56 +67,10 @@ final class TempestViewRenderer implements ViewRenderer
         $compiled = $this->compileElements($elements);
 
         // (6. cache)
+        // TODO
 
         // 7. Render compiled template
-        $rendered = $this->renderCompiledTemplate($view, $compiled);
-
-        return $rendered;
-
-//
-//        $view = $this->resolveView($view);
-//
-//        //        /** @var Element $element */
-//        //        $element = $this->viewCache->resolve(
-//        //            key: (string)crc32($view->getPath()),
-//        //            cache: function () use ($view) {
-//        $contents = $this->resolveContent($view);
-//
-//        $contents = str_replace(
-//            search: array_keys(self::TOKEN_MAPPING),
-//            replace: array_values(self::TOKEN_MAPPING),
-//            subject: $contents,
-//        );
-//
-//        $html5 = new HTML5();
-//        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
-//
-//        $element = $this->elementFactory->make(
-//            $dom->getElementById('tempest_render'),
-//        );
-//
-//        //                return $element;
-//        //            },
-//        //        );
-//
-//        $element->setView($view);
-//lw($element);
-//        $element = $this->applyAttributes(
-//            view: $view,
-//            element: $element,
-//        );
-//
-//        $rendered = $this->renderElements($view, $element->getChildren());
-//
-//        $this->currentScope = null;
-//
-//        $rendered = str_replace(
-//            search: array_values(self::TOKEN_MAPPING),
-//            replace: array_keys(self::TOKEN_MAPPING),
-//            subject: $rendered,
-//        );
-//
-//        return $this->scopedEval($rendered);
+        return $this->renderCompiled($view, $compiled);
     }
 
     private function retrieveTemplate(View|string|null $view): string
@@ -173,7 +126,13 @@ final class TempestViewRenderer implements ViewRenderer
         $elements = [];
 
         foreach ($domNodeList as $node) {
-            $elements[] = $this->elementFactory->make($node);
+            $element = $this->elementFactory->make($node);
+
+            if ($element === null) {
+                continue;
+            }
+
+            $elements[] = $element;
         }
 
         return $elements;
@@ -230,7 +189,7 @@ final class TempestViewRenderer implements ViewRenderer
         return implode(PHP_EOL, $compiled);
     }
 
-    private function renderCompiledTemplate(View $_view, string $_content): string
+    private function renderCompiled(View $_view, string $_content): string
     {
         $this->currentView = $_view;
 

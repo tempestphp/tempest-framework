@@ -12,8 +12,9 @@ final class GenericElement implements Element
 
     public function __construct(
         private readonly string $tag,
-        private readonly array $attributes,
+        array $attributes,
     ) {
+        $this->attributes = $attributes;
     }
 
     public function compile(): string
@@ -43,28 +44,5 @@ final class GenericElement implements Element
         }
 
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    public function hasAttribute(string $name): bool
-    {
-        $name = ltrim($name, ':');
-
-        return
-            array_key_exists(":{$name}", $this->attributes) ||
-            array_key_exists($name, $this->attributes);
-    }
-
-    public function getAttribute(string $name): string|null
-    {
-        $name = ltrim($name, ':');
-
-        return $this->attributes[":{$name}"]
-            ?? $this->attributes[$name]
-            ?? null;
     }
 }

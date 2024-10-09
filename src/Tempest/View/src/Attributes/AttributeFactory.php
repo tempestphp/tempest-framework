@@ -16,7 +16,7 @@ final readonly class AttributeFactory
             $name === ':else' => new ElseAttribute(),
             $name === ':foreach' => new ForeachAttribute(),
             $name === ':forelse' => new ForelseAttribute(),
-            str_starts_with(':', $name) => new DataAttribute(),
+            str_starts_with($name, ':') => new DataAttribute($name),
             default => new DefaultAttribute(),
         };
     }

@@ -13,8 +13,9 @@ final class ViewComponentElement implements Element
 
     public function __construct(
         private readonly ViewComponent $viewComponent,
-        private readonly array $attributes,
+        array $attributes,
     ) {
+        $this->attributes = $attributes;
     }
 
     public function getViewComponent(): ViewComponent
@@ -49,65 +50,6 @@ final class ViewComponentElement implements Element
         }
 
         return null;
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->attributes;
-    }
-
-    public function hasAttribute(string $name): bool
-    {
-        $name = ltrim($name, ':');
-
-        return array_key_exists($name, $this->attributes)
-            || array_key_exists(":{$name}", $this->attributes);
-    }
-    
-    public function getAttribute(string $name): string|null
-    {
-        $name = ltrim($name, ':');
-
-        return $this->attributes[":{$name}"]
-            ?? $this->attributes[$name]
-            ?? null;
-    }
-
-    public function getData(?string $key = null): mixed
-    {
-        if ($key && $this->hasAttribute($key)) {
-            return $this->getAttribute($key);
-        }
-
-        $parentData = $this->getParent()?->getData() ?? [];
-
-        $data = [...$this->attributes, ...$this->view->getData(), ...$parentData, ...$this->data];
-
-        if ($key) {
-            return $data[$key] ?? null;
-        }
-
-        return $data;
-    }
-
-    private function eval(string $eval): mixed
-    {
-        $data = $this->getData();
-
-        extract($data, flags: EXTR_SKIP);
-
-        /** @phpstan-ignore-next-line */
-        return eval("return {$eval};");
-    }
-
-    public function __get(string $name)
-    {
-        return $this->getData($name) ?? $this->view->{$name};
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->view->{$name}(...$arguments);
     }
 
     public function compile(): string

@@ -19,30 +19,48 @@ trait IsElement
 
     private ?Element $previous = null;
 
-    public function setView(View $view): self
-    {
-        $this->view = $view;
-
-        foreach ($this->children as $child) {
-            $child->setView($view);
-        }
-
-        return $this;
-    }
+    private array $attributes = [];
 
     public function getAttributes(): array
     {
-        return [];
+        return $this->attributes;
     }
 
     public function hasAttribute(string $name): bool
     {
-        return false;
+        $name = ltrim($name, ':');
+
+        return
+            array_key_exists(":{$name}", $this->attributes) ||
+            array_key_exists($name, $this->attributes);
     }
 
     public function getAttribute(string $name): string|null
     {
-        return null;
+        $name = ltrim($name, ':');
+
+        return $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
+    }
+
+    public function setAttribute(string $name, string $value): self
+    {
+        $this->unsetAttribute($name);
+
+        $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    public function unsetAttribute(string $name): self
+    {
+        $name = ltrim($name, ':');
+
+        unset($this->attributes[$name]);
+        unset($this->attributes[":{$name}"]);
+
+        return $this;
     }
 
     public function setPrevious(?Element $previous): self

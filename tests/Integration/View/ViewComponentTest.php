@@ -142,37 +142,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public static function view_components(): Generator
-    {
-        yield [
-            '<x-my></x-my>',
-            '<div></div>',
-        ];
-
-        yield [
-            '<x-my>body</x-my>',
-            '<div>body</div>',
-        ];
-
-        yield [
-            '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p>
-<p>b</p></div>',
-        ];
-
-        yield [
-            '<div>body</div>
-<div>body</div>',
-            '<div>body</div>
-<div>body</div>',
-        ];
-
-        yield [
-            '<x-my foo="fooValue" bar="barValue">body</x-my>',
-            '<div foo="fooValue" bar="barValue">body</div>',
-        ];
-    }
-
     public function test_anonymous_view_component(): void
     {
         $this->assertSame(
@@ -332,5 +301,36 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         test
         test
         HTML, $html);
+    }
+
+    public static function view_components(): Generator
+    {
+        yield [
+            '<x-my></x-my>',
+            '<div></div>',
+        ];
+
+        yield [
+            '<x-my>body</x-my>',
+            '<div>body</div>',
+        ];
+
+        yield [
+            '<x-my><p>a</p><p>b</p></x-my>',
+            '<div><p>a</p>
+<p>b</p></div>',
+        ];
+
+        yield [
+            '<div>body</div>
+<div>body</div>',
+            '<div>body</div>
+<div>body</div>',
+        ];
+
+        yield [
+            '<x-my foo="fooValue" bar="barValue">body</x-my>',
+            '<div foo="fooValue" bar="barValue">body</div>',
+        ];
     }
 }
