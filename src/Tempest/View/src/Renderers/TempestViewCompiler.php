@@ -27,8 +27,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string $path): string
     {
@@ -157,41 +156,10 @@ final readonly class TempestViewCompiler
 
         $compiled = implode(PHP_EOL, $compiled);
 
-        return $this->cleanupCompiled($compiled);
-    }
-
-    private function cleanupCompiled(string $compiled): string
-    {
-        // Restore PHP tokens
-        $compiled = str($compiled)
-            ->replace(
-                search: array_values(self::TOKEN_MAPPING),
-                replace: array_keys(self::TOKEN_MAPPING),
-            );
-
-        // Remove strict type declarations
-        $compiled = $compiled->replace('declare(strict_types=1);', '');
-
-        // Cleanup and bundle imports
-        $imports = arr();
-        $compiled = $compiled
-            ->replaceRegex('/use .*;/', function (array $matches) use (&$imports) {
-                $imports[$matches[0]] = $matches[0];
-
-                return '';
-            })
-            ->prepend(
-                sprintf(
-                    '<?php
-%s
-?>',
-                    $imports->implode(PHP_EOL)
-                ),
-            );
-
-        // Remove empty PHP blocks
-        $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
-
-        return $compiled->toString();
+        return str_replace(
+            search: array_values(self::TOKEN_MAPPING),
+            replace: array_keys(self::TOKEN_MAPPING),
+            subject: $compiled,
+        );
     }
 }

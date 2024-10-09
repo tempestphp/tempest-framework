@@ -10,6 +10,8 @@ use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewRenderer;
 use Throwable;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final class TempestViewRenderer implements ViewRenderer
 {
@@ -39,10 +41,38 @@ final class TempestViewRenderer implements ViewRenderer
 
         $compiled = $this->viewCache->resolve(
             key: (string)crc32($path),
-            cache: fn () => $this->compiler->compile($path),
+            cache: fn () => $this->cleanupCompiled($this->compiler->compile($path)),
         );
 
         return $this->renderCompiled($view, $compiled);
+    }
+
+    private function cleanupCompiled(string $compiled): string
+    {
+        // Remove strict type declarations
+        $compiled = str($compiled)->replace('declare(strict_types=1);', '');
+
+        // Cleanup and bundle imports
+        $imports = arr();
+        $compiled = $compiled
+            ->replaceRegex('/use .*;/', function (array $matches) use (&$imports) {
+                $imports[$matches[0]] = $matches[0];
+
+                return '';
+            })
+            ->prepend(
+                sprintf(
+                    '<?php
+%s
+?>',
+                    $imports->implode(PHP_EOL)
+                ),
+            );
+
+        // Remove empty PHP blocks
+        $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
+
+        return $compiled->toString();
     }
 
     private function renderCompiled(View $_view, string $_content): string
