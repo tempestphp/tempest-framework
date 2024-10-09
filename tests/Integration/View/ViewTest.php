@@ -45,21 +45,6 @@ HTML;
         $this->assertEquals($expected, $html);
     }
 
-    public function test_raw_and_escaping(): void
-    {
-        $this->markTestSkipped('Need to refactor raw and escaping to only work with {{ and {{!');
-        //        $html = $this->render(view('Views/rawAndEscaping.php')->data(
-        //            property: '<h1>hi</h1>',
-        //        ));
-        //
-        //        $expected = <<<HTML
-        //        &lt;h1&gt;hi&lt;/h1&gt;
-        //        <h1>hi</h1>
-        //        HTML;
-        //
-        //        $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($html));
-    }
-
     public function test_custom_view_with_response_data(): void
     {
         $this->http

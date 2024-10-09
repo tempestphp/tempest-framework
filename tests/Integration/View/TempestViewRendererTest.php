@@ -246,4 +246,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('/', $html);
     }
+    
+    public function test_raw_and_escaped(): void
+    {
+        
+    }
 }
