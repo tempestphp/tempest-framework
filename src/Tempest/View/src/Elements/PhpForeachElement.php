@@ -51,7 +51,7 @@ final class PhpForeachElement implements Element
                 ->match('/^(?<match>.*)\s+as/')['match'];
 
             $compiled = sprintf(
-                '<?php if(count(%s)): ?>
+                '<?php if(iterator_count(%s)): ?>
 %s
 <?php else: ?>
 %s
