@@ -239,4 +239,11 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             ),
         );
     }
+
+    public function test_use_statements_are_grouped(): void
+    {
+        $html = $this->render('<x-view-component-with-use-import></x-view-component-with-use-import><x-view-component-with-use-import></x-view-component-with-use-import>');
+
+        $this->assertStringContainsString('/', $html);
+    }
 }

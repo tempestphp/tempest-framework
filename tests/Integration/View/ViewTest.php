@@ -18,7 +18,7 @@ final class ViewTest extends FrameworkIntegrationTestCase
 {
     public function test_render(): void
     {
-        $view = view('Views/overview.view.php')->data(name: 'Brent');
+        $view = view(__DIR__ . '/../../Fixtures/Views/overview.view.php')->data(name: 'Brent');
 
         $html = $this->render($view);
 

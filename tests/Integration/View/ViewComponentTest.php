@@ -86,6 +86,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_component_with_anther_component_included(): void
+    {
+        $html = $this->render('<x-view-component-with-another-one-included-a/>');
+
+        $this->assertSame('hi', $html);
+    }
+
     public function test_view_component_with_injected_view(): void
     {
         $between = new Between(min: 1, max: 10);

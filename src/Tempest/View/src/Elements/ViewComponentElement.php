@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use function Tempest\Support\str;
 use Tempest\View\Element;
+use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 
 final class ViewComponentElement implements Element
@@ -12,6 +14,7 @@ final class ViewComponentElement implements Element
     use IsElement;
 
     public function __construct(
+        private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
     ) {
@@ -54,20 +57,31 @@ final class ViewComponentElement implements Element
 
     public function compile(): string
     {
-        return preg_replace_callback(
-            pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
-            callback: function ($matches) {
-                $name = $matches['name'] ?: 'slot';
+        $compiled = str($this->viewComponent->compile($this))
+            // Compile slots
+            ->replaceRegex(
+                regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
+                replace: function ($matches) {
+                    $name = $matches['name'] ?: 'slot';
 
-                $slot = $this->getSlot($name);
+                    $slot = $this->getSlot($name);
 
-                if ($slot === null) {
-                    return $matches[0];
-                }
+                    if ($slot === null) {
+                        return $matches[0];
+                    }
 
-                return $slot->compile();
-            },
-            subject: $this->viewComponent->compile($this),
-        );
+                    return $slot->compile();
+                },
+            )
+
+            // Compile includes, matches self-closing and non-self-closing tags starting with `x-`, including attributes
+            ->replaceRegex(
+                regex: '/<x-.*?>((<\/x-.*?)>)?/',
+                replace: function ($matches) {
+                    return $this->compiler->compile($matches[0]);
+                },
+            );
+
+        return $compiled->toString();
     }
 }

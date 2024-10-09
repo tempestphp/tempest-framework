@@ -7,6 +7,7 @@ namespace Tempest\View\Attributes;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
+use Tempest\View\Elements\ViewComponentElement;
 
 final readonly class DataAttribute implements Attribute
 {
@@ -17,6 +18,10 @@ final readonly class DataAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
+        if (! $element instanceof ViewComponentElement) {
+            return $element;
+        }
+
         return new PhpDataElement(
             $this->name,
             $element->getAttribute($this->name),

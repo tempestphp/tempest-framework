@@ -11,15 +11,25 @@ use DOMText;
 use Tempest\Container\Container;
 use function Tempest\Support\str;
 use Tempest\View\Element;
+use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
 final class ElementFactory
 {
+    private TempestViewCompiler $compiler;
+
     public function __construct(
-        private ViewConfig $viewConfig,
-        private Container $container,
+        private readonly ViewConfig $viewConfig,
+        private readonly Container $container,
     ) {
+    }
+
+    public function setViewCompiler(TempestViewCompiler $compiler): self
+    {
+        $this->compiler = $compiler;
+
+        return $this;
     }
 
     public function make(DOMNode $node): ?Element
@@ -64,7 +74,11 @@ final class ElementFactory
                 $attributes[$name] = $attribute->value;
             }
 
-            $element = new ViewComponentElement($viewComponentClass, $attributes);
+            $element = new ViewComponentElement(
+                $this->compiler,
+                $viewComponentClass,
+                $attributes
+            );
         } elseif ($node->tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
