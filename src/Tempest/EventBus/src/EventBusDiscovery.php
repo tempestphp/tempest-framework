@@ -53,9 +53,9 @@ final readonly class EventBusDiscovery implements Discovery
                 $eventName = $type->getName();
             }
 
-            $this->eventBusConfig->addHandler(
-                eventHandler: $eventHandler,
-                eventName: $eventName,
+            $this->eventBusConfig->addClassMethodHandler(
+                event: $eventName,
+                handler: $eventHandler,
                 reflectionMethod: $method,
             );
         }
@@ -68,7 +68,7 @@ final readonly class EventBusDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $handlers = unserialize($payload, ['allowed_classes' => [EventHandler::class, MethodReflector::class]]);
+        $handlers = unserialize($payload, ['allowed_classes' => [CallableEventHandler::class, EventHandler::class, MethodReflector::class]]);
 
         $this->eventBusConfig->handlers = $handlers;
     }

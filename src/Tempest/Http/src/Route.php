@@ -6,6 +6,8 @@ namespace Tempest\Http;
 
 use Attribute;
 use Tempest\Reflection\MethodReflector;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 #[Attribute]
 class Route
@@ -18,6 +20,12 @@ class Route
     /** @var bool If the route has params */
     public readonly bool $isDynamic;
 
+    public const string DEFAULT_MATCHING_GROUP = '[^/]++';
+
+    public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
+
+    public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
+
     public function __construct(
         public string $uri,
         public Method $method,
@@ -28,12 +36,12 @@ class Route
          */
         public array $middleware = [],
     ) {
-        // Routes can have parameters in the form of "/{PARAM}/",
-        // these parameters are replaced with a regex matching group
-        $matchingRegex = preg_replace(
-            '#\{(\w+)}#',
-            '([^/]++)',
-            $uri
+
+        // Routes can have parameters in the form of "/{PARAM}/" or /{PARAM:CUSTOM_REGEX},
+        // these parameters are replaced with a regex matching group or with the custom regex
+        $matchingRegex = (string)str($this->uri)->replaceRegex(
+            '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#',
+            fn ($matches) => '(' . trim(arr($matches)->get('2', self::DEFAULT_MATCHING_GROUP)). ')'
         );
 
         $this->isDynamic = $matchingRegex !== $this->uri;

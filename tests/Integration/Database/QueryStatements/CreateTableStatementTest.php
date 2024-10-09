@@ -32,7 +32,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->float('float', default: 0.1)
                     ->integer('integer', default: 1)
                     ->date('date', default: '2024-01-01')
-                    ->datetime('datetime', default: '2024-01-01 00:00:00');
+                    ->datetime('datetime', default: '2024-01-01 00:00:00')
+                    ->boolean('is_active', default: true);
             }
 
             public function down(): QueryStatement|null
