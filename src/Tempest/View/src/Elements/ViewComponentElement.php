@@ -63,32 +63,14 @@ final class ViewComponentElement implements Element
         return array_key_exists($name, $this->attributes)
             || array_key_exists(":{$name}", $this->attributes);
     }
-
-    public function getAttribute(string $name, bool $eval = true): mixed
+    
+    public function getAttribute(string $name): string|null
     {
         $name = ltrim($name, ':');
 
-        foreach ($this->attributes as $attributeName => $value) {
-            if ($attributeName === $name) {
-                return $value;
-            }
-
-            if ($attributeName === ":{$name}") {
-                if (! $value) {
-                    return null;
-                }
-
-                if (! $eval) {
-                    return $value;
-                }
-
-                return $this->eval($value)
-                    ?? $this->getData()[ltrim($value, '$')]
-                    ?? '';
-            }
-        }
-
-        return null;
+        return $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
     }
 
     public function getData(?string $key = null): mixed
@@ -126,5 +108,24 @@ final class ViewComponentElement implements Element
     public function __call(string $name, array $arguments)
     {
         return $this->view->{$name}(...$arguments);
+    }
+
+    public function compile(): string
+    {
+        return preg_replace_callback(
+            pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
+            callback: function ($matches) {
+                $name = $matches['name'] ?: 'slot';
+
+                $slot = $this->getSlot($name);
+
+                if ($slot === null) {
+                    return $matches[0];
+                }
+
+                return $slot->compile();
+            },
+            subject: $this->getViewComponent()->render($this),
+        );
     }
 }

@@ -4,23 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use DOMNodeList;
 use Exception;
 use Masterminds\HTML5;
 use ParseError;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
 use function Tempest\path;
-use function Tempest\Support\arr;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
-use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ElementFactory;
-use Tempest\View\Elements\EmptyElement;
-use Tempest\View\Elements\GenericElement;
-use Tempest\View\Elements\RawElement;
-use Tempest\View\Elements\SlotElement;
-use Tempest\View\Elements\TextElement;
-use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
@@ -37,8 +30,6 @@ final class TempestViewRenderer implements ViewRenderer
 
     private ?View $currentView = null;
 
-    private ?Element $currentScope = null;
-
     public function __construct(
         private readonly ElementFactory $elementFactory,
         private readonly AttributeFactory $attributeFactory,
@@ -46,13 +37,11 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
-        return $this->currentScope?->getData($name)
-            ?? $this->currentView?->get($name);
+        return $this->currentView?->get($name);
     }
 
     public function __call(string $name, array $arguments)
@@ -62,100 +51,85 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function render(string|View|null $view): string
     {
-        $view = $this->resolveView($view);
+        // 1. retrieve template
+        $template = $this->retrieveTemplate($view);
 
-        //        /** @var Element $element */
-        //        $element = $this->viewCache->resolve(
-        //            key: (string)crc32($view->getPath()),
-        //            cache: function () use ($view) {
-        $contents = $this->resolveContent($view);
+        // 2. Parse as DOM
+        // TODO: return children directly
+        $dom = $this->parseDom($template);
 
-        $contents = str_replace(
-            search: array_keys(self::TOKEN_MAPPING),
-            replace: array_values(self::TOKEN_MAPPING),
-            subject: $contents,
-        );
+        // 3. Map to elements
+        $elements = $this->mapToElements($dom);
 
-        $html5 = new HTML5();
-        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
+        // 4. Apply attributes
+        $elements = $this->applyAttributes($elements);
 
-        $element = $this->elementFactory->make(
-            $dom->getElementById('tempest_render'),
-        );
+        // 5. Compile to PHP
+        $compiled = $this->compileElements($elements);
 
-        //                return $element;
-        //            },
-        //        );
+        // (6. cache)
 
-        $element->setView($view);
-lw($element);
-        $element = $this->applyAttributes(
-            view: $view,
-            element: $element,
-        );
+        // 7. Render compiled template
+        $rendered = $this->renderCompiledTemplate($view, $compiled);
 
-        $rendered = $this->renderElements($view, $element->getChildren());
+        return $rendered;
 
-        $this->currentScope = null;
-
-        $rendered = str_replace(
-            search: array_values(self::TOKEN_MAPPING),
-            replace: array_keys(self::TOKEN_MAPPING),
-            subject: $rendered,
-        );
-
-        return $this->scopedEval($rendered);
+//
+//        $view = $this->resolveView($view);
+//
+//        //        /** @var Element $element */
+//        //        $element = $this->viewCache->resolve(
+//        //            key: (string)crc32($view->getPath()),
+//        //            cache: function () use ($view) {
+//        $contents = $this->resolveContent($view);
+//
+//        $contents = str_replace(
+//            search: array_keys(self::TOKEN_MAPPING),
+//            replace: array_values(self::TOKEN_MAPPING),
+//            subject: $contents,
+//        );
+//
+//        $html5 = new HTML5();
+//        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
+//
+//        $element = $this->elementFactory->make(
+//            $dom->getElementById('tempest_render'),
+//        );
+//
+//        //                return $element;
+//        //            },
+//        //        );
+//
+//        $element->setView($view);
+//lw($element);
+//        $element = $this->applyAttributes(
+//            view: $view,
+//            element: $element,
+//        );
+//
+//        $rendered = $this->renderElements($view, $element->getChildren());
+//
+//        $this->currentScope = null;
+//
+//        $rendered = str_replace(
+//            search: array_values(self::TOKEN_MAPPING),
+//            replace: array_keys(self::TOKEN_MAPPING),
+//            subject: $rendered,
+//        );
+//
+//        return $this->scopedEval($rendered);
     }
 
-    /** @param \Tempest\View\Element[] $elements */
-    private function renderElements(View $view, array $elements): string
+    private function retrieveTemplate(View|string|null $view): string
     {
-        $rendered = [];
-
-        foreach ($elements as $element) {
-            $rendered[] = $this->renderElement($view, $element);
+        if ($view === null) {
+            $view = '';
         }
 
-        return implode(PHP_EOL, $rendered);
-    }
-
-    public function renderElement(View $view, Element $element): string
-    {
-        if ($element instanceof CollectionElement) {
-            return $this->renderCollectionElement($view, $element);
+        if (is_string($view)) {
+            $view = new GenericView($view);
         }
 
-        if ($element instanceof TextElement) {
-            return $this->renderTextElement($view, $element);
-        }
-
-        if ($element instanceof EmptyElement) {
-            return $this->renderEmptyElement();
-        }
-
-        if ($element instanceof SlotElement) {
-            return $this->renderSlotElement($view, $element);
-        }
-
-        if ($element instanceof RawElement) {
-            return $this->renderRawElement($element);
-        }
-
-        if ($element instanceof ViewComponentElement) {
-            return $this->renderViewComponentElement($view, $element);
-        }
-
-        if ($element instanceof GenericElement) {
-            return $this->renderGenericElement($view, $element);
-        }
-
-        $this->currentScope = null;
-
-        throw new Exception("No rendered found");
-    }
-
-    private function resolveContent(View $view): string
-    {
         $path = $view->getPath();
 
         if (! str_ends_with($path, '.php')) {
@@ -176,141 +150,100 @@ lw($element);
         return file_get_contents($path);
     }
 
-    private function applyAttributes(View $view, Element $element): Element
+    private function parseDom(string $template): DOMNodeList
     {
-        $children = [];
-
-        foreach ($element->getChildren() as $child) {
-            $children[] = $this->applyAttributes($view, $child);
-        }
-
-        $element->setChildren($children);
-
-        foreach ($element->getAttributes() as $name => $value) {
-            $attribute = $this->attributeFactory->make($view, $name, $value);
-
-            $element = $attribute->apply($element);
-        }
-
-        return $element;
-    }
-
-    private function renderTextElement(View $view, TextElement $element): string
-    {
-        return preg_replace_callback(
-            pattern: '/{{\s*(?<eval>\$.*?)\s*}}/',
-            callback: function (array $matches) use ($element, $view): string {
-                $eval = $matches['eval'];
-
-                if (str_starts_with($eval, '$this->')) {
-                    return $view->eval($eval) ?? '';
-                }
-
-                return $element->getData()[ltrim($eval, '$')] ?? '';
-            },
-            subject: $element->getText(),
-        );
-    }
-
-    private function renderRawElement(RawElement $element): string
-    {
-        return $element->getHtml();
-    }
-
-    private function renderCollectionElement(View $view, CollectionElement $collectionElement): string
-    {
-        $rendered = [];
-
-        foreach ($collectionElement->getElements() as $element) {
-            $rendered[] = $this->renderElement($view, $element);
-        }
-
-        return implode(PHP_EOL, $rendered);
-    }
-
-    private function renderViewComponentElement(View $view, ViewComponentElement $element): string
-    {
-        $this->currentScope = $element;
-
-        $renderedContent = preg_replace_callback(
-            pattern: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
-            callback: function ($matches) use ($view, $element) {
-                $name = $matches['name'] ?: 'slot';
-
-                $slot = $element->getSlot($name);
-
-                if ($slot === null) {
-                    return $matches[0];
-                }
-
-                return $this->renderElement($view, $slot);
-            },
-            subject: $element->getViewComponent()->render($element, $this),
+        $template = str_replace(
+            search: array_keys(self::TOKEN_MAPPING),
+            replace: array_values(self::TOKEN_MAPPING),
+            subject: $template,
         );
 
-        $rendered = $this->scopedEval($renderedContent);
+        $html5 = new HTML5();
 
-        $this->currentScope = null;
+        $dom = $html5->loadHTML("<div id='tempest_render'>{$template}</div>");
 
-        return $rendered;
+        return $dom->getElementById('tempest_render')->childNodes;
     }
 
-    private function renderEmptyElement(): string
+    /**
+     * @return Element[]
+     */
+    private function mapToElements(DOMNodeList $domNodeList): array
     {
-        return '';
-    }
+        $elements = [];
 
-    private function renderSlotElement(View $view, SlotElement $element): string
-    {
-        $rendered = [];
-
-        foreach ($element->getChildren() as $child) {
-            $rendered[] = $this->renderElement($view, $child);
+        foreach ($domNodeList as $node) {
+            $elements[] = $this->elementFactory->make($node);
         }
 
-        return implode(PHP_EOL, $rendered);
+        return $elements;
     }
 
-    private function renderGenericElement(View $view, GenericElement $element): string
+    /**
+     * @param Element[] $elements
+     * @return Element[]
+     */
+    private function applyAttributes(array $elements): array
     {
-        $content = [];
+        $appliedElements = [];
 
-        foreach ($element->getChildren() as $child) {
-            $content[] = $this->renderElement($view, $child);
-        }
+        $previous = null;
 
-        $content = implode('', $content);
+        foreach ($elements as $element) {
+            $children = $this->applyAttributes($element->getChildren());
 
-        $attributes = [];
+            $element
+                ->setPrevious($previous)
+                ->setChildren($children);
 
-        foreach ($element->getAttributes() as $name => $value) {
-            if ($value) {
-                $attributes[] = $name . '="' . $value . '"';
-            } else {
-                $attributes[] = $name;
+            foreach ($element->getAttributes() as $name => $value) {
+                $attribute = $this->attributeFactory->make($name);
+
+                $element = $attribute->apply($element);
+
+                if ($element === null) {
+                    break;
+                }
             }
+
+            if ($element === null) {
+                continue;
+            }
+
+            $appliedElements[] = $element;
+
+            $previous = $element;
         }
 
-        $attributes = implode(' ', $attributes);
-
-        if ($attributes !== '') {
-            $attributes = ' ' . $attributes;
-        }
-
-        return "<{$element->getTag()}{$attributes}>{$content}</{$element->getTag()}>";
+        return $appliedElements;
     }
 
-    private function scopedEval(string $_content): string
+    /** @param \Tempest\View\Element[] $elements */
+    private function compileElements(array $elements): string
     {
+        $compiled = [];
+
+        foreach ($elements as $element) {
+            $compiled[] = $element->compile();
+        }
+
+        return implode(PHP_EOL, $compiled);
+    }
+
+    private function renderCompiledTemplate(View $_view, string $_content): string
+    {
+        $this->currentView = $_view;
+
+        $_content = str_replace(
+            search: array_values(self::TOKEN_MAPPING),
+            replace: array_keys(self::TOKEN_MAPPING),
+            subject: $_content,
+        );
+
         ob_start();
 
-        // Extract data from current element and current view into local variables so that they can be accessed directly
-        $_data = arr([
-            ...($this->currentScope?->getData() ?? []),
-            ...$this->currentView?->getData(),
-        ])
-            ->mapWithKeys(fn (mixed $value, string $key) => yield ltrim($key, ':') => $value)
-            ->toArray();
+        // Extract data from view into local variables so that they can be accessed directly
+        $_data = $_view->getData();
 
         extract($_data, flags: EXTR_SKIP);
 
@@ -326,26 +259,13 @@ lw($element);
 
         // If the view defines local variables, we add them here to the view object as well
         foreach (get_defined_vars() as $key => $value) {
-            if (! $this->currentView->has($key)) {
-                $this->currentView->data(...[$key => $value]);
+            if (! $_view->has($key)) {
+                $_view->data(...[$key => $value]);
             }
         }
 
+        $this->currentView = null;
+
         return trim(ob_get_clean());
-    }
-
-    private function resolveView(View|string|null $view): View
-    {
-        if ($view === null) {
-            $view = '';
-        }
-
-        if (is_string($view)) {
-            $view = new GenericView($view);
-        }
-
-        $this->currentView = $view;
-
-        return $view;
     }
 }

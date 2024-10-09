@@ -19,8 +19,6 @@ trait IsElement
 
     private ?Element $previous = null;
 
-    private array $data = [];
-
     public function setView(View $view): self
     {
         $this->view = $view;
@@ -42,7 +40,7 @@ trait IsElement
         return false;
     }
 
-    public function getAttribute(string $name, bool $eval = true): mixed
+    public function getAttribute(string $name): string|null
     {
         return null;
     }
@@ -93,36 +91,5 @@ trait IsElement
         $this->children = $children;
 
         return $this;
-    }
-
-    public function getData(?string $key = null): mixed
-    {
-        $parentData = $this->getParent()?->getData() ?? [];
-
-        $data = [...$parentData, ...$this->data];
-
-        if ($key) {
-            return $data[$key] ?? null;
-        }
-
-        return $data;
-    }
-
-    public function addData(...$data): self
-    {
-        $this->data = [...$this->data, ...$data];
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        $childClones = [];
-
-        foreach ($this->children as $child) {
-            $childClones[] = clone $child;
-        }
-
-        $this->setChildren($childClones);
     }
 }

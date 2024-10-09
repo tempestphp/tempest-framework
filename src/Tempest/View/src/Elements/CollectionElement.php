@@ -22,14 +22,14 @@ final class CollectionElement implements Element
         return $this->elements;
     }
 
-    public function render(ViewRenderer $renderer): string
+    public function compile(): string
     {
-        $rendered = [];
+        $compiled = [];
 
-        foreach ($this->elements as $element) {
-            $rendered[] = $element->render($renderer);
+        foreach ($this->getElements() as $element) {
+            $compiled[] = $element->compile();
         }
 
-        return implode(PHP_EOL, $rendered);
+        return implode(PHP_EOL, $compiled);
     }
 }

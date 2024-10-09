@@ -8,35 +8,21 @@ namespace Tempest\View\Attributes;
 
 use Tempest\View\Attribute;
 use Tempest\View\Element;
-use Tempest\View\Elements\EmptyElement;
+use Tempest\View\Elements\PhpIfElement;
+use Tempest\View\Exceptions\InvalidElement;
 
 final readonly class ElseIfAttribute implements Attribute
 {
-    public function apply(Element $element): Element
+    public function apply(Element $element): ?Element
     {
         $previous = $element->getPrevious();
 
-        $previousCondition = false;
-
-        // Check all :elseif and :if conditions for previous elements
-        // If one of the previous element's conditions is true, we'll stop.
-        // We won't have to render this :elseif element
-        while (
-            $previousCondition === false
-            && ($previous?->hasAttribute('if') || $previous?->hasAttribute('elseif'))
-        ) {
-            $previousCondition = (bool) ($previous?->getAttribute('if') ?? $previous?->getAttribute('elseif'));
-            $previous = $previous->getPrevious();
+        if (! $previous instanceof PhpIfElement) {
+            throw new InvalidElement('There needs to be an if or elseif element before.');
         }
 
-        $currentCondition = (bool) $element->getAttribute('elseif');
+        $previous->addElseif($element);
 
-        // For this element to render, the previous conditions need to be false,
-        // and the current condition must be true
-        if ($previousCondition === false && $currentCondition === true) {
-            return $element;
-        }
-
-        return new EmptyElement();
+        return null;
     }
 }

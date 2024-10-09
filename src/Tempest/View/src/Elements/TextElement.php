@@ -15,8 +15,14 @@ final class TextElement implements Element
     ) {
     }
 
-    public function getText(): string
+    public function compile(): string
     {
-        return $this->text;
+        return preg_replace_callback(
+            pattern: '/{{\s*(?<php>\$.*?)\s*}}/',
+            callback: function (array $matches): string {
+                return sprintf('<?= %s ?>', $matches['php']);
+            },
+            subject: $this->text,
+        );
     }
 }

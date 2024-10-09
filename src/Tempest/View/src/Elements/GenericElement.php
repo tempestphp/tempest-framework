@@ -16,9 +16,33 @@ final class GenericElement implements Element
     ) {
     }
 
-    public function getTag(): string
+    public function compile(): string
     {
-        return $this->tag;
+        $content = [];
+
+        foreach ($this->getChildren() as $child) {
+            $content[] = $child->compile();
+        }
+
+        $content = implode('', $content);
+
+        $attributes = [];
+
+        foreach ($this->getAttributes() as $name => $value) {
+            if ($value) {
+                $attributes[] = $name . '="' . $value . '"';
+            } else {
+                $attributes[] = $name;
+            }
+        }
+
+        $attributes = implode(' ', $attributes);
+
+        if ($attributes !== '') {
+            $attributes = ' ' . $attributes;
+        }
+
+        return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
     }
 
     public function getAttributes(): array
@@ -30,71 +54,17 @@ final class GenericElement implements Element
     {
         $name = ltrim($name, ':');
 
-        return array_key_exists($name, $this->attributes)
-            || array_key_exists(":{$name}", $this->attributes);
+        return
+            array_key_exists(":{$name}", $this->attributes) ||
+            array_key_exists($name, $this->attributes);
     }
 
-    public function getAttribute(string $name, bool $eval = true): mixed
+    public function getAttribute(string $name): string|null
     {
         $name = ltrim($name, ':');
 
-        foreach ($this->attributes as $attributeName => $value) {
-            if ($attributeName === $name) {
-                return $value;
-            }
-
-            if ($attributeName === ":{$name}") {
-                if (! $value) {
-                    return null;
-                }
-
-                if (! $eval) {
-                    return $value;
-                }
-
-                return $this->eval($value)
-                    ?? $this->getData()[ltrim($value, '$')]
-                    ?? '';
-            }
-        }
-
-        return null;
-    }
-
-    public function getData(?string $key = null): mixed
-    {
-        if ($key && $this->hasAttribute($key)) {
-            return $this->getAttribute($key);
-        }
-
-        $parentData = $this->getParent()?->getData() ?? [];
-
-        $data = [...$this->attributes, ...$this->view->getData(), ...$parentData, ...$this->data];
-
-        if ($key) {
-            return $data[$key] ?? null;
-        }
-
-        return $data;
-    }
-
-    private function eval(string $eval): mixed
-    {
-        $data = $this->getData();
-
-        extract($data, flags: EXTR_SKIP);
-
-        /** @phpstan-ignore-next-line */
-        return eval("return {$eval};");
-    }
-
-    public function __get(string $name)
-    {
-        return $this->getData($name) ?? $this->view->{$name};
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->view->{$name}(...$arguments);
+        return $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
     }
 }
