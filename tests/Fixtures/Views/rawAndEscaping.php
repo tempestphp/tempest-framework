@@ -2,7 +2,7 @@
 
 use Tempest\View\GenericView;
 
-/** @var GenericView $this */ ?>
+/** @var GenericView|stdClass $this */ ?>
 
 <?= $this->property ?>
 <?= $this->raw('property') ?>
