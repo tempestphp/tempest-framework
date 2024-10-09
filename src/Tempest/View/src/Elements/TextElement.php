@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use function Tempest\Support\str;
 
 final class TextElement implements Element
 {
@@ -17,12 +18,22 @@ final class TextElement implements Element
 
     public function compile(): string
     {
-        return preg_replace_callback(
-            pattern: '/{{\s*(?<php>\$.*?)\s*}}/',
-            callback: function (array $matches): string {
-                return sprintf('<?= %s ?>', $matches['php']);
-            },
-            subject: $this->text,
-        );
+        return str($this->text)
+            // Render {{
+            ->replaceRegex(
+                regex: '/{{(?<match>.*?)}}/',
+                replace: function (array $matches): string {
+                    return sprintf('<?= $this->escape(%s); ?>', $matches['match']);
+                },
+            )
+
+            // Render {!!
+            ->replaceRegex(
+                regex: '/{!!(?<match>.*?)!!}/',
+                replace: function (array $matches): string {
+                    return sprintf('<?= %s ?>', $matches['match']);
+                },
+            )
+            ->toString();
     }
 }

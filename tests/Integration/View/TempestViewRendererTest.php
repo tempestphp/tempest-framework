@@ -249,6 +249,12 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     
     public function test_raw_and_escaped(): void
     {
-        
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
+
+        $this->assertSame(<<<'HTML'
+        &lt;h1&gt;hi&lt;/h1&gt;
+        &lt;H1&gt;HI&lt;/H1&gt;
+        <h1>hi</h1>
+        HTML, $html);
     }
 }

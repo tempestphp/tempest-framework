@@ -62,16 +62,18 @@ final readonly class TempestViewCompiler
 
         $discoveryLocations = $this->kernel->discoveryLocations;
 
-        while (! file_exists($path) && $location = current($discoveryLocations)) {
-            $path = path($location->path, $path);
+        $searchPath = $path;
+
+        while (! file_exists($searchPath) && $location = current($discoveryLocations)) {
+            $searchPath = path($location->path, $path);
             next($discoveryLocations);
         }
 
-        if (! file_exists($path)) {
-            throw new Exception("View {$path} not found");
+        if (! file_exists($searchPath)) {
+            throw new Exception("View {$searchPath} not found");
         }
 
-        return file_get_contents($path);
+        return file_get_contents($searchPath);
     }
 
     private function parseDom(string $template): DOMNodeList

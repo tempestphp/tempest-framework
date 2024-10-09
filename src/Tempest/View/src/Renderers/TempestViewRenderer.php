@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use Stringable;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 use Tempest\View\Exceptions\CompileError;
@@ -89,8 +90,8 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             /** @phpstan-ignore-next-line */
             eval('?>' . $_content . '<?php');
-        } catch (Throwable) {
-            throw new CompileError($_content);
+        } catch (Throwable $throwable) {
+            throw new CompileError(content: $_content, previous: $throwable);
         }
 
         // If the view defines local variables, we add them here to the view object as well
@@ -103,5 +104,10 @@ final class TempestViewRenderer implements ViewRenderer
         $this->currentView = null;
 
         return trim(ob_get_clean());
+    }
+
+    public function escape(string|Stringable $value): string
+    {
+        return htmlentities((string) $value);
     }
 }
