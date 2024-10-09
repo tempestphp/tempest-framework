@@ -11,7 +11,7 @@ use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\ShellExecutor;
-use Tempest\Console\Testing\OldConsoleTester;
+use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\DiscoveryLocation;
@@ -41,7 +41,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->singleton(StdoutOutputBuffer::class, fn () => new MemoryOutputBuffer());
         $this->container->singleton(ShellExecutor::class, fn () => new NullShellExecutor());
 
-        $this->console = new OldConsoleTester($this->container);
+        $this->console = new ConsoleTester($this->container);
 
         // Database
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
