@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem\Tests;
 
+use bovigo\vfs\vfsStream;
 use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -12,6 +14,9 @@ use Tempest\Filesystem\ErrorContext;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
 use Tempest\Filesystem\Exceptions\UnableToCopyFile;
 use Tempest\Filesystem\Exceptions\UnableToCreateDirectory;
+use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
+use Tempest\Filesystem\Exceptions\UnableToReadFile;
+use Tempest\Filesystem\Exceptions\UnableToWriteFile;
 use Tempest\Filesystem\LocalFilesystem;
 
 /**
@@ -50,15 +55,6 @@ final class LocalFilesystemTest extends TestCase
         return $this->sandbox . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
     }
 
-    public function test_writing_files(): void
-    {
-        $filePath = $this->path('test.txt');
-
-        (new LocalFilesystem())->write($filePath, 'Hello world!');
-
-        $this->assertStringEqualsFile($filePath, 'Hello world!');
-    }
-
     public function test_reading_files(): void
     {
         $filePath = $this->path('test.txt');
@@ -70,6 +66,87 @@ final class LocalFilesystemTest extends TestCase
         $this->assertSame('Hello world!', $text);
     }
 
+    public function test_exception_is_thrown_when_reading_a_file_that_doesnt_exist(): void
+    {
+        $filePath = $this->path('test.txt');
+
+        $this->expectExceptionObject(
+            FileDoesNotExist::atPath($filePath),
+        );
+
+        (new LocalFilesystem())->read($filePath);
+    }
+
+    public function test_exception_is_thrown_when_there_is_an_error_reading_a_file(): void
+    {
+        $root = vfsStream::setup('root', null, [
+            'file.txt' => 'content',
+        ]);
+
+        $filePath = vfsStream::url('root/file.txt');
+
+        $this->expectExceptionObject(
+            UnableToReadFile::atPath($filePath, new ErrorContext())
+        );
+
+        // Make the file unreadable.
+        $root->getChild('file.txt')->chmod(0000);
+
+        (new LocalFilesystem())->read($filePath);
+    }
+
+    public function test_writing_files(): void
+    {
+        $filePath = $this->path('test.txt');
+
+        (new LocalFilesystem())->write($filePath, 'Hello world!');
+
+        $this->assertStringEqualsFile($filePath, 'Hello world!');
+    }
+
+    public function test_exception_is_thrown_when_there_is_an_error_writing_a_file(): void
+    {
+        vfsStream::setup('root', 0000);
+
+        $filePath = vfsStream::url('root/file.txt');
+
+        $this->expectExceptionObject(
+            UnableToWriteFile::atPath($filePath, new ErrorContext())
+        );
+
+        (new LocalFilesystem())->write($filePath, 'Hello world!');
+    }
+
+    public function test_appending_to_a_file(): void
+    {
+        vfsStream::setup('root', null, [
+            'file.txt' => 'Line 1' . PHP_EOL,
+        ]);
+
+        $filePath = vfsStream::url('root/file.txt');
+
+        (new LocalFilesystem())->append($filePath, 'Line 2' . PHP_EOL);
+
+        $this->assertStringEqualsFile($filePath, 'Line 1' . PHP_EOL . 'Line 2' . PHP_EOL);
+    }
+
+    public function test_exception_is_thrown_when_there_is_an_error_appending_to_a_file(): void
+    {
+        $root = vfsStream::setup('root', null, [
+            'file.txt' => 'Line 1' . PHP_EOL,
+        ]);
+
+        $root->getChild('file.txt')->chmod(0000);
+
+        $filePath = vfsStream::url('root/file.txt');
+
+        $this->expectExceptionObject(
+            UnableToWriteFile::atPath($filePath, new ErrorContext())
+        );
+
+        (new LocalFilesystem())->append($filePath, 'Line 2' . PHP_EOL);
+    }
+
     public function test_deleting_files(): void
     {
         $filePath = $this->path('to-be-deleted.txt');
@@ -79,6 +156,34 @@ final class LocalFilesystemTest extends TestCase
         (new LocalFilesystem())->delete($filePath);
 
         $this->assertFileDoesNotExist($filePath);
+    }
+
+    public function test_exception_is_thrown_when_there_is_an_error_deleting_a_file(): void
+    {
+        vfsStream::setup('root', 0000, [
+            'file.txt' => 'Hello world!',
+        ]);
+
+        $filePath = vfsStream::url('root/file.txt');
+
+        $this->expectExceptionObject(
+            UnableToDeleteFile::atPath($filePath)
+        );
+
+        (new LocalFilesystem())->delete($filePath);
+    }
+
+    public function test_is_file(): void
+    {
+        $filesystem = new LocalFilesystem();
+        $directoryPath = $this->path('some-directory');
+        $filePath = $this->path('some-file.txt');
+
+        mkdir($directoryPath);
+        file_put_contents($filePath, 'Hello world!');
+
+        $this->assertFalse($filesystem->isFile($directoryPath));
+        $this->assertTrue($filesystem->isFile($filePath));
     }
 
     public function test_checking_file_existence(): void

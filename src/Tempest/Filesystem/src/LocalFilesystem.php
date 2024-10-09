@@ -19,11 +19,11 @@ final class LocalFilesystem implements Filesystem
     {
         $error = ErrorContext::reset();
 
-        if (! $this->exists($filePath)) {
+        if (! $this->isFile($filePath)) {
             throw FileDoesNotExist::atPath($filePath);
         }
 
-        $contents = file_get_contents($filePath);
+        $contents = @file_get_contents($filePath);
 
         if ($contents === false) {
             throw UnableToReadFile::atPath($filePath, $error);
@@ -59,28 +59,9 @@ final class LocalFilesystem implements Filesystem
         }
     }
 
-    public function exists(string $filePath): bool
+    public function isFile(string $filePath): bool
     {
-        return file_exists($filePath);
-    }
-
-    public function copy(string $sourcePath, string $destinationPath): void
-    {
-        $error = ErrorContext::reset();
-
-        if (! $this->exists($sourcePath)) {
-            throw FileDoesNotExist::atPath($sourcePath);
-        }
-
-        if (@copy($sourcePath, $destinationPath) === false) {
-            throw UnableToCopyFile::fromSourceToDestination($sourcePath, $destinationPath, $error);
-        }
-    }
-
-    public function move(string $sourcePath, string $destinationPath): void
-    {
-        $this->copy($sourcePath, $destinationPath);
-        $this->delete($sourcePath);
+        return is_file($filePath);
     }
 
     public function createDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void
@@ -100,5 +81,29 @@ final class LocalFilesystem implements Filesystem
     public function isDirectory(string $path): bool
     {
         return is_dir($path);
+    }
+
+    public function exists(string $path): bool
+    {
+        return file_exists($path);
+    }
+
+    public function copy(string $sourcePath, string $destinationPath): void
+    {
+        $error = ErrorContext::reset();
+
+        if (! $this->exists($sourcePath)) {
+            throw FileDoesNotExist::atPath($sourcePath);
+        }
+
+        if (@copy($sourcePath, $destinationPath) === false) {
+            throw UnableToCopyFile::fromSourceToDestination($sourcePath, $destinationPath, $error);
+        }
+    }
+
+    public function move(string $sourcePath, string $destinationPath): void
+    {
+        $this->copy($sourcePath, $destinationPath);
+        $this->delete($sourcePath);
     }
 }

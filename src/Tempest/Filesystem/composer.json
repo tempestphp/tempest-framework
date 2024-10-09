@@ -15,5 +15,8 @@
         }
     },
     "license": "MIT",
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "mikey179/vfsstream": "^2.0@dev"
+    }
 }

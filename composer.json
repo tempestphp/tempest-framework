@@ -38,6 +38,7 @@
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
+        "mikey179/vfsstream": "^2.0@dev",
         "nyholm/psr7": "^1.8",
         "php-http/mock-client": "^1.6",
         "phpat/phpat": "^0.10.14",

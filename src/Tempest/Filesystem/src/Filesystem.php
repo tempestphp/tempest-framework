@@ -12,7 +12,7 @@ interface Filesystem
 
     public function delete(string $filePath): void;
 
-    public function exists(string $filePath): bool;
+    public function exists(string $path): bool;
 
     public function copy(string $sourcePath, string $destinationPath): void;
 
