@@ -8,7 +8,6 @@ use DOMNodeList;
 use Exception;
 use Masterminds\HTML5;
 use ParseError;
-use Tempest\Container\Container;
 use Tempest\Core\Kernel;
 use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
@@ -17,7 +16,6 @@ use Tempest\View\Elements\ElementFactory;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
-use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
 final class TempestViewRenderer implements ViewRenderer
@@ -34,10 +32,9 @@ final class TempestViewRenderer implements ViewRenderer
         private readonly ElementFactory $elementFactory,
         private readonly AttributeFactory $attributeFactory,
         private readonly Kernel $kernel,
-        private readonly ViewConfig $viewConfig,
-        private readonly Container $container,
         private readonly ViewCache $viewCache,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
@@ -186,18 +183,18 @@ final class TempestViewRenderer implements ViewRenderer
             $compiled[] = $element->compile();
         }
 
-        return implode(PHP_EOL, $compiled);
+        $compiled = implode(PHP_EOL, $compiled);
+
+        return str_replace(
+            search: array_values(self::TOKEN_MAPPING),
+            replace: array_keys(self::TOKEN_MAPPING),
+            subject: $compiled,
+        );
     }
 
     private function renderCompiled(View $_view, string $_content): string
     {
         $this->currentView = $_view;
-
-        $_content = str_replace(
-            search: array_values(self::TOKEN_MAPPING),
-            replace: array_keys(self::TOKEN_MAPPING),
-            subject: $_content,
-        );
 
         ob_start();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
@@ -16,7 +18,8 @@ final class PhpIfElement implements Element
 
     public function __construct(
         private readonly Element $wrappingElement,
-    ) {}
+    ) {
+    }
 
     public function addElseif(Element $element): self
     {

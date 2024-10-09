@@ -6,7 +6,6 @@ namespace Tests\Tempest\Fixtures;
 
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
-use Tempest\View\ViewRenderer;
 
 final readonly class MyViewComponent implements ViewComponent
 {

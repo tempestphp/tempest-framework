@@ -6,20 +6,21 @@ namespace Tempest\View\Attributes;
 
 use Tempest\View\Attribute;
 use Tempest\View\Element;
+use Tempest\View\Elements\PhpDataElement;
 
 final readonly class DataAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {}
+    ) {
+    }
 
     public function apply(Element $element): Element
     {
-        $value = $element->getAttribute($this->name);
-
-        return $element->setAttribute(
+        return new PhpDataElement(
             $this->name,
-            sprintf('<?= %s ?>', $value)
+            $element->getAttribute($this->name),
+            $element,
         );
     }
 }

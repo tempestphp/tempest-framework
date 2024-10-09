@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
+use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Exceptions\InvalidElement;
-use function Tempest\Support\str;
 
 final class PhpForeachElement implements Element
 {
@@ -14,7 +16,8 @@ final class PhpForeachElement implements Element
 
     public function __construct(
         private readonly Element $wrappingElement,
-    ) {}
+    ) {
+    }
 
     public function setElse(Element $element): self
     {
@@ -43,7 +46,7 @@ final class PhpForeachElement implements Element
             $compiled,
         );
 
-        if ($this->else) {
+        if ($this->else !== null) {
             $collectionName = str($this->wrappingElement->getAttribute('foreach'))
                 ->match('/^(?<match>.*)\s+as/')['match'];
 

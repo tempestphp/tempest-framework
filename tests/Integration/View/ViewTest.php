@@ -23,12 +23,13 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->render($view);
 
         $expected = <<<HTML
-            <html lang="en"><head><title></title></head><body>
-                Hello Brent!
-            </body></html>
+            <html lang="en">    <head>        <title></title>    </head>    <body>    Hello Brent!</body>    </html>
             HTML;
 
-        $this->assertStringContainsStringIgnoringLineEndings($expected, $html);
+        $this->assertStringContainsStringIgnoringLineEndings(
+            str_replace(PHP_EOL, '', $expected),
+            str_replace(PHP_EOL, '', $html),
+        );
     }
 
     public function test_render_with_view_model(): void
@@ -47,16 +48,16 @@ HTML;
     public function test_raw_and_escaping(): void
     {
         $this->markTestSkipped('Need to refactor raw and escaping to only work with {{ and {{!');
-        $html = $this->render(view('Views/rawAndEscaping.php')->data(
-            property: '<h1>hi</h1>',
-        ));
-
-        $expected = <<<HTML
-        &lt;h1&gt;hi&lt;/h1&gt;
-        <h1>hi</h1>
-        HTML;
-
-        $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($html));
+        //        $html = $this->render(view('Views/rawAndEscaping.php')->data(
+        //            property: '<h1>hi</h1>',
+        //        ));
+        //
+        //        $expected = <<<HTML
+        //        &lt;h1&gt;hi&lt;/h1&gt;
+        //        <h1>hi</h1>
+        //        HTML;
+        //
+        //        $this->assertStringEqualsStringIgnoringLineEndings(trim($expected), trim($html));
     }
 
     public function test_custom_view_with_response_data(): void

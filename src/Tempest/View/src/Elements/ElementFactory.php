@@ -9,10 +9,10 @@ use DOMElement;
 use DOMNode;
 use DOMText;
 use Tempest\Container\Container;
+use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
-use function Tempest\Support\str;
 
 final class ElementFactory
 {

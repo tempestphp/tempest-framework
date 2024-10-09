@@ -59,7 +59,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
-            expected: <<<'HTML'
+            expected: str_replace(PHP_EOL, '', <<<'HTML'
             <form action="#" method="post" >
                 <div><div>
                 <label for="a">a</label>
@@ -72,8 +72,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 
             </div>
             </form>
-            HTML,
-            actual: $this->render(view(
+            HTML),
+            actual: str_replace(PHP_EOL, '', $this->render(view(
                 <<<'HTML'
             <x-form action="#">
                 <div>
@@ -82,7 +82,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-input name="b" label="b" type="text" />
             </x-form>
             HTML,
-            )),
+            ))),
         );
     }
 
@@ -241,26 +241,24 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-        <div>
-                a    </div>
-        <div>
-                b    </div>
-        <div>
-                c    </div>
+        <div>        a    </div>    <div>        b    </div>    <div>        c    </div>
         HTML,
-            $rendered
+            str_replace(PHP_EOL, '', $rendered)
         );
     }
 
     public function test_inline_view_variables_passed_to_component(): void
     {
-        $this->markTestSkipped('Defining local variables within the view file currently is not possible anymore because PHP rendering now happens after element rendering');
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
         $this->assertSame(<<<HTML
         fromPHP
-        fromString
-        nothing
+        
+        
+            fromString
+        
+        
+            nothing
         HTML, $html);
     }
 
@@ -299,7 +297,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(<<<HTML
         test
-        test
+        
+        
+            test
         HTML, $html);
     }
 

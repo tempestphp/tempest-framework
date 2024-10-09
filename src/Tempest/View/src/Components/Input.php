@@ -8,7 +8,6 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\Rule;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
-use Tempest\View\ViewRenderer;
 
 final readonly class Input implements ViewComponent
 {

@@ -6,9 +6,7 @@ namespace Tempest\View\Attributes;
 
 use Tempest\View\Attribute;
 use Tempest\View\Element;
-use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\PhpForeachElement;
-use Tempest\View\View;
 
 final readonly class ForeachAttribute implements Attribute
 {
