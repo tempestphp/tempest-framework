@@ -48,23 +48,27 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function render(string|View|null $view): string
     {
-        // 1. Retrieve template
-        $template = $this->retrieveTemplate($view);
+        $compiled = $this->viewCache->resolve(
+            key: (string) crc32($view->getPath()),
+            cache: function () use ($view) {
+                // 1. Retrieve template
+                $template = $this->retrieveTemplate($view);
 
-        // 2. Parse as DOM
-        $dom = $this->parseDom($template);
+                // 2. Parse as DOM
+                $dom = $this->parseDom($template);
 
-        // 3. Map to elements
-        $elements = $this->mapToElements($dom);
+                // 3. Map to elements
+                $elements = $this->mapToElements($dom);
 
-        // 4. Apply attributes
-        $elements = $this->applyAttributes($elements);
+                // 4. Apply attributes
+                $elements = $this->applyAttributes($elements);
 
-        // 5. Compile to PHP
-        $compiled = $this->compileElements($elements);
+                // 5. Compile to PHP
+                return $this->compileElements($elements);
+            }
+        );
 
         // (6. cache)
-        // TODO
 
         // 7. Render compiled template
         return $this->renderCompiled($view, $compiled);
