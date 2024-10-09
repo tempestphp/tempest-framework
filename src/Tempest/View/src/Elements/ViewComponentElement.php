@@ -125,7 +125,7 @@ final class ViewComponentElement implements Element
 
                 return $slot->compile();
             },
-            subject: $this->getViewComponent()->render($this),
+            subject: $this->getViewComponent()->compile($this),
         );
     }
 }

@@ -21,7 +21,7 @@ final readonly class AnonymousViewComponent implements ViewComponent
         return 'x-component';
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         return $this->contents;
     }

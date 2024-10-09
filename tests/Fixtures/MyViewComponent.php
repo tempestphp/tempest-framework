@@ -15,7 +15,7 @@ final readonly class MyViewComponent implements ViewComponent
         return 'my';
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         $foo = $element->getAttribute('foo');
         $bar = $element->getAttribute('bar');

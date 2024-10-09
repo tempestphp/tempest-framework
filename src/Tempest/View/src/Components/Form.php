@@ -15,7 +15,7 @@ final readonly class Form implements ViewComponent
         return 'x-form';
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         $action = $element->getAttribute('action');
         $method = $element->getAttribute('method') ?? 'post';

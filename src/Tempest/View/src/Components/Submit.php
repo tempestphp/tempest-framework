@@ -15,7 +15,7 @@ final readonly class Submit implements ViewComponent
         return 'x-submit';
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         $label = $element->getAttribute('label') ?? 'Submit';
 

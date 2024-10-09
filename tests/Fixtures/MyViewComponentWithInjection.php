@@ -19,7 +19,7 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
     {
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         return 'hi';
     }

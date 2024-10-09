@@ -10,5 +10,5 @@ interface ViewComponent
 {
     public static function getName(): string;
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string;
+    public function compile(ViewComponentElement $element): string;
 }

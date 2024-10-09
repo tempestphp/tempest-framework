@@ -22,7 +22,7 @@ final readonly class Input implements ViewComponent
         return 'x-input';
     }
 
-    public function render(ViewComponentElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         $name = $element->getAttribute('name');
         $label = $element->getAttribute('label');
