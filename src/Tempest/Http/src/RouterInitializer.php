@@ -16,6 +16,7 @@ final readonly class RouterInitializer implements Initializer
     {
         $router = $container->get(GenericRouter::class);
 
+        $router->addMiddleware(ResolveRequestMiddleware::class);
         $router->addMiddleware(SetCookieMiddleware::class);
 
         return $router;
