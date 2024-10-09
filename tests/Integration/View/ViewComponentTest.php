@@ -310,6 +310,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_php_code_in_attribute(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/x-button-usage.view.php'));
+
+        $this->assertStringContainsString('/docs/', $html);
+    }
+
     public static function view_components(): Generator
     {
         yield [

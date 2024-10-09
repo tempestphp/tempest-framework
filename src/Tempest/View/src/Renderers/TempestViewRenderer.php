@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 use Tempest\View\Exceptions\CompileError;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewRenderer;
 use Throwable;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
 final class TempestViewRenderer implements ViewRenderer
 {

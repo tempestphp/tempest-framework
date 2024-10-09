@@ -9,25 +9,30 @@ use Exception;
 use Masterminds\HTML5;
 use Tempest\Core\Kernel;
 use function Tempest\path;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 
 final readonly class TempestViewCompiler
 {
-    private const array TOKEN_MAPPING = [
-        '<?php' => '__TOKEN_PHP_OPEN__',
-        '<?=' => '__TOKEN_PHP_SHORT_ECHO__',
-        '?>' => '__TOKEN_PHP_CLOSE__',
+    public const string TOKEN_PHP_OPEN = '__TOKEN_PHP_OPEN__';
+
+    public const string TOKEN_PHP_SHORT_ECHO = '__TOKEN_PHP_SHORT_ECHO__';
+
+    public const string TOKEN_PHP_CLOSE = '__TOKEN_PHP_CLOSE__';
+
+    public const array TOKEN_MAPPING = [
+        '<?php' => self::TOKEN_PHP_OPEN,
+        '<?=' => self::TOKEN_PHP_SHORT_ECHO,
+        '?>' => self::TOKEN_PHP_CLOSE,
     ];
 
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public function compile(string $path): string
     {

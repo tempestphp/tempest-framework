@@ -22,9 +22,11 @@ final readonly class DataAttribute implements Attribute
             return $element;
         }
 
+        $value = str($element->getAttribute($this->name));
+
         return new PhpDataElement(
             $this->name,
-            $element->getAttribute($this->name),
+            $value->toString(),
             $element,
         );
     }
