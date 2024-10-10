@@ -9,6 +9,7 @@ use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tempest\Generation\Tests\Fixtures\WelcomeController;
 
 /**
  * @internal
@@ -128,6 +129,16 @@ final class ClassManipulatorTest extends TestCase
     {
         $class = new ClassManipulator(CreateMigrationsTable::class);
         $class->simplifyClassNamesInMethodBodies(false);
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function transforms_functions(): void
+    {
+        $class = new ClassManipulator(WelcomeController::class);
+        $class->setNamespace('App\\Controllers');
+        $class->setClassName('WelcomeController');
 
         $this->assertMatchesSnapshot($class->print());
     }

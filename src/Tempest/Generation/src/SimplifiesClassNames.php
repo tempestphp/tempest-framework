@@ -55,6 +55,7 @@ trait SimplifiesClassNames
         foreach ($file->getNamespaces() as $namespace) {
             foreach ($namespace->getClasses() as $class) {
                 $types = [];
+                $functions = [];
 
                 if ($this->simplifyImplements) {
                     foreach ($class->getImplements() as $implement) {
@@ -69,24 +70,38 @@ trait SimplifiesClassNames
                 foreach ($class->getMethods() as $method) {
                     $types[] = $method->getReturnType(true);
 
-                    array_map(function ($param) use (&$types): void {
-                        $types[] = $param->getType(true);
-                    }, $method->getParameters());
+                    foreach ($method->getParameters() as $parameter) {
+                        $types[] = $parameter->getType(true);
+                    }
+
+                    foreach ($method->getAttributes() as $attribute) {
+                        $types[] = $attribute->getName();
+                    }
 
                     if ($this->simplifyClassNamesInBodies) {
                         $methodBody = $method->getBody();
                         $fqcnMatches = $this->extractFqcnFromBody($methodBody);
 
                         foreach (array_filter($fqcnMatches) as $fqcn) {
-                            $namespace->addUse($fqcn);
+                            if (str_contains($methodBody, "/*(f*/\\{$fqcn}")) {
+                                $namespace->addUseFunction($fqcn);
 
-                            if (! str_contains($methodBody, "/*(n*/\\{$fqcn}")) {
-                                $methodBody = str_replace(
-                                    search: '\\'.$fqcn,
-                                    replace: (string) str($fqcn)->afterLast('\\'),
-                                    subject: $methodBody
-                                );
+                                continue;
                             }
+
+                            if (str_contains($methodBody, "/*(n*/\\{$fqcn}")) {
+                                $namespace->addUse($fqcn);
+
+                                continue;
+                            }
+
+                            $methodBody = str_replace(
+                                search: '\\'.$fqcn,
+                                replace: (string) str($fqcn)->afterLast('\\'),
+                                subject: $methodBody
+                            );
+
+                            $namespace->addUse($fqcn);
                         }
 
                         $method->setBody($methodBody);
