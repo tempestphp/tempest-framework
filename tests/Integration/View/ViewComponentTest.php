@@ -59,21 +59,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
-            expected: str_replace(PHP_EOL, '', <<<'HTML'
-            <form action="#" method="post" >
-                <div><div>
-                <label for="a">a</label>
-                <input type="number" name="a" id="a" value="" />
-                
-            </div></div>
-            <div>
-                <label for="b">b</label>
-                <input type="text" name="b" id="b" value="" />
-                
+            expected: <<<'HTML'
+            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
             </div>
+            <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
+            
             </form>
-            HTML),
-            actual: str_replace(PHP_EOL, '', $this->render(view(
+            HTML,
+            actual: $this->render(view(
                 <<<'HTML'
             <x-form action="#">
                 <div>
@@ -82,7 +75,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-input name="b" label="b" type="text" />
             </x-form>
             HTML,
-            ))),
+            )),
         );
     }
 
@@ -90,7 +83,26 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-view-component-with-another-one-included-a/>');
 
-        $this->assertSame('hi', $html);
+        $this->assertSame(<<<'HTML'
+hi
+
+    
+<div class="slot-b"><div class="slot-a"></div></div>
+HTML, $html);
+    }
+
+    public function test_component_with_anther_component_included_with_slot(): void
+    {
+        $html = $this->render('<x-view-component-with-another-one-included-a>test</x-view-component-with-another-one-included-a>');
+
+        $this->assertSame(<<<'HTML'
+hi
+
+    
+<div class="slot-b"><div class="slot-a">
+            test
+        </div></div>
+HTML, $html);
     }
 
     public function test_view_component_with_injected_view(): void
@@ -331,8 +343,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         yield [
             '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p>
-<p>b</p></div>',
+            '<div><p>a</p><p>b</p></div>',
         ];
 
         yield [

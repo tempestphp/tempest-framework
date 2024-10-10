@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
-use function Tempest\Support\str;
 
 final class PhpDataElement implements Element
 {

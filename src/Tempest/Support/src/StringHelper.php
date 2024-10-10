@@ -292,8 +292,7 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        foreach ($needles as $needle)
-        {
+        foreach ($needles as $needle) {
             if (str_starts_with($this->string, (string) $needle)) {
                 return true;
             }
@@ -308,8 +307,7 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        foreach ($needles as $needle)
-        {
+        foreach ($needles as $needle) {
             if (str_ends_with($this->string, (string) $needle)) {
                 return true;
             }

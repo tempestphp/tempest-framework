@@ -184,6 +184,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             injected scripts
                 
             
+            
             <div class="base">
                 
                 Test
@@ -194,6 +195,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
                 Hi
             
             </div>
+            
             
             
                 injected styles

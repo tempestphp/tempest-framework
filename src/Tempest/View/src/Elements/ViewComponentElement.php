@@ -72,16 +72,8 @@ final class ViewComponentElement implements Element
 
                     return $slot->compile();
                 },
-            )
-
-            // Compile includes, matches self-closing and non-self-closing tags starting with `x-`, including attributes
-            ->replaceRegex(
-                regex: '/<x-.*?>((<\/x-.*?)>)?/',
-                replace: function ($matches) {
-                    return $this->compiler->compile($matches[0]);
-                },
             );
 
-        return $compiled->toString();
+        return $this->compiler->compile($compiled->toString());
     }
 }

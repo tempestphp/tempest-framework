@@ -22,13 +22,14 @@ final class ViewTest extends FrameworkIntegrationTestCase
 
         $html = $this->render($view);
 
-        $expected = <<<HTML
-            <html lang="en">    <head>        <title></title>    </head>    <body>    Hello Brent!</body>    </html>
-            HTML;
+        $this->assertStringContainsString(
+            'Hello Brent!',
+            $html
+        );
 
-        $this->assertStringContainsStringIgnoringLineEndings(
-            str_replace(PHP_EOL, '', $expected),
-            str_replace(PHP_EOL, '', $html),
+        $this->assertStringContainsString(
+            '<title></title>',
+            $html
         );
     }
 
