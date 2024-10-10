@@ -25,6 +25,7 @@ final class PhpDataElement implements Element
         $isExpression = str_starts_with($this->name, ':');
         $value = str($this->value ?? '');
 
+        // If the value of an attribute is PHP code, it's automatically promoted to an expression with the PHP tags stripped
         if ($value->startsWith([TempestViewCompiler::TOKEN_PHP_OPEN, TempestViewCompiler::TOKEN_PHP_SHORT_ECHO])) {
             $value = $value->replace(TempestViewCompiler::TOKEN_MAPPING, '');
             $isExpression = true;
@@ -32,6 +33,7 @@ final class PhpDataElement implements Element
 
         $value = $value->toString();
 
+        // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
             '$%s = %s;',
             $name,
@@ -40,6 +42,8 @@ final class PhpDataElement implements Element
                 : var_export($value, true),
         );
 
+        // And we'll remove it right after the element, this way we've created a "local scope"
+        // where the variable is only available to that specific element.
         $variableRemoval = sprintf(
             'unset($%s);',
             $name,
