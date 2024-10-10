@@ -7,7 +7,7 @@ namespace Tempest\View\Renderers;
 use Stringable;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
-use Tempest\View\Exceptions\CompileError;
+use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
@@ -91,7 +91,7 @@ final class TempestViewRenderer implements ViewRenderer
             /** @phpstan-ignore-next-line */
             eval('?>' . $_content . '<?php');
         } catch (Throwable $throwable) {
-            throw new CompileError(content: $_content, previous: $throwable);
+            throw new ViewCompilationError(content: $_content, previous: $throwable);
         }
 
         // If the view defines local variables, we add them here to the view object as well

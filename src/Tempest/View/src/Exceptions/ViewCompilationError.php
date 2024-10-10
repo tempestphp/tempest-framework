@@ -8,7 +8,7 @@ use Exception;
 use function Tempest\Support\str;
 use Throwable;
 
-final class CompileError extends Exception
+final class ViewCompilationError extends Exception
 {
     public function __construct(string $content, Throwable $previous)
     {
