@@ -10,6 +10,7 @@ use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use function Tempest\env;
+use Tempest\Http\Session\Session;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
@@ -57,6 +58,8 @@ final readonly class HttpApplication implements Application
             $responseSender->send(
                 $router->dispatch($psrRequest),
             );
+
+            $this->container->get(Session::class)->cleanup();
         } catch (Throwable $throwable) {
             foreach ($this->container->get(AppConfig::class)->exceptionHandlers as $exceptionHandler) {
                 $exceptionHandler->handle($throwable);

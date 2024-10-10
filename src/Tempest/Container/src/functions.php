@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Tempest\Container\GenericContainer;
+    use Tempest\Reflection\FunctionReflector;
+    use Tempest\Reflection\MethodReflector;
 
     /**
      * @template TClassName of object
@@ -16,5 +18,12 @@ namespace Tempest {
         $container = GenericContainer::instance();
 
         return $container->get($className, $tag, ...$params);
+    }
+
+    function invoke(MethodReflector|FunctionReflector|callable|string $callable, mixed ...$params): mixed
+    {
+        $container = GenericContainer::instance();
+
+        return $container->invoke($callable, ...$params);
     }
 }

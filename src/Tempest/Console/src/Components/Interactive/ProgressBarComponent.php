@@ -8,10 +8,10 @@ use Closure;
 use Generator;
 use Tempest\Console\Components\Static\StaticProgressBarComponent;
 use Tempest\Console\HasStaticComponent;
-use Tempest\Console\InteractiveComponent;
-use Tempest\Console\StaticComponent;
+use Tempest\Console\InteractiveConsoleComponent;
+use Tempest\Console\StaticConsoleComponent;
 
-final readonly class ProgressBarComponent implements InteractiveComponent, HasStaticComponent
+final readonly class ProgressBarComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
     public function __construct(
         private iterable $data,
@@ -70,7 +70,7 @@ final readonly class ProgressBarComponent implements InteractiveComponent, HasSt
         return "Press <em>ctrl+c</em> to cancel";
     }
 
-    public function getStaticComponent(): StaticComponent
+    public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticProgressBarComponent(
             data: $this->data,

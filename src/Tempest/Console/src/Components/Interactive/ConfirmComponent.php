@@ -8,12 +8,12 @@ use Tempest\Console\Components\Static\StaticConfirmComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
-use Tempest\Console\InteractiveComponent;
+use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
-use Tempest\Console\StaticComponent;
+use Tempest\Console\StaticConsoleComponent;
 
-final class ConfirmComponent implements InteractiveComponent, HasCursor, HasStaticComponent
+final class ConfirmComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
     private bool $answer;
 
@@ -85,7 +85,7 @@ final class ConfirmComponent implements InteractiveComponent, HasCursor, HasStat
         );
     }
 
-    public function getStaticComponent(): StaticComponent
+    public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticConfirmComponent(
             $this->question,

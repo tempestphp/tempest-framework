@@ -59,6 +59,11 @@ final readonly class ClassReflector implements Reflector
         return new PropertyReflector(new PHPReflectionProperty($this->reflectionClass->getName(), $name));
     }
 
+    public function hasProperty(string $name): bool
+    {
+        return $this->reflectionClass->hasProperty($name);
+    }
+
     /**
      * @return class-string<TClassName>
      */

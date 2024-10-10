@@ -14,16 +14,36 @@ use ReflectionProperty as PHPReflectionProperty;
 use ReflectionType as PHPReflectionType;
 use ReflectionUnionType as PHPReflectionUnionType;
 use Reflector as PHPReflector;
-use TypeError;
 
 final readonly class TypeReflector implements Reflector
 {
+    private const array BUILTIN_VALIDATION = [
+        'array' => 'is_array',
+        'bool' => 'is_bool',
+        'callable' => 'is_callable',
+        'float' => 'is_float',
+        'int' => 'is_int',
+        'null' => 'is_null',
+        'object' => 'is_object',
+        'resource' => 'is_resource',
+        'string' => 'is_string',
+        // these are handled explicitly
+        'false' => null,
+        'mixed' => null,
+        'never' => null,
+        'true' => null,
+        'void' => null,
+    ];
+
     private string $definition;
+
+    private string $cleanDefinition;
 
     public function __construct(
         private PHPReflector|PHPReflectionType|string $reflector,
     ) {
         $this->definition = $this->resolveDefinition($this->reflector);
+        $this->cleanDefinition = str_replace('?', '', $this->definition);
     }
 
     public function asClass(): ClassReflector
@@ -42,21 +62,61 @@ final readonly class TypeReflector implements Reflector
 
     public function accepts(mixed $input): bool
     {
-        // TODO: We really need to get rid of this.
-        $test = eval(sprintf('return fn (%s $input) => $input;', $this->definition));
+        if ($this->isNullable() && $input === null) {
+            return true;
+        }
 
-        try {
-            $test($input);
-        } catch (TypeError) {
+        if ($this->isBuiltIn()) {
+            return match ($this->cleanDefinition) {
+                'false' => $input === false,
+                'mixed' => true,
+                'never' => false,
+                'true' => $input === true,
+                'void' => false,
+                default => self::BUILTIN_VALIDATION[$this->cleanDefinition]($input),
+            };
+        }
+
+        if ($this->isClass()) {
+            if (is_string($input)) {
+                return $this->matches($input);
+            }
+
+            $cleanDefinition = $this->cleanDefinition;
+
+            return $input instanceof $cleanDefinition;
+        }
+
+        if ($this->isIterable()) {
+            return is_iterable($input);
+        }
+
+        if (str_contains($this->definition, '|')) {
+            foreach ($this->split() as $type) {
+                if ($type->accepts($input)) {
+                    return true;
+                }
+            }
+
             return false;
         }
 
-        return true;
+        if (str_contains($this->definition, '&')) {
+            foreach ($this->split() as $type) {
+                if (! $type->accepts($input)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function matches(string $className): bool
     {
-        return is_a($this->definition, $className, true);
+        return is_a($this->cleanDefinition, $className, true);
     }
 
     public function getName(): string
@@ -73,35 +133,27 @@ final readonly class TypeReflector implements Reflector
 
     public function isBuiltIn(): bool
     {
-        return in_array($this->definition, [
-            'string',
-            'bool',
-            'float',
-            'int',
-            'array',
-            'null',
-            'object',
-            'callable',
-            'resource',
-            'never',
-            'void',
-            'true',
-            'false',
-        ]);
+        return isset(self::BUILTIN_VALIDATION[$this->cleanDefinition]);
     }
 
     public function isClass(): bool
     {
-        return class_exists($this->definition);
+        return class_exists($this->cleanDefinition);
     }
 
     public function isIterable(): bool
     {
-        return in_array($this->definition, [
+        return in_array($this->cleanDefinition, [
             'array',
             'iterable',
             Generator::class,
         ]);
+    }
+
+    public function isNullable(): bool
+    {
+        return str_contains($this->definition, '?')
+            || str_contains($this->definition, 'null');
     }
 
     /** @return self[] */

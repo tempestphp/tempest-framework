@@ -6,9 +6,9 @@ namespace Tempest\Console\Components\Static;
 
 use Closure;
 use Tempest\Console\Console;
-use Tempest\Console\StaticComponent;
+use Tempest\Console\StaticConsoleComponent;
 
-final readonly class StaticProgressBarComponent implements StaticComponent
+final readonly class StaticProgressBarComponent implements StaticConsoleComponent
 {
     public function __construct(
         private iterable $data,

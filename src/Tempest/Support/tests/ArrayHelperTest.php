@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\InvalidMapWithKeysUsage;
+use function Tempest\Support\str;
 
 /**
  * @internal
@@ -207,6 +208,14 @@ final class ArrayHelperTest extends TestCase
 
     public function test_filter(): void
     {
+        $this->assertSame(
+            ['a', 'b', '-1', -1, '0', 0],
+            arr(['a', false, 'b', '-1', null, -1, '0', 0])
+                ->filter()
+                ->values()
+                ->toArray(),
+        );
+
         $this->assertTrue(
             arr(['a', 'b', 'c'])
                 ->filter(fn (mixed $value) => $value === 'b')
@@ -248,5 +257,20 @@ final class ArrayHelperTest extends TestCase
         });
 
         $this->assertSame('012', $string);
+    }
+
+    public function test_contains(): void
+    {
+        $this->assertTrue(arr(['a', 'b', 'c'])->contains('b'));
+        $this->assertFalse(arr(['a', 'b', 'c'])->contains('d'));
+    }
+
+    public function test_explode(): void
+    {
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon doe')->toArray());
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode(str('jon doe'))->toArray());
+        $this->assertEquals(['jon doe'], ArrayHelper::explode('jon doe', ',')->toArray());
+        $this->assertEquals(['jon', 'doe'], ArrayHelper::explode('jon, doe', ', ')->toArray());
+        $this->assertEquals(['jon, doe'], ArrayHelper::explode('jon, doe', '')->toArray());
     }
 }

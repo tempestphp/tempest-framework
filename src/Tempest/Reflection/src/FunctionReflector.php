@@ -20,6 +20,11 @@ final readonly class FunctionReflector implements Reflector
             : $function;
     }
 
+    public function invokeArgs(array $args = []): mixed
+    {
+        return $this->reflectionFunction->invokeArgs($args);
+    }
+
     /** @return Generator|\Tempest\Reflection\ParameterReflector[] */
     public function getParameters(): Generator
     {

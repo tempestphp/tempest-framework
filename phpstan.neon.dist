@@ -19,6 +19,12 @@ parameters:
 			message: '#.*#'
 			path:  tests/Integration/View/blade/cache/**.php
 		-
+			message: '#.*[Rr]eadonly.*#'
+			path: src/Tempest/Core/src/Composer.php
+		-
+			message: '#.*final#'
+			path:  src/Tempest/Generation/tests/TestCase.php
+		-
 			message: '#.*#'
 			path: src/Tempest/Http/Exceptions/HttpExceptionHandler.php
 		-

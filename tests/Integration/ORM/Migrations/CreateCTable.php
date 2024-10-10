@@ -20,7 +20,7 @@ final readonly class CreateCTable implements Migration
 
     public function up(): QueryStatement|null
     {
-        return new CreateTableStatement('C', [
+        return new CreateTableStatement('c', [
             new PrimaryKeyStatement(),
             new TextStatement('name'),
         ]);
@@ -28,6 +28,6 @@ final readonly class CreateCTable implements Migration
 
     public function down(): QueryStatement|null
     {
-        return new DropTableStatement('C');
+        return new DropTableStatement('c');
     }
 }

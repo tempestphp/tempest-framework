@@ -1,6 +1,6 @@
 {
     "name": "tempest/database",
-    "description": "The PHP framework that gets out of your way.",
+    "description": "The component responsible for database interaction in the Tempest framework.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
@@ -8,7 +8,8 @@
         "ext-pdo": "*",
         "tempest/container": "dev-main",
         "tempest/event-bus": "dev-main",
-        "tempest/mapper": "dev-main"
+        "tempest/mapper": "dev-main",
+        "tempest/support": "dev-main"
     },
     "autoload": {
         "psr-4": {

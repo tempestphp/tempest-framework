@@ -152,6 +152,20 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function boolean(
+        string $name,
+        bool $nullable = false,
+        ?bool $default = null
+    ): self {
+        $this->statements[] = new BooleanStatement(
+            name: $name,
+            nullable: $nullable,
+            default: $default,
+        );
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $compiled = sprintf(

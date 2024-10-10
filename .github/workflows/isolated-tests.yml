@@ -18,6 +18,8 @@ jobs:
           coverage: none
 
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Get Packages
         id: get_json
@@ -64,6 +66,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          ./bin/build-changed-packages
           cd "src/Tempest/${{ matrix.package.basename }}"
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 

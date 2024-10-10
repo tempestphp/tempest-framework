@@ -122,7 +122,7 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function component(InteractiveComponent $component, array $validation = []): mixed
+    public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
         if ($this->interactiveSupported()) {
             return $this->componentRenderer->render($this, $component, $validation);
@@ -144,7 +144,7 @@ final class GenericConsole implements Console
         array $validation = [],
     ): string|array {
         if ($options === null || $options === []) {
-            $component = new TextBoxComponent($question);
+            $component = new TextBoxComponent($question, $default);
         } elseif ($multiple) {
             $component = new MultipleChoiceComponent(
                 question: $question,

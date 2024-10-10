@@ -10,7 +10,13 @@ use Countable;
 use Generator;
 use Iterator;
 use Serializable;
+use Stringable;
+use function Tempest\map;
 
+/**
+ * @template TValueType
+ * @implements ArrayAccess<array-key, TValueType>
+ */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
     use IsIterable;
@@ -27,6 +33,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         } else {
             $this->array = [$input];
         }
+    }
+
+    public static function explode(string|Stringable $string, string $separator = ' '): self
+    {
+        if ($separator === '') {
+            return new self([(string) $string]);
+        }
+
+        return new self(explode($separator, (string) $string));
     }
 
     public function equals(array|self $other): bool
@@ -109,12 +124,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_values($this->array));
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
-    public function filter(Closure $filter): self
+    /** @param null|Closure(mixed $value, mixed $key): bool $filter */
+    public function filter(?Closure $filter = null): self
     {
         $array = [];
+        $filter ??= static fn (mixed $value, mixed $_) => ! in_array($value, [false, null], strict: true);
 
-        foreach ($this as $key => $value) {
+        foreach ($this->array as $key => $value) {
             if ($filter($value, $key)) {
                 $array[$key] = $value;
             }
@@ -202,6 +218,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return true;
     }
 
+    public function contains(mixed $search): bool
+    {
+        return $this->first(fn ($value) => $value === $search) !== null;
+    }
+
     public function set(string $key, mixed $value): self
     {
         $array = $this->array;
@@ -265,8 +286,23 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    public function dd(mixed ...$dd): void
+    {
+        dd($this->array, ...$dd); // @phpstan-ignore-line
+    }
+
     public function toArray(): array
     {
         return $this->array;
+    }
+
+    /**
+     * @template T
+     * @param class-string<T> $to
+     * @return self<T>
+     */
+    public function mapTo(string $to): self
+    {
+        return new self(map($this->array)->collection()->to($to));
     }
 }

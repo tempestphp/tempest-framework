@@ -6,6 +6,7 @@ namespace Tempest\Http;
 
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
@@ -17,6 +18,7 @@ use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use function Tempest\map;
 use Tempest\Reflection\ClassReflector;
+use function Tempest\Support\str;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -120,25 +122,30 @@ final class GenericRouter implements Router
 
     public function toUri(array|string $action, ...$params): string
     {
-        if (is_array($action)) {
-            $controllerClass = $action[0];
-            $reflection = new ClassReflector($controllerClass);
-            $controllerMethod = $reflection->getMethod($action[1]);
-        } else {
-            $controllerClass = $action;
-            $reflection = new ClassReflector($controllerClass);
-            $controllerMethod = $reflection->getMethod('__invoke');
+        try {
+            if (is_array($action)) {
+                $controllerClass = $action[0];
+                $reflection = new ClassReflector($controllerClass);
+                $controllerMethod = $reflection->getMethod($action[1]);
+            } else {
+                $controllerClass = $action;
+                $reflection = new ClassReflector($controllerClass);
+                $controllerMethod = $reflection->getMethod('__invoke');
+            }
+
+            $routeAttribute = $controllerMethod->getAttribute(Route::class);
+
+            $uri = $routeAttribute->uri;
+        } catch (ReflectionException) {
+            if (is_array($action)) {
+                throw new InvalidRouteException($action[0], $action[1]);
+            }
+
+            $uri = $action;
         }
-
-        $routeAttribute = $controllerMethod->getAttribute(Route::class);
-
-        if ($routeAttribute === null) {
-            throw new InvalidRouteException($controllerClass, $controllerMethod->getName());
-        }
-
-        $uri = $routeAttribute->uri;
 
         $queryParams = [];
+
 
         foreach ($params as $key => $value) {
             if (! str_contains($uri, "{$key}")) {
@@ -147,7 +154,8 @@ final class GenericRouter implements Router
                 continue;
             }
 
-            $uri = str_replace('{' . $key . '}', "{$value}", $uri);
+            $pattern = '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
+            $uri = preg_replace($pattern, (string)$value, $uri);
         }
 
         $uri = rtrim($this->appConfig->baseUri, '/') . $uri;
@@ -165,17 +173,17 @@ final class GenericRouter implements Router
             return [];
         }
 
-        $tokensResult = preg_match_all('#\{\w+}#', $route->uri, $tokens);
+        $tokens = str($route->uri)->matchAll('#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#', );
 
-        if (! $tokensResult) {
+        if (empty($tokens)) {
             return null;
         }
 
-        $tokens = $tokens[0];
+        $tokens = $tokens[1];
 
-        $tokensResult = preg_match_all("#^$route->matchingRegex$#", $uri, $matches);
+        $matches = str($uri)->matchAll("#^$route->matchingRegex$#");
 
-        if ($tokensResult === 0) {
+        if (empty($matches)) {
             return null;
         }
 

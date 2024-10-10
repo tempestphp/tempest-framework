@@ -7,12 +7,15 @@ namespace Tempest\Database\Connections;
 use SensitiveParameter;
 use Tempest\Database\DatabaseConnection;
 use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Tables\NamingStrategy;
+use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
 
 final readonly class SQLiteConnection implements DatabaseConnection
 {
     public function __construct(
         #[SensitiveParameter]
         public string $path = 'localhost',
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
     ) {
     }
 
@@ -34,5 +37,10 @@ final readonly class SQLiteConnection implements DatabaseConnection
     public function dialect(): DatabaseDialect
     {
         return DatabaseDialect::SQLITE;
+    }
+
+    public function tableNamingStrategy(): NamingStrategy
+    {
+        return $this->namingStrategy;
     }
 }

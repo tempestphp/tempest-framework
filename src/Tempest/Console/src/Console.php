@@ -21,7 +21,7 @@ interface Console
     /**
      * @param \Tempest\Validation\Rule[] $validation
      */
-    public function component(InteractiveComponent $component, array $validation = []): mixed;
+    public function component(InteractiveConsoleComponent $component, array $validation = []): mixed;
 
     /**
      * @param mixed|null $default
