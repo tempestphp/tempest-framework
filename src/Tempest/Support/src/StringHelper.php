@@ -286,14 +286,36 @@ final readonly class StringHelper implements Stringable
         return new self(basename(str_replace('\\', '/', $this->string)));
     }
 
-    public function startsWith(Stringable|string $needle): bool
+    public function startsWith(Stringable|string|array $needles): bool
     {
-        return str_starts_with($this->string, (string) $needle);
+        if (! is_array($needles)) {
+            $needles = [$needles];
+        }
+
+        foreach ($needles as $needle)
+        {
+            if (str_starts_with($this->string, (string) $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function endsWith(Stringable|string $needle): bool
+    public function endsWith(Stringable|string|array $needles): bool
     {
-        return str_ends_with($this->string, (string) $needle);
+        if (! is_array($needles)) {
+            $needles = [$needles];
+        }
+
+        foreach ($needles as $needle)
+        {
+            if (str_ends_with($this->string, (string) $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function replaceFirst(Stringable|string $search, Stringable|string $replace): self

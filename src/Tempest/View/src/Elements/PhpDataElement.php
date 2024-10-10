@@ -6,6 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
+use function Tempest\Support\str;
 
 final class PhpDataElement implements Element
 {
