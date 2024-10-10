@@ -71,7 +71,13 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function save(CacheItemInterface $item): bool
     {
-        file_put_contents($this->makePath($item), $item->get());
+        $path = $this->makePath($item);
+
+        if (! is_dir(dirname($path))) {
+            mkdir(dirname($path), recursive: true);
+        }
+
+        file_put_contents($path, $item->get());
 
         return true;
     }
