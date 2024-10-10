@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
-use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
-use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tempest\Generation\ClassGenerator;
+use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
+use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
 
 /**
  * @internal
@@ -16,83 +15,40 @@ use Tempest\Generation\Tests\Fixtures\TestAttribute;
 final class ClassGeneratorTest extends TestCase
 {
     #[Test]
-    public function updates_namespace(): void
+    public function creates_class_from_scratch(): void
     {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->updateNamespace('App');
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
+
+        $class->simplifyImplements(false);
+        $class->addImplement(FakeMigration::class);
+        $class->setFinal();
+        $class->setReadOnly();
+
+        $class->addMethod('up', body: <<<PHP
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
+
+        $class->addMethod('getName', body: <<<PHP
+            return '0000-00-00_create_users_table';
+        PHP, returnType: 'string');
 
         $this->assertMatchesSnapshot($class->print());
     }
 
     #[Test]
-    public function updates_namespace_multiple_times(): void
+    public function creates_methods_with_parameters(): void
     {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->updateNamespace('App');
-        $class->updateNamespace('Database');
+        $class = new ClassGenerator('UserService', namespace: 'App\\Services');
 
-        $this->assertMatchesSnapshot($class->print());
-    }
+        $class->simplifyImplements(true);
+        $class->setFinal();
+        $class->setReadOnly();
 
-    #[Test]
-    public function removes_class_attributes(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->removeClassAttribute(TestAttribute::class);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function sets_class_final(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setFinal(true);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function unsets_class_final(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setFinal(false);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function sets_class_readonly(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setReadOnly(true);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function unsets_class_readonly(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setReadOnly(false);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function sets_strict_types(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setStrictTypes(true);
-
-        $this->assertMatchesSnapshot($class->print());
-    }
-
-    #[Test]
-    public function unsets_strict_types(): void
-    {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setStrictTypes(false);
+        $class->addMethod('findById', body: <<<PHP
+            //
+        PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -100,18 +56,68 @@ final class ClassGeneratorTest extends TestCase
     #[Test]
     public function simplifies_implements(): void
     {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
+
         $class->simplifyImplements();
+        $class->addImplement(FakeMigration::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
 
     #[Test]
-    public function set_aliases(): void
+    public function simplify_class_names_by_default(): void
     {
-        $class = new ClassManipulator(CreateMigrationsTable::class);
-        $class->setAlias(MigrationModel::class, 'Model');
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
 
+        $class->addMethod('up', body: <<<PHP
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function does_not_simplify_class_names(): void
+    {
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
+
+        $class->simplifyClassNamesInMethodBodies(false);
+        $class->addMethod('up', body: <<<PHP
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function sets_file_modifiers(): void
+    {
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
+        $class->setStrictTypes();
+        $class->setFileComment('This file has been generated.');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function sets_class_modifiers(): void
+    {
+        $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
+        $class->setFinal();
+        $class->setReadOnly();
+        $class->setClassComment('This creates a users table.');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function sets_long_namespace(): void
+    {
+        $class = new ClassGenerator('MyClass', namespace: 'App\\Foo\\Bar\\Baz\\Qux');
         $this->assertMatchesSnapshot($class->print());
     }
 }
