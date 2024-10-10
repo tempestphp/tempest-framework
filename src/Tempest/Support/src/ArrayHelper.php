@@ -566,14 +566,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public function dump(mixed ...$dumps): self
     {
-        dump($this->array, ...$dumps); // @phpstan-ignore-line
+        lw($this->array, ...$dumps); // @phpstan-ignore-line
 
         return $this;
     }
 
     public function dd(mixed ...$dd): void
     {
-        dd($this->array, ...$dd); // @phpstan-ignore-line
+        ld($this->array, ...$dd); // @phpstan-ignore-line
     }
 
     /**
