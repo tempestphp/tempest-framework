@@ -72,6 +72,18 @@ final class LocalFilesystemTest extends TestCase
         unlink($filePath);
     }
 
+    public function test_writing_files_to_a_directory_that_doesnt_exist(): void
+    {
+        $filePath = __DIR__ . '/testing/test.txt';
+
+        (new LocalFilesystem())->write($filePath, 'Hello world!');
+
+        $this->assertStringEqualsFile($filePath, 'Hello world!');
+
+        unlink($filePath);
+        rmdir(__DIR__ . '/testing');
+    }
+
     public function test_exception_is_thrown_when_there_is_an_error_writing_a_file(): void
     {
         vfsStream::setup('root', 0000);

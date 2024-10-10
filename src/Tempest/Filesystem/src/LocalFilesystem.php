@@ -37,6 +37,17 @@ final class LocalFilesystem implements Filesystem
 
     public function write(string $filePath, string $content): void
     {
+        // If the directory we are attempting to write the file to
+        // doesn't exist, create it before writing the file.
+        // TODO: Move this to a path helper.
+        $directoryPath = dirname($filePath);
+
+        if (! $this->isDirectory($directoryPath)) {
+            // TODO: I'm not convinced this is best for permissions. Let's revisit.
+            $this->createDirectory($directoryPath);
+        }
+
+        // Write the file.
         $error = ErrorContext::reset();
         $successfullyWrittenBytes = @file_put_contents($filePath, $content, LOCK_EX);
 
