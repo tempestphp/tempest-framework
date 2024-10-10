@@ -45,7 +45,13 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function clear(): bool
     {
-        @rmdir(__DIR__ . '/.cache');
+        $path = __DIR__ . '/.cache';
+
+        if (is_dir($path)) {
+            arr(glob($path . '/*.php'))->each(fn (string $file) => unlink($file));
+
+            rmdir($path);
+        }
 
         return true;
     }

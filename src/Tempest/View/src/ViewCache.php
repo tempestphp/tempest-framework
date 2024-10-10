@@ -28,7 +28,7 @@ final class ViewCache implements Cache
 
         $cacheItem = $this->cachePool->getItem($cacheKey);
 
-        if (! $cacheItem->isHit()) {
+        if ($this->cacheConfig->enabled === false || $cacheItem->isHit() === false) {
             $cacheItem = $this->put($cacheKey, $compiledView());
         }
 
