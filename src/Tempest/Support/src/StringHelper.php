@@ -435,6 +435,24 @@ final readonly class StringHelper implements Stringable
         dd($this->string, ...$dd); // @phpstan-ignore-line
     }
 
+    public function excerpt(int $from, int $to, bool $asArray = false): self|ArrayHelper
+    {
+        $lines = explode(PHP_EOL, $this->string);
+
+        $from = max(0, $from - 1);
+
+        $to = min($to - 1, count($lines));
+
+        $lines = array_slice($lines, $from, $to - $from + 1, true);
+
+        if ($asArray) {
+            return arr($lines)
+                ->mapWithKeys(fn (string $line, int $number) => yield $number + 1 => $line);
+        }
+
+        return new self(implode(PHP_EOL, $lines));
+    }
+
     private function normalizeString(mixed $value): mixed
     {
         if ($value instanceof Stringable) {
