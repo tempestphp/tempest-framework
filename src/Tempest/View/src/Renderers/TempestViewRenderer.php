@@ -21,8 +21,7 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -39,13 +38,17 @@ final class TempestViewRenderer implements ViewRenderer
         $view = is_string($view) ? new GenericView($view) : $view;
 
         $path = $view->getPath();
+        $cacheKey = (string)crc32($path);
 
-        $compiled = $this->viewCache->resolve(
-            key: (string)crc32($path),
-            cache: fn () => $this->cleanupCompiled($this->compiler->compile($path)),
-        );
+        $cacheItem = $this->viewCache->getCachePool()->getItem($cacheKey);
 
-        return $this->renderCompiled($view, $compiled);
+        if (! $cacheItem->isHit()) {
+            $cacheItem = $this->viewCache->put($cacheKey, $this->cleanupCompiled($this->compiler->compile($path)));
+        }
+
+        $path = __DIR__ . '/../.cache/' . $cacheItem->getKey() . '.php';
+
+        return $this->renderCompiled($view, $path);
     }
 
     private function cleanupCompiled(string $compiled): string
@@ -66,7 +69,7 @@ final class TempestViewRenderer implements ViewRenderer
                     '<?php
 %s
 ?>',
-                    $imports->implode(PHP_EOL)
+                    $imports->implode(PHP_EOL),
                 ),
             );
 
@@ -76,7 +79,7 @@ final class TempestViewRenderer implements ViewRenderer
         return $compiled->toString();
     }
 
-    private function renderCompiled(View $_view, string $_content): string
+    private function renderCompiled(View $_view, string $_path): string
     {
         $this->currentView = $_view;
 
@@ -88,8 +91,7 @@ final class TempestViewRenderer implements ViewRenderer
         extract($_data, flags: EXTR_SKIP);
 
         try {
-            /** @phpstan-ignore-next-line */
-            eval('?>' . $_content . '<?php');
+            include $_path;
         } catch (Throwable $throwable) {
             throw new ViewCompilationError(content: $_content, previous: $throwable);
         }
@@ -108,6 +110,6 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function escape(null|string|Stringable $value): string
     {
-        return htmlentities((string) $value);
+        return htmlentities((string)$value);
     }
 }

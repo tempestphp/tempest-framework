@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
@@ -14,19 +15,15 @@ final class ViewCache implements Cache
 {
     use IsCache;
 
-    private readonly PhpFilesAdapter $cachePool;
+    private readonly CacheItemPoolInterface $cachePool;
 
     public function __construct(
         private readonly CacheConfig $cacheConfig
     ) {
-        $this->cachePool = new PhpFilesAdapter(
-            namespace: '',
-            defaultLifetime: 0,
-            directory: null,
-        );
+        $this->cachePool = new ViewCachePool();
     }
 
-    protected function getCachePool(): CacheItemPoolInterface
+    public function getCachePool(): CacheItemPoolInterface
     {
         return $this->cachePool;
     }
