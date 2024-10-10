@@ -38,16 +38,10 @@ final class TempestViewRenderer implements ViewRenderer
     {
         $view = is_string($view) ? new GenericView($view) : $view;
 
-        $path = $view->getPath();
-        $cacheKey = (string)crc32($path);
-
-        $cacheItem = $this->viewCache->getCachePool()->getItem($cacheKey);
-
-        if (! $cacheItem->isHit()) {
-            $cacheItem = $this->viewCache->put($cacheKey, $this->cleanupCompiled($this->compiler->compile($path)));
-        }
-
-        $path = __DIR__ . '/../.cache/' . $cacheItem->getKey() . '.php';
+        $path = $this->viewCache->getCachedViewPath(
+            path: $view->getPath(),
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath()))
+        );
 
         return $this->renderCompiled($view, $path);
     }

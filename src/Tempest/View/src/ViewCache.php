@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
+use Closure;
 use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
@@ -21,7 +22,20 @@ final class ViewCache implements Cache
         $this->cachePool = new ViewCachePool();
     }
 
-    public function getCachePool(): CacheItemPoolInterface
+    public function getCachedViewPath(string $path, Closure $compiledView): string
+    {
+        $cacheKey = (string)crc32($path);
+
+        $cacheItem = $this->cachePool->getItem($cacheKey);
+
+        if (! $cacheItem->isHit()) {
+            $cacheItem = $this->put($cacheKey, $compiledView());
+        }
+
+        return __DIR__ . '/.cache/' . $cacheItem->getKey() . '.php';
+    }
+
+    protected function getCachePool(): CacheItemPoolInterface
     {
         return $this->cachePool;
     }

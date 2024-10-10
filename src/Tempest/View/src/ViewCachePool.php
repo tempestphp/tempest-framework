@@ -45,10 +45,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function clear(): bool
     {
-        arr(glob(__DIR__ . '/.cache/*.php'))
-            ->each(function (string $path): void {
-                $this->deleteItem(pathinfo($path, PATHINFO_FILENAME));
-            });
+        @rmdir(__DIR__ . '/.cache');
 
         return true;
     }
@@ -84,14 +81,12 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function saveDeferred(CacheItemInterface $item): bool
     {
-        // TODO: Implement saveDeferred() method.
-        throw new Exception('No');
+        throw new Exception('Not supported');
     }
 
     public function commit(): bool
     {
-        // TODO: Implement commit() method.
-        throw new Exception('No');
+        throw new Exception('Not supported');
     }
 
     private function makePath(CacheItemInterface|string $key): string
