@@ -10,6 +10,7 @@ use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
 use Tempest\Generation\Tests\Fixtures\WelcomeController;
+use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -139,6 +140,17 @@ final class ClassManipulatorTest extends TestCase
         $class = new ClassManipulator(WelcomeController::class);
         $class->setNamespace('App\\Controllers');
         $class->setClassName('WelcomeController');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function manipulates_classes(): void
+    {
+        $class = new ClassManipulator(WelcomeController::class);
+        $class->setNamespace('App\\Controllers');
+        $class->setClassName('WelcomeController');
+        $class->manipulate(fn (StringHelper $string) => $string->replace('welcome', 'home'));
 
         $this->assertMatchesSnapshot($class->print());
     }

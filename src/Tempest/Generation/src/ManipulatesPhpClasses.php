@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
+use Closure;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
+use function Tempest\Support\str;
 
 /**
  * @internal
@@ -20,6 +22,9 @@ trait ManipulatesPhpClasses
     protected PhpFile $file;
 
     protected string $namespace;
+
+    /** @var array<Closure> */
+    protected array $manipulations = [];
 
     public function addMethod(
         string $name,
@@ -37,6 +42,13 @@ trait ManipulatesPhpClasses
                 ->addParameter($parameter)
                 ->setType($type);
         }
+
+        return $this;
+    }
+
+    public function manipulate(Closure $callback): self
+    {
+        $this->manipulations[] = $callback;
 
         return $this;
     }
@@ -169,6 +181,12 @@ trait ManipulatesPhpClasses
 
         $this->simplifyClassNames($file);
 
-        return $printer->printFile($file);
+        $code = $printer->printFile($file);
+
+        foreach ($this->manipulations as $manipulation) {
+            $code = (string) $manipulation(str($code));
+        }
+
+        return $code;
     }
 }
