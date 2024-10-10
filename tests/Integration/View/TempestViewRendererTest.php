@@ -253,7 +253,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
 
-        $this->assertSame(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         &lt;h1&gt;hi&lt;/h1&gt;
         &lt;H1&gt;HI&lt;/H1&gt;
         <h1>hi</h1>

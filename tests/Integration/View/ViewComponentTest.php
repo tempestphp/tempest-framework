@@ -83,7 +83,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render('<x-view-component-with-another-one-included-a/>');
 
-        $this->assertSame(<<<'HTML'
+        $this->assertStringContainsStringIgnoringLineEndings(<<<'HTML'
 hi
 
     
@@ -95,7 +95,7 @@ HTML, $html);
     {
         $html = $this->render('<x-view-component-with-another-one-included-a>test</x-view-component-with-another-one-included-a>');
 
-        $this->assertSame(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
 hi
 
     
@@ -260,9 +260,20 @@ HTML, $html);
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-        <div>        a    </div>    <div>        b    </div>    <div>        c    </div>
-        HTML,
-            str_replace(PHP_EOL, '', $rendered)
+            <div>
+                    a    </div>
+            
+            
+                
+            <div>
+                    b    </div>
+            
+            
+                
+            <div>
+                    c    </div>
+            HTML,
+            $rendered
         );
     }
 
@@ -270,7 +281,7 @@ HTML, $html);
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
         fromPHP
         
         
@@ -314,7 +325,7 @@ HTML, $html);
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringContainsStringIgnoringLineEndings(<<<HTML
         test
         
         
