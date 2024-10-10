@@ -6,13 +6,13 @@ namespace Tempest\Filesystem\Tests;
 
 use bovigo\vfs\vfsStream;
 use bovigo\vfs\vfsStreamDirectory;
-use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
 use Tempest\Filesystem\ErrorContext;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
 use Tempest\Filesystem\Exceptions\UnableToCopyFile;
 use Tempest\Filesystem\Exceptions\UnableToCreateDirectory;
+use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
 use Tempest\Filesystem\Exceptions\UnableToReadFile;
 use Tempest\Filesystem\Exceptions\UnableToWriteFile;

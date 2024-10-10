@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use const FILE_APPEND;
 use const LOCK_EX;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
 use Tempest\Filesystem\Exceptions\UnableToCopyFile;
 use Tempest\Filesystem\Exceptions\UnableToCreateDirectory;
+use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
 use Tempest\Filesystem\Exceptions\UnableToReadFile;
 use Tempest\Filesystem\Exceptions\UnableToWriteFile;
