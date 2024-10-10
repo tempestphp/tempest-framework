@@ -38,6 +38,22 @@ final class ClassGeneratorTest extends TestCase
     }
 
     #[Test]
+    public function creates_methods_with_parameters(): void
+    {
+        $class = new ClassGenerator('UserService', namespace: 'App\\Services');
+
+        $class->simplifyImplements(true);
+        $class->setFinal();
+        $class->setReadOnly();
+
+        $class->addMethod('findById', body: <<<PHP
+            //
+        PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
     public function simplifies_implements(): void
     {
         $class = new ClassGenerator('CreateUsersTable', namespace: 'App');

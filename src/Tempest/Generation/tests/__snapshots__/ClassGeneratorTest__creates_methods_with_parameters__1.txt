@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\User;
+
+final readonly class UserService
+{
+    public function findById(int $id): ?User
+    {
+        //
+    }
+}

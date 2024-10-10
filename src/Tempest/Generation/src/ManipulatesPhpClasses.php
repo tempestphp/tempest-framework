@@ -32,8 +32,10 @@ trait ManipulatesPhpClasses
             ->setReturnType($returnType)
             ->setBody($body);
 
-        foreach ($parameters as $parameter) {
-            $method->addParameter($parameter);
+        foreach ($parameters as $parameter => $type) {
+            $method
+                ->addParameter($parameter)
+                ->setType($type);
         }
 
         return $this;
