@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Filesystem\Tests;
 
 use bovigo\vfs\vfsStream;
-use const DIRECTORY_SEPARATOR;
+use bovigo\vfs\vfsStreamDirectory;
 use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Tempest\Filesystem\ErrorContext;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
 use Tempest\Filesystem\Exceptions\UnableToCopyFile;
@@ -24,40 +22,11 @@ use Tempest\Filesystem\LocalFilesystem;
  */
 final class LocalFilesystemTest extends TestCase
 {
-    private string $sandbox = __DIR__ . '/Sandbox';
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        mkdir($this->sandbox);
-    }
-
-    protected function tearDown(): void
-    {
-        parent::setUp();
-
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->sandbox, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $file) {
-            $todo = ($file->isDir() ? 'rmdir' : 'unlink');
-            $todo($file->getRealPath());
-        }
-
-        rmdir($this->sandbox);
-    }
-
-    private function path(string $path): string
-    {
-        return $this->sandbox . DIRECTORY_SEPARATOR . ltrim($path, '/\\');
-    }
+    private vfsStreamDirectory $root;
 
     public function test_reading_files(): void
     {
-        $filePath = $this->path('test.txt');
+        $filePath = vfsStream::url('root/test.txt');
 
         file_put_contents($filePath, 'Hello world!');
 
@@ -68,7 +37,7 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_reading_a_file_that_doesnt_exist(): void
     {
-        $filePath = $this->path('test.txt');
+        $filePath = vfsStream::url('root/does-not-exist.txt');
 
         $this->expectExceptionObject(
             FileDoesNotExist::atPath($filePath),
@@ -79,29 +48,27 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_there_is_an_error_reading_a_file(): void
     {
-        $root = vfsStream::setup('root', null, [
-            'file.txt' => 'content',
-        ]);
-
-        $filePath = vfsStream::url('root/file.txt');
+        $filePath = vfsStream::url('root/test.txt');
 
         $this->expectExceptionObject(
             UnableToReadFile::atPath($filePath, new ErrorContext())
         );
 
         // Make the file unreadable.
-        $root->getChild('file.txt')->chmod(0000);
+        $this->root->getChild('test.txt')->chmod(0000);
 
         (new LocalFilesystem())->read($filePath);
     }
 
     public function test_writing_files(): void
     {
-        $filePath = $this->path('test.txt');
+        $filePath = __DIR__ . '/test.txt';
 
         (new LocalFilesystem())->write($filePath, 'Hello world!');
 
         $this->assertStringEqualsFile($filePath, 'Hello world!');
+
+        unlink($filePath);
     }
 
     public function test_exception_is_thrown_when_there_is_an_error_writing_a_file(): void
@@ -132,13 +99,9 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_there_is_an_error_appending_to_a_file(): void
     {
-        $root = vfsStream::setup('root', null, [
-            'file.txt' => 'Line 1' . PHP_EOL,
-        ]);
+        $this->root->getChild('test.txt')->chmod(0000);
 
-        $root->getChild('file.txt')->chmod(0000);
-
-        $filePath = vfsStream::url('root/file.txt');
+        $filePath = vfsStream::url('root/test.txt');
 
         $this->expectExceptionObject(
             UnableToWriteFile::atPath($filePath, new ErrorContext())
@@ -149,9 +112,7 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_deleting_files(): void
     {
-        $filePath = $this->path('to-be-deleted.txt');
-
-        file_put_contents($filePath, 'Hello world!');
+        $filePath = vfsStream::url('root/test.txt');
 
         (new LocalFilesystem())->delete($filePath);
 
@@ -176,11 +137,8 @@ final class LocalFilesystemTest extends TestCase
     public function test_is_file(): void
     {
         $filesystem = new LocalFilesystem();
-        $directoryPath = $this->path('some-directory');
-        $filePath = $this->path('some-file.txt');
-
-        mkdir($directoryPath);
-        file_put_contents($filePath, 'Hello world!');
+        $directoryPath = vfsStream::url('root/test-directory');
+        $filePath = vfsStream::url('root/test.txt');
 
         $this->assertFalse($filesystem->isFile($directoryPath));
         $this->assertTrue($filesystem->isFile($filePath));
@@ -188,7 +146,7 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_checking_file_existence(): void
     {
-        $filePath = $this->path('test.txt');
+        $filePath = vfsStream::url('root/some-file.txt');
 
         $this->assertFalse(
             (new LocalFilesystem())->exists($filePath)
@@ -203,10 +161,8 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_copying_files(): void
     {
-        $filePath1 = $this->path('test.txt');
-        $filePath2 = $this->path('test2.txt');
-
-        file_put_contents($filePath1, 'Hello world!');
+        $filePath1 = vfsStream::url('root/test.txt');
+        $filePath2 = vfsStream::url('root/test2.txt');
 
         (new LocalFilesystem())->copy($filePath1, $filePath2);
 
@@ -215,8 +171,8 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_if_source_file_doesnt_exist_when_copying(): void
     {
-        $filePath1 = $this->path('test.txt');
-        $filePath2 = $this->path('test2.txt');
+        $filePath1 = vfsStream::url('some-file.txt');
+        $filePath2 = vfsStream::url('some-other-file.txt');
 
         $this->expectExceptionObject(
             FileDoesNotExist::atPath($filePath1)
@@ -227,24 +183,20 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_if_there_is_an_error_copying(): void
     {
-        $filePath1 = $this->path('test.txt');
-        $filePath2 = $this->path('nested-dir/test2.txt');
+        $filePath1 = vfsStream::url('root/test.txt');
+        $filePath2 = vfsStream::url('root/nested-dir/test2.txt');
 
         $this->expectExceptionObject(
             UnableToCopyFile::fromSourceToDestination($filePath1, $filePath2, new ErrorContext())
         );
-
-        file_put_contents($filePath1, 'Hello world!');
 
         (new LocalFilesystem())->copy($filePath1, $filePath2);
     }
 
     public function test_moving_files(): void
     {
-        $filePath1 = $this->path('test.txt');
-        $filePath2 = $this->path('test2.txt');
-
-        file_put_contents($filePath1, 'Hello world!');
+        $filePath1 = vfsStream::url('root/test.txt');
+        $filePath2 = vfsStream::url('root/test2.txt');
 
         (new LocalFilesystem())->move($filePath1, $filePath2);
 
@@ -254,7 +206,7 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_making_a_directory(): void
     {
-        $directoryPath = $this->path('test-directory');
+        $directoryPath = vfsStream::url('root/some-dir');
 
         (new LocalFilesystem())->createDirectory($directoryPath);
 
@@ -263,7 +215,7 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_making_a_directory_recursively(): void
     {
-        $directoryPath = $this->path('test-directory/nested-test-directory');
+        $directoryPath = vfsStream::url('root/some-dir/nested-some-dir');
 
         (new LocalFilesystem())->createDirectory($directoryPath);
 
@@ -272,9 +224,9 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_making_a_directory_recursively_without_recursive_enabled_fails(): void
     {
-        $directoryPath = $this->path('test-directory/nested-test-directory');
+        $directoryPath = vfsStream::url('root/some-dir/nested-some-dir');
 
-        // Update
+        // TODO: Update
         $this->expectException(UnableToCreateDirectory::class);
 
         (new LocalFilesystem())->createDirectory(
@@ -286,12 +238,22 @@ final class LocalFilesystemTest extends TestCase
     public function test_is_directory(): void
     {
         $filesystem = new LocalFilesystem();
-        $directory = $this->path('test-directory/nested-test-directory');
+        $directory = vfsStream::url('root/test-directory/nested-test-directory');
 
         $this->assertFalse($filesystem->isDirectory($directory));
 
         $filesystem->createDirectory($directory);
 
         $this->assertTrue($filesystem->isDirectory($directory));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->root = vfsStream::setup('root', null, [
+            'test-directory' => [],
+            'test.txt' => 'Hello world!',
+        ]);
     }
 }
