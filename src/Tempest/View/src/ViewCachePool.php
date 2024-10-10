@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View;
 
 use Closure;
@@ -44,7 +46,9 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
     public function clear(): bool
     {
         arr(glob(__DIR__ . '/.cache/*.php'))
-            ->each(fn (string $path) => $this->deleteItem(pathinfo($path, PATHINFO_FILENAME)));
+            ->each(function (string $path): void {
+                $this->deleteItem(pathinfo($path, PATHINFO_FILENAME));
+            });
 
         return true;
     }
@@ -61,6 +65,8 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         foreach ($keys as $key) {
             $this->deleteItem($key);
         }
+
+        return true;
     }
 
     public function save(CacheItemInterface $item): bool

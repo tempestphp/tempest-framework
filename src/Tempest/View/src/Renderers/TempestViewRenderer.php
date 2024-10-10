@@ -21,7 +21,8 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
@@ -93,7 +94,7 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
-            throw new ViewCompilationError(content: $_content, previous: $throwable);
+            throw new ViewCompilationError(content: file_get_contents($_path), previous: $throwable);
         }
 
         // If the view defines local variables, we add them here to the view object as well

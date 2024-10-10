@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\IsCache;
