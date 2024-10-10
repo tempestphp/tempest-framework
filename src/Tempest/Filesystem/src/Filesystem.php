@@ -20,7 +20,7 @@ interface Filesystem
 
     public function createDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void;
 
-    public function deleteDirectory(string $path, bool $recursive = false): void;
+    public function deleteDirectory(string $path): void;
 
     public function isDirectory(string $path): bool;
 }

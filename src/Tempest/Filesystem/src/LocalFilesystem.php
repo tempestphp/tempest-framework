@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use const FILE_APPEND;
 use const LOCK_EX;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
@@ -73,9 +76,45 @@ final class LocalFilesystem implements Filesystem
         }
     }
 
-    public function deleteDirectory(string $path, bool $recursive = false): void
+    public function deleteDirectory(string $path, bool $recursive = true): void
     {
-        // TODO: Implement deleteDirectory() method.
+        if (! $this->isDirectory($path)) {
+            return;
+        }
+
+        // If we're not recursively deleting the directory, simply
+        // attempt to remove it without checking for children
+        // and throw an exception on any errors.
+        if ($recursive === false) {
+            $error = ErrorContext::reset();
+            $successfullyDeleted = @rmdir($path);
+
+            if ($successfullyDeleted === false) {
+                throw UnableToDeleteDirectory::atPath($path, $error->commit());
+            }
+
+            return;
+        }
+
+        // Iterate through the directory contents and
+        // use helpers to delete the child items.
+        $recursiveDirectoryIterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($recursiveDirectoryIterator as $item) {
+            if ($item->isDir()) {
+                $this->deleteDirectory($item->getPathname());
+
+                continue;
+            }
+
+            $this->delete($item->getPathname());
+        }
+
+        // Wrap up a recursive delete by deleting the parent.
+        $this->deleteDirectory($path, false);
     }
 
     public function isDirectory(string $path): bool

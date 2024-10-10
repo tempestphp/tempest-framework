@@ -6,6 +6,7 @@ namespace Tempest\Filesystem\Tests;
 
 use bovigo\vfs\vfsStream;
 use bovigo\vfs\vfsStreamDirectory;
+use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
 use Tempest\Filesystem\ErrorContext;
@@ -204,7 +205,7 @@ final class LocalFilesystemTest extends TestCase
         $this->assertStringEqualsFile($filePath2, 'Hello world!');
     }
 
-    public function test_making_a_directory(): void
+    public function test_creating_a_directory(): void
     {
         $directoryPath = vfsStream::url('root/some-dir');
 
@@ -213,7 +214,7 @@ final class LocalFilesystemTest extends TestCase
         $this->assertDirectoryExists($directoryPath);
     }
 
-    public function test_making_a_directory_recursively(): void
+    public function test_creating_a_directory_recursively(): void
     {
         $directoryPath = vfsStream::url('root/some-dir/nested-some-dir');
 
@@ -222,7 +223,7 @@ final class LocalFilesystemTest extends TestCase
         $this->assertDirectoryExists($directoryPath);
     }
 
-    public function test_making_a_directory_recursively_without_recursive_enabled_fails(): void
+    public function test_creating_a_directory_recursively_without_recursive_enabled_fails(): void
     {
         $directoryPath = vfsStream::url('root/some-dir/nested-some-dir');
 
@@ -233,6 +234,59 @@ final class LocalFilesystemTest extends TestCase
             path: $directoryPath,
             recursive: false
         );
+    }
+
+    public function test_deleting_a_directory(): void
+    {
+        $directory = vfsStream::url('root/test-directory');
+
+        (new LocalFilesystem())->deleteDirectory($directory);
+
+        $this->assertDirectoryDoesNotExist($directory);
+    }
+
+    public function test_nothing_happens_when_deleting_a_directory_that_doesnt_exist(): void
+    {
+        $directory = vfsStream::url('root/some-non-existing-directory');
+
+        (new LocalFilesystem())->deleteDirectory($directory);
+
+        $this->assertDirectoryDoesNotExist($directory);
+    }
+
+    public function test_an_exception_is_thrown_when_there_is_an_error_deleting_a_directory(): void
+    {
+        vfsStream::setup('root', 0000, [
+            'test-directory' => [],
+        ]);
+
+        $directory = vfsStream::url('root/test-directory');
+
+        $this->expectExceptionObject(
+            UnableToDeleteDirectory::atPath($directory, new ErrorContext())
+        );
+
+        (new LocalFilesystem())->deleteDirectory($directory);
+    }
+
+    public function test_deleting_a_directory_recursively(): void
+    {
+        $directory = vfsStream::url('root/test-directory-with-files');
+
+        (new LocalFilesystem())->deleteDirectory($directory);
+
+        $this->assertDirectoryDoesNotExist($directory);
+    }
+
+    public function test_an_exception_is_thrown_when_attempting_to_delete_a_directory_with_contents_not_recursively(): void
+    {
+        $directory = vfsStream::url('root/test-directory-with-files');
+
+        $this->expectExceptionObject(
+            UnableToDeleteDirectory::atPath($directory, new ErrorContext())
+        );
+
+        (new LocalFilesystem())->deleteDirectory($directory, false);
     }
 
     public function test_is_directory(): void
@@ -253,6 +307,12 @@ final class LocalFilesystemTest extends TestCase
 
         $this->root = vfsStream::setup('root', null, [
             'test-directory' => [],
+            'test-directory-with-files' => [
+                'nested-dir' => [
+                    'some-file.txt' => 'Wassup?',
+                ],
+                'the-office.txt' => 'Dwight Schrute',
+            ],
             'test.txt' => 'Hello world!',
         ]);
     }
