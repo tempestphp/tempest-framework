@@ -11,26 +11,12 @@ trait IsView
 
     public array $data = [];
 
-    private array $rawData = [];
-
     public function __construct(
         string $path,
         array $data = [],
     ) {
         $this->path = $path;
-        $this->data = $this->escape($data);
-        $this->rawData = $data;
-    }
-
-    public function __get(string $name)
-    {
-        $value = $this->data[$name] ?? null;
-
-        if (is_string($value)) {
-            return htmlentities($value);
-        }
-
-        return $value;
+        $this->data = $data;
     }
 
     public function getPath(): string
@@ -41,16 +27,6 @@ trait IsView
     public function getData(): array
     {
         return $this->data;
-    }
-
-    public function getRawData(): array
-    {
-        return $this->rawData;
-    }
-
-    public function getRaw(string $key): mixed
-    {
-        return $this->rawData[$key] ?? null;
     }
 
     public function get(string $key): mixed
@@ -65,35 +41,8 @@ trait IsView
 
     public function data(mixed ...$params): self
     {
-        $this->rawData = [...$this->rawData, ...$params];
-        $this->data = [...$this->data, ...$this->escape($params)];
+        $this->data = [...$this->data, ...$params];
 
         return $this;
-    }
-
-    public function raw(string $name): ?string
-    {
-        return $this->rawData[$name] ?? null;
-    }
-
-    private function escape(array $items): array
-    {
-        foreach ($items as $key => $value) {
-            if (! is_string($value)) {
-                continue;
-            }
-
-            $items[$key] = htmlentities($value);
-        }
-
-        return $items;
-    }
-
-    public function eval(string $eval): mixed
-    {
-        extract($this->data, flags: EXTR_SKIP);
-
-        /** @phpstan-ignore-next-line */
-        return eval("return {$eval};");
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use function Tempest\view;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -12,6 +13,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->container->get(ViewCache::class)->clear();
+    }
+
     public function test_view_renderer(): void
     {
         $this->assertSame(
@@ -20,8 +28,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: 'Hello')),
+            '<h1>&lt;span&gt;Hello&lt;/span&gt;</h1>',
+            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: '<span>Hello</span>')),
         );
 
         $this->assertSame(
@@ -30,8 +38,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->raw("foo") }}</h1>')->data(foo: 'Hello')),
+            '<h1><span>Hello</span></h1>',
+            $this->render(view('<h1>{!! $this->foo !!}</h1>')->data(foo: '<span>Hello</span>')),
         );
     }
 
@@ -232,5 +240,23 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             ),
         );
+    }
+
+    public function test_use_statements_are_grouped(): void
+    {
+        $html = $this->render('<x-view-component-with-use-import></x-view-component-with-use-import><x-view-component-with-use-import></x-view-component-with-use-import>');
+
+        $this->assertStringContainsString('/', $html);
+    }
+
+    public function test_raw_and_escaped(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        &lt;h1&gt;hi&lt;/h1&gt;
+        &lt;H1&gt;HI&lt;/H1&gt;
+        <h1>hi</h1>
+        HTML, $html);
     }
 }

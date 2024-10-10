@@ -202,14 +202,19 @@ final class StringHelperTest extends TestCase
     public function test_starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
+        $this->assertTrue(str('abc')->startsWith(['a', 'b']));
+        $this->assertTrue(str('bc')->startsWith(['a', 'b']));
         $this->assertTrue(str('abc')->startsWith((str('a'))));
         $this->assertFalse(str('abc')->startsWith('c'));
+        $this->assertFalse(str('abc')->startsWith(['b', 'c']));
     }
 
     public function test_ends_with(): void
     {
         $this->assertTrue(str('abc')->endsWith('c'));
         $this->assertTrue(str('abc')->endsWith(str('c')));
+        $this->assertTrue(str('abc')->endsWith(['b', 'c']));
+        $this->assertFalse(str('abc')->endsWith(['b', 'a']));
         $this->assertFalse(str('abc')->endsWith('a'));
     }
 
@@ -402,5 +407,27 @@ final class StringHelperTest extends TestCase
         $matches = str('abcdef')->matchAll(regex: $regex, offset: 3);
         $expected = [];
         $this->assertSame($expected, $matches);
+    }
+
+    public function test_excerpt(): void
+    {
+        $content = str('a
+b
+c
+d
+e
+f
+g');
+
+        $this->assertTrue($content->excerpt(2, 4)->equals('b
+c
+d'));
+
+        $this->assertTrue($content->excerpt(-10, 2)->equals('a
+b'));
+
+        $this->assertTrue($content->excerpt(7, 100)->equals('g'));
+
+        $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
     }
 }

@@ -13,6 +13,8 @@ trait IsCache
 {
     abstract protected function getCachePool(): CacheItemPoolInterface;
 
+    abstract protected function isEnabled(): bool;
+
     public function put(string $key, mixed $value, ?DateTimeInterface $expiresAt = null): CacheItemInterface
     {
         $item = $this->getCachePool()
@@ -36,6 +38,10 @@ trait IsCache
     /** @param Closure(): mixed $cache */
     public function resolve(string $key, Closure $cache, ?DateTimeInterface $expiresAt = null): mixed
     {
+        if (! $this->isEnabled()) {
+            return $cache();
+        }
+
         $item = $this->getCachePool()->getItem($key);
 
         if (! $item->isHit()) {

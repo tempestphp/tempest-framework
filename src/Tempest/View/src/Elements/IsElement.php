@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\View;
 
 /** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
 {
+    private View $view;
+
     /** @var Element[] */
     private array $children = [];
 
@@ -16,7 +19,49 @@ trait IsElement
 
     private ?Element $previous = null;
 
-    private array $data = [];
+    private array $attributes = [];
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function hasAttribute(string $name): bool
+    {
+        $name = ltrim($name, ':');
+
+        return
+            array_key_exists(":{$name}", $this->attributes) ||
+            array_key_exists($name, $this->attributes);
+    }
+
+    public function getAttribute(string $name): string|null
+    {
+        $name = ltrim($name, ':');
+
+        return $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
+    }
+
+    public function setAttribute(string $name, string $value): self
+    {
+        $this->unsetAttribute($name);
+
+        $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    public function unsetAttribute(string $name): self
+    {
+        $name = ltrim($name, ':');
+
+        unset($this->attributes[$name]);
+        unset($this->attributes[":{$name}"]);
+
+        return $this;
+    }
 
     public function setPrevious(?Element $previous): self
     {
@@ -64,36 +109,5 @@ trait IsElement
         $this->children = $children;
 
         return $this;
-    }
-
-    public function getData(?string $key = null): mixed
-    {
-        $parentData = $this->getParent()?->getData() ?? [];
-
-        $data = [...$parentData, ...$this->data];
-
-        if ($key) {
-            return $data[$key] ?? null;
-        }
-
-        return $data;
-    }
-
-    public function addData(...$data): self
-    {
-        $this->data = [...$this->data, ...$data];
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        $childClones = [];
-
-        foreach ($this->children as $child) {
-            $childClones[] = clone $child;
-        }
-
-        $this->setChildren($childClones);
     }
 }

@@ -6,17 +6,22 @@ namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 
-final readonly class GenericCache implements Cache
+final class GenericCache implements Cache
 {
     use IsCache;
 
     public function __construct(
-        private CacheItemPoolInterface $pool,
+        private readonly CacheConfig $cacheConfig,
     ) {
     }
 
     protected function getCachePool(): CacheItemPoolInterface
     {
-        return $this->pool;
+        return $this->cacheConfig->pool;
+    }
+
+    protected function isEnabled(): bool
+    {
+        return $this->cacheConfig->enabled;
     }
 }

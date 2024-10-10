@@ -1,0 +1,5 @@
+{{ $var }}
+
+{{ strtoupper($var) }}
+
+{!! $var !!}
