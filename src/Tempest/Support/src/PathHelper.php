@@ -38,7 +38,8 @@ final readonly class PathHelper
 
         return arr(explode('\\', (string) $path))
             ->map(fn (string $segment) => (string) str($segment)->pascal())
-            ->implode('\\');
+            ->implode('\\')
+            ->toString();
     }
 
     public static function toRegisteredNamespace(string $path): string
