@@ -423,13 +423,13 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Explode the string into an ArrayHelper by a delimiter.
+     * Explode the string into an ArrayHelper by a separator.
      *
-     * @param string $delimiter The delimiter to explode the string by.
+     * @param string $separator The separator to explode the string by.
      *
      * @return ArrayHelper
      */
-    public function explode( string $delimiter ): ArrayHelper {
-        return new ArrayHelper(explode($delimiter, $this->string));
+    public function explode( string $separator = ' ' ): ArrayHelper {
+        return ArrayHelper::explode($this->string, $separator);
     }
 }

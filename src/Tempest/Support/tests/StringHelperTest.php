@@ -403,4 +403,9 @@ final class StringHelperTest extends TestCase
         $expected = [];
         $this->assertSame($expected, $matches);
     }
+
+    public function test_explode(): void {
+        $this->assertSame(['path', 'to', 'tempest'], str('path/to/tempest')->explode('/')->toArray());
+        $this->assertSame(['john', 'doe'], str('john doe')->explode()->toArray());
+    }
 }
