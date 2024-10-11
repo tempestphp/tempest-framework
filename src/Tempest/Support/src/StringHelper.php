@@ -286,14 +286,34 @@ final readonly class StringHelper implements Stringable
         return new self(basename(str_replace('\\', '/', $this->string)));
     }
 
-    public function startsWith(Stringable|string $needle): bool
+    public function startsWith(Stringable|string|array $needles): bool
     {
-        return str_starts_with($this->string, (string) $needle);
+        if (! is_array($needles)) {
+            $needles = [$needles];
+        }
+
+        foreach ($needles as $needle) {
+            if (str_starts_with($this->string, (string) $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function endsWith(Stringable|string $needle): bool
+    public function endsWith(Stringable|string|array $needles): bool
     {
-        return str_ends_with($this->string, (string) $needle);
+        if (! is_array($needles)) {
+            $needles = [$needles];
+        }
+
+        foreach ($needles as $needle) {
+            if (str_ends_with($this->string, (string) $needle)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function replaceFirst(Stringable|string $search, Stringable|string $replace): self
@@ -418,6 +438,24 @@ final readonly class StringHelper implements Stringable
         lw($this->string, ...$dumps); // @phpstan-ignore-line
 
         return $this;
+    }
+
+    public function excerpt(int $from, int $to, bool $asArray = false): self|ArrayHelper
+    {
+        $lines = explode(PHP_EOL, $this->string);
+
+        $from = max(0, $from - 1);
+
+        $to = min($to - 1, count($lines));
+
+        $lines = array_slice($lines, $from, $to - $from + 1, true);
+
+        if ($asArray) {
+            return arr($lines)
+                ->mapWithKeys(fn (string $line, int $number) => yield $number + 1 => $line);
+        }
+
+        return new self(implode(PHP_EOL, $lines));
     }
 
     private function normalizeString(mixed $value): mixed

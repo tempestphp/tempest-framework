@@ -8,21 +8,39 @@ use DOMAttr;
 use DOMElement;
 use DOMNode;
 use DOMText;
+use Tempest\Container\Container;
+use function Tempest\Support\str;
 use Tempest\View\Element;
-use Tempest\View\View;
+use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\ViewComponent;
+use Tempest\View\ViewConfig;
 
 final class ElementFactory
 {
-    public function make(View $view, DOMElement $node): ?Element
+    private TempestViewCompiler $compiler;
+
+    public function __construct(
+        private readonly ViewConfig $viewConfig,
+        private readonly Container $container,
+    ) {
+    }
+
+    public function setViewCompiler(TempestViewCompiler $compiler): self
+    {
+        $this->compiler = $compiler;
+
+        return $this;
+    }
+
+    public function make(DOMNode $node): ?Element
     {
         return $this->makeElement(
-            view: $view,
             node: $node,
             parent: null,
         );
     }
 
-    private function makeElement(View $view, DOMNode $node, ?Element $parent): ?Element
+    private function makeElement(DOMNode $node, ?Element $parent): ?Element
     {
         if ($node instanceof DOMText) {
             if (trim($node->textContent) === '') {
@@ -42,7 +60,26 @@ final class ElementFactory
             return new RawElement($node->ownerDocument->saveHTML($node));
         }
 
-        if ($node->tagName === 'x-slot') {
+        if ($viewComponentClass = $this->viewConfig->viewComponents[$node->tagName] ?? null) {
+            if (! $viewComponentClass instanceof ViewComponent) {
+                $viewComponentClass = $this->container->get($viewComponentClass);
+            }
+
+            $attributes = [];
+
+            /** @var DOMAttr $attribute */
+            foreach ($node->attributes as $attribute) {
+                $name = (string)str($attribute->name)->camel();
+
+                $attributes[$name] = $attribute->value;
+            }
+
+            $element = new ViewComponentElement(
+                $this->compiler,
+                $viewComponentClass,
+                $attributes
+            );
+        } elseif ($node->tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
             );
@@ -51,13 +88,12 @@ final class ElementFactory
 
             /** @var DOMAttr $attribute */
             foreach ($node->attributes as $attribute) {
-                $name = (string) \Tempest\Support\str($attribute->name)->camel();
+                $name = (string)str($attribute->name)->camel();
 
                 $attributes[$name] = $attribute->value;
             }
 
             $element = new GenericElement(
-                view: $view,
                 tag: $node->tagName,
                 attributes: $attributes,
             );
@@ -67,7 +103,6 @@ final class ElementFactory
 
         foreach ($node->childNodes as $child) {
             $childElement = $this->clone()->makeElement(
-                view: $view,
                 node: $child,
                 parent: $parent,
             );

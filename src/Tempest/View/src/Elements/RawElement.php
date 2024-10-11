@@ -15,7 +15,7 @@ final class RawElement implements Element
     ) {
     }
 
-    public function getHtml(): string
+    public function compile(): string
     {
         return $this->html;
     }

@@ -1,5 +1,9 @@
+<?php
+/** @var string $variable */
+?>
+
 <x-component name="x-with-variable">
     <div>
-        <?= $this->variable ?>
+        <?= $variable ?>
     </div>
 </x-component>

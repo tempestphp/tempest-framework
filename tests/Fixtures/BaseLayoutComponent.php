@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures;
 
-use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
-use Tempest\View\ViewRenderer;
 
 final readonly class BaseLayoutComponent implements ViewComponent
 {
@@ -15,7 +14,7 @@ final readonly class BaseLayoutComponent implements ViewComponent
         return 'x-base-layout';
     }
 
-    public function render(GenericElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         return <<<HTML
         <div class="base">

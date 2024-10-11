@@ -13,6 +13,6 @@ final readonly class CacheInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): Cache|GenericCache
     {
-        return new GenericCache($container->get(CacheConfig::class)->pool);
+        return new GenericCache($container->get(CacheConfig::class));
     }
 }

@@ -31,4 +31,9 @@ final class DummyCache implements Cache
     {
         $this->cleared = true;
     }
+
+    protected function isEnabled(): bool
+    {
+        return true;
+    }
 }
