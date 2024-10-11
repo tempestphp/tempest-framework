@@ -1030,6 +1030,7 @@ final class ArrayHelperTest extends TestCase
             $this->assertIsInt($value);
             $this->assertContains($value, $collection->toArray());
         }
+
         $this->assertCount(3, $randoms);
     }
 

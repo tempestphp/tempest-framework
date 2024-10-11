@@ -132,7 +132,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Add an item at the end of the array.
      *
-     * @param mixed $value
      *
      * @return self<TKey, TValue>
      */
@@ -146,8 +145,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Pad the array to the specified size with a value.
      *
-     * @param int $size
-     * @param mixed $value
      *
      * @return self<TKey, TValue>
      */
