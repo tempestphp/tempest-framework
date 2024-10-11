@@ -6,10 +6,9 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\StringHelper;
-
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
+use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -407,12 +406,14 @@ final class StringHelperTest extends TestCase
         $this->assertSame($expected, $matches);
     }
 
-    public function test_explode(): void {
+    public function test_explode(): void
+    {
         $this->assertSame(['path', 'to', 'tempest'], str('path/to/tempest')->explode('/')->toArray());
         $this->assertSame(['john', 'doe'], str('john doe')->explode()->toArray());
     }
 
-    public function test_implode(): void {
+    public function test_implode(): void
+    {
         $this->assertSame('path/to/tempest', StringHelper::implode(['path', 'to', 'tempest'], '/')->toString());
         $this->assertSame('john doe', StringHelper::implode(['john', 'doe'])->toString());
         $this->assertSame('path/to/tempest', StringHelper::implode(arr(['path', 'to', 'tempest']), '/')->toString());
