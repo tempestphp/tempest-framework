@@ -141,7 +141,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_implode(): void
     {
-        $this->assertSame('a,b,c', arr(['a', 'b', 'c'])->implode(','));
+        $this->assertEquals(str('a,b,c'), arr(['a', 'b', 'c'])->implode(','));
     }
 
     public function test_pop(): void
