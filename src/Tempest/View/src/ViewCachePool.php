@@ -9,10 +9,17 @@ use Exception;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\CacheItem;
+use function Tempest\path;
 use function Tempest\Support\arr;
+use Tempest\Support\ArrayHelper;
 
 final readonly class ViewCachePool implements CacheItemPoolInterface
 {
+    public function __construct(
+        private string $directory = __DIR__ . '/.cache/',
+    ) {
+    }
+
     public function getItem(string $key): CacheItemInterface
     {
         $createCacheItem = Closure::bind(
@@ -32,7 +39,10 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         return $createCacheItem($key, $this->makePath($key), $this->hasItem($key));
     }
 
-    public function getItems(array $keys = []): iterable
+    /**
+     * @return ArrayHelper<array-key, \Psr\Cache\CacheItemInterface>
+     */
+    public function getItems(array $keys = []): ArrayHelper
     {
         return arr($keys)
             ->map(fn (string $key) => $this->getItem($key));
@@ -45,13 +55,11 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function clear(): bool
     {
-        $path = __DIR__ . '/.cache';
-
-        if (is_dir($path)) {
+        if (is_dir($this->directory)) {
             /** @phpstan-ignore-next-line  */
-            arr(glob($path . '/*.php'))->each(fn (string $file) => unlink($file));
+            arr(glob(path($this->directory, '/*.php')))->each(fn (string $file) => unlink($file));
 
-            rmdir($path);
+            rmdir($this->directory);
         }
 
         return true;
@@ -100,6 +108,6 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
     {
         $key = is_string($key) ? $key : $key->getKey();
 
-        return __DIR__ . "/.cache/{$key}.php";
+        return path($this->directory, "/{$key}.php");
     }
 }
