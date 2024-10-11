@@ -8,21 +8,34 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Generator;
+use InvalidArgumentException;
 use Iterator;
+use Random\Randomizer;
 use Serializable;
 use Stringable;
 use function Tempest\map;
 
 /**
- * @template TValueType
- * @implements ArrayAccess<array-key, TValueType>
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements ArrayAccess<TKey, TValue>
+ * @implements Iterator<TKey, TValue>
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
     use IsIterable;
 
+    /**
+     * The underlying array.
+     *
+     * @var array<TKey, TValue>
+     */
     private array $array;
 
+    /**
+     * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
+     */
     public function __construct(
         mixed $input = [],
     ) {
@@ -33,6 +46,250 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         } else {
             $this->array = [$input];
         }
+    }
+
+    /**
+     * Get one or a specified number of random values from the array.
+     *
+     * @param int $number The number of random values to get.
+     * @param bool $preserveKey Whether to preserve the keys of the original array. ( won't work if $number is 1 as it will return a single value )
+     *
+     * @return self<TKey, TValue>|mixed The random values or single value if $number is 1.
+     */
+    public function random(int $number = 1, bool $preserveKey = false): mixed
+    {
+        $count = count($this->array);
+
+        if ($number > $count) {
+            throw new InvalidArgumentException("Cannot retrive {$number} items from an array of {$count} items.");
+        }
+
+        if ($number < 1) {
+            throw new InvalidArgumentException("Random value only accepts positive integers, {$number} requested.");
+        }
+
+        $keys = (new Randomizer())->pickArrayKeys($this->array, $number);
+
+        $randomValues = [];
+        foreach ($keys as $key) {
+            $preserveKey
+                ? $randomValues[$key] = $this->array[$key]
+                : $randomValues[] = $this->array[$key];
+        }
+
+        if ($preserveKey === false) {
+            shuffle($randomValues);
+        }
+
+        return count($randomValues) > 1
+            ? new self($randomValues)
+            : $randomValues[0];
+    }
+
+    /**
+     * Retrieve values from a given key in each sub-array of the current array.
+     * Optionally, you can pass a second parameter to also get the keys following the same pattern.
+     *
+     * @param string $value The key to assign the values from, support dot notation.
+     * @param string|null $key The key to assign the keys from, support dot notation.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pluck(string $value, ?string $key = null): self
+    {
+        $results = [];
+
+        foreach ($this->array as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $itemValue = arr($item)->get($value);
+
+            /**
+             * Perform basic pluck if no key is given.
+             * Otherwise, also pluck the key as well.
+             */
+            if (is_null($key)) {
+                $results[] = $itemValue;
+            } else {
+                $itemKey = arr($item)->get($key);
+                $results[$itemKey] = $itemValue;
+            }
+        }
+
+        return new self($results);
+    }
+
+    /**
+     * @alias of add.
+     */
+    public function push(mixed $value): self
+    {
+        return $this->add($value);
+    }
+
+    /**
+     * Add an item at the end of the array.
+     *
+     *
+     * @return self<TKey, TValue>
+     */
+    public function add(mixed $value): self
+    {
+        $this->array[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Pad the array to the specified size with a value.
+     *
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pad(int $size, mixed $value): self
+    {
+        return new self(array_pad($this->array, $size, $value));
+    }
+
+    /**
+     * Reverse the keys and values of the array.
+     *
+     * @return self<TValue&array-key, TKey>
+     */
+    public function flip(): self
+    {
+        return new self(array_flip($this->array));
+    }
+
+    /**
+     * Keep only the unique items in the array.
+     *
+     * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
+     * @param bool $should_be_strict Whether the comparison should be strict, only used when giving a key parameter.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function unique(?string $key = null, bool $should_be_strict = false): self
+    {
+        if (is_null($key) && $should_be_strict === false) {
+            return new self(array_unique($this->array, flags: SORT_REGULAR));
+        }
+
+        $uniqueItems = [];
+        $uniqueFilteredValues = [];
+        foreach ($this->array as $item) {
+            // Ensure we don't check raw values with key filter
+            if (! is_null($key) && ! is_array($item)) {
+                continue;
+            }
+
+            $filterValue = is_array($item)
+                ? arr($item)->get($key)
+                : $item;
+
+            if (is_null($filterValue)) {
+                continue;
+            }
+
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $should_be_strict)) {
+                continue;
+            }
+
+            $uniqueItems[] = $item;
+            $uniqueFilteredValues[] = $filterValue;
+        }
+
+        return new self($uniqueItems);
+    }
+
+    /**
+     * Keep only the items that are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diff(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_diff($this->array, ...$arrays));
+    }
+
+    /**
+     * Keep only the items whose keys are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diffKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_diff_key($this->array, ...$arrays));
+    }
+
+    /**
+     * Keep only the items that are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersect(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_intersect($this->array, ...$arrays));
+    }
+
+    /**
+     * Keep only the items whose keys are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersectKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_intersect_key($this->array, ...$arrays));
+    }
+
+    /**
+     * Merge the array with the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays The arrays to merge.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function merge(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_merge($this->array, ...$arrays));
+    }
+
+    /**
+     * Create a new array with this current array values as keys and the given values as values.
+     *
+     * @template TCombineValue
+     *
+     * @param array<array-key, TCombineValue>|self<array-key, TCombineValue> $values
+     *
+     * @return self<array-key, TCombineValue>
+     */
+    public function combine(array|self $values): self
+    {
+        $values = $values instanceof self
+            ? $values->toArray()
+            : $values;
+
+        return new self(array_combine($this->array, $values));
     }
 
     public static function explode(string|Stringable $string, string $separator = ' '): self
@@ -117,6 +374,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function implode(string $glue): string
     {
         return implode($glue, $this->array);
+    }
+
+    /**
+     * Create a new array with the keys of this array as values.
+     *
+     * @return self<array-key, TKey>
+     */
+    public function keys(): self
+    {
+        return new self(array_keys($this->array));
     }
 
     public function values(): self
@@ -259,6 +526,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * @alias self::set()
+     */
+    public function put(string $key, mixed $value): self
+    {
+        return $this->set($key, $value);
+    }
+
     public function unwrap(): self
     {
         $unwrapValue = function (string|int $key, mixed $value) {
@@ -286,11 +561,21 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    public function dd(mixed ...$dd): void
+    public function dump(mixed ...$dumps): self
     {
-        dd($this->array, ...$dd); // @phpstan-ignore-line
+        lw($this->array, ...$dumps); // @phpstan-ignore-line
+
+        return $this;
     }
 
+    public function dd(mixed ...$dd): void
+    {
+        ld($this->array, ...$dd); // @phpstan-ignore-line
+    }
+
+    /**
+     * @return array<TKey, TValue>
+     */
     public function toArray(): array
     {
         return $this->array;
