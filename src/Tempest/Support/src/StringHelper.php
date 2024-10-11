@@ -421,4 +421,15 @@ final readonly class StringHelper implements Stringable
 
         return $value;
     }
+
+    /**
+     * Explode the string into an ArrayHelper by a delimiter.
+     *
+     * @param string $delimiter The delimiter to explode the string by.
+     *
+     * @return ArrayHelper
+     */
+    public function explode( string $delimiter ): ArrayHelper {
+        return new ArrayHelper(explode($delimiter, $this->string));
+    }
 }
