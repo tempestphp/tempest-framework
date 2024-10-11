@@ -9,6 +9,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\IsCache;
+use function Tempest\path;
 
 final class ViewCache implements Cache
 {
@@ -17,9 +18,10 @@ final class ViewCache implements Cache
     private readonly CacheItemPoolInterface $cachePool;
 
     public function __construct(
-        private readonly CacheConfig $cacheConfig
+        private readonly CacheConfig $cacheConfig,
+        ?ViewCachePool $cachePool = null,
     ) {
-        $this->cachePool = new ViewCachePool();
+        $this->cachePool = $cachePool ?? new ViewCachePool();
     }
 
     public function getCachedViewPath(string $path, Closure $compiledView): string
@@ -32,7 +34,7 @@ final class ViewCache implements Cache
             $cacheItem = $this->put($cacheKey, $compiledView());
         }
 
-        return __DIR__ . '/.cache/' . $cacheItem->getKey() . '.php';
+        return path($this->cachePool->directory, $cacheItem->getKey() . '.php');
     }
 
     protected function getCachePool(): CacheItemPoolInterface

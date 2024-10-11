@@ -16,7 +16,7 @@ use Tempest\Support\ArrayHelper;
 final readonly class ViewCachePool implements CacheItemPoolInterface
 {
     public function __construct(
-        private string $directory = __DIR__ . '/.cache/',
+        public string $directory = __DIR__ . '/.cache/',
     ) {
     }
 
