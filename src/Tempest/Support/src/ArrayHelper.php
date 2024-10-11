@@ -371,9 +371,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return ! $this->isEmpty();
     }
 
-    public function implode(string $glue): string
+    public function implode(string $glue): StringHelper
     {
-        return implode($glue, $this->array);
+        return str(implode($glue, $this->array));
     }
 
     /**
