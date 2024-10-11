@@ -55,7 +55,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return bool
      */
-    public function isList()
+    public function isList(): bool
     {
         return array_is_list($this->array);
     }
@@ -67,7 +67,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return bool
      */
-    public function isAssoc()
+    public function isAssoc(): bool
     {
         return !$this->isList();
     }
