@@ -426,8 +426,6 @@ final readonly class StringHelper implements Stringable
      * Explode the string into an ArrayHelper by a separator.
      *
      * @param string $separator The separator to explode the string by.
-     *
-     * @return ArrayHelper
      */
     public function explode(string $separator = ' '): ArrayHelper
     {
