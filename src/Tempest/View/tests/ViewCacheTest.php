@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;
-use Tempest\View\ViewCache;
-use Tempest\View\ViewCachePool;
 use function Tempest\path;
 use function Tempest\Support\arr;
+use Tempest\View\ViewCache;
+use Tempest\View\ViewCachePool;
 
+/**
+ * @internal
+ */
 final class ViewCacheTest extends TestCase
 {
     private const string DIRECTORY = __DIR__ . '/.cache';
@@ -43,20 +48,23 @@ final class ViewCacheTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_view_cache(): void {
+    public function test_view_cache(): void
+    {
         $path = $this->cache->getCachedViewPath('path', fn () => 'hi');
 
         $this->assertFileExists($path);
         $this->assertSame('hi', file_get_contents($path));
     }
 
-    public function test_view_cache_when_disabled(): void {
+    public function test_view_cache_when_disabled(): void
+    {
         $hit = 0;
 
         $this->cacheConfig->enabled = false;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
+
             return 'hi';
         };
 
@@ -68,13 +76,15 @@ final class ViewCacheTest extends TestCase
         $this->assertSame(2, $hit);
     }
 
-    public function test_view_cache_when_enabled(): void {
+    public function test_view_cache_when_enabled(): void
+    {
         $hit = 0;
 
         $this->cacheConfig->enabled = true;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
+
             return 'hi';
         };
 

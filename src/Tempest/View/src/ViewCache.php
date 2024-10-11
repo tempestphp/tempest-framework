@@ -15,13 +15,8 @@ final class ViewCache implements Cache
 {
     use IsCache;
 
-    private readonly CacheItemPoolInterface $cachePool;
-
-    public function __construct(
-        private readonly CacheConfig $cacheConfig,
-        ?ViewCachePool $cachePool = null,
-    ) {
-        $this->cachePool = $cachePool ?? new ViewCachePool();
+    public function __construct(private readonly CacheConfig $cacheConfig, private readonly ViewCachePool $cachePool = new ViewCachePool())
+    {
     }
 
     public function getCachedViewPath(string $path, Closure $compiledView): string
