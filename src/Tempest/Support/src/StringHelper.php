@@ -432,4 +432,19 @@ final readonly class StringHelper implements Stringable
     public function explode( string $separator = ' ' ): ArrayHelper {
         return ArrayHelper::explode($this->string, $separator);
     }
+
+    /**
+     * Implode the array into a string by a separator.
+     *
+     * @param array|ArrayHelper $array The array to implode.
+     * @param string $separator The separator to implode the array by.
+     *
+     * @return self The imploded string.
+     */
+    public static function implode( array|ArrayHelper $array, string $separator = ' ' ): self {
+        $array = ($array instanceof ArrayHelper)
+            ? $array->toArray()
+            : $array;
+        return new self(implode($separator, $array));
+    }
 }
