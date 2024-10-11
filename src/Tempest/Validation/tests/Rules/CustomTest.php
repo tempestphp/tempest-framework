@@ -6,7 +6,6 @@ namespace Tempest\Validation\Tests\Rules;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Custom;
-use Tempest\Validation\Tests\Rules\Fixtures\CustomTestClass;
 
 /**
  * @internal
