@@ -430,12 +430,12 @@ final readonly class StringHelper implements Stringable
 
     public function dd(mixed ...$dd): void
     {
-        ld($this->string, ...$dd); // @phpstan-ignore-line
+        ld($this->string, ...$dd);
     }
 
     public function dump(mixed ...$dumps): self
     {
-        lw($this->string, ...$dumps); // @phpstan-ignore-line
+        lw($this->string, ...$dumps);
 
         return $this;
     }
