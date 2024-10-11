@@ -48,6 +48,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
         $path = __DIR__ . '/.cache';
 
         if (is_dir($path)) {
+            /** @phpstan-ignore-next-line  */
             arr(glob($path . '/*.php'))->each(fn (string $file) => unlink($file));
 
             rmdir($path);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\View\Exceptions\InvalidElement;
 use function Tempest\view;
+use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -265,7 +265,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(InvalidElement::class);
 
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :if="false"></div>
 <div :else></div>
 <div :else></div>
@@ -275,13 +276,15 @@ HTML,
 
     public function test_else_must_be_after_if_or_elseif(): void
     {
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :if="false"></div>
 <div :else></div>
 HTML,
         );
 
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :if="false"></div>
 <div :elseif="false"></div>
 <div :else></div>
@@ -290,7 +293,8 @@ HTML,
 
         $this->expectException(InvalidElement::class);
 
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :else></div>
 HTML,
         );
@@ -298,7 +302,8 @@ HTML,
 
     public function test_elseif_must_be_after_if_or_elseif(): void
     {
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :if="false"></div>
 <div :elseif="false"></div>
 <div :elseif="false"></div>
@@ -307,7 +312,8 @@ HTML,
 
         $this->expectException(InvalidElement::class);
 
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :elseif="false"></div>
 HTML,
         );
@@ -315,7 +321,8 @@ HTML,
 
     public function test_forelse_must_be_before_foreach(): void
     {
-        $this->render(view(<<<'HTML'
+        $this->render(
+            view(<<<'HTML'
 <div :foreach="$foo as $bar"></div>
 <div :forelse></div>
 HTML, foo: []),
@@ -323,7 +330,8 @@ HTML, foo: []),
 
         $this->expectException(InvalidElement::class);
 
-        $this->render(<<<'HTML'
+        $this->render(
+            <<<'HTML'
 <div :forelse></div>
 HTML,
         );
@@ -331,7 +339,8 @@ HTML,
 
     public function test_no_double_forelse_attributes(): void
     {
-        $this->render(view(<<<'HTML'
+        $this->render(
+            view(<<<'HTML'
 <div :foreach="$foo as $bar"></div>
 <div :forelse></div>
 HTML, foo: []),
@@ -339,7 +348,8 @@ HTML, foo: []),
 
         $this->expectException(InvalidElement::class);
 
-        $this->render(view(<<<'HTML'
+        $this->render(
+            view(<<<'HTML'
 <div :foreach="$foo as $bar"></div>
 <div :forelse></div>
 <div :forelse></div>
