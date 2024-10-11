@@ -10,17 +10,9 @@ interface View
 
     public function getData(): array;
 
-    public function getRawData(): array;
-
-    public function getRaw(string $key): mixed;
-
     public function get(string $key): mixed;
 
     public function has(string $key): bool;
 
     public function data(...$params): self;
-
-    public function raw(string $name): ?string;
-
-    public function eval(string $eval): mixed;
 }

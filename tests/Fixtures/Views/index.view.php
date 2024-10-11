@@ -1,7 +1,7 @@
 <x-component name="x-index">
     <html lang="en">
     <head>
-        <title>{{ $this->title }}</title>
+        <title><?= $title ?? '' ?></title>
     </head>
     <body><x-slot/></body>
     </html>
