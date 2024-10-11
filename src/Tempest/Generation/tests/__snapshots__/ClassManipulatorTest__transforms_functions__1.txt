@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Controllers;
+
+use Tempest\Http\Get;
+use Tempest\View\View;
+
+use function Tempest\view;
+
+final class WelcomeController
+{
+    #[Get(uri: '/welcome')]
+    public function __invoke(): View
+    {
+        return view('welcome');
+    }
+}

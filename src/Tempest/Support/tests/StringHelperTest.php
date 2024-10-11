@@ -6,7 +6,9 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
+use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -202,19 +204,14 @@ final class StringHelperTest extends TestCase
     public function test_starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
-        $this->assertTrue(str('abc')->startsWith(['a', 'b']));
-        $this->assertTrue(str('bc')->startsWith(['a', 'b']));
         $this->assertTrue(str('abc')->startsWith((str('a'))));
         $this->assertFalse(str('abc')->startsWith('c'));
-        $this->assertFalse(str('abc')->startsWith(['b', 'c']));
     }
 
     public function test_ends_with(): void
     {
         $this->assertTrue(str('abc')->endsWith('c'));
         $this->assertTrue(str('abc')->endsWith(str('c')));
-        $this->assertTrue(str('abc')->endsWith(['b', 'c']));
-        $this->assertFalse(str('abc')->endsWith(['b', 'a']));
         $this->assertFalse(str('abc')->endsWith('a'));
     }
 
@@ -407,6 +404,20 @@ final class StringHelperTest extends TestCase
         $matches = str('abcdef')->matchAll(regex: $regex, offset: 3);
         $expected = [];
         $this->assertSame($expected, $matches);
+    }
+
+    public function test_explode(): void
+    {
+        $this->assertSame(['path', 'to', 'tempest'], str('path/to/tempest')->explode('/')->toArray());
+        $this->assertSame(['john', 'doe'], str('john doe')->explode()->toArray());
+    }
+
+    public function test_implode(): void
+    {
+        $this->assertSame('path/to/tempest', StringHelper::implode(['path', 'to', 'tempest'], '/')->toString());
+        $this->assertSame('john doe', StringHelper::implode(['john', 'doe'])->toString());
+        $this->assertSame('path/to/tempest', StringHelper::implode(arr(['path', 'to', 'tempest']), '/')->toString());
+        $this->assertSame('john doe', StringHelper::implode(arr(['john', 'doe']))->toString());
     }
 
     public function test_excerpt(): void
