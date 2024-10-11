@@ -53,4 +53,18 @@ HTML;
             ->assertHasHeader('x-from-view')
             ->assertStatus(Status::CREATED);
     }
+
+    public function test_render_element_with_attribute_with_dash(): void
+    {
+        $view = view(<<<HTML
+    <div data-theme="tempest"></div>
+    HTML);
+
+        $html = $this->render($view);
+
+        $this->assertStringContainsString(
+            '<div data-theme="tempest"></div>',
+            $html
+        );
+    }
 }
