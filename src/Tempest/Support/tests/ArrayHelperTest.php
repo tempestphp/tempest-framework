@@ -1081,7 +1081,7 @@ final class ArrayHelperTest extends TestCase
         $collection->random(-1);
     }
     
-    public function test_is_list()
+    public function test_is_list(): void
     {
         $this->assertTrue(arr()->isList());
         $this->assertTrue(arr(['a', 2, 3])->isList());
@@ -1093,7 +1093,7 @@ final class ArrayHelperTest extends TestCase
         $this->assertFalse(arr([0 => 'a', 2 => 'b'])->isList());
     }
     
-    public function test_is_assoc()
+    public function test_is_assoc(): void
     {
         $this->assertTrue(arr([1 => 'a', 'b'])->isAssoc());
         $this->assertTrue(arr([1 => 'a', 0 => 'b'])->isAssoc());
