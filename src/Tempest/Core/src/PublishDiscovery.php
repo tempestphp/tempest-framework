@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Console\PublishConfig;
 use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
 
 final readonly class PublishDiscovery implements Discovery
 {
-    public const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/publish-discovery.cache.php';
+    use HandlesDiscoveryCache;
 
     public function __construct(
-        private Kernel $kernel,
+        private PublishConfig $publish,
     ) {
     }
 
@@ -26,36 +27,24 @@ final readonly class PublishDiscovery implements Discovery
             return;
         }
 
-        $this->kernel->publishClasses[] = $class->getName();
+        $this->publish->publishClasses[] = $class->getName();
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize(
+            [
+                'publish_classes' => $this->publish->publishClasses,
+                'publish_files' => $this->publish->publishFiles,
+            ],
+        );
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        $directory = pathinfo(self::CACHE_PATH, PATHINFO_DIRNAME);
+        $data = unserialize($payload);
 
-        if (! is_dir($directory)) {
-            mkdir($directory, recursive: true);
-        }
-
-        file_put_contents(self::CACHE_PATH, serialize($this->kernel->publishClasses));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $publishFiles = unserialize(file_get_contents(self::CACHE_PATH), [
-            'allowed_classes' => true,
-        ]);
-
-        $this->kernel->publishClasses = $publishFiles;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
+        $this->publish->publishClasses = $data['publish_classes'] ?? [];
+        $this->publish->publishFiles = $data['publish_files'] ?? [];
     }
 }
