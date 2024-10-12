@@ -147,8 +147,6 @@ final class Kernel
 
     private function event(object $event): self
     {
-        testFunction();
-
         if (interface_exists(EventBus::class)) {
             $this->container->get(EventBus::class)->dispatch($event);
         }
