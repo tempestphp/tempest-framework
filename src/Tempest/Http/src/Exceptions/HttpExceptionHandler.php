@@ -25,6 +25,8 @@ final class HttpExceptionHandler implements ExceptionHandler
 
         ob_start();
 
+        ([$this, "getCodeSample"]); // unused
+
         include __DIR__ . '/exception.php';
 
         $contents = ob_get_clean();
@@ -55,7 +57,7 @@ final class HttpExceptionHandler implements ExceptionHandler
             }
 
             $lines[$i] = '<span class="' . $class . '">' . str_pad(
-                string: '' . $i + 1,
+                string: (string) ($i + 1),
                 length: 3,
                 pad_type: STR_PAD_LEFT,
             ) . '</span>' . $line;

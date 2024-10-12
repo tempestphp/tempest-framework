@@ -31,8 +31,7 @@ class Route
         public Method $method,
 
         /**
-         * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
-         * @var class-string<MiddlewareClass>[] $middleware
+         * @var class-string<\Tempest\Http\HttpMiddleware>[] $middleware
          */
         public array $middleware = [],
     ) {
