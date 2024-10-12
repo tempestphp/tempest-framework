@@ -40,7 +40,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $path = $this->viewCache->getCachedViewPath(
             path: $view->getPath(),
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath()))
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath())),
         );
 
         return $this->renderCompiled($view, $path);
@@ -89,13 +89,6 @@ final class TempestViewRenderer implements ViewRenderer
             include $_path;
         } catch (Throwable $throwable) {
             throw new ViewCompilationError(content: file_get_contents($_path), previous: $throwable);
-        }
-
-        // If the view defines local variables, we add them here to the view object as well
-        foreach (get_defined_vars() as $key => $value) {
-            if (! $_view->has($key)) {
-                $_view->data(...[$key => $value]);
-            }
         }
 
         $this->currentView = null;
