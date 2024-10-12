@@ -1,4 +1,8 @@
 <?php
+
+use Tempest\View\GenericView;
+
+/** @var GenericView $this */
 $localVariable = 'fromPHP';
 ?>
 
