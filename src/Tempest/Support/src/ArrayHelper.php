@@ -52,8 +52,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Determines if the array is a list.
      *
      * An array is a list if its keys consist of consecutive numbers.
-     *
-     * @return bool
      */
     public function isList(): bool
     {
@@ -64,12 +62,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Determines if the array is an associative.
      *
      * An array is associative if its keys doesn't consist of consecutive numbers.
-     *
-     * @return bool
      */
     public function isAssoc(): bool
     {
-        return !$this->isList();
+        return ! $this->isList();
     }
 
     /**
