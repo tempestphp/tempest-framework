@@ -12,6 +12,7 @@ use SplFileInfo;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
+use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DoNotDiscover;
 use Tempest\Core\Kernel;
 use Tempest\Reflection\ClassReflector;
@@ -22,6 +23,7 @@ final readonly class LoadDiscoveryClasses
 {
     public function __construct(
         private Kernel $kernel,
+        private DiscoveryCache $discoveryCache,
         private Container $container,
     ) {
     }
@@ -34,15 +36,19 @@ final readonly class LoadDiscoveryClasses
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
-            try {
-                if ($this->kernel->discoveryCache && $discovery->hasCache()) {
-                    $discovery->restoreCache($this->container);
-                    next($this->kernel->discoveryClasses);
+            if ($this->kernel->discoveryCache) {
+                try {
+                    $cachedPayload = $this->discoveryCache->get($discoveryClass);
 
-                    continue;
+                    if ($cachedPayload) {
+                        $discovery->restoreCachePayload($this->container, $cachedPayload);
+                        next($this->kernel->discoveryClasses);
+
+                        continue;
+                    }
+                } catch (ReflectionException) {
+                    // Invalid cache
                 }
-            } catch (ReflectionException) {
-                // Invalid cache
             }
 
             foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
@@ -108,7 +114,7 @@ final readonly class LoadDiscoveryClasses
             next($this->kernel->discoveryClasses);
 
             if ($this->kernel->discoveryCache) {
-                $discovery->storeCache();
+                $this->discoveryCache->put($discoveryClass, $discovery->createCachePayload());
             }
         }
     }
