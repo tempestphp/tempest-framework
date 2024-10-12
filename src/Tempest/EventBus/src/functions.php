@@ -8,9 +8,9 @@ namespace Tempest {
     use Tempest\EventBus\EventBus;
     use Tempest\EventBus\EventBusConfig;
 
-    function testFunction(): void
+    function testFunction(): string
     {
-        echo 'test';
+        return 'test';
     }
 
     function event(string|object $event): void
