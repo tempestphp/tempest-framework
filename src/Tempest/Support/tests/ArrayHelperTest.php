@@ -1080,4 +1080,33 @@ final class ArrayHelperTest extends TestCase
 
         $collection->random(-1);
     }
+
+    public function test_is_list(): void
+    {
+        $this->assertTrue(arr()->isList());
+        $this->assertTrue(arr(['a', 2, 3])->isList());
+        $this->assertTrue(arr([0 => 'a', 'b'])->isList());
+
+        $this->assertFalse(arr([1 => 'a', 'b'])->isList());
+        $this->assertFalse(arr([1 => 'a', 0 => 'b'])->isList());
+        $this->assertFalse(arr([0 => 'a', 'foo' => 'b'])->isList());
+        $this->assertFalse(arr([0 => 'a', 2 => 'b'])->isList());
+    }
+
+    public function test_is_assoc(): void
+    {
+        $this->assertTrue(arr([1 => 'a', 'b'])->isAssoc());
+        $this->assertTrue(arr([1 => 'a', 0 => 'b'])->isAssoc());
+        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssoc());
+        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
+
+        $this->assertFalse(arr()->isAssoc());
+        $this->assertFalse(arr([1, 2, 3])->isAssoc());
+        $this->assertFalse(arr(['a', 2, 3])->isAssoc());
+        $this->assertFalse(arr([0 => 'a', 'b'])->isAssoc());
+
+        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssoc());
+        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
+        $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssoc());
+    }
 }

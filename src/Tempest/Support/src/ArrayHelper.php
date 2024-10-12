@@ -49,6 +49,26 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Determines if the array is a list.
+     *
+     * An array is a list if its keys consist of consecutive numbers.
+     */
+    public function isList(): bool
+    {
+        return array_is_list($this->array);
+    }
+
+    /**
+     * Determines if the array is an associative.
+     *
+     * An array is associative if its keys doesn't consist of consecutive numbers.
+     */
+    public function isAssoc(): bool
+    {
+        return ! $this->isList();
+    }
+
+    /**
      * Get one or a specified number of random values from the array.
      *
      * @param int $number The number of random values to get.
