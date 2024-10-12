@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Core\Tests;
+namespace Tempest\Database\Tests;
 
 use PHPUnit\Framework\TestCase;
 use function Tempest\testFunction;
