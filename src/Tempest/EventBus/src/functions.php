@@ -8,6 +8,11 @@ namespace Tempest {
     use Tempest\EventBus\EventBus;
     use Tempest\EventBus\EventBusConfig;
 
+    function testFunction(): void
+    {
+        echo 'test';
+    }
+
     function event(string|object $event): void
     {
         $eventBus = get(EventBus::class);

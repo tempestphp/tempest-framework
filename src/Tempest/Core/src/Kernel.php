@@ -12,6 +12,7 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use function Tempest\env;
 use Tempest\EventBus\EventBus;
+use function Tempest\testFunction;
 
 final class Kernel
 {
@@ -146,6 +147,8 @@ final class Kernel
 
     private function event(object $event): self
     {
+        testFunction();
+
         if (interface_exists(EventBus::class)) {
             $this->container->get(EventBus::class)->dispatch($event);
         }
