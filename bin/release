@@ -69,13 +69,8 @@ function suggestNextVersions(string $current): array
     ]);
 }
 
-function releaseTag(string $tag): void
+function executeCommands(array $commands): void
 {
-    $commands = [
-        "git tag {$tag}",
-        "git push origin tag {$tag}",
-    ];
-
     foreach ($commands as $command) {
         exec($command, result_code: $code);
 
@@ -83,7 +78,7 @@ function releaseTag(string $tag): void
             continue;
         }
 
-        throw new Exception("Pushing of git tag failed.");
+        throw new Exception("Command failed: {$command}");
     }
 }
 
@@ -112,7 +107,9 @@ try {
             ->toArray(),
     );
 
-    $tag = (string) str($new)->afterLast(': ')->prepend('v');
+    $isMajor = str_contains($new, 'major');
+    $version = (string) str($new)->afterLast(': ');
+    $tag = "v{$version}";
 
     $console->writeln();
     if (! $console->confirm("The next tag will be <u><strong>{$tag}</strong></u><question>. Release?")) {
@@ -121,16 +118,24 @@ try {
     }
 
     $console->writeln();
-    $console->writeln();
-    $console->writeln();
     $console->info('Releasing...');
 
-    releaseTag($tag);
+    if ($isMajor) {
+        executeCommands([
+            "./vendor/bin/monorepo-builder bump-interdependency {$version}",
+            "./vendor/bin/monorepo-builder validate",
+            "git commit -am 'chore: release $tag'",
+        ]);
+    }
+
+    executeCommands([
+        "git tag {$tag}",
+        "git push origin tag {$tag}",
+    ]);
 
     $console->writeln();
     $console->success("Released {$tag}");
 
     exit;
-
 } catch (InterruptException) {
 }
