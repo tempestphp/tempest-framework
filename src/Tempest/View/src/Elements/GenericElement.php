@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use function Tempest\Support\str;
 
 final class GenericElement implements Element
 {
@@ -30,6 +31,8 @@ final class GenericElement implements Element
         $attributes = [];
 
         foreach ($this->getAttributes() as $name => $value) {
+            $name = str($name)->kebab()->toString();
+
             if ($value) {
                 $attributes[] = $name . '="' . $value . '"';
             } else {
