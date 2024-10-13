@@ -36,19 +36,17 @@ final readonly class LoadDiscoveryClasses
             /** @var Discovery $discovery */
             $discovery = $this->container->get($discoveryClass);
 
-            if ($this->kernel->discoveryCache) {
-                try {
-                    $cachedPayload = $this->discoveryCache->get($discoveryClass);
+            try {
+                $cachedPayload = $this->discoveryCache->get($discoveryClass);
 
-                    if ($cachedPayload) {
-                        $discovery->restoreCachePayload($this->container, $cachedPayload);
-                        next($this->kernel->discoveryClasses);
+                if ($cachedPayload) {
+                    $discovery->restoreCachePayload($this->container, $cachedPayload);
+                    next($this->kernel->discoveryClasses);
 
-                        continue;
-                    }
-                } catch (ReflectionException) {
-                    // Invalid cache
+                    continue;
                 }
+            } catch (ReflectionException) {
+                // Invalid cache
             }
 
             foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
@@ -113,9 +111,7 @@ final readonly class LoadDiscoveryClasses
 
             next($this->kernel->discoveryClasses);
 
-            if ($this->kernel->discoveryCache) {
-                $this->discoveryCache->put($discoveryClass, $discovery->createCachePayload());
-            }
+            $this->discoveryCache->put($discoveryClass, $discovery->createCachePayload());
         }
     }
 

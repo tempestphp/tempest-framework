@@ -28,9 +28,9 @@ final class CacheConfig
         ?bool $enable = null,
     ) {
         $this->enable = $enable ?? env('CACHE') ?? null;
-        $this->projectCache = env('PROJECT_CACHE', false);
-        $this->viewCache = env('VIEW_CACHE', false);
-        $this->discoveryCache = env('DISCOVERY_CACHE', false);
+        $this->projectCache = (bool) env('PROJECT_CACHE', false);
+        $this->viewCache = (bool) env('VIEW_CACHE', false);
+        $this->discoveryCache = (bool) env('DISCOVERY_CACHE', false);
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */
