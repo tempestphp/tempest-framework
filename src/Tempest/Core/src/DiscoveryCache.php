@@ -23,7 +23,6 @@ final readonly class DiscoveryCache implements Cache
     private CacheItemPoolInterface $pool;
 
     public function __construct(
-        private Kernel $kernel,
         private CacheConfig $cacheConfig,
         ?CacheItemPoolInterface $pool = null,
     ) {
@@ -47,8 +46,8 @@ final readonly class DiscoveryCache implements Cache
         return $this->pool;
     }
 
-    protected function isEnabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->kernel->discoveryCache;
+        return $this->cacheConfig->enable ?? $this->cacheConfig->discoveryCache;
     }
 }

@@ -20,7 +20,7 @@ final class CacheTest extends TestCase
     {
         $clock = new MockClock();
         $pool = new ArrayAdapter(clock: $clock);
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
         $interval = new DateInterval('P1D');
 
         $cache->put('a', 'a', $clock->now()->add($interval));
@@ -44,7 +44,7 @@ final class CacheTest extends TestCase
     {
         $clock = new MockClock();
         $pool = new ArrayAdapter(clock: $clock);
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
         $interval = new DateInterval('P1D');
 
         $cache->put('a', 'a', $clock->now()->add($interval));
@@ -65,7 +65,7 @@ final class CacheTest extends TestCase
         $pool = new ArrayAdapter(clock: $clock);
         $config = new CacheConfig(
             projectCachePool: $pool,
-            enabled: true,
+            enable: true,
         );
         $cache = new ProjectCache($config);
         $interval = new DateInterval('P1D');
@@ -88,7 +88,7 @@ final class CacheTest extends TestCase
     public function test_remove(): void
     {
         $pool = new ArrayAdapter();
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
 
         $cache->put('a', 'a');
 

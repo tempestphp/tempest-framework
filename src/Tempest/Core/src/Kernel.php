@@ -80,6 +80,7 @@ final class Kernel
 
     private function setDiscoveryCache(?bool $discoveryCache): self
     {
+        // TODO: should be moved to cache config
         if ($discoveryCache !== null) {
             $this->discoveryCache = $discoveryCache;
         } else {

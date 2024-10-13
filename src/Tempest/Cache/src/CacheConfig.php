@@ -12,14 +12,25 @@ final class CacheConfig
     /** @var class-string<\Tempest\Cache\Cache>[] */
     public array $caches = [];
 
-    public bool $enabled;
+    public ?bool $enable;
+
+    public bool $projectCache = false;
+
+    public bool $viewCache = false;
+
+    public bool $discoveryCache = false;
 
     public function __construct(
-        ?bool $enabled = null,
         public string $directory = __DIR__ . '/../../../../.cache',
         public ?CacheItemPoolInterface $projectCachePool = null,
+
+        /** Used as a global override, should be true in production, null in local */
+        ?bool $enable = null,
     ) {
-        $this->enabled = $enabled ?? env('CACHE', true);
+        $this->enable = $enable ?? env('CACHE') ?? null;
+        $this->projectCache = env('PROJECT_CACHE', false);
+        $this->viewCache = env('VIEW_CACHE', false);
+        $this->discoveryCache = env('DISCOVERY_CACHE', false);
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */

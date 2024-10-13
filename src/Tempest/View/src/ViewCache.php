@@ -32,8 +32,10 @@ final class ViewCache implements Cache
 
         $cacheItem = $this->cachePool->getItem($cacheKey);
 
-        if ($this->cacheConfig->enabled === false || $cacheItem->isHit() === false) {
-            $cacheItem = $this->put($cacheKey, $compiledView());
+        if ($this->isEnabled() === false || $cacheItem->isHit() === false) {
+            $cacheItem->set($compiledView());
+
+            $this->cachePool->save($cacheItem);
         }
 
         return path($this->cachePool->directory, $cacheItem->getKey() . '.php');
@@ -44,8 +46,8 @@ final class ViewCache implements Cache
         return $this->cachePool;
     }
 
-    protected function isEnabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->cacheConfig->enabled;
+        return $this->cacheConfig->enable ?? $this->cacheConfig->viewCache;
     }
 }

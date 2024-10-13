@@ -27,8 +27,8 @@ final class ProjectCache implements Cache
         return $this->pool;
     }
 
-    protected function isEnabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->cacheConfig->enabled;
+        return $this->cacheConfig->enable ?? $this->cacheConfig->projectCache;
     }
 }
