@@ -16,7 +16,7 @@ final readonly class ModelDefinition
 {
     public function __construct(
         /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */
-        protected string $modelClass,
+        private string $modelClass,
     ) {
     }
 
