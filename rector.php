@@ -51,7 +51,6 @@ return RectorConfig::configure()
         ReadOnlyClassRector::class,
         ReadOnlyPropertyRector::class,
         RemoveNullPropertyInitializationRector::class,
-        RemoveUnreachableStatementRector::class,
         AddSensitiveParameterAttributeRector::class,
         RemoveUnusedPublicMethodParameterRector::class,
         RestoreDefaultNullToNullableTypePropertyRector::class,

@@ -8,11 +8,11 @@ use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleInputArgument;
 
-final class ConsoleInputBuilder
+final readonly class ConsoleInputBuilder
 {
     public function __construct(
-        protected ConsoleCommand $command,
-        protected ConsoleArgumentBag $argumentBag,
+        private ConsoleCommand $command,
+        private ConsoleArgumentBag $argumentBag,
     ) {
     }
 
