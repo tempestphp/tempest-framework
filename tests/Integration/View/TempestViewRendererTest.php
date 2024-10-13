@@ -359,7 +359,8 @@ HTML, foo: []),
 
     public function test_render_element_with_attribute_with_dash(): void
     {
-        $view = view(<<<HTML
+        $view = view(
+            <<<HTML
     <div data-theme="tempest"></div>
     HTML,
         );
