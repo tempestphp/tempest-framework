@@ -31,7 +31,13 @@ final class GenericElement implements Element
         $attributes = [];
 
         foreach ($this->getAttributes() as $name => $value) {
-            $name = str($name)->kebab()->toString();
+            $name = str($name);
+
+            if ($name->startsWith(':')) {
+                $name = ':' . $name->kebab()->toString();
+            } else {
+                $name = $name->kebab()->toString();
+            }
 
             if ($value) {
                 $attributes[] = $name . '="' . $value . '"';
