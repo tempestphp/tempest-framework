@@ -30,7 +30,6 @@ abstract class IntegrationTestCase extends TestCase
                     __DIR__ . '/../Fixtures/',
                 ),
             ],
-            discoveryCache: true,
         );
 
         $this->container = ($this->kernel)->container;

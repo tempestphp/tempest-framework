@@ -60,7 +60,7 @@ final class ViewCacheTest extends TestCase
     {
         $hit = 0;
 
-        $this->cacheConfig->enabled = false;
+        $this->cacheConfig->enable = false;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
@@ -80,7 +80,7 @@ final class ViewCacheTest extends TestCase
     {
         $hit = 0;
 
-        $this->cacheConfig->enabled = true;
+        $this->cacheConfig->enable = true;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
