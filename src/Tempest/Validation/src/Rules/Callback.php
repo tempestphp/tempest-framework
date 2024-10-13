@@ -9,7 +9,7 @@ use Closure;
 use Tempest\Validation\Rule;
 
 #[Attribute(Attribute::IS_REPEATABLE)]
-final readonly class Custom implements Rule
+final readonly class Callback implements Rule
 {
     public function __construct(
         private Closure $callable,
