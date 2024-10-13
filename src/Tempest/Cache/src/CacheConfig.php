@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use function Tempest\env;
 
 final class CacheConfig
@@ -16,12 +15,9 @@ final class CacheConfig
     public bool $enabled;
 
     public function __construct(
-        public CacheItemPoolInterface $pool = new FilesystemAdapter(
-            namespace: '',
-            defaultLifetime: 0,
-            directory: __DIR__ . '/../../../../.cache',
-        ),
         ?bool $enabled = null,
+        public string $directory = __DIR__ . '/../../../../.cache',
+        public ?CacheItemPoolInterface $projectCachePool = null,
     ) {
         $this->enabled = $enabled ?? env('CACHE', true);
     }

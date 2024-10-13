@@ -8,7 +8,7 @@ use DateInterval;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\CacheConfig;
-use Tempest\Cache\GenericCache;
+use Tempest\Cache\ProjectCache;
 use Tempest\Clock\MockClock;
 
 /**
@@ -20,7 +20,7 @@ final class CacheTest extends TestCase
     {
         $clock = new MockClock();
         $pool = new ArrayAdapter(clock: $clock);
-        $cache = new GenericCache(new CacheConfig($pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
         $interval = new DateInterval('P1D');
 
         $cache->put('a', 'a', $clock->now()->add($interval));
@@ -44,7 +44,7 @@ final class CacheTest extends TestCase
     {
         $clock = new MockClock();
         $pool = new ArrayAdapter(clock: $clock);
-        $cache = new GenericCache(new CacheConfig($pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
         $interval = new DateInterval('P1D');
 
         $cache->put('a', 'a', $clock->now()->add($interval));
@@ -64,10 +64,10 @@ final class CacheTest extends TestCase
         $clock = new MockClock();
         $pool = new ArrayAdapter(clock: $clock);
         $config = new CacheConfig(
-            pool: $pool,
+            projectCachePool: $pool,
             enabled: true,
         );
-        $cache = new GenericCache($config);
+        $cache = new ProjectCache($config);
         $interval = new DateInterval('P1D');
 
         $a = $cache->resolve('a', fn () => 'a', $clock->now()->add($interval));
@@ -88,7 +88,7 @@ final class CacheTest extends TestCase
     public function test_remove(): void
     {
         $pool = new ArrayAdapter();
-        $cache = new GenericCache(new CacheConfig($pool));
+        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool));
 
         $cache->put('a', 'a');
 
@@ -100,7 +100,7 @@ final class CacheTest extends TestCase
     public function test_clear(): void
     {
         $pool = new ArrayAdapter();
-        $cache = new GenericCache(new CacheConfig($pool));
+        $cache = new ProjectCache(cacheConfig: new CacheConfig(projectCachePool: $pool));
 
         $cache->put('a', 'a');
         $cache->put('b', 'b');
