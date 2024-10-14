@@ -95,4 +95,19 @@ final readonly class PathHelper
 
         return $path;
     }
+
+    /**
+     * Convert a path to a class name.
+     * 
+     * @param string $path The path to convert.
+     */
+    public static function toClassName(string $path): string {
+        return str($path)
+            ->replace(['/', '\\'], DIRECTORY_SEPARATOR)
+            ->replaceEnd(DIRECTORY_SEPARATOR, '')
+            ->replaceEnd('.php', '')
+            ->afterLast(DIRECTORY_SEPARATOR)
+            ->classBasename()
+            ->toString();
+    }
 }
