@@ -20,7 +20,7 @@ final class MakeControllerCommand
     use HasConsole;
 
     public function __construct(
-        private readonly Console $console,
+        protected readonly Composer $composer,
     ) {
     }
 
@@ -35,24 +35,19 @@ final class MakeControllerCommand
         )]
         string $classname
     ): void {
-
-        // @TODO replace '' with the project root path ( maybe from the .ENV or something like that )
-        $project_namespace = (new Composer(''))->mainNamespace;
-
-        // @TODO Need to Extract the whole logic to a service/helper ( maybe the ClassGenerator ) to be able to test/use it separately for other commands
-        // anyways, this should be moved to the Generation Component
-        // The Console component should only be responsible for the input/output around the command
-
-        $pathPrefix = 'Controllers';
-        $classSuffix = 'Controller';
-        $fullNamespace = NamespaceHelper::make($pathPrefix . DIRECTORY_SEPARATOR . $classname);
-        $fullNamespace = str($fullNamespace)->finish($classSuffix);
+        $project_namespace = $this->composer->mainNamespace;
+        $pathPrefix        = 'Controllers';
+        $classSuffix       = 'Controller';
 
         // Split namespace and classname
-        $classname = $fullNamespace->afterLast('\\')->toString();
-        $namespace = $fullNamespace->beforeLast('\\')->toString();
-        $path = PathHelper::make($project_namespace->path, $namespace);
-        $namespace = NamespaceHelper::make($project_namespace->namespace, $namespace);
+        $fullNamespace = PathHelper::toNamespace($pathPrefix . DIRECTORY_SEPARATOR . $classname);
+        $fullNamespace = str($fullNamespace)->finish($classSuffix);
+        $namespace     = $fullNamespace->beforeLast('\\')->toString();
+        $classname     = $fullNamespace->afterLast('\\')->toString();
+
+        // Create final path and namespace
+        $path      = PathHelper::make($project_namespace->path . $namespace);
+        $namespace = PathHelper::toNamespace($project_namespace->namespace . $namespace);
 
         // Transform stub to class
         $classManipulator = (new ClassManipulator(ControllerStub::class))
