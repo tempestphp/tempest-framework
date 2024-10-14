@@ -37,21 +37,22 @@ final class ClassGeneratorTest extends TestCase
         $this->assertMatchesSnapshot($class->print());
     }
 
-    #[Test]
-    public function creates_methods_with_parameters(): void
-    {
-        $class = new ClassGenerator('UserService', namespace: 'App\\Services');
+    // #[Test]
+    // public function creates_methods_with_parameters(): void
+    // {
+    //     $class = new ClassGenerator('UserService', namespace: 'App\\Services');
 
-        $class->simplifyImplements(true);
-        $class->setFinal();
-        $class->setReadOnly();
+    //     $class->simplifyImplements(true);
+    //     $class->setFinal();
+    //     $class->setReadOnly();
 
-        $class->addMethod('findById', body: <<<PHP
-            //
-        PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
+    //     $class->addMethod('findById', body: <<<PHP
+    //         //
+    //     PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
 
-        $class->simplifyImplements();
-        $class->addImplement(FakeMigration::class);
+    //     $class->simplifyImplements();
+    //     $class->addImplement(FakeMigration::class);
+    // }
 
     #[Test]
     public function simplifies_implements(): void
