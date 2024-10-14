@@ -16,7 +16,7 @@ final readonly class PathHelper
         return static::make(get(Kernel::class)->root, ...$paths);
     }
 
-    private static function prapareStringForNamespace(string $path, string $root = ''): StringHelper
+    private static function prepareStringForNamespace(string $path, string $root = ''): StringHelper
     {
         $normalized = str($path)
             ->replaceStart($root, '')
@@ -34,7 +34,7 @@ final readonly class PathHelper
 
     public static function toNamespace(string $path, string $root = ''): string
     {
-        $path = static::prapareStringForNamespace($path, $root)->replaceEnd('\\', '');
+        $path = static::prepareStringForNamespace($path, $root)->replaceEnd('\\', '');
 
         return arr(explode('\\', (string) $path))
             ->map(fn (string $segment) => (string) str($segment)->pascal())
@@ -47,7 +47,7 @@ final readonly class PathHelper
         $composer = get(Composer::class);
         $kernel = get(Kernel::class);
 
-        $relativePath = static::prapareStringForNamespace($path, $kernel->root)
+        $relativePath = static::prepareStringForNamespace($path, $kernel->root)
             ->replaceEnd('\\', '')
             ->replace('\\', '/')
             ->finish('/');
