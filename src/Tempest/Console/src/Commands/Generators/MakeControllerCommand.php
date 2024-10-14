@@ -14,6 +14,7 @@ use Tempest\Console\Stubs\ControllerStub;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\Console;
+use Tempest\Support\StringHelper;
 
 final class MakeControllerCommand
 {
@@ -32,15 +33,16 @@ final class MakeControllerCommand
         #[ConsoleArgument(
             help: 'The name of the controller class to create ( "Controller" will be suffixed )',
         )]
-        string $classname
+        string $controllerClassname,
+        ?string $controllerPath = null,
+        ?string $controllerView = null,
     ): void {
-        $input       = $classname;
         $pathPrefix  = 'Controllers';
         $classSuffix = 'Controller';
 
         // Separate input path and classname
-        $classname = PathHelper::toClassName($input);
-        $inputPath = str(PathHelper::make($input))->replace($classname, '')->toString();
+        $classname = PathHelper::toClassName($controllerClassname);
+        $inputPath = str(PathHelper::make($controllerClassname))->replace($classname, '')->toString();
         $classname = str($classname)
             ->pascal()
             ->finish($classSuffix)
@@ -71,7 +73,9 @@ final class MakeControllerCommand
         $classname        = PathHelper::toClassName($targetPath);
         $classManipulator = (new ClassManipulator(ControllerStub::class))
             ->setNamespace($namespace)
-            ->setClassName($classname);
+            ->setClassName($classname)
+            ->manipulate(fn( StringHelper $code ) => ! is_null( $controllerPath ) ? $code->replace('dummy-path', $controllerPath) : $code)
+            ->manipulate(fn( StringHelper $code ) => ! is_null( $controllerView ) ? $code->replace('dummy-view', $controllerView) : $code);
 
         // Write the file
         file_put_contents(

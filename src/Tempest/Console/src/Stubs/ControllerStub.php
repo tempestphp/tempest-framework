@@ -10,9 +10,9 @@ use Tempest\View\View;
 
 final class ControllerStub
 {
-    #[Get(uri: '/welcome')]
+    #[Get(uri: '/dummy-path')]
     public function __invoke(): View
     {
-        return view('welcome');
+        return view('dummy-view');
     }
 }
