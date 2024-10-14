@@ -34,25 +34,30 @@ final class MakeControllerCommand
         )]
         string $classname
     ): void {
-        $project_namespace = $this->composer->mainNamespace;
-        $pathPrefix        = 'Controllers';
-        $classSuffix       = 'Controller';
+        $input       = $classname;
+        $pathPrefix  = 'Controllers';
+        $classSuffix = 'Controller';
 
-        // Split namespace and classname
-        $fullNamespace = PathHelper::toNamespace($pathPrefix . DIRECTORY_SEPARATOR . $classname);
-        $fullNamespace = str($fullNamespace)->finish($classSuffix);
-        $namespace     = $fullNamespace->beforeLast('\\')->toString();
-        $classname     = $fullNamespace->afterLast('\\')->toString();
+        // Separate input path and classname
+        $classname = PathHelper::toClassName($input);
+        $inputPath = str(PathHelper::make($input))->replace($classname, '')->toString();
+        $classname = str($classname)
+            ->pascal()
+            ->finish($classSuffix)
+            ->toString();
 
-        // Create final path and namespace
-        $path      = PathHelper::make($project_namespace->path . $namespace);
-        $namespace = PathHelper::toNamespace($project_namespace->namespace . $namespace);
-
-        // @TODO refactor above code to only use the required methods ( namespace could be useless before prompting to the user )
+        // Prepare the suggested path from the project namespace
+        $suggestedPath = str(PathHelper::make(
+            $this->composer->mainNamespace->path,
+            $pathPrefix,
+            $inputPath,
+        ))
+            ->finish(DIRECTORY_SEPARATOR)
+            ->toString();
 
         $targetPath = $this->promptTargetPath(
             classname    : $classname,
-            suggestedPath: $path . DIRECTORY_SEPARATOR . $classname . '.php',
+            suggestedPath: $suggestedPath . $classname . '.php',
             rules        : [new NotEmpty(), new EndsWith('.php')]
         );
 
