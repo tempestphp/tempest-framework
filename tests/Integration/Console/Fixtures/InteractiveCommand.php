@@ -94,7 +94,7 @@ final readonly class InteractiveCommand
     {
         $answer = $this->console->ask('Hello?');
 
-        $this->console->writeln($answer);
+        $this->console->success($answer);
     }
 
     #[ConsoleCommand('interactive:progress')]

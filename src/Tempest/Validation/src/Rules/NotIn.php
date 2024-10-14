@@ -12,7 +12,7 @@ final readonly class NotIn implements Rule
 {
     public function __construct(
         /** @var array<string|int> */
-        protected array $values
+        private array $values
     ) {
 
     }

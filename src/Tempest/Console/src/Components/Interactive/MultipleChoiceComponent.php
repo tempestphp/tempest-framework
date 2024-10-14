@@ -15,7 +15,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
 {
     public array $selectedOptions = [];
 
-    public int $activeOption;
+    public int|string $activeOption;
 
     public function __construct(
         public string $question,
@@ -46,12 +46,12 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
         return "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }
 
-    public function isActive(int $key): bool
+    public function isActive(int|string $key): bool
     {
         return $this->activeOption === $key;
     }
 
-    public function isSelected(int $key): bool
+    public function isSelected(int|string $key): bool
     {
         return $this->selectedOptions[$key] ?? false;
     }
@@ -69,7 +69,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
 
         foreach ($this->options as $key => $option) {
             if ($this->isSelected($key)) {
-                $result[] = $option;
+                $result[$key] = $option;
             }
         }
 
@@ -80,22 +80,26 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
     #[HandlesKey(Key::LEFT)]
     public function up(): void
     {
-        $this->activeOption = $this->activeOption - 1;
+        $previousValue = prev($this->options);
 
-        if ($this->activeOption < 0) {
-            $this->activeOption = count($this->options) - 1;
+        if ($previousValue === false) {
+            end($this->options);
         }
+
+        $this->activeOption = key($this->options);
     }
 
     #[HandlesKey(Key::DOWN)]
     #[HandlesKey(Key::RIGHT)]
     public function down(): void
     {
-        $this->activeOption = $this->activeOption + 1;
+        $nextValue = next($this->options);
 
-        if ($this->activeOption > count($this->options) - 1) {
-            $this->activeOption = 0;
+        if ($nextValue === false) {
+            reset($this->options);
         }
+
+        $this->activeOption = key($this->options);
     }
 
     public function getStaticComponent(): StaticConsoleComponent

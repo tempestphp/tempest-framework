@@ -11,11 +11,7 @@ interface Discovery
 {
     public function discover(ClassReflector $class): void;
 
-    public function hasCache(): bool;
+    public function createCachePayload(): string;
 
-    public function storeCache(): void;
-
-    public function restoreCache(Container $container): void;
-
-    public function destroyCache(): void;
+    public function restoreCachePayload(Container $container, string $payload): void;
 }

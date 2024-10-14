@@ -85,7 +85,7 @@ final class Terminal
             }
 
             if ($footerLinesForContent !== []) {
-                $content .= PHP_EOL . PHP_EOL . implode(PHP_EOL, $footerLinesForContent);
+                $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent);
             }
 
             $this

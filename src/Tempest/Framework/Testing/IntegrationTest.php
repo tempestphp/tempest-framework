@@ -22,8 +22,6 @@ abstract class IntegrationTest extends TestCase
 {
     protected string $root;
 
-    protected bool $discoveryCache = false;
-
     /** @var \Tempest\Core\DiscoveryLocation[] */
     protected array $discoveryLocations = [];
 
@@ -46,7 +44,6 @@ abstract class IntegrationTest extends TestCase
         $this->kernel ??= new Kernel(
             root: $this->root,
             discoveryLocations: $this->discoveryLocations,
-            discoveryCache: $this->discoveryCache,
         );
 
         $this->container = $this->kernel->container;
@@ -84,7 +81,6 @@ abstract class IntegrationTest extends TestCase
         parent::tearDown();
 
         unset($this->root);
-        unset($this->discoveryCache);
         unset($this->discoveryLocations);
         unset($this->appConfig);
         unset($this->kernel);

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-use Tempest\View\Elements\GenericElement;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
-use Tempest\View\ViewRenderer;
 
 final readonly class Submit implements ViewComponent
 {
@@ -15,7 +14,7 @@ final readonly class Submit implements ViewComponent
         return 'x-submit';
     }
 
-    public function render(GenericElement $element, ViewRenderer $renderer): string
+    public function compile(ViewComponentElement $element): string
     {
         $label = $element->getAttribute('label') ?? 'Submit';
 

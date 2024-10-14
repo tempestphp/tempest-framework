@@ -419,4 +419,26 @@ final class StringHelperTest extends TestCase
         $this->assertSame('path/to/tempest', StringHelper::implode(arr(['path', 'to', 'tempest']), '/')->toString());
         $this->assertSame('john doe', StringHelper::implode(arr(['john', 'doe']))->toString());
     }
+
+    public function test_excerpt(): void
+    {
+        $content = str('a
+b
+c
+d
+e
+f
+g');
+
+        $this->assertTrue($content->excerpt(2, 4)->equals('b
+c
+d'));
+
+        $this->assertTrue($content->excerpt(-10, 2)->equals('a
+b'));
+
+        $this->assertTrue($content->excerpt(7, 100)->equals('g'));
+
+        $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
+    }
 }

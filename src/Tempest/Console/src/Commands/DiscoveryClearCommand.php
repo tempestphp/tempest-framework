@@ -6,16 +6,13 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Container\Container;
-use Tempest\Core\Discovery;
-use Tempest\Core\Kernel;
+use Tempest\Core\DiscoveryCache;
 
 final readonly class DiscoveryClearCommand
 {
     public function __construct(
-        private Container $container,
-        private Console $console,
-        private Kernel $kernel,
+        private DiscoveryCache $discoveryCache,
+        private Console $console
     ) {
     }
 
@@ -26,18 +23,8 @@ final readonly class DiscoveryClearCommand
     )]
     public function __invoke(): void
     {
-        foreach ($this->kernel->discoveryClasses as $discoveryClass) {
-            /** @var Discovery $discovery */
-            $discovery = $this->container->get($discoveryClass);
+        $this->discoveryCache->clear();
 
-            $discovery->destroyCache();
-
-            $this->console->writeln(implode('', [
-                "<em>{$discoveryClass}</em>",
-                ' cleared successfully',
-            ]));
-        }
-
-        $this->console->success('Done');
+        $this->console->success('Discovery cached has been cleared');
     }
 }

@@ -12,12 +12,11 @@ use Tempest\Database\HasOne;
 use function Tempest\reflect;
 use Tempest\Reflection\ClassReflector;
 
-/** @phpstan-ignore-next-line */
 final readonly class ModelDefinition
 {
     public function __construct(
         /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */
-        protected string $modelClass,
+        private string $modelClass,
     ) {
     }
 

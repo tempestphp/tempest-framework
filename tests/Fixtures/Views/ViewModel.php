@@ -14,7 +14,7 @@ final class ViewModel implements View
     public function __construct(
         public readonly string $name,
     ) {
-        $this->path = 'Views/withViewModel.php';
+        $this->path = __DIR__ . '/withViewModel.php';
     }
 
     public function currentDate(): string

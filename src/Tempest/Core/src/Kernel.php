@@ -10,7 +10,6 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
-use function Tempest\env;
 use Tempest\EventBus\EventBus;
 
 final class Kernel
@@ -26,14 +25,12 @@ final class Kernel
     public function __construct(
         public readonly string $root,
         public array $discoveryLocations = [],
-        ?bool $discoveryCache = null,
         ?Container $container = null,
     ) {
         $this->container = $container ?? $this->createContainer();
 
         $this
             ->loadEnv()
-            ->setDiscoveryCache($discoveryCache)
             ->registerShutdownFunction()
             ->registerKernel()
             ->loadComposer()
@@ -74,17 +71,6 @@ final class Kernel
     {
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
-
-        return $this;
-    }
-
-    private function setDiscoveryCache(?bool $discoveryCache): self
-    {
-        if ($discoveryCache !== null) {
-            $this->discoveryCache = $discoveryCache;
-        } else {
-            $this->discoveryCache = env('DISCOVERY_CACHE', false);
-        }
 
         return $this;
     }

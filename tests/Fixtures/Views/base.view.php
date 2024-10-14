@@ -2,12 +2,16 @@
 
 use Tempest\View\GenericView;
 
-/** @var GenericView $this */?>
+/**
+ * @var GenericView $this
+ * @var string|null $title
+ */
+?>
 
 <x-component name="x-base">
     <html lang="en">
     <head>
-        <title><?= $this->title ?? 'Home' ?></title>
+        <title><?= $title ?? 'Home' ?></title>
     </head>
     <body>
     <x-slot />

@@ -31,5 +31,7 @@
   <php>
     <env name="ENVIRONMENT" value="testing" />
     <env name="BASE_URI" value="" />
+    <env name="CACHE" value="null" />
+    <env name="DISCOVERY_CACHE" value="true" />
   </php>
 </phpunit>

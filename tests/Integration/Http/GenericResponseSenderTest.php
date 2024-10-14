@@ -96,7 +96,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         ob_start();
 
         $response = new Ok(
-            body: view('Views/overview.view.php')->data(
+            body: view(__DIR__ . '/../../Fixtures/Views/overview.view.php')->data(
                 name: 'Brent',
             ),
         );

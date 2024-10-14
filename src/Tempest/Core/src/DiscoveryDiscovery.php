@@ -9,8 +9,6 @@ use Tempest\Reflection\ClassReflector;
 
 final readonly class DiscoveryDiscovery implements Discovery
 {
-    public const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/discovery-discovery.cache.php';
-
     public function __construct(
         private Kernel $kernel,
     ) {
@@ -29,33 +27,17 @@ final readonly class DiscoveryDiscovery implements Discovery
         $this->kernel->discoveryClasses[] = $class->getName();
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return file_exists(self::CACHE_PATH);
+        return serialize($this->kernel->discoveryClasses);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        $directory = pathinfo(self::CACHE_PATH, PATHINFO_DIRNAME);
-
-        if (! is_dir($directory)) {
-            mkdir($directory, recursive: true);
-        }
-
-        file_put_contents(self::CACHE_PATH, serialize($this->kernel->discoveryClasses));
-    }
-
-    public function restoreCache(Container $container): void
-    {
-        $discoveryClasses = unserialize(file_get_contents(self::CACHE_PATH), [
+        $discoveryClasses = unserialize($payload, [
             'allowed_classes' => true,
         ]);
 
         $this->kernel->discoveryClasses = $discoveryClasses;
-    }
-
-    public function destroyCache(): void
-    {
-        @unlink(self::CACHE_PATH);
     }
 }

@@ -23,19 +23,29 @@ trait IsCache
             $item = $item->expiresAt($expiresAt);
         }
 
-        $this->getCachePool()->save($item);
+        if ($this->isEnabled()) {
+            $this->getCachePool()->save($item);
+        }
 
         return $item;
     }
 
     public function get(string $key): mixed
     {
+        if (! $this->isEnabled()) {
+            return null;
+        }
+
         return $this->getCachePool()->getItem($key)->get();
     }
 
     /** @param Closure(): mixed $cache */
     public function resolve(string $key, Closure $cache, ?DateTimeInterface $expiresAt = null): mixed
     {
+        if (! $this->isEnabled()) {
+            return $cache();
+        }
+
         $item = $this->getCachePool()->getItem($key);
 
         if (! $item->isHit()) {
@@ -47,6 +57,10 @@ trait IsCache
 
     public function remove(string $key): void
     {
+        if (! $this->isEnabled()) {
+            return;
+        }
+
         $this->getCachePool()->deleteItem($key);
     }
 
