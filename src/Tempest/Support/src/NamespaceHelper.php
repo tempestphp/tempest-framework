@@ -7,7 +7,7 @@ namespace Tempest\Support;
 final readonly class NamespaceHelper
 {
     protected const NAMESPACE_SEPARATOR = '\\';
-    
+
     /**
      * This will build a namespace from the given path or namespace.
      * It's compatible with PSR-4.
@@ -25,7 +25,7 @@ final readonly class NamespaceHelper
         // Trim forward and backward slashes
         $parts = array_map(fn (string $part) => trim($part, DIRECTORY_SEPARATOR . self::NAMESPACE_SEPARATOR), $parts);
         $parts = array_filter($parts);
-        
+
         // pascal case each part to validate PSR-4
         $parts = array_map(fn (string $part) => str($part)->pascal()->toString(), $parts);
 
