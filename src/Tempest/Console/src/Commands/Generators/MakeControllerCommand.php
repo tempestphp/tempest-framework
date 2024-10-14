@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Console\Console;
-use Tempest\Console\ConsoleArgument;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\HasConsole;
-use Tempest\Console\Stubs\ControllerStub;
-use Tempest\Core\Composer;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Support\NamespaceHelper;
-use Tempest\Support\PathHelper;
 use function Tempest\Support\str;
+use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Support\PathHelper;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Core\Composer;
+use Tempest\Console\Stubs\ControllerStub;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\Console;
 
 final class MakeControllerCommand
 {
-    use HasConsole;
-
     public function __construct(
         protected readonly Composer $composer,
+        protected readonly Console $console,
     ) {
     }
 
@@ -49,21 +48,82 @@ final class MakeControllerCommand
         $path      = PathHelper::make($project_namespace->path . $namespace);
         $namespace = PathHelper::toNamespace($project_namespace->namespace . $namespace);
 
+        // @TODO refactor above code to only use the required methods ( namespace could be useless before prompting to the user )
+
+        $targetPath = $this->promptTargetPath(
+            classname    : $classname,
+            suggestedPath: $path . DIRECTORY_SEPARATOR . $classname . '.php',
+            rules        : [new NotEmpty(), new EndsWith('.php')]
+        );
+
+        if (! $this->prepareFilesystem($targetPath)) {
+            $this->console->error('The operation has been aborted.');
+            return;
+        }
+
         // Transform stub to class
+        $namespace        = PathHelper::toRegisteredNamespace($targetPath);
+        $classname        = PathHelper::toClassName($targetPath);
         $classManipulator = (new ClassManipulator(ControllerStub::class))
             ->setNamespace($namespace)
             ->setClassName($classname);
 
-        // @TODO Find a better way to handle this : maybe use Filesystem or something like that
-        // Recursively create directories before writing the file
-        if (! is_dir($path)) {
-            mkdir($path, recursive: true);
-        }
-
         // Write the file
         file_put_contents(
-            $path . DIRECTORY_SEPARATOR . $classname . '.php',
+            $targetPath,
             $classManipulator->print()
         );
+
+        $this->console->success(sprintf('Controller successfully created at "%s".', $targetPath));
+    }
+
+    /**
+     * Prompt the target path to the user.
+     *
+     * @param string $classname The name of the class.
+     * @param string $suggestedPath The suggested path.
+     * @param array $rules The validation rules.
+     *
+     * @return string The validated target path.
+     */
+    protected function promptTargetPath(string $classname, string $suggestedPath, array $rules = []): string
+    {
+        return $this->console->ask(
+            question  : sprintf('Where do you want to save the controller "%s"?', $classname),
+            default   : $suggestedPath,
+            validation: $rules
+        );
+    }
+
+    /**
+     * Prepare the directory structure for the new file.
+     * It can also ask the user if they want to overwrite the file if it already exists.
+     *
+     * @param string $targetPath The path to the target file.
+     *
+     * @return boolean Whether the filesystem is ready to write the file.
+     */
+    protected function prepareFilesystem(string $targetPath): bool
+    {
+        // Maybe delete the file if it exists and we force the override
+        if (file_exists($targetPath)) {
+            $shouldOverride = $this->console->confirm(
+                question: sprintf('"%s" already exists, do you want to overwrite it?', $targetPath),
+                default : false,
+            );
+
+            if (! $shouldOverride) {
+                return false;
+            }
+
+            @unlink($targetPath);
+        }
+
+        // Recursively create directories before writing the file
+        if (! file_exists(dirname($targetPath))) {
+            mkdir(dirname($targetPath), recursive: true);
+        }
+
+        return true;
     }
 }
