@@ -21,7 +21,8 @@ final class MakeControllerCommand
 
     public function __construct(
         private readonly Console $console,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name       : 'make:controller',
@@ -42,15 +43,15 @@ final class MakeControllerCommand
         // anyways, this should be moved to the Generation Component
         // The Console component should only be responsible for the input/output around the command
 
-        $pathPrefix    = 'Controllers';
-        $classSuffix   = 'Controller';
+        $pathPrefix = 'Controllers';
+        $classSuffix = 'Controller';
         $fullNamespace = NamespaceHelper::make($pathPrefix . DIRECTORY_SEPARATOR . $classname);
         $fullNamespace = str($fullNamespace)->finish($classSuffix);
 
         // Split namespace and classname
         $classname = $fullNamespace->afterLast('\\')->toString();
         $namespace = $fullNamespace->beforeLast('\\')->toString();
-        $path      = PathHelper::make($project_namespace->path, $namespace);
+        $path = PathHelper::make($project_namespace->path, $namespace);
         $namespace = NamespaceHelper::make($project_namespace->namespace, $namespace);
 
         // Transform stub to class
@@ -60,7 +61,7 @@ final class MakeControllerCommand
 
         // @TODO Find a better way to handle this : maybe use Filesystem or something like that
         // Recursively create directories before writing the file
-        if (!is_dir($path)) {
+        if (! is_dir($path)) {
             mkdir($path, recursive: true);
         }
 
