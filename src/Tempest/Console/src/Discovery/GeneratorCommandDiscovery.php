@@ -36,7 +36,7 @@ final readonly class GeneratorCommandDiscovery implements Discovery
                 continue;
             }
 
-            $this->consoleConfig->addCommand($method, $generatorCommand->getConsoleCommand());
+            $this->consoleConfig->addCommand($method, $generatorCommand);
         }
     }
 
