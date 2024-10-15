@@ -11,6 +11,5 @@ final class ModelStub
     public function __construct(
         #[Length(min: 1, max: 120)]
         public string $title
-    ): void
-    {}
+    ) {}
 }
