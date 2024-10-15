@@ -27,13 +27,11 @@ final class MakeModelCommand
             pathPrefix : 'Models',
             classSuffix: 'Model',
         );
-        $className      = $this->getClassName($suggestedPath);
         $targetPath     = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
         
         // The Discovery may use the prepareFilesystem method to create the directories
         return new StubFileGenerator(
-            className     : $className,
             stubFile      : ModelStub::class,
             targetPath    : $suggestedPath,
             shouldOverride: $shouldOverride,
