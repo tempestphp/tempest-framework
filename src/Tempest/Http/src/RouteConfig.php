@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use Tempest\Http\RoutingTree\MarkedRoute;
+use Tempest\Http\RoutingTree\RoutingTree;
 use Tempest\Reflection\MethodReflector;
 
 final class RouteConfig
@@ -14,12 +16,15 @@ final class RouteConfig
     /** @var array<string, string> */
     public array $matchingRegexes = [];
 
+    public RoutingTree $routingTree;
+
     public function __construct(
         /** @var array<string, array<string, \Tempest\Http\Route>> */
         public array $staticRoutes = [],
         /** @var array<string, array<string, \Tempest\Http\Route>> */
         public array $dynamicRoutes = [],
     ) {
+        $this->routingTree = new RoutingTree();
     }
 
     public function addRoute(MethodReflector $handler, Route $route): self
@@ -29,7 +34,15 @@ final class RouteConfig
         if ($route->isDynamic) {
             $this->regexMark = str_increment($this->regexMark);
             $this->dynamicRoutes[$route->method->value][$this->regexMark] = $route;
-            $this->addToMatchingRegex($route, $this->regexMark);
+
+            $this->routingTree->add(
+                new MarkedRoute(
+                    mark: $this->regexMark,
+                    route: $route,
+                )
+            );
+
+            $this->matchingRegexes[$route->method->value] = $this->routingTree->regexForMethod($route->method);
         } else {
             $uriWithTrailingSlash = rtrim($route->uri, '/');
 

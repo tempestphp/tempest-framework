@@ -167,34 +167,24 @@ final class GenericRouter implements Router
         return $uri;
     }
 
-    private function resolveParams(Route $route, string $uri): ?array
+    private function resolveParams(Route $route, string $uri, array $matches): ?array
     {
         if ($route->uri === $uri) {
             return [];
         }
 
-        $tokens = str($route->uri)->matchAll('#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#', );
+        $tokens = str($route->uri)->matchAll('#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#');
 
         if (empty($tokens)) {
             return null;
         }
 
-        $tokens = $tokens[1];
-
-        $matches = str($uri)->matchAll("#^$route->matchingRegex$#");
-
-        if (empty($matches)) {
-            return null;
-        }
-
-        unset($matches[0]);
-
-        $matches = array_values($matches);
+        $tokens = array_values($tokens[1]);
 
         $valueMap = [];
 
-        foreach ($matches as $i => $match) {
-            $valueMap[trim($tokens[$i], '{}')] = $match[0];
+        foreach ($tokens as $i => $token) {
+            $valueMap[trim($token, '{}')] = $matches[$i + 1];
         }
 
         return $valueMap;
@@ -228,7 +218,6 @@ final class GenericRouter implements Router
             return null;
         }
 
-        // First we get the Routing-Regex for the request method
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
 
         // Then we'll use this regex to see whether we have a match or not
@@ -242,7 +231,7 @@ final class GenericRouter implements Router
 
         // TODO: we could probably optimize resolveParams now,
         //  because we already know for sure there's a match
-        $routeParams = $this->resolveParams($route, $request->getUri()->getPath());
+        $routeParams = $this->resolveParams($route, $request->getUri()->getPath(), $matches);
 
         // This check should _in theory_ not be needed,
         // since we're certain there's a match
