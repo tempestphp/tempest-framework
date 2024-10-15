@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
+use function Tempest\Support\str;
+use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\EndsWith;
+
+use Tempest\Support\PathHelper;
 use Tempest\Core\Composer;
 use Tempest\Console\Console;
 
@@ -30,19 +35,25 @@ trait HasGeneratorCommand
      */
     protected function getSuggestedPath(string $className, ?string $pathPrefix = null, ?string $classSuffix = null): string
     {
-        // @TODO
-    }
+        // Separate input path and classname
+        $inputClassName = PathHelper::toClassName($className);
+        $inputPath      = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
+        $className      = str($inputClassName)
+            ->pascal()
+            ->finish($classSuffix)
+            ->toString();
+        
+        // Prepare the suggested path from the project namespace
+        $suggestedPath = str(PathHelper::make(
+            $this->composer->mainNamespace->path,
+            $pathPrefix,
+            $inputPath,
+        ))
+            ->finish(DIRECTORY_SEPARATOR)
+            ->append($className . '.php')
+            ->toString();
 
-    /**
-     * Get the class name from the suggested path.
-     *
-     * @param string $suggestedPath The suggested path to extract the class name from.
-     *
-     * @return string The extracted class name.
-     */
-    protected function getClassName(string $suggestedPath): string
-    {
-        // @TODO
+        return $suggestedPath;
     }
 
     /**
@@ -54,7 +65,14 @@ trait HasGeneratorCommand
      */
     protected function promptTargetPath(string $suggestedPath): string
     {
-        // @TODO
+        $className  = PathHelper::toClassName($suggestedPath);
+        $targetPath = $this->console->ask(
+            question  : sprintf('Where do you want to save the file "%s"?', $className),
+            default   : $suggestedPath,
+            validation: [new NotEmpty(), new EndsWith('.php')],
+        );
+
+        return $targetPath;
     }
 
     /**
@@ -66,6 +84,13 @@ trait HasGeneratorCommand
      */
     protected function askForOverride(string $targetPath): bool
     {
-        // @TODO
+        if ( ! file_exists($targetPath) ) {
+            return false;
+        }
+
+        return $this->console->confirm(
+            question: sprintf('The file "%s" already exists. Do you want to override it?', $targetPath),
+            default : false,
+        );
     }
 }
