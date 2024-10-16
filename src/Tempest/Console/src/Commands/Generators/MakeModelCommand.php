@@ -8,6 +8,7 @@ use Tempest\Generation\StubFileGenerator;
 use Tempest\Generation\HasGeneratorCommand;
 use Tempest\Console\Stubs\ModelStub;
 use Tempest\Console\GeneratorCommand;
+use Tempest\Console\Stubs\DatabaseModelStub;
 
 final class MakeModelCommand
 {
@@ -20,7 +21,8 @@ final class MakeModelCommand
     )]
     public function __invoke(
         string $className,
-    ): StubFileGenerator
+        bool $isDatabaseModel = false,
+    ): void
     {
         $suggestedPath = $this->getSuggestedPath(
             className  : $className,
@@ -30,15 +32,11 @@ final class MakeModelCommand
         $targetPath     = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
         
-        // The Discovery may use the prepareFilesystem method to create the directories
-        return new StubFileGenerator(
-            stubFile      : ModelStub::class,
+        $generator = new StubFileGenerator(
+            stubFile      : $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
             targetPath    : $suggestedPath,
             shouldOverride: $shouldOverride,
-            replacements  : [
-                'DummyNamespace' => $this->composer->mainNamespace->path,
-                'DummyClass'     => $className,
-            ],
         );
+        $generator->generate();
     }
 }
