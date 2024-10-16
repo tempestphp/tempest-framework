@@ -1237,4 +1237,25 @@ final class ArrayHelperTest extends TestCase
             expected: $array,
         );
     }
+
+    public function test_pull(): void {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+        ]);
+
+        $this->assertSame(
+            actual: $collection->pull('first_name'),
+            expected: 'John',
+        );
+
+        $this->assertSame(
+            actual: $collection->toArray(),
+            expected: [
+                'last_name' => 'Doe',
+                'age'       => 42,
+            ],
+        );
+    }
 }
