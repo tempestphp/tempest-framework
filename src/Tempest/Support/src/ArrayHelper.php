@@ -49,6 +49,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * @alias of add.
+     */
+    public function forget(string|int|array $keys): self {
+        return $this->remove($keys);
+    }
+
+    /**
      * Remove items from the array.
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.

@@ -1193,4 +1193,28 @@ final class ArrayHelperTest extends TestCase
             ],
         );
     }
+
+    public function test_forget_is_alias_of_remove(): void
+    {
+        $first_collection = arr( [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+        ] )
+            ->remove(42)
+            ->remove('foo')
+            ->remove(['bar', 'first_name']);
+        
+        $second_collection = arr( [
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+        ] )
+            ->forget(42)
+            ->forget('foo')
+            ->forget(['bar', 'first_name']);
+
+
+        $this->assertTrue($first_collection->equals($second_collection));
+    }
 }
