@@ -1109,4 +1109,88 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
         $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssoc());
     }
+
+    public function test_remove_with_basic_keys(): void {
+        $collection = arr([1, 2, 3]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(1)
+                ->toArray(),
+            expected: [
+                0 => 1,
+                2 => 3
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove([0, 2])
+                ->toArray(),
+            expected: [],
+        );
+    }
+
+    public function test_remove_with_associative_keys(): void {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+        ]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove('first_name')
+                ->toArray(),
+            expected: [
+                'last_name' => 'Doe',
+                'age'       => 42,
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(['last_name', 'age'])
+                ->toArray(),
+            expected: [],
+        );
+    }
+
+    public function test_remove_with_no_valid_key(): void {
+        $collection = arr([1, 2, 3]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(42)
+                ->toArray(),
+            expected: [1, 2, 3],
+        );
+
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name'  => 'Doe',
+            'age'        => 42,
+        ]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove('foo')
+                ->toArray(),
+            expected: [
+                'first_name' => 'John',
+                'last_name'  => 'Doe',
+                'age'        => 42,
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(['bar', 'first_name'])
+                ->toArray(),
+            expected: [
+                'last_name'  => 'Doe',
+                'age'        => 42,
+            ],
+        );
+    }
 }

@@ -49,6 +49,23 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Remove items from the array.
+     *
+     * @param array-key|array<array-key> $keys The keys of the items to remove.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function remove(string|int|array $keys): self {
+        $keys = is_array($keys) ? $keys : [$keys];
+        
+        foreach ($keys as $key) {
+            $this->offsetUnset($key);
+        }
+
+        return $this;
+    }
+
+    /**
      * Determines if the array is a list.
      *
      * An array is a list if its keys consist of consecutive numbers.
