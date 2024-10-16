@@ -1110,7 +1110,8 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssoc());
     }
 
-    public function test_remove_with_basic_keys(): void {
+    public function test_remove_with_basic_keys(): void
+    {
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
@@ -1119,7 +1120,7 @@ final class ArrayHelperTest extends TestCase
                 ->toArray(),
             expected: [
                 0 => 1,
-                2 => 3
+                2 => 3,
             ],
         );
 
@@ -1131,11 +1132,12 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_remove_with_associative_keys(): void {
+    public function test_remove_with_associative_keys(): void
+    {
         $collection = arr([
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'age'        => 42,
+            'last_name' => 'Doe',
+            'age' => 42,
         ]);
 
         $this->assertEquals(
@@ -1144,7 +1146,7 @@ final class ArrayHelperTest extends TestCase
                 ->toArray(),
             expected: [
                 'last_name' => 'Doe',
-                'age'       => 42,
+                'age' => 42,
             ],
         );
 
@@ -1156,7 +1158,8 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_remove_with_no_valid_key(): void {
+    public function test_remove_with_no_valid_key(): void
+    {
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
@@ -1168,8 +1171,8 @@ final class ArrayHelperTest extends TestCase
 
         $collection = arr([
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'age'        => 42,
+            'last_name' => 'Doe',
+            'age' => 42,
         ]);
 
         $this->assertEquals(
@@ -1178,8 +1181,8 @@ final class ArrayHelperTest extends TestCase
                 ->toArray(),
             expected: [
                 'first_name' => 'John',
-                'last_name'  => 'Doe',
-                'age'        => 42,
+                'last_name' => 'Doe',
+                'age' => 42,
             ],
         );
 
@@ -1188,28 +1191,28 @@ final class ArrayHelperTest extends TestCase
                 ->remove(['bar', 'first_name'])
                 ->toArray(),
             expected: [
-                'last_name'  => 'Doe',
-                'age'        => 42,
+                'last_name' => 'Doe',
+                'age' => 42,
             ],
         );
     }
 
     public function test_forget_is_alias_of_remove(): void
     {
-        $first_collection = arr( [
+        $first_collection = arr([
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'age'        => 42,
-        ] )
+            'last_name' => 'Doe',
+            'age' => 42,
+        ])
             ->remove(42)
             ->remove('foo')
             ->remove(['bar', 'first_name']);
-        
-        $second_collection = arr( [
+
+        $second_collection = arr([
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'age'        => 42,
-        ] )
+            'last_name' => 'Doe',
+            'age' => 42,
+        ])
             ->forget(42)
             ->forget('foo')
             ->forget(['bar', 'first_name']);
@@ -1218,7 +1221,8 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue($first_collection->equals($second_collection));
     }
 
-    public function test_shuffle_actually_shuffles(): void {
+    public function test_shuffle_actually_shuffles(): void
+    {
         $array = range('a', 'z');
 
         $this->assertFalse(
@@ -1227,8 +1231,9 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_shuffle_keeps_same_values(): void {
-        $array    = range('a', 'z');
+    public function test_shuffle_keeps_same_values(): void
+    {
+        $array = range('a', 'z');
         $shuffled = arr($array)->shuffle()->toArray();
         sort($shuffled);
 
@@ -1238,11 +1243,12 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_pull(): void {
+    public function test_pull(): void
+    {
         $collection = arr([
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'age'        => 42,
+            'last_name' => 'Doe',
+            'age' => 42,
         ]);
 
         $this->assertSame(
@@ -1254,7 +1260,7 @@ final class ArrayHelperTest extends TestCase
             actual: $collection->toArray(),
             expected: [
                 'last_name' => 'Doe',
-                'age'       => 42,
+                'age' => 42,
             ],
         );
     }

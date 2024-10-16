@@ -54,7 +54,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * @param array-key $key
      * @param mixed $default
      */
-    public function pull(string|int $key, mixed $default = null): mixed {
+    public function pull(string|int $key, mixed $default = null): mixed
+    {
         $value = $this->get($key, $default);
 
         $this->remove($key);
@@ -67,14 +68,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function shuffle(): self {
-        return new self( (new Randomizer)->shuffleArray($this->array) );
+    public function shuffle(): self
+    {
+        return new self((new Randomizer())->shuffleArray($this->array));
     }
 
     /**
      * @alias of add.
      */
-    public function forget(string|int|array $keys): self {
+    public function forget(string|int|array $keys): self
+    {
         return $this->remove($keys);
     }
 
@@ -85,9 +88,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return self<TKey, TValue>
      */
-    public function remove(string|int|array $keys): self {
+    public function remove(string|int|array $keys): self
+    {
         $keys = is_array($keys) ? $keys : [$keys];
-        
+
         foreach ($keys as $key) {
             $this->offsetUnset($key);
         }
