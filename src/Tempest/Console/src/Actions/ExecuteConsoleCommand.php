@@ -36,15 +36,10 @@ final readonly class ExecuteConsoleCommand
     {
         $callable = function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
-
-            $handler = $consoleCommand->handler;
-
-            $consoleCommandClass = $this->container->get($handler->getDeclaringClass()->getName());
-
-            $inputBuilder = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
-
+            $inputBuilder   = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
+            
             $consoleCommand->handler->invokeArgs(
-                $consoleCommandClass,
+                $consoleCommand,
                 $inputBuilder->build(),
             );
 

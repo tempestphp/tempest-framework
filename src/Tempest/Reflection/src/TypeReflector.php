@@ -40,7 +40,7 @@ final readonly class TypeReflector implements Reflector
     private string $cleanDefinition;
 
     public function __construct(
-        private PHPReflector|PHPReflectionType|string $reflector,
+        private PHPReflector|PHPReflectionType|string|null $reflector,
     ) {
         $this->definition = $this->resolveDefinition($this->reflector);
         $this->cleanDefinition = str_replace('?', '', $this->definition);
@@ -165,8 +165,12 @@ final readonly class TypeReflector implements Reflector
         );
     }
 
-    private function resolveDefinition(PHPReflector|PHPReflectionType|string $reflector): string
+    private function resolveDefinition(PHPReflector|PHPReflectionType|string|null $reflector): string
     {
+        if ( is_null($reflector) ) {
+            return 'null';
+        }
+        
         if (is_string($reflector)) {
             return $reflector;
         }
