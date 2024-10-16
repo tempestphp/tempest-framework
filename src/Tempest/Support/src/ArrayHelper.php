@@ -49,6 +49,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Shuffle the array.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function shuffle(): self {
+        return new self( (new Randomizer)->shuffleArray($this->array) );
+    }
+
+    /**
      * @alias of add.
      */
     public function forget(string|int|array $keys): self {

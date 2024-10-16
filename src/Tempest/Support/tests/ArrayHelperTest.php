@@ -1217,4 +1217,24 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertTrue($first_collection->equals($second_collection));
     }
+
+    public function test_shuffle_actually_shuffles(): void {
+        $array = range('a', 'z');
+
+        $this->assertFalse(
+            arr($array)->shuffle()->toArray() === $array
+            && arr($array)->shuffle()->toArray() === $array,
+        );
+    }
+
+    public function test_shuffle_keeps_same_values(): void {
+        $array    = range('a', 'z');
+        $shuffled = arr($array)->shuffle()->toArray();
+        sort($shuffled);
+
+        $this->assertSame(
+            actual  : $shuffled,
+            expected: $array,
+        );
+    }
 }
