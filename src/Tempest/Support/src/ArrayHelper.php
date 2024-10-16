@@ -52,7 +52,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Get a value from the array and remove it.
      *
      * @param array-key $key
-     * @param mixed $default
      */
     public function pull(string|int $key, mixed $default = null): mixed
     {
