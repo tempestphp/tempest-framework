@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use Tempest\Console\Console;
-
 use function Tempest\get;
+
+use Tempest\Support\StringHelper;
+use Tempest\Support\PathHelper;
+use Tempest\Console\Console;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -14,6 +16,8 @@ use function Tempest\get;
  */
 final class StubFileGenerator
 {
+    protected Console $console;
+    
     /**
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param class-string $stubFile The stub file to use for the generation.
@@ -27,13 +31,69 @@ final class StubFileGenerator
         protected readonly string $stubFile,
         protected readonly array $replacements = [],
         protected readonly bool $shouldOverride = false,
-    ) {}
+    ) {
+        $this->console = get(Console::class);
+    }
 
     public function generate(): void {
-        $console = get(Console::class);
+        if (! $this->prepareFilesystem()) {
+            $this->console->error('The operation has been aborted.');
+            return;
+        }
+        
+        if (! $this->writeFile()) {
+            $this->console->error('The file could not be written.');
+            return;
+        }
 
-        $console->success('File generated successfully!');
+        $this->console->success(sprintf('File successfully created at "%s".', $this->targetPath));
+    }
 
-        dd('Generating file...' );
+    /**
+     * Write the file to the target path.
+     * 
+     * @return boolean Whether the file was written successfully.
+     */
+    protected function writeFile(): bool {
+        // Transform stub to class
+        $namespace        = PathHelper::toRegisteredNamespace($this->targetPath);
+        $classname        = PathHelper::toClassName($this->targetPath);
+        $classManipulator = (new ClassManipulator($this->stubFile))
+            ->setNamespace($namespace)
+            ->setClassName($classname);
+        
+        foreach ($this->replacements as $placeholder => $replacement) {
+            $classManipulator->manipulate(fn( StringHelper $code ) => $code->replace($placeholder, $replacement));
+        }
+
+        // Write the file
+        return (bool) file_put_contents(
+            $this->targetPath,
+            $classManipulator->print()
+        );
+    }
+
+    /**
+     * Prepare the directory structure for the new file.
+     * It will delete the target file if it exists and we force the override.
+     *
+     * @return boolean Whether the filesystem is ready to write the file.
+     */
+    protected function prepareFilesystem(): bool {
+        // Delete the file if it exists and we force the override
+        if (file_exists($this->targetPath)) {
+            if (! $this->shouldOverride) {
+                return false;
+            }
+
+            @unlink($this->targetPath);
+        }
+
+        // Recursively create directories before writing the file
+        if (! file_exists(dirname($this->targetPath))) {
+            mkdir(dirname($this->targetPath), recursive: true);
+        }
+        
+        return true;
     }
 }
