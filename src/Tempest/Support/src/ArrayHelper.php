@@ -73,7 +73,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * @alias of add.
+     * @alias of remove.
      */
     public function forget(string|int|array $keys): self
     {
