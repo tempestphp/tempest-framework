@@ -1109,4 +1109,159 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
         $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssoc());
     }
+
+    public function test_remove_with_basic_keys(): void
+    {
+        $collection = arr([1, 2, 3]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(1)
+                ->toArray(),
+            expected: [
+                0 => 1,
+                2 => 3,
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove([0, 2])
+                ->toArray(),
+            expected: [],
+        );
+    }
+
+    public function test_remove_with_associative_keys(): void
+    {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove('first_name')
+                ->toArray(),
+            expected: [
+                'last_name' => 'Doe',
+                'age' => 42,
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(['last_name', 'age'])
+                ->toArray(),
+            expected: [],
+        );
+    }
+
+    public function test_remove_with_no_valid_key(): void
+    {
+        $collection = arr([1, 2, 3]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(42)
+                ->toArray(),
+            expected: [1, 2, 3],
+        );
+
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove('foo')
+                ->toArray(),
+            expected: [
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'age' => 42,
+            ],
+        );
+
+        $this->assertEquals(
+            actual: $collection
+                ->remove(['bar', 'first_name'])
+                ->toArray(),
+            expected: [
+                'last_name' => 'Doe',
+                'age' => 42,
+            ],
+        );
+    }
+
+    public function test_forget_is_alias_of_remove(): void
+    {
+        $first_collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ])
+            ->remove(42)
+            ->remove('foo')
+            ->remove(['bar', 'first_name']);
+
+        $second_collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ])
+            ->forget(42)
+            ->forget('foo')
+            ->forget(['bar', 'first_name']);
+
+
+        $this->assertTrue($first_collection->equals($second_collection));
+    }
+
+    public function test_shuffle_actually_shuffles(): void
+    {
+        $array = range('a', 'z');
+
+        $this->assertFalse(
+            arr($array)->shuffle()->toArray() === $array
+            && arr($array)->shuffle()->toArray() === $array,
+        );
+    }
+
+    public function test_shuffle_keeps_same_values(): void
+    {
+        $array = range('a', 'z');
+        $shuffled = arr($array)->shuffle()->toArray();
+        sort($shuffled);
+
+        $this->assertSame(
+            actual  : $shuffled,
+            expected: $array,
+        );
+    }
+
+    public function test_pull(): void
+    {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertSame(
+            actual: $collection->pull('first_name'),
+            expected: 'John',
+        );
+
+        $this->assertSame(
+            actual: $collection->toArray(),
+            expected: [
+                'last_name' => 'Doe',
+                'age' => 42,
+            ],
+        );
+    }
 }
