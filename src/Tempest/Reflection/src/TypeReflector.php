@@ -39,10 +39,13 @@ final readonly class TypeReflector implements Reflector
 
     private string $cleanDefinition;
 
+    private bool $isNullable;
+
     public function __construct(
         private PHPReflector|PHPReflectionType|string $reflector,
     ) {
         $this->definition = $this->resolveDefinition($this->reflector);
+        $this->isNullable = $this->resolveIsNullable($this->reflector);
         $this->cleanDefinition = str_replace('?', '', $this->definition);
     }
 
@@ -62,7 +65,7 @@ final readonly class TypeReflector implements Reflector
 
     public function accepts(mixed $input): bool
     {
-        if ($this->isNullable() && $input === null) {
+        if ($this->isNullable && $input === null) {
             return true;
         }
 
@@ -152,8 +155,7 @@ final readonly class TypeReflector implements Reflector
 
     public function isNullable(): bool
     {
-        return str_contains($this->definition, '?')
-            || str_contains($this->definition, 'null');
+        return $this->isNullable;
     }
 
     /** @return self[] */
@@ -201,5 +203,25 @@ final readonly class TypeReflector implements Reflector
         }
 
         throw new Exception('Could not resolve type');
+    }
+
+    private function resolveIsNullable(PHPReflectionType|PHPReflector|string $reflector): bool
+    {
+        if (is_string($reflector)) {
+            return str_contains($this->definition, '?') || str_contains($this->definition, 'null');
+        }
+
+        if (
+            $reflector instanceof PHPReflectionParameter
+            || $reflector instanceof PHPReflectionProperty
+        ) {
+            return $reflector->getType()->allowsNull();
+        }
+
+        if ($reflector instanceof PHPReflectionType) {
+            return $reflector->allowsNull();
+        }
+
+        return false;
     }
 }

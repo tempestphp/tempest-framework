@@ -49,6 +49,56 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Get a value from the array and remove it.
+     *
+     * @param array-key $key
+     */
+    public function pull(string|int $key, mixed $default = null): mixed
+    {
+        $value = $this->get($key, $default);
+
+        $this->remove($key);
+
+        return $value;
+    }
+
+    /**
+     * Shuffle the array.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function shuffle(): self
+    {
+        return new self((new Randomizer())->shuffleArray($this->array));
+    }
+
+    /**
+     * @alias of remove.
+     */
+    public function forget(string|int|array $keys): self
+    {
+        return $this->remove($keys);
+    }
+
+    /**
+     * Remove items from the array.
+     *
+     * @param array-key|array<array-key> $keys The keys of the items to remove.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function remove(string|int|array $keys): self
+    {
+        $keys = is_array($keys) ? $keys : [$keys];
+
+        foreach ($keys as $key) {
+            $this->offsetUnset($key);
+        }
+
+        return $this;
+    }
+
+    /**
      * Determines if the array is a list.
      *
      * An array is a list if its keys consist of consecutive numbers.
