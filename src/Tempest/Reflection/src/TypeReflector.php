@@ -51,7 +51,7 @@ final readonly class TypeReflector implements Reflector
 
     public function asClass(): ClassReflector
     {
-        return new ClassReflector($this->definition);
+        return new ClassReflector($this->cleanDefinition);
     }
 
     public function equals(string|TypeReflector $type): bool
