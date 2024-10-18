@@ -47,7 +47,7 @@
         "phpat/phpat": "^0.10.14",
         "phpstan/phpstan": "^1.10.0",
         "phpunit/phpunit": "^11.3.5",
-        "rector/rector": "^1.2",
+        "rector/rector": "1.2.6",
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^3.1",
         "symplify/monorepo-builder": "^11.2"
