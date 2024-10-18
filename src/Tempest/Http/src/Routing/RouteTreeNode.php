@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http\RoutingTree;
+namespace Tempest\Http\Routing;
 
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
@@ -15,14 +15,15 @@ final class RouteTreeNode
     /** @var array<string, RouteTreeNode> */
     private array $staticPaths = [];
 
-    private ?RouteTreeNode $dynamicPath = null;
+    /** @var array<string, RouteTreeNode> */
+    private array $dynamicPaths = [];
 
     /** @var ?MarkedRoute */
     private ?MarkedRoute $leaf = null;
 
     private function __construct(
         public readonly RouteTreeNodeType $type,
-        public readonly ?string $name = null
+        public readonly ?string $segment = null
     )
     {
     }
@@ -32,9 +33,9 @@ final class RouteTreeNode
         return new self(RouteTreeNodeType::Root);
     }
 
-    public static function createParameterRoute(): self
+    public static function createParameterRoute(string $regex): self
     {
-        return new self(RouteTreeNodeType::Parameter);
+        return new self(RouteTreeNodeType::Parameter, $regex);
     }
 
     public static function createStaticRoute(string $name): self
@@ -54,30 +55,35 @@ final class RouteTreeNode
         }
 
         $segment = array_shift($pathSegments);
-        $isDynamic = self::isDynamicRouteSegment($segment);
 
-        if ($isDynamic) {
-            if ($this->dynamicPath === null) {
-                $this->dynamicPath = self::createParameterRoute();
-            }
+        $dynamicSegment = self::convertDynamicSegmentToRegex($segment);
 
-            $this->dynamicPath->addPath($pathSegments, $route);
-            return;
+        if ($segment !== $dynamicSegment) {
+            $node = $this->dynamicPaths[$dynamicSegment] ??= self::createParameterRoute($dynamicSegment);
+        } else {
+            $node = $this->staticPaths[$dynamicSegment] ??= self::createStaticRoute($segment);
         }
 
-        if (!isset($this->staticPaths[$segment])) {
-            $this->staticPaths[$segment] = self::createStaticRoute($segment);
-        }
+        $node->addPath($pathSegments, $route);
+    }
 
-        $this->staticPaths[$segment]->addPath($pathSegments, $route);
+    public static function convertDynamicSegmentToRegex(string $uriPart): string
+    {
+        $regex = '#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+
+        return preg_replace_callback(
+            $regex,
+            static fn ($matches) => trim($matches[2] ?? Route::DEFAULT_MATCHING_GROUP),
+            $uriPart,
+        );
     }
 
     private function regexSegment(): string
     {
         return match($this->type) {
             RouteTreeNodeType::Root => '',
-            RouteTreeNodeType::Static => "/{$this->name}",
-            RouteTreeNodeType::Parameter => '/([^/]++)',
+            RouteTreeNodeType::Static => "/{$this->segment}",
+            RouteTreeNodeType::Parameter => '/(' . $this->segment . ')',
         };
     }
 
@@ -85,31 +91,25 @@ final class RouteTreeNode
     {
         $regexp = $this->regexSegment();
 
-        if ($this->dynamicPath !== null || count($this->staticPaths) > 0 ) {
+        if (count($this->staticPaths) > 0 || count($this->dynamicPaths) > 0) {
             $regexp .= "(?";
 
             foreach ($this->staticPaths as $path) {
                 $regexp .= '|' . $path->toRegex();
             }
-            if ($this->dynamicPath !== null) {
-                $regexp .= '|' . $this->dynamicPath->toRegex();
+            foreach ($this->dynamicPaths as $path) {
+                $regexp .= '|' . $path->toRegex();
             }
 
             if ($this->leaf !== null) {
-                $regexp .= '|(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+                $regexp .= '|\/?(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
             }
 
             $regexp .= ")";
         } else if ($this->leaf !== null) {
-            $regexp .= '(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+            $regexp .= '\/?(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
         }
 
         return $regexp;
-    }
-
-    private static function isDynamicRouteSegment(string $pathSegment): bool
-    {
-        $regexp = '#\{' . Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
-        return preg_match($regexp, $pathSegment) === 1;
     }
 }

@@ -35,18 +35,7 @@ class Route
          */
         public array $middleware = [],
     ) {
-
-        // Routes can have parameters in the form of "/{PARAM}/" or /{PARAM:CUSTOM_REGEX},
-        // these parameters are replaced with a regex matching group or with the custom regex
-        $matchingRegex = (string)str($this->uri)->replaceRegex(
-            '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#',
-            fn ($matches) => '(' . trim(arr($matches)->get('2', self::DEFAULT_MATCHING_GROUP)). ')'
-        );
-
-        $this->isDynamic = $matchingRegex !== $this->uri;
-
-        // Allow for optional trailing slashes
-        $this->matchingRegex = $matchingRegex . '\/?';
+        $this->isDynamic = Route::isDynamic($this->uri);
     }
 
     public function setHandler(MethodReflector $handler): self
@@ -54,5 +43,19 @@ class Route
         $this->handler = $handler;
 
         return $this;
+    }
+
+    public static function isDynamic(string $uriPart): bool
+    {
+        $regex = '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+        return preg_match($regex, $uriPart) === 1;
+    }
+
+    /** @return string[] */
+    public function routeParts(): array
+    {
+        $parts = explode('/', $this->uri);
+
+        return array_filter($parts, static fn (string $part) => !empty($part));
     }
 }

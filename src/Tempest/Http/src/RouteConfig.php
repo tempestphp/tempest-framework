@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\RoutingTree\MarkedRoute;
-use Tempest\Http\RoutingTree\RoutingTree;
+use Tempest\Http\Routing\MarkedRoute;
+use Tempest\Http\Routing\RoutingTree;
 use Tempest\Reflection\MethodReflector;
 
 final class RouteConfig
@@ -73,5 +73,21 @@ final class RouteConfig
 
         // insert regex part of this route into the matching group of the regex for the method
         $this->matchingRegexes[$route->method->value] = substr_replace($this->matchingRegexes[$route->method->value], "|{$routeRegexPart}", -4, 0);
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'staticRoutes' => serialize($this->staticRoutes),
+            'dynamicRoutes' => serialize($this->dynamicRoutes),
+            'matchingRegexes' => serialize($this->matchingRegexes),
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->staticRoutes = unserialize($data['staticRoutes']);
+        $this->dynamicRoutes = unserialize($data['dynamicRoutes']);
+        $this->matchingRegexes = unserialize($data['matchingRegexes']);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http\RoutingTree;
+namespace Tempest\Http\Routing;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\Method;
@@ -21,16 +21,13 @@ final class RoutingTree
     {
         $method = $markedRoute->route->method;
 
-        $pathSegments = explode('/', $markedRoute->route->uri);
-        array_shift($pathSegments);
-
         $root = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
-        $root->addPath($pathSegments, $markedRoute);
+        $root->addPath($markedRoute->route->routeParts(), $markedRoute);
     }
 
     public function regexForMethod(Method $method): string
     {
         $root = $this->roots[$method->value] ?? RouteTreeNode::createRootRoute();
-        return '#' . $root->toRegex() . '#';
+        return '#^' . $root->toRegex() . '$#';
     }
 }
