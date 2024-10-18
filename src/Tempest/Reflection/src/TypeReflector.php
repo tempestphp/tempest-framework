@@ -43,8 +43,7 @@ final readonly class TypeReflector implements Reflector
 
     public function __construct(
         private PHPReflector|PHPReflectionType|string $reflector,
-    )
-    {
+    ) {
         $this->definition = $this->resolveDefinition($this->reflector);
         $this->isNullable = $this->resolveIsNullable($this->reflector);
         $this->cleanDefinition = str_replace('?', '', $this->definition);
@@ -66,7 +65,7 @@ final readonly class TypeReflector implements Reflector
 
     public function accepts(mixed $input): bool
     {
-        if ($this->isNullable() && $input === null) {
+        if ($this->isNullable && $input === null) {
             return true;
         }
 
