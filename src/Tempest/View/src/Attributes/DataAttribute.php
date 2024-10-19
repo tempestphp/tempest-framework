@@ -19,7 +19,10 @@ final readonly class DataAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
-        if (! $element instanceof ViewComponentElement) {
+        if (
+            ! $element instanceof ViewComponentElement
+            && ! $element instanceof PhpDataElement
+        ) {
             return $element;
         }
 
