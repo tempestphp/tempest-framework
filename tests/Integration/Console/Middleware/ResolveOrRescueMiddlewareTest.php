@@ -31,4 +31,23 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
             ->call('discovery')
             ->assertSee('Did you mean to run one of these?  [discovery:status/discovery:clear]');
     }
+
+    #[Test]
+    public function it_does_not_duplicate_completed_commands(): void
+    {
+        $formatOutput = static fn (string $buffer) => str($buffer)
+            ->trim()
+            ->remove(['[',']'])
+            ->explode('/')
+            ->all();
+
+        $output = $this->console
+            ->call('discovery')
+            ->getContent(fn (array $buffer) => $formatOutput(array_pop($buffer)));
+
+        $this->assertContains('discovery:status', $output);
+        $this->assertContains('discovery:clear', $output);
+
+        $this->assertCount(2, $output);
+    }
 }
