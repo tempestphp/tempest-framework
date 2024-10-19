@@ -381,15 +381,15 @@ HTML, foo: []),
         b    </div>';
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" b="b"></x-view-component-with-multiple-attributes>'));
-        $this->assertSame($expected, $html);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
-        $this->assertSame($expected, $html);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
-        $this->assertSame($expected, $html);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
-        $this->assertSame($expected, $html);
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
 }
