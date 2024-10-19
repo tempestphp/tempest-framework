@@ -20,6 +20,9 @@ class Route
     /** @var bool If the route has params */
     public readonly bool $isDynamic;
 
+    /** @var string[] Route parameters */
+    public readonly array $params;
+
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
     public const string ROUTE_PARAM_NAME_REGEX = '(\w*)';
@@ -35,7 +38,9 @@ class Route
          */
         public array $middleware = [],
     ) {
-        $this->isDynamic = Route::isDynamic($this->uri);
+
+        $this->params = Route::getRouteParams($this->uri);
+        $this->isDynamic = !empty($this->params);
     }
 
     public function setHandler(MethodReflector $handler): self
@@ -45,10 +50,14 @@ class Route
         return $this;
     }
 
-    public static function isDynamic(string $uriPart): bool
+    /** @return string[] */
+    public static function getRouteParams(string $uriPart): array
     {
         $regex = '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
-        return preg_match($regex, $uriPart) === 1;
+
+        preg_match_all($regex, $uriPart, $matches);
+
+        return $matches[1] ?? [];
     }
 
     /** @return string[] */

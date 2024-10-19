@@ -167,24 +167,15 @@ final class GenericRouter implements Router
         return $uri;
     }
 
-    private function resolveParams(Route $route, string $uri, array $matches): ?array
+    private function resolveParams(Route $route, array $routeMatches): ?array
     {
-        if ($route->uri === $uri) {
+        if (!$route->isDynamic) {
             return [];
         }
 
-        $tokens = str($route->uri)->matchAll('#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#');
-
-        if (empty($tokens)) {
-            return null;
-        }
-
-        $tokens = array_values($tokens[1]);
-
         $valueMap = [];
-
-        foreach ($tokens as $i => $token) {
-            $valueMap[trim($token, '{}')] = $matches[$i + 1];
+        foreach ($route->params as $i => $param) {
+            $valueMap[$param] = $routeMatches[$i + 1];
         }
 
         return $valueMap;
@@ -221,17 +212,14 @@ final class GenericRouter implements Router
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
 
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $matches);
+        $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $routingMatches);
 
-        if (! $matchResult || ! array_key_exists(self::REGEX_MARK_TOKEN, $matches)) {
+        if (! $matchResult || ! array_key_exists(self::REGEX_MARK_TOKEN, $routingMatches)) {
             return null;
         }
+        $route = $routesForMethod[$routingMatches[self::REGEX_MARK_TOKEN]];
 
-        $route = $routesForMethod[$matches[self::REGEX_MARK_TOKEN]];
-
-        // TODO: we could probably optimize resolveParams now,
-        //  because we already know for sure there's a match
-        $routeParams = $this->resolveParams($route, $request->getUri()->getPath(), $matches);
+        $routeParams = $this->resolveParams($route, $routingMatches);
 
         // This check should _in theory_ not be needed,
         // since we're certain there's a match

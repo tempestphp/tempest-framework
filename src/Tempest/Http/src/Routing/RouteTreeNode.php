@@ -81,7 +81,7 @@ final class RouteTreeNode
     private function regexSegment(): string
     {
         return match($this->type) {
-            RouteTreeNodeType::Root => '',
+            RouteTreeNodeType::Root => '^',
             RouteTreeNodeType::Static => "/{$this->segment}",
             RouteTreeNodeType::Parameter => '/(' . $this->segment . ')',
         };
@@ -102,12 +102,12 @@ final class RouteTreeNode
             }
 
             if ($this->leaf !== null) {
-                $regexp .= '|\/?(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+                $regexp .= '|\/?$(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
             }
 
             $regexp .= ")";
         } else if ($this->leaf !== null) {
-            $regexp .= '\/?(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+            $regexp .= '\/?$(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
         }
 
         return $regexp;

@@ -28,6 +28,6 @@ final class RoutingTree
     public function regexForMethod(Method $method): string
     {
         $root = $this->roots[$method->value] ?? RouteTreeNode::createRootRoute();
-        return '#^' . $root->toRegex() . '$#';
+        return '#' . $root->toRegex() . '#';
     }
 }
