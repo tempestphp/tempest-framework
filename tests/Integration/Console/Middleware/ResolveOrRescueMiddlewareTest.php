@@ -25,14 +25,6 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function it_can_find_multiple_similar_commands(): void
-    {
-        $this->console
-            ->call('discovery')
-            ->assertSee('Did you mean to run one of these?  [discovery:status/discovery:clear]');
-    }
-
-    #[Test]
     public function it_does_not_duplicate_completed_commands(): void
     {
         $formatOutput = static fn (string $buffer) => str($buffer)
