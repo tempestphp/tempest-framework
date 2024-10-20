@@ -160,7 +160,7 @@ final class ConsoleTester
         return $this;
     }
 
-    public function getContent(?callable $callback = null): array
+    public function getBuffer(?callable $callback = null): array
     {
         $buffer = array_map('trim', $this->output->getBufferWithoutFormatting());
 
