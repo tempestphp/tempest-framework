@@ -6,6 +6,7 @@ namespace Tempest\Console\Discovery;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
+use Tempest\Console\GeneratorCommand;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
@@ -41,7 +42,7 @@ final readonly class ConsoleCommandDiscovery implements Discovery
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $commands = unserialize($payload, ['allowed_classes' => [ConsoleCommand::class, MethodReflector::class]]);
+        $commands = unserialize($payload, ['allowed_classes' => [GeneratorCommand::class, ConsoleCommand::class, MethodReflector::class]]);
 
         $this->consoleConfig->commands = $commands;
     }

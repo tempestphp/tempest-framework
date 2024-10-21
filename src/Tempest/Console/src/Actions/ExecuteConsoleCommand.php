@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
-use Closure;
-use Tempest\Console\ConsoleConfig;
-use Tempest\Console\ConsoleInputBuilder;
-use Tempest\Console\ExitCode;
-use Tempest\Console\Initializers\Invocation;
-use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
+use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Console\Initializers\Invocation;
+use Tempest\Console\GeneratorCommandFactory;
+use Tempest\Console\GeneratorCommand;
+use Tempest\Console\ExitCode;
+use Tempest\Console\ConsoleInputBuilder;
+use Tempest\Console\ConsoleConfig;
+use Tempest\Reflection\MethodReflector;
 
 final readonly class ExecuteConsoleCommand
 {
@@ -32,16 +34,25 @@ final readonly class ExecuteConsoleCommand
         ));
     }
 
-    private function getCallable(array $commandMiddleware): Closure
+    private function getCallable(array $commandMiddleware): \Closure
     {
         $callable = function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
             $inputBuilder   = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
+
+            if ( $consoleCommand instanceof GeneratorCommand ) {
+                $handlerClassInstance = $this->container->get(GeneratorCommandFactory::class);
+                $handler              = $handlerClassInstance->makeHandler($consoleCommand);
+            } else {
+                $handlerClassInstance = $consoleCommand;
+                $handler              = $consoleCommand->handler;
+            }
             
-            $consoleCommand->handler->invokeArgs(
-                $consoleCommand,
-                $inputBuilder->build(),
-            );
+            match (true) {
+                is_callable($handler)                 => $handler($inputBuilder->build()),
+                ($handler instanceof MethodReflector) => $handler->invokeArgs($handlerClassInstance, $inputBuilder->build()),
+                default                               => throw new \RuntimeException('Command handler cannot be resolved.'),
+            };
 
             return ExitCode::SUCCESS;
         };
