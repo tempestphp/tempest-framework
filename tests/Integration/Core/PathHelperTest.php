@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
 use function Tempest\base_path;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
