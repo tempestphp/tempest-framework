@@ -39,18 +39,13 @@ final readonly class ExecuteConsoleCommand
         $callable = function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
             $inputBuilder   = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
-
-            if ( $consoleCommand instanceof GeneratorCommand ) {
-                $handlerClassInstance = $this->container->get(GeneratorCommandFactory::class);
-                $handler              = $handlerClassInstance->makeHandler($consoleCommand);
-            } else {
-                $handlerClassInstance = $consoleCommand;
-                $handler              = $consoleCommand->handler;
-            }
+            $handler        = ($consoleCommand instanceof GeneratorCommand)
+                ? $consoleCommand->makeHandler()
+                : $consoleCommand->handler;
             
             match (true) {
                 is_callable($handler)                 => $handler($inputBuilder->build()),
-                ($handler instanceof MethodReflector) => $handler->invokeArgs($handlerClassInstance, $inputBuilder->build()),
+                ($handler instanceof MethodReflector) => $handler->invokeArgs($consoleCommand, $inputBuilder->build()),
                 default                               => throw new \RuntimeException('Command handler cannot be resolved.'),
             };
 
