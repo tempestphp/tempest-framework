@@ -22,7 +22,7 @@ final class MakeModelCommand
     public function __invoke(
         string $className,
         bool $isDatabaseModel = false,
-    ): void
+    ): StubFileGenerator
     {
         $suggestedPath = $this->getSuggestedPath(
             className  : $className,
@@ -32,11 +32,10 @@ final class MakeModelCommand
         $targetPath     = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
         
-        $generator = new StubFileGenerator(
+        return new StubFileGenerator(
             stubFile      : $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
             targetPath    : $suggestedPath,
             shouldOverride: $shouldOverride,
         );
-        $generator->generate();
     }
 }
