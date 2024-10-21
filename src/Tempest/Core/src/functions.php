@@ -3,6 +3,14 @@
 declare(strict_types=1);
 
 namespace Tempest {
+
+    use Tempest\Core\Kernel;
+
+    function base_path(string ...$parts): string
+    {
+        return path(realpath(get(Kernel::class)->root), ...$parts);
+    }
+
     function path(string ...$parts): string
     {
         $path = implode('/', $parts);
