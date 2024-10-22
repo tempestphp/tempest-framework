@@ -6,15 +6,15 @@ namespace Tempest\Console\Commands\Generators;
 
 use Tempest\Generation\HasGeneratorCommand;
 use Tempest\Console\Stubs\ControllerStub;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\GeneratorCommand;
 use Tempest\Generation\StubFileGenerator;
 
 final class MakeControllerCommand
 {
     use HasGeneratorCommand;
     
-    #[ConsoleCommand(
+    #[GeneratorCommand(
         name       : 'make:controller',
         description: 'Create a new controller class with a basic route',
         aliases    : ['controller:make', 'controller:create', 'create:controller'],
