@@ -5,11 +5,12 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "php-http/discovery": "^1.19.2",
         "psr/http-client": "^1.0.0",
         "psr/http-message": "^1.0|^2.0",
         "tempest/container": "dev-main",
-        "tempest/http": "dev-main"
+        "tempest/http": "dev-main",
+        "psr-discovery/http-factory-implementations": "1.x-dev",
+        "psr-discovery/http-client-implementations": "1.x-dev"
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
@@ -23,11 +24,6 @@
     "autoload-dev": {
         "psr-4": {
             "Tempest\\HttpClient\\Tests\\": "tests"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
         }
     }
 }
