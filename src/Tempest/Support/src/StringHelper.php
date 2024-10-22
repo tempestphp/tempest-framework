@@ -480,18 +480,14 @@ final readonly class StringHelper implements Stringable
     /**
      * Implode the array into a string by a separator.
      *
-     * @param array|ArrayHelper $array The array to implode.
+     * @param array|ArrayHelper $parts The array to implode.
      * @param string $separator The separator to implode the array by.
      *
      * @return self The imploded string.
      */
-    public static function implode(array|ArrayHelper $array, string $separator = ' '): self
+    public static function implode(array|ArrayHelper $parts, string $glue = ' '): self
     {
-        $array = ($array instanceof ArrayHelper)
-            ? $array->toArray()
-            : $array;
-
-        return new self(implode($separator, $array));
+        return arr($parts)->implode($glue);
     }
 
     /**
