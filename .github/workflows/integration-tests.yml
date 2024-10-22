@@ -58,7 +58,7 @@ jobs:
         uses: ankane/setup-postgres@v1
 
       - name: Set database config - ${{ matrix.database }}
-        run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.config.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
+        run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.config.php', 'tests/Fixtures/Config/database.config.php');"
 
       - name: List Discovered Locations
         run: php ./tempest discovery:status
