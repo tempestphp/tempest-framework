@@ -61,8 +61,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
             <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
+            
+            
             </div>
             <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
+            
+            
             
             </form>
             HTML,

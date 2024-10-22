@@ -1,17 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: "#^Tempest\\\\Console\\\\Exceptions\\\\ConsoleException should be final$#"
-			count: 1
-			path: src/Tempest/Console/src/Exceptions/ConsoleException.php
-
-		-
-			message: "#^Tempest\\\\Database\\\\Exceptions\\\\DatabaseException should be final$#"
-			count: 1
-			path: src/Tempest/Database/src/Exceptions/DatabaseException.php
-
-		-
-			message: "#^Tempest\\\\Generation\\\\Tests\\\\TestCase should be final$#"
-			count: 1
-			path: src/Tempest/Generation/tests/TestCase.php
-
+	ignoreErrors: []

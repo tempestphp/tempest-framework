@@ -39,45 +39,14 @@ final readonly class Validator
         }
     }
 
-    /**
-     * @param Rule[] $rules
-     */
     public function validateValue(mixed $value, Closure|Rule|array $rules): void
     {
         $failingRules = [];
 
         foreach (arr($rules) as $rule) {
-            if ($rule instanceof Closure) {
-                $result = $rule($value);
+            $rule = $this->convertToRule($rule, $value);
 
-                [$isValid, $message] = match (true) {
-                    is_string($result) => [false, $result],
-                    $result === false => [false, 'Value did not pass validation.'],
-                    default => [true, ''],
-                };
-
-                $rule = new class ($isValid, $message) implements Rule {
-                    public function __construct(
-                        private readonly bool $isValid,
-                        private readonly string $message,
-                    ) {
-                    }
-
-                    public function isValid(mixed $value): bool
-                    {
-                        return $this->isValid;
-                    }
-
-                    public function message(): string
-                    {
-                        return $this->message;
-                    }
-                };
-            }
-
-            $isValid = $rule->isValid($value);
-
-            if (! $isValid) {
+            if (! $rule->isValid($value)) {
                 $failingRules[] = $rule;
             }
         }
@@ -85,5 +54,38 @@ final readonly class Validator
         if ($failingRules !== []) {
             throw new InvalidValueException($value, $failingRules);
         }
+    }
+
+    private function convertToRule(Rule|Closure $rule, mixed $value): Rule
+    {
+        if ($rule instanceof Rule) {
+            return $rule;
+        }
+
+        $result = $rule($value);
+
+        [$isValid, $message] = match (true) {
+            is_string($result) => [false, $result],
+            $result === false => [false, 'Value did not pass validation.'],
+            default => [true, ''],
+        };
+
+        return new class ($isValid, $message) implements Rule {
+            public function __construct(
+                private readonly bool $isValid,
+                private readonly string $message,
+            ) {
+            }
+
+            public function isValid(mixed $value): bool
+            {
+                return $this->isValid;
+            }
+
+            public function message(): string
+            {
+                return $this->message;
+            }
+        };
     }
 }

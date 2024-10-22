@@ -4,28 +4,52 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
+use Tempest\Core\ConfigCache;
 use Tempest\Core\Kernel;
-use Tempest\Support\PathHelper;
 
 /** @internal */
 final readonly class LoadConfig
 {
     public function __construct(
         private Kernel $kernel,
+        private ConfigCache $cache,
     ) {
     }
 
     public function __invoke(): void
     {
-        // Scan for config files in all discovery locations
-        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-            $configFiles = glob(PathHelper::make($discoveryLocation->path, 'Config/**.php'));
+        $configPaths = $this->cache->resolve(
+            'config_cache',
+            function () {
+                $configPaths = [];
 
-            foreach ($configFiles as $configFile) {
-                $configFile = require $configFile;
+                // Scan for config files in all discovery locations
+                foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
+                    $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
+                    $files = new RecursiveIteratorIterator($directories);
 
-                $this->kernel->container->config($configFile);
+                    /** @var SplFileInfo $file */
+                    foreach ($files as $file) {
+                        if (! str_ends_with($file->getPathname(), '.config.php')) {
+                            continue;
+                        }
+
+                        $configPaths[] = $file->getPathname();
+                    }
+                }
+
+                return $configPaths;
             }
+        );
+
+        foreach ($configPaths as $path) {
+            $configFile = require $path;
+
+            $this->kernel->container->config($configFile);
         }
     }
 }

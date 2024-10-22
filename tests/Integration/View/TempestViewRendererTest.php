@@ -372,4 +372,24 @@ HTML, foo: []),
             $html,
         );
     }
+
+    public function test_view_component_with_multiple_attributes(): void
+    {
+        $expected = '<div class="a">
+        a    </div>
+<div class="b">
+        b    </div>';
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" b="b"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+    }
 }

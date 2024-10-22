@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Tempest\Container\Container;
+use Tempest\Container\Singleton;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\Kernel;
@@ -16,6 +17,7 @@ use Tempest\Log\LogConfig;
 use Tempest\Support\PathHelper;
 use Throwable;
 
+#[Singleton]
 final readonly class HttpApplication implements Application
 {
     public function __construct(private Container $container)
@@ -29,17 +31,11 @@ final readonly class HttpApplication implements Application
     ): self {
         $container = Tempest::boot($root, $discoveryLocations);
 
-        // Application,
-        // TODO: can be refactored to resolve via the container
-        $application = new HttpApplication($container);
-
-        $container->singleton(Application::class, fn () => $application);
-
-        $root = $container->get(Kernel::class)->root;
+        $application = $container->get(HttpApplication::class);
 
         // Application-specific setup
         $logConfig = $container->get(LogConfig::class);
-        $logConfig->debugLogPath = PathHelper::make($root, '/log/debug.log');
+        $logConfig->debugLogPath = PathHelper::make($container->get(Kernel::class)->root, '/log/debug.log');
         $logConfig->serverLogPath = env('SERVER_LOG');
         $logConfig->channels[] = new AppendLogChannel(PathHelper::make($root, '/log/tempest.log'));
 

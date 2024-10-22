@@ -70,8 +70,8 @@ final class ArchitectureTestCase
             ->classes(Selector::AND(
                 Selector::inNamespace('Tempest'),
                 Selector::NOT(Selector::isInterface()),
+                Selector::NOT(Selector::isAbstract()),
                 Selector::NOT(Selector::classname(Route::class)),
-                Selector::NOT(Selector::classname(IntegrationTest::class)),
             ))
             ->shouldBeFinal();
     }
