@@ -6,7 +6,7 @@ namespace Tempest {
 
     use Tempest\Core\Kernel;
 
-    function base_path(string ...$parts): string
+    function root_path(string ...$parts): string
     {
         return path(realpath(get(Kernel::class)->root), ...$parts);
     }
