@@ -43,7 +43,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
+        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
             copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);

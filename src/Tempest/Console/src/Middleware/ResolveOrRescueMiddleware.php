@@ -65,6 +65,10 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         $similarCommands = [];
 
         foreach ($this->consoleConfig->commands as $consoleCommand) {
+            if (in_array($consoleCommand->getName(), $similarCommands, strict: true)) {
+                continue;
+            }
+
             if (str_starts_with($consoleCommand->getName(), $name)) {
                 $similarCommands[] = $consoleCommand->getName();
 
