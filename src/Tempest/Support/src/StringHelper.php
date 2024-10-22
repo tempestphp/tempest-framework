@@ -493,4 +493,12 @@ final readonly class StringHelper implements Stringable
 
         return new self(implode($separator, $array));
     }
+
+    /**
+     * Joins all values using the specified `$glue`. The last item of the string is separated by `$finalGlue`.
+     */
+    public static function join(array|ArrayHelper $parts, string $glue = ', ', ?string $finalGlue = ' and '): self
+    {
+        return arr($parts)->join($glue, $finalGlue);
+    }
 }

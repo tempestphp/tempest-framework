@@ -10,20 +10,6 @@ use Tempest\Support\Pluralizer\Pluralizer;
 
 final class LanguageHelper
 {
-    /**
-     * @param string[] $parts
-     */
-    public static function join(array|ArrayHelper $parts): string
-    {
-        $parts = arr($parts)->pop($last);
-
-        if ($parts->isNotEmpty()) {
-            return $parts->implode(', ') . ' ' . 'and' . ' ' . $last;
-        }
-
-        return $last;
-    }
-
     public static function pluralize(string $value, int|array|Countable $count = 2): string
     {
         return get(Pluralizer::class)->pluralize($value, $count);
