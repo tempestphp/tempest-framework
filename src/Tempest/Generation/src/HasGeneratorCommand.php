@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use function Tempest\Support\str;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\EndsWith;
-
-use Tempest\Support\PathHelper;
-use Tempest\Core\Composer;
 use Tempest\Console\Console;
+use Tempest\Core\Composer;
+use Tempest\Support\PathHelper;
+use function Tempest\Support\str;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
 
 /**
  * This provide bunch of methods to generate files.
@@ -21,8 +20,9 @@ trait HasGeneratorCommand
     public function __construct(
         protected readonly Console $console,
         protected readonly Composer $composer,
-    ) {}
-    
+    ) {
+    }
+
     /**
      * Get a suggested path for the given class name.
      * This will find the main autoloaded namespace in the project's composer file and use it as the base path.
@@ -37,12 +37,12 @@ trait HasGeneratorCommand
     {
         // Separate input path and classname
         $inputClassName = PathHelper::toClassName($className);
-        $inputPath      = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
-        $className      = str($inputClassName)
+        $inputPath = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
+        $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix)
             ->toString();
-        
+
         // Prepare the suggested path from the project namespace
         $suggestedPath = str(PathHelper::make(
             $this->composer->mainNamespace->path,
@@ -65,7 +65,7 @@ trait HasGeneratorCommand
      */
     protected function promptTargetPath(string $suggestedPath): string
     {
-        $className  = PathHelper::toClassName($suggestedPath);
+        $className = PathHelper::toClassName($suggestedPath);
         $targetPath = $this->console->ask(
             question  : sprintf('Where do you want to save the file "%s"?', $className),
             default   : $suggestedPath,
@@ -84,7 +84,7 @@ trait HasGeneratorCommand
      */
     protected function askForOverride(string $targetPath): bool
     {
-        if ( ! file_exists($targetPath) ) {
+        if (! file_exists($targetPath)) {
             return false;
         }
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use function Tempest\Support\str;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\EndsWith;
-use Tempest\Support\PathHelper;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Core\Composer;
-use Tempest\Console\Stubs\ControllerStub;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgument;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Stubs\ControllerStub;
+use Tempest\Core\Composer;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Support\PathHelper;
+use function Tempest\Support\str;
 use Tempest\Support\StringHelper;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
 
 final class MakeControllerCommand
 {
@@ -37,7 +37,7 @@ final class MakeControllerCommand
         ?string $controllerPath = null,
         ?string $controllerView = null,
     ): void {
-        $pathPrefix  = 'Controllers';
+        $pathPrefix = 'Controllers';
         $classSuffix = 'Controller';
 
         // Separate input path and classname
@@ -65,17 +65,18 @@ final class MakeControllerCommand
 
         if (! $this->prepareFilesystem($targetPath)) {
             $this->console->error('The operation has been aborted.');
+
             return;
         }
 
         // Transform stub to class
-        $namespace        = PathHelper::toRegisteredNamespace($targetPath);
-        $classname        = PathHelper::toClassName($targetPath);
+        $namespace = PathHelper::toRegisteredNamespace($targetPath);
+        $classname = PathHelper::toClassName($targetPath);
         $classManipulator = (new ClassManipulator(ControllerStub::class))
             ->setNamespace($namespace)
             ->setClassName($classname)
-            ->manipulate(fn( StringHelper $code ) => ! is_null( $controllerPath ) ? $code->replace('dummy-path', $controllerPath) : $code)
-            ->manipulate(fn( StringHelper $code ) => ! is_null( $controllerView ) ? $code->replace('dummy-view', $controllerView) : $code);
+            ->manipulate(fn (StringHelper $code) => ! is_null($controllerPath) ? $code->replace('dummy-path', $controllerPath) : $code)
+            ->manipulate(fn (StringHelper $code) => ! is_null($controllerView) ? $code->replace('dummy-view', $controllerView) : $code);
 
         // Write the file
         file_put_contents(
@@ -110,7 +111,7 @@ final class MakeControllerCommand
      *
      * @param string $targetPath The path to the target file.
      *
-     * @return boolean Whether the filesystem is ready to write the file.
+     * @return bool Whether the filesystem is ready to write the file.
      */
     protected function prepareFilesystem(string $targetPath): bool
     {

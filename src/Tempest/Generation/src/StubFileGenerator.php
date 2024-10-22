@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use function Tempest\get;
-
-use Tempest\Support\StringHelper;
-use Tempest\Support\PathHelper;
 use Tempest\Console\Console;
+use function Tempest\get;
+use Tempest\Support\PathHelper;
+use Tempest\Support\StringHelper;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -17,14 +16,14 @@ use Tempest\Console\Console;
 final class StubFileGenerator
 {
     protected Console $console;
-    
+
     /**
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param class-string $stubFile The stub file to use for the generation.
      * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
-     * @param boolean $shouldOverride Whether the generator should override the file if it already exists.
+     * @param bool $shouldOverride Whether the generator should override the file if it already exists.
      */
     public function __construct(
         protected readonly string $targetPath,
@@ -35,14 +34,17 @@ final class StubFileGenerator
         $this->console = get(Console::class);
     }
 
-    public function generate(): void {
+    public function generate(): void
+    {
         if (! $this->prepareFilesystem()) {
             $this->console->error('The operation has been aborted.');
+
             return;
         }
-        
+
         if (! $this->writeFile()) {
             $this->console->error('The file could not be written.');
+
             return;
         }
 
@@ -51,19 +53,20 @@ final class StubFileGenerator
 
     /**
      * Write the file to the target path.
-     * 
-     * @return boolean Whether the file was written successfully.
+     *
+     * @return bool Whether the file was written successfully.
      */
-    protected function writeFile(): bool {
+    protected function writeFile(): bool
+    {
         // Transform stub to class
-        $namespace        = PathHelper::toRegisteredNamespace($this->targetPath);
-        $classname        = PathHelper::toClassName($this->targetPath);
+        $namespace = PathHelper::toRegisteredNamespace($this->targetPath);
+        $classname = PathHelper::toClassName($this->targetPath);
         $classManipulator = (new ClassManipulator($this->stubFile))
             ->setNamespace($namespace)
             ->setClassName($classname);
-        
+
         foreach ($this->replacements as $placeholder => $replacement) {
-            $classManipulator->manipulate(fn( StringHelper $code ) => $code->replace($placeholder, $replacement));
+            $classManipulator->manipulate(fn (StringHelper $code) => $code->replace($placeholder, $replacement));
         }
 
         // Write the file
@@ -77,9 +80,10 @@ final class StubFileGenerator
      * Prepare the directory structure for the new file.
      * It will delete the target file if it exists and we force the override.
      *
-     * @return boolean Whether the filesystem is ready to write the file.
+     * @return bool Whether the filesystem is ready to write the file.
      */
-    protected function prepareFilesystem(): bool {
+    protected function prepareFilesystem(): bool
+    {
         // Delete the file if it exists and we force the override
         if (file_exists($this->targetPath)) {
             if (! $this->shouldOverride) {
@@ -93,7 +97,7 @@ final class StubFileGenerator
         if (! file_exists(dirname($this->targetPath))) {
             mkdir(dirname($this->targetPath), recursive: true);
         }
-        
+
         return true;
     }
 }
