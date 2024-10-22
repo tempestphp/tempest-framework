@@ -481,7 +481,7 @@ final readonly class StringHelper implements Stringable
      * Implode the array into a string by a separator.
      *
      * @param array|ArrayHelper $parts The array to implode.
-     * @param string $separator The separator to implode the array by.
+     * @param string $glue The separator to implode the array by.
      *
      * @return self The imploded string.
      */
