@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Console\GeneratorCommand;
-use Tempest\Console\Stubs\DatabaseModelStub;
-use Tempest\Console\Stubs\ModelStub;
-use Tempest\Generation\HasGeneratorCommand;
 use Tempest\Generation\StubFileGenerator;
+use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Console\Stubs\ModelStub;
+use Tempest\Console\Stubs\DatabaseModelStub;
+use Tempest\Console\GeneratorCommand;
+use Tempest\Console\ConsoleArgument;
 
 final class MakeModelCommand
 {
@@ -20,7 +21,14 @@ final class MakeModelCommand
         aliases    : ['model:make', 'model:create', 'create:model'],
     )]
     public function __invoke(
+        #[ConsoleArgument(
+            help: 'The name of the model class to create ( "Model" will be suffixed )',
+        )]
         string $className,
+
+        #[ConsoleArgument(
+            help: 'Whether the model is a database model',
+        )]
         bool $isDatabaseModel = false,
     ): StubFileGenerator {
         $suggestedPath = $this->getSuggestedPath(
