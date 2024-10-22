@@ -33,7 +33,7 @@ final class MakeModelCommand
 
         return new StubFileGenerator(
             stubFile      : $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
-            targetPath    : $suggestedPath,
+            targetPath    : $targetPath,
             shouldOverride: $shouldOverride,
         );
     }
