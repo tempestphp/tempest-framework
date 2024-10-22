@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Generation\StubFileGenerator;
-use Tempest\Generation\HasGeneratorCommand;
-use Tempest\Console\Stubs\ModelStub;
-use Tempest\Console\Stubs\DatabaseModelStub;
-use Tempest\Console\GeneratorCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\GeneratorCommand;
+use Tempest\Console\Stubs\DatabaseModelStub;
+use Tempest\Console\Stubs\ModelStub;
+use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\StubFileGenerator;
 
 final class MakeModelCommand
 {
@@ -25,7 +25,6 @@ final class MakeModelCommand
             help: 'The name of the model class to create ( "Model" will be suffixed )',
         )]
         string $className,
-
         #[ConsoleArgument(
             help: 'Whether the model is a database model',
         )]
