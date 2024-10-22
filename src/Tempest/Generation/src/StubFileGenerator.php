@@ -66,6 +66,10 @@ final class StubFileGenerator
             ->setClassName($classname);
 
         foreach ($this->replacements as $placeholder => $replacement) {
+            if (! is_string($replacement)) {
+                continue;
+            }
+            
             $classManipulator->manipulate(fn (StringHelper $code) => $code->replace($placeholder, $replacement));
         }
 
