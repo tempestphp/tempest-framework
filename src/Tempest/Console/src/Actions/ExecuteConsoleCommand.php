@@ -47,7 +47,7 @@ final readonly class ExecuteConsoleCommand
             match (true) {
                 is_callable($handler) => $handler($inputBuilder->build()),
                 ($handler instanceof MethodReflector) => $handler->invokeArgs($consoleCommand, $inputBuilder->build()),
-                default => throw new RuntimeException('Command handler cannot be resolved.'),
+                default => throw new RuntimeException('Command handler cannot be resolved.'), // @phpstan-ignore-line
             };
 
             return ExitCode::SUCCESS;

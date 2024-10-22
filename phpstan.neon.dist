@@ -1,21 +1,21 @@
 includes:
-	- phpstan-baseline.neon
-	- vendor/phpat/phpat/extension.neon
-	- vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - phpstan-baseline.neon
+    - vendor/phpat/phpat/extension.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
 services:
-	-
-		class: Tests\Tempest\Architecture\ArchitectureTestCase
-		tags:
-			- phpat.test
+    -
+        class: Tests\Tempest\Architecture\ArchitectureTestCase
+        tags:
+            - phpat.test
 parameters:
-	level: 5
-	tmpDir: .cache/phpstan
-	excludePaths:
-	    - tests/Integration/View/blade/cache/**.php
-	paths:
-		- src
-		- tests
-	ignoreErrors:
+    level: 5
+    tmpDir: .cache/phpstan
+    excludePaths:
+        - tests/Integration/View/blade/cache/**.php
+    paths:
+        - src
+        - tests
+    ignoreErrors:
 
 		-
 			message: '#.*#'
@@ -23,17 +23,20 @@ parameters:
 		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
+        -
+            message: "#^Tempest\\\\Console\\\\ConsoleCommand should be final$#"
+            path: src/Tempest/Console/src/ConsoleCommand.php
 
-	disallowedFunctionCalls:
-		-
-			function: 'exec()'
-		-
-			function: 'eval()'
-		-
-			function: 'dd()'
-		-
-			function: 'dump()'
-		-
-			function: 'phpinfo()'
-		-
-			function: 'var_dump()'
+    disallowedFunctionCalls:
+        -
+            function: 'exec()'
+        -
+            function: 'eval()'
+        -
+            function: 'dd()'
+        -
+            function: 'dump()'
+        -
+            function: 'phpinfo()'
+        -
+            function: 'var_dump()'
