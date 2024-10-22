@@ -69,7 +69,7 @@ final class StubFileGenerator
             if (! is_string($replacement)) {
                 continue;
             }
-            
+
             $classManipulator->manipulate(fn (StringHelper $code) => $code->replace($placeholder, $replacement));
         }
 
