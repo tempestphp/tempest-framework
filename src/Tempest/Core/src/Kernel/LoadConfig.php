@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 use Tempest\Core\Kernel;
-use Tempest\Support\PathHelper;
 
 /** @internal */
 final readonly class LoadConfig
@@ -19,10 +22,16 @@ final readonly class LoadConfig
     {
         // Scan for config files in all discovery locations
         foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-            $configFiles = glob(PathHelper::make($discoveryLocation->path, 'Config/**.php'));
+            $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
+            $files = new RecursiveIteratorIterator($directories);
 
-            foreach ($configFiles as $configFile) {
-                $configFile = require $configFile;
+            /** @var SplFileInfo $file */
+            foreach ($files as $file) {
+                if (! str_ends_with($file->getPathname(), '.config.php')) {
+                    continue;
+                }
+
+                $configFile = require $file->getPathname();
 
                 $this->kernel->container->config($configFile);
             }
