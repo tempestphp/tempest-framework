@@ -600,8 +600,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     /**
      * Asserts whether a value identified by the specified `$key` exists.
-     *
-     * @return mixed|ArrayHelper
      */
     public function has(string $key): bool
     {
