@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
+use Tempest\Core\CanBePublished;
+use Tempest\Core\DoNotDiscover;
+use Tempest\Core\PublishDiscovery;
 use Tempest\Database\Migration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
+#[CanBePublished]
+#[DoNotDiscover(except: [PublishDiscovery::class])]
 final readonly class CreateUserPermissionTable implements Migration
 {
     public function getName(): string

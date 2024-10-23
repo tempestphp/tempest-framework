@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tempest\Console\Actions;
 
 use Closure;
+use RuntimeException;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
 use Tempest\Console\ExitCode;
+use Tempest\Console\GeneratorCommand;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
+use Tempest\Reflection\MethodReflector;
 
 final readonly class ExecuteConsoleCommand
 {
@@ -36,17 +39,19 @@ final readonly class ExecuteConsoleCommand
     {
         $callable = function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
-
-            $handler = $consoleCommand->handler;
-
-            $consoleCommandClass = $this->container->get($handler->getDeclaringClass()->getName());
-
             $inputBuilder = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
+            $handler = ($consoleCommand instanceof GeneratorCommand)
+                ? $consoleCommand->makeHandler()
+                : $consoleCommand->handler;
 
-            $consoleCommand->handler->invokeArgs(
-                $consoleCommandClass,
-                $inputBuilder->build(),
-            );
+            match (true) {
+                is_callable($handler) => $handler($inputBuilder->build()),
+                ($handler instanceof MethodReflector) => $handler->invokeArgs(
+                    $this->container->get($handler->getDeclaringClass()->getName()),
+                    $inputBuilder->build()
+                ),
+                default => throw new RuntimeException('Command handler cannot be resolved.'), // @phpstan-ignore-line
+            };
 
             return ExitCode::SUCCESS;
         };

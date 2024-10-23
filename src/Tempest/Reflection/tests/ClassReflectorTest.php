@@ -38,6 +38,14 @@ final class ClassReflectorTest extends TestCase
         $this->assertSame($reflector->getShortName(), $reflection->getShortName());
     }
 
+    public function test_getting_file_path(): void
+    {
+        $reflector = new ClassReflector(TestClassA::class);
+        $reflection = new ReflectionClass(TestClassA::class);
+
+        $this->assertSame($reflector->getFilePath(), $reflection->getFileName());
+    }
+
     public function test_nullable_property_type(): void
     {
         $reflector = new ClassReflector(TestClassB::class);

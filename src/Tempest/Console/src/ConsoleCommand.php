@@ -9,7 +9,7 @@ use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Reflection\MethodReflector;
 
 #[Attribute]
-final class ConsoleCommand
+class ConsoleCommand
 {
     public MethodReflector $handler;
 
