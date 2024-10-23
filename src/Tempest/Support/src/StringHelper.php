@@ -19,36 +19,57 @@ final readonly class StringHelper implements Stringable
     ) {
     }
 
+    /**
+     * Converts the instance to a string.
+     */
     public function toString(): string
     {
         return $this->string;
     }
 
+    /**
+     * Converts the instance to a string.
+     */
     public function __toString(): string
     {
         return $this->string;
     }
 
+    /**
+     * Asserts whether the instance is equal to the given instance or string.
+     */
     public function equals(string|Stringable $other): bool
     {
         return $this->string === (string) $other;
     }
 
+    /**
+     * Converts the instance to title case.
+     */
     public function title(): self
     {
         return new self(mb_convert_case($this->string, MB_CASE_TITLE, 'UTF-8'));
     }
 
+    /**
+     * Converts the instance to lower case.
+     */
     public function lower(): self
     {
         return new self(mb_strtolower($this->string, 'UTF-8'));
     }
 
+    /**
+     * Converts the instance to upper case.
+     */
     public function upper(): self
     {
         return new self(mb_strtoupper($this->string, 'UTF-8'));
     }
 
+    /**
+     * Converts the instance to snake case.
+     */
     public function snake(string $delimiter = '_'): self
     {
         $string = $this->string;
@@ -69,11 +90,17 @@ final readonly class StringHelper implements Stringable
         return (new self($string))->deduplicate($delimiter);
     }
 
+    /**
+     * Converts the instance to kebab case.
+     */
     public function kebab(): self
     {
         return $this->snake('-');
     }
 
+    /**
+     * Converts the instance to pascal case.
+     */
     public function pascal(): self
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $this->string));
@@ -84,11 +111,17 @@ final readonly class StringHelper implements Stringable
         return new self(implode('', $studlyWords));
     }
 
+    /**
+     * Converts the instance to camel case.
+     */
     public function camel(): self
     {
         return new self(lcfirst((string)$this->pascal()));
     }
 
+    /**
+     * Replaces consecutive instances of a given character with a single character.
+     */
     public function deduplicate(string|array $characters = ' '): self
     {
         $string = $this->string;
@@ -100,11 +133,17 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Converts the instance to its English plural form.
+     */
     public function pluralize(int|array|Countable $count = 2): self
     {
         return new self(LanguageHelper::pluralize($this->string, $count));
     }
 
+    /**
+     * Converts the last word to its English plural form.
+     */
     public function pluralizeLast(int|array|Countable $count = 2): self
     {
         $parts = preg_split('/(.)(?=[A-Z])/u', $this->string, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -116,6 +155,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Creates a random alpha-numeric string of the given length.
+     */
     public function random(int $length = 16): self
     {
         $string = '';
@@ -130,6 +172,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Caps the instance with the given string.
+     */
     public function finish(string $cap): self
     {
         return new self(
@@ -137,6 +182,9 @@ final readonly class StringHelper implements Stringable
         );
     }
 
+    /**
+     * Returns the remainder of the string after the first occurrence of the given value.
+     */
     public function after(Stringable|string|array $search): self
     {
         $search = $this->normalizeString($search);
@@ -166,6 +214,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Returns the remainder of the string after the last occurrence of the given value.
+     */
     public function afterLast(Stringable|string|array $search): self
     {
         $search = $this->normalizeString($search);
@@ -195,6 +246,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Returns the portion of the string before the first occurrence of the given value.
+     */
     public function before(Stringable|string|array $search): self
     {
         $search = $this->normalizeString($search);
@@ -222,6 +276,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Returns the portion of the string before the last occurrence of the given value.
+     */
     public function beforeLast(Stringable|string|array $search): self
     {
         $search = $this->normalizeString($search);
@@ -249,6 +306,9 @@ final readonly class StringHelper implements Stringable
         return new self($string);
     }
 
+    /**
+     * Returns the portion of the string between the widest possible instances of the given strings.
+     */
     public function between(string|Stringable $from, string|Stringable $to): self
     {
         $from = $this->normalizeString($from);
@@ -261,31 +321,49 @@ final readonly class StringHelper implements Stringable
         return $this->after($from)->beforeLast($to);
     }
 
+    /**
+     * Removes all whitespace (or specified characters) from both ends of the instance.
+     */
     public function trim(string $characters = " \n\r\t\v\0"): self
     {
         return new self(trim($this->string, $characters));
     }
 
+    /**
+     * Removes all whitespace (or specified characters) from the start of the instance.
+     */
     public function ltrim(string $characters = " \n\r\t\v\0"): self
     {
         return new self(ltrim($this->string, $characters));
     }
 
+    /**
+     * Removes all whitespace (or specified characters) from the end of the instance.
+     */
     public function rtrim(string $characters = " \n\r\t\v\0"): self
     {
         return new self(rtrim($this->string, $characters));
     }
 
+    /**
+     * Returns the multi-bytes length of the instance.
+     */
     public function length(): int
     {
         return mb_strlen($this->string);
     }
 
+    /**
+     * Returns the base name of the instance, assuming the instance is a class name.
+     */
     public function classBasename(): self
     {
         return new self(basename(str_replace('\\', '/', $this->string)));
     }
 
+    /**
+     * Asserts whether the instance starts with one of the given needles.
+     */
     public function startsWith(Stringable|string|array $needles): bool
     {
         if (! is_array($needles)) {
@@ -301,6 +379,9 @@ final readonly class StringHelper implements Stringable
         return false;
     }
 
+    /**
+     * Asserts whether the instance ends with one of the given `$needles`.
+     */
     public function endsWith(Stringable|string|array $needles): bool
     {
         if (! is_array($needles)) {
@@ -316,6 +397,9 @@ final readonly class StringHelper implements Stringable
         return false;
     }
 
+    /**
+     * Replaces the first occurence of `$search` with `$replace`.
+     */
     public function replaceFirst(Stringable|string $search, Stringable|string $replace): self
     {
         $search = $this->normalizeString($search);
@@ -333,6 +417,9 @@ final readonly class StringHelper implements Stringable
         return new self(substr_replace($this->string, $replace, $position, strlen($search)));
     }
 
+    /**
+     * Replaces the last occurence of `$search` with `$replace`.
+     */
     public function replaceLast(Stringable|string $search, Stringable|string $replace): self
     {
         $search = $this->normalizeString($search);
@@ -350,6 +437,9 @@ final readonly class StringHelper implements Stringable
         return new self(substr_replace($this->string, $replace, $position, strlen($search)));
     }
 
+    /**
+     * Replaces `$search` with `$replace` if `$search` is at the end of the instance.
+     */
     public function replaceEnd(Stringable|string $search, Stringable|string $replace): self
     {
         $search = $this->normalizeString($search);
@@ -365,6 +455,9 @@ final readonly class StringHelper implements Stringable
         return $this->replaceLast($search, $replace);
     }
 
+    /**
+     * Replaces `$search` with `$replace` if `$search` is at the start of the instance.
+     */
     public function replaceStart(Stringable|string $search, Stringable|string $replace): self
     {
         if ($search === '') {
@@ -378,16 +471,25 @@ final readonly class StringHelper implements Stringable
         return $this->replaceFirst($search, $replace);
     }
 
+    /**
+     * Appends the given strings to the instance.
+     */
     public function append(string|Stringable ...$append): self
     {
         return new self($this->string . implode('', $append));
     }
 
+    /**
+     * Prepends the given strings to the instance.
+     */
     public function prepend(string|Stringable ...$prepend): self
     {
         return new self(implode('', $prepend) . $this->string);
     }
 
+    /**
+     * Replaces all occurrences of the given `$search` with `$replace`.
+     */
     public function replace(Stringable|string|array $search, Stringable|string|array $replace): self
     {
         $search = $this->normalizeString($search);
@@ -396,6 +498,9 @@ final readonly class StringHelper implements Stringable
         return new self(str_replace($search, $replace, $this->string));
     }
 
+    /**
+     * Replaces the patterns matching the given regular expression.
+     */
     public function replaceRegex(string|array $regex, string|array|callable $replace): self
     {
         if (is_callable($replace)) {
@@ -405,6 +510,9 @@ final readonly class StringHelper implements Stringable
         return new self(preg_replace($regex, $replace, $this->string));
     }
 
+    /**
+     * Gets the first portion of the instance that matches the given regular expression.
+     */
     public function match(string $regex): array
     {
         preg_match($regex, $this->string, $matches);
@@ -412,6 +520,9 @@ final readonly class StringHelper implements Stringable
         return $matches;
     }
 
+    /**
+     * Gets all portions of the instance that match the given regular expression.
+     */
     public function matchAll(string $regex, int $flags = 0, int $offset = 0): array
     {
         $result = preg_match_all($regex, $this->string, $matches, $flags, $offset);
@@ -423,16 +534,25 @@ final readonly class StringHelper implements Stringable
         return $matches;
     }
 
+    /**
+     * Asserts whether the instance matches the given regular expression.
+     */
     public function matches(string $regex): bool
     {
         return ($this->match($regex)[0] ?? null) !== null;
     }
 
+    /**
+     * Dumps the instance and stops the execution of the script.
+     */
     public function dd(mixed ...$dd): void
     {
         ld($this->string, ...$dd);
     }
 
+    /**
+     * Dumps the instance.
+     */
     public function dump(mixed ...$dumps): self
     {
         lw($this->string, ...$dumps);
@@ -440,6 +560,9 @@ final readonly class StringHelper implements Stringable
         return $this;
     }
 
+    /**
+     * Extracts an excerpt from the instance.
+     */
     public function excerpt(int $from, int $to, bool $asArray = false): self|ArrayHelper
     {
         $lines = explode(PHP_EOL, $this->string);
@@ -468,9 +591,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Explode the string into an ArrayHelper by a separator.
-     *
-     * @param string $separator The separator to explode the string by.
+     * Explodes the string into an `ArrayHelper` instance by a separator.
      */
     public function explode(string $separator = ' '): ArrayHelper
     {
@@ -478,12 +599,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Implode the array into a string by a separator.
-     *
-     * @param array|ArrayHelper $parts The array to implode.
-     * @param string $glue The separator to implode the array by.
-     *
-     * @return self The imploded string.
+     * Implodes the given array into a string by a separator.
      */
     public static function implode(array|ArrayHelper $parts, string $glue = ' '): self
     {

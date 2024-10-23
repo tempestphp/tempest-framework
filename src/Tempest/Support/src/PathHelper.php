@@ -6,6 +6,9 @@ namespace Tempest\Support;
 
 final readonly class PathHelper
 {
+    /**
+     * Returns a valid path from the specified portions.
+     */
     public static function make(string ...$paths): string
     {
         // Split paths items on forward and backward slashes

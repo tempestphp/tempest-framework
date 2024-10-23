@@ -26,11 +26,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 {
     use IsIterable;
 
-    /**
-     * The underlying array.
-     *
-     * @var array<TKey, TValue>
-     */
+    /** @var array<TKey, TValue> */
     private array $array;
 
     /**
@@ -49,7 +45,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Get a value from the array and remove it.
+     * Gets a value from the array and remove it.
      *
      * @param array-key $key
      */
@@ -63,7 +59,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Shuffle the array.
+     * Shuffles the array.
      *
      * @return self<TKey, TValue>
      */
@@ -73,7 +69,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * @alias of remove.
+     * @alias of `remove`.
      */
     public function forget(string|int|array $keys): self
     {
@@ -81,7 +77,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Remove items from the array.
+     * Removes the specified items from the array.
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      *
@@ -99,8 +95,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Determines if the array is a list.
-     *
+     * Asserts whether the array is a list.
      * An array is a list if its keys consist of consecutive numbers.
      */
     public function isList(): bool
@@ -109,9 +104,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Determines if the array is an associative.
-     *
-     * An array is associative if its keys doesn't consist of consecutive numbers.
+     * Asserts whether the array is a associative.
+     * An array is associative if its keys do not consist of consecutive numbers.
      */
     public function isAssoc(): bool
     {
@@ -119,12 +113,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Get one or a specified number of random values from the array.
+     * Gets one or a specified number of random values from the array.
      *
      * @param int $number The number of random values to get.
-     * @param bool $preserveKey Whether to preserve the keys of the original array. ( won't work if $number is 1 as it will return a single value )
+     * @param bool $preserveKey Whether to include the keys of the original array.
      *
-     * @return self<TKey, TValue>|mixed The random values or single value if $number is 1.
+     * @return self<TKey, TValue>|mixed The random values, or a single value if `$number` is 1.
      */
     public function random(int $number = 1, bool $preserveKey = false): mixed
     {
@@ -157,7 +151,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Retrieve values from a given key in each sub-array of the current array.
+     * Retrieves values from a given key in each sub-array of the current array.
      * Optionally, you can pass a second parameter to also get the keys following the same pattern.
      *
      * @param string $value The key to assign the values from, support dot notation.
@@ -192,7 +186,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * @alias of add.
+     * @alias of `add`.
      */
     public function push(mixed $value): self
     {
@@ -200,8 +194,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Add an item at the end of the array.
-     *
+     * Appends the specified value to the array.
      *
      * @return self<TKey, TValue>
      */
@@ -213,8 +206,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Pad the array to the specified size with a value.
-     *
+     * Pads the array to the specified size with a value.
      *
      * @return self<TKey, TValue>
      */
@@ -224,7 +216,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Reverse the keys and values of the array.
+     * Reverses the keys and values of the array.
      *
      * @return self<TValue&array-key, TKey>
      */
@@ -234,16 +226,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Keep only the unique items in the array.
+     * Returns a new instance with only unique items from the original array.
      *
      * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
-     * @param bool $should_be_strict Whether the comparison should be strict, only used when giving a key parameter.
+     * @param bool $shouldBeStrict Whether the comparison should be strict, only used when giving a key parameter.
      *
      * @return self<TKey, TValue>
      */
-    public function unique(?string $key = null, bool $should_be_strict = false): self
+    public function unique(?string $key = null, bool $shouldBeStrict = false): self
     {
-        if (is_null($key) && $should_be_strict === false) {
+        if (is_null($key) && $shouldBeStrict === false) {
             return new self(array_unique($this->array, flags: SORT_REGULAR));
         }
 
@@ -263,7 +255,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
                 continue;
             }
 
-            if (in_array($filterValue, $uniqueFilteredValues, strict: $should_be_strict)) {
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
                 continue;
             }
 
@@ -275,7 +267,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Keep only the items that are not present in any of the given arrays.
+     * Returns a new instance of the array with only the items that are not present in any of the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
      *
@@ -289,7 +281,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Keep only the items whose keys are not present in any of the given arrays.
+     * Returns a new instance of the array with only the items whose keys are not present in any of the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
      *
@@ -303,7 +295,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Keep only the items that are present in all of the given arrays.
+     * Returns a new instance of the array with only the items that are present in all of the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
      *
@@ -317,7 +309,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Keep only the items whose keys are present in all of the given arrays.
+     * Returns a new instance of the array with only the items whose keys are present in all of the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
      *
@@ -331,7 +323,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Merge the array with the given arrays.
+     * Merges the array with the given arrays.
      *
      * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays The arrays to merge.
      *
@@ -345,7 +337,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Create a new array with this current array values as keys and the given values as values.
+     * Creates a new array with this current array values as keys and the given values as values.
      *
      * @template TCombineValue
      *
@@ -362,6 +354,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_combine($this->array, $values));
     }
 
+    /**
+     * Creates an array from the specified `$string`, split by the given `$separator`.
+     */
     public static function explode(string|Stringable $string, string $separator = ' '): self
     {
         if ($separator === '') {
@@ -371,6 +366,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(explode($separator, (string) $string));
     }
 
+    /**
+     * Asserts whether this instance is equal to the given array.
+     */
     public function equals(array|self $other): bool
     {
         $other = is_array($other) ? $other : $other->array;
@@ -378,7 +376,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $this->array === $other;
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns the first item in the instance that matches the given `$filter`.
+     * If `$filter` is `null`, returns the first item.
+     *
+     * @param Closure(mixed $value, mixed $key): bool $filter
+     */
     public function first(?Closure $filter = null): mixed
     {
         if ($filter === null) {
@@ -394,7 +397,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return null;
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns the last item in the instance that matches the given `$filter`.
+     * If `$filter` is `null`, returns the last item.
+     *
+     * @param Closure(mixed $value, mixed $key): bool $filter
+     */
     public function last(?Closure $filter = null): mixed
     {
         if ($filter === null) {
@@ -410,7 +418,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return null;
     }
 
-    /** @param mixed $value The popped value will be stored in this variable */
+    /**
+     * Returns an instance of the array without the last value.
+     *
+     * @param mixed $value The popped value will be stored in this variable
+     */
     public function pop(mixed &$value): self
     {
         $value = $this->last();
@@ -418,7 +430,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_slice($this->array, 0, -1));
     }
 
-    /** @param mixed $value The unshifted value will be stored in this variable */
+    /**
+     * Returns an instance of the array without the first value.
+     *
+     * @param mixed $value The unshifted value will be stored in this variable
+     */
     public function unshift(mixed &$value): self
     {
         $value = $this->first();
@@ -426,28 +442,40 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_slice($this->array, 1));
     }
 
+    /**
+     * Returns a new instance of the array in reverse order.
+     */
     public function reverse(): self
     {
         return new self(array_reverse($this->array));
     }
 
+    /**
+     * Asserts whether the array is empty.
+     */
     public function isEmpty(): bool
     {
         return empty($this->array);
     }
 
+    /**
+     * Asserts whether the array is not empty.
+     */
     public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
 
+    /**
+     * Returns an instance of `StringHelper` with the values of the instance joined with the given `$glue`.
+     */
     public function implode(string $glue): StringHelper
     {
         return str(implode($glue, $this->array));
     }
 
     /**
-     * Create a new array with the keys of this array as values.
+     * Returns a new instance with the keys of this array as values.
      *
      * @return self<array-key, TKey>
      */
@@ -456,12 +484,22 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_keys($this->array));
     }
 
+    /**
+     * Returns a new instance of this array without its keys.
+     *
+     * @return self<int, TValue>
+     */
     public function values(): self
     {
         return new self(array_values($this->array));
     }
 
-    /** @param null|Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns a new instance of this array with only the items that pass the given `$filter`.
+     * If `$filter` is `null`, the new instance will contain only values that are not `false` or `null`.
+     *
+     * @param null|Closure(mixed $value, mixed $key): bool $filter
+     */
     public function filter(?Closure $filter = null): self
     {
         $array = [];
@@ -476,7 +514,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @param Closure(mixed $value, mixed $key): void $each */
+    /**
+     * Applies the given callback to all items of the instance.
+     *
+     * @param Closure(mixed $value, mixed $key): void $each
+     */
     public function each(Closure $each): self
     {
         foreach ($this as $key => $value) {
@@ -486,7 +528,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $this;
     }
 
-    /** @param Closure(mixed $value, mixed $key): mixed $map */
+    /**
+     * Returns a new instance of the array, with each item transformed by the given callback.
+     *
+     * @param Closure(mixed $value, mixed $key): mixed $map
+     */
     public function map(Closure $map): self
     {
         $array = [];
@@ -498,7 +544,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @param Closure(mixed $value, mixed $key): Generator $map */
+    /**
+     * Returns a new instance of the array, with each item transformed by the given callback.
+     * The callback must return a generator, associating a key and a value.
+     *
+     * ### Example
+     * ```php
+     * arr(['a', 'b'])->mapWithKeys(fn (mixed $value, mixed $key) => yield $key => $value);
+     * ```
+     *
+     * @param Closure(mixed $value, mixed $key): Generator $map
+     */
     public function mapWithKeys(Closure $map): self
     {
         $array = [];
@@ -516,7 +572,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @return mixed|ArrayHelper */
+    /**
+     * Gets the value identified by the specified `$key`, or `$default` if no such value exists.
+     *
+     * @return mixed|ArrayHelper
+     */
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->array;
@@ -538,6 +598,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $value;
     }
 
+    /**
+     * Asserts whether a value identified by the specified `$key` exists.
+     */
     public function has(string $key): bool
     {
         $array = $this->array;
@@ -555,11 +618,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return true;
     }
 
+    /**
+     * Asserts whether the instance contains an item that can be identified by `$search`.
+     */
     public function contains(mixed $search): bool
     {
-        return $this->first(fn ($value) => $value === $search) !== null;
+        return $this->first(fn (mixed $value) => $value === $search) !== null;
     }
 
+    /**
+     * Associates the given `$value` to the given `$key` on the instance.
+     */
     public function set(string $key, mixed $value): self
     {
         $array = $this->array;
@@ -597,13 +666,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * @alias self::set()
+     * @alias of `set`
      */
     public function put(string $key, mixed $value): self
     {
         return $this->set($key, $value);
     }
 
+    /**
+     * Converts the dot-notated keys of the instance to a set of nested arrays.
+     */
     public function unwrap(): self
     {
         $unwrapValue = function (string|int $key, mixed $value) {
@@ -653,6 +725,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return str($last);
     }
 
+    /**
+     * Dumps the instance.
+     */
     public function dump(mixed ...$dumps): self
     {
         lw($this->array, ...$dumps);
@@ -660,12 +735,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $this;
     }
 
+    /**
+     * Dumps the instance and stops the execution of the script.
+     */
     public function dd(mixed ...$dd): void
     {
         ld($this->array, ...$dd);
     }
 
     /**
+     * Returns the underlying array of the instance.
+     *
      * @return array<TKey, TValue>
      */
     public function toArray(): array
@@ -674,6 +754,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Maps the items of the instance to the given object.
+     *
+     * @see Tempest\map()
+     *
      * @template T
      * @param class-string<T> $to
      * @return self<T>
