@@ -22,7 +22,8 @@
         "nikic/php-parser": "^5.3",
         "nunomaduro/collision": "^8.4",
         "php": "^8.3",
-        "php-http/discovery": "^1.19.2",
+        "psr-discovery/http-client-implementations": "1.x-dev",
+        "psr-discovery/http-factory-implementations": "1.x-dev",
         "psr/cache": "^3.0",
         "psr/clock": "^1.0.0",
         "psr/http-client": "^1.0.0",
@@ -43,7 +44,6 @@
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
         "nyholm/psr7": "^1.8",
-        "php-http/mock-client": "^1.6",
         "phpat/phpat": "^0.10.14",
         "phpstan/phpstan": "^1.10.0",
         "phpunit/phpunit": "^11.3.5",
@@ -134,11 +134,6 @@
     "bin": [
         "src/Tempest/Console/bin/tempest"
     ],
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
@@ -150,7 +145,6 @@
             "composer merge",
             "./bin/validate-packages",
             "./tempest discovery:clear",
-            "vendor/bin/rector process",
             "composer csfixer",
             "composer phpunit",
             "composer phpstan"

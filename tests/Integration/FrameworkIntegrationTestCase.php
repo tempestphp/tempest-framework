@@ -28,7 +28,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         $this->root = __DIR__ . '/../../';
-        $this->discoveryCache = true;
         $this->discoveryLocations = [
             new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
             new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
@@ -44,7 +43,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
+        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
             copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);

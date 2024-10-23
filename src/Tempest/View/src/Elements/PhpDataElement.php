@@ -19,6 +19,11 @@ final class PhpDataElement implements Element
     ) {
     }
 
+    public function getAttribute(string $name): string|null
+    {
+        return $this->wrappingElement->getAttribute($name);
+    }
+
     public function compile(): string
     {
         $name = ltrim($this->name, ':');

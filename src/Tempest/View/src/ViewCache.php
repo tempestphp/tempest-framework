@@ -15,8 +15,15 @@ final class ViewCache implements Cache
 {
     use IsCache;
 
-    public function __construct(private readonly CacheConfig $cacheConfig, private readonly ViewCachePool $cachePool = new ViewCachePool())
-    {
+    private readonly ViewCachePool $cachePool;
+
+    public function __construct(
+        private readonly CacheConfig $cacheConfig,
+        ?ViewCachePool $pool = null,
+    ) {
+        $this->cachePool = $pool ?? new ViewCachePool(
+            directory: path($this->cacheConfig->directory, 'views'),
+        );
     }
 
     public function getCachedViewPath(string $path, Closure $compiledView): string
@@ -25,8 +32,10 @@ final class ViewCache implements Cache
 
         $cacheItem = $this->cachePool->getItem($cacheKey);
 
-        if ($this->cacheConfig->enabled === false || $cacheItem->isHit() === false) {
-            $cacheItem = $this->put($cacheKey, $compiledView());
+        if ($this->isEnabled() === false || $cacheItem->isHit() === false) {
+            $cacheItem->set($compiledView());
+
+            $this->cachePool->save($cacheItem);
         }
 
         return path($this->cachePool->directory, $cacheItem->getKey() . '.php');
@@ -37,8 +46,8 @@ final class ViewCache implements Cache
         return $this->cachePool;
     }
 
-    protected function isEnabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->cacheConfig->enabled;
+        return $this->cacheConfig->enable ?? $this->cacheConfig->viewCache;
     }
 }

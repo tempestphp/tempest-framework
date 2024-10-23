@@ -7,18 +7,12 @@ namespace Tempest\Http;
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Support\VarExport\VarExportPhpFile;
 
 final readonly class RouteDiscovery implements Discovery
 {
-    private const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/route-discovery.cache.php';
-
-    /** @var VarExportPhpFile<RouteConfig> */
-    private VarExportPhpFile $routeCacheFile;
-
-    public function __construct(private RouteConfig $routeConfig)
-    {
-        $this->routeCacheFile = new VarExportPhpFile(self::CACHE_PATH);
+    public function __construct(
+        private RouteConfig $routeConfig,
+    ) {
     }
 
     public function discover(ClassReflector $class): void
@@ -34,26 +28,17 @@ final readonly class RouteDiscovery implements Discovery
         }
     }
 
-    public function hasCache(): bool
+    public function createCachePayload(): string
     {
-        return $this->routeCacheFile->exists();
+        return serialize($this->routeConfig);
     }
 
-    public function storeCache(): void
+    public function restoreCachePayload(Container $container, string $payload): void
     {
-        $this->routeCacheFile->export($this->routeConfig);
-    }
+        $routeConfig = unserialize($payload);
 
-    public function restoreCache(Container $container): void
-    {
-        $cachedRouteConfig = $this->routeCacheFile->import();
-        $this->routeConfig->staticRoutes = $cachedRouteConfig->staticRoutes;
-        $this->routeConfig->dynamicRoutes = $cachedRouteConfig->dynamicRoutes;
-        $this->routeConfig->matchingRegexes = $cachedRouteConfig->matchingRegexes;
-    }
-
-    public function destroyCache(): void
-    {
-        $this->routeCacheFile->destroy();
+        $this->routeConfig->staticRoutes = $routeConfig->staticRoutes;
+        $this->routeConfig->dynamicRoutes = $routeConfig->dynamicRoutes;
+        $this->routeConfig->matchingRegexes = $routeConfig->matchingRegexes;
     }
 }

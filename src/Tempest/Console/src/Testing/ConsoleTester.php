@@ -160,6 +160,19 @@ final class ConsoleTester
         return $this;
     }
 
+    public function getBuffer(?callable $callback = null): array
+    {
+        $buffer = array_map('trim', $this->output->getBufferWithoutFormatting());
+
+        $this->output->clear();
+
+        if ($callback !== null) {
+            return $callback($buffer);
+        }
+
+        return $buffer;
+    }
+
     public function useInteractiveTerminal(): self
     {
         $this->componentRenderer = new InteractiveComponentRenderer();
