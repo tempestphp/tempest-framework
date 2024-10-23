@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 namespace Tempest {
+    /**
+     * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
+     */
     function path(string ...$parts): string
     {
         $path = implode('/', $parts);
@@ -14,6 +17,9 @@ namespace Tempest {
         );
     }
 
+    /**
+     * Retrieves the given `$key` from the environment variables. If `$key` is not defined, `$default` is returned instead.
+     */
     function env(string $key, mixed $default = null): mixed
     {
         $value = getenv($key);
