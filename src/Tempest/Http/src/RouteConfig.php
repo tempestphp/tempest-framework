@@ -54,7 +54,7 @@ final class RouteConfig
 
     public function prepareMatchingRegexes(): void
     {
-        if (!empty($this->matchingRegexes)) {
+        if (! empty($this->matchingRegexes)) {
             return;
         }
 
@@ -64,6 +64,7 @@ final class RouteConfig
     public function __sleep(): array
     {
         $this->prepareMatchingRegexes();
+
         return ['staticRoutes', 'dynamicRoutes', 'matchingRegexes'];
     }
 

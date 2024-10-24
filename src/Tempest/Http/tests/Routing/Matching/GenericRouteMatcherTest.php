@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests\Routing\Matching;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Http\Method;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
-use PHPUnit\Framework\TestCase;
 use Tempest\Http\Routing\Matching\GenericRouteMatcher;
 use Tempest\Reflection\MethodReflector;
 
+/**
+ * @internal
+ */
 final class GenericRouteMatcherTest extends TestCase
 {
     private RouteConfig $routeConfig;

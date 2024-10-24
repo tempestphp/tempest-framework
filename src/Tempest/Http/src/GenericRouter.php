@@ -27,7 +27,6 @@ use Tempest\View\View;
  */
 final class GenericRouter implements Router
 {
-
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
 

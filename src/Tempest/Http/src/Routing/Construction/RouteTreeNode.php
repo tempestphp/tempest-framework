@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
-
 use RuntimeException;
-use Tempest\Http\GenericRouter;
 use Tempest\Http\Route;
 
 final class RouteTreeNode
@@ -23,8 +21,7 @@ final class RouteTreeNode
     private function __construct(
         public readonly RouteTreeNodeType $type,
         public readonly ?string $segment = null
-    )
-    {
+    ) {
     }
 
     public static function createRootRoute(): self
@@ -50,6 +47,7 @@ final class RouteTreeNode
             }
 
             $this->leaf = $route;
+
             return;
         }
 
@@ -105,7 +103,7 @@ final class RouteTreeNode
             }
 
             $regexp .= ")";
-        } else if ($this->leaf !== null) {
+        } elseif ($this->leaf !== null) {
             $regexp .= '\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
         }
 

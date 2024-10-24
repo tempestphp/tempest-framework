@@ -6,8 +6,6 @@ namespace Tempest\Http;
 
 use Attribute;
 use Tempest\Reflection\MethodReflector;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
 #[Attribute]
 class Route
@@ -37,7 +35,7 @@ class Route
     ) {
 
         $this->params = self::getRouteParams($this->uri);
-        $this->isDynamic = !empty($this->params);
+        $this->isDynamic = ! empty($this->params);
     }
 
     public function setHandler(MethodReflector $handler): self
@@ -63,7 +61,7 @@ class Route
         $parts = explode('/', $this->uri);
 
         return array_values(
-            array_filter($parts, static fn (string $part) => !empty($part))
+            array_filter($parts, static fn (string $part) => ! empty($part))
         );
     }
 }

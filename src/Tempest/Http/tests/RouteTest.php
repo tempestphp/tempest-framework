@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Http\Route;
 
+/**
+ * @internal
+ */
 final class RouteTest extends TestCase
 {
     #[DataProvider('uri_provider_with_param')]
