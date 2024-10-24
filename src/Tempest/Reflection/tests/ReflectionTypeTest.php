@@ -44,7 +44,7 @@ final class ReflectionTypeTest extends TestCase
     {
         $this->assertSame(
             expected: A::class,
-            actual: (new TypeReflector('Tempest\Reflection\Tests\Fixtures\A'))->asClass()->getName(),
+            actual: (new TypeReflector(\Tempest\Reflection\Tests\Fixtures\A::class))->asClass()->getName(),
         );
 
         $this->assertSame(
