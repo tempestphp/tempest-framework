@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http\Routing;
+namespace Tempest\Http\Routing\Construction;
 
 
-use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use RuntimeException;
 use Tempest\Http\GenericRouter;
 use Tempest\Http\Route;
@@ -102,12 +101,12 @@ final class RouteTreeNode
             }
 
             if ($this->leaf !== null) {
-                $regexp .= '|\/?$(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+                $regexp .= '|\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
             }
 
             $regexp .= ")";
         } else if ($this->leaf !== null) {
-            $regexp .= '\/?$(*' . GenericRouter::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+            $regexp .= '\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
         }
 
         return $regexp;

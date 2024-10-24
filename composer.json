@@ -50,7 +50,8 @@
         "rector/rector": "^1.2",
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^3.1",
-        "symplify/monorepo-builder": "^11.2"
+        "symplify/monorepo-builder": "^11.2",
+        "phpbench/phpbench": "84.x-dev"
     },
     "replace": {
         "tempest/auth": "self.version",

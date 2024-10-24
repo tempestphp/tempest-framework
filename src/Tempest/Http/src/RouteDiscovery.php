@@ -6,7 +6,6 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Http\Routing\RoutingTree;
 use Tempest\Reflection\ClassReflector;
 
 final readonly class RouteDiscovery implements Discovery

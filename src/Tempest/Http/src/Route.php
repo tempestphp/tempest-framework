@@ -14,9 +14,6 @@ class Route
 {
     public MethodReflector $handler;
 
-    /** @var string The Regex used for matching this route against a request URI */
-    public readonly string $matchingRegex;
-
     /** @var bool If the route has params */
     public readonly bool $isDynamic;
 
@@ -39,7 +36,7 @@ class Route
         public array $middleware = [],
     ) {
 
-        $this->params = Route::getRouteParams($this->uri);
+        $this->params = self::getRouteParams($this->uri);
         $this->isDynamic = !empty($this->params);
     }
 
@@ -65,6 +62,8 @@ class Route
     {
         $parts = explode('/', $this->uri);
 
-        return array_filter($parts, static fn (string $part) => !empty($part));
+        return array_values(
+            array_filter($parts, static fn (string $part) => !empty($part))
+        );
     }
 }

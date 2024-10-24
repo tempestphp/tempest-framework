@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Http\Routing;
+namespace Tempest\Http\Routing\Construction;
 
 enum RouteTreeNodeType
 {

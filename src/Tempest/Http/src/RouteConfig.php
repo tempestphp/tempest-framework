@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Routing\MarkedRoute;
-use Tempest\Http\Routing\RoutingTree;
+use Tempest\Http\Routing\Construction\MarkedRoute;
+use Tempest\Http\Routing\Construction\RoutingTree;
 use Tempest\Reflection\MethodReflector;
 
 final class RouteConfig
@@ -42,7 +42,6 @@ final class RouteConfig
                 )
             );
 
-            $this->matchingRegexes[$route->method->value] = $this->routingTree->regexForMethod($route->method);
         } else {
             $uriWithTrailingSlash = rtrim($route->uri, '/');
 
@@ -53,41 +52,23 @@ final class RouteConfig
         return $this;
     }
 
-    /**
-     * Build one big regex for matching request URIs.
-     * See https://github.com/tempestphp/tempest-framework/pull/175 for the details
-     */
-    private function addToMatchingRegex(Route $route, string $routeMark): void
+    public function prepareMatchingRegexes(): void
     {
-        // Each route, say "/posts/{postId}", which would have the regex "/posts/[^/]+", is marked.
-        // e.g "/posts/[^/]+ (*MARK:a)".
-        // This mark can then be used to find the matched route via a hashmap-lookup.
-        $routeRegexPart = "{$route->matchingRegex} (*" . GenericRouter::REGEX_MARK_TOKEN . ":{$routeMark})";
-
-        if (! array_key_exists($route->method->value, $this->matchingRegexes)) {
-            // initialize matching regex for method
-            $this->matchingRegexes[$route->method->value] = "#^(?|{$routeRegexPart})$#x";
-
+        if (!empty($this->matchingRegexes)) {
             return;
         }
 
-        // insert regex part of this route into the matching group of the regex for the method
-        $this->matchingRegexes[$route->method->value] = substr_replace($this->matchingRegexes[$route->method->value], "|{$routeRegexPart}", -4, 0);
+        $this->matchingRegexes = $this->routingTree->toMatchingRegexes();
     }
 
-    public function __serialize(): array
+    public function __sleep(): array
     {
-        return [
-            'staticRoutes' => serialize($this->staticRoutes),
-            'dynamicRoutes' => serialize($this->dynamicRoutes),
-            'matchingRegexes' => serialize($this->matchingRegexes),
-        ];
+        $this->prepareMatchingRegexes();
+        return ['staticRoutes', 'dynamicRoutes', 'matchingRegexes'];
     }
 
-    public function __unserialize(array $data): void
+    public function __wakeup(): void
     {
-        $this->staticRoutes = unserialize($data['staticRoutes']);
-        $this->dynamicRoutes = unserialize($data['dynamicRoutes']);
-        $this->matchingRegexes = unserialize($data['matchingRegexes']);
+        $this->routingTree = new RoutingTree();
     }
 }

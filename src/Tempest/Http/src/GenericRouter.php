@@ -16,9 +16,9 @@ use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Routing\Matching\RouteMatcher;
 use function Tempest\map;
 use Tempest\Reflection\ClassReflector;
-use function Tempest\Support\str;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -27,14 +27,13 @@ use Tempest\View\View;
  */
 final class GenericRouter implements Router
 {
-    public const string REGEX_MARK_TOKEN = 'MARK';
 
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
 
     public function __construct(
         private readonly Container $container,
-        private readonly RouteConfig $routeConfig,
+        private readonly RouteMatcher $routeMatcher,
         private readonly AppConfig $appConfig,
     ) {
     }
@@ -45,7 +44,7 @@ final class GenericRouter implements Router
             $request = map($request)->with(RequestToPsrRequestMapper::class);
         }
 
-        $matchedRoute = $this->matchRoute($request);
+        $matchedRoute = $this->routeMatcher->match($request);
 
         if ($matchedRoute === null) {
             return new NotFound();
@@ -74,17 +73,6 @@ final class GenericRouter implements Router
         }
 
         return $response;
-    }
-
-    private function matchRoute(PsrRequest $request): ?MatchedRoute
-    {
-        // Try to match routes without any parameters
-        if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
-            return $staticRoute;
-        }
-
-        // match dynamic routes
-        return $this->matchDynamicRoute($request);
     }
 
     private function getCallable(MatchedRoute $matchedRoute): Closure
@@ -167,20 +155,6 @@ final class GenericRouter implements Router
         return $uri;
     }
 
-    private function resolveParams(Route $route, array $routeMatches): ?array
-    {
-        if (!$route->isDynamic) {
-            return [];
-        }
-
-        $valueMap = [];
-        foreach ($route->params as $i => $param) {
-            $valueMap[$param] = $routeMatches[$i + 1];
-        }
-
-        return $valueMap;
-    }
-
     private function createResponse(Response|View $input): Response
     {
         if ($input instanceof View) {
@@ -188,46 +162,6 @@ final class GenericRouter implements Router
         }
 
         return $input;
-    }
-
-    private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
-    {
-        $staticRoute = $this->routeConfig->staticRoutes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
-
-        if ($staticRoute === null) {
-            return null;
-        }
-
-        return new MatchedRoute($staticRoute, []);
-    }
-
-    private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
-    {
-        // If there are no routes for the given request method, we immediately stop
-        $routesForMethod = $this->routeConfig->dynamicRoutes[$request->getMethod()] ?? null;
-        if ($routesForMethod === null) {
-            return null;
-        }
-
-        $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
-
-        // Then we'll use this regex to see whether we have a match or not
-        $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $routingMatches);
-
-        if (! $matchResult || ! array_key_exists(self::REGEX_MARK_TOKEN, $routingMatches)) {
-            return null;
-        }
-        $route = $routesForMethod[$routingMatches[self::REGEX_MARK_TOKEN]];
-
-        $routeParams = $this->resolveParams($route, $routingMatches);
-
-        // This check should _in theory_ not be needed,
-        // since we're certain there's a match
-        if ($routeParams === null) {
-            return null;
-        }
-
-        return new MatchedRoute($route, $routeParams);
     }
 
     private function resolveRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
