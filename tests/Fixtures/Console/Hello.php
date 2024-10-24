@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Console;
 
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\Console;
 
 final readonly class Hello
 {
@@ -23,7 +24,14 @@ final readonly class Hello
     }
 
     #[ConsoleCommand]
-    public function test(?int $optionalValue = null, bool $flag = false): void
+    public function test(
+        #[ConsoleArgument]
+        ?int $optionalValue = null,
+        #[ConsoleArgument(
+            name: 'custom-flag',
+        )]
+        bool $flag = false
+    ): void
     {
         $value = $optionalValue ?? 'null';
 
