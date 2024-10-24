@@ -44,7 +44,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
         $this->assertArrayHasKey('foo', $session->get(Session::ORIGINAL_VALUES));
     }
 
-    public function test_invalid_with_request()
+    public function test_invalid_with_request(): void
     {
         $request = new GenericRequest(
             method: Method::GET,
