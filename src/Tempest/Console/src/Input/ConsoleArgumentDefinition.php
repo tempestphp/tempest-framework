@@ -24,18 +24,17 @@ final readonly class ConsoleArgumentDefinition
     public static function fromParameter(ParameterReflector $parameter): ConsoleArgumentDefinition
     {
         $attribute = $parameter->getAttribute(ConsoleArgument::class);
-
-        $type = $parameter->getType();
+        $type      = $parameter->getType();
 
         return new ConsoleArgumentDefinition(
-            name: $parameter->getName(),
-            type: $type->getName(),
-            default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
-            hasDefault: $parameter->isDefaultValueAvailable(),
-            position: $parameter->getPosition(),
+            name       : $attribute?->name ?? $parameter->getName(),
+            type       : $type->getName(),
+            default    : $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue(): null,
+            hasDefault : $parameter->isDefaultValueAvailable(),
+            position   : $parameter->getPosition(),
             description: $attribute?->description,
-            aliases: $attribute->aliases ?? [],
-            help: $attribute?->help,
+            aliases    : $attribute->aliases ?? [],
+            help       : $attribute?->help,
         );
     }
 
