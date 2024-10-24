@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Console;
 
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgument;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
 
 final readonly class Hello
 {
@@ -31,8 +31,7 @@ final readonly class Hello
             name: 'custom-flag',
         )]
         bool $flag = false
-    ): void
-    {
+    ): void {
         $value = $optionalValue ?? 'null';
 
         $this->console->info("{$value}");

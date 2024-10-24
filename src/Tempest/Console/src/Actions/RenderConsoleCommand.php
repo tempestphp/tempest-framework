@@ -7,7 +7,6 @@ namespace Tempest\Console\Actions;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
-use Tempest\Reflection\ParameterReflector;
 
 final readonly class RenderConsoleCommand
 {
@@ -35,12 +34,12 @@ final readonly class RenderConsoleCommand
         $name = str($argument->name)
             ->prepend('<em>')
             ->append('</em>');
-        
+
         $asString = match($argument->type) {
             'bool' => "<em>--</em>{$name}",
             default => $name,
         };
-            
+
         if (! $argument->hasDefault) {
             return "<{$asString}>";
         }
