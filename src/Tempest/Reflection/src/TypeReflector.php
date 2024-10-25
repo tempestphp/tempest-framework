@@ -144,6 +144,11 @@ final readonly class TypeReflector implements Reflector
         return class_exists($this->cleanDefinition);
     }
 
+    public function isInterface(): bool
+    {
+        return interface_exists($this->cleanDefinition);
+    }
+
     public function isIterable(): bool
     {
         return in_array($this->cleanDefinition, [
