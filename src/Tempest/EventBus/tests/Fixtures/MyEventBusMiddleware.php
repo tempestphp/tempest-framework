@@ -8,11 +8,11 @@ use Tempest\EventBus\EventBusMiddleware;
 
 final class MyEventBusMiddleware implements EventBusMiddleware
 {
-    public static bool $hit = false;
+    public static int $hits = 0;
 
     public function __invoke(object $event, callable $next): void
     {
-        self::$hit = true;
+        self::$hits += 1;
 
         $next($event);
     }

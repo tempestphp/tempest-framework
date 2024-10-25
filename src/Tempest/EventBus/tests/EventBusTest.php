@@ -46,12 +46,40 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
 
         MyEventHandler::$itHappened = false;
-        MyEventBusMiddleware::$hit = false;
+        MyEventBusMiddleware::$hits = 0;
 
         $eventBus->dispatch(new ItHappened());
 
         $this->assertTrue(MyEventHandler::$itHappened);
-        $this->assertTrue(MyEventBusMiddleware::$hit);
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
+    }
+
+    public function test_middleware_is_only_triggered_once_per_event_dispatch(): void
+    {
+        $container = new GenericContainer();
+
+        $handler = new EventHandler();
+        $handler->setHandler(new MethodReflector(new ReflectionMethod(MyEventHandler::class, 'handleItHappened')));
+
+        $config = new EventBusConfig(
+            handlers: [
+                ItHappened::class => [
+                    new CallableEventHandler(ItHappened::class, $handler),
+                    new CallableEventHandler(ItHappened::class, $handler),
+                ],
+            ],
+            middleware: [
+                MyEventBusMiddleware::class,
+            ]
+        );
+
+        $eventBus = new GenericEventBus($container, $config);
+
+        MyEventBusMiddleware::$hits = 0;
+
+        $eventBus->dispatch(new ItHappened());
+
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
     public function test_closure_based_handlers(): void
@@ -76,12 +104,12 @@ final class EventBusTest extends TestCase
 
         $eventBus = new GenericEventBus($container, $config);
 
-        MyEventBusMiddleware::$hit = false;
+        MyEventBusMiddleware::$hits = 0;
 
         $eventBus->dispatch(new ItHappened());
 
         $this->assertSame('bar', $called);
-        $this->assertTrue(MyEventBusMiddleware::$hit);
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
     public function test_closure_based_handlers_using_listen_method(): void

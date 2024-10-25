@@ -24,7 +24,7 @@ final readonly class GenericEventBus implements EventBus
 
     public function dispatch(string|object $event): void
     {
-        $eventName = match(true) {
+        $eventName = match (true) {
             $event instanceof BackedEnum => $event->value,
             $event instanceof UnitEnum => $event->name,
             is_string($event) => $event,
@@ -34,12 +34,15 @@ final readonly class GenericEventBus implements EventBus
         /** @var \Tempest\EventBus\CallableEventHandler[] $eventHandlers */
         $eventHandlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
-        foreach ($eventHandlers as $eventHandler) {
-            $callable = $eventHandler->normalizeCallable($this->container);
-            $callable = $this->applyMiddleware($callable);
+        $dispatch = $this->applyMiddleware(function (string|object $event) use ($eventHandlers): void {
+            foreach ($eventHandlers as $eventHandler) {
+                $callable = $eventHandler->normalizeCallable($this->container);
 
-            $callable($event);
-        }
+                $callable($event);
+            }
+        });
+
+        $dispatch($event);
     }
 
     private function applyMiddleware(Closure $handler): Closure
@@ -50,7 +53,7 @@ final readonly class GenericEventBus implements EventBus
             $handler = fn (string|object $event) => $this->container->invoke(
                 $middlewareClass,
                 event: $event,
-                next: $handler
+                next: $handler,
             );
         }
 
