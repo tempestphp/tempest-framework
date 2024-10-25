@@ -24,22 +24,44 @@ final readonly class GenericEventBus implements EventBus
 
     public function dispatch(string|object $event): void
     {
-        $eventName = match(true) {
+
+        $eventHandlers = $this->resolveHandlers($event);
+
+        $dispatch = $this->applyMiddleware(function (string|object $event) use ($eventHandlers): void {
+            foreach ($eventHandlers as $eventHandler) {
+                $callable = $eventHandler->normalizeCallable($this->container);
+
+                $callable($event);
+            }
+        });
+
+        $dispatch($event);
+    }
+
+    /** @return \Tempest\EventBus\CallableEventHandler[] */
+    private function resolveHandlers(string|object $event): array
+    {
+        $eventName = match (true) {
             $event instanceof BackedEnum => $event->value,
             $event instanceof UnitEnum => $event->name,
             is_string($event) => $event,
             default => $event::class,
         };
 
-        /** @var \Tempest\EventBus\CallableEventHandler[] $eventHandlers */
-        $eventHandlers = $this->eventBusConfig->handlers[$eventName] ?? [];
+        $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
-        foreach ($eventHandlers as $eventHandler) {
-            $callable = $eventHandler->normalizeCallable($this->container);
-            $callable = $this->applyMiddleware($callable);
+        if (is_object($event)) {
+            $interfaces = class_implements($event);
 
-            $callable($event);
+            foreach ($interfaces as $interface) {
+                $handlers = [
+                    ...$handlers,
+                    ...($this->eventBusConfig->handlers[$interface] ?? []),
+                ];
+            }
         }
+
+        return $handlers;
     }
 
     private function applyMiddleware(Closure $handler): Closure
@@ -50,7 +72,7 @@ final readonly class GenericEventBus implements EventBus
             $handler = fn (string|object $event) => $this->container->invoke(
                 $middlewareClass,
                 event: $event,
-                next: $handler
+                next: $handler,
             );
         }
 

@@ -10,6 +10,7 @@ use Tempest\Core\Discovery;
 use Tempest\Core\HandlesDiscoveryCache;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\TypeReflector;
 use UnitEnum;
 
 final readonly class EventBusDiscovery implements Discovery
@@ -44,9 +45,10 @@ final readonly class EventBusDiscovery implements Discovery
                     continue;
                 }
 
+                /** @var TypeReflector $type */
                 $type = $parameters[0]->getType();
 
-                if (! $type->isClass()) {
+                if (! $type->isClass() && ! $type->isInterface()) {
                     continue;
                 }
 

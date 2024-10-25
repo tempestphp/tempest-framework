@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 namespace Tempest {
+
+    use Closure;
+    use Tempest\Core\DeferredTasks;
+
     /**
      * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
      */
@@ -34,5 +38,13 @@ namespace Tempest {
             'null', '' => null,
             default => $value,
         };
+    }
+  
+    /**
+     * Defer a task, will be run after a request has been sent or a command has executed
+     */
+    function defer(Closure $closure): void
+    {
+        get(DeferredTasks::class)->add($closure);
     }
 }
