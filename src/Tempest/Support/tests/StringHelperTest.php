@@ -420,6 +420,21 @@ final class StringHelperTest extends TestCase
         $this->assertSame('john doe', StringHelper::implode(arr(['john', 'doe']))->toString());
     }
 
+    #[TestWith([['Jon', 'Jane'], 'Jon and Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], 'Jon, Jane and Jill'])]
+    public function test_join(array $initial, string $expected): void
+    {
+        $this->assertEquals($expected, StringHelper::join($initial));
+    }
+
+    #[TestWith([['Jon', 'Jane'], ', ', ' and maybe ', 'Jon and maybe Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', ' and ', 'Jon + Jane and Jill'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', null, 'Jon + Jane + Jill'])]
+    public function test_join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
+    {
+        $this->assertTrue(StringHelper::join($initial, $glue, $finalGlue)->equals($expected));
+    }
+
     public function test_excerpt(): void
     {
         $content = str('a

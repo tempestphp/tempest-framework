@@ -631,6 +631,28 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * Joins all values using the specified `$glue`. The last item of the string is separated by `$finalGlue`.
+     */
+    public function join(string $glue = ', ', ?string $finalGlue = ' and '): StringHelper
+    {
+        if ($finalGlue === '' || is_null($finalGlue)) {
+            return $this->implode($glue);
+        }
+
+        if ($this->isEmpty()) {
+            return str('');
+        }
+
+        $parts = $this->pop($last);
+
+        if ($parts->isNotEmpty()) {
+            return $parts->implode($glue)->append($finalGlue, $last);
+        }
+
+        return str($last);
+    }
+
     public function dump(mixed ...$dumps): self
     {
         lw($this->array, ...$dumps);

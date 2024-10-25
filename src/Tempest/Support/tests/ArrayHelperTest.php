@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
@@ -142,6 +143,21 @@ final class ArrayHelperTest extends TestCase
     public function test_implode(): void
     {
         $this->assertEquals(str('a,b,c'), arr(['a', 'b', 'c'])->implode(','));
+    }
+
+    #[TestWith([['Jon', 'Jane'], 'Jon and Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], 'Jon, Jane and Jill'])]
+    public function test_join(array $initial, string $expected): void
+    {
+        $this->assertEquals($expected, arr($initial)->join());
+    }
+
+    #[TestWith([['Jon', 'Jane'], ', ', ' and maybe ', 'Jon and maybe Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', ' and ', 'Jon + Jane and Jill'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', null, 'Jon + Jane + Jill'])]
+    public function test_join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
+    {
+        $this->assertTrue(arr($initial)->join($glue, $finalGlue)->equals($expected));
     }
 
     public function test_pop(): void
