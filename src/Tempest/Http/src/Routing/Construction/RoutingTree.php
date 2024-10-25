@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
+/**
+ * @internal
+ */
 final class RoutingTree
 {
     /** @var array<string, RouteTreeNode> */
@@ -18,7 +21,10 @@ final class RoutingTree
     {
         $method = $markedRoute->route->method;
 
+        // Find the root tree node based on HTTP method
         $root = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
+
+        // Add path to tree using recursion
         $root->addPath($markedRoute->route->routeParts(), $markedRoute);
     }
 

@@ -84,7 +84,7 @@ final class GenericRouteMatcherTest extends TestCase
 
         $matchedRoute = $this->subject->match($request);
 
-        $this->assertEquals([ 'id' => '6', 'tag' => 'brendt', 'name' => 'brend' ], $matchedRoute->params);
+        $this->assertEquals([ 'id' => '6', 'tag' => 'brendt', 'name' => 'brent' ], $matchedRoute->params);
         $this->assertTrue($matchedRoute->route->isDynamic);
         $this->assertEquals('/dynamic/{id}/{tag}/{name}/{id}', $matchedRoute->route->uri);
     }

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
-use RuntimeException;
 use Tempest\Http\Route;
 
+/**
+ * @internal
+ */
 final class RouteTreeNode
 {
     /** @var array<string, RouteTreeNode> */
@@ -39,29 +41,29 @@ final class RouteTreeNode
         return new self(RouteTreeNodeType::Static, $name);
     }
 
-    public function addPath(array $pathSegments, MarkedRoute $route): void
+    public function addPath(array $pathSegments, MarkedRoute $markedRoute): void
     {
         if (count($pathSegments) === 0) {
             if ($this->leaf !== null) {
-                throw new RuntimeException('Path already defined for' . $route->route->uri);
+                throw new DuplicateRouteException($markedRoute->route);
             }
 
-            $this->leaf = $route;
+            $this->leaf = $markedRoute;
 
             return;
         }
 
-        $segment = array_shift($pathSegments);
+        $currentPathSegment = array_shift($pathSegments);
 
-        $dynamicSegment = self::convertDynamicSegmentToRegex($segment);
+        $regexPathSegment = self::convertDynamicSegmentToRegex($currentPathSegment);
 
-        if ($segment !== $dynamicSegment) {
-            $node = $this->dynamicPaths[$dynamicSegment] ??= self::createParameterRoute($dynamicSegment);
+        if ($currentPathSegment !== $regexPathSegment) {
+            $node = $this->dynamicPaths[$regexPathSegment] ??= self::createParameterRoute($regexPathSegment);
         } else {
-            $node = $this->staticPaths[$dynamicSegment] ??= self::createStaticRoute($segment);
+            $node = $this->staticPaths[$regexPathSegment] ??= self::createStaticRoute($currentPathSegment);
         }
 
-        $node->addPath($pathSegments, $route);
+        $node->addPath($pathSegments, $markedRoute);
     }
 
     public static function convertDynamicSegmentToRegex(string $uriPart): string
@@ -94,6 +96,7 @@ final class RouteTreeNode
             foreach ($this->staticPaths as $path) {
                 $regexp .= '|' . $path->toRegex();
             }
+
             foreach ($this->dynamicPaths as $path) {
                 $regexp .= '|' . $path->toRegex();
             }
