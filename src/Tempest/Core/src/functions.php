@@ -3,11 +3,6 @@
 declare(strict_types=1);
 
 namespace Tempest {
-    function testFunction(): string
-    {
-        return 'a-test';
-    }
-
     function path(string ...$parts): string
     {
         $path = implode('/', $parts);
