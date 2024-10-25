@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 namespace Tempest {
+
+    use Closure;
+    use Tempest\Core\DeferredTasks;
+
     function path(string ...$parts): string
     {
         $path = implode('/', $parts);
@@ -28,5 +32,10 @@ namespace Tempest {
             'null', '' => null,
             default => $value,
         };
+    }
+
+    function defer(Closure $closure): void
+    {
+        get(DeferredTasks::class)->add($closure);
     }
 }
