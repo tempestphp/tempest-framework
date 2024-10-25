@@ -663,7 +663,7 @@ final class ArrayHelperTest extends TestCase
                 true,
                 'true',
             ])
-                ->unique(should_be_strict: false)
+                ->unique(shouldBeStrict: false)
                 ->values()
                 ->toArray(),
             expected: [
@@ -682,7 +682,7 @@ final class ArrayHelperTest extends TestCase
                 true,
                 'true',
             ])
-                ->unique(should_be_strict: true)
+                ->unique(shouldBeStrict: true)
                 ->values()
                 ->toArray(),
             expected: [
@@ -704,7 +704,7 @@ final class ArrayHelperTest extends TestCase
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate'],
             ])
-                ->unique('id', should_be_strict: true)
+                ->unique('id', shouldBeStrict: true)
                 ->values()
                 ->toArray(),
             expected: [
