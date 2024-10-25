@@ -21,6 +21,7 @@ use Tempest\Reflection\MethodReflector;
 final class GenericRouteMatcherTest extends TestCase
 {
     private RouteConfig $routeConfig;
+
     private GenericRouteMatcher $subject;
 
     protected function setUp(): void
@@ -80,7 +81,7 @@ final class GenericRouteMatcherTest extends TestCase
 
     public function test_match_on_dynamic_route_with_many_parameters(): void
     {
-        $request = new ServerRequest(uri: '/dynamic/5/brendt/brend/6', method: 'GET');
+        $request = new ServerRequest(uri: '/dynamic/5/brendt/brent/6', method: 'GET');
 
         $matchedRoute = $this->subject->match($request);
 

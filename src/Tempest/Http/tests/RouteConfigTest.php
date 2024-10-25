@@ -19,6 +19,7 @@ use Tempest\Reflection\MethodReflector;
 final class RouteConfigTest extends TestCase
 {
     private RouteConfig $subject;
+
     private MethodReflector $dummyMethod;
 
     protected function setUp(): void

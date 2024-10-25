@@ -21,6 +21,7 @@ use Tempest\Reflection\MethodReflector;
 final class GenericRouteMatcherBench
 {
     private RouteConfig $config;
+
     private GenericRouteMatcher $matcher;
 
     public function __construct()

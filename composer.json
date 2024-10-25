@@ -45,13 +45,13 @@
         "jenssegers/blade": "^2.0",
         "nyholm/psr7": "^1.8",
         "phpat/phpat": "^0.10.14",
+        "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^1.10.0",
         "phpunit/phpunit": "^11.3.5",
         "rector/rector": "^1.2",
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^3.1",
-        "symplify/monorepo-builder": "^11.2",
-        "phpbench/phpbench": "84.x-dev"
+        "symplify/monorepo-builder": "^11.2"
     },
     "replace": {
         "tempest/auth": "self.version",

@@ -17,7 +17,6 @@ final class RouteTreeNode
     /** @var array<string, RouteTreeNode> */
     private array $dynamicPaths = [];
 
-    /** @var ?MarkedRoute */
     private ?MarkedRoute $leaf = null;
 
     private function __construct(
@@ -43,7 +42,7 @@ final class RouteTreeNode
 
     public function addPath(array $pathSegments, MarkedRoute $markedRoute): void
     {
-        if (count($pathSegments) === 0) {
+        if ($pathSegments === []) {
             if ($this->leaf !== null) {
                 throw new DuplicateRouteException($markedRoute->route);
             }
@@ -90,7 +89,7 @@ final class RouteTreeNode
     {
         $regexp = $this->regexSegment();
 
-        if (count($this->staticPaths) > 0 || count($this->dynamicPaths) > 0) {
+        if ($this->staticPaths !== [] || $this->dynamicPaths !== []) {
             $regexp .= "(?";
 
             foreach ($this->staticPaths as $path) {
