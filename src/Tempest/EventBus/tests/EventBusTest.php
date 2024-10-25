@@ -12,6 +12,9 @@ use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\EventHandler;
 use Tempest\EventBus\GenericEventBus;
+use Tempest\EventBus\Tests\Fixtures\EventInterface;
+use Tempest\EventBus\Tests\Fixtures\EventInterfaceHandler;
+use Tempest\EventBus\Tests\Fixtures\EventInterfaceImplementation;
 use Tempest\EventBus\Tests\Fixtures\ItHappened;
 use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
@@ -46,12 +49,40 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
 
         MyEventHandler::$itHappened = false;
-        MyEventBusMiddleware::$hit = false;
+        MyEventBusMiddleware::$hits = 0;
 
         $eventBus->dispatch(new ItHappened());
 
         $this->assertTrue(MyEventHandler::$itHappened);
-        $this->assertTrue(MyEventBusMiddleware::$hit);
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
+    }
+
+    public function test_middleware_is_only_triggered_once_per_event_dispatch(): void
+    {
+        $container = new GenericContainer();
+
+        $handler = new EventHandler();
+        $handler->setHandler(new MethodReflector(new ReflectionMethod(MyEventHandler::class, 'handleItHappened')));
+
+        $config = new EventBusConfig(
+            handlers: [
+                ItHappened::class => [
+                    new CallableEventHandler(ItHappened::class, $handler),
+                    new CallableEventHandler(ItHappened::class, $handler),
+                ],
+            ],
+            middleware: [
+                MyEventBusMiddleware::class,
+            ]
+        );
+
+        $eventBus = new GenericEventBus($container, $config);
+
+        MyEventBusMiddleware::$hits = 0;
+
+        $eventBus->dispatch(new ItHappened());
+
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
     public function test_closure_based_handlers(): void
@@ -76,12 +107,12 @@ final class EventBusTest extends TestCase
 
         $eventBus = new GenericEventBus($container, $config);
 
-        MyEventBusMiddleware::$hit = false;
+        MyEventBusMiddleware::$hits = 0;
 
         $eventBus->dispatch(new ItHappened());
 
         $this->assertSame('bar', $called);
-        $this->assertTrue(MyEventBusMiddleware::$hit);
+        $this->assertSame(1, MyEventBusMiddleware::$hits);
     }
 
     public function test_closure_based_handlers_using_listen_method(): void
@@ -116,5 +147,29 @@ final class EventBusTest extends TestCase
         get(EventBus::class)->dispatch('my-event');
 
         $this->assertTrue($hasHappened);
+    }
+
+    public function test_interface_handlers(): void
+    {
+        $container = new GenericContainer();
+
+        $handler = new EventHandler();
+        $handler->setHandler(new MethodReflector(new ReflectionMethod(EventInterfaceHandler::class, 'handleItHappened')));
+
+        $config = new EventBusConfig(
+            handlers: [
+                EventInterface::class => [
+                    new CallableEventHandler(EventInterface::class, $handler),
+                ],
+            ]
+        );
+
+        $eventBus = new GenericEventBus($container, $config);
+
+        EventInterfaceHandler::$itHappened = false;
+
+        $eventBus->dispatch(new EventInterfaceImplementation());
+
+        $this->assertTrue(EventInterfaceHandler::$itHappened);
     }
 }
