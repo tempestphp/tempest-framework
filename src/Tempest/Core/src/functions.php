@@ -6,6 +6,7 @@ namespace Tempest {
 
     use Closure;
     use Tempest\Core\DeferredTasks;
+    use Tempest\Core\Kernel;
 
     function path(string ...$parts): string
     {
@@ -16,6 +17,11 @@ namespace Tempest {
             '/',
             $path,
         );
+    }
+
+    function root_path(string ...$parts): string
+    {
+        return path(realpath(get(Kernel::class)->root), ...$parts);
     }
 
     function env(string $key, mixed $default = null): mixed
