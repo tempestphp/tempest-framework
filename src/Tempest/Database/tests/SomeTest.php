@@ -9,6 +9,6 @@ class SomeTest extends TestCase
 {
     public function testSome()
     {
-        $this->assertSame('test', testFunction());
+        $this->assertSame('a-test', testFunction());
     }
 }

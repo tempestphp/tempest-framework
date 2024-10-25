@@ -12,7 +12,9 @@ $tempestPackages = json_decode(
     associative: true
 );
 
-$composerPackages = [];
+$composerPackages = [
+    'packages' => [],
+];
 
 foreach ($tempestPackages as $package) {
     // Find out if there are changes in this package.
@@ -33,7 +35,7 @@ foreach ($tempestPackages as $package) {
         $composerFile['dist']['url'] = 'file://'. $package['directory'] . '/package.tar';
 
         // Add the package details to the root "packages.json."
-        $composerPackages[$composerFile['name']][$composerFile['version']] = $composerFile;
+        $composerPackages['packages'][$composerFile['name']][$composerFile['version']] = $composerFile;
     }
 
     // Load the packages from the root "packages.json" file we will write in a second.
