@@ -12,7 +12,7 @@ use function Tempest\testFunction;
  */
 final class SomeTest extends TestCase
 {
-    public function test_some()
+    public function test_some(): void
     {
         $this->assertSame('a-test', testFunction());
     }
