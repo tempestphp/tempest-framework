@@ -12,6 +12,9 @@ use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\EventBus\EventHandler;
 use Tempest\EventBus\GenericEventBus;
+use Tempest\EventBus\Tests\Fixtures\EventInterface;
+use Tempest\EventBus\Tests\Fixtures\EventInterfaceHandler;
+use Tempest\EventBus\Tests\Fixtures\EventInterfaceImplementation;
 use Tempest\EventBus\Tests\Fixtures\ItHappened;
 use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
@@ -144,5 +147,29 @@ final class EventBusTest extends TestCase
         get(EventBus::class)->dispatch('my-event');
 
         $this->assertTrue($hasHappened);
+    }
+
+    public function test_interface_handlers(): void
+    {
+        $container = new GenericContainer();
+
+        $handler = new EventHandler();
+        $handler->setHandler(new MethodReflector(new ReflectionMethod(EventInterfaceHandler::class, 'handleItHappened')));
+
+        $config = new EventBusConfig(
+            handlers: [
+                EventInterface::class => [
+                    new CallableEventHandler(EventInterface::class, $handler),
+                ],
+            ]
+        );
+
+        $eventBus = new GenericEventBus($container, $config);
+
+        EventInterfaceHandler::$itHappened = false;
+
+        $eventBus->dispatch(new EventInterfaceImplementation());
+
+        $this->assertTrue(EventInterfaceHandler::$itHappened);
     }
 }
