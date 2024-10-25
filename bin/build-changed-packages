@@ -5,6 +5,8 @@
  * Though this script attempts to simplify, it borrows heavily from Symfony's approach.
  *
  * @see https://github.com/symfony/symfony/blob/7.2/.github/build-packages.php
+ *
+ * TODO: This script is not really optimized, because it runs on every unit test action.
  */
 
 $tempestPackages = json_decode(
