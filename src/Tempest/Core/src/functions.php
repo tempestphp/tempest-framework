@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest {
 
-    use Tempest\Core\Kernel;
     use Closure;
     use Tempest\Core\DeferredTasks;
+    use Tempest\Core\Kernel;
 
     function path(string ...$parts): string
     {
