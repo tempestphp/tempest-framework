@@ -33,24 +33,20 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
 
     public function test_it_asks_to_continue_installing(): void
     {
-        // Act
-        $output = $this->console->call('install');
-
-        // Assert
-        $output->assertContains("Installing Tempest in {$this->installDir()}, continue?");
+        $this->console
+            ->call('install framework')
+            ->assertSee('Running the `framework` installer, continue?  [yes/no]');
     }
 
     public function test_it_can_force_install(): void
     {
-        // Act
-        $output = $this->console->call('install --force');
-
-        // Assert
-        $output->assertDoesNotContain("Installing Tempest in {$this->installDir()}, continue?");
-        $output->assertSee("{$this->installDir('/tempest')} created");
-        $output->assertSee("{$this->installDir('/public/index.php')} created");
-        $output->assertSee("{$this->installDir('/.env.example')} created");
-        $output->assertSee("{$this->installDir('/.env')} created");
+        $this->console
+            ->call('install framework --force')
+            ->assertDoesNotContain("Running the `framework` installer, continue?  [yes/no]")
+            ->assertSee("{$this->installDir('/tempest')} created")
+            ->assertSee("{$this->installDir('/public/index.php')} created")
+            ->assertSee("{$this->installDir('/.env.example')} created")
+            ->assertSee("{$this->installDir('/.env')} created");
 
         $this->assertFileEquals($this->baseDir('/src/Tempest/Console/bin/tempest'), $this->installDir('/tempest'));
         $this->assertFileEquals($this->baseDir('/src/Tempest/Console/src/Commands/index.php'), $this->installDir('/public/index.php'));

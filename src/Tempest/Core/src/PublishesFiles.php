@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Core;
+
+use Closure;
+use Tempest\Console\HasConsole;
+
+trait PublishesFiles
+{
+    use HasConsole;
+
+    public function publish(
+        string $source,
+        string $destination,
+        ?Closure $callback = null,
+    ): void {
+        if (file_exists($destination)) {
+            if (! $this->confirm(
+                question: "<error>{$destination} already exists Do you want to overwrite it?</error>",
+            )) {
+                return;
+            }
+        } else {
+            if (! $this->confirm(
+                question: "Do you want to create {$destination}?",
+                default: true,
+            )) {
+                $this->writeln('Skipped');
+
+                return;
+            }
+        }
+
+        copy($source, $destination);
+
+        if ($callback !== null) {
+            $callback($source, $destination);
+        }
+
+        $this->success("{$destination} created");
+    }
+}
