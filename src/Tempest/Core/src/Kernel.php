@@ -7,6 +7,7 @@ namespace Tempest\Core;
 use Dotenv\Dotenv;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
@@ -47,6 +48,15 @@ final class Kernel
             root: $root,
             container: $container,
         );
+    }
+
+    public function shutdown(int|string $status = ''): never
+    {
+        $this
+            ->finishDeferredTasks()
+            ->event(KernelEvent::SHUTDOWN);
+
+        exit($status);
     }
 
     private function createContainer(): Container
@@ -126,6 +136,13 @@ final class Kernel
         $appConfig = $this->container->get(AppConfig::class);
 
         $appConfig->exceptionHandlerSetup->setup($appConfig);
+
+        return $this;
+    }
+
+    private function finishDeferredTasks(): self
+    {
+        ($this->container->get(FinishDeferredTasks::class))();
 
         return $this;
     }
