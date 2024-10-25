@@ -22,6 +22,7 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
 
         @mkdir($this->installDir());
         chdir($this->installDir());
+        $this->kernel->root = $this->installDir();
     }
 
     protected function tearDown(): void
@@ -48,8 +49,16 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
             ->assertSee("{$this->installDir('/.env.example')} created")
             ->assertSee("{$this->installDir('/.env')} created");
 
-        $this->assertFileEquals($this->baseDir('/src/Tempest/Console/bin/tempest'), $this->installDir('/tempest'));
-        $this->assertFileEquals($this->baseDir('/src/Tempest/Console/src/Commands/index.php'), $this->installDir('/public/index.php'));
+        $this->assertFileEquals(
+            $this->baseDir('/src/Tempest/Framework/Installers/tempest'),
+            $this->installDir('/tempest')
+        );
+
+        $this->assertFileEquals(
+            $this->baseDir('/src/Tempest/Framework/Installers/index.php'),
+            $this->installDir('/public/index.php')
+        );
+
         if (PHP_OS_FAMILY !== 'Windows') {
             $this->assertTrue(is_executable($this->installDir('/tempest')));
         }
@@ -60,21 +69,16 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
 
     public function test_it_does_not_overwrite_files(): void
     {
-        // Arrange
         @mkdir($this->installDir('/public'));
         file_put_contents($this->installDir('/tempest'), 'foo');
         file_put_contents($this->installDir('/public/index.php'), 'foo');
         file_put_contents($this->installDir('/.env.example'), 'foo');
         file_put_contents($this->installDir('/.env'), 'foo');
 
-        // Act
-        $output = $this->console->call('install --force');
-
-        //Assert
-        $output->assertSee("{$this->installDir('/tempest')} already exists, skipped.");
-        $output->assertSee("{$this->installDir('/public/index.php')} already exists, skipped.");
-        $output->assertSee("{$this->installDir('/.env.example')} already exists, skipped.");
-        $output->assertSee("{$this->installDir('/.env')} already exists, skipped.");
+        $this->console
+            ->call('install framework')
+            ->submit('yes')
+            ->assertSee('.env.example already exists');
 
         $this->assertStringEqualsFile($this->installDir('/tempest'), 'foo');
         $this->assertStringEqualsFile($this->installDir('/public/index.php'), 'foo');

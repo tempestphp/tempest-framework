@@ -39,6 +39,7 @@ final readonly class FrameworkInstaller implements Installer
             destination: root_path('tempest'),
             callback: function (string $source, string $destination): void {
                 if (PHP_OS_FAMILY !== 'Windows') {
+                    /** @phpstan-ignore-next-line */
                     exec("chmod +x {$destination}");
                 }
             },

@@ -33,6 +33,12 @@ trait PublishesFiles
             }
         }
 
+        $dir = pathinfo($destination, PATHINFO_DIRNAME);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, recursive: true);
+        }
+
         copy($source, $destination);
 
         if ($callback !== null) {
