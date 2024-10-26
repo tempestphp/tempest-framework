@@ -21,13 +21,18 @@ final readonly class InstallCommand
         private InstallerConfig $installerConfig,
         private Console $console,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'install', middleware: [ForceMiddleware::class])]
     public function __invoke(?string $installer = null): void
     {
         $installer = $this->resolveInstaller($installer);
+
+        if (! $installer) {
+            $this->error('Installer not found');
+
+            return;
+        }
 
         if (! $this->confirm("Running the `{$installer->getName()}` installer, continue?")) {
             $this->error('Aborted');
@@ -40,7 +45,7 @@ final readonly class InstallCommand
         $this->success('Done');
     }
 
-    private function resolveInstaller(?string $search): Installer
+    private function resolveInstaller(?string $search): ?Installer
     {
         /** @var Installer[]|\Tempest\Support\ArrayHelper $installers */
         $installers = arr($this->installerConfig->installers)
