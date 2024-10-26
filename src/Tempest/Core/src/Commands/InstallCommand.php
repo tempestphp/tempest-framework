@@ -11,7 +11,6 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\InstallerConfig;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use function Tempest\Support\arr;
 
 final readonly class InstallCommand
@@ -22,7 +21,6 @@ final readonly class InstallCommand
         private InstallerConfig $installerConfig,
         private Console $console,
         private Container $container,
-        private LoadDiscoveryClasses $loadDiscoveryClasses,
     ) {
     }
 

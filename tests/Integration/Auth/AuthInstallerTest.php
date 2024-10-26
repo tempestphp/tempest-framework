@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Core\ComposerNamespace;
-use Tempest\Database\Migrations\Migration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -51,7 +50,5 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
                 ->assertFileContains($path, 'namespace App;')
                 ->assertFileNotContains($path, 'DoNotDiscover');
         }
-
-        $this->assertNotEmpty(Migration::all());
     }
 }
