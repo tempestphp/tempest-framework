@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Auth;
 
 use RecursiveDirectoryIterator;
@@ -9,6 +11,9 @@ use Tempest\Core\ComposerNamespace;
 use Tempest\Core\Kernel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class AuthInstallerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -21,6 +26,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
             mkdir($installDir);
 
         }
+
         $this->container->get(Kernel::class)->root = $installDir;
         $this->container->get(Composer::class)->setMainNamespace(new ComposerNamespace('App\\', $installDir));
     }

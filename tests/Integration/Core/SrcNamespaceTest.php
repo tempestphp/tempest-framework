@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\root_path;
 use function Tempest\src_namespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
@@ -19,7 +19,7 @@ final class SrcNamespaceTest extends FrameworkIntegrationTestCase
     {
         $this->container->get(Composer::class)->setMainNamespace(new ComposerNamespace('App\\', root_path('/app')));
 
-        $this->assertSame('App\\', src_namespace());
+        $this->assertSame('App', src_namespace());
         $this->assertSame('App\Auth\Foo', src_namespace('Auth\Foo'));
     }
 }

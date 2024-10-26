@@ -47,8 +47,10 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
             ->assertSee("{$this->installDir('/tempest')} created")
             ->assertSee("{$this->installDir('/public/index.php')} created")
             ->assertSee("{$this->installDir('/.env.example')} created")
-            ->assertSee("{$this->installDir('/.env')} created");
+            ->assertSee("{$this->installDir('/.env')} created")
+        ->printFormatted();
 
+        ld('hi');
         $this->assertFileEquals(
             $this->baseDir('/src/Tempest/Framework/Installers/tempest'),
             $this->installDir('/tempest')
