@@ -19,7 +19,7 @@ final class ClassManipulatorTest extends TestCase
 {
     public function test_from_file(): void
     {
-        $class = new ClassManipulator(__FILE__);
+        $class = new ClassManipulator(__DIR__ . '/Fixtures/ClassFromFile.php');
 
         $this->assertMatchesSnapshot($class->print());
     }
