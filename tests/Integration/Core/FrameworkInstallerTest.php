@@ -12,18 +12,9 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-final class InstallCommandTest extends FrameworkIntegrationTestCase
+final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
 {
     private const string INSTALL_DIR = '/tmp/';
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        @mkdir($this->installDir());
-        chdir($this->installDir());
-        $this->kernel->root = $this->installDir();
-    }
 
     protected function tearDown(): void
     {
@@ -86,31 +77,5 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsFile($this->installDir('/public/index.php'), 'foo');
         $this->assertStringEqualsFile($this->installDir('/.env.example'), 'foo');
         $this->assertStringEqualsFile($this->installDir('/.env'), 'foo');
-    }
-
-    private function baseDir(string ...$paths): string
-    {
-        return PathHelper::make(realpath(__DIR__ . '/../../../../'), ...$paths);
-    }
-
-    private function installDir(string $path = ''): string
-    {
-        return $this->baseDir(static::INSTALL_DIR, $path);
-    }
-
-    private function deleteInstallDir(): void
-    {
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->installDir(), RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $fileinfo) {
-            $fileinfo->isDir()
-                ? @rmdir($fileinfo->getRealPath())
-                : @unlink($fileinfo->getRealPath());
-        }
-
-        @rmdir($this->installDir());
     }
 }

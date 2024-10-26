@@ -20,33 +20,12 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $installDir = __DIR__ . '/install';
-
-        if (! is_dir($installDir)) {
-            mkdir($installDir);
-
-        }
-
-        $this->container->get(Kernel::class)->root = $installDir;
-        $this->container->get(Composer::class)->setMainNamespace(new ComposerNamespace('App\\', $installDir));
+        $this->installer->setNamespace(new ComposerNamespace('App\\', __DIR__ . '/install'));
     }
 
     protected function tearDown(): void
     {
-        $installDir = __DIR__ . '/install';
-
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($installDir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $fileinfo) {
-            $fileinfo->isDir()
-                ? @rmdir($fileinfo->getRealPath())
-                : @unlink($fileinfo->getRealPath());
-        }
-
-        @rmdir($installDir);
+        $this->installer->clean();
 
         parent::tearDown();
     }
@@ -65,10 +44,12 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($publishItems as $publishItem) {
-            $this->assertFileExists(__DIR__ . "/install/{$publishItem}.php");
-            $file = file_get_contents(__DIR__ . "/install/{$publishItem}.php");
-            $this->assertStringContainsString('namespace App;', $file);
-            $this->assertStringNotContainsString('DoNotDiscover', $file);
+            $path = "{$publishItem}.php";
+
+            $this->installer
+                ->assertFileExists($path)
+                ->assertFileContains($path, 'namespace App;')
+                ->assertFileNotContains($path, 'DoNotDiscover');
         }
     }
 }
