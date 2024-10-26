@@ -14,6 +14,8 @@ use Tempest\Reflection\ClassReflector;
 final class AutowireDiscovery implements Discovery
 {
     use HandlesDiscoveryCache;
+    /** @var array<string, string> */
+    private array $trackedAutowireDefinitions = [];
 
     public function __construct(
         private readonly Container $container,
@@ -39,7 +41,12 @@ final class AutowireDiscovery implements Discovery
     {
         $interfaces = $class->getReflection()->getInterfaceNames();
         foreach ($interfaces as $interface) {
-            $this->container->singleton($interface, fn (Container $container) => $container->get($class->getName()));
+            // No need to track this autowire definition as it will be cached as a singleton
+
+            $this->container->singleton(
+                $interface,
+                static fn (Container $container) => $container->get($class->getName())
+            );
         }
     }
 
@@ -47,17 +54,26 @@ final class AutowireDiscovery implements Discovery
     {
         $interfaces = $class->getReflection()->getInterfaceNames();
         foreach ($interfaces as $interface) {
-            $this->container->register($interface, fn (Container $container) => $container->get($class->getName()));
+            $this->trackedAutowireDefinitions[$interface] = $class->getName();
+
+            $this->container->register(
+                $interface,
+                static fn (Container $container) => $container->get($class->getName())
+            );
         }
     }
 
     public function createCachePayload(): string
     {
-        return serialize($this->container->getDefinitions());
+        return serialize($this->trackedAutowireDefinitions);
     }
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $this->container->setDefinitions(unserialize($payload));
+        $this->trackedAutowireDefinitions = unserialize($payload, ['allowed_classes' => false]);
+
+        foreach ($this->trackedAutowireDefinitions as $interface => $className) {
+            $this->container->register($interface, static fn (Container $container) => $container->get($className));
+        }
     }
 }
