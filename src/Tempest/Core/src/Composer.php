@@ -7,7 +7,7 @@ namespace Tempest\Core;
 use function Tempest\Support\arr;
 use Tempest\Support\PathHelper;
 
-final readonly class Composer
+final class Composer
 {
     /** @var array<ComposerNamespace> */
     public array $namespaces;
@@ -43,6 +43,13 @@ final readonly class Composer
         if (! isset($this->mainNamespace)) {
             throw new KernelException("Tempest requires at least one PSR-4 namespace to be defined in composer.json.");
         }
+    }
+
+    public function setMainNamespace(ComposerNamespace $namespace): self
+    {
+        $this->mainNamespace = $namespace;
+
+        return $this;
     }
 
     private function loadComposerFile(string $path): array
