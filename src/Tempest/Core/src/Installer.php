@@ -8,5 +8,5 @@ interface Installer
 {
     public function getName(): string;
 
-    public function publishFiles(): void;
+    public function install(): void;
 }

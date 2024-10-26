@@ -34,7 +34,7 @@ final readonly class InstallCommand
             return;
         }
 
-        $installer->publishFiles();
+        $installer->install();
 
         $this->success('Done');
     }

@@ -17,7 +17,7 @@ final readonly class FrameworkInstaller implements Installer
         return 'framework';
     }
 
-    public function publishFiles(): void
+    public function install(): void
     {
         $this->publish(
             source: __DIR__ . '/../../../../.env.example',

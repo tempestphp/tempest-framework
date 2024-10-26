@@ -20,7 +20,7 @@ final readonly class AuthInstaller implements Installer
         return 'auth';
     }
 
-    public function publishFiles(): void
+    public function install(): void
     {
         $publishFiles = [
             __DIR__ . '/User.php' => src_path('User.php'),
