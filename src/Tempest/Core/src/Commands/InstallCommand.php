@@ -11,6 +11,8 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\InstallerConfig;
+use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use function Tempest\Support\arr;
 
 final readonly class InstallCommand
 {
@@ -20,6 +22,7 @@ final readonly class InstallCommand
         private InstallerConfig $installerConfig,
         private Console $console,
         private Container $container,
+        private LoadDiscoveryClasses $loadDiscoveryClasses,
     ) {
     }
 
@@ -36,27 +39,26 @@ final readonly class InstallCommand
 
         $installer->install();
 
+        ($this->loadDiscoveryClasses)();
+
+        $installer->postInstall();
+
         $this->success('Done');
     }
 
-    private function resolveInstaller(?string $installer): Installer
+    private function resolveInstaller(?string $search): Installer
     {
-        if ($installer) {
-            foreach ($this->installerConfig->installers as $searchInstallerClass) {
-                /** @var Installer $searchInstaller */
-                $searchInstaller = $this->container->get($searchInstallerClass);
+        /** @var Installer[]|\Tempest\Support\ArrayHelper $installers */
+        $installers = arr($this->installerConfig->installers)
+            ->map(fn (string $installerClass) => $this->container->get($installerClass));
 
-                if ($installer === $searchInstaller->getName()) {
-                    return $searchInstaller;
-                }
-            }
+        if (! $search) {
+            $search = $this->ask(
+                question: 'Please choose an installer',
+                options: $installers->map(fn (Installer $installer) => $installer->getName())->toArray(),
+            );
         }
 
-        $installerClass = $this->ask(
-            question: 'Please choose an installer',
-            options: $this->installerConfig->installers,
-        );
-
-        return $this->container->get($installerClass);
+        return $installers->first(fn (Installer $installer) => $installer->getName() === $search);
     }
 }

@@ -21,7 +21,7 @@ trait PublishesFiles
     ): void {
         if (file_exists($destination)) {
             if (! $this->confirm(
-                question: "<error>{$destination} already exists Do you want to overwrite it?</error>",
+                question: "{$destination} already exists Do you want to overwrite it?",
             )) {
                 return;
             }

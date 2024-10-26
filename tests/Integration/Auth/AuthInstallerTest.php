@@ -40,7 +40,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
             'Permission',
             'PermissionMigration',
             'UserPermission',
-            'UserPermissionMigrations',
+            'UserPermissionMigration',
         ];
 
         foreach ($publishItems as $publishItem) {

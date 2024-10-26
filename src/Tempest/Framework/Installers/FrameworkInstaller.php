@@ -45,4 +45,9 @@ final readonly class FrameworkInstaller implements Installer
             },
         );
     }
+
+    public function postInstall(): void
+    {
+        // Nothing
+    }
 }

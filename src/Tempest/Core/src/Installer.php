@@ -9,4 +9,6 @@ interface Installer
     public function getName(): string;
 
     public function install(): void;
+
+    public function postInstall(): void;
 }
