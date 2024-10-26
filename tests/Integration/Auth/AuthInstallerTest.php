@@ -43,7 +43,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($publishItems as $publishItem) {
-            $path = "app/{$publishItem}.php";
+            $path = "App/{$publishItem}.php";
 
             $this->installer
                 ->assertFileExists($path)
