@@ -21,14 +21,15 @@ final readonly class InstallCommand
         private InstallerConfig $installerConfig,
         private Console $console,
         private Container $container,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'install', middleware: [ForceMiddleware::class])]
     public function __invoke(?string $installer = null): void
     {
         $installer = $this->resolveInstaller($installer);
 
-        if (! $installer) {
+        if ($installer === null) {
             $this->error('Installer not found');
 
             return;
