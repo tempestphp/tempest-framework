@@ -34,7 +34,7 @@ final class ClassManipulator
             mkdir($dir, recursive: true);
         }
 
-        file_put_contents($this->print(), $path);
+        file_put_contents($path, $this->print());
 
         return $this;
     }

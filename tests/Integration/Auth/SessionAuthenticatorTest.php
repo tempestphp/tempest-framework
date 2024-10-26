@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Authenticator;
-use Tempest\Auth\CreatePermissionsTable;
-use Tempest\Auth\CreateUserPermissionTable;
-use Tempest\Auth\CreateUsersTable;
+use Tempest\Auth\PermissionMigration;
+use Tempest\Auth\UserPermissionMigration;
+use Tempest\Auth\UserMigration;
 use Tempest\Auth\CurrentUserNotLoggedIn;
 use Tempest\Auth\SessionAuthenticator;
 use Tempest\Auth\User;
@@ -43,9 +43,9 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateUsersTable::class,
-            CreatePermissionsTable::class,
-            CreateUserPermissionTable::class
+            UserMigration::class,
+            PermissionMigration::class,
+            UserPermissionMigration::class
         );
     }
 

@@ -38,9 +38,9 @@ namespace Tempest {
         $composer = get(Composer::class);
 
         return str($composer->mainNamespace->namespace)
-            ->append('\\')
             ->append($append ?? '')
             ->replace('\\\\', '\\')
+            ->trim('\\')
             ->toString();
     }
 

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
+use Tempest\Core\DoNotDiscover;
 use Tempest\Database\Migration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final readonly class CreateUserPermissionTable implements Migration
+#[DoNotDiscover]
+final readonly class UserPermissionMigration implements Migration
 {
     public function getName(): string
     {
