@@ -6,6 +6,7 @@ namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Tests\Fixtures\ClassFromFile;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
@@ -19,7 +20,7 @@ final class ClassManipulatorTest extends TestCase
 {
     public function test_from_file(): void
     {
-        $class = new ClassManipulator(__FILE__);
+        $class = new ClassManipulator(ClassFromFile::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
