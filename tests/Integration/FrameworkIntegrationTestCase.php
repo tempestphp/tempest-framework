@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Tempest\Console\ConsoleApplication;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
@@ -21,7 +19,6 @@ use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\HttpApplication;
-use Tempest\Support\PathHelper;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;

@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
-use Tempest\Core\Kernel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -20,7 +16,10 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->installer->setNamespace(new ComposerNamespace('App\\', __DIR__ . '/install'));
+        $this->installer->configure(
+            __DIR__ . '/install',
+            new ComposerNamespace('App\\', __DIR__ . '/install/App')
+        );
     }
 
     protected function tearDown(): void
@@ -44,7 +43,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($publishItems as $publishItem) {
-            $path = "{$publishItem}.php";
+            $path = "app/{$publishItem}.php";
 
             $this->installer
                 ->assertFileExists($path)

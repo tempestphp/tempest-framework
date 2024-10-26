@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Framework\Testing;
 
 use PHPUnit\Framework\Assert;
@@ -13,28 +15,55 @@ use function Tempest\path;
 
 final class InstallerTester
 {
-    private string $installPath;
+    private string $root;
 
     public function __construct(
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
-    public function setNamespace(ComposerNamespace $namespace): self
+    public function configure(string $root, ComposerNamespace $mainNamespace): self
     {
-        $this->installPath = $namespace->path;
-        $this->container->get(Kernel::class)->root = $namespace->path;
-        $this->container->get(Composer::class)->setMainNamespace($namespace);
+        $this->root = $root;
+        $this->container->get(Kernel::class)->root = $root;
+        $this->container->get(Composer::class)->setMainNamespace($mainNamespace);
 
-        if (! is_dir($this->installPath)) {
-            mkdir($this->installPath, recursive: true);
+        if (! is_dir($this->root)) {
+            mkdir($this->root, recursive: true);
         }
+
+        if (! is_dir($mainNamespace->path)) {
+            mkdir($mainNamespace->path, recursive: true);
+        }
+
+        return $this;
+    }
+
+    public function setRoot(string $root): self
+    {
+        $this->container->get(Kernel::class)->root = $root;
 
         return $this;
     }
 
     public function path(string $path): string
     {
-        return path($this->installPath, $path);
+        return path($this->root, $path);
+    }
+
+    public function put(string $path, string $contents): self
+    {
+        $path = $this->path($path);
+
+        $dir = dirname($path);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, recursive: true);
+        }
+
+        file_put_contents($path, $contents);
+
+        return $this;
     }
 
     public function get(string $path): string
@@ -42,35 +71,46 @@ final class InstallerTester
         return file_get_contents($this->path($path));
     }
 
-    public function assertFileExists(string $path): self
+    public function assertFileExists(string $path, ?string $content = null): self
     {
-        Assert::assertFileExists($this->path($path));
+        Assert::assertFileExists(
+            filename: $this->path($path),
+            message: sprintf('File "%s" does not exist', $path),
+        );
+
+        if ($content) {
+            $this->assertFileContains($path, $content);
+        }
 
         return $this;
     }
 
     public function assertFileContains(string $path, string $search): self
     {
-        Assert::assertStringContainsString($search, $this->get($path));
+        Assert::assertStringContainsString(
+            needle: $search,
+            haystack: $this->get($path),
+            message: sprintf("File %s does not contain:\n %s", $path, $search),
+        );
 
         return $this;
     }
 
     public function assertFileNotContains(string $path, string $search): self
     {
-        Assert::assertStringNotContainsString($search, $this->get($path));
+        Assert::assertStringNotContainsString(
+            needle: $search,
+            haystack: $this->get($path),
+            message: sprintf("File %s contains something it shouldn't:\n %s", $path, $search),
+        );
 
         return $this;
     }
 
     public function clean(): void
     {
-        if ($this->installPath === null) {
-            return;
-        }
-
         $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->installPath, RecursiveDirectoryIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator($this->root, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST,
         );
 
@@ -80,6 +120,6 @@ final class InstallerTester
                 : @unlink($file->getRealPath());
         }
 
-        @rmdir($this->installPath);
+        @rmdir($this->root);
     }
 }
