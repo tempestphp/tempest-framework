@@ -43,5 +43,7 @@ final readonly class AuthInstaller implements Installer
                 }
             );
         }
+
+        $this->console->call('migrate up');
     }
 }
