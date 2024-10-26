@@ -28,7 +28,7 @@ final readonly class AuthInstaller implements Installer
             __DIR__ . '/Permission.php' => src_path('Permission.php'),
             __DIR__ . '/PermissionMigration.php' => src_path('PermissionMigration.php'),
             __DIR__ . '/UserPermission.php' => src_path('UserPermission.php'),
-            __DIR__ . '/UserPermissionMigration.php' => src_path('UserPermissionMigrations.php'),
+            __DIR__ . '/UserPermissionMigration.php' => src_path('UserPermissionMigration.php'),
         ];
 
         foreach ($publishFiles as $source => $destination) {
