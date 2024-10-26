@@ -39,10 +39,6 @@ final readonly class InstallCommand
 
         $installer->install();
 
-        ($this->loadDiscoveryClasses)();
-
-        $installer->postInstall();
-
         $this->success('Done');
     }
 

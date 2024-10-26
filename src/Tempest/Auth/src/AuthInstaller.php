@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
+use Tempest\Console\Console;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Core\DoNotDiscover;
 use Tempest\Core\Installer;
+use Tempest\Core\Kernel;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\ClassManipulator;
 use function Tempest\src_namespace;
@@ -14,6 +17,12 @@ use function Tempest\src_path;
 final readonly class AuthInstaller implements Installer
 {
     use PublishesFiles;
+
+    public function __construct(
+        private Console $console,
+        private Kernel $kernel,
+        private ConsoleArgumentBag $argumentBag,
+    ) {}
 
     public function getName(): string
     {
@@ -40,13 +49,10 @@ final readonly class AuthInstaller implements Installer
                         ->setNamespace(src_namespace())
                         ->removeClassAttribute(DoNotDiscover::class)
                         ->save($destination);
-                }
+                },
             );
         }
-    }
 
-    public function postInstall(): void
-    {
-        $this->console->call('migrate:up');
+        passthru(sprintf('%s migrate:up', $this->argumentBag->getCliName()));
     }
 }
