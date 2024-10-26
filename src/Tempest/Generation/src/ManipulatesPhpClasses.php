@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Generation;
 
 use Closure;
+use Nette\PhpGenerator\ClassLike;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
@@ -17,7 +18,7 @@ trait ManipulatesPhpClasses
 {
     use SimplifiesClassNames;
 
-    protected ClassType $classType;
+    protected ClassType|ClassLike $classType;
 
     protected PhpFile $file;
 

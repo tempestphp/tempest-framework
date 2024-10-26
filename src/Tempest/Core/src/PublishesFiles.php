@@ -11,6 +11,12 @@ trait PublishesFiles
 {
     use HasConsole;
 
+    /**
+     * @param string $source
+     * @param string $destination
+     * @param \Closure(string $source, string $destination): void|null $callback
+     * @return void
+     */
     public function publish(
         string $source,
         string $destination,
