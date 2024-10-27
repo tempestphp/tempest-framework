@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Core\DoNotDiscover;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
-use Tempest\Generation\ClassManipulator;
-use function Tempest\src_namespace;
 use function Tempest\src_path;
 
 final readonly class AuthInstaller implements Installer
@@ -35,12 +32,6 @@ final readonly class AuthInstaller implements Installer
             $this->publish(
                 source: $source,
                 destination: $destination,
-                callback: function (string $source, string $destination): void {
-                    (new ClassManipulator($source))
-                        ->setNamespace(src_namespace())
-                        ->removeClassAttribute(DoNotDiscover::class)
-                        ->save($destination);
-                },
             );
         }
     }
