@@ -8,6 +8,9 @@ namespace Tempest {
     use Tempest\EventBus\EventBus;
     use Tempest\EventBus\EventBusConfig;
 
+    /**
+     * Dispatches the given `$event`, triggering all associated event listeners.
+     */
     function event(string|object $event): void
     {
         $eventBus = get(EventBus::class);
@@ -15,6 +18,9 @@ namespace Tempest {
         $eventBus->dispatch($event);
     }
 
+    /**
+     * Registers a closure-based event listener for the given `$event`.
+     */
     function listen(string|object $event, Closure $handler): void
     {
         $config = get(EventBusConfig::class);
