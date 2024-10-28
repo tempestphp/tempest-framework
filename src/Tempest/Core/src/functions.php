@@ -24,11 +24,17 @@ namespace Tempest {
         );
     }
 
+    /**
+     * Creates a path scoped within the root of the project
+     */
     function root_path(string ...$parts): string
     {
         return path(realpath(get(Kernel::class)->root), ...$parts);
     }
 
+    /**
+     * Creates a path scoped within the src folder of the project
+     */
     function src_path(string ...$parts): string
     {
         $composer = get(Composer::class);
@@ -36,6 +42,9 @@ namespace Tempest {
         return path($composer->mainNamespace->path, ...$parts);
     }
 
+    /**
+     * Creates a namespace scoped within the main namespace of the project
+     */
     function src_namespace(?string $append = null): string
     {
         $composer = get(Composer::class);
