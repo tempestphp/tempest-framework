@@ -17,12 +17,12 @@ parameters:
         - tests
     ignoreErrors:
 
-		-
-			message: '#.*#'
-			path: src/Tempest/Http/src/Exceptions/exception.php
-		-
-		    message: '#.*exec*#'
-		    path: src/Tempest/Console/src/Terminal/Terminal.php
+        -
+            message: '#.*#'
+            path: src/Tempest/Http/src/Exceptions/exception.php
+        -
+            message: '#.*exec*#'
+            path: src/Tempest/Console/src/Terminal/Terminal.php
         -
             message: "#^Tempest\\\\Console\\\\ConsoleCommand should be final$#"
             path: src/Tempest/Console/src/ConsoleCommand.php
