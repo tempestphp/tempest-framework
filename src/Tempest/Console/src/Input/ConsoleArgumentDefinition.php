@@ -27,14 +27,14 @@ final readonly class ConsoleArgumentDefinition
         $type = $parameter->getType();
 
         return new ConsoleArgumentDefinition(
-            name       : $attribute?->name ?? $parameter->getName(),
-            type       : $type->getName(),
-            default    : $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
-            hasDefault : $parameter->isDefaultValueAvailable(),
-            position   : $parameter->getPosition(),
+            name: $attribute?->name ?? $parameter->getName(),
+            type: $type->getName(),
+            default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+            hasDefault: $parameter->isDefaultValueAvailable(),
+            position: $parameter->getPosition(),
             description: $attribute?->description,
-            aliases    : $attribute->aliases ?? [],
-            help       : $attribute?->help,
+            aliases: $attribute->aliases ?? [],
+            help: $attribute?->help,
         );
     }
 
