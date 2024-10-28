@@ -109,7 +109,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function isAssoc(): bool
     {
-        return !$this->isList();
+        return ! $this->isList();
     }
 
     /**
@@ -164,7 +164,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $results = [];
 
         foreach ($this->array as $item) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 continue;
             }
 
@@ -243,7 +243,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $uniqueFilteredValues = [];
         foreach ($this->array as $item) {
             // Ensure we don't check raw values with key filter
-            if (!is_null($key) && !is_array($item)) {
+            if (! is_null($key) && ! is_array($item)) {
                 continue;
             }
 
@@ -275,7 +275,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function diff(array|self ...$arrays): self
     {
-        $arrays = array_map(fn(array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
         return new self(array_diff($this->array, ...$arrays));
     }
@@ -289,7 +289,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function diffKeys(array|self ...$arrays): self
     {
-        $arrays = array_map(fn(array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
         return new self(array_diff_key($this->array, ...$arrays));
     }
@@ -303,7 +303,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function intersect(array|self ...$arrays): self
     {
-        $arrays = array_map(fn(array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
         return new self(array_intersect($this->array, ...$arrays));
     }
@@ -317,7 +317,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function intersectKeys(array|self ...$arrays): self
     {
-        $arrays = array_map(fn(array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
         return new self(array_intersect_key($this->array, ...$arrays));
     }
@@ -331,7 +331,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function merge(array|self ...$arrays): self
     {
-        $arrays = array_map(fn(array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
 
         return new self(array_merge($this->array, ...$arrays));
     }
@@ -463,7 +463,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function isNotEmpty(): bool
     {
-        return !$this->isEmpty();
+        return ! $this->isEmpty();
     }
 
     /**
@@ -503,7 +503,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function filter(?Closure $filter = null): self
     {
         $array = [];
-        $filter ??= static fn(mixed $value, mixed $_) => !in_array($value, [false, null], strict: true);
+        $filter ??= static fn (mixed $value, mixed $_) => ! in_array($value, [false, null], strict: true);
 
         foreach ($this->array as $key => $value) {
             if ($filter($value, $key)) {
@@ -562,7 +562,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         foreach ($this->array as $key => $value) {
             $generator = $map($value, $key);
 
-            if (!$generator instanceof Generator) {
+            if (! $generator instanceof Generator) {
                 throw new InvalidMapWithKeysUsage();
             }
 
@@ -584,7 +584,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $keys = explode('.', $key);
 
         foreach ($keys as $key) {
-            if (!isset($value[$key])) {
+            if (! isset($value[$key])) {
                 return $default;
             }
 
@@ -608,7 +608,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $keys = explode('.', $key);
 
         foreach ($keys as $key) {
-            if (!isset($array[$key])) {
+            if (! isset($array[$key])) {
                 return false;
             }
 
@@ -623,7 +623,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function contains(mixed $search): bool
     {
-        return $this->first(fn(mixed $value) => $value === $search) !== null;
+        return $this->first(fn (mixed $value) => $value === $search) !== null;
     }
 
     /**
@@ -650,7 +650,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             unset($keys[$i]);
 
             // If we know this key is not an array, make it one.
-            if (!isset($current[$key]) || !is_array($current[$key])) {
+            if (! isset($current[$key]) || ! is_array($current[$key])) {
                 $current[$key] = [];
             }
 
@@ -766,10 +766,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         return new self(map($this->array)->collection()->to($to));
     }
+
     /**
      * Sorts the array in ascending order.
-     * @template T
-     * @return self<T>
      */
     public function sort(): self
     {
