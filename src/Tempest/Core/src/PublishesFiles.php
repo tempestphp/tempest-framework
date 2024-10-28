@@ -67,7 +67,7 @@ trait PublishesFiles
         }
 
         $namespace = str($destination)
-            ->replaceStart(src_path(), src_namespace())
+            ->replaceStart(rtrim(src_path(), '/'), src_namespace())
             ->replaceEnd('.php', '')
             ->replace('/', '\\')
             ->explode('\\')
