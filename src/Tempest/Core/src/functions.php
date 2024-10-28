@@ -74,7 +74,7 @@ namespace Tempest {
             default => $value,
         };
     }
-  
+
     /**
      * Defer a task, will be run after a request has been sent or a command has executed
      */
