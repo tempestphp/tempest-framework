@@ -1280,4 +1280,58 @@ final class ArrayHelperTest extends TestCase
             ],
         );
     }
+
+    public function test_sort(): void
+    {
+        $collection = arr(['d', 'a', 'b']);
+
+        $this->assertSame(
+            expected: ['a', 'b', 'd'],
+            actual: $collection->sort(desc: false, preserveKeys: false)->toArray(),
+        );
+
+        $this->assertSame(
+            expected: ['d', 'b', 'a'],
+            actual: $collection->sort(desc: true, preserveKeys: false)->toArray(),
+        );
+
+        $collection = arr([1 => 'd', 2 => 'a', 3 => 'b']);
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'd'],
+            actual: $collection->sort(desc: false, preserveKeys: true)->toArray(),
+        );
+
+        $this->assertSame(
+            expected: [1 => 'd', 3 => 'b', 2 => 'a'],
+            actual: $collection->sort(desc: true, preserveKeys: true)->toArray(),
+        );
+    }
+
+    public function test_sort_by_callback()
+    {
+        $collection = arr(['d', 'a', 'b']);
+
+        $this->assertSame(
+            expected: ['a', 'b', 'd'],
+            actual: $collection->sortByCallback(
+                callback: function ($a, $b) {
+                    return $a <=> $b;
+                },
+                preserveKeys: false,
+            )->toArray(),
+        );
+
+        $collection = arr([1 => 'd', 2 => 'a', 3 => 'b']);
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'd'],
+            actual: $collection->sortByCallback(
+                callback: function ($a, $b) {
+                    return $a <=> $b;
+                },
+                preserveKeys: true,
+            )->toArray(),
+        );
+    }
 }

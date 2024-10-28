@@ -766,4 +766,36 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         return new self(map($this->array)->collection()->to($to));
     }
+
+    public function sort(bool $desc = false, bool $preserveKeys = false, $flags = SORT_REGULAR): self
+    {
+        if ($preserveKeys) {
+            $desc ? arsort($this->array, flags: $flags) : asort($this->array, flags: $flags);
+        } else {
+            $desc ? rsort($this->array, flags: $flags) : sort($this->array, flags: $flags);
+        }
+
+        return $this;
+    }
+
+    public function sortByCallback(callable $callback, bool $preserveKeys = false): self
+    {
+        $preserveKeys ? uasort($this->array, $callback) : usort($this->array, $callback);
+
+        return $this;
+    }
+
+    public function sortKeys(bool $desc = false, $flags = SORT_REGULAR): self
+    {
+        $desc ? krsort($this->array, flags: $flags) : ksort($this->array, flags: $flags);
+
+        return $this;
+    }
+
+    public function sortKeysByCallback(callable $callback): self
+    {
+        uksort($this->array, $callback);
+
+        return $this;
+    }
 }
