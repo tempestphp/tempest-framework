@@ -150,5 +150,10 @@
             "composer phpunit",
             "composer phpstan"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
