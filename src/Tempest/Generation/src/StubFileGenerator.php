@@ -15,7 +15,7 @@ use Tempest\Support\StringHelper;
  */
 final class StubFileGenerator
 {
-    protected Console $console;
+    private Console $console;
 
     /**
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
@@ -26,10 +26,10 @@ final class StubFileGenerator
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
      */
     public function __construct(
-        protected readonly string $targetPath,
-        protected readonly string $stubFile,
-        protected readonly array $replacements = [],
-        protected readonly bool $shouldOverride = false,
+        private readonly string $targetPath,
+        private readonly string $stubFile,
+        private readonly array $replacements = [],
+        private readonly bool $shouldOverride = false,
     ) {
         $this->console = get(Console::class);
     }
@@ -56,7 +56,7 @@ final class StubFileGenerator
      *
      * @return bool Whether the file was written successfully.
      */
-    protected function writeFile(): bool
+    private function writeFile(): bool
     {
         // Transform stub to class
         $namespace = PathHelper::toRegisteredNamespace($this->targetPath);
@@ -86,7 +86,7 @@ final class StubFileGenerator
      *
      * @return bool Whether the filesystem is ready to write the file.
      */
-    protected function prepareFilesystem(): bool
+    private function prepareFilesystem(): bool
     {
         // Delete the file if it exists and we force the override
         if (file_exists($this->targetPath)) {

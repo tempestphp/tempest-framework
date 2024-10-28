@@ -24,7 +24,7 @@ final class GeneratorCommand extends ConsoleCommand
      */
     public function makeHandler(): Closure
     {
-        return function (array $params) {
+        return function (array $params): void {
             // Resolve all generators and run them.
             arr(
                 $this->handler->invokeArgs(

@@ -66,13 +66,12 @@ trait HasGeneratorCommand
     protected function promptTargetPath(string $suggestedPath): string
     {
         $className = PathHelper::toClassName($suggestedPath);
-        $targetPath = $this->console->ask(
+
+        return $this->console->ask(
             question  : sprintf('Where do you want to save the file "%s"?', $className),
             default   : $suggestedPath,
             validation: [new NotEmpty(), new EndsWith('.php')],
         );
-
-        return $targetPath;
     }
 
     /**
