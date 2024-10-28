@@ -17,6 +17,13 @@ use Tempest\Support\StringHelper;
  */
 final class ClassManipulatorTest extends TestCase
 {
+    public function test_from_file(): void
+    {
+        $class = new ClassManipulator(__DIR__ . '/Fixtures/ClassFromFile.php');
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
     #[Test]
     public function updates_namespace(): void
     {

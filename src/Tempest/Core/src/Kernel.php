@@ -24,7 +24,7 @@ final class Kernel
     ];
 
     public function __construct(
-        public readonly string $root,
+        public string $root,
         public array $discoveryLocations = [],
         ?Container $container = null,
     ) {

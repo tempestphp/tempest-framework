@@ -18,15 +18,8 @@ parameters:
 	ignoreErrors:
 
 		-
-			message: '#.*[Rr]eadonly.*#'
-			path: src/Tempest/Core/src/Composer.php
-
-		-
 			message: '#.*#'
 			path: src/Tempest/Http/src/Exceptions/exception.php
-		-
-			message: '#.*exec*#'
-			path:  src/Tempest/Console/src/Commands/InstallCommand.php
 		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
