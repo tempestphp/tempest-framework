@@ -1308,7 +1308,7 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
-    public function test_sort_by_callback()
+    public function test_sort_by_callback(): void
     {
         $collection = arr(['d', 'a', 'b']);
 
