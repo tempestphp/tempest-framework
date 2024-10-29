@@ -767,9 +767,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(map($this->array)->collection()->to($to));
     }
 
-    public function sort(bool $desc = false, bool $preserveKeys = false, $flags = SORT_REGULAR): self
+    public function sort(bool $desc = false, ?bool $preserveKeys = null, $flags = SORT_REGULAR): self
     {
         $array = $this->array;
+
+        if ($preserveKeys === null) {
+            $preserveKeys = ! array_is_list($array);
+        }
 
         if ($preserveKeys) {
             $desc ? arsort($array, $flags) : asort($array, $flags);
@@ -780,9 +784,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    public function sortByCallback(callable $callback, bool $preserveKeys = false): self
+    public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
     {
         $array = $this->array;
+
+        if ($preserveKeys === null) {
+            $preserveKeys = ! array_is_list($array);
+        }
 
         $preserveKeys ? uasort($array, $callback) : usort($array, $callback);
 

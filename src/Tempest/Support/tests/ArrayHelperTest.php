@@ -1283,38 +1283,57 @@ final class ArrayHelperTest extends TestCase
 
     public function test_sort(): void
     {
-        $collection = arr(['d', 'a', 'b']);
+        $list = arr(['c', 'a', 'b']);
 
         $this->assertSame(
-            expected: ['a', 'b', 'd'],
-            actual: $collection->sort(desc: false, preserveKeys: false)->toArray(),
+            expected: ['a', 'b', 'c'],
+            actual: $list->sort()->toArray(),
         );
 
         $this->assertSame(
-            expected: ['d', 'b', 'a'],
-            actual: $collection->sort(desc: true, preserveKeys: false)->toArray(),
-        );
-
-        $collection = arr([1 => 'd', 2 => 'a', 3 => 'b']);
-
-        $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'd'],
-            actual: $collection->sort(desc: false, preserveKeys: true)->toArray(),
+            expected: ['a', 'b', 'c'],
+            actual: $list->sort(desc: false, preserveKeys: false)->toArray(),
         );
 
         $this->assertSame(
-            expected: [1 => 'd', 3 => 'b', 2 => 'a'],
-            actual: $collection->sort(desc: true, preserveKeys: true)->toArray(),
+            expected: ['c', 'b', 'a'],
+            actual: $list->sort(desc: true, preserveKeys: false)->toArray(),
+        );
+
+        $array = arr([1 => 'c', 2 => 'a', 3 => 'b']);
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sort()->toArray(),
+        );
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sort(desc: false, preserveKeys: true)->toArray(),
+        );
+
+        $this->assertSame(
+            expected: [1 => 'c', 3 => 'b', 2 => 'a'],
+            actual: $array->sort(desc: true, preserveKeys: true)->toArray(),
         );
     }
 
     public function test_sort_by_callback(): void
     {
-        $collection = arr(['d', 'a', 'b']);
+        $list = arr(['c', 'a', 'b']);
 
         $this->assertSame(
-            expected: ['a', 'b', 'd'],
-            actual: $collection->sortByCallback(
+            expected: ['a', 'b', 'c'],
+            actual: $list->sortByCallback(
+                callback: function ($a, $b) {
+                    return $a <=> $b;
+                },
+            )->toArray(),
+        );
+
+        $this->assertSame(
+            expected: ['a', 'b', 'c'],
+            actual: $list->sortByCallback(
                 callback: function ($a, $b) {
                     return $a <=> $b;
                 },
@@ -1322,11 +1341,20 @@ final class ArrayHelperTest extends TestCase
             )->toArray(),
         );
 
-        $collection = arr([1 => 'd', 2 => 'a', 3 => 'b']);
+        $array = arr([1 => 'c', 2 => 'a', 3 => 'b']);
 
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'd'],
-            actual: $collection->sortByCallback(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sortByCallback(
+                callback: function ($a, $b) {
+                    return $a <=> $b;
+                },
+            )->toArray(),
+        );
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sortByCallback(
                 callback: function ($a, $b) {
                     return $a <=> $b;
                 },
