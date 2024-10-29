@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use DateTimeImmutable;
 use function Tempest\view;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
@@ -53,7 +52,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<div :if="$this->show">Hello</div>',
+            '<div>Hello</div>',
             $this->render(view('<div :if="$this->show">Hello</div>')->data(show: true)),
         );
     }
@@ -61,37 +60,37 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_elseif_attribute(): void
     {
         $this->assertSame(
-            '<div :if="$this->a">A</div>',
+            '<div>A</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: true)),
         );
 
         $this->assertSame(
-            '<div :if="$this->a">A</div>',
+            '<div>A</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: false)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->b">B</div>',
+            '<div>B</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: true)),
         );
 
         $this->assertSame(
-            '<div :else>None</div>',
+            '<div>None</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: false)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->c">C</div>',
+            '<div>C</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: true)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->b">B</div>',
+            '<div>B</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: true, c: true)),
         );
 
         $this->assertSame(
-            '<div :else>None</div>',
+            '<div>None</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: false)),
         );
     }
@@ -99,12 +98,12 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_else_attribute(): void
     {
         $this->assertSame(
-            '<div :if="$this->show">True</div>',
+            '<div>True</div>',
             $this->render(view('<div :if="$this->show">True</div><div :else>False</div>')->data(show: true)),
         );
 
         $this->assertSame(
-            '<div :else>False</div>',
+            '<div>False</div>',
             $this->render(view('<div :if="$this->show">True</div><div :else>False</div>')->data(show: false)),
         );
     }
@@ -122,7 +121,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_foreach_consumes_attribute(): void
     {
-        $html = $this->render(view(<<<'HTML'
+        $html = $this->render(view(
+            <<<'HTML'
         <x-base>
             <table>
                 <tr :foreach="$items as $item">
@@ -133,12 +133,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML,
         )->data(items: ['a', 'b']));
 
-        $this->assertSame(<<<'HTML'
+        $this->assertSame(
+            <<<'HTML'
         <html lang="en"><head><title>Home</title></head><body><table><tr><td>a</td></tr>
         <tr><td>b</td></tr>
         </table></body></html>
         HTML,
-        $html);
+            $html
+        );
     }
 
     public function test_forelse_attribute(): void

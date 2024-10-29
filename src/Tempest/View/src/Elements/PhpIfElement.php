@@ -44,7 +44,7 @@ final class PhpIfElement implements Element
         $compiled = sprintf(
             "<?php if(%s): ?>
                 %s",
-            $this->wrappingElement->getAttribute('if'),
+            $this->wrappingElement->consumeAttribute('if'),
             $this->wrappingElement->compile(),
         );
 
@@ -54,12 +54,14 @@ final class PhpIfElement implements Element
                 <?php elseif(%s): ?>
                 %s",
                 $compiled,
-                $elseif->getAttribute('elseif'),
+                $elseif->consumeAttribute('elseif'),
                 $elseif->compile(),
             );
         }
 
         if ($this->else !== null) {
+            $this->else->consumeAttribute('else');
+
             $compiled = sprintf(
                 "%s
                 <?php else: ?>
