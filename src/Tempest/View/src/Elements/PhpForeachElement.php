@@ -32,10 +32,12 @@ final class PhpForeachElement implements Element
 
     public function compile(): string
     {
+        $foreachAttribute = $this->wrappingElement->consumeAttribute('foreach');
+
         $compiled = sprintf(
             '<?php foreach (%s): ?>
 %s',
-            $this->wrappingElement->getAttribute('foreach'),
+            $foreachAttribute,
             $this->wrappingElement->compile(),
         );
 
@@ -47,8 +49,9 @@ final class PhpForeachElement implements Element
         );
 
         if ($this->else !== null) {
-            $collectionName = str($this->wrappingElement->getAttribute('foreach'))
-                ->match('/^(?<match>.*)\s+as/')['match'];
+            $collectionName = str($foreachAttribute)->match('/^(?<match>.*)\s+as/')['match'];
+
+            $this->else->consumeAttribute('forelse');
 
             $compiled = sprintf(
                 '<?php if(iterator_count(%s)): ?>

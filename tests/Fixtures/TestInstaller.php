@@ -8,7 +8,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use function Tempest\src_path;
 
-final readonly class TestInstaller implements Installer
+final class TestInstaller implements Installer
 {
     use PublishesFiles;
 

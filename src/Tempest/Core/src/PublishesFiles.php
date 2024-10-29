@@ -16,6 +16,10 @@ trait PublishesFiles
 {
     use HasConsole;
 
+    private array $publishedFiles = [];
+
+    private array $publishedClasses = [];
+
     /**
      * @param Closure(string $source, string $destination): void|null $callback
      */
@@ -51,11 +55,26 @@ trait PublishesFiles
 
         $this->updateClass($destination);
 
+        $this->publishedFiles[] = $destination;
+
         if ($callback !== null) {
             $callback($source, $destination);
         }
 
         $this->success("{$destination} created");
+    }
+
+    public function publishImports(): void
+    {
+        foreach ($this->publishedFiles as $file) {
+            $contents = str(file_get_contents($file));
+
+            foreach ($this->publishedClasses as $old => $new) {
+                $contents = $contents->replace("use {$old};", "use {$new};");
+            }
+
+            file_put_contents($file, $contents);
+        }
     }
 
     private function updateClass(string $destination): void
@@ -75,9 +94,13 @@ trait PublishesFiles
             ->implode('\\')
             ->toString();
 
+        $oldClassName = $class->getClassName();
+
         $class
             ->setNamespace($namespace)
             ->removeClassAttribute(DoNotDiscover::class)
             ->save($destination);
+
+        $this->publishedClasses[$oldClassName] = $class->getClassName();
     }
 }

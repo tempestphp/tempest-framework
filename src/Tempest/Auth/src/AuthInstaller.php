@@ -8,7 +8,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use function Tempest\src_path;
 
-final readonly class AuthInstaller implements Installer
+final class AuthInstaller implements Installer
 {
     use PublishesFiles;
 
@@ -34,5 +34,7 @@ final readonly class AuthInstaller implements Installer
                 destination: $destination,
             );
         }
+
+        $this->publishImports();
     }
 }
