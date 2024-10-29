@@ -53,6 +53,15 @@ trait IsElement
         return $this;
     }
 
+    public function consumeAttribute(string $name): string|null
+    {
+        $value = $this->getAttribute($name);
+
+        $this->unsetAttribute($name);
+
+        return $value;
+    }
+
     public function unsetAttribute(string $name): self
     {
         $name = ltrim($name, ':');
