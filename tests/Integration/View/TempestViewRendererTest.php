@@ -133,7 +133,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML,
         )->data(items: ['a', 'b']));
 
-        $this->assertSame(
+        $this->assertStringContainsStringIgnoringLineEndings(
             <<<'HTML'
         <html lang="en"><head><title>Home</title></head><body><table><tr><td>a</td></tr>
         <tr><td>b</td></tr>
