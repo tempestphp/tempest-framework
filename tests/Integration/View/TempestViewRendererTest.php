@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use DateTimeImmutable;
 use function Tempest\view;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
@@ -112,25 +113,46 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div :foreach="$this->items as $foo">a</div>
-            <div :foreach="$this->items as $foo">b</div>
+            <div>a</div>
+            <div>b</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div>')->data(items: ['a', 'b'])),
         );
+    }
+
+    public function test_foreach_consumes_attribute(): void
+    {
+        $html = $this->render(view(<<<'HTML'
+        <x-base>
+            <table>
+                <tr :foreach="$items as $item">
+                    <td>{{ $item }}</td>
+                </tr>
+            </table>
+        </x-base>
+        HTML,
+        )->data(items: ['a', 'b']));
+
+        $this->assertSame(<<<'HTML'
+        <html lang="en"><head><title>Home</title></head><body><table><tr><td>a</td></tr>
+        <tr><td>b</td></tr>
+        </table></body></html>
+        HTML,
+        $html);
     }
 
     public function test_forelse_attribute(): void
     {
         $this->assertSame(
             <<<'HTML'
-            <div :forelse>Empty</div>
+            <div>Empty</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: [])),
         );
 
         $this->assertSame(
             <<<'HTML'
-            <div :foreach="$this->items as $foo">a</div>
+            <div>a</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
         );
