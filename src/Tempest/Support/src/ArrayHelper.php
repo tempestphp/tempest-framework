@@ -769,33 +769,41 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public function sort(bool $desc = false, bool $preserveKeys = false, $flags = SORT_REGULAR): self
     {
+        $array = $this->array;
+
         if ($preserveKeys) {
-            $desc ? arsort($this->array, flags: $flags) : asort($this->array, flags: $flags);
+            $desc ? arsort($array, $flags) : asort($array, $flags);
         } else {
-            $desc ? rsort($this->array, flags: $flags) : sort($this->array, flags: $flags);
+            $desc ? rsort($array, $flags) : sort($array, $flags);
         }
 
-        return $this;
+        return new self($array);
     }
 
     public function sortByCallback(callable $callback, bool $preserveKeys = false): self
     {
-        $preserveKeys ? uasort($this->array, $callback) : usort($this->array, $callback);
+        $array = $this->array;
 
-        return $this;
+        $preserveKeys ? uasort($array, $callback) : usort($array, $callback);
+
+        return new self($array);
     }
 
     public function sortKeys(bool $desc = false, $flags = SORT_REGULAR): self
     {
-        $desc ? krsort($this->array, flags: $flags) : ksort($this->array, flags: $flags);
+        $array = $this->array;
 
-        return $this;
+        $desc ? krsort($array, $flags) : ksort($array, $flags);
+
+        return new self($array);
     }
 
     public function sortKeysByCallback(callable $callback): self
     {
-        uksort($this->array, $callback);
+        $array = $this->array;
 
-        return $this;
+        uksort($array, $callback);
+
+        return new self($array);
     }
 }
