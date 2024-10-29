@@ -50,5 +50,10 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
                 ->assertFileContains($path, 'namespace App;')
                 ->assertFileNotContains($path, 'DoNotDiscover');
         }
+
+        $this->installer->assertFileContains(
+            'App/User.php',
+            'use App\UserPermission',
+        );
     }
 }

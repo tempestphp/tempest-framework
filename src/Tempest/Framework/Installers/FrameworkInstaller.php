@@ -8,7 +8,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use function Tempest\root_path;
 
-final readonly class FrameworkInstaller implements Installer
+final class FrameworkInstaller implements Installer
 {
     use PublishesFiles;
 

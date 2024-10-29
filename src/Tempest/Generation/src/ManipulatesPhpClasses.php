@@ -167,6 +167,11 @@ trait ManipulatesPhpClasses
         return $this;
     }
 
+    public function getClassName(): string
+    {
+        return $this->namespace . '\\' . $this->classType->getName();
+    }
+
     public function print(): string
     {
         if (! $this->namespace) {
