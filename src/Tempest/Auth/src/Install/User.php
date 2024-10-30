@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth;
+namespace Tempest\Auth\Install;
 
 use BackedEnum;
 use SensitiveParameter;
+use Tempest\Auth\CanAuthenticate;
+use Tempest\Auth\CanAuthorize;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use function Tempest\Support\arr;
@@ -20,7 +22,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
     public function __construct(
         public string $name,
         public string $email,
-        /** @var \Tempest\Auth\UserPermission[] $userPermissions */
+        /** @var \Tempest\Auth\Install\UserPermission[] $userPermissions */
         public array $userPermissions = [],
     ) {
     }
@@ -35,37 +37,54 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         return $this;
     }
 
-    public function grantPermission(string|UnitEnum $permission): self
+    public function grantPermission(string|UnitEnum|Permission $permission): self
     {
-        $permission = match(true) {
-            is_string($permission) => $permission,
-            $permission instanceof BackedEnum => $permission->value,
-            $permission instanceof UnitEnum => $permission->name,
-        };
+        $permission = $this->resolvePermission($permission);
 
         (new UserPermission(
             user: $this,
-            permission: new Permission($permission)
+            permission: $permission,
         ))->save();
 
         return $this->load('userPermissions.permission');
     }
 
-    public function revokePermission(string|UnitEnum $permission): self
+    public function revokePermission(string|UnitEnum|Permission $permission): self
     {
         $this->getPermission($permission)?->delete();
 
         return $this->load('userPermissions.permission');
     }
 
-    public function hasPermission(UnitEnum|string $permission): bool
+    public function hasPermission(string|UnitEnum|Permission $permission): bool
     {
         return $this->getPermission($permission) !== null;
     }
 
-    public function getPermission(UnitEnum|string $permission): ?UserPermission
+    public function getPermission(string|UnitEnum|Permission $permission): ?UserPermission
     {
         return arr($this->userPermissions)
             ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission));
+    }
+
+    private function resolvePermission(string|UnitEnum|Permission $permission): Permission
+    {
+        if ($permission instanceof Permission) {
+            return $permission;
+        }
+
+        $name = match (true) {
+            is_string($permission) => $permission,
+            $permission instanceof BackedEnum => $permission->value,
+            $permission instanceof UnitEnum => $permission->name,
+        };
+
+        $permission = Permission::query()->whereField('name', $name)->first();
+
+        if ($permission === null) {
+            return (new Permission($name))->save();
+        }
+
+        return $permission;
     }
 }

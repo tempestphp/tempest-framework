@@ -43,17 +43,17 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
         ];
 
         foreach ($publishItems as $publishItem) {
-            $path = "App/{$publishItem}.php";
+            $path = "App/Auth/{$publishItem}.php";
 
             $this->installer
                 ->assertFileExists($path)
-                ->assertFileContains($path, 'namespace App;')
+                ->assertFileContains($path, 'namespace App\Auth;')
                 ->assertFileNotContains($path, 'DoNotDiscover');
         }
 
         $this->installer->assertFileContains(
-            'App/User.php',
-            'use App\UserPermission',
+            'App/Auth/User.php',
+            'use App\Auth\UserPermission',
         );
     }
 }

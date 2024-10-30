@@ -6,11 +6,11 @@ namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Authenticator;
 use Tempest\Auth\CurrentUserNotLoggedIn;
-use Tempest\Auth\PermissionMigration;
+use Tempest\Auth\Install\PermissionMigration;
+use Tempest\Auth\Install\User;
+use Tempest\Auth\Install\UserMigration;
+use Tempest\Auth\Install\UserPermissionMigration;
 use Tempest\Auth\SessionAuthenticator;
-use Tempest\Auth\User;
-use Tempest\Auth\UserMigration;
-use Tempest\Auth\UserPermissionMigration;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Session\Managers\FileSessionManager;

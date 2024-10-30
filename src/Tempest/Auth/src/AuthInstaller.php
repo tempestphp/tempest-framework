@@ -20,12 +20,12 @@ final class AuthInstaller implements Installer
     public function install(): void
     {
         $publishFiles = [
-            __DIR__ . '/User.php' => src_path('User.php'),
-            __DIR__ . '/UserMigration.php' => src_path('UserMigration.php'),
-            __DIR__ . '/Permission.php' => src_path('Permission.php'),
-            __DIR__ . '/PermissionMigration.php' => src_path('PermissionMigration.php'),
-            __DIR__ . '/UserPermission.php' => src_path('UserPermission.php'),
-            __DIR__ . '/UserPermissionMigration.php' => src_path('UserPermissionMigration.php'),
+            __DIR__ . '/Install/User.php' => src_path('Auth/User.php'),
+            __DIR__ . '/Install/UserMigration.php' => src_path('Auth/UserMigration.php'),
+            __DIR__ . '/Install/Permission.php' => src_path('Auth/Permission.php'),
+            __DIR__ . '/Install/PermissionMigration.php' => src_path('Auth/PermissionMigration.php'),
+            __DIR__ . '/Install/UserPermission.php' => src_path('Auth/UserPermission.php'),
+            __DIR__ . '/Install/UserPermissionMigration.php' => src_path('Auth/UserPermissionMigration.php'),
         ];
 
         foreach ($publishFiles as $source => $destination) {
