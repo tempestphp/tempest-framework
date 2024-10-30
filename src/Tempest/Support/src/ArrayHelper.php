@@ -766,4 +766,15 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         return new self(map($this->array)->collection()->to($to));
     }
+
+    /**
+     * Sorts the array in ascending order.
+     */
+    public function sort(): self
+    {
+        $array = $this->array;
+        sort($array);
+
+        return new self($array);
+    }
 }
