@@ -40,8 +40,8 @@ final class StubFileGenerator
             $file_path = $this->writeFile($targetPath, $stubFile, $replacements);
 
             $this->console->success(sprintf('File successfully created at "%s".', $file_path));
-        } catch (Throwable $e) {
-            $this->console->error($e->getMessage());
+        } catch (Throwable $throwable) {
+            $this->console->error($throwable->getMessage());
         }
     }
 
