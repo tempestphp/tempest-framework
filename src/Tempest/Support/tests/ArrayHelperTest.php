@@ -1371,8 +1371,8 @@ final class ArrayHelperTest extends TestCase
         $array = arr([2 => 'a', 1 => 'c', 3 => 'b']);
 
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
-            actual: $array->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+            expected: [1 => 'c', 2 => 'a', 3 => 'b'],
+            actual: $array->sortKeysByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
         );
     }
 }
