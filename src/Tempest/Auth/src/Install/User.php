@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth;
+namespace Tempest\Auth\Install;
 
 use BackedEnum;
 use SensitiveParameter;
+use Tempest\Auth\CanAuthenticate;
+use Tempest\Auth\CanAuthorize;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
-use function Tempest\Support\arr;
 use UnitEnum;
+use function Tempest\Support\arr;
 
 final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
 {
@@ -20,7 +22,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
     public function __construct(
         public string $name,
         public string $email,
-        /** @var \Tempest\Auth\UserPermission[] $userPermissions */
+        /** @var \Tempest\Auth\Install\UserPermission[] $userPermissions */
         public array $userPermissions = [],
     ) {
     }

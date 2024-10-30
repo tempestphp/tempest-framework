@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth;
+namespace Tempest\Auth\Install;
 
 use Tempest\Core\DoNotDiscover;
 use Tempest\Database\Migration;
@@ -10,25 +10,23 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
 #[DoNotDiscover]
-final readonly class UserMigration implements Migration
+final readonly class UserPermissionMigration implements Migration
 {
     public function getName(): string
     {
-        return '0000-00-00_create_users_table';
+        return '0000-00-02_create_user_permissions_table';
     }
 
     public function up(): CreateTableStatement
     {
-        return (new CreateTableStatement('users'))
+        return (new CreateTableStatement('user_permissions'))
             ->primary()
-            ->varchar('name')
-            ->varchar('email')
-            ->datetime('emailValidatedAt', nullable: true)
-            ->text('password');
+            ->belongsTo('user_permissions.user_id', 'users.id')
+            ->belongsTo('user_permissions.permission_id', 'permissions.id');
     }
 
     public function down(): DropTableStatement
     {
-        return DropTableStatement::forModel(User::class);
+        return DropTableStatement::forModel(Permission::class);
     }
 }

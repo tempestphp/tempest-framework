@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Auth;
+namespace Tempest\Auth\Install;
 
 use BackedEnum;
 use Tempest\Database\DatabaseModel;
