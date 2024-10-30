@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-use function Tempest\get;
-use Tempest\Core\Kernel;
-use Tempest\Core\Composer;
 use Exception;
+use Tempest\Core\Composer;
+use Tempest\Core\Kernel;
+use function Tempest\get;
 
 final readonly class PathHelper
 {

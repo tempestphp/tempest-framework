@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Generation\StubFileGenerator;
-use Tempest\Generation\HasGeneratorCommand;
-use Tempest\Console\Stubs\ControllerStub;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Stubs\ControllerStub;
+use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\StubFileGenerator;
 
 final class MakeControllerCommand
 {
@@ -16,7 +16,8 @@ final class MakeControllerCommand
 
     public function __construct(
         private StubFileGenerator $stubFileGenerator
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name       : 'make:controller',
@@ -28,13 +29,11 @@ final class MakeControllerCommand
             help: 'The name of the controller class to create ( "Controller" will be suffixed )',
         )]
         string $className,
-
         #[ConsoleArgument(
             name: 'path',
             help: 'The route path inside the controller',
         )]
         ?string $controllerPath = null,
-        
         #[ConsoleArgument(
             name: 'view',
             help: 'The view name to return in the controller',

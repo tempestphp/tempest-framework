@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use Tempest\Support\StringHelper;
-use Tempest\Support\PathHelper;
-use Tempest\Generation\Exceptions\StubFileGenerationFailedException;
 use Tempest\Console\Console;
+use Tempest\Generation\Exceptions\StubFileGenerationFailedException;
+use Tempest\Support\PathHelper;
+use Tempest\Support\StringHelper;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -17,7 +17,8 @@ final class StubFileGenerator
 {
     public function __construct(
         private Console $console
-    ) {}
+    ) {
+    }
 
     /**
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
@@ -32,22 +33,21 @@ final class StubFileGenerator
         string $stubFile,
         array $replacements = [],
         bool $shouldOverride = false,
-    ): void
-    {
+    ): void {
         try {
             $this->prepareFilesystem($targetPath, $shouldOverride);
             $file_path = $this->writeFile($targetPath, $stubFile, $replacements);
-        } catch ( StubFileGenerationFailedException $e ) {
-            $this->console->error( $e->getMessage() );
+        } catch (StubFileGenerationFailedException $e) {
+            $this->console->error($e->getMessage());
         }
-        
+
         $this->console->success(sprintf('File successfully created at "%s".', $file_path));
     }
 
     /**
      * Prepare the directory structure for the new file.
      * It will delete the target file if it exists and we force the override.
-     * 
+     *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
      *
@@ -56,8 +56,7 @@ final class StubFileGenerator
     private function prepareFilesystem(
         string $targetPath,
         bool $shouldOverride = false,
-    ): void
-    {
+    ): void {
         // Delete the file if it exists and we force the override
         if (file_exists($targetPath)) {
             if (! $shouldOverride) {
@@ -75,7 +74,7 @@ final class StubFileGenerator
 
     /**
      * Write the file to the target path.
-     * 
+     *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param string $stubFile The stub file to use for the generation.
      * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
@@ -83,15 +82,14 @@ final class StubFileGenerator
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
      *
      * @throws StubFileGenerationFailedException If the file could not be written.
-     * 
+     *
      * @return string The path where the file was written.
      */
     private function writeFile(
         string $targetPath,
         string $stubFile,
         array $replacements = [],
-    ): 
-    {
+    ): string {
         // Transform stub to class
         $namespace = PathHelper::toRegisteredNamespace($targetPath);
         $classname = PathHelper::toClassName($targetPath);
