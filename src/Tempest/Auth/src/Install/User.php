@@ -39,12 +39,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
 
     public function grantPermission(string|UnitEnum|Permission $permission): self
     {
-        $permission = match(true) {
-            is_string($permission) => new Permission($permission),
-            $permission instanceof BackedEnum => new Permission($permission->value),
-            $permission instanceof UnitEnum => new Permission($permission->name),
-            default => $permission,
-        };
+        $permission = $this->resolvePermission($permission);
 
         (new UserPermission(
             user: $this,
@@ -70,5 +65,26 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
     {
         return arr($this->userPermissions)
             ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission));
+    }
+
+    private function resolvePermission(string|UnitEnum|Permission $permission): Permission
+    {
+        if ($permission instanceof Permission) {
+            return $permission;
+        }
+
+        $name = match (true) {
+            is_string($permission) => $permission,
+            $permission instanceof BackedEnum => $permission->value,
+            $permission instanceof UnitEnum => $permission->name,
+        };
+
+        $permission = Permission::query()->whereField('name', $name)->first();
+
+        if ($permission === null) {
+            return (new Permission($name))->save();
+        }
+
+        return $permission;
     }
 }

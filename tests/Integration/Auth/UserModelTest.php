@@ -90,6 +90,23 @@ final class UserModelTest extends FrameworkIntegrationTestCase
         $this->assertFalse($user->hasPermission('guest'));
     }
 
+    public function test_permissions_are_not_duplicated(): void
+    {
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save();
+
+        $user->grantPermission('admin');
+        $user->grantPermission(UserPermissionBackedEnum::ADMIN);
+
+        $permissions = Permission::all();
+
+        $this->assertCount(1, $permissions);
+    }
+
     public function test_revoke_permission(): void
     {
         $user = (new User(
