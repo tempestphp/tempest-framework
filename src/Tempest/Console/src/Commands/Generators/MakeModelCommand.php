@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Generation\HasGeneratorCommand;
-use Tempest\Console\Stubs\ModelStub;
-use Tempest\Console\Stubs\DatabaseModelStub;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Stubs\DatabaseModelStub;
+use Tempest\Console\Stubs\ModelStub;
+use Tempest\Generation\HasGeneratorCommand;
 
 final class MakeModelCommand
 {
