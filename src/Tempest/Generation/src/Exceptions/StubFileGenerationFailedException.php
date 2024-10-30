@@ -6,6 +6,6 @@ namespace Tempest\Generation\Exceptions;
 
 use Exception;
 
-class StubFileGenerationFailedException extends Exception
+final class StubFileGenerationFailedException extends Exception
 {
 }

@@ -30,12 +30,10 @@ final class MakeControllerCommand
         )]
         string $className,
         #[ConsoleArgument(
-            name: 'path',
             help: 'The route path inside the controller',
         )]
         ?string $controllerPath = null,
         #[ConsoleArgument(
-            name: 'view',
             help: 'The view name to return in the controller',
         )]
         ?string $controllerView = null,

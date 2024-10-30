@@ -8,6 +8,7 @@ use Tempest\Console\Console;
 use Tempest\Generation\Exceptions\StubFileGenerationFailedException;
 use Tempest\Support\PathHelper;
 use Tempest\Support\StringHelper;
+use Throwable;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -37,11 +38,11 @@ final class StubFileGenerator
         try {
             $this->prepareFilesystem($targetPath, $shouldOverride);
             $file_path = $this->writeFile($targetPath, $stubFile, $replacements);
-        } catch (StubFileGenerationFailedException $e) {
+
+            $this->console->success(sprintf('File successfully created at "%s".', $file_path));
+        } catch (Throwable $e) {
             $this->console->error($e->getMessage());
         }
-
-        $this->console->success(sprintf('File successfully created at "%s".', $file_path));
     }
 
     /**
@@ -50,8 +51,6 @@ final class StubFileGenerator
      *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     *
-     * @return bool Whether the filesystem is ready to write the file.
      */
     private function prepareFilesystem(
         string $targetPath,
