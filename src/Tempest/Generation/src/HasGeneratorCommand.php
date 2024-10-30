@@ -7,6 +7,7 @@ namespace Tempest\Generation;
 use Tempest\Console\Console;
 use Tempest\Core\Composer;
 use Tempest\Support\PathHelper;
+
 use function Tempest\Support\str;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
@@ -20,6 +21,7 @@ trait HasGeneratorCommand
     public function __construct(
         protected readonly Console $console,
         protected readonly Composer $composer,
+        protected readonly StubFileGenerator $stubFileGenerator
     ) {
     }
 

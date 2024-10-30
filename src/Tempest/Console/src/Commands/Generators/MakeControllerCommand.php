@@ -8,16 +8,10 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\ControllerStub;
 use Tempest\Generation\HasGeneratorCommand;
-use Tempest\Generation\StubFileGenerator;
 
 final class MakeControllerCommand
 {
     use HasGeneratorCommand;
-
-    public function __construct(
-        private StubFileGenerator $stubFileGenerator
-    ) {
-    }
 
     #[ConsoleCommand(
         name       : 'make:controller',
