@@ -14,10 +14,10 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionManager;
+use function Tempest\uri;
 use Tests\Tempest\Fixtures\Controllers\AdminController;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\uri;
 
 /**
  * @internal

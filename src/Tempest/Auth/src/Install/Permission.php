@@ -18,12 +18,13 @@ final class Permission implements DatabaseModel
     ) {
     }
 
-    public function matches(string|UnitEnum $match): bool
+    public function matches(string|UnitEnum|Permission $match): bool
     {
         $match = match(true) {
             is_string($match) => $match,
             $match instanceof BackedEnum => $match->value,
             $match instanceof UnitEnum => $match->name,
+            default => $match->name,
         };
 
         return $this->name === $match;

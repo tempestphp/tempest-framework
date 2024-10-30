@@ -10,8 +10,8 @@ use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
-use UnitEnum;
 use function Tempest\Support\arr;
+use UnitEnum;
 
 final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
 {
@@ -37,35 +37,36 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         return $this;
     }
 
-    public function grantPermission(string|UnitEnum $permission): self
+    public function grantPermission(string|UnitEnum|Permission $permission): self
     {
         $permission = match(true) {
-            is_string($permission) => $permission,
-            $permission instanceof BackedEnum => $permission->value,
-            $permission instanceof UnitEnum => $permission->name,
+            is_string($permission) => new Permission($permission),
+            $permission instanceof BackedEnum => new Permission($permission->value),
+            $permission instanceof UnitEnum => new Permission($permission->name),
+            default => $permission,
         };
 
         (new UserPermission(
             user: $this,
-            permission: new Permission($permission)
+            permission: $permission,
         ))->save();
 
         return $this->load('userPermissions.permission');
     }
 
-    public function revokePermission(string|UnitEnum $permission): self
+    public function revokePermission(string|UnitEnum|Permission $permission): self
     {
         $this->getPermission($permission)?->delete();
 
         return $this->load('userPermissions.permission');
     }
 
-    public function hasPermission(UnitEnum|string $permission): bool
+    public function hasPermission(string|UnitEnum|Permission $permission): bool
     {
         return $this->getPermission($permission) !== null;
     }
 
-    public function getPermission(UnitEnum|string $permission): ?UserPermission
+    public function getPermission(string|UnitEnum|Permission $permission): ?UserPermission
     {
         return arr($this->userPermissions)
             ->first(fn (UserPermission $userPermission) => $userPermission->permission->matches($permission));
