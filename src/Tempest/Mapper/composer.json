@@ -5,8 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/validation": "dev-main",
-        "tempest/core": "dev-main"
+        "tempest/validation": "^v1.0.0-alpha.3",
+        "tempest/core": "^v1.0.0-alpha.3"
     },
     "autoload": {
         "files": [
