@@ -25,7 +25,7 @@ final class RoutingTree
         $root = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
         // Add path to tree using recursion
-        $root->addPath($markedRoute->route->routeParts(), $markedRoute);
+        $root->addPath($markedRoute->route->split(), $markedRoute);
     }
 
     /** @return array<string, string> */

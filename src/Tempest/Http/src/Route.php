@@ -55,8 +55,13 @@ class Route
         return $matches[1] ?? [];
     }
 
-    /** @return string[] */
-    public function routeParts(): array
+    /**
+     * Splits the route URI into separate segments
+     *
+     * @example '/test/{id}/edit' becomes ['test', '{id}', 'edit']
+     * @return string[]
+     */
+    public function split(): array
     {
         $parts = explode('/', $this->uri);
 

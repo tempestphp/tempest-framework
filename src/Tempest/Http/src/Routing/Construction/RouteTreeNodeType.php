@@ -8,5 +8,5 @@ enum RouteTreeNodeType
 {
     case Root;
     case Static;
-    case Parameter;
+    case Dynamic;
 }

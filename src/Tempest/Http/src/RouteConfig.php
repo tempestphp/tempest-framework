@@ -61,6 +61,11 @@ final class RouteConfig
         $this->matchingRegexes = $this->routingTree->toMatchingRegexes();
     }
 
+    /**
+     * __sleep is called before serialize and returns the public properties to serialize. We do not want the routingTree
+     * to be serialized, but we do want the result to be serialized. Thus prepareMatchingRegexes is called and the
+     * resulting matchingRegexes are stored.
+     */
     public function __sleep(): array
     {
         $this->prepareMatchingRegexes();
@@ -68,6 +73,10 @@ final class RouteConfig
         return ['staticRoutes', 'dynamicRoutes', 'matchingRegexes'];
     }
 
+    /**
+     * __wakeup is called after unserialize. We do not serialize the routingTree thus we need to provide some default
+     *  for it. Otherwise, it will be uninitialized and cause issues when tempest expects it to be defined.
+     */
     public function __wakeup(): void
     {
         $this->routingTree = new RoutingTree();

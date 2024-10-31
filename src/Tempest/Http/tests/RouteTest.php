@@ -47,7 +47,7 @@ final class RouteTest extends TestCase
     public function test_route_parts(string $uri, array $expectedRouteParts): void
     {
         $route = new Route($uri, Method::GET);
-        $this->assertEquals($expectedRouteParts, $route->routeParts());
+        $this->assertEquals($expectedRouteParts, $route->split());
     }
 
     public static function uri_with_route_parts(): Generator
