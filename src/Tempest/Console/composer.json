@@ -5,15 +5,15 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.3",
-        "tempest/cache": "dev-main",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/debug": "dev-main",
+        "tempest/cache": "^v1.0.0-alpha.3",
+        "tempest/core": "^v1.0.0-alpha.3",
+        "tempest/container": "^v1.0.0-alpha.3",
+        "tempest/debug": "^v1.0.0-alpha.3",
         "tempest/highlight": "^2.0",
-        "tempest/log": "dev-main",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main",
-        "tempest/validation": "dev-main",
+        "tempest/log": "^v1.0.0-alpha.3",
+        "tempest/reflection": "^v1.0.0-alpha.3",
+        "tempest/support": "^v1.0.0-alpha.3",
+        "tempest/validation": "^v1.0.0-alpha.3",
         "ext-readline": "*"
     },
     "autoload": {

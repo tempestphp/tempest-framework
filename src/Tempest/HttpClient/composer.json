@@ -7,8 +7,8 @@
         "php": "^8.3",
         "psr/http-client": "^1.0.0",
         "psr/http-message": "^1.0|^2.0",
-        "tempest/container": "dev-main",
-        "tempest/http": "dev-main",
+        "tempest/container": "^v1.0.0-alpha.3",
+        "tempest/http": "^v1.0.0-alpha.3",
         "psr-discovery/http-factory-implementations": "1.x-dev",
         "psr-discovery/http-client-implementations": "1.x-dev"
     },

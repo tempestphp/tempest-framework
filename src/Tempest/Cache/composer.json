@@ -5,10 +5,10 @@
         "php": "^8.3",
         "psr/cache": "^3.0",
         "symfony/cache": "^7.2",
-        "tempest/core": "dev-main"
+        "tempest/core": "^v1.0.0-alpha.3"
     },
     "require-dev": {
-        "tempest/clock": "dev-main"
+        "tempest/clock": "^v1.0.0-alpha.3"
     },
     "autoload": {
         "psr-4": {

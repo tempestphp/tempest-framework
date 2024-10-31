@@ -3,9 +3,9 @@
     "description": "A flexible authentication package for Tempest, providing user authentication and authorization.",
     "require": {
         "php": "^8.3",
-        "tempest/core": "dev-main",
-        "tempest/http": "dev-main",
-        "tempest/database": "dev-main"
+        "tempest/core": "^v1.0.0-alpha.3",
+        "tempest/http": "^v1.0.0-alpha.3",
+        "tempest/database": "^v1.0.0-alpha.3"
     },
     "autoload": {
         "psr-4": {
