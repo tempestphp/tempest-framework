@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.3",
         "doctrine/inflector": "^2.0",
-        "tempest/container": "^v1.0.0-alpha.3"
+        "tempest/container": "dev-main"
     },
     "autoload": {
         "psr-4": {
