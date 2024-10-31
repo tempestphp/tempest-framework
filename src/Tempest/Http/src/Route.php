@@ -66,7 +66,7 @@ class Route
         $parts = explode('/', $this->uri);
 
         return array_values(
-            array_filter($parts, static fn (string $part) => ! empty($part))
+            array_filter($parts, static fn (string $part) => $part !== '')
         );
     }
 }
