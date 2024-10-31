@@ -58,6 +58,7 @@ final class RouteTest extends TestCase
         yield 'static route with trailing slash' => ['/foo/', ['foo']];
         yield 'route with many slashes' => ['/foo////bar//', ['foo', 'bar']];
         yield 'dynamic route' => ['/foo/{bar}', ['foo', '{bar}']];
+        yield 'does not filter out 0 in routes' => ['/foo/0/bar', ['foo', '0', 'bar']];
         yield 'dynamic route custom regex' => ['/foo/{bar:.*}', ['foo', '{bar:.*}']];
         yield 'dynamic route with more parameters' => ['/{foo}/{bar}', ['{foo}', '{bar}']];
         yield 'dynamic route with the same parameters' => ['/{bar}/{bar}', ['{bar}', '{bar}']];
