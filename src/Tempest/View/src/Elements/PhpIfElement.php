@@ -21,6 +21,23 @@ final class PhpIfElement implements Element
     ) {
     }
 
+    public function setAttribute(string $name, string $value): Element
+    {
+         $this->wrappingElement->setAttribute($name, $value);
+
+         return $this;
+    }
+
+    public function getAttribute(string $name): string|null
+    {
+        $name = ltrim($name, ':');
+
+        return $this->wrappingElement->getAttribute($name)
+            ?? $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
+    }
+
     public function addElseif(Element $element): self
     {
         $this->elseif[] = $element;

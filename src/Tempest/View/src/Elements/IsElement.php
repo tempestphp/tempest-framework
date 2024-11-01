@@ -119,4 +119,9 @@ trait IsElement
 
         return $this;
     }
+
+    public function is(string $className): bool
+    {
+        return $this instanceof $className;
+    }
 }

@@ -18,9 +18,9 @@ final readonly class ExpressionAttribute implements Attribute
     public function apply(Element $element): Element
     {
         return new PhpDataElement(
-            $this->name,
-            $element->getAttribute($this->name),
-            $element->setAttribute(
+            name: $this->name,
+            value: $element->getAttribute($this->name),
+            wrappingElement: $element->setAttribute(
                 $this->name,
                 sprintf('<?= %s ?>', $element->getAttribute($this->name))
             ),

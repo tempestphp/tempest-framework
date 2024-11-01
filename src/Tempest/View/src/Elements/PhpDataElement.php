@@ -19,15 +19,32 @@ final class PhpDataElement implements Element
     ) {
     }
 
+    public function is(string $className): bool
+    {
+        return $this->wrappingElement->is($className);
+    }
+
     public function getAttribute(string $name): string|null
     {
-        return $this->wrappingElement->getAttribute($name);
+        $name = ltrim($name, ':');
+
+        return $this->wrappingElement->getAttribute($name)
+            ?? $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        return $this->wrappingElement->{$name}(...$arguments);
     }
 
     public function compile(): string
     {
         $name = ltrim($this->name, ':');
         $isExpression = str_starts_with($this->name, ':');
+
+        // TODO: what if not stringable value? Eg. object passed to view component?
         $value = str($this->value ?? '');
 
         // If the value of an attribute is PHP code, it's automatically promoted to an expression with the PHP tags stripped
@@ -40,12 +57,15 @@ final class PhpDataElement implements Element
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
-            '$%s = %s;',
+            '$%s = %s ?? null;',
             $name,
             $isExpression
                 ? $value ?: 'null'
                 : var_export($value, true),
         );
+
+        // TODO: don't always do? But when? If HTML attribute, if stringable?
+        $this->wrappingElement->setAttribute($name, "<?= \$$name ?>");
 
         // And we'll remove it right after the element, this way we've created a "local scope"
         // where the variable is only available to that specific element.

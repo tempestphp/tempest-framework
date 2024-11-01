@@ -31,4 +31,6 @@ interface Element
 
     /** @return \Tempest\View\Element[] */
     public function getChildren(): array;
+
+    public function is(string $className): bool;
 }

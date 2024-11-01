@@ -416,4 +416,59 @@ HTML, foo: []),
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
+
+    public function test_elseif_before_data_element(): void
+    {
+        // TODO: maybe :href="$href" shouldn't be supported, if you want to print data into an attribute maybe it should only be possible with `href="{{ $href }}"`?
+
+        // <a :href="$href"
+        // <a :href="strtoupper('string')"
+        // <a :href="{{ $href }}"
+        // <a :href="<?= $href …"
+        // <a href="<?= $href "
+        // <a href="{{ $href }}"
+        // <a href="http://"
+        // <x-component :href="$object" />
+        // <x-component href="http://…" />
+
+        $view = <<<'HTML'
+        <a :if="($href ?? null) && ($label ?? null)" :href="$href">
+            {{ $label }}
+        </a>
+        <span :elseif="$label ?? null">
+            {{ $label }}
+        </span>
+        HTML;
+
+        $html = $this->render(view($view, href: '#', label: 'Label'));
+
+        $this->assertSame(<<<'HTML'
+        <a href="#">
+            Label</a>
+        HTML, $html);
+
+        $html = $this->render(view($view, label: 'Label'));
+        $this->assertSame(<<<'HTML'
+        <span>
+            Label</span>
+        HTML, $html);
+    }
+
+    public function test_forelse_before_data_element(): void
+    {
+        $view = <<<'HTML'
+        <div :if="$label ?? null" :foreach="$items as $item" data-label="$label">
+            {{ $item }}
+        </div>
+        <span :forelse="$label ?? null">
+            {{ $label }}
+        </span>
+        HTML;
+
+        $html = $this->render(view($view, items: ['a', 'b'], label: 'Label'));
+        ld($html);
+        $this->assertSame(<<<'HTML'
+
+        HTML, $html);
+    }
 }
