@@ -9,28 +9,21 @@ use Laminas\Diactoros\ServerRequest;
 use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use ReflectionMethod;
 use Tempest\Http\Method;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Ok;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
+use Tempest\Http\Routing\Construction\RouteConfigConstructor;
 use Tempest\Http\Routing\Matching\GenericRouteMatcher;
-use Tempest\Reflection\MethodReflector;
 
 final class GenericRouteMatcherBench
 {
-    private RouteConfig $config;
-
     private GenericRouteMatcher $matcher;
 
     public function __construct()
     {
-        $this->config = new RouteConfig();
+        $config = self::makeRouteConfig();
 
-        $this->matcher = new GenericRouteMatcher($this->config);
-
-        $this->setupConfigRoutes();
+        $this->matcher = new GenericRouteMatcher($config);
     }
 
     #[Warmup(10)]
@@ -43,17 +36,6 @@ final class GenericRouteMatcherBench
         );
     }
 
-    public function setupConfigRoutes(): void
-    {
-        $method = new MethodReflector(new ReflectionMethod(self::class, 'dummyMethod'));
-        foreach (range(1, 100) as $i) {
-            $this->config->addRoute($method, new Route("/test/{$i}", Method::GET));
-            $this->config->addRoute($method, new Route("/test/{id}/{$i}", Method::GET));
-            $this->config->addRoute($method, new Route("/test/{id}/{$i}/delete", Method::GET));
-            $this->config->addRoute($method, new Route("/test/{id}/{$i}/edit", Method::GET));
-        }
-    }
-
     public function provideDynamicMatchingCases(): Generator
     {
         yield 'Dynamic' => [ 'uri' => '/test/key/5/edit' ];
@@ -62,8 +44,16 @@ final class GenericRouteMatcherBench
         yield 'Static route' => [ 'uri' => '/test/5' ];
     }
 
-    public static function dummyMethod(): Response
+    private static function makeRouteConfig(): RouteConfig
     {
-        return new Ok();
+        $constructor = new RouteConfigConstructor();
+        foreach (range(1, 100) as $i) {
+            $constructor->addRoute(new Route("/test/{$i}", Method::GET));
+            $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));
+            $constructor->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
+            $constructor->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+        }
+
+        return $constructor->toRouteConfig();
     }
 }
