@@ -767,6 +767,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(map($this->array)->collection()->to($to));
     }
 
+    /**
+     * Returns a new instance of this array sorted by its values.
+     *
+     * @param bool $desc              Sorts in descending order if `true`; defaults to `false` (ascending).
+     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
+     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
+     * @param int $flags              Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.          
+     */
     public function sort(bool $desc = false, ?bool $preserveKeys = null, $flags = SORT_REGULAR): self
     {
         $array = $this->array;
@@ -784,6 +792,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * Returns a new instance of this array sorted by its values using a callback function.
+     *
+     * @param callable $callback      The function to use for comparing values. It should accept two parameters 
+     *                                and return an integer less than, equal to, or greater than zero if the 
+     *                                first argument is considered to be respectively less than, equal to, or 
+     *                                greater than the second.
+     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
+     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).     
+     */
     public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
     {
         $array = $this->array;
@@ -797,6 +815,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * Returns a new instance of this array sorted by its keys.
+     *
+     * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
+     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.   
+     */
     public function sortKeys(bool $desc = false, $flags = SORT_REGULAR): self
     {
         $array = $this->array;
@@ -806,6 +830,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * Returns a new instance of this array sorted by its keys using a callback function.
+     *
+     * @param callable $callback The function to use for comparing keys. It should accept two parameters 
+     *                           and return an integer less than, equal to, or greater than zero if the 
+     *                           first argument is considered to be respectively less than, equal to, or 
+     *                           greater than the second.
+     */
     public function sortKeysByCallback(callable $callback): self
     {
         $array = $this->array;
