@@ -89,22 +89,31 @@ final class RouteTreeNode
         $regexp = $this->regexSegment();
 
         if ($this->staticPaths !== [] || $this->dynamicPaths !== []) {
+            // The regex uses "Branch reset group" to match different available paths.
+            // two available routes /a and /b will create the regex (?|a|b)
             $regexp .= "(?";
 
+            // Add static route alteration
             foreach ($this->staticPaths as $path) {
                 $regexp .= '|' . $path->toRegex();
             }
 
+            // Add dynamic route alteration, for example routes {id:\d} and {id:\w} will create the regex (?|(\d)|(\w)).
+            // Both these parameter matches will end up on the same index in the matches array.
             foreach ($this->dynamicPaths as $path) {
                 $regexp .= '|' . $path->toRegex();
             }
 
+            // Add a leaf alteration with an optional slash and end of line match `$`.
+            // The `(*MARK:x)` is a marker which when this regex is matched will cause the matches array to contain
+            // a key `"MARK"` with value `"x"`, it is used to track which route has been matched
             if ($this->leaf !== null) {
                 $regexp .= '|\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
             }
 
             $regexp .= ")";
         } elseif ($this->leaf !== null) {
+            // Add a singular leaf regex without alteration
             $regexp .= '\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
         }
 
