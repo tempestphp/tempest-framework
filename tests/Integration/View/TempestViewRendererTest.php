@@ -417,7 +417,7 @@ HTML, foo: []),
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
 
-    public function test_elseif_before_data_element(): void
+    public function test_combined_if_and_data_elements(): void
     {
         $view = <<<'HTML'
         <a :if="($href ?? null) && ($label ?? null)" :href="$href">
@@ -426,6 +426,7 @@ HTML, foo: []),
         <span :elseif="$label ?? null">
             {{ $label }}
         </span>
+        <div :else>Nothing</div>
         HTML;
 
         $html = $this->render(view($view, href: '#', label: 'Label'));
@@ -440,15 +441,20 @@ HTML, foo: []),
         <span>
             Label</span>
         HTML, $html);
+
+        $html = $this->render(view($view));
+        $this->assertSame(<<<'HTML'
+        <div>Nothing</div>
+        HTML, $html);
     }
 
-    public function test_forelse_before_data_element(): void
+    public function test_combined_foreach_and_data_elements(): void
     {
         $view = <<<'HTML'
-        <div :if="$label ?? null" :foreach="$items as $item" data-label="$label">
+        <div :if="$label ?? null" :foreach="$items as $item" :data-label="$label">
             {{ $item }}
         </div>
-        <span :forelse="$label ?? null">
+        <span :else>
             {{ $label }}
         </span>
         HTML;

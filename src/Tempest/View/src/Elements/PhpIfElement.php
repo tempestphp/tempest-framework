@@ -21,6 +21,11 @@ final class PhpIfElement implements Element
     ) {
     }
 
+    public function is(string $className): bool
+    {
+        return $this instanceof $className || $this->wrappingElement->is($className);
+    }
+
     public function setAttribute(string $name, string $value): Element
     {
          $this->wrappingElement->setAttribute($name, $value);

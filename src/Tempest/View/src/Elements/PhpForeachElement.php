@@ -19,6 +19,11 @@ final class PhpForeachElement implements Element
     ) {
     }
 
+    public function is(string $className): bool
+    {
+        return $this instanceof $className || $this->wrappingElement->is($className);
+    }
+
     public function getAttribute(string $name): string|null
     {
         $name = ltrim($name, ':');

@@ -17,10 +17,11 @@ final readonly class ElseIfAttribute implements Attribute
     {
         $previous = $element->getPrevious();
 
-        if (! $previous->is(PhpIfElement::class)) {
+        if (! $previous?->is(PhpIfElement::class)) {
             throw new InvalidElement('There needs to be an if or elseif element before.');
         }
 
+        /** @var PhpIfElement $previous */
         $previous->addElseif($element);
 
         return null;
