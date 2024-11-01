@@ -23,9 +23,9 @@ final class PhpIfElement implements Element
 
     public function setAttribute(string $name, string $value): Element
     {
-         $this->wrappingElement->setAttribute($name, $value);
+        $this->wrappingElement->setAttribute($name, $value);
 
-         return $this;
+        return $this;
     }
 
     public function getAttribute(string $name): string|null

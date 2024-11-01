@@ -99,6 +99,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
     }
+
     protected function rollbackDatabase(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);

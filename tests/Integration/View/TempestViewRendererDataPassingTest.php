@@ -142,7 +142,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
             <<<'HTML'
             <a :href="<?= $object ?>">a</a>
             HTML,
-            object: new class {
+            object: new class () {
             },
         );
     }
@@ -161,7 +161,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                 <<<'HTML'
             <x-link :object="$object">a</x-link>
             HTML,
-                object: new class {
+                object: new class () {
                     public string $url = 'https://';
                 },
             ),
@@ -225,7 +225,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                 <<<'HTML'
             <x-link :href="$object">a</x-link>
             HTML,
-                object: new class {
+                object: new class () {
                     public string $url = 'https://';
                 },
             ),

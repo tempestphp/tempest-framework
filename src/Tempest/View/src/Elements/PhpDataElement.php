@@ -16,7 +16,8 @@ final class PhpDataElement implements Element
         private readonly string $name,
         private readonly ?string $value,
         private readonly Element $wrappingElement,
-    ) {}
+    ) {
+    }
 
     public function getAttribute(string $name): string|null
     {
@@ -60,8 +61,8 @@ final class PhpDataElement implements Element
 
         $wrappedViewComponent = $this->wrappingElement->unwrap(ViewComponentElement::class);
 
-        if ($wrappedViewComponent) {
-            $this->wrappingElement->setAttribute($name, "<?= \$$name ?>");
+        if ($wrappedViewComponent !== null) {
+            $this->wrappingElement->setAttribute($name, "<?= \${$name} ?>");
         }
 
         // And we'll remove it right after the element, this way we've created a "local scope"

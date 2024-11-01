@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use function Tempest\view;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\view;
 
 /**
  * @internal
