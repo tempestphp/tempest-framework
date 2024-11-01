@@ -419,18 +419,6 @@ HTML, foo: []),
 
     public function test_elseif_before_data_element(): void
     {
-        // TODO: maybe :href="$href" shouldn't be supported, if you want to print data into an attribute maybe it should only be possible with `href="{{ $href }}"`?
-
-        // <a :href="$href"
-        // <a :href="strtoupper('string')"
-        // <a :href="{{ $href }}"
-        // <a :href="<?= $href …"
-        // <a href="<?= $href "
-        // <a href="{{ $href }}"
-        // <a href="http://"
-        // <x-component :href="$object" />
-        // <x-component href="http://…" />
-
         $view = <<<'HTML'
         <a :if="($href ?? null) && ($label ?? null)" :href="$href">
             {{ $label }}

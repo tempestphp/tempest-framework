@@ -19,8 +19,10 @@ use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\HttpApplication;
+use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
+use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
@@ -91,6 +93,12 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         return $this->container->get(ViewRenderer::class)->render($view);
     }
 
+    protected function registerViewComponent(string $name, string $html): void
+    {
+        $viewComponent = new AnonymousViewComponent($html, '');
+
+        $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
+    }
     protected function rollbackDatabase(): void
     {
         $migrationManager = $this->container->get(MigrationManager::class);

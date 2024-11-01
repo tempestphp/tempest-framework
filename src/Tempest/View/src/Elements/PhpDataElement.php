@@ -16,8 +16,7 @@ final class PhpDataElement implements Element
         private readonly string $name,
         private readonly ?string $value,
         private readonly Element $wrappingElement,
-    ) {
-    }
+    ) {}
 
     public function is(string $className): bool
     {
@@ -64,8 +63,9 @@ final class PhpDataElement implements Element
                 : var_export($value, true),
         );
 
-        // TODO: don't always do? But when? If HTML attribute, if stringable?
-        $this->wrappingElement->setAttribute($name, "<?= \$$name ?>");
+        if (! $this->wrappingElement->is(ViewComponentElement::class)) {
+            $this->wrappingElement->setAttribute($name, "<?= \$$name ?>");
+        }
 
         // And we'll remove it right after the element, this way we've created a "local scope"
         // where the variable is only available to that specific element.

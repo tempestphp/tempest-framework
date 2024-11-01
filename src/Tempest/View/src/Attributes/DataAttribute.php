@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Attributes;
 
+use Tempest\View\Elements\TextElement;
 use function Tempest\Support\str;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
@@ -19,6 +20,16 @@ final readonly class DataAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
+        $value = str($element->getAttribute($this->name));
+
+        // Render {{ and {!! tags
+        if ($value->startsWith(['{{', '{!!']) && $value->endsWith(['}}', '!!}'])) {
+            $value = (new TextElement($value->toString()))->compile();
+            $element->setAttribute($this->name, $value);
+        }
+
+        // Data should only be defined for view component elements and data elements,
+        // otherwise it's a plain HTML attribute
         if (
             ! $element instanceof ViewComponentElement
             && ! $element instanceof PhpDataElement
@@ -26,11 +37,9 @@ final readonly class DataAttribute implements Attribute
             return $element;
         }
 
-        $value = str($element->getAttribute($this->name));
-
         return new PhpDataElement(
             $this->name,
-            $value->toString(),
+            $element->getAttribute($this->name),
             $element,
         );
     }
