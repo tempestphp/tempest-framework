@@ -781,7 +781,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $array = $this->array;
 
         if ($preserveKeys === null) {
-            $preserveKeys = ! array_is_list($array);
+            $preserveKeys = $this->isAssoc();
         }
 
         if ($preserveKeys) {
@@ -809,7 +809,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $array = $this->array;
 
         if ($preserveKeys === null) {
-            $preserveKeys = ! array_is_list($array);
+            $preserveKeys = $this->isAssoc();
         }
 
         $preserveKeys ? uasort($array, $callback) : usort($array, $callback);
