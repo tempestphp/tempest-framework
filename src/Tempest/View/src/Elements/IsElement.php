@@ -120,8 +120,21 @@ trait IsElement
         return $this;
     }
 
-    public function is(string $className): bool
+    /**
+     * @template T of \Tempest\View\Element
+     * @param class-string<T> $elementClass
+     * @return T|null
+     */
+    public function unwrap(string $elementClass): ?Element
     {
-        return $this instanceof $className;
+        if ($this instanceof $elementClass) {
+            return $this;
+        }
+
+        if (! isset($this->wrappingElement)) { // TODO: clean up
+            return null;
+        }
+
+        return $this->wrappingElement->unwrap($elementClass);
     }
 }

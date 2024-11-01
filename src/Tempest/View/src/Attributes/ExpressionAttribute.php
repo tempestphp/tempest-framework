@@ -30,7 +30,7 @@ final readonly class ExpressionAttribute implements Attribute
             name: $this->name,
             value: $value->toString(),
             wrappingElement: $element->setAttribute(
-                $this->name,
+                ltrim($this->name, ':'),
                 sprintf('<?= %s ?>', $value) // TODO: duplicate code with PhpDateElement
             ),
         );

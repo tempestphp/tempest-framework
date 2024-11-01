@@ -18,11 +18,6 @@ final class PhpDataElement implements Element
         private readonly Element $wrappingElement,
     ) {}
 
-    public function is(string $className): bool
-    {
-        return $this instanceof $className || $this->wrappingElement->is($className);
-    }
-
     public function getAttribute(string $name): string|null
     {
         $name = ltrim($name, ':');
@@ -63,7 +58,9 @@ final class PhpDataElement implements Element
                 : var_export($value, true),
         );
 
-        if (! $this->wrappingElement->is(ViewComponentElement::class)) {
+        $wrappedViewComponent = $this->wrappingElement->unwrap(ViewComponentElement::class);
+
+        if ($wrappedViewComponent) {
             $this->wrappingElement->setAttribute($name, "<?= \$$name ?>");
         }
 

@@ -32,5 +32,10 @@ interface Element
     /** @return \Tempest\View\Element[] */
     public function getChildren(): array;
 
-    public function is(string $className): bool;
+    /**
+     * @template T of \Tempest\View\Element
+     * @param class-string<T> $elementClass
+     * @return T|null
+     */
+    public function unwrap(string $elementClass): ?Element;
 }

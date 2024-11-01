@@ -19,11 +19,6 @@ final class PhpForeachElement implements Element
     ) {
     }
 
-    public function is(string $className): bool
-    {
-        return $this instanceof $className || $this->wrappingElement->is($className);
-    }
-
     public function getAttribute(string $name): string|null
     {
         $name = ltrim($name, ':');
@@ -69,7 +64,7 @@ final class PhpForeachElement implements Element
             $this->else->consumeAttribute('forelse');
 
             $compiled = sprintf(
-                '<?php if(iterator_count(%s)): ?>
+                '<?php if(iterator_count(%s ?? [])): ?>
 %s
 <?php else: ?>
 %s
