@@ -152,14 +152,14 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
         $this->registerViewComponent('x-link', <<<'HTML'
-        <a :href="$href->url"><x-slot/></a>
+        <a :href="$object->url"><x-slot/></a>
         HTML);
 
         $this->assertSame(
             '<a href="https://">a</a>',
             $this->render(
                 <<<'HTML'
-            <x-link :href="$object">a</x-link>
+            <x-link :object="$object">a</x-link>
             HTML,
                 object: new class {
                     public string $url = 'https://';
@@ -201,6 +201,33 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                 <<<'HTML'
             <x-link href="https://">a</x-link>
             HTML,
+            ),
+        );
+    }
+
+    public function test_expression_attribute_with_same_name(): void
+    {
+        // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
+
+        $this->registerViewComponent('x-link', <<<'HTML'
+        <a :href="$href->url"><x-slot/></a>
+        HTML);
+
+        /* There's a name collision here:
+            <?php $href = $href->url ?? null; ?>\n
+            <a href="<?= $href->url ?>">a</a>\n
+            <?php unset($href); ?>\n
+         */
+
+        $this->assertSame(
+            '<a href="https://">a</a>',
+            $this->render(
+                <<<'HTML'
+            <x-link :href="$object">a</x-link>
+            HTML,
+                object: new class {
+                    public string $url = 'https://';
+                },
             ),
         );
     }
