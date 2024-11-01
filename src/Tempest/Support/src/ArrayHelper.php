@@ -770,12 +770,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of this array sorted by its values.
      *
-     * @param bool $desc              Sorts in descending order if `true`; defaults to `false` (ascending).
+     * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
      * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
      *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
-     * @param int $flags              Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.          
+     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
+     * @return ($preserveKeys is true ? self<TKey, TValue> : self<int|TKey, TValue>)
      */
-    public function sort(bool $desc = false, ?bool $preserveKeys = null, $flags = SORT_REGULAR): self
+    public function sort(bool $desc = false, ?bool $preserveKeys = null, int $flags = SORT_REGULAR): self
     {
         $array = $this->array;
 
@@ -795,12 +796,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of this array sorted by its values using a callback function.
      *
-     * @param callable $callback      The function to use for comparing values. It should accept two parameters 
-     *                                and return an integer less than, equal to, or greater than zero if the 
-     *                                first argument is considered to be respectively less than, equal to, or 
+     * @param callable $callback      The function to use for comparing values. It should accept two parameters
+     *                                and return an integer less than, equal to, or greater than zero if the
+     *                                first argument is considered to be respectively less than, equal to, or
      *                                greater than the second.
      * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
-     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).     
+     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
+     * @return ($preserveKeys is true ? self<TKey, TValue> : self<int|TKey, TValue>)
      */
     public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
     {
@@ -819,9 +821,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns a new instance of this array sorted by its keys.
      *
      * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
-     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.   
+     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
+     * @return self<TKey, TValue>
      */
-    public function sortKeys(bool $desc = false, $flags = SORT_REGULAR): self
+    public function sortKeys(bool $desc = false, int $flags = SORT_REGULAR): self
     {
         $array = $this->array;
 
@@ -833,10 +836,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of this array sorted by its keys using a callback function.
      *
-     * @param callable $callback The function to use for comparing keys. It should accept two parameters 
-     *                           and return an integer less than, equal to, or greater than zero if the 
-     *                           first argument is considered to be respectively less than, equal to, or 
+     * @param callable $callback The function to use for comparing keys. It should accept two parameters
+     *                           and return an integer less than, equal to, or greater than zero if the
+     *                           first argument is considered to be respectively less than, equal to, or
      *                           greater than the second.
+     * @return self<TKey, TValue>
      */
     public function sortKeysByCallback(callable $callback): self
     {
