@@ -25,16 +25,6 @@ final class PhpForeachElement implements Element, WrapsElement
         return $this->wrappingElement;
     }
 
-    public function getAttribute(string $name): string|null
-    {
-        $name = ltrim($name, ':');
-
-        return $this->wrappingElement->getAttribute($name)
-            ?? $this->attributes[":{$name}"]
-            ?? $this->attributes[$name]
-            ?? null;
-    }
-
     public function setElse(Element $element): self
     {
         if ($this->else !== null) {

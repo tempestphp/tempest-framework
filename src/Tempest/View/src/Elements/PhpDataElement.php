@@ -25,21 +25,6 @@ final class PhpDataElement implements Element, WrapsElement
         return $this->wrappingElement;
     }
 
-    public function getAttribute(string $name): string|null
-    {
-        $name = ltrim($name, ':');
-
-        return $this->wrappingElement->getAttribute($name)
-            ?? $this->attributes[":{$name}"]
-            ?? $this->attributes[$name]
-            ?? null;
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->wrappingElement->{$name}(...$arguments);
-    }
-
     public function compile(): string
     {
         $name = ltrim($this->name, ':');
