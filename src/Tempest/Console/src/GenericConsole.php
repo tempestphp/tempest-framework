@@ -12,8 +12,8 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
-use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Components\TextBox\TextBoxComponent;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -177,22 +177,20 @@ final class GenericConsole implements Console
             return $default;
         }
 
-        if ($options === null || $options === []) {
-            $component = new TextBoxComponent($question, $default);
-        } elseif ($multiple) {
-            $component = new MultipleChoiceComponent(
+        $component = match (true) {
+            $options === null || $options === [] => new TextBoxComponent($question, $default),
+            $multiple => new MultipleChoiceComponent(
                 question: $question,
                 options: $options,
                 default: is_array($default) ? $default : [$default],
-            );
-        } else {
-            $component = new SingleChoiceComponent(
+            ),
+            default => new SingleChoiceComponent(
                 question: $question,
                 options: $options,
                 default: $default,
                 asList: $asList,
-            );
-        }
+            )
+        };
 
         return $this->component($component, $validation);
     }
