@@ -7,8 +7,9 @@ namespace Tempest\View\Elements;
 use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\WrapsElement;
 
-final class PhpForeachElement implements Element
+final class PhpForeachElement implements Element, WrapsElement
 {
     use IsElement;
 
@@ -17,6 +18,11 @@ final class PhpForeachElement implements Element
     public function __construct(
         private readonly Element $wrappingElement,
     ) {
+    }
+
+    public function getWrappingElement(): Element
+    {
+        return $this->wrappingElement;
     }
 
     public function setElse(Element $element): self
@@ -54,7 +60,7 @@ final class PhpForeachElement implements Element
             $this->else->consumeAttribute('forelse');
 
             $compiled = sprintf(
-                '<?php if(iterator_count(%s)): ?>
+                '<?php if(iterator_count(%s ?? [])): ?>
 %s
 <?php else: ?>
 %s

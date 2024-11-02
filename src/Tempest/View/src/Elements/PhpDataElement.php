@@ -7,8 +7,9 @@ namespace Tempest\View\Elements;
 use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\WrapsElement;
 
-final class PhpDataElement implements Element
+final class PhpDataElement implements Element, WrapsElement
 {
     use IsElement;
 
@@ -19,15 +20,16 @@ final class PhpDataElement implements Element
     ) {
     }
 
-    public function getAttribute(string $name): string|null
+    public function getWrappingElement(): Element
     {
-        return $this->wrappingElement->getAttribute($name);
+        return $this->wrappingElement;
     }
 
     public function compile(): string
     {
         $name = ltrim($this->name, ':');
         $isExpression = str_starts_with($this->name, ':');
+
         $value = str($this->value ?? '');
 
         // If the value of an attribute is PHP code, it's automatically promoted to an expression with the PHP tags stripped
@@ -40,7 +42,7 @@ final class PhpDataElement implements Element
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
-            '$%s = %s;',
+            '$%s ??= %s ?? null;',
             $name,
             $isExpression
                 ? $value ?: 'null'

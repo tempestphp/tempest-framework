@@ -13,10 +13,10 @@ final readonly class ElseAttribute implements Attribute
 {
     public function apply(Element $element): ?Element
     {
-        $previous = $element->getPrevious();
+        $previous = $element->getPrevious()?->unwrap(PhpIfElement::class);
 
         if (! $previous instanceof PhpIfElement) {
-            throw new InvalidElement('There needs to be an if or elseif element before.');
+            throw new InvalidElement('There needs to be an if or elseif element before an else element.');
         }
 
         $previous->setElse($element);
