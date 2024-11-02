@@ -214,9 +214,11 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML);
 
         /* There's a name collision here:
-            <?php $href = $href->url ?? null; ?>\n
-            <a href="<?= $href->url ?>">a</a>\n
-            <?php unset($href); ?>\n
+            <?php $href = $href->url ?? null; ?>
+            <a href="<?= $href->url ?>">a</a>
+            <?php unset($href); ?>
+           So instead we do this:
+            <?php $href ??= $href->url ?? null; ?>
          */
 
         $this->assertSame(

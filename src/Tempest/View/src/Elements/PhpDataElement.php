@@ -52,7 +52,7 @@ final class PhpDataElement implements Element
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
-            '$%s = %s ?? null;',
+            '$%s ??= %s ?? null;',
             $name,
             $isExpression
                 ? $value ?: 'null'
