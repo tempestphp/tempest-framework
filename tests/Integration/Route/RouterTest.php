@@ -10,6 +10,7 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
+use function Tempest\uri;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
@@ -19,7 +20,6 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\uri;
 
 /**
  * @internal
