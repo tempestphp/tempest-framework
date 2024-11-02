@@ -28,12 +28,8 @@ final readonly class DataAttribute implements Attribute
             $element->setAttribute($this->name, $value);
         }
 
-        // Data should only be defined for view component elements and data elements,
-        // otherwise it's a plain HTML attribute
-        if (
-            ! $element instanceof ViewComponentElement // TODO: unwrap
-            && ! $element instanceof PhpDataElement
-        ) {
+        // Data attributes should only be parsed for view components
+        if ($element->unwrap(ViewComponentElement::class) === null) {
             return $element;
         }
 

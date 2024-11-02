@@ -6,6 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\View;
+use Tempest\View\WrapsElement;
 
 /** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
@@ -131,10 +132,10 @@ trait IsElement
             return $this;
         }
 
-        if (! isset($this->wrappingElement)) { // TODO: clean up
-            return null;
+        if ($this instanceof WrapsElement) {
+            return $this->getWrappingElement()->unwrap($elementClass);
         }
 
-        return $this->wrappingElement->unwrap($elementClass);
+        return null;
     }
 }

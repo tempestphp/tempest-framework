@@ -7,8 +7,9 @@ namespace Tempest\View\Elements;
 use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\WrapsElement;
 
-final class PhpDataElement implements Element
+final class PhpDataElement implements Element, WrapsElement
 {
     use IsElement;
 
@@ -17,6 +18,11 @@ final class PhpDataElement implements Element
         private readonly ?string $value,
         private readonly Element $wrappingElement,
     ) {
+    }
+
+    public function getWrappingElement(): Element
+    {
+        return $this->wrappingElement;
     }
 
     public function getAttribute(string $name): string|null
@@ -58,12 +64,6 @@ final class PhpDataElement implements Element
                 ? $value ?: 'null'
                 : var_export($value, true),
         );
-
-        $wrappedViewComponent = $this->wrappingElement->unwrap(ViewComponentElement::class);
-
-        if ($wrappedViewComponent !== null) {
-            $this->wrappingElement->setAttribute($name, "<?= \${$name} ?>");
-        }
 
         // And we'll remove it right after the element, this way we've created a "local scope"
         // where the variable is only available to that specific element.
