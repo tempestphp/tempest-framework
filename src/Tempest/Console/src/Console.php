@@ -45,7 +45,7 @@ interface Console
     /**
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search): mixed;
+    public function search(string $label, Closure $search, ?string $default = null): mixed;
 
     public function info(string $line): self;
 

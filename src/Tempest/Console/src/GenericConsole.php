@@ -226,9 +226,9 @@ final class GenericConsole implements Console
         return $this->component(new ProgressBarComponent($data, $handler));
     }
 
-    public function search(string $label, Closure $search): mixed
+    public function search(string $label, Closure $search, ?string $default = null): mixed
     {
-        return $this->component(new SearchComponent($label, $search));
+        return $this->component(new SearchComponent($label, $search, $default));
     }
 
     public function supportsTty(): bool

@@ -46,11 +46,89 @@ TXT,
             ->assertContains("Hello Brent");
     }
 
-    private function search(string $query): array
+    public function test_no_answer(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $result = $console->search(
+                    label: 'Search',
+                    search: $this->search(...),
+                );
+
+                $console->write($result ?? '<no answer>');
+            })
+            ->submit()
+            ->assertContains(
+                text: <<<TXT
+                - [0] Search again
+                - [1] Cancel
+                TXT,
+                ignoreLineEndings: true
+            )
+            ->submit(1)
+            ->assertContains('<no answer>');
+    }
+
+    public function test_default_answer(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $result = $console->search(
+                    label: 'Search',
+                    search: $this->search(...),
+                    default: 'foo'
+                );
+
+                $console->write($result);
+            })
+            ->submit()
+            ->assertContains(
+                text: <<<TXT
+                - [0] Search again
+                - [1] Cancel
+                TXT,
+                ignoreLineEndings: true
+            )
+            ->submit(1)
+            ->assertContains('foo');
+    }
+
+    public function test_without_prompting(): void
+    {
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $result = $console->search(
+                    label: 'Search',
+                    search: $this->search(...),
+                );
+
+                $console->write($result ?? '<no answer>');
+            })
+            ->assertContains('<no answer>');
+    }
+
+    public function test_default_answer_without_prompting(): void
+    {
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $result = $console->search(
+                    label: 'Search',
+                    search: $this->search(...),
+                    default: 'foo'
+                );
+
+                $console->write($result);
+            })
+            ->assertContains('foo');
+    }
+
+    private function search(?string $query): array
     {
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
 
-        if ($query === '') {
+        if (! $query) {
             return [];
         }
 
