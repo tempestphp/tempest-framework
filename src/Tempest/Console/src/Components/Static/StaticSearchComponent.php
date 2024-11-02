@@ -11,6 +11,7 @@ use Tempest\Console\StaticConsoleComponent;
 final readonly class StaticSearchComponent implements StaticConsoleComponent
 {
     private const string SEARCH_AGAIN = 'Search again';
+
     private const string CANCEL = 'Cancel';
 
     public function __construct(

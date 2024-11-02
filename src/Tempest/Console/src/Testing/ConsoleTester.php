@@ -296,7 +296,7 @@ final class ConsoleTester
 
     public function dd(): self
     {
-        dd($this->output->asFormattedString());
+        ld($this->output->asFormattedString());
 
         return $this;
     }
