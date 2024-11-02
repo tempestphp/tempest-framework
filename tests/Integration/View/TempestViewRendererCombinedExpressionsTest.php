@@ -34,19 +34,19 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
 
         $html = $this->render(view($view, href: '#', label: 'Label'));
 
-        $this->assertSame(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <a href="#">
             Label</a>
         HTML, $html);
 
         $html = $this->render(view($view, label: 'Label'));
-        $this->assertSame(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <span>
             Label</span>
         HTML, $html);
 
         $html = $this->render(view($view));
-        $this->assertSame(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div>Nothing</div>
         HTML, $html);
     }
