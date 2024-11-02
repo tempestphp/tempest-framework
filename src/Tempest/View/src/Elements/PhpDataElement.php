@@ -30,7 +30,6 @@ final class PhpDataElement implements Element, WrapsElement
         $name = ltrim($this->name, ':');
         $isExpression = str_starts_with($this->name, ':');
 
-        // TODO: what if not stringable value? Eg. object passed to view component?
         $value = str($this->value ?? '');
 
         // If the value of an attribute is PHP code, it's automatically promoted to an expression with the PHP tags stripped

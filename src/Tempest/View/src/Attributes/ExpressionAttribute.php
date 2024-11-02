@@ -15,8 +15,7 @@ final readonly class ExpressionAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {
-    }
+    ) {}
 
     public function apply(Element $element): Element
     {
@@ -31,7 +30,7 @@ final readonly class ExpressionAttribute implements Attribute
             value: $value->toString(),
             wrappingElement: $element->setAttribute(
                 ltrim($this->name, ':'),
-                sprintf('<?= %s ?>', $value) // TODO: duplicate code with PhpDateElement
+                sprintf('<?= %s ?>', $value),
             ),
         );
     }
