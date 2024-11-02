@@ -7,7 +7,7 @@ namespace Tempest\Http;
 use Attribute;
 use Tempest\Reflection\MethodReflector;
 
-#[Attribute]
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
 class Route
 {
     public MethodReflector $handler;

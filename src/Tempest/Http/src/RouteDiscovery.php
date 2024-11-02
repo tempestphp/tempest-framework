@@ -18,13 +18,11 @@ final readonly class RouteDiscovery implements Discovery
     public function discover(ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $routeAttribute = $method->getAttribute(Route::class);
+            $routeAttributes = $method->getAttributes(Route::class);
 
-            if (! $routeAttribute) {
-                continue;
+            foreach ($routeAttributes as $routeAttribute) {
+                $this->routeConfig->addRoute($method, $routeAttribute);
             }
-
-            $this->routeConfig->addRoute($method, $routeAttribute);
         }
     }
 
