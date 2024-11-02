@@ -17,8 +17,12 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
     ) {
     }
 
-    public function render(Console $console): string
+    public function render(Console $console): ?string
     {
+        if (! $console->supportsPrompting()) {
+            return $this->default;
+        }
+
         $console->write("<h2>{$this->question}</h2> ");
 
         $parsedOptions = [];
