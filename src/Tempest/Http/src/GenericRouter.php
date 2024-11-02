@@ -12,6 +12,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
 use Tempest\Http\Exceptions\MissingControllerOutputException;
+use Tempest\Http\Exceptions\NotFoundException;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
@@ -59,6 +60,8 @@ final class GenericRouter implements Router
         try {
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
+        } catch (NotFoundException) {
+            return new NotFound();
         } catch (ValidationException $validationException) {
             // TODO: refactor to middleware
             return new Invalid($request, $validationException->failingRules);

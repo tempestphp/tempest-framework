@@ -147,4 +147,11 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http->post('/repeated/e')->assertOk();
         $this->http->post('/repeated/f')->assertOk();
     }
+
+    public function test_enum_route_binding(): void
+    {
+        $this->http->get('/with-enum/foo')->assertOk();
+        $this->http->get('/with-enum/bar')->assertOk();
+        $this->http->get('/with-enum/unknown')->assertNotFound();
+    }
 }
