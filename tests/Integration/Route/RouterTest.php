@@ -137,4 +137,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/test/1/a/')
             ->assertOk();
     }
+
+    public function test_repeated_routes(): void
+    {
+        $this->http->get('/repeated/a')->assertOk();
+        $this->http->get('/repeated/b')->assertOk();
+        $this->http->get('/repeated/c')->assertOk();
+        $this->http->get('/repeated/d')->assertOk();
+        $this->http->post('/repeated/e')->assertOk();
+        $this->http->post('/repeated/f')->assertOk();
+    }
 }
