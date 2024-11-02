@@ -10,6 +10,8 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
+use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
+use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -17,6 +19,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 
 /**
  * @internal
@@ -153,5 +156,18 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http->get('/with-enum/foo')->assertOk();
         $this->http->get('/with-enum/bar')->assertOk();
         $this->http->get('/with-enum/unknown')->assertNotFound();
+    }
+
+    public function test_generate_uri_with_enum(): void
+    {
+        $this->assertSame(
+            '/with-enum/foo',
+            uri(ControllerWithEnumBinding::class, input: EnumForController::FOO),
+        );
+
+        $this->assertSame(
+            '/with-enum/bar',
+            uri(ControllerWithEnumBinding::class, input: EnumForController::BAR),
+        );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
+use BackedEnum;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionException;
@@ -63,7 +64,6 @@ final class GenericRouter implements Router
         } catch (NotFoundException) {
             return new NotFound();
         } catch (ValidationException $validationException) {
-            // TODO: refactor to middleware
             return new Invalid($request, $validationException->failingRules);
         }
 
@@ -142,6 +142,10 @@ final class GenericRouter implements Router
                 $queryParams[$key] = $value;
 
                 continue;
+            }
+
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
             }
 
             $pattern = '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
