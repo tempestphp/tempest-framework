@@ -93,8 +93,12 @@ final class InteractiveComponentRenderer
                 continue;
             }
 
-            // If ctrl+c or ctrl+d, we'll exit
-            if ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value) {
+            /** @var MethodReflector[] $handlersForKey */
+            $handlersForKey = $keyBindings[$key] ?? null;
+
+            // If we pressed CTRL+C or CTRL+D, we want to exit.
+            // However, if we overriden one of those handler, we don't leave.
+            if (! $handlersForKey && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
                 throw new InterruptException();
             }
 
@@ -102,14 +106,14 @@ final class InteractiveComponentRenderer
 
             $return = null;
 
-            /** @var MethodReflector $handler */
-            if ($handlersForKey = $keyBindings[$key] ?? null) {
-                // Apply specific key handlers
-                foreach ($handlersForKey as $handler) {
-                    $return ??= $handler->invokeArgs($component);
-                }
-            } else {
-                // Apply catch-all key handlers
+            // If we have handlers for that key, apply them.
+            foreach ($handlersForKey ?? [] as $handler) {
+                $return ??= $handler->invokeArgs($component);
+            }
+
+            // If we didn't have any handler for the key,
+            // we call catch-all handlers.
+            if (! $handlersForKey) {
                 foreach ($inputHandlers as $handler) {
                     $return ??= $handler->invokeArgs($component, [$key]);
                 }
