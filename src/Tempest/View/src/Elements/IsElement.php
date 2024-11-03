@@ -6,6 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\View;
+use Tempest\View\WrapsElement;
 
 /** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
@@ -39,13 +40,23 @@ trait IsElement
     {
         $name = ltrim($name, ':');
 
-        return $this->attributes[":{$name}"]
+        if ($this instanceof WrapsElement) {
+            $value = $this->getWrappingElement()->getAttribute($name);
+        }
+
+        return
+            $value
+            ?? $this->attributes[":{$name}"]
             ?? $this->attributes[$name]
             ?? null;
     }
 
     public function setAttribute(string $name, string $value): self
     {
+        if ($this instanceof WrapsElement) {
+            $this->getWrappingElement()->setAttribute($name, $value);
+        }
+
         $this->unsetAttribute($name);
 
         $this->attributes[$name] = $value;
@@ -118,5 +129,23 @@ trait IsElement
         $this->children = $children;
 
         return $this;
+    }
+
+    /**
+     * @template T of \Tempest\View\Element
+     * @param class-string<T> $elementClass
+     * @return T|null
+     */
+    public function unwrap(string $elementClass): ?Element
+    {
+        if ($this instanceof $elementClass) {
+            return $this;
+        }
+
+        if ($this instanceof WrapsElement) {
+            return $this->getWrappingElement()->unwrap($elementClass);
+        }
+
+        return null;
     }
 }

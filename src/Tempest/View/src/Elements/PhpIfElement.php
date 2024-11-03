@@ -6,8 +6,9 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\WrapsElement;
 
-final class PhpIfElement implements Element
+final class PhpIfElement implements Element, WrapsElement
 {
     use IsElement;
 
@@ -19,6 +20,11 @@ final class PhpIfElement implements Element
     public function __construct(
         private readonly Element $wrappingElement,
     ) {
+    }
+
+    public function getWrappingElement(): Element
+    {
+        return $this->wrappingElement;
     }
 
     public function addElseif(Element $element): self

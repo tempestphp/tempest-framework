@@ -114,12 +114,14 @@ HTML, $html);
         $between = new Between(min: 1, max: 10);
         $alphaNumeric = new AlphaNumeric();
 
-        $this->container->get(Session::class)->flash(
+        $session = $this->container->get(Session::class);
+
+        $session->flash(
             Session::VALIDATION_ERRORS,
             ['name' => [$between, $alphaNumeric]],
         );
 
-        $this->container->get(Session::class)->flash(
+        $session->flash(
             Session::ORIGINAL_VALUES,
             ['name' => 'original name'],
         );

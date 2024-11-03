@@ -13,10 +13,10 @@ final readonly class ForelseAttribute implements Attribute
 {
     public function apply(Element $element): ?Element
     {
-        $previous = $element->getPrevious();
+        $previous = $element->getPrevious()?->unwrap(PhpForeachElement::class);
 
         if (! $previous instanceof PhpForeachElement) {
-            throw new InvalidElement('No valid foreach loop found in preceding element');
+            throw new InvalidElement('There needs to be a foreach element before an forelse element.');
         }
 
         $previous->setElse($element);

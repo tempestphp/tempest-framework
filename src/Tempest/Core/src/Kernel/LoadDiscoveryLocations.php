@@ -25,8 +25,8 @@ final readonly class LoadDiscoveryLocations
             [
                 ...$this->kernel->discoveryLocations,
                 ...$this->discoverCorePackages(),
-                ...$this->discoverAppNamespaces(),
                 ...$this->discoverVendorPackages(),
+                ...$this->discoverAppNamespaces(),
             ];
     }
 
