@@ -144,15 +144,12 @@ final class Kernel
             return $this;
         }
 
-        $handler = null;
-
         if (PHP_SAPI === 'cli') {
             $handler = $this->container->get(ConsoleExceptionHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...));
         } elseif ($appConfig->environment->isProduction()) {
             $handler = $this->container->get(HttpProductionExceptionHandler::class);
-        }
-
-        if ($handler) {
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...));
         } else {
