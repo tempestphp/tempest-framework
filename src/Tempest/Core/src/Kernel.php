@@ -13,7 +13,9 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpExceptionHandler;
+use Tempest\Http\Exceptions\HttpProductionExceptionHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final class Kernel
 {
@@ -29,7 +31,8 @@ final class Kernel
         public string $root,
         public array $discoveryLocations = [],
         ?Container $container = null,
-    ) {
+    )
+    {
         $this->container = $container ?? $this->createContainer();
 
         $this
@@ -141,14 +144,22 @@ final class Kernel
             return $this;
         }
 
+        $handler = null;
+
         if (PHP_SAPI === 'cli') {
             $handler = $this->container->get(ConsoleExceptionHandler::class);
-        } else {
-            $handler = $this->container->get(HttpExceptionHandler::class);
+        } elseif ($appConfig->environment->isProduction()) {
+            $handler = $this->container->get(HttpProductionExceptionHandler::class);
         }
 
-        set_exception_handler($handler->handleException(...));
-        set_error_handler($handler->handleError(...));
+        if ($handler) {
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...));
+        } else {
+            $whoops = new Run();
+            $whoops->pushHandler(new PrettyPageHandler());
+            $whoops->register();
+        }
 
         return $this;
     }
