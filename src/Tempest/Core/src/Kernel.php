@@ -31,8 +31,7 @@ final class Kernel
         public string $root,
         public array $discoveryLocations = [],
         ?Container $container = null,
-    )
-    {
+    ) {
         $this->container = $container ?? $this->createContainer();
 
         $this
@@ -147,11 +146,11 @@ final class Kernel
         if (PHP_SAPI === 'cli') {
             $handler = $this->container->get(ConsoleExceptionHandler::class);
             set_exception_handler($handler->handleException(...));
-            set_error_handler($handler->handleError(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
         } elseif ($appConfig->environment->isProduction()) {
             $handler = $this->container->get(HttpProductionExceptionHandler::class);
             set_exception_handler($handler->handleException(...));
-            set_error_handler($handler->handleError(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
         } else {
             $whoops = new Run();
             $whoops->pushHandler(new PrettyPageHandler());
