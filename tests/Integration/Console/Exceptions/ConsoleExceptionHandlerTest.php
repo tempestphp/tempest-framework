@@ -12,6 +12,7 @@ use Tempest\Console\Highlight\TextTerminalTheme;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Console\OutputBuffer;
 use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -24,20 +25,11 @@ final class ConsoleExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $output = new MemoryOutputBuffer();
 
-        $highlighter = new Highlighter(new TextTerminalTheme());
+        $this->container->singleton(OutputBuffer::class, $output);
 
-        $handler = new ConsoleExceptionHandler(
-            new GenericConsole(
-                output: $output,
-                input: new UnsupportedInputBuffer(),
-                highlighter: $highlighter,
-                executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class),
-            ),
-            highlighter: $highlighter,
-            argumentBag: $this->container->get(ConsoleArgumentBag::class),
-        );
+        $handler = $this->container->get(ConsoleExceptionHandler::class);
 
-        $handler->handle(new Exception('test message'));
+        $handler->handleException(new Exception('test message'));
 
         $output = $output->asUnformattedString();
 

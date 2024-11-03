@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -12,6 +13,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
+use Tempest\Http\Exceptions\HttpExceptionHandler;
 
 final class Kernel
 {
@@ -37,8 +39,8 @@ final class Kernel
             ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
-            ->loadExceptionHandler()
             ->loadDiscovery()
+            ->loadExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -135,7 +137,18 @@ final class Kernel
     {
         $appConfig = $this->container->get(AppConfig::class);
 
-        $appConfig->exceptionHandlerSetup->setup($appConfig);
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $handler = $this->container->get(ConsoleExceptionHandler::class);
+        } else {
+            $handler = $this->container->get(HttpExceptionHandler::class);
+        }
+
+        set_exception_handler($handler->handleException(...));
+        set_error_handler($handler->handleError(...));
 
         return $this;
     }

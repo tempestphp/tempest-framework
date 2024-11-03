@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use NunoMaduro\Collision\Provider as Collision;
 use Throwable;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -13,17 +12,6 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
 {
     public function setup(AppConfig $appConfig): void
     {
-        if ($appConfig->environment->isTesting()) {
-            return;
-        }
-
-        // Console
-        if (PHP_SAPI === 'cli') {
-            (new Collision())->register();
-
-            return;
-        }
-
         // Production web
         if ($appConfig->environment->isProduction()) {
             set_exception_handler($this->renderExceptionPage(...));
@@ -56,31 +44,4 @@ final readonly class GenericExceptionHandlerSetup implements ExceptionHandlerSet
         exit;
     }
 
-    public function renderErrorPage(
-        int $errNo,
-        string $errstr,
-        string $errFile,
-        int $errLine,
-    ): void {
-        ll("{$errFile}:{$errLine} {$errstr} ({$errNo})");
-
-        if (
-            $errNo === E_USER_WARNING
-            || $errNo === E_DEPRECATED
-        ) {
-            return;
-        }
-
-        ob_start();
-
-        if (! headers_sent()) {
-            http_response_code(500);
-        }
-
-        echo file_get_contents(__DIR__ . '/500.html');
-
-        ob_end_flush();
-
-        exit;
-    }
 }
