@@ -13,7 +13,6 @@ final class AppConfig
     public function __construct(
         ?Environment $environment = null,
         ?string $baseUri = null,
-        public ExceptionHandlerSetup $exceptionHandlerSetup = new GenericExceptionHandlerSetup(),
 
         /** @var \Tempest\Core\ExceptionHandler[] */
         public array $exceptionHandlers = [

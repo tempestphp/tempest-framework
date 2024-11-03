@@ -21,19 +21,19 @@ final class HttpExceptionHandler implements ExceptionHandler
         // TODO check for production or not
         $this->highlighter = new Highlighter(new CssTheme());
 
-//        // Production web
-//        if ($appConfig->environment->isProduction()) {
-//            set_exception_handler($this->renderExceptionPage(...));
-//            /** @phpstan-ignore-next-line */
-//            set_error_handler($this->renderErrorPage(...));
-//
-//            return;
-//        }
-//
-//        // Local web
-//        $whoops = new Run();
-//        $whoops->pushHandler(new PrettyPageHandler());
-//        $whoops->register();
+        //        // Production web
+        //        if ($appConfig->environment->isProduction()) {
+        //            set_exception_handler($this->renderExceptionPage(...));
+        //            /** @phpstan-ignore-next-line */
+        //            set_error_handler($this->renderErrorPage(...));
+        //
+        //            return;
+        //        }
+        //
+        //        // Local web
+        //        $whoops = new Run();
+        //        $whoops->pushHandler(new PrettyPageHandler());
+        //        $whoops->register();
     }
 
     public function handleException(Throwable $throwable): void
@@ -72,10 +72,10 @@ final class HttpExceptionHandler implements ExceptionHandler
             }
 
             $lines[$i] = '<span class="' . $class . '">' . str_pad(
-                    string: (string)($i + 1),
-                    length: 3,
-                    pad_type: STR_PAD_LEFT,
-                ) . '</span>' . $line;
+                string: (string)($i + 1),
+                length: 3,
+                pad_type: STR_PAD_LEFT,
+            ) . '</span>' . $line;
         }
 
         $start = max(0, $this->throwable->getLine() - $excerptSize);
@@ -110,17 +110,17 @@ final class HttpExceptionHandler implements ExceptionHandler
     }
 
 
-//ll($throwable);
-//
-//ob_start();
-//
-//if (! headers_sent()) {
-//http_response_code(500);
-//}
-//
-//echo file_get_contents(__DIR__ . '/500.html');
-//
-//ob_end_flush();
-//
-//exit;
+    //ll($throwable);
+    //
+    //ob_start();
+    //
+    //if (! headers_sent()) {
+    //http_response_code(500);
+    //}
+    //
+    //echo file_get_contents(__DIR__ . '/500.html');
+    //
+    //ob_end_flush();
+    //
+    //exit;
 }

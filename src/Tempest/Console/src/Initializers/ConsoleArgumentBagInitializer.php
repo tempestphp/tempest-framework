@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Console\Initializers;
 
 use Tempest\Console\Input\ConsoleArgumentBag;

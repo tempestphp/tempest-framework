@@ -5,15 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Exceptions;
 
 use Exception;
-use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleExceptionHandler;
-use Tempest\Console\GenericConsole;
-use Tempest\Console\Highlight\TextTerminalTheme;
-use Tempest\Console\Input\ConsoleArgumentBag;
-use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\OutputBuffer;
-use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

@@ -15,10 +15,12 @@ use Throwable;
 final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
-        #[Tag('console')] private Highlighter $highlighter,
+        #[Tag('console')]
+        private Highlighter $highlighter,
         private Console $console,
         private ConsoleArgumentBag $argumentBag,
-    ) {}
+    ) {
+    }
 
     public function handleException(Throwable $throwable): void
     {
