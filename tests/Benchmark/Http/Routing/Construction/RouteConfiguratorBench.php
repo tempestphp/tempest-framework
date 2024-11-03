@@ -9,15 +9,15 @@ use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
 use Tempest\Http\Route;
-use Tempest\Http\Routing\Construction\RouteConfigConstructor;
+use Tempest\Http\Routing\Construction\RouteConfigurator;
 
-final class RouteConfigConstructorBench
+final class RouteConfiguratorBench
 {
-    private RouteConfigConstructor $subject;
+    private RouteConfigurator $subject;
 
     public function __construct()
     {
-        $this->subject = new RouteConfigConstructor();
+        $this->subject = new RouteConfigurator();
     }
 
     #[Warmup(10)]
@@ -32,13 +32,13 @@ final class RouteConfigConstructorBench
     #[Revs(1000)]
     public function benchRouteConfigConstructionRouteAdding(): void
     {
-        $constructor = new RouteConfigConstructor();
+        $configurator = new RouteConfigurator();
 
         foreach (range(1, 100) as $i) {
-            $constructor->addRoute(new Route("/test/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+            $configurator->addRoute(new Route("/test/{$i}", Method::GET));
+            $configurator->addRoute(new Route("/test/{id}/{$i}", Method::GET));
+            $configurator->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
+            $configurator->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
         }
     }
 
@@ -47,7 +47,7 @@ final class RouteConfigConstructorBench
         self::addRoutes($this->subject);
     }
 
-    private static function addRoutes(RouteConfigConstructor $constructor): void
+    private static function addRoutes(RouteConfigurator $constructor): void
     {
         foreach (range(1, 100) as $i) {
             $constructor->addRoute(new Route("/test/{$i}", Method::GET));

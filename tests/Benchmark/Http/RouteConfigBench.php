@@ -9,7 +9,7 @@ use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\RouteConfigConstructor;
+use Tempest\Http\Routing\Construction\RouteConfigurator;
 
 final class RouteConfigBench
 {
@@ -30,7 +30,7 @@ final class RouteConfigBench
 
     private static function makeRouteConfig(): RouteConfig
     {
-        $constructor = new RouteConfigConstructor();
+        $constructor = new RouteConfigurator();
         foreach (range(1, 100) as $i) {
             $constructor->addRoute(new Route("/test/{$i}", Method::GET));
             $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));

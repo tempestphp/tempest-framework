@@ -8,13 +8,13 @@ use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\KernelEvent;
 use Tempest\EventBus\EventHandler;
-use Tempest\Http\Routing\Construction\RouteConfigConstructor;
+use Tempest\Http\Routing\Construction\RouteConfigurator;
 use Tempest\Reflection\ClassReflector;
 
 final readonly class RouteDiscovery implements Discovery
 {
     public function __construct(
-        private RouteConfigConstructor $routeConfigConstructor,
+        private RouteConfigurator $configurator,
         private RouteConfig $routeConfig,
     ) {
     }
@@ -27,7 +27,7 @@ final readonly class RouteDiscovery implements Discovery
             foreach ($routeAttributes as $routeAttribute) {
                 $routeAttribute->setHandler($method);
 
-                $this->routeConfigConstructor->addRoute($routeAttribute);
+                $this->configurator->addRoute($routeAttribute);
             }
         }
     }
@@ -35,8 +35,8 @@ final readonly class RouteDiscovery implements Discovery
     #[EventHandler(KernelEvent::BOOTED)]
     public function finishDiscovery(): void
     {
-        if ($this->routeConfigConstructor->isDirty()) {
-            $this->routeConfig->apply($this->routeConfigConstructor->toRouteConfig());
+        if ($this->configurator->isDirty()) {
+            $this->routeConfig->apply($this->configurator->toRouteConfig());
         }
     }
 

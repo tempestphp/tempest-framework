@@ -8,20 +8,20 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\RouteConfigConstructor;
+use Tempest\Http\Routing\Construction\RouteConfigurator;
 
 /**
  * @internal
  */
-final class RouteConfigConstructorTest extends TestCase
+final class RouteConfiguratorTest extends TestCase
 {
-    private RouteConfigConstructor $subject;
+    private RouteConfigurator $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subject = new RouteConfigConstructor();
+        $this->subject = new RouteConfigurator();
     }
 
     public function test_empty(): void

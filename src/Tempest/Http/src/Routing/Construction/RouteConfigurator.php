@@ -12,7 +12,7 @@ use Tempest\Http\RouteConfig;
  * @internal
  */
 #[Singleton]
-final class RouteConfigConstructor
+final class RouteConfigurator
 {
     /** @var string The mark to give the next route in the matching Regex */
     private string $regexMark = 'a';
