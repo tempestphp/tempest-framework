@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use function Tempest\env;
+
 final class AppConfig
 {
     public Environment $environment;
@@ -20,9 +22,9 @@ final class AppConfig
         ],
     ) {
         $this->environment = $environment
-            ?? Environment::tryFrom(\Tempest\env('ENVIRONMENT', 'local'))
+            ?? Environment::tryFrom(env('ENVIRONMENT', 'local'))
             ?? Environment::LOCAL;
 
-        $this->baseUri = $baseUri ?? \Tempest\env('BASE_URI') ?? '';
+        $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
     }
 }
