@@ -24,7 +24,7 @@ final class MakeControllerCommand
         )]
         string $className,
         #[ConsoleArgument(
-            help: 'The route path inside the controller',
+            help: 'The path of the route',
         )]
         ?string $controllerPath = null,
         #[ConsoleArgument(
