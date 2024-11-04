@@ -6,6 +6,7 @@ namespace Tempest\Auth;
 
 use Tempest\Container\Container;
 use Tempest\Http\HttpMiddleware;
+use Tempest\Http\HttpMiddlewareCallable;
 use Tempest\Http\MatchedRoute;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -20,7 +21,7 @@ final readonly class AuthorizerMiddleware implements HttpMiddleware
     ) {
     }
 
-    public function __invoke(Request $request, callable $next): Response
+    public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
         $attribute = $this->matchedRoute
             ->route

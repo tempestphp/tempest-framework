@@ -7,6 +7,7 @@ namespace Tempest\Console\Middleware;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
@@ -21,7 +22,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
     {
         try {
             return $next($invocation);
