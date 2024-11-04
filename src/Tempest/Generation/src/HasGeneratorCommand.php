@@ -12,8 +12,7 @@ use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 
 /**
- * This provide bunch of methods to generate files.
- * Also methods to manipulate the user generic input like the class name.
+ * Provides a bunch of methods to generate files and work with common user input.
  */
 trait HasGeneratorCommand
 {
