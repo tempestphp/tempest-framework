@@ -21,7 +21,7 @@ final class MakeModelCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The name of the model class to create ( "Model" will be suffixed )',
+            help: 'The name of the model class to create',
         )]
         string $className,
         #[ConsoleArgument(
