@@ -20,7 +20,7 @@ final class MakeControllerCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The name of the controller class to create ( "Controller" will be suffixed )',
+            help: 'The name of the controller class to create',
         )]
         string $className,
         #[ConsoleArgument(
