@@ -7,12 +7,12 @@ namespace Tempest\Console\Exceptions;
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
-use Tempest\Core\ExceptionHandler;
+use Tempest\Core\ErrorHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Throwable;
 
-final readonly class ConsoleExceptionHandler implements ExceptionHandler
+final readonly class ConsoleErrorHandler implements ErrorHandler
 {
     public function __construct(
         #[Tag('console')]

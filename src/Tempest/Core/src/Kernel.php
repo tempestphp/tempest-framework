@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
+use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -13,7 +13,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpProductionExceptionHandler;
+use Tempest\Http\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -144,11 +144,11 @@ final class Kernel
         }
 
         if (PHP_SAPI === 'cli') {
-            $handler = $this->container->get(ConsoleExceptionHandler::class);
+            $handler = $this->container->get(ConsoleErrorHandler::class);
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
         } elseif ($appConfig->environment->isProduction()) {
-            $handler = $this->container->get(HttpProductionExceptionHandler::class);
+            $handler = $this->container->get(HttpProductionErrorHandler::class);
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
         } else {

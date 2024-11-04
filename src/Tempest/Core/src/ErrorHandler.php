@@ -6,7 +6,7 @@ namespace Tempest\Core;
 
 use Throwable;
 
-interface ExceptionHandler
+interface ErrorHandler
 {
     public function handleException(Throwable $throwable): void;
 

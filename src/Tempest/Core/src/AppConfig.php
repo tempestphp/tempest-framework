@@ -16,8 +16,8 @@ final class AppConfig
         ?Environment $environment = null,
         ?string $baseUri = null,
 
-        /** @var \Tempest\Core\ExceptionHandler[] */
-        public array $exceptionHandlers = [
+        /** @var \Tempest\Core\ErrorHandler[] */
+        public array $errorHandlers = [
             // …,
         ],
     ) {

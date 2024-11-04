@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Exceptions;
 
-use Tempest\Core\ExceptionHandler;
+use Tempest\Core\ErrorHandler;
 use Throwable;
 
-final class HttpProductionExceptionHandler implements ExceptionHandler
+final class HttpProductionErrorHandler implements ErrorHandler
 {
     public function handleException(Throwable $throwable): void
     {

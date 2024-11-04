@@ -53,7 +53,7 @@ final readonly class ConsoleApplication implements Application
 
             $this->container->get(Kernel::class)->shutdown($exitCode->value);
         } catch (Throwable $throwable) {
-            foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
+            foreach ($this->appConfig->errorHandlers as $exceptionHandler) {
                 $exceptionHandler->handleException($throwable);
             }
 
