@@ -30,8 +30,8 @@ final class MakeModelCommand
         bool $isDatabaseModel = false,
     ): void {
         $suggestedPath = $this->getSuggestedPath(
-            className  : $className,
-            pathPrefix : 'Models',
+            className: $className,
+            pathPrefix: 'Models',
             classSuffix: 'Model',
         );
         $targetPath = $this->promptTargetPath($suggestedPath);
