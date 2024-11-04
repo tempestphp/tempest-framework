@@ -24,16 +24,9 @@ final readonly class GenericEventBus implements EventBus
 
     public function dispatch(string|object $event): void
     {
-
         $eventHandlers = $this->resolveHandlers($event);
 
-        $dispatch = $this->applyMiddleware(function (string|object $event) use ($eventHandlers): void {
-            foreach ($eventHandlers as $eventHandler) {
-                $callable = $eventHandler->normalizeCallable($this->container);
-
-                $callable($event);
-            }
-        });
+        $dispatch = $this->getCallable($eventHandlers);
 
         $dispatch($event);
     }
@@ -64,18 +57,26 @@ final readonly class GenericEventBus implements EventBus
         return $handlers;
     }
 
-    private function applyMiddleware(Closure $handler): Closure
+    private function getCallable(array $eventHandlers): EventBusMiddlewareCallable
     {
+        $callable = new EventBusMiddlewareCallable(function (string|object $event) use ($eventHandlers): void {
+            foreach ($eventHandlers as $eventHandler) {
+                $callable = $eventHandler->normalizeCallable($this->container);
+
+                $callable($event);
+            }
+        });
+
         $middlewareStack = $this->eventBusConfig->middleware;
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $handler = fn (string|object $event) => $this->container->invoke(
+            $callable = new EventBusMiddlewareCallable(fn (string|object $event) => $this->container->invoke(
                 $middlewareClass,
                 event: $event,
-                next: $handler,
-            );
+                next: $callable,
+            ));
         }
 
-        return $handler;
+        return $callable;
     }
 }
