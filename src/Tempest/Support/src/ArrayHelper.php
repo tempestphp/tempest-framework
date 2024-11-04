@@ -774,7 +774,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
      *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
      * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
-     * @return ($preserveKeys is true ? self<TKey, TValue> : self<int|TKey, TValue>)
+     * @return self<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
     public function sort(bool $desc = false, ?bool $preserveKeys = null, int $flags = SORT_REGULAR): self
     {
@@ -796,13 +796,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of this array sorted by its values using a callback function.
      *
-     * @param callable $callback      The function to use for comparing values. It should accept two parameters
-     *                                and return an integer less than, equal to, or greater than zero if the
-     *                                first argument is considered to be respectively less than, equal to, or
-     *                                greater than the second.
+     * @param callable $callback The function to use for comparing values. It should accept two parameters
+     *                           and return an integer less than, equal to, or greater than zero if the
+     *                           first argument is considered to be respectively less than, equal to, or
+     *                           greater than the second.
      * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
      *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
-     * @return ($preserveKeys is true ? self<TKey, TValue> : self<int|TKey, TValue>)
+     * @return self<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
     public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
     {
