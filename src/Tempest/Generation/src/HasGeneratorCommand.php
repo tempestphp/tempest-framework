@@ -24,8 +24,8 @@ trait HasGeneratorCommand
     }
 
     /**
-     * Get a suggested path for the given class name.
-     * This will find the main autoloaded namespace in the project's composer file and use it as the base path.
+     * Gets a suggested path for the given class name.
+     * This will use the user's main namespace as the base path.
      *
      * @param string $className The class name to generate the path for, can include path parts (e.g. 'Models/User').
      * @param string|null $pathPrefix The prefix to add to the path (e.g. 'Models').
