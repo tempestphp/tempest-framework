@@ -14,9 +14,9 @@ final class MakeControllerCommand
     use HasGeneratorCommand;
 
     #[ConsoleCommand(
-        name       : 'make:controller',
-        description: 'Create a new controller class with a basic route',
-        aliases    : ['controller:make', 'controller:create', 'create:controller'],
+        name: 'make:controller',
+        description: 'Creates a new controller class with a route',
+        aliases: ['controller:make', 'controller:create', 'create:controller'],
     )]
     public function __invoke(
         #[ConsoleArgument(
