@@ -38,8 +38,8 @@ final class MakeModelCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         $this->stubFileGenerator->generate(
-            stubFile      : $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
-            targetPath    : $targetPath,
+            stubFile: $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
+            targetPath: $targetPath,
             shouldOverride: $shouldOverride,
         );
     }
