@@ -28,7 +28,7 @@ final class MakeControllerCommand
         )]
         ?string $controllerPath = null,
         #[ConsoleArgument(
-            help: 'The view name to return in the controller',
+            help: 'The name of the view returned from the controller',
         )]
         ?string $controllerView = null,
     ): void {
