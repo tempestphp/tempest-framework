@@ -7,34 +7,33 @@ namespace Tempest\Console\Exceptions;
 use Tempest\Console\Console;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
-use Tempest\Core\ExceptionHandler;
+use Tempest\Core\ErrorHandler;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
 use Throwable;
 
-final readonly class ConsoleExceptionHandler implements ExceptionHandler
+final readonly class ConsoleErrorHandler implements ErrorHandler
 {
     public function __construct(
-        private Console $console,
         #[Tag('console')]
         private Highlighter $highlighter,
+        private Console $console,
         private ConsoleArgumentBag $argumentBag,
     ) {
     }
 
-    public function handle(Throwable $throwable): void
+    public function handleException(Throwable $throwable): void
     {
+        ll(exception: $throwable->getMessage());
+
         $this->console
             ->writeln()
             ->error($throwable::class)
             ->when(
                 expression: $throwable->getMessage(),
                 callback: fn (Console $console) => $console->error($throwable->getMessage()),
-            );
-
-        $this->writeSnippet($throwable);
-
-        $this->console
+            )
+            ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
             ->writeln()
             ->writeln('<u>' . $throwable->getFile() . ':' . $throwable->getLine() . '</u>')
             ->writeln();
@@ -54,31 +53,34 @@ final readonly class ConsoleExceptionHandler implements ExceptionHandler
                 ->writeln('<em>-v</em> show more')
                 ->writeln();
         }
-
-        ll(exception: $throwable->getMessage());
     }
 
-    private function writeSnippet(Throwable $throwable): void
+    public function handleError(int $errNo, string $errstr, string $errFile, int $errLine): void
     {
-        $this->console->writeln($this->getCodeSample($throwable));
+        ll('error');
+
+        $this->console
+            ->writeln()
+            ->error($errstr)
+            ->writeln($this->getSnippet($errFile, $errLine));
     }
 
-    private function getCodeSample(Throwable $throwable): string
+    private function getSnippet(string $file, int $lineNumber): string
     {
         $highlighter = $this->highlighter->withGutter();
-        $code = Escape::terminal($highlighter->parse(file_get_contents($throwable->getFile()), 'php'));
+        $code = Escape::terminal($highlighter->parse(file_get_contents($file), 'php'));
         $lines = explode(PHP_EOL, $code);
 
-        $lines[$throwable->getLine() - 1] = $lines[$throwable->getLine() - 1] . ' <error><</error>';
+        $lines[$lineNumber - 1] = $lines[$lineNumber - 1] . ' <error><</error>';
 
         $excerptSize = 5;
-        $start = max(0, $throwable->getLine() - $excerptSize - 2);
+        $start = max(0, $lineNumber - $excerptSize - 2);
         $lines = array_slice($lines, $start, $excerptSize * 2);
 
         return PHP_EOL . implode(PHP_EOL, $lines);
     }
 
-    public function formatTrace(mixed $trace): string
+    private function formatTrace(mixed $trace): string
     {
         if (isset($trace['file'])) {
             return '<u>' . $trace['file'] . ':' . $trace['line'] . '</u>';

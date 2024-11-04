@@ -59,8 +59,8 @@ final readonly class HttpApplication implements Application
 
             $this->container->get(Kernel::class)->shutdown();
         } catch (Throwable $throwable) {
-            foreach ($this->container->get(AppConfig::class)->exceptionHandlers as $exceptionHandler) {
-                $exceptionHandler->handle($throwable);
+            foreach ($this->container->get(AppConfig::class)->errorHandlers as $exceptionHandler) {
+                $exceptionHandler->handleException($throwable);
             }
 
             throw $throwable;

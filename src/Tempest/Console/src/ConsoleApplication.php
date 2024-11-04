@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Tempest\Console\Actions\ExecuteConsoleCommand;
-use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
@@ -44,8 +43,6 @@ final readonly class ConsoleApplication implements Application
         $logConfig->debugLogPath = PathHelper::make($container->get(Kernel::class)->root, '/log/debug.log');
         $logConfig->channels[] = new AppendLogChannel(PathHelper::make($container->get(Kernel::class)->root, '/log/tempest.log'));
 
-        $container->get(AppConfig::class)->exceptionHandlers[] = $container->get(ConsoleExceptionHandler::class);
-
         return $application;
     }
 
@@ -56,8 +53,8 @@ final readonly class ConsoleApplication implements Application
 
             $this->container->get(Kernel::class)->shutdown($exitCode->value);
         } catch (Throwable $throwable) {
-            foreach ($this->appConfig->exceptionHandlers as $exceptionHandler) {
-                $exceptionHandler->handle($throwable);
+            foreach ($this->appConfig->errorHandlers as $exceptionHandler) {
+                $exceptionHandler->handleException($throwable);
             }
 
             throw $throwable;

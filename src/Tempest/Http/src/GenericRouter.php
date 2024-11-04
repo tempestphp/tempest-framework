@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use BackedEnum;
-use Closure;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
-use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Exceptions\NotFoundException;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
@@ -67,17 +65,10 @@ final class GenericRouter implements Router
             return new Invalid($request, $validationException->failingRules);
         }
 
-        if ($response === null) {
-            throw new MissingControllerOutputException(
-                $matchedRoute->route->handler->getDeclaringClass()->getName(),
-                $matchedRoute->route->handler->getName(),
-            );
-        }
-
         return $response;
     }
 
-    private function getCallable(MatchedRoute $matchedRoute): Closure
+    private function getCallable(MatchedRoute $matchedRoute): HttpMiddlewareCallable
     {
         $route = $matchedRoute->route;
 
@@ -94,17 +85,17 @@ final class GenericRouter implements Router
             return $response;
         };
 
-        $callable = fn (Request $request) => $this->createResponse($callControllerAction($request));
+        $callable = new HttpMiddlewareCallable(fn (Request $request) => $this->createResponse($callControllerAction($request)));
 
         $middlewareStack = [...$this->middleware, ...$route->middleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = function (Request $request) use ($middlewareClass, $callable) {
+            $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
                 /** @var HttpMiddleware $middleware */
                 $middleware = $this->container->get($middlewareClass);
 
                 return $middleware($request, $callable);
-            };
+            });
         }
 
         return $callable;

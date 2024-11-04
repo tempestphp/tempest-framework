@@ -8,6 +8,7 @@ use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 
@@ -20,7 +21,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
     {
         $consoleCommand = $this->consoleConfig->commands[$invocation->argumentBag->getCommandName()] ?? null;
 
