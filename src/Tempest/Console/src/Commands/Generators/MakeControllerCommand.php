@@ -33,8 +33,8 @@ final class MakeControllerCommand
         ?string $controllerView = null,
     ): void {
         $suggestedPath = $this->getSuggestedPath(
-            className  : $className,
-            pathPrefix : 'Controllers',
+            className: $className,
+            pathPrefix: 'Controllers',
             classSuffix: 'Controller',
         );
         $targetPath = $this->promptTargetPath($suggestedPath);
