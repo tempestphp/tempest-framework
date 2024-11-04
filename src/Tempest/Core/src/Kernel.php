@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -12,6 +13,9 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
+use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final class Kernel
 {
@@ -37,8 +41,8 @@ final class Kernel
             ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
-            ->loadExceptionHandler()
             ->loadDiscovery()
+            ->loadExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -135,7 +139,23 @@ final class Kernel
     {
         $appConfig = $this->container->get(AppConfig::class);
 
-        $appConfig->exceptionHandlerSetup->setup($appConfig);
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $handler = $this->container->get(ConsoleErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } elseif ($appConfig->environment->isProduction()) {
+            $handler = $this->container->get(HttpProductionErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } else {
+            $whoops = new Run();
+            $whoops->pushHandler(new PrettyPageHandler());
+            $whoops->register();
+        }
 
         return $this;
     }
