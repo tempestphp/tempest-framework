@@ -41,10 +41,10 @@ final class MakeControllerCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         $this->stubFileGenerator->generate(
-            stubFile      : ControllerStub::class,
-            targetPath    : $targetPath,
+            stubFile: ControllerStub::class,
+            targetPath: $targetPath,
             shouldOverride: $shouldOverride,
-            replacements  : [
+            replacements: [
                 'dummy-path' => $controllerPath,
                 'dummy-view' => $controllerView,
             ],
