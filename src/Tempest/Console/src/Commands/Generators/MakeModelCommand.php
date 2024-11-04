@@ -15,9 +15,9 @@ final class MakeModelCommand
     use HasGeneratorCommand;
 
     #[ConsoleCommand(
-        name       : 'make:model',
-        description: 'Create a new model class',
-        aliases    : ['model:make', 'model:create', 'create:model'],
+        name: 'make:model',
+        description: 'Creates a new model class',
+        aliases: ['model:make', 'model:create', 'create:model'],
     )]
     public function __invoke(
         #[ConsoleArgument(
