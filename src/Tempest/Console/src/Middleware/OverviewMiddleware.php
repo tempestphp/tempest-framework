@@ -8,6 +8,7 @@ use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
+use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\DiscoveryCache;
@@ -21,7 +22,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, callable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
     {
         if (! $invocation->argumentBag->getCommandName()) {
             $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));

@@ -11,7 +11,6 @@ use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Http\Exceptions\InvalidRouteException;
-use Tempest\Http\Exceptions\MissingControllerOutputException;
 use Tempest\Http\Exceptions\NotFoundException;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Responses\Invalid;
