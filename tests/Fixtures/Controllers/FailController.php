@@ -6,14 +6,19 @@ namespace Tests\Tempest\Fixtures\Controllers;
 
 use Exception;
 use Tempest\Http\Get;
+use Tempest\Http\Request;
 use Tempest\Http\Responses\Ok;
 
 final readonly class FailController
 {
     #[Get('/fail')]
-    public function __invoke(): void
+    public function __invoke(Request $request): void
     {
-        throw new Exception('Hi!');
+        if ($request->get('error')) {
+            trigger_error('Error message', E_USER_ERROR);
+        } else {
+            throw new Exception('Hi!');
+        }
     }
 
     #[Get('/warning')]

@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * This file has been generated.
+ */
+
+declare(strict_types=1);
+
+namespace App;
+
+class CreateUsersTable
+{
+}

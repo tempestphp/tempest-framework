@@ -6,19 +6,17 @@ namespace Tempest\Http;
 
 use Attribute;
 use Tempest\Reflection\MethodReflector;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
 
-#[Attribute]
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
 class Route
 {
     public MethodReflector $handler;
 
-    /** @var string The Regex used for matching this route against a request URI */
-    public readonly string $matchingRegex;
-
     /** @var bool If the route has params */
     public readonly bool $isDynamic;
+
+    /** @var string[] Route parameters */
+    public readonly array $params;
 
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
@@ -31,23 +29,13 @@ class Route
         public Method $method,
 
         /**
-         * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
-         * @var class-string<MiddlewareClass>[] $middleware
+         * @var class-string<\Tempest\Http\HttpMiddleware>[] $middleware
          */
         public array $middleware = [],
     ) {
 
-        // Routes can have parameters in the form of "/{PARAM}/" or /{PARAM:CUSTOM_REGEX},
-        // these parameters are replaced with a regex matching group or with the custom regex
-        $matchingRegex = (string)str($this->uri)->replaceRegex(
-            '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#',
-            fn ($matches) => '(' . trim(arr($matches)->get('2', self::DEFAULT_MATCHING_GROUP)). ')'
-        );
-
-        $this->isDynamic = $matchingRegex !== $this->uri;
-
-        // Allow for optional trailing slashes
-        $this->matchingRegex = $matchingRegex . '\/?';
+        $this->params = self::getRouteParams($this->uri);
+        $this->isDynamic = ! empty($this->params);
     }
 
     public function setHandler(MethodReflector $handler): self
@@ -55,5 +43,30 @@ class Route
         $this->handler = $handler;
 
         return $this;
+    }
+
+    /** @return string[] */
+    public static function getRouteParams(string $uriPart): array
+    {
+        $regex = '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+
+        preg_match_all($regex, $uriPart, $matches);
+
+        return $matches[1] ?? [];
+    }
+
+    /**
+     * Splits the route URI into separate segments
+     *
+     * @example '/test/{id}/edit' becomes ['test', '{id}', 'edit']
+     * @return string[]
+     */
+    public function split(): array
+    {
+        $parts = explode('/', $this->uri);
+
+        return array_values(
+            array_filter($parts, static fn (string $part) => $part !== '')
+        );
     }
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Validation;
 
+use Closure;
 use Tempest\Reflection\ClassReflector;
+use function Tempest\Support\arr;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
 
@@ -37,17 +39,14 @@ final readonly class Validator
         }
     }
 
-    /**
-     * @param Rule[] $rules
-     */
-    public function validateValue(mixed $value, array $rules): void
+    public function validateValue(mixed $value, Closure|Rule|array $rules): void
     {
         $failingRules = [];
 
-        foreach ($rules as $rule) {
-            $isValid = $rule->isValid($value);
+        foreach (arr($rules) as $rule) {
+            $rule = $this->convertToRule($rule, $value);
 
-            if (! $isValid) {
+            if (! $rule->isValid($value)) {
                 $failingRules[] = $rule;
             }
         }
@@ -55,5 +54,38 @@ final readonly class Validator
         if ($failingRules !== []) {
             throw new InvalidValueException($value, $failingRules);
         }
+    }
+
+    private function convertToRule(Rule|Closure $rule, mixed $value): Rule
+    {
+        if ($rule instanceof Rule) {
+            return $rule;
+        }
+
+        $result = $rule($value);
+
+        [$isValid, $message] = match (true) {
+            is_string($result) => [false, $result],
+            $result === false => [false, 'Value did not pass validation.'],
+            default => [true, ''],
+        };
+
+        return new class ($isValid, $message) implements Rule {
+            public function __construct(
+                private readonly bool $isValid,
+                private readonly string $message,
+            ) {
+            }
+
+            public function isValid(mixed $value): bool
+            {
+                return $this->isValid;
+            }
+
+            public function message(): string
+            {
+                return $this->message;
+            }
+        };
     }
 }

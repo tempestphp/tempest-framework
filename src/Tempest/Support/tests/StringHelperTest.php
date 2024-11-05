@@ -6,7 +6,9 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
+use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -402,5 +404,56 @@ final class StringHelperTest extends TestCase
         $matches = str('abcdef')->matchAll(regex: $regex, offset: 3);
         $expected = [];
         $this->assertSame($expected, $matches);
+    }
+
+    public function test_explode(): void
+    {
+        $this->assertSame(['path', 'to', 'tempest'], str('path/to/tempest')->explode('/')->toArray());
+        $this->assertSame(['john', 'doe'], str('john doe')->explode()->toArray());
+    }
+
+    public function test_implode(): void
+    {
+        $this->assertSame('path/to/tempest', StringHelper::implode(['path', 'to', 'tempest'], '/')->toString());
+        $this->assertSame('john doe', StringHelper::implode(['john', 'doe'])->toString());
+        $this->assertSame('path/to/tempest', StringHelper::implode(arr(['path', 'to', 'tempest']), '/')->toString());
+        $this->assertSame('john doe', StringHelper::implode(arr(['john', 'doe']))->toString());
+    }
+
+    #[TestWith([['Jon', 'Jane'], 'Jon and Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], 'Jon, Jane and Jill'])]
+    public function test_join(array $initial, string $expected): void
+    {
+        $this->assertEquals($expected, StringHelper::join($initial));
+    }
+
+    #[TestWith([['Jon', 'Jane'], ', ', ' and maybe ', 'Jon and maybe Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', ' and ', 'Jon + Jane and Jill'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', null, 'Jon + Jane + Jill'])]
+    public function test_join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
+    {
+        $this->assertTrue(StringHelper::join($initial, $glue, $finalGlue)->equals($expected));
+    }
+
+    public function test_excerpt(): void
+    {
+        $content = str('a
+b
+c
+d
+e
+f
+g');
+
+        $this->assertTrue($content->excerpt(2, 4)->equals('b
+c
+d'));
+
+        $this->assertTrue($content->excerpt(-10, 2)->equals('a
+b'));
+
+        $this->assertTrue($content->excerpt(7, 100)->equals('g'));
+
+        $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
     }
 }

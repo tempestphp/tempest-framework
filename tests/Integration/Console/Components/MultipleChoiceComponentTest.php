@@ -52,4 +52,50 @@ final class MultipleChoiceComponentTest extends TestCase
 
         $this->assertSame(['a', 'b'],  $component->enter());
     }
+
+    public function test_supports_key_values(): void
+    {
+        $component = new MultipleChoiceComponent('Label', [
+            'foo' => '1. Foo',
+            'bar' => '2. Bar',
+        ]);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'TXT'
+            <question>Label</question>
+            > [ ]<em> 1. Foo</em>
+              [ ] 2. Bar
+            TXT,
+            $component->render(),
+        );
+
+        $component->down();
+        $this->assertStringContainsString('> [ ]<em> 2. Bar</em>', $component->render());
+        $this->assertStringContainsString('[ ] 1. Foo', $component->render());
+
+        $component->toggleSelected();
+        $this->assertStringContainsString('> [x]<em> 2. Bar</em>', $component->render());
+
+        $component->toggleSelected();
+        $this->assertStringContainsString('> [ ]<em> 2. Bar</em>', $component->render());
+
+        $component->up();
+        $component->toggleSelected();
+        $this->assertStringContainsString('> [x]<em> 1. Foo</em>', $component->render());
+
+        $component->down();
+        $component->toggleSelected();
+
+        $component->up();
+        $component->up();
+        $this->assertStringContainsString('> [x]<em> 2. Bar</em>', $component->render());
+
+        $component->down();
+        $this->assertStringContainsString('> [x]<em> 1. Foo</em>', $component->render());
+
+        $this->assertSame([
+            'foo' => '1. Foo',
+            'bar' => '2. Bar',
+        ], $component->enter());
+    }
 }

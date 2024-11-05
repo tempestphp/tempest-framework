@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
-use function Tempest\env;
 use Tempest\EventBus\EventBus;
+use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final class Kernel
 {
@@ -24,23 +28,21 @@ final class Kernel
     ];
 
     public function __construct(
-        public readonly string $root,
+        public string $root,
         public array $discoveryLocations = [],
-        ?bool $discoveryCache = null,
         ?Container $container = null,
     ) {
         $this->container = $container ?? $this->createContainer();
 
         $this
             ->loadEnv()
-            ->setDiscoveryCache($discoveryCache)
             ->registerShutdownFunction()
             ->registerKernel()
             ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
-            ->loadExceptionHandler()
             ->loadDiscovery()
+            ->loadExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -50,6 +52,15 @@ final class Kernel
             root: $root,
             container: $container,
         );
+    }
+
+    public function shutdown(int|string $status = ''): never
+    {
+        $this
+            ->finishDeferredTasks()
+            ->event(KernelEvent::SHUTDOWN);
+
+        exit($status);
     }
 
     private function createContainer(): Container
@@ -74,17 +85,6 @@ final class Kernel
     {
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
-
-        return $this;
-    }
-
-    private function setDiscoveryCache(?bool $discoveryCache): self
-    {
-        if ($discoveryCache !== null) {
-            $this->discoveryCache = $discoveryCache;
-        } else {
-            $this->discoveryCache = env('DISCOVERY_CACHE', false);
-        }
 
         return $this;
     }
@@ -139,7 +139,30 @@ final class Kernel
     {
         $appConfig = $this->container->get(AppConfig::class);
 
-        $appConfig->exceptionHandlerSetup->setup($appConfig);
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $handler = $this->container->get(ConsoleErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } elseif ($appConfig->environment->isProduction()) {
+            $handler = $this->container->get(HttpProductionErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } else {
+            $whoops = new Run();
+            $whoops->pushHandler(new PrettyPageHandler());
+            $whoops->register();
+        }
+
+        return $this;
+    }
+
+    private function finishDeferredTasks(): self
+    {
+        ($this->container->get(FinishDeferredTasks::class))();
 
         return $this;
     }

@@ -132,6 +132,11 @@ final class ConsoleArgumentBag
         return $this;
     }
 
+    public function getCliName(): string
+    {
+        return $this->path[0] ?? '';
+    }
+
     public function getCommandName(): string
     {
         return $this->path[1] ?? '';

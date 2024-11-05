@@ -8,21 +8,30 @@ use ArrayAccess;
 use Closure;
 use Countable;
 use Generator;
+use InvalidArgumentException;
 use Iterator;
+use Random\Randomizer;
 use Serializable;
 use Stringable;
 use function Tempest\map;
 
 /**
- * @template TValueType
- * @implements ArrayAccess<array-key, TValueType>
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements ArrayAccess<TKey, TValue>
+ * @implements Iterator<TKey, TValue>
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
     use IsIterable;
 
+    /** @var array<TKey, TValue> */
     private array $array;
 
+    /**
+     * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
+     */
     public function __construct(
         mixed $input = [],
     ) {
@@ -35,6 +44,319 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
     }
 
+    /**
+     * Gets a value from the array and remove it.
+     *
+     * @param array-key $key
+     */
+    public function pull(string|int $key, mixed $default = null): mixed
+    {
+        $value = $this->get($key, $default);
+
+        $this->remove($key);
+
+        return $value;
+    }
+
+    /**
+     * Shuffles the array.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function shuffle(): self
+    {
+        return new self((new Randomizer())->shuffleArray($this->array));
+    }
+
+    /**
+     * @alias of `remove`.
+     */
+    public function forget(string|int|array $keys): self
+    {
+        return $this->remove($keys);
+    }
+
+    /**
+     * Removes the specified items from the array.
+     *
+     * @param array-key|array<array-key> $keys The keys of the items to remove.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function remove(string|int|array $keys): self
+    {
+        $keys = is_array($keys) ? $keys : [$keys];
+
+        foreach ($keys as $key) {
+            $this->offsetUnset($key);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Asserts whether the array is a list.
+     * An array is a list if its keys consist of consecutive numbers.
+     */
+    public function isList(): bool
+    {
+        return array_is_list($this->array);
+    }
+
+    /**
+     * Asserts whether the array is a associative.
+     * An array is associative if its keys do not consist of consecutive numbers.
+     */
+    public function isAssoc(): bool
+    {
+        return ! $this->isList();
+    }
+
+    /**
+     * Gets one or a specified number of random values from the array.
+     *
+     * @param int $number The number of random values to get.
+     * @param bool $preserveKey Whether to include the keys of the original array.
+     *
+     * @return self<TKey, TValue>|mixed The random values, or a single value if `$number` is 1.
+     */
+    public function random(int $number = 1, bool $preserveKey = false): mixed
+    {
+        $count = count($this->array);
+
+        if ($number > $count) {
+            throw new InvalidArgumentException("Cannot retrive {$number} items from an array of {$count} items.");
+        }
+
+        if ($number < 1) {
+            throw new InvalidArgumentException("Random value only accepts positive integers, {$number} requested.");
+        }
+
+        $keys = (new Randomizer())->pickArrayKeys($this->array, $number);
+
+        $randomValues = [];
+        foreach ($keys as $key) {
+            $preserveKey
+                ? $randomValues[$key] = $this->array[$key]
+                : $randomValues[] = $this->array[$key];
+        }
+
+        if ($preserveKey === false) {
+            shuffle($randomValues);
+        }
+
+        return count($randomValues) > 1
+            ? new self($randomValues)
+            : $randomValues[0];
+    }
+
+    /**
+     * Retrieves values from a given key in each sub-array of the current array.
+     * Optionally, you can pass a second parameter to also get the keys following the same pattern.
+     *
+     * @param string $value The key to assign the values from, support dot notation.
+     * @param string|null $key The key to assign the keys from, support dot notation.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pluck(string $value, ?string $key = null): self
+    {
+        $results = [];
+
+        foreach ($this->array as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $itemValue = arr($item)->get($value);
+
+            /**
+             * Perform basic pluck if no key is given.
+             * Otherwise, also pluck the key as well.
+             */
+            if (is_null($key)) {
+                $results[] = $itemValue;
+            } else {
+                $itemKey = arr($item)->get($key);
+                $results[$itemKey] = $itemValue;
+            }
+        }
+
+        return new self($results);
+    }
+
+    /**
+     * @alias of `add`.
+     */
+    public function push(mixed $value): self
+    {
+        return $this->add($value);
+    }
+
+    /**
+     * Appends the specified value to the array.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function add(mixed $value): self
+    {
+        $this->array[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Pads the array to the specified size with a value.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function pad(int $size, mixed $value): self
+    {
+        return new self(array_pad($this->array, $size, $value));
+    }
+
+    /**
+     * Reverses the keys and values of the array.
+     *
+     * @return self<TValue&array-key, TKey>
+     */
+    public function flip(): self
+    {
+        return new self(array_flip($this->array));
+    }
+
+    /**
+     * Returns a new instance with only unique items from the original array.
+     *
+     * @param string|null $key The key to use as the uniqueness criteria in nested arrays.
+     * @param bool $shouldBeStrict Whether the comparison should be strict, only used when giving a key parameter.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function unique(?string $key = null, bool $shouldBeStrict = false): self
+    {
+        if (is_null($key) && $shouldBeStrict === false) {
+            return new self(array_unique($this->array, flags: SORT_REGULAR));
+        }
+
+        $uniqueItems = [];
+        $uniqueFilteredValues = [];
+        foreach ($this->array as $item) {
+            // Ensure we don't check raw values with key filter
+            if (! is_null($key) && ! is_array($item)) {
+                continue;
+            }
+
+            $filterValue = is_array($item)
+                ? arr($item)->get($key)
+                : $item;
+
+            if (is_null($filterValue)) {
+                continue;
+            }
+
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
+                continue;
+            }
+
+            $uniqueItems[] = $item;
+            $uniqueFilteredValues[] = $filterValue;
+        }
+
+        return new self($uniqueItems);
+    }
+
+    /**
+     * Returns a new instance of the array with only the items that are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diff(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_diff($this->array, ...$arrays));
+    }
+
+    /**
+     * Returns a new instance of the array with only the items whose keys are not present in any of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function diffKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_diff_key($this->array, ...$arrays));
+    }
+
+    /**
+     * Returns a new instance of the array with only the items that are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersect(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_intersect($this->array, ...$arrays));
+    }
+
+    /**
+     * Returns a new instance of the array with only the items whose keys are present in all of the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays
+     *
+     * @return self<TKey, TValue>
+     */
+    public function intersectKeys(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_intersect_key($this->array, ...$arrays));
+    }
+
+    /**
+     * Merges the array with the given arrays.
+     *
+     * @param array<TKey, TValue>|self<TKey, TValue> ...$arrays The arrays to merge.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function merge(array|self ...$arrays): self
+    {
+        $arrays = array_map(fn (array|self $array) => $array instanceof self ? $array->toArray() : $array, $arrays);
+
+        return new self(array_merge($this->array, ...$arrays));
+    }
+
+    /**
+     * Creates a new array with this current array values as keys and the given values as values.
+     *
+     * @template TCombineValue
+     *
+     * @param array<array-key, TCombineValue>|self<array-key, TCombineValue> $values
+     *
+     * @return self<array-key, TCombineValue>
+     */
+    public function combine(array|self $values): self
+    {
+        $values = $values instanceof self
+            ? $values->toArray()
+            : $values;
+
+        return new self(array_combine($this->array, $values));
+    }
+
+    /**
+     * Creates an array from the specified `$string`, split by the given `$separator`.
+     */
     public static function explode(string|Stringable $string, string $separator = ' '): self
     {
         if ($separator === '') {
@@ -44,6 +366,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(explode($separator, (string) $string));
     }
 
+    /**
+     * Asserts whether this instance is equal to the given array.
+     */
     public function equals(array|self $other): bool
     {
         $other = is_array($other) ? $other : $other->array;
@@ -51,7 +376,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $this->array === $other;
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns the first item in the instance that matches the given `$filter`.
+     * If `$filter` is `null`, returns the first item.
+     *
+     * @param Closure(mixed $value, mixed $key): bool $filter
+     */
     public function first(?Closure $filter = null): mixed
     {
         if ($filter === null) {
@@ -67,7 +397,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return null;
     }
 
-    /** @param Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns the last item in the instance that matches the given `$filter`.
+     * If `$filter` is `null`, returns the last item.
+     *
+     * @param Closure(mixed $value, mixed $key): bool $filter
+     */
     public function last(?Closure $filter = null): mixed
     {
         if ($filter === null) {
@@ -83,7 +418,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return null;
     }
 
-    /** @param mixed $value The popped value will be stored in this variable */
+    /**
+     * Returns an instance of the array without the last value.
+     *
+     * @param mixed $value The popped value will be stored in this variable
+     */
     public function pop(mixed &$value): self
     {
         $value = $this->last();
@@ -91,7 +430,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_slice($this->array, 0, -1));
     }
 
-    /** @param mixed $value The unshifted value will be stored in this variable */
+    /**
+     * Returns an instance of the array without the first value.
+     *
+     * @param mixed $value The unshifted value will be stored in this variable
+     */
     public function unshift(mixed &$value): self
     {
         $value = $this->first();
@@ -99,32 +442,64 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self(array_slice($this->array, 1));
     }
 
+    /**
+     * Returns a new instance of the array in reverse order.
+     */
     public function reverse(): self
     {
         return new self(array_reverse($this->array));
     }
 
+    /**
+     * Asserts whether the array is empty.
+     */
     public function isEmpty(): bool
     {
         return empty($this->array);
     }
 
+    /**
+     * Asserts whether the array is not empty.
+     */
     public function isNotEmpty(): bool
     {
         return ! $this->isEmpty();
     }
 
-    public function implode(string $glue): string
+    /**
+     * Returns an instance of `StringHelper` with the values of the instance joined with the given `$glue`.
+     */
+    public function implode(string $glue): StringHelper
     {
-        return implode($glue, $this->array);
+        return str(implode($glue, $this->array));
     }
 
+    /**
+     * Returns a new instance with the keys of this array as values.
+     *
+     * @return self<array-key, TKey>
+     */
+    public function keys(): self
+    {
+        return new self(array_keys($this->array));
+    }
+
+    /**
+     * Returns a new instance of this array without its keys.
+     *
+     * @return self<int, TValue>
+     */
     public function values(): self
     {
         return new self(array_values($this->array));
     }
 
-    /** @param null|Closure(mixed $value, mixed $key): bool $filter */
+    /**
+     * Returns a new instance of this array with only the items that pass the given `$filter`.
+     * If `$filter` is `null`, the new instance will contain only values that are not `false` or `null`.
+     *
+     * @param null|Closure(mixed $value, mixed $key): bool $filter
+     */
     public function filter(?Closure $filter = null): self
     {
         $array = [];
@@ -139,7 +514,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @param Closure(mixed $value, mixed $key): void $each */
+    /**
+     * Applies the given callback to all items of the instance.
+     *
+     * @param Closure(mixed $value, mixed $key): void $each
+     */
     public function each(Closure $each): self
     {
         foreach ($this as $key => $value) {
@@ -149,7 +528,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $this;
     }
 
-    /** @param Closure(mixed $value, mixed $key): mixed $map */
+    /**
+     * Returns a new instance of the array, with each item transformed by the given callback.
+     *
+     * @param Closure(mixed $value, mixed $key): mixed $map
+     */
     public function map(Closure $map): self
     {
         $array = [];
@@ -161,7 +544,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @param Closure(mixed $value, mixed $key): Generator $map */
+    /**
+     * Returns a new instance of the array, with each item transformed by the given callback.
+     * The callback must return a generator, associating a key and a value.
+     *
+     * ### Example
+     * ```php
+     * arr(['a', 'b'])->mapWithKeys(fn (mixed $value, mixed $key) => yield $key => $value);
+     * ```
+     *
+     * @param Closure(mixed $value, mixed $key): Generator $map
+     */
     public function mapWithKeys(Closure $map): self
     {
         $array = [];
@@ -179,7 +572,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    /** @return mixed|ArrayHelper */
+    /**
+     * Gets the value identified by the specified `$key`, or `$default` if no such value exists.
+     *
+     * @return mixed|ArrayHelper
+     */
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->array;
@@ -201,6 +598,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return $value;
     }
 
+    /**
+     * Asserts whether a value identified by the specified `$key` exists.
+     */
     public function has(string $key): bool
     {
         $array = $this->array;
@@ -218,11 +618,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return true;
     }
 
+    /**
+     * Asserts whether the instance contains an item that can be identified by `$search`.
+     */
     public function contains(mixed $search): bool
     {
-        return $this->first(fn ($value) => $value === $search) !== null;
+        return $this->first(fn (mixed $value) => $value === $search) !== null;
     }
 
+    /**
+     * Associates the given `$value` to the given `$key` on the instance.
+     */
     public function set(string $key, mixed $value): self
     {
         $array = $this->array;
@@ -259,6 +665,17 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
+    /**
+     * @alias of `set`
+     */
+    public function put(string $key, mixed $value): self
+    {
+        return $this->set($key, $value);
+    }
+
+    /**
+     * Converts the dot-notated keys of the instance to a set of nested arrays.
+     */
     public function unwrap(): self
     {
         $unwrapValue = function (string|int $key, mixed $value) {
@@ -286,17 +703,61 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         return new self($array);
     }
 
-    public function dd(mixed ...$dd): void
+    /**
+     * Joins all values using the specified `$glue`. The last item of the string is separated by `$finalGlue`.
+     */
+    public function join(string $glue = ', ', ?string $finalGlue = ' and '): StringHelper
     {
-        dd($this->array, ...$dd); // @phpstan-ignore-line
+        if ($finalGlue === '' || is_null($finalGlue)) {
+            return $this->implode($glue);
+        }
+
+        if ($this->isEmpty()) {
+            return str('');
+        }
+
+        $parts = $this->pop($last);
+
+        if ($parts->isNotEmpty()) {
+            return $parts->implode($glue)->append($finalGlue, $last);
+        }
+
+        return str($last);
     }
 
+    /**
+     * Dumps the instance.
+     */
+    public function dump(mixed ...$dumps): self
+    {
+        lw($this->array, ...$dumps);
+
+        return $this;
+    }
+
+    /**
+     * Dumps the instance and stops the execution of the script.
+     */
+    public function dd(mixed ...$dd): void
+    {
+        ld($this->array, ...$dd);
+    }
+
+    /**
+     * Returns the underlying array of the instance.
+     *
+     * @return array<TKey, TValue>
+     */
     public function toArray(): array
     {
         return $this->array;
     }
 
     /**
+     * Maps the items of the instance to the given object.
+     *
+     * @see Tempest\map()
+     *
      * @template T
      * @param class-string<T> $to
      * @return self<T>
@@ -304,5 +765,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function mapTo(string $to): self
     {
         return new self(map($this->array)->collection()->to($to));
+    }
+
+    /**
+     * Sorts the array in ascending order.
+     */
+    public function sort(): self
+    {
+        $array = $this->array;
+        sort($array);
+
+        return new self($array);
     }
 }

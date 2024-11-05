@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Auth\CreatePermissionsTable;
-use Tempest\Auth\CreateUserPermissionTable;
-use Tempest\Auth\CreateUsersTable;
-use Tempest\Auth\User;
+use Tempest\Auth\Install\Permission;
+use Tempest\Auth\Install\PermissionMigration;
+use Tempest\Auth\Install\User;
+use Tempest\Auth\Install\UserMigration;
+use Tempest\Auth\Install\UserPermissionMigration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
@@ -24,9 +25,9 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateUsersTable::class,
-            CreatePermissionsTable::class,
-            CreateUserPermissionTable::class,
+            UserMigration::class,
+            PermissionMigration::class,
+            UserPermissionMigration::class,
         );
     }
 
@@ -70,6 +71,40 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
         $this->assertTrue($user->hasPermission(UserPermissionUnitEnum::ADMIN));
         $this->assertFalse($user->hasPermission(UserPermissionUnitEnum::GUEST));
+    }
+
+    public function test_grant_permission_model(): void
+    {
+        $permission = (new Permission('admin'))->save();
+
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save()
+            ->grantPermission($permission);
+
+        $this->assertTrue($user->hasPermission($permission));
+        $this->assertTrue($user->hasPermission('admin'));
+        $this->assertFalse($user->hasPermission('guest'));
+    }
+
+    public function test_permissions_are_not_duplicated(): void
+    {
+        $user = (new User(
+            name: 'Brent',
+            email: 'brendt@stitcher.io',
+        ))
+            ->setPassword('password')
+            ->save();
+
+        $user->grantPermission('admin');
+        $user->grantPermission(UserPermissionBackedEnum::ADMIN);
+
+        $permissions = Permission::all();
+
+        $this->assertCount(1, $permissions);
     }
 
     public function test_revoke_permission(): void

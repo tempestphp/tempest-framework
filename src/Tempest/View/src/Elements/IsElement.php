@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+use Tempest\View\View;
+use Tempest\View\WrapsElement;
 
 /** @phpstan-require-implements \Tempest\View\Element */
 trait IsElement
 {
+    private View $view;
+
     /** @var Element[] */
     private array $children = [];
 
@@ -16,7 +20,68 @@ trait IsElement
 
     private ?Element $previous = null;
 
-    private array $data = [];
+    private array $attributes = [];
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    public function hasAttribute(string $name): bool
+    {
+        $name = ltrim($name, ':');
+
+        return
+            array_key_exists(":{$name}", $this->attributes) ||
+            array_key_exists($name, $this->attributes);
+    }
+
+    public function getAttribute(string $name): string|null
+    {
+        $name = ltrim($name, ':');
+
+        if ($this instanceof WrapsElement) {
+            $value = $this->getWrappingElement()->getAttribute($name);
+        }
+
+        return
+            $value
+            ?? $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
+    }
+
+    public function setAttribute(string $name, string $value): self
+    {
+        if ($this instanceof WrapsElement) {
+            $this->getWrappingElement()->setAttribute($name, $value);
+        }
+
+        $this->unsetAttribute($name);
+
+        $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    public function consumeAttribute(string $name): string|null
+    {
+        $value = $this->getAttribute($name);
+
+        $this->unsetAttribute($name);
+
+        return $value;
+    }
+
+    public function unsetAttribute(string $name): self
+    {
+        $name = ltrim($name, ':');
+
+        unset($this->attributes[$name]);
+        unset($this->attributes[":{$name}"]);
+
+        return $this;
+    }
 
     public function setPrevious(?Element $previous): self
     {
@@ -66,34 +131,21 @@ trait IsElement
         return $this;
     }
 
-    public function getData(?string $key = null): mixed
+    /**
+     * @template T of \Tempest\View\Element
+     * @param class-string<T> $elementClass
+     * @return T|null
+     */
+    public function unwrap(string $elementClass): ?Element
     {
-        $parentData = $this->getParent()?->getData() ?? [];
-
-        $data = [...$parentData, ...$this->data];
-
-        if ($key) {
-            return $data[$key] ?? null;
+        if ($this instanceof $elementClass) {
+            return $this;
         }
 
-        return $data;
-    }
-
-    public function addData(...$data): self
-    {
-        $this->data = [...$this->data, ...$data];
-
-        return $this;
-    }
-
-    public function __clone(): void
-    {
-        $childClones = [];
-
-        foreach ($this->children as $child) {
-            $childClones[] = clone $child;
+        if ($this instanceof WrapsElement) {
+            return $this->getWrappingElement()->unwrap($elementClass);
         }
 
-        $this->setChildren($childClones);
+        return null;
     }
 }

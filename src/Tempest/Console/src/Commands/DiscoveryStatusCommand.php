@@ -6,6 +6,7 @@ namespace Tempest\Console\Commands;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Kernel;
 
 final readonly class DiscoveryStatusCommand
@@ -13,6 +14,7 @@ final readonly class DiscoveryStatusCommand
     public function __construct(
         private Console $console,
         private Kernel $kernel,
+        private DiscoveryCache $discoveryCache,
     ) {
     }
 
@@ -39,7 +41,7 @@ final readonly class DiscoveryStatusCommand
 
         $this->console
             ->writeln()
-            ->when($this->kernel->discoveryCache, fn (Console $console) => $console->success('Discovery cache enabled'))
-            ->when(! $this->kernel->discoveryCache, fn (Console $console) => $console->error('Discovery cache disabled'));
+            ->when($this->discoveryCache->isEnabled(), fn (Console $console) => $console->success('Discovery cache enabled'))
+            ->when(! $this->discoveryCache->isEnabled(), fn (Console $console) => $console->error('Discovery cache disabled'));
     }
 }

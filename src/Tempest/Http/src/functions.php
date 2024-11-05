@@ -7,6 +7,9 @@ namespace Tempest {
     use Tempest\Http\Router;
     use Tempest\Reflection\MethodReflector;
 
+    /**
+     * Creates a valid URI to the given controller `$action`.
+     */
     function uri(array|string|MethodReflector $action, ...$params): string
     {
         if ($action instanceof MethodReflector) {

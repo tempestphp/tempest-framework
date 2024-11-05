@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
-use Closure;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
+use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -32,9 +32,9 @@ final readonly class ExecuteConsoleCommand
         ));
     }
 
-    private function getCallable(array $commandMiddleware): Closure
+    private function getCallable(array $commandMiddleware): ConsoleMiddlewareCallable
     {
-        $callable = function (Invocation $invocation) {
+        $callable = new ConsoleMiddlewareCallable(function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
 
             $handler = $consoleCommand->handler;
@@ -49,12 +49,14 @@ final readonly class ExecuteConsoleCommand
             );
 
             return ExitCode::SUCCESS;
-        };
+        });
 
         $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable);
+            $callable = new ConsoleMiddlewareCallable(
+                fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable)
+            );
         }
 
         return $callable;

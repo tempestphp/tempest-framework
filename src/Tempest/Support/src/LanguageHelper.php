@@ -11,24 +11,16 @@ use Tempest\Support\Pluralizer\Pluralizer;
 final class LanguageHelper
 {
     /**
-     * @param string[] $parts
+     * Converts the given string to its English plural form.
      */
-    public static function join(array|ArrayHelper $parts): string
-    {
-        $parts = arr($parts)->pop($last);
-
-        if ($parts->isNotEmpty()) {
-            return $parts->implode(', ') . ' ' . 'and' . ' ' . $last;
-        }
-
-        return $last;
-    }
-
     public static function pluralize(string $value, int|array|Countable $count = 2): string
     {
         return get(Pluralizer::class)->pluralize($value, $count);
     }
 
+    /**
+     * Converts the given string to its English singular form.
+     */
     public static function singularize(string $value): string
     {
         return get(Pluralizer::class)->singularize($value);

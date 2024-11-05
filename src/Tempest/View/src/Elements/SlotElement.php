@@ -19,4 +19,15 @@ final class SlotElement implements Element
     {
         return $this->name === $name;
     }
+
+    public function compile(): string
+    {
+        $rendered = [];
+
+        foreach ($this->getChildren() as $child) {
+            $rendered[] = $child->compile();
+        }
+
+        return implode(PHP_EOL, $rendered);
+    }
 }

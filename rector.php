@@ -8,7 +8,6 @@ use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
-use Rector\DeadCode\Rector\Stmt\RemoveUnreachableStatementRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php74\Rector\Property\RestoreDefaultNullToNullableTypePropertyRector;
@@ -51,7 +50,6 @@ return RectorConfig::configure()
         ReadOnlyClassRector::class,
         ReadOnlyPropertyRector::class,
         RemoveNullPropertyInitializationRector::class,
-        RemoveUnreachableStatementRector::class,
         AddSensitiveParameterAttributeRector::class,
         RemoveUnusedPublicMethodParameterRector::class,
         RestoreDefaultNullToNullableTypePropertyRector::class,
@@ -61,7 +59,7 @@ return RectorConfig::configure()
         EncapsedStringsToSprintfRector::class,
         AddArrowFunctionReturnTypeRector::class,
     ])
-    ->withSkipPath(__DIR__  .'/src/Tempest/Http/src/Exceptions/HttpExceptionHandler.php')
+    ->withSkipPath(__DIR__  .'/src/Tempest/Http/src/Exceptions/HttpProductionErrorHandler.php')
     ->withSkipPath(__DIR__  .'/src/Tempest/Http/src/Exceptions/exception.php')
     ->withParallel(300, 10, 10)
     ->withPreparedSets(

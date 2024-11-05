@@ -6,10 +6,8 @@ use Tempest\Core\DiscoveryLocation;
 
 require_once getcwd() . '/vendor/autoload.php';
 
-ConsoleApplication::boot(
-    discoveryLocations: [
-        new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/tests/Fixtures')
-    ],
-)->run();
+ConsoleApplication::boot(discoveryLocations: [
+        new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
+])->run();
 
 exit;

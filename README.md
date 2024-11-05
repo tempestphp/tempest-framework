@@ -58,18 +58,19 @@ Read how to get started with Tempest [here](https://tempestphp.com).
 Install Tempest in any project, including existing projects:
 
 ```
-composer require tempest/framework:1.0-alpha1
+composer require tempest/framework:1.0-alpha.3
 ```
 
 Or create a Tempest project from scratch:
 
 ```
-composer create-project tempest/app:1.0-alpha1 <name>
+composer create-project tempest/app:1.0-alpha.3 <name>
 ```
 
 Continue to read how Tempest works in [the docs](https://tempestphp.com).
 
 ## Contributing
-We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](.github/CONTRIBUTING.md) and then head on over to the issues page to see some ways you might help out!
 
-For more information, [join the Tempest Discord](https://discord.gg/pPhpTGUMPQ)
+We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](https://tempestphp.com/docs/internals/contributing/) and then head on over to the issues page to see some ways you might help out!
+
+For more information, [join the Tempest Discord](https://tempestphp.com/discord)

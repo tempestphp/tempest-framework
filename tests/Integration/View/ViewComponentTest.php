@@ -10,6 +10,7 @@ use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
 use function Tempest\view;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -19,6 +20,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViewComponentTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->container->get(ViewCache::class)->clear();
+    }
+
     #[DataProvider('view_components')]
     public function test_view_components(string $component, string $rendered): void
     {
@@ -52,7 +60,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></input></div></form>
+            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
+            
+            
+            </div>
+            <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
+            
+            
+            
+            </form>
             HTML,
             actual: $this->render(view(
                 <<<'HTML'
@@ -67,17 +83,45 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_component_with_anther_component_included(): void
+    {
+        $html = $this->render('<x-view-component-with-another-one-included-a/>');
+
+        $this->assertStringContainsStringIgnoringLineEndings(<<<'HTML'
+hi
+
+    
+<div class="slot-b"><div class="slot-a"></div></div>
+HTML, $html);
+    }
+
+    public function test_component_with_anther_component_included_with_slot(): void
+    {
+        $html = $this->render('<x-view-component-with-another-one-included-a>test</x-view-component-with-another-one-included-a>');
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+hi
+
+    
+<div class="slot-b"><div class="slot-a">
+            test
+        </div></div>
+HTML, $html);
+    }
+
     public function test_view_component_with_injected_view(): void
     {
         $between = new Between(min: 1, max: 10);
         $alphaNumeric = new AlphaNumeric();
 
-        $this->container->get(Session::class)->flash(
+        $session = $this->container->get(Session::class);
+
+        $session->flash(
             Session::VALIDATION_ERRORS,
             ['name' => [$between, $alphaNumeric]],
         );
 
-        $this->container->get(Session::class)->flash(
+        $session->flash(
             Session::ORIGINAL_VALUES,
             ['name' => 'original name'],
         );
@@ -123,36 +167,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public static function view_components(): Generator
-    {
-        yield [
-            '<x-my></x-my>',
-            '<div></div>',
-        ];
-
-        yield [
-            '<x-my>body</x-my>',
-            '<div>body</div>',
-        ];
-
-        yield [
-            '<x-my><p>a</p><p>b</p></x-my>',
-            '<div><p>a</p><p>b</p></div>',
-        ];
-
-        yield [
-            '<div>body</div>
-<div>body</div>',
-            '<div>body</div>
-<div>body</div>',
-        ];
-
-        yield [
-            '<x-my foo="fooValue" bar="barValue">body</x-my>',
-            '<div foo="fooValue" bar="barValue">body</div>',
-        ];
-    }
-
     public function test_anonymous_view_component(): void
     {
         $this->assertSame(
@@ -174,7 +188,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_with_passed_variable(): void
     {
         $rendered = $this->render(
-            view('<x-with-variable :variable="$variable"></x-with-variable:>')->data(
+            view('<x-with-variable :variable="$variable"></x-with-variable>')->data(
                 variable: 'test'
             )
         );
@@ -207,7 +221,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $rendered = $this->render(
             view(<<<HTML
-            <x-with-variable :variable="strtoupper('test')"></x-with-variable:>'
+            <x-with-variable :variable="strtoupper('test')"></x-with-variable>
             HTML)
         );
 
@@ -252,13 +266,19 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-        <div>
-                a    </div>
-        <div>
-                b    </div>
-        <div>
-                c    </div>
-        HTML,
+            <div>
+                    a    </div>
+            
+            
+                
+            <div>
+                    b    </div>
+            
+            
+                
+            <div>
+                    c    </div>
+            HTML,
             $rendered
         );
     }
@@ -267,10 +287,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
         fromPHP
-        fromString
-        nothing
+        
+        
+            fromString
+        
+        
+            nothing
         HTML, $html);
     }
 
@@ -307,9 +331,48 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringContainsStringIgnoringLineEndings(<<<HTML
         test
-        test
+        
+        
+            test
         HTML, $html);
+    }
+
+    public function test_php_code_in_attribute(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/x-button-usage.view.php'));
+
+        $this->assertStringContainsString('/docs/', $html);
+    }
+
+    public static function view_components(): Generator
+    {
+        yield [
+            '<x-my></x-my>',
+            '<div></div>',
+        ];
+
+        yield [
+            '<x-my>body</x-my>',
+            '<div>body</div>',
+        ];
+
+        yield [
+            '<x-my><p>a</p><p>b</p></x-my>',
+            '<div><p>a</p><p>b</p></div>',
+        ];
+
+        yield [
+            '<div>body</div>
+<div>body</div>',
+            '<div>body</div>
+<div>body</div>',
+        ];
+
+        yield [
+            '<x-my foo="fooValue" bar="barValue">body</x-my>',
+            '<div foo="fooValue" bar="barValue">body</div>',
+        ];
     }
 }

@@ -6,6 +6,18 @@ namespace Tempest\View;
 
 interface Element
 {
+    public function compile(): string;
+
+    public function getAttributes(): array;
+
+    public function hasAttribute(string $name): bool;
+
+    public function getAttribute(string $name): string|null;
+
+    public function setAttribute(string $name, string $value): self;
+
+    public function consumeAttribute(string $name): string|null;
+
     public function setPrevious(?Element $previous): self;
 
     public function getPrevious(): ?Element;
@@ -20,7 +32,10 @@ interface Element
     /** @return \Tempest\View\Element[] */
     public function getChildren(): array;
 
-    public function getData(?string $key = null): mixed;
-
-    public function addData(...$data): self;
+    /**
+     * @template T of \Tempest\View\Element
+     * @param class-string<T> $elementClass
+     * @return T|null
+     */
+    public function unwrap(string $elementClass): ?Element;
 }

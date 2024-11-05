@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Closure;
 use Tempest\Container\Container;
 
 final class GenericCommandBus implements CommandBus
@@ -31,21 +30,23 @@ final class GenericCommandBus implements CommandBus
         $callable($command);
     }
 
-    private function getCallable(CommandHandler $commandHandler): Closure
+    private function getCallable(CommandHandler $commandHandler): CommandBusMiddlewareCallable
     {
-        $callable = function (object $command) use ($commandHandler): void {
+        $callable = new CommandBusMiddlewareCallable(function (object $command) use ($commandHandler): void {
             $commandHandler->handler->invokeArgs(
                 $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
                 [$command],
             );
 
             $this->history[] = $command;
-        };
+        });
 
         $middlewareStack = $this->commandBusConfig->middleware;
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $callable = fn (object $command) => $this->container->get($middlewareClass)($command, $callable);
+            $callable = new CommandBusMiddlewareCallable(
+                fn (object $command) => $this->container->get($middlewareClass)($command, $callable),
+            );
         }
 
         return $callable;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use function Tempest\view;
+use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -12,6 +14,13 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->container->get(ViewCache::class)->clear();
+    }
+
     public function test_view_renderer(): void
     {
         $this->assertSame(
@@ -20,8 +29,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: 'Hello')),
+            '<h1>&lt;span&gt;Hello&lt;/span&gt;</h1>',
+            $this->render(view('<h1>{{ $this->foo }}</h1>')->data(foo: '<span>Hello</span>')),
         );
 
         $this->assertSame(
@@ -30,8 +39,8 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<h1>Hello</h1>',
-            $this->render(view('<h1>{{ $this->raw("foo") }}</h1>')->data(foo: 'Hello')),
+            '<h1><span>Hello</span></h1>',
+            $this->render(view('<h1>{!! $this->foo !!}</h1>')->data(foo: '<span>Hello</span>')),
         );
     }
 
@@ -43,7 +52,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '<div :if="$this->show">Hello</div>',
+            '<div>Hello</div>',
             $this->render(view('<div :if="$this->show">Hello</div>')->data(show: true)),
         );
     }
@@ -51,37 +60,37 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_elseif_attribute(): void
     {
         $this->assertSame(
-            '<div :if="$this->a">A</div>',
+            '<div>A</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: true)),
         );
 
         $this->assertSame(
-            '<div :if="$this->a">A</div>',
+            '<div>A</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: true, b: false)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->b">B</div>',
+            '<div>B</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: true)),
         );
 
         $this->assertSame(
-            '<div :else>None</div>',
+            '<div>None</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :else>None</div>')->data(a: false, b: false)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->c">C</div>',
+            '<div>C</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: true)),
         );
 
         $this->assertSame(
-            '<div :elseif="$this->b">B</div>',
+            '<div>B</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: true, c: true)),
         );
 
         $this->assertSame(
-            '<div :else>None</div>',
+            '<div>None</div>',
             $this->render(view('<div :if="$this->a">A</div><div :elseif="$this->b">B</div><div :elseif="$this->c">C</div><div :else>None</div>')->data(a: false, b: false, c: false)),
         );
     }
@@ -89,12 +98,12 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     public function test_else_attribute(): void
     {
         $this->assertSame(
-            '<div :if="$this->show">True</div>',
+            '<div>True</div>',
             $this->render(view('<div :if="$this->show">True</div><div :else>False</div>')->data(show: true)),
         );
 
         $this->assertSame(
-            '<div :else>False</div>',
+            '<div>False</div>',
             $this->render(view('<div :if="$this->show">True</div><div :else>False</div>')->data(show: false)),
         );
     }
@@ -103,10 +112,34 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div :foreach="$this->items as $foo">a</div>
-            <div :foreach="$this->items as $foo">b</div>
+            <div>a</div>
+            <div>b</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div>')->data(items: ['a', 'b'])),
+        );
+    }
+
+    public function test_foreach_consumes_attribute(): void
+    {
+        $html = $this->render(view(
+            <<<'HTML'
+        <x-base>
+            <table>
+                <tr :foreach="$items as $item">
+                    <td>{{ $item }}</td>
+                </tr>
+            </table>
+        </x-base>
+        HTML,
+        )->data(items: ['a', 'b']));
+
+        $this->assertStringContainsStringIgnoringLineEndings(
+            <<<'HTML'
+        <html lang="en"><head><title>Home</title></head><body><table><tr><td>a</td></tr>
+        <tr><td>b</td></tr>
+        </table></body></html>
+        HTML,
+            $html
         );
     }
 
@@ -114,14 +147,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div :forelse>Empty</div>
+            <div>Empty</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: [])),
         );
 
         $this->assertSame(
             <<<'HTML'
-            <div :foreach="$this->items as $foo">a</div>
+            <div>a</div>
             HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
         );
@@ -232,5 +265,155 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
             ),
         );
+    }
+
+    public function test_use_statements_are_grouped(): void
+    {
+        $html = $this->render('<x-view-component-with-use-import></x-view-component-with-use-import><x-view-component-with-use-import></x-view-component-with-use-import>');
+
+        $this->assertStringContainsString('/', $html);
+    }
+
+    public function test_raw_and_escaped(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        &lt;h1&gt;hi&lt;/h1&gt;
+        &lt;H1&gt;HI&lt;/H1&gt;
+        <h1>hi</h1>
+        HTML, $html);
+    }
+
+    public function test_no_double_else_attributes(): void
+    {
+        $this->expectException(InvalidElement::class);
+
+        $this->render(
+            <<<'HTML'
+<div :if="false"></div>
+<div :else></div>
+<div :else></div>
+HTML,
+        );
+    }
+
+    public function test_else_must_be_after_if_or_elseif(): void
+    {
+        $this->render(
+            <<<'HTML'
+<div :if="false"></div>
+<div :else></div>
+HTML,
+        );
+
+        $this->render(
+            <<<'HTML'
+<div :if="false"></div>
+<div :elseif="false"></div>
+<div :else></div>
+HTML,
+        );
+
+        $this->expectException(InvalidElement::class);
+
+        $this->render(
+            <<<'HTML'
+<div :else></div>
+HTML,
+        );
+    }
+
+    public function test_elseif_must_be_after_if_or_elseif(): void
+    {
+        $this->render(
+            <<<'HTML'
+<div :if="false"></div>
+<div :elseif="false"></div>
+<div :elseif="false"></div>
+HTML,
+        );
+
+        $this->expectException(InvalidElement::class);
+
+        $this->render(
+            <<<'HTML'
+<div :elseif="false"></div>
+HTML,
+        );
+    }
+
+    public function test_forelse_must_be_before_foreach(): void
+    {
+        $this->render(
+            view(<<<'HTML'
+<div :foreach="$foo as $bar"></div>
+<div :forelse></div>
+HTML, foo: []),
+        );
+
+        $this->expectException(InvalidElement::class);
+
+        $this->render(
+            <<<'HTML'
+<div :forelse></div>
+HTML,
+        );
+    }
+
+    public function test_no_double_forelse_attributes(): void
+    {
+        $this->render(
+            view(<<<'HTML'
+<div :foreach="$foo as $bar"></div>
+<div :forelse></div>
+HTML, foo: []),
+        );
+
+        $this->expectException(InvalidElement::class);
+
+        $this->render(
+            view(<<<'HTML'
+<div :foreach="$foo as $bar"></div>
+<div :forelse></div>
+<div :forelse></div>
+HTML, foo: []),
+        );
+    }
+
+    public function test_render_element_with_attribute_with_dash(): void
+    {
+        $view = view(
+            <<<HTML
+    <div data-theme="tempest"></div>
+    HTML,
+        );
+
+        $html = $this->render($view);
+
+        $this->assertStringContainsString(
+            '<div data-theme="tempest"></div>',
+            $html,
+        );
+    }
+
+    public function test_view_component_with_multiple_attributes(): void
+    {
+        $expected = '<div class="a">
+        a    </div>
+<div class="b">
+        b    </div>';
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" b="b"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+
+        $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
+        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
 }
