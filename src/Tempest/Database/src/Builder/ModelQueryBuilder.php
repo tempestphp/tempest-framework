@@ -35,7 +35,6 @@ final class ModelQueryBuilder
         $this->modelDefinition = new ModelDefinition($this->modelClass);
     }
 
-    /** @return TModelClass|null */
     public function first(mixed ...$bindings): ?DatabaseModel
     {
         $query = $this->build($bindings);
@@ -49,7 +48,6 @@ final class ModelQueryBuilder
         return $result[array_key_first($result)];
     }
 
-    /** @return TModelClass|null */
     public function find(Id $id): ?DatabaseModel
     {
         return $this
