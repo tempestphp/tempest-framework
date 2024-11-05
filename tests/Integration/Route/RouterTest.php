@@ -88,6 +88,15 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('https://test.com/test/1/a/b/c/d', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
     }
 
+    public function test_uri_generation_with_query_param(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $uri = $router->toUri(TestController::class, test: 'foo');
+
+        $this->assertSame('/test?test=foo', $uri);
+    }
+
     public function test_with_view(): void
     {
         $router = $this->container->get(GenericRouter::class);
