@@ -60,6 +60,11 @@ final class PermissionTest extends TestCase
         $this->assertTrue(Permission::has($permissions, Permission::GROUP_READ_EXECUTE));
     }
 
+    public function test_empty_allow_returns_zero(): void
+    {
+        $this->assertSame(0, Permission::allow());
+    }
+
     public static function permissionDataProvider(): array
     {
         return [

@@ -243,9 +243,18 @@ final class LocalFilesystemTest extends TestCase
         $this->expectException(UnableToCreateDirectory::class);
 
         (new LocalFilesystem())->createDirectory(
-            path: $directoryPath,
+            directoryPath: $directoryPath,
             recursive: false
         );
+    }
+
+    public function test_ensuring_a_directory_exists(): void
+    {
+        $directoryPath = vfsStream::url('root/some-dir/non-existent-dir');
+
+        (new LocalFilesystem())->ensureDirectoryExists($directoryPath);
+
+        $this->assertDirectoryExists($directoryPath);
     }
 
     public function test_deleting_a_directory(): void
@@ -311,6 +320,20 @@ final class LocalFilesystemTest extends TestCase
         $filesystem->createDirectory($directory);
 
         $this->assertTrue($filesystem->isDirectory($directory));
+    }
+
+    public function test_deleting_path(): void
+    {
+        $directory = vfsStream::url('root/test-directory-with-files');
+        $file = vfsStream::url('root/test-file.txt');
+
+        $filesystem = new LocalFilesystem();
+
+        $filesystem->delete($directory);
+        $filesystem->delete($file);
+
+        $this->assertDirectoryDoesNotExist($directory);
+        $this->assertFileDoesNotExist($file);
     }
 
     protected function setUp(): void

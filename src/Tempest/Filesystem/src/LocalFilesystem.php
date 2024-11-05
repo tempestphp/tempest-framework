@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Filesystem;
 
 use const FILE_APPEND;
+use FilesystemIterator;
 use const LOCK_EX;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -66,30 +67,39 @@ final class LocalFilesystem implements Filesystem
         }
     }
 
-    public function delete(string $filePath): void
+    public function deleteFile(string $filePath): void
     {
         if (@unlink($filePath) === false) {
             throw UnableToDeleteFile::atPath($filePath);
         }
     }
 
-    public function isFile(string $filePath): bool
+    public function isFile(string $path): bool
     {
-        return is_file($filePath);
+        return is_file($path);
     }
 
-    public function createDirectory(string $path, int $permissions = Permission::FULL->value, bool $recursive = true): void
+    public function createDirectory(string $directoryPath, int $permissions = Permission::FULL->value, bool $recursive = true): void
     {
         $error = ErrorContext::reset();
 
-        if (@mkdir($path, $permissions, $recursive) === false) {
-            throw UnableToCreateDirectory::atPath($path, $error->commit());
+        if (@mkdir($directoryPath, $permissions, $recursive) === false) {
+            throw UnableToCreateDirectory::atPath($directoryPath, $error->commit());
         }
     }
 
-    public function deleteDirectory(string $path, bool $recursive = true): void
+    public function ensureDirectoryExists(string $directoryPath, int $permissions = Permission::FULL->value): void
     {
-        if (! $this->isDirectory($path)) {
+        if (! $this->isDirectory($directoryPath)) {
+            $this->createDirectory($directoryPath, $permissions, true);
+        }
+
+        // TODO: We are not checking for the existence post-creation. Do we care or do we trust PHP's return?
+    }
+
+    public function deleteDirectory(string $directoryPath, bool $recursive = true): void
+    {
+        if (! $this->isDirectory($directoryPath)) {
             return;
         }
 
@@ -98,10 +108,10 @@ final class LocalFilesystem implements Filesystem
         // and throw an exception on any errors.
         if ($recursive === false) {
             $error = ErrorContext::reset();
-            $successfullyDeleted = @rmdir($path);
+            $successfullyDeleted = @rmdir($directoryPath);
 
             if ($successfullyDeleted === false) {
-                throw UnableToDeleteDirectory::atPath($path, $error->commit());
+                throw UnableToDeleteDirectory::atPath($directoryPath, $error->commit());
             }
 
             return;
@@ -110,22 +120,18 @@ final class LocalFilesystem implements Filesystem
         // Iterate through the directory contents and
         // use helpers to delete the child items.
         $recursiveDirectoryIterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator($directoryPath, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($recursiveDirectoryIterator as $item) {
-            if ($item->isDir()) {
-                $this->deleteDirectory($item->getPathname());
-
-                continue;
-            }
-
-            $this->delete($item->getPathname());
+            $item->isDir()
+                ? $this->deleteDirectory($item->getPathname())
+                : $this->deleteFile($item->getPathname());
         }
 
         // Wrap up a recursive delete by deleting the parent.
-        $this->deleteDirectory($path, false);
+        $this->deleteDirectory($directoryPath, false);
     }
 
     public function isDirectory(string $path): bool
@@ -155,5 +161,12 @@ final class LocalFilesystem implements Filesystem
     {
         $this->copy($sourcePath, $destinationPath);
         $this->delete($sourcePath);
+    }
+
+    public function delete(string $path): void
+    {
+        $this->isFile($path)
+            ? $this->deleteFile($path)
+            : $this->deleteDirectory($path);
     }
 }
