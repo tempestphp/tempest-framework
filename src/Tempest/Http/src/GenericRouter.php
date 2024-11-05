@@ -129,7 +129,7 @@ final class GenericRouter implements Router
 
 
         foreach ($params as $key => $value) {
-            if (! str_contains($uri, "{$key}")) {
+            if (! str_contains($uri, sprintf('{%s', $key))) {
                 $queryParams[$key] = $value;
 
                 continue;
