@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_generate(): void
+    public function test_static_site_generate_command(): void
     {
         $appConfig = new AppConfig(baseUri: 'https://test.com');
         $this->container->config($appConfig);
