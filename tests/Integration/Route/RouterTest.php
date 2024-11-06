@@ -15,6 +15,7 @@ use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -177,6 +178,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '/with-enum/bar',
             uri(ControllerWithEnumBinding::class, input: EnumForController::BAR),
+        );
+    }
+
+    public function test_uri_with_query_param_that_collides_partially_with_route_param(): void
+    {
+        $this->assertSame(
+            '/test-with-collision/hi?id=1',
+            uri([UriGeneratorController::class, 'withCollidingNames'], id: '1', idea: 'hi')
         );
     }
 }
