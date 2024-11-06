@@ -10,7 +10,7 @@ use Tempest\Container\Inject;
 trait HasConsole
 {
     #[Inject]
-    private readonly Console $console;
+    private readonly Console $console; // @phpstan-ignore-line
 
     public function readln(): string
     {

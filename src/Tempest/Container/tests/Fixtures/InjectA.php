@@ -9,7 +9,7 @@ use Tempest\Container\Inject;
 final readonly class InjectA
 {
     #[Inject]
-    private InjectB $b;
+    private InjectB $b; // @phpstan-ignore-line
 
     public function getB(): InjectB
     {
