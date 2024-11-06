@@ -8,6 +8,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\DatabaseModelStub;
 use Tempest\Console\Stubs\ModelStub;
+use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\HasGeneratorCommand;
 
 final class MakeModelCommand
@@ -37,8 +38,10 @@ final class MakeModelCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        $this->stubFileGenerator->generate(
-            stubFile: $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::fromClassString(
+                $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
+            ),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
         );

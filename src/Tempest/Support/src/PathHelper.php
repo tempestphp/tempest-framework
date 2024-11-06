@@ -8,6 +8,8 @@ use Exception;
 use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
 use function Tempest\get;
+use function Tempest\src_namespace;
+use function Tempest\src_path;
 
 final readonly class PathHelper
 {
@@ -66,6 +68,15 @@ final readonly class PathHelper
             ->map(fn (string $segment) => (string) str($segment)->pascal())
             ->implode('\\')
             ->toString();
+    }
+
+    public static function toMainNamespace(string $path): string {
+        return self::toNamespace(
+            src_namespace() . DIRECTORY_SEPARATOR . str($path)
+                ->replaceStart(src_path(), '')
+                ->trim(DIRECTORY_SEPARATOR)
+                ->toString()
+        );
     }
 
     public static function toRegisteredNamespace(string $path): string

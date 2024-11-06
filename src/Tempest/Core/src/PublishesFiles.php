@@ -68,7 +68,7 @@ trait PublishesFiles
                         fn ( ClassManipulator $class ) => $class->removeClassAttribute(DoNotDiscover::class),
                     ]
                 );
-
+                
                 $newClass = new ClassManipulator($destination);
 
                 $this->publishedClasses[$oldClass->getClassName()] = $newClass->getClassName();

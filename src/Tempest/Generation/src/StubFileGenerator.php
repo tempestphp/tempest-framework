@@ -8,6 +8,8 @@ use function Tempest\src_path;
 use function Tempest\src_namespace;
 use function Tempest\Support\arr;
 use function PHPUnit\Framework\callback;
+use function Tempest\Support\str;
+
 use Throwable;
 use Tempest\Support\StringHelper;
 
@@ -55,7 +57,7 @@ final class StubFileGenerator
             $this->prepareFilesystem($targetPath, $shouldOverride);
 
             // Transform stub to class
-            $namespace = PathHelper::toRegisteredNamespace($targetPath);
+            $namespace = PathHelper::toMainNamespace($targetPath);
             $classname = PathHelper::toClassName($targetPath);
             $classManipulator = (new ClassManipulator($stubFile->filePath))
                 ->setNamespace($namespace)
