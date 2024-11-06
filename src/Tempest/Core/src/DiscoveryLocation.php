@@ -14,6 +14,6 @@ final readonly class DiscoveryLocation
 
     public function isVendor(): bool
     {
-        return str_contains($this->path, '/vendor/');
+        return str_contains(str_replace('\\', '/', $this->path), '/vendor/');
     }
 }
