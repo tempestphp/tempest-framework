@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use Nette\PhpGenerator\ClassType;
-use Nette\PhpGenerator\PhpFile;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use ReflectionClass;
+use Nette\PhpGenerator\PhpFile;
+use Nette\PhpGenerator\ClassType;
 
 final class ClassManipulator
 {
@@ -29,6 +30,13 @@ final class ClassManipulator
         $this->namespace = $this->classType->getNamespace()->getName();
     }
 
+    /**
+     * Save the class to a target file.
+     * 
+     * @param string $path the path to save the class to.
+     * 
+     * @throws FileGenerationFailedException if the file could not be written.
+     */
     public function save(string $path): self
     {
         $dir = pathinfo($path, PATHINFO_DIRNAME);
@@ -37,7 +45,11 @@ final class ClassManipulator
             mkdir($dir, recursive: true);
         }
 
-        file_put_contents($path, $this->print());
+        $is_success = (bool) file_put_contents($path, $this->print());
+
+        if (! $is_success) {
+            throw new FileGenerationFailedException(sprintf('The file "%s" could not be written.', $path));
+        }
 
         return $this;
     }

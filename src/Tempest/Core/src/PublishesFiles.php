@@ -4,66 +4,103 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use Closure;
-use Nette\InvalidStateException;
-use Tempest\Console\HasConsole;
-use Tempest\Generation\ClassManipulator;
-use function Tempest\src_namespace;
 use function Tempest\src_path;
+use function Tempest\src_namespace;
 use function Tempest\Support\str;
+use Throwable;
+use Tempest\Support\StringHelper;
+use Tempest\Support\PathHelper;
+use Tempest\Generation\StubFileGenerator;
+
+use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Console\HasConsole;
+use Tempest\Console\Console;
+use Nette\InvalidStateException;
+use Closure;
 
 trait PublishesFiles
 {
-    use HasConsole;
+    use HasGeneratorCommand;
 
     private array $publishedFiles = [];
-
     private array $publishedClasses = [];
 
     /**
-     * @param Closure(string $source, string $destination): void|null $callback
+     * Publishes a file from a source to a destination.
+     * 
+     * @param string $source The path to the source file.
+     * @param string $destination The path to the destination file.
+     * @param Closure(string $source, string $destination): void|null $callback A callback to run after the file is published.
      */
     public function publish(
         string $source,
         string $destination,
         ?Closure $callback = null,
     ): void {
-        if (file_exists($destination)) {
-            if (! $this->confirm(
-                question: "{$destination} already exists Do you want to overwrite it?",
-            )) {
-                return;
-            }
-        } else {
-            if (! $this->confirm(
-                question: "Do you want to create {$destination}?",
+        try {
+            if (! $this->console->confirm(
+                question: sprintf('Do you want to create "%s"', $destination),
                 default: true,
             )) {
-                $this->writeln('Skipped');
-
-                return;
+                throw new FileGenerationAbortedException('Skipped.');
             }
+
+            if ( ! $this->askForOverride($destination) ) {
+                throw new FileGenerationAbortedException('Skipped.');
+            }
+            
+            $stubFile = StubFile::fromFilePath($source);
+
+            // Handle class files
+            if ( $stubFile->type === StubFileType::CLASS_FILE ) {
+                $oldClass = new ClassManipulator($source);
+
+                $this->stubFileGenerator->generateClassFile(
+                    stubFile: $stubFile,
+                    targetPath: $destination,
+                    shouldOverride: true,
+                    manipulations: [
+                        fn ( ClassManipulator $class ) => $class->removeClassAttribute(DoNotDiscover::class),
+                    ]
+                );
+
+                $newClass = new ClassManipulator($destination);
+
+                $this->publishedClasses[$oldClass->getClassName()] = $newClass->getClassName();
+            }
+
+            // Handle raw files
+            if ( $stubFile->type === StubFileType::RAW_FILE ) {
+                $this->stubFileGenerator->generateRawFile(
+                    stubFile: $stubFile,
+                    targetPath: $destination,
+                    shouldOverride: true,
+                );
+            }
+
+            $this->publishedFiles[] = $destination;
+
+            if ($callback !== null) {
+                $callback($source, $destination);
+            }
+
+            $this->console->success(sprintf('File successfully created at "%s".', $destination));
+        } catch ( FileGenerationAbortedException $exception ) {
+            $this->console->info($exception->getMessage());
+        } catch ( Throwable $throwable ) {
+            throw new FileGenerationFailedException(sprintf('The file could not be published. %s', $throwable->getMessage()));
         }
-
-        $dir = pathinfo($destination, PATHINFO_DIRNAME);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
-        }
-
-        copy($source, $destination);
-
-        $this->updateClass($destination);
-
-        $this->publishedFiles[] = $destination;
-
-        if ($callback !== null) {
-            $callback($source, $destination);
-        }
-
-        $this->success("{$destination} created");
     }
 
+    /**
+     * Publishes the imports of the published classes.
+     * Any published class that is imported in another published class will have its import updated.
+     */
     public function publishImports(): void
     {
         foreach ($this->publishedFiles as $file) {
@@ -75,32 +112,5 @@ trait PublishesFiles
 
             file_put_contents($file, $contents);
         }
-    }
-
-    private function updateClass(string $destination): void
-    {
-        try {
-            $class = new ClassManipulator($destination);
-        } catch (InvalidStateException) {
-            return;
-        }
-
-        $namespace = str($destination)
-            ->replaceStart(rtrim(src_path(), '/'), src_namespace())
-            ->replaceEnd('.php', '')
-            ->replace('/', '\\')
-            ->explode('\\')
-            ->pop($value)
-            ->implode('\\')
-            ->toString();
-
-        $oldClassName = $class->getClassName();
-
-        $class
-            ->setNamespace($namespace)
-            ->removeClassAttribute(DoNotDiscover::class)
-            ->save($destination);
-
-        $this->publishedClasses[$oldClassName] = $class->getClassName();
     }
 }

@@ -84,7 +84,7 @@ trait HasGeneratorCommand
     protected function askForOverride(string $targetPath): bool
     {
         if (! file_exists($targetPath)) {
-            return false;
+            return true;
         }
 
         return $this->console->confirm(
