@@ -31,7 +31,7 @@ final class StubFile
             new ClassManipulator($filePath);
 
             return new self($filePath, StubFileType::CLASS_FILE);
-        } catch (InvalidStateException $e) {
+        } catch (InvalidStateException) {
             return new self($filePath, StubFileType::RAW_FILE);
         }
     }
@@ -44,7 +44,7 @@ final class StubFile
                 filePath: $classReflector->getFileName(),
                 type: StubFileType::CLASS_FILE,
             );
-        } catch (Throwable $throwable) {
+        } catch (Throwable) {
             throw new ClassNotFoundException(sprintf('The class "%s" does not exist.', $className));
         }
     }

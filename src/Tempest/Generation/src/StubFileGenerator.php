@@ -18,7 +18,6 @@ use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Console\Console;
 use Closure;
 
 /**
@@ -27,11 +26,6 @@ use Closure;
  */
 final class StubFileGenerator
 {
-    public function __construct(
-        private Console $console
-    ) {
-    }
-
     /**
      * @param StubFile $stubFile The stub file to use for the generation. It must be of type CLASS_FILE.
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.

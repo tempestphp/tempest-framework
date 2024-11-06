@@ -28,6 +28,7 @@ trait PublishesFiles
     use HasGeneratorCommand;
 
     private array $publishedFiles = [];
+
     private array $publishedClasses = [];
 
     /**
@@ -53,7 +54,7 @@ trait PublishesFiles
             if ( ! $this->askForOverride($destination) ) {
                 throw new FileGenerationAbortedException('Skipped.');
             }
-            
+
             $stubFile = StubFile::fromFilePath($source);
 
             // Handle class files
@@ -68,7 +69,7 @@ trait PublishesFiles
                         fn ( ClassManipulator $class ) => $class->removeClassAttribute(DoNotDiscover::class),
                     ]
                 );
-                
+
                 $newClass = new ClassManipulator($destination);
 
                 $this->publishedClasses[$oldClass->getClassName()] = $newClass->getClassName();
