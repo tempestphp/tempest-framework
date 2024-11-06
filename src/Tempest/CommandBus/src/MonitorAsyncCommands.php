@@ -30,17 +30,19 @@ final readonly class MonitorAsyncCommands
             foreach ($processes as $key => $process) {
                 $errorOutput = trim($process->getErrorOutput());
 
+                $time = new DateTimeImmutable();
+
                 if ($errorOutput) {
                     $this->error($errorOutput);
-                }
-
-                if ($process->isTerminated()) {
-                    $this->success("{$key} finished, {$process->getExitCode()}");
+                    $this->writeln("<error>{$key}</error> failed at {$time->format('Y-m-d H:i:s')}");
+                    unset($processes[$key]);
+                } elseif ($process->isTerminated()) {
+                    $this->writeln("<success>{$key}</success> finished at {$time->format('Y-m-d H:i:s')}");
                     unset($processes[$key]);
                 }
             }
 
-            $uuids = arr($this->repository->all())
+            $availableUuids = arr($this->repository->available())
                 ->filter(fn (string $uuid) => ! in_array($uuid, array_keys($processes)));
 
             if (count($processes) === 5) {
@@ -48,15 +50,15 @@ final readonly class MonitorAsyncCommands
                 continue;
             }
 
-            if ($uuids->isEmpty()) {
+            if ($availableUuids->isEmpty()) {
                 sleep(1);
                 continue;
             }
 
             // Start a task
-            $uuid = $uuids->first();
+            $uuid = $availableUuids->first();
             $time = new DateTimeImmutable();
-            $this->info("{$uuid} started at {$time->format('Y-m-d H:i:s')}");
+            $this->writeln("<h2>{$uuid}</h2> started at {$time->format('Y-m-d H:i:s')}");
             $process = new Process(['php', 'tempest', 'command:handle', $uuid], getcwd());
             $process->start();
             $processes[$uuid] = $process;

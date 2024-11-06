@@ -31,7 +31,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
     {
         command(new MyAsyncCommand('Brent'));
 
-        $uuids = $this->repository->all();
+        $uuids = $this->repository->available();
 
         $this->assertCount(1, $uuids);
         $uuid = $uuids[0];
@@ -43,7 +43,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
             ->call("command:handle {$uuid}")
             ->assertSee('Done');
 
-        $this->assertEmpty($this->repository->all());
+        $this->assertEmpty($this->repository->available());
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
     }
 }

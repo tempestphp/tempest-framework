@@ -11,5 +11,5 @@ interface AsyncCommandRepository
     public function remove(string $uuid): void;
 
     /** @return string[] */
-    public function all(): array;
+    public function available(): array;
 }

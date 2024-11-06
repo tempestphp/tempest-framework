@@ -30,7 +30,7 @@ final readonly class FileRepository implements AsyncCommandRepository
         unlink($path);
     }
 
-    public function all(): array
+    public function available(): array
     {
         return arr(glob(__DIR__ . "/../stored-commands/*.txt"))
             ->map(fn (string $path) => pathinfo($path, PATHINFO_FILENAME))
