@@ -456,4 +456,23 @@ b'));
 
         $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
     }
+
+    public function test_wrap(): void
+    {
+        $this->assertSame('Leon Scott Kennedy', str('Scott')->wrap(before: 'Leon ', after: ' Kennedy')->toString());
+        $this->assertSame('"value"', str('value')->wrap('"')->toString());
+    }
+
+    public function test_unwrap(): void
+    {
+        $this->assertSame('Scott', str('Leon Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy')->toString());
+        $this->assertSame('value', str('"value"')->unwrap('"')->toString());
+        $this->assertSame('"value"', str('"value"')->unwrap('`')->toString());
+        $this->assertSame('[value', str('[value')->unwrap('[', ']')->toString());
+        $this->assertEquals('some: "json"', str('{some: "json"}')->unwrap('{', '}')->toString());
+
+        $this->assertSame('value', str('[value')->unwrap('[', ']', strict: false)->toString());
+        $this->assertSame('value', str('value]')->unwrap('[', ']', strict: false)->toString());
+        $this->assertSame('Scott', str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false)->toString());
+    }
 }

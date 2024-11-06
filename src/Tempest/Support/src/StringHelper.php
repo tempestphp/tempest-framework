@@ -488,6 +488,51 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Wraps the instance with the given string. If `$after` is specified, it will be appended instead of `$before`.
+     *
+     * ### Example
+     * ```php
+     * str('Scott')->wrap(before: 'Leon ', after: ' Kennedy'); // Leon Scott Kennedy
+     * ```
+     */
+    public function wrap(string|Stringable $before, string|Stringable $after = null): self
+    {
+        return new self($before . $this->string . ($after ??= $before));
+    }
+
+    /**
+     * Removes the specified `$before` and `$after` from the beginning and the end of the instance. If `$after` is null, `$before` is used instead.
+     * Setting `$strict` to `false` will unwrap the instance even if both ends do not correspond to the specified `$before` and `$after`.
+     *
+     * ### Example
+     * ```php
+     *  str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false); // Scott
+     * ```
+     */
+    public function unwrap(string|Stringable $before, string|Stringable $after = null, bool $strict = true): self
+    {
+        $string = $this->string;
+
+        if ($string === '') {
+            return $this;
+        }
+
+        if ($after === null) {
+            $after = $before;
+        }
+
+        if (! $strict) {
+            return (new self($string))->after($before)->beforeLast($after);
+        }
+
+        if ($this->startsWith($before) && $this->endsWith($after)) {
+            $string = (string) (new self($string))->after($before)->beforeLast($after);
+        }
+
+        return new self($string);
+    }
+
+    /**
      * Replaces all occurrences of the given `$search` with `$replace`.
      */
     public function replace(Stringable|string|array $search, Stringable|string|array $replace): self
