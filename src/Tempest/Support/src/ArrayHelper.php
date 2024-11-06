@@ -384,6 +384,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function first(?Closure $filter = null): mixed
     {
+        if ($this->array === []) {
+            return null;
+        }
+
         if ($filter === null) {
             return $this->array[array_key_first($this->array)];
         }
@@ -405,6 +409,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function last(?Closure $filter = null): mixed
     {
+        if ($this->array === []) {
+            return null;
+        }
+
         if ($filter === null) {
             return $this->array[array_key_last($this->array)];
         }
