@@ -6,6 +6,6 @@ namespace Tempest\Generation\Exceptions;
 
 use Exception;
 
-class ClassNotFoundException extends Exception
+final class ClassNotFoundException extends Exception
 {
 }

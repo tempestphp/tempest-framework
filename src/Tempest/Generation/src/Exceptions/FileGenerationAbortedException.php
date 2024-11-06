@@ -6,6 +6,6 @@ namespace Tempest\Generation\Exceptions;
 
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 
-class FileGenerationAbortedException extends FileGenerationFailedException
+final class FileGenerationAbortedException extends FileGenerationFailedException
 {
 }
