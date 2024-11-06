@@ -98,4 +98,22 @@ final class MultipleChoiceComponentTest extends TestCase
             'bar' => '2. Bar',
         ], $component->enter());
     }
+
+    public function test_supports_defaults(): void
+    {
+        $component = new MultipleChoiceComponent(
+            question: 'whatever',
+            options: [
+                'foo' => '1. Foo',
+                'bar' => '2. Bar',
+                'baz' => '3. Baz',
+            ],
+            default: ['foo', 'baz']
+        );
+
+        $this->assertSame([
+            'foo' => '1. Foo',
+            'baz' => '3. Baz',
+        ], $component->enter());
+    }
 }

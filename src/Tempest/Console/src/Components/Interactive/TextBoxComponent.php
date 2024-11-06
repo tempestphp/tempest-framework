@@ -118,6 +118,9 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
 
     public function getStaticComponent(): StaticConsoleComponent
     {
-        return new StaticTextBoxComponent($this->label);
+        return new StaticTextBoxComponent(
+            label: $this->label,
+            default: $this->default
+        );
     }
 }

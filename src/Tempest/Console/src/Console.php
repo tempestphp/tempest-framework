@@ -34,7 +34,7 @@ interface Console
         bool $multiple = false,
         bool $asList = false,
         array $validation = [],
-    ): string|array;
+    ): null|string|array;
 
     public function confirm(string $question, bool $default = false): bool;
 
@@ -45,7 +45,7 @@ interface Console
     /**
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search): mixed;
+    public function search(string $label, Closure $search, ?string $default = null): mixed;
 
     public function info(string $line): self;
 
@@ -56,4 +56,12 @@ interface Console
     public function when(mixed $expression, callable $callback): self;
 
     public function withLabel(string $label): self;
+
+    public function supportsTty(): bool;
+
+    public function supportsPrompting(): bool;
+
+    public function disableTty(): self;
+
+    public function disablePrompting(): self;
 }

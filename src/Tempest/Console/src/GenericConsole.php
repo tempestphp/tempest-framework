@@ -16,6 +16,7 @@ use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 
@@ -25,6 +26,10 @@ final class GenericConsole implements Console
 
     private bool $isForced = false;
 
+    private bool $supportsTty = true;
+
+    private bool $supportsPrompting = true;
+
     private ?InteractiveComponentRenderer $componentRenderer = null;
 
     public function __construct(
@@ -33,6 +38,7 @@ final class GenericConsole implements Console
         #[Tag('console')]
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
+        private readonly ConsoleArgumentBag $argumentBag
     ) {
     }
 
@@ -55,13 +61,35 @@ final class GenericConsole implements Console
         return $this;
     }
 
+    public function disableTty(): self
+    {
+        $this->supportsTty = false;
+
+        return $this;
+    }
+
+    public function disablePrompting(): self
+    {
+        $this->supportsPrompting = false;
+
+        return $this;
+    }
+
     public function read(int $bytes): string
     {
+        if (! $this->supportsPrompting()) {
+            return '';
+        }
+
         return $this->input->read($bytes);
     }
 
     public function readln(): string
     {
+        if (! $this->supportsPrompting()) {
+            return '';
+        }
+
         return $this->input->readln();
     }
 
@@ -124,7 +152,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->interactiveSupported()) {
+        if ($this->supportsTty()) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -142,13 +170,14 @@ final class GenericConsole implements Console
         bool $multiple = false,
         bool $asList = false,
         array $validation = [],
-    ): string|array {
+    ): null|string|array {
         if ($options === null || $options === []) {
             $component = new TextBoxComponent($question, $default);
         } elseif ($multiple) {
             $component = new MultipleChoiceComponent(
                 question: $question,
                 options: $options,
+                default: is_array($default) ? $default : [$default],
             );
         } else {
             $component = new SingleChoiceComponent(
@@ -197,17 +226,38 @@ final class GenericConsole implements Console
         return $this->component(new ProgressBarComponent($data, $handler));
     }
 
-    public function search(string $label, Closure $search): mixed
+    public function search(string $label, Closure $search, ?string $default = null): mixed
     {
-        return $this->component(new SearchComponent($label, $search));
+        return $this->component(new SearchComponent($label, $search, $default));
     }
 
-    private function interactiveSupported(): bool
+    public function supportsTty(): bool
     {
+        if ($this->supportsTty === false) {
+            return false;
+        }
+
         if ($this->componentRenderer === null) {
             return false;
         }
 
+        if (! $this->supportsPrompting()) {
+            return false;
+        }
+
         return (bool) shell_exec('which tput && which stty');
+    }
+
+    public function supportsPrompting(): bool
+    {
+        if ($this->supportsPrompting === false) {
+            return false;
+        }
+
+        if ($this->argumentBag->get('interaction')?->value === false) {
+            return false;
+        }
+
+        return true;
     }
 }

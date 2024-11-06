@@ -36,6 +36,8 @@ final class ConsoleTester
 
     private ?ExitCode $exitCode = null;
 
+    private bool $withPrompting = true;
+
     public function __construct(
         private readonly Container $container,
     ) {
@@ -56,7 +58,12 @@ final class ConsoleTester
             input: $memoryInputBuffer,
             highlighter: $clone->container->get(Highlighter::class, 'console'),
             executeConsoleCommand: $clone->container->get(ExecuteConsoleCommand::class),
+            argumentBag: $clone->container->get(ConsoleArgumentBag::class),
         );
+
+        if ($this->withPrompting === false) {
+            $console->disablePrompting();
+        }
 
         if ($this->componentRenderer !== null) {
             $console->setComponentRenderer($this->componentRenderer);
@@ -269,6 +276,27 @@ final class ConsoleTester
     public function assertInvalid(): self
     {
         $this->assertExitCode(ExitCode::INVALID);
+
+        return $this;
+    }
+
+    public function withoutPrompting(): self
+    {
+        $this->withPrompting = false;
+
+        return $this;
+    }
+
+    public function withPrompting(): self
+    {
+        $this->withPrompting = true;
+
+        return $this;
+    }
+
+    public function dd(): self
+    {
+        ld($this->output->asFormattedString());
 
         return $this;
     }
