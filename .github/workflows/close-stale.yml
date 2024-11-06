@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/stale@v9
         with:
-          start-date: "20241106T120000Z"
+          start-date: "2024-11-06T12:00:00Z"
           days-before-stale: 30
           days-before-close: 1
           stale-issue-label: "stale"
