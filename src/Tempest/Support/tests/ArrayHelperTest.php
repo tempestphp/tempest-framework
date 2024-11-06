@@ -178,6 +178,7 @@ final class ArrayHelperTest extends TestCase
 
     public function test_last(): void
     {
+        $this->assertSame(null, arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
     }
 
