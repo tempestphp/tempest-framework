@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\CommandBus;
 
 use DateTimeImmutable;
@@ -16,7 +18,8 @@ final readonly class MonitorAsyncCommands
     public function __construct(
         private AsyncCommandRepository $repository,
         private Console $console,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'command:monitor')]
     public function __invoke(): void
@@ -26,7 +29,7 @@ final readonly class MonitorAsyncCommands
         /** @var \Symfony\Component\Process\Process[] $processes */
         $processes = [];
 
-        while (true) {
+        while (true) { // @phpstan-ignore-line
             foreach ($processes as $key => $process) {
                 $errorOutput = trim($process->getErrorOutput());
 
@@ -47,11 +50,13 @@ final readonly class MonitorAsyncCommands
 
             if (count($processes) === 5) {
                 sleep(1);
+
                 continue;
             }
 
             if ($availableUuids->isEmpty()) {
                 sleep(1);
+
                 continue;
             }
 

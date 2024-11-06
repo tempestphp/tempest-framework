@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\CommandBus;
 
 use Tempest\CommandBus\AsyncCommandRepositories\FileRepository;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\CommandBus;
 
 use Ramsey\Uuid\Uuid;
@@ -12,7 +14,8 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
     public function __construct(
         private CommandBusConfig $commandBusConfig,
         private AsyncCommandRepository $repository,
-    ) {}
+    ) {
+    }
 
     #[EventHandler(KernelEvent::BOOTED)]
     public function onBooted(): void
@@ -24,9 +27,9 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
     {
         $reflector = new ClassReflector($command);
 
-        if ($reflector->hasAttribute(AsyncCommand::class))
-        {
+        if ($reflector->hasAttribute(AsyncCommand::class)) {
             $this->repository->store(Uuid::uuid7()->toString(), $command);
+
             return;
         }
 

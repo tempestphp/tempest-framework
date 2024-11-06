@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\CommandBus;
 
 use Tempest\Console\Console;
@@ -16,7 +18,8 @@ final readonly class HandleAsyncCommand
         private Container $container,
         private Console $console,
         private AsyncCommandRepository $repository,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'command:handle')]
     public function __invoke(string $uuid): void

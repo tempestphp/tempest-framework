@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\CommandBus;
 
+use function Tempest\command;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\AsyncCommandRepository;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\command;
 
+/**
+ * @internal
+ */
 final class AsyncCommandTest extends FrameworkIntegrationTestCase
 {
     private MemoryRepository $repository;

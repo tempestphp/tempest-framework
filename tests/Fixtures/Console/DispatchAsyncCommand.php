@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Fixtures\Console;
 
+use function Tempest\command;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
-use function Tempest\command;
 
 final readonly class DispatchAsyncCommand
 {
@@ -15,7 +17,7 @@ final readonly class DispatchAsyncCommand
     public function __invoke(): void
     {
         foreach (range(1, 10) as $i) {
-            command(new MyAsyncCommand($i));
+            command(new MyAsyncCommand("{$i}"));
         }
 
         $this->info('Dispatched commands');
