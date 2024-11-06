@@ -130,32 +130,6 @@ final class StubFileGenerator
     }
 
     /**
-     * @param string $targetPath The path where the generated file will be saved including the filename and extension.
-     * @param string|class-string $stubFile The stub file path to use for the generation.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
-     *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
-     *     The values are the replacements for the placeholders (e.g. 'App\Models')
-     * @param array<Closure> $manipulations An array of manipulations to apply to the generated class.
-     * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     */
-    public function generate(
-        string $targetPath,
-        string $stubFile,
-        array $replacements = [],
-        array $manipulations = [],
-        bool $shouldOverride = false,
-    ): void {
-        try {
-            $this->prepareFilesystem($targetPath, $shouldOverride);
-            $file_path = $this->writeFile($targetPath, $stubFile, $replacements, $manipulations);
-
-            $this->console->success(sprintf('File successfully created at "%s".', $file_path));
-        } catch (Throwable $throwable) {
-            $this->console->error($throwable->getMessage());
-        }
-    }
-
-    /**
      * Prepare the directory structure for the new file.
      * It will delete the target file if it exists and we force the override.
      *
@@ -181,57 +155,6 @@ final class StubFileGenerator
         $directory = dirname($targetPath);
         if (! is_dir($directory)) {
             mkdir($directory, recursive: true);
-        }
-    }
-
-    /**
-     * Write the file to the target path.
-     *
-     * @param string $targetPath The path where the generated file will be saved including the filename and extension.
-     * @param string|class-string $stubFile The stub file path to use for the generation.
-     * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
-     *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
-     *     The values are the replacements for the placeholders (e.g. 'App\Models')
-     * @param array<Closure> $manipulations An array of manipulations to apply to the generated class.
-     * 
-     * @throws FileGenerationFailedException If the file could not be written.
-     *
-     * @return string The path where the file was written.
-     */
-    private function writeFile(
-        string $targetPath,
-        string $stubFile,
-        array $replacements = [],
-        array $manipulations = [],
-    ): string {
-        try {
-            // Transform stub to class
-            $namespace = PathHelper::toRegisteredNamespace($targetPath);
-            $classname = PathHelper::toClassName($targetPath);
-            $classManipulator = (new ClassManipulator($stubFile))
-                ->setNamespace($namespace)
-                ->setClassName($classname);
-
-            foreach ($replacements as $placeholder => $replacement) {
-                if (! is_string($replacement)) {
-                    continue;
-                }
-
-                $classManipulator->manipulate(fn (StringHelper $code) => $code->replace($placeholder, $replacement));
-            }
-
-            // Run all manipulations
-            $classManipulator = array_reduce(
-                array: $manipulations,
-                initial: $classManipulator,
-                callback: fn ( ClassManipulator $manipulator, Closure $manipulation ) => $manipulation($manipulator) 
-            );
-
-            $classManipulator->save($targetPath);
-
-            return $targetPath;
-        } catch (\Throwable $th) {
-            throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $th->getMessage()));
         }
     }
 }

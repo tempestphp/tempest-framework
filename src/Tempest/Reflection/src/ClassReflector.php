@@ -85,6 +85,10 @@ final readonly class ClassReflector implements Reflector
         return $this->reflectionClass->getShortName();
     }
 
+    public function getFileName(): string {
+        return $this->reflectionClass->getFileName();
+    }
+
     public function getType(): TypeReflector
     {
         return new TypeReflector($this->reflectionClass);

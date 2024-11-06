@@ -7,6 +7,7 @@ namespace Tempest\Console\Commands\Generators;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\ControllerStub;
+use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\HasGeneratorCommand;
 
 final class MakeControllerCommand
@@ -40,8 +41,8 @@ final class MakeControllerCommand
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        $this->stubFileGenerator->generate(
-            stubFile: ControllerStub::class,
+        $this->stubFileGenerator->generateClassFile(
+            stubFile: StubFile::fromClassString( ControllerStub::class ),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
             replacements: [
