@@ -23,6 +23,8 @@ parameters:
 		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
+		-
+		    message: '#.*uninitialized readonly property \$console*#'
 
 	disallowedFunctionCalls:
 		-
