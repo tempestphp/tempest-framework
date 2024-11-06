@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
@@ -27,7 +28,10 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         ];
 
         $this->kernel->discoveryLocations = [
-            realpath(__DIR__ . '../../Fixtures/Discovery'),
+            new DiscoveryLocation(
+                'Tests\Tempest\Fixtures',
+                __DIR__ . '../../Fixtures/Discovery'
+            ),
         ];
 
         (new LoadDiscoveryClasses(
@@ -50,7 +54,10 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         ];
 
         $this->kernel->discoveryLocations = [
-            realpath(__DIR__ . '../../Fixtures/Discovery'),
+            new DiscoveryLocation(
+                'Tests\Tempest\Fixtures',
+                __DIR__ . '../../Fixtures/Discovery'
+            ),
         ];
 
         (new LoadDiscoveryClasses(
