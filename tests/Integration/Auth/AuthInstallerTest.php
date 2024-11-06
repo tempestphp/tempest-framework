@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\get;
 
 /**
  * @internal

@@ -27,7 +27,7 @@ final class InstallerTester
         $this->root = $root;
         $this->container->get(Kernel::class)->root = $root;
         $this->container->get(Composer::class)->setMainNamespace($mainNamespace);
-        
+
         if (! is_dir($this->root)) {
             mkdir($this->root, recursive: true);
         }

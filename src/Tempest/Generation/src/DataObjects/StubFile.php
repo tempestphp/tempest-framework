@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\DataObjects;
 
-use Throwable;
-use Tempest\Generation\Exceptions\ClassNotFoundException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\ClassManipulator;
+use Exception;
 use Nette\InvalidStateException;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\Exceptions\ClassNotFoundException;
 use Tempest\Reflection\ClassReflector;
+use Throwable;
 
 /**
  * Represents a file that is to be generated.
@@ -19,12 +20,14 @@ final class StubFile
     public function __construct(
         public readonly string $filePath,
         public readonly StubFileType $type,
-    ) {}
+    ) {
+    }
 
-    public static function fromFilePath(string $filePath): self {
+    public static function fromFilePath(string $filePath): self
+    {
         // Every file that can't be constructed in class manipulator is considered raw
-        if ( ! file_exists($filePath)) {
-            throw new \Exception(sprintf('The file "%s" does not exist.', $filePath));
+        if (! file_exists($filePath)) {
+            throw new Exception(sprintf('The file "%s" does not exist.', $filePath));
         }
 
         try {
@@ -36,7 +39,8 @@ final class StubFile
         }
     }
 
-    public static function fromClassString(string $className): self {
+    public static function fromClassString(string $className): self
+    {
         try {
             $classReflector = new ClassReflector($className);
 

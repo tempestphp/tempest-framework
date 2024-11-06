@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use ReflectionClass;
-use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\PhpFile;
+use ReflectionClass;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
 
 final class ClassManipulator
 {
@@ -32,9 +32,9 @@ final class ClassManipulator
 
     /**
      * Save the class to a target file.
-     * 
+     *
      * @param string $path the path to save the class to.
-     * 
+     *
      * @throws FileGenerationFailedException if the file could not be written.
      */
     public function save(string $path): self

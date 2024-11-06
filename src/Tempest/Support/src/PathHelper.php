@@ -70,7 +70,8 @@ final readonly class PathHelper
             ->toString();
     }
 
-    public static function toMainNamespace(string $path): string {
+    public static function toMainNamespace(string $path): string
+    {
         return self::toNamespace(
             src_namespace() . DIRECTORY_SEPARATOR . str($path)
                 ->replaceStart(src_path(), '')

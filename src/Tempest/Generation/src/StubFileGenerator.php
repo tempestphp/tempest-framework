@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use function Tempest\src_path;
-use function Tempest\src_namespace;
-use function Tempest\Support\arr;
-use function PHPUnit\Framework\callback;
-use function Tempest\Support\str;
-
-use Throwable;
-use Tempest\Support\StringHelper;
-
-use Tempest\Support\PathHelper;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\DataObjects\StubFile;
 use Closure;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Support\PathHelper;
+use function Tempest\Support\str;
+use Tempest\Support\StringHelper;
+use Throwable;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -33,7 +27,7 @@ final class StubFileGenerator
      * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'DummyNamespace')
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
-     * 
+     *
      * @param array<Closure(ClassManipulator): ClassManipulator> $manipulations An array of manipulations to apply to the generated class.
      */
     public function generateClassFile(
@@ -43,7 +37,7 @@ final class StubFileGenerator
         array $replacements = [],
         array $manipulations = [],
     ): void {
-        if ( $stubFile->type !== StubFileType::CLASS_FILE ) {
+        if ($stubFile->type !== StubFileType::CLASS_FILE) {
             throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, "%s" given.', $stubFile->type->name));
         }
 
@@ -69,7 +63,7 @@ final class StubFileGenerator
             $classManipulator = array_reduce(
                 array: $manipulations,
                 initial: $classManipulator,
-                callback: fn ( ClassManipulator $manipulator, Closure $manipulation ) => $manipulation($manipulator) 
+                callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator)
             );
 
             $classManipulator->save($targetPath);
@@ -85,7 +79,7 @@ final class StubFileGenerator
      * @param array<string, string> $replacements An array of key-value pairs to replace in the stub file.
      *     The keys are the placeholders in the stub file (e.g. 'dummy-content')
      *     The values are the replacements for the placeholders (e.g. 'real content')
-     * 
+     *
      * @param array<Closure(StringHelper): StringHelper> $manipulations An array of manipulations to apply to the generated file raw content.
      */
     public function generateRawFile(
@@ -95,7 +89,7 @@ final class StubFileGenerator
         array $replacements = [],
         array $manipulations = [],
     ): void {
-        if ( $stubFile->type !== StubFileType::RAW_FILE ) {
+        if ($stubFile->type !== StubFileType::RAW_FILE) {
             throw new FileGenerationFailedException(sprintf('The stub file must be of type RAW_FILE, "%s" given.', $stubFile->type->name));
         }
 
@@ -116,7 +110,7 @@ final class StubFileGenerator
             $fileContent = array_reduce(
                 array: $manipulations,
                 initial: $fileContent,
-                callback: fn ( StringHelper $content, Closure $manipulation ) => $manipulation($content) 
+                callback: fn (StringHelper $content, Closure $manipulation) => $manipulation($content)
             );
 
             file_put_contents($targetPath, $fileContent);
@@ -131,7 +125,7 @@ final class StubFileGenerator
      *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     * 
+     *
      * @throws FileGenerationFailedException If the operation has been aborted.
      */
     private function prepareFilesystem(

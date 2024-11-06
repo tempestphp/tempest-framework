@@ -4,24 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use function Tempest\src_path;
-use function Tempest\src_namespace;
+use Closure;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\HasGeneratorCommand;
 use function Tempest\Support\str;
 use Throwable;
-use Tempest\Support\StringHelper;
-use Tempest\Support\PathHelper;
-use Tempest\Generation\StubFileGenerator;
-
-use Tempest\Generation\HasGeneratorCommand;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Console\HasConsole;
-use Tempest\Console\Console;
-use Nette\InvalidStateException;
-use Closure;
 
 trait PublishesFiles
 {
@@ -33,7 +24,7 @@ trait PublishesFiles
 
     /**
      * Publishes a file from a source to a destination.
-     * 
+     *
      * @param string $source The path to the source file.
      * @param string $destination The path to the destination file.
      * @param Closure(string $source, string $destination): void|null $callback A callback to run after the file is published.
@@ -51,14 +42,14 @@ trait PublishesFiles
                 throw new FileGenerationAbortedException('Skipped.');
             }
 
-            if ( ! $this->askForOverride($destination) ) {
+            if (! $this->askForOverride($destination)) {
                 throw new FileGenerationAbortedException('Skipped.');
             }
 
             $stubFile = StubFile::fromFilePath($source);
 
             // Handle class files
-            if ( $stubFile->type === StubFileType::CLASS_FILE ) {
+            if ($stubFile->type === StubFileType::CLASS_FILE) {
                 $oldClass = new ClassManipulator($source);
 
                 $this->stubFileGenerator->generateClassFile(
@@ -66,7 +57,7 @@ trait PublishesFiles
                     targetPath: $destination,
                     shouldOverride: true,
                     manipulations: [
-                        fn ( ClassManipulator $class ) => $class->removeClassAttribute(DoNotDiscover::class),
+                        fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
                     ]
                 );
 
@@ -76,7 +67,7 @@ trait PublishesFiles
             }
 
             // Handle raw files
-            if ( $stubFile->type === StubFileType::RAW_FILE ) {
+            if ($stubFile->type === StubFileType::RAW_FILE) {
                 $this->stubFileGenerator->generateRawFile(
                     stubFile: $stubFile,
                     targetPath: $destination,
@@ -91,9 +82,9 @@ trait PublishesFiles
             }
 
             $this->console->success(sprintf('File successfully created at "%s".', $destination));
-        } catch ( FileGenerationAbortedException $exception ) {
+        } catch (FileGenerationAbortedException $exception) {
             $this->console->info($exception->getMessage());
-        } catch ( Throwable $throwable ) {
+        } catch (Throwable $throwable) {
             throw new FileGenerationFailedException(sprintf('The file could not be published. %s', $throwable->getMessage()));
         }
     }

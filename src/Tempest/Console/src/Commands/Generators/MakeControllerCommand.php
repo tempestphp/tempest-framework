@@ -42,7 +42,7 @@ final class MakeControllerCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         $this->stubFileGenerator->generateClassFile(
-            stubFile: StubFile::fromClassString( ControllerStub::class ),
+            stubFile: StubFile::fromClassString(ControllerStub::class),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
             replacements: [
