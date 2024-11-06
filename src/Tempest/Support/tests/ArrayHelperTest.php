@@ -184,6 +184,7 @@ final class ArrayHelperTest extends TestCase
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
+        $this->assertSame(null, arr()->first());
     }
 
     public function test_is_empty(): void
