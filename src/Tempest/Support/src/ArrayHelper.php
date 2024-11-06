@@ -768,12 +768,85 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Sorts the array in ascending order.
+     * Returns a new instance of this array sorted by its values.
+     *
+     * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
+     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
+     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
+     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
+     * @return self<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
-    public function sort(): self
+    public function sort(bool $desc = false, ?bool $preserveKeys = null, int $flags = SORT_REGULAR): self
     {
         $array = $this->array;
-        sort($array);
+
+        if ($preserveKeys === null) {
+            $preserveKeys = $this->isAssoc();
+        }
+
+        if ($preserveKeys) {
+            $desc ? arsort($array, $flags) : asort($array, $flags);
+        } else {
+            $desc ? rsort($array, $flags) : sort($array, $flags);
+        }
+
+        return new self($array);
+    }
+
+    /**
+     * Returns a new instance of this array sorted by its values using a callback function.
+     *
+     * @param callable $callback The function to use for comparing values. It should accept two parameters
+     *                           and return an integer less than, equal to, or greater than zero if the
+     *                           first argument is considered to be respectively less than, equal to, or
+     *                           greater than the second.
+     * @param bool|null $preserveKeys Preserves array keys if `true`; reindexes numerically if `false`.
+     *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
+     * @return self<array-key, TValue> Key type depends on whether array keys are preserved or not.
+     */
+    public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
+    {
+        $array = $this->array;
+
+        if ($preserveKeys === null) {
+            $preserveKeys = $this->isAssoc();
+        }
+
+        $preserveKeys ? uasort($array, $callback) : usort($array, $callback);
+
+        return new self($array);
+    }
+
+    /**
+     * Returns a new instance of this array sorted by its keys.
+     *
+     * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
+     * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
+     * @return self<TKey, TValue>
+     */
+    public function sortKeys(bool $desc = false, int $flags = SORT_REGULAR): self
+    {
+        $array = $this->array;
+
+        $desc ? krsort($array, $flags) : ksort($array, $flags);
+
+        return new self($array);
+    }
+
+    /**
+     * Returns a new instance of this array sorted by its keys using a callback function.
+     *
+     * @param callable $callback The function to use for comparing keys. It should accept two parameters
+     *                           and return an integer less than, equal to, or greater than zero if the
+     *                           first argument is considered to be respectively less than, equal to, or
+     *                           greater than the second.
+     * @return self<TKey, TValue>
+     */
+    public function sortKeysByCallback(callable $callback): self
+    {
+        $array = $this->array;
+
+        uksort($array, $callback);
 
         return new self($array);
     }
