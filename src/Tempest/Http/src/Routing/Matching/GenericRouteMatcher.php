@@ -46,9 +46,6 @@ final readonly class GenericRouteMatcher implements RouteMatcher
             return null;
         }
 
-        // Ensures matching regexes are available
-        $this->routeConfig->prepareMatchingRegexes();
-
         // Get matching regex for route
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
 

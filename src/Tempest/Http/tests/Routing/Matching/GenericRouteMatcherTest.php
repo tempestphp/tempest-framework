@@ -6,14 +6,10 @@ namespace Tempest\Http\Tests\Routing\Matching;
 
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 use Tempest\Http\Method;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Ok;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Http\Routing\Matching\GenericRouteMatcher;
-use Tempest\Reflection\MethodReflector;
 
 /**
  * @internal
@@ -28,13 +24,27 @@ final class GenericRouteMatcherTest extends TestCase
     {
         parent::setUp();
 
-        $this->routeConfig = new RouteConfig();
-
-        $method = new MethodReflector(new ReflectionMethod(self::class, 'dummyMethod'));
-        $this->routeConfig->addRoute($method, new Route('/static', Method::GET));
-        $this->routeConfig->addRoute($method, new Route('/dynamic/{id}', Method::GET));
-        $this->routeConfig->addRoute($method, new Route('/dynamic/{id}/view', Method::GET));
-        $this->routeConfig->addRoute($method, new Route('/dynamic/{id}/{tag}/{name}/{id}', Method::GET));
+        $this->routeConfig = new RouteConfig(
+            [
+                'GET' => [
+                    '/static' => new Route('/static', Method::GET),
+                ],
+            ],
+            [
+                'GET' => [
+                    'b' => new Route('/dynamic/{id}', Method::GET),
+                    'c' => new Route('/dynamic/{id}/view', Method::GET),
+                    'e' => new Route('/dynamic/{id}/{tag}/{name}/{id}', Method::GET),
+                ],
+                'PATCH' => [
+                    'c' => new Route('/dynamic/{id}', Method::PATCH),
+                ],
+            ],
+            [
+                'GET' => '#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#',
+                'PATCH' => '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+            ]
+        );
 
         $this->subject = new GenericRouteMatcher($this->routeConfig);
     }
@@ -88,10 +98,5 @@ final class GenericRouteMatcherTest extends TestCase
         $this->assertEquals([ 'id' => '6', 'tag' => 'brendt', 'name' => 'brent' ], $matchedRoute->params);
         $this->assertTrue($matchedRoute->route->isDynamic);
         $this->assertEquals('/dynamic/{id}/{tag}/{name}/{id}', $matchedRoute->route->uri);
-    }
-
-    public static function dummyMethod(): Response
-    {
-        return new Ok();
     }
 }
