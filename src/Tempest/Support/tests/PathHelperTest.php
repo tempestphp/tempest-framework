@@ -115,14 +115,16 @@ final class PathHelperTest extends TestCase
 
     #[Test]
     #[DataProvider('toClassNameProvider')]
-    public function toClassName(string $path, string $expected): void {
+    public function toClassName(string $path, string $expected): void
+    {
         $this->assertSame(
             actual: PathHelper::toClassName($path),
             expected: $expected,
         );
     }
 
-    public static function toClassNameProvider(): array {
+    public static function toClassNameProvider(): array
+    {
         return [
             'single path' => ['/Foo/Bar', 'Bar'],
             'single path end with forward slash' => ['Foo/Bar/', 'Bar'],

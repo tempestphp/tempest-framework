@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use function Tempest\Support\str;
-use Tempest\Validation\Rules\NotEmpty;
-use Tempest\Validation\Rules\EndsWith;
-use Tempest\Support\PathHelper;
-use Tempest\Core\Composer;
-use Tempest\Container\Inject;
 use Tempest\Console\Console;
+use Tempest\Container\Inject;
+use Tempest\Core\Composer;
+use Tempest\Support\PathHelper;
+use function Tempest\Support\str;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
 
 /**
  * Provides a bunch of methods to generate files and work with common user input.

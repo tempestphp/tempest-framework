@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Commands;
 
-use Tempest\Generation\HasGeneratorConsoleInteractions;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Database\Stubs\DatabaseModelStub;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Database\Stubs\DatabaseModelStub;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\HasGeneratorConsoleInteractions;
 
 final class MakeModelCommand
 {
@@ -32,13 +32,13 @@ final class MakeModelCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         try {
-            
+
             $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::fromClassString( DatabaseModelStub::class ),
+                stubFile: StubFile::fromClassString(DatabaseModelStub::class),
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
             );
-    
+
             $this->console->success(sprintf('File successfully created at "%s".', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->console->error($e->getMessage());
