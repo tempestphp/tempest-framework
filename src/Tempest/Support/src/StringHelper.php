@@ -667,6 +667,18 @@ final readonly class StringHelper implements Stringable
         return new self(mb_substr($this->string, $start, $length));
     }
 
+    /**
+     * Takes the specified amount of characters. If `$length` is negative, starts from the end.
+     */
+    public function take(int $length): self
+    {
+        if ($length < 0) {
+            return $this->substr($length);
+        }
+
+        return $this->substr(0, $length);
+    }
+
     private function normalizeString(mixed $value): mixed
     {
         if ($value instanceof Stringable) {

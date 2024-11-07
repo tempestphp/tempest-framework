@@ -500,4 +500,14 @@ b'));
         $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5)->toString());
         $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5, length: 5)->toString());
     }
+
+    public function test_take(): void
+    {
+        // positive
+        $this->assertSame('Lorem', str('Lorem ipsum')->take(5)->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->take(100)->toString());
+
+        // negative
+        $this->assertSame('ipsum', str('Lorem ipsum')->take(-5)->toString());
+    }
 }
