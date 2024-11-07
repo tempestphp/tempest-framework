@@ -491,4 +491,13 @@ b'));
         $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100)->toString());
         $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100, end: '...')->toString());
     }
+
+    public function test_substr(): void
+    {
+        $this->assertSame('Lorem', str('Lorem ipsum')->substr(0, length: 5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(6, length: 5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(6)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5, length: 5)->toString());
+    }
 }

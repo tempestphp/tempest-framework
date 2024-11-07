@@ -653,6 +653,20 @@ final readonly class StringHelper implements Stringable
         return new self(rtrim(mb_strimwidth($this->string, 0, $characters, '', 'UTF-8')) . $end);
     }
 
+    /**
+     * Gets parts of the instance.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->substr(0, length: 5); // Lorem
+     * str('Lorem ipsum')->substr(6); // ipsum
+     * ```
+     */
+    public function substr(int $start, ?int $length = null): self
+    {
+        return new self(mb_substr($this->string, $start, $length));
+    }
+
     private function normalizeString(mixed $value): mixed
     {
         if ($value instanceof Stringable) {
