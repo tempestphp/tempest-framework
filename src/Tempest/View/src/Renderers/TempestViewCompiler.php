@@ -36,6 +36,8 @@ final readonly class TempestViewCompiler
 
     public function compile(string $path): string
     {
+        $this->elementFactory->setViewCompiler($this);
+
         // 1. Retrieve template
         $template = $this->retrieveTemplate($path);
 
@@ -99,9 +101,7 @@ final readonly class TempestViewCompiler
         $elements = [];
 
         foreach ($domNodeList as $node) {
-            $element = $this->elementFactory
-                ->setViewCompiler($this)
-                ->make($node);
+            $element = $this->elementFactory->make($node);
 
             if ($element === null) {
                 continue;
@@ -131,7 +131,7 @@ final readonly class TempestViewCompiler
                 ->setChildren($children);
 
             foreach ($element->getAttributes() as $name => $value) {
-                $attribute = $this->attributeFactory->make($name);
+                $attribute = $this->attributeFactory->make($element, $name);
 
                 $element = $attribute->apply($element);
 
