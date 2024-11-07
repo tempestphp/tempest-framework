@@ -29,13 +29,13 @@ final class StubFile
      */
     public static function from(string $pathOrClass): self {
         try {
-            $classReflector = new ClassReflector($pathOrClass);
+            new ClassManipulator($pathOrClass);
 
             return new self(
-                filePath: $classReflector->getFileName(),
+                filePath: $pathOrClass,
                 type: StubFileType::CLASS_FILE,
             );
-        } catch (ReflectionException) {
+        } catch (InvalidStateException) {
             if ( ! file_exists($pathOrClass)) {
                 throw new Exception(sprintf('The file "%s" does not exist.', $pathOrClass));
             }
