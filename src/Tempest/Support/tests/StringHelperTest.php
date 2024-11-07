@@ -520,4 +520,16 @@ b'));
         $this->assertSame(['foo', 'bar', 'baz'], str('foobarbaz')->split(3)->toArray());
         $this->assertSame(['foo', 'bar', 'baz', '22'], str('foobarbaz22')->split(3)->toArray());
     }
+
+    public function test_insert(): void
+    {
+        $this->assertSame('foo', str()->insert(0, 'foo')->toString());
+        $this->assertSame('foo', str()->insert(-1, 'foo')->toString());
+        $this->assertSame('foo', str()->insert(100, 'foo')->toString());
+        $this->assertSame('foo', str()->insert(-100, 'foo')->toString());
+        $this->assertSame('foobar', str('bar')->insert(0, 'foo')->toString());
+        $this->assertSame('barfoo', str('bar')->insert(3, 'foo')->toString());
+        $this->assertSame('foobarbaz', str('foobaz')->insert(3, 'bar')->toString());
+        $this->assertSame('123', str('13')->insert(-1, '2')->toString());
+    }
 }

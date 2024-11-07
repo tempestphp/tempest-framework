@@ -717,6 +717,21 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Inserts the specified `$string` at the specified `$position`.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum sit amet')->insert(11, ' dolor'); // Lorem ipsum dolor sit amet
+     * ```
+     */
+    public function insert(int $position, string $string): self
+    {
+        return new self(
+            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
+        );
+    }
+
+    /**
      * Implodes the given array into a string by a separator.
      */
     public static function implode(array|ArrayHelper $parts, string $glue = ' '): self
