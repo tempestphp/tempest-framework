@@ -432,6 +432,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return new self([(string) $string]);
         }
 
+        if ((string) $string === '') {
+            return new self();
+        }
+
         return new self(explode($separator, (string) $string));
     }
 
@@ -654,11 +658,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return mixed|ArrayHelper
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(int|string $key, mixed $default = null): mixed
     {
         $value = $this->array;
 
-        $keys = explode('.', $key);
+        $keys = is_int($key)
+            ? [$key]
+            : explode('.', $key);
 
         foreach ($keys as $key) {
             if (! isset($value[$key])) {
@@ -678,11 +684,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Asserts whether a value identified by the specified `$key` exists.
      */
-    public function has(string $key): bool
+    public function has(int|string $key): bool
     {
         $array = $this->array;
 
-        $keys = explode('.', $key);
+        $keys = is_int($key)
+            ? [$key]
+            : explode('.', $key);
 
         foreach ($keys as $key) {
             if (! isset($array[$key])) {
