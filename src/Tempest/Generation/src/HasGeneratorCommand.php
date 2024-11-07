@@ -4,24 +4,27 @@ declare(strict_types=1);
 
 namespace Tempest\Generation;
 
-use Tempest\Console\Console;
-use Tempest\Core\Composer;
-use Tempest\Support\PathHelper;
 use function Tempest\Support\str;
-use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Support\PathHelper;
+use Tempest\Core\Composer;
+use Tempest\Container\Inject;
+use Tempest\Console\Console;
 
 /**
  * Provides a bunch of methods to generate files and work with common user input.
  */
 trait HasGeneratorCommand
 {
-    public function __construct(
-        protected readonly Console $console,
-        protected readonly Composer $composer,
-        protected readonly StubFileGenerator $stubFileGenerator
-    ) {
-    }
+    #[Inject]
+    protected readonly Console $console;
+
+    #[Inject]
+    protected readonly Composer $composer;
+
+    #[Inject]
+    protected readonly StubFileGenerator $stubFileGenerator;
 
     /**
      * Gets a suggested path for the given class name.
