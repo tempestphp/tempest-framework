@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Stubs;
+namespace Tempest\Http\Stubs;
 
 use Tempest\Http\Get;
 use function Tempest\view;

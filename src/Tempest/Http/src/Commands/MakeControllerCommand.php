@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Commands\Generators;
+namespace Tempest\Http\Commands;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Stubs\ControllerStub;
+use Tempest\Http\Stubs\ControllerStub;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
