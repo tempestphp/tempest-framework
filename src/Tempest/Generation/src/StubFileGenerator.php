@@ -29,6 +29,8 @@ final class StubFileGenerator
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
      *
      * @param array<Closure(ClassManipulator): ClassManipulator> $manipulations An array of manipulations to apply to the generated class.
+     * 
+     * @throws FileGenerationFailedException
      */
     public function generateClassFile(
         StubFile $stubFile,
@@ -37,12 +39,16 @@ final class StubFileGenerator
         array $replacements = [],
         array $manipulations = [],
     ): void {
-        if ($stubFile->type !== StubFileType::CLASS_FILE) {
-            throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, "%s" given.', $stubFile->type->name));
-        }
-
         try {
-            $this->prepareFilesystem($targetPath, $shouldOverride);
+            if ($stubFile->type !== StubFileType::CLASS_FILE) {
+                throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, "%s" given.', $stubFile->type->name));
+            }
+
+            if (file_exists($targetPath) && ! $shouldOverride) {
+                throw new FileGenerationAbortedException(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
+            }
+
+            $this->prepareFilesystem($targetPath);
 
             // Transform stub to class
             $namespace = PathHelper::toMainNamespace($targetPath);
@@ -66,6 +72,10 @@ final class StubFileGenerator
                 callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator)
             );
 
+            if (file_exists($targetPath) && $shouldOverride) {
+                @unlink($targetPath);
+            }
+
             $classManipulator->save($targetPath);
         } catch (Throwable $throwable) {
             throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
@@ -81,6 +91,8 @@ final class StubFileGenerator
      *     The values are the replacements for the placeholders (e.g. 'real content')
      *
      * @param array<Closure(StringHelper): StringHelper> $manipulations An array of manipulations to apply to the generated file raw content.
+     * 
+     * @throws FileGenerationFailedException
      */
     public function generateRawFile(
         StubFile $stubFile,
@@ -89,13 +101,16 @@ final class StubFileGenerator
         array $replacements = [],
         array $manipulations = [],
     ): void {
-        if ($stubFile->type !== StubFileType::RAW_FILE) {
-            throw new FileGenerationFailedException(sprintf('The stub file must be of type RAW_FILE, "%s" given.', $stubFile->type->name));
-        }
-
         try {
-            $this->prepareFilesystem($targetPath, $shouldOverride);
+            if ($stubFile->type !== StubFileType::RAW_FILE) {
+                throw new FileGenerationFailedException(sprintf('The stub file must be of type RAW_FILE, "%s" given.', $stubFile->type->name));
+            }
 
+            if (file_exists($targetPath) && ! $shouldOverride) {
+                throw new FileGenerationAbortedException(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
+            }
+
+            $this->prepareFilesystem($targetPath);
             $fileContent = file_get_contents($stubFile->filePath);
 
             foreach ($replacements as $placeholder => $replacement) {
@@ -113,6 +128,10 @@ final class StubFileGenerator
                 callback: fn (StringHelper $content, Closure $manipulation) => $manipulation($content)
             );
 
+            if (file_exists($targetPath) && $shouldOverride) {
+                @unlink($targetPath);
+            }
+            
             file_put_contents($targetPath, $fileContent);
         } catch (Throwable $throwable) {
             throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
@@ -124,23 +143,8 @@ final class StubFileGenerator
      * It will delete the target file if it exists and we force the override.
      *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
-     * @param bool $shouldOverride Whether the generator should override the file if it already exists.
-     *
-     * @throws FileGenerationFailedException If the operation has been aborted.
      */
-    private function prepareFilesystem(
-        string $targetPath,
-        bool $shouldOverride = false,
-    ): void {
-        // Delete the file if it exists and we force the override
-        if (file_exists($targetPath)) {
-            if (! $shouldOverride) {
-                throw new FileGenerationAbortedException(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
-            }
-
-            @unlink($targetPath);
-        }
-
+    private function prepareFilesystem( string $targetPath ): void {
         // Recursively create directories before writing the file
         $directory = dirname($targetPath);
         if (! is_dir($directory)) {
