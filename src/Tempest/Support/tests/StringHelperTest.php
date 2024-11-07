@@ -533,4 +533,17 @@ b'));
         $this->assertSame('foobarbaz', str('foobaz')->insert(3, 'bar')->toString());
         $this->assertSame('123', str('13')->insert(-1, '2')->toString());
     }
+
+    public function test_replace_at(): void
+    {
+        $this->assertSame('foobar', str('foo2bar')->replaceAt(4, -1, '')->toString());
+        $this->assertSame('foobar', str('foo2bar')->replaceAt(3, 1, '')->toString());
+        $this->assertSame('fooquxbar', str('foo2bar')->replaceAt(3, 1, 'qux')->toString());
+        $this->assertSame('foobarbaz', str('barbaz')->replaceAt(0, 0, 'foo')->toString());
+        $this->assertSame('barbazfoo', str('barbaz')->replaceAt(6, 0, 'foo')->toString());
+        $this->assertSame('bar', str('foo')->replaceAt(0, 3, 'bar')->toString());
+        $this->assertSame('abc1', str('abcd')->replaceAt(-1, 1, '1')->toString());
+        $this->assertSame('ab1d', str('abcd')->replaceAt(-1, -1, '1')->toString());
+        $this->assertSame('abc', str('abc')->replaceAt(3, 1, '')->toString());
+    }
 }

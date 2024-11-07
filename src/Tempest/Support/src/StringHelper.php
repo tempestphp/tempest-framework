@@ -484,6 +484,24 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Replaces the portion of the specified `$length` at the specified `$position` with the specified `$replace`.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem dolor')->replaceAt(6, 5, 'ipsum'); // Lorem ipsum
+     * ```
+     */
+    public function replaceAt(int $position, int $length, Stringable|string $replace): self
+    {
+        if ($length < 0) {
+            $position += $length;
+            $length = abs($length);
+        }
+
+        return new self(substr_replace($this->string, (string) $replace, $position, $length));
+    }
+
+    /**
      * Appends the given strings to the instance.
      */
     public function append(string|Stringable ...$append): self
