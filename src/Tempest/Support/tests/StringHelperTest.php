@@ -546,4 +546,15 @@ b'));
         $this->assertSame('ab1d', str('abcd')->replaceAt(-1, -1, '1')->toString());
         $this->assertSame('abc', str('abc')->replaceAt(3, 1, '')->toString());
     }
+
+    public function test_strip_tags(): void
+    {
+        $this->assertSame('Hello World', str('<p>Hello World</p>')->stripTags()->toString());
+        $this->assertSame('Hello World', str('<p>Hello <strong>World</strong></p>')->stripTags()->toString());
+        $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: '<strong>')->toString());
+        $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: '<p>')->toString());
+
+        $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'strong')->toString());
+        $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'p')->toString());
+    }
 }

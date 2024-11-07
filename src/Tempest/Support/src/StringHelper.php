@@ -739,6 +739,26 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Strips HTML and PHP tags from the instance.
+     *
+     * @param null|string|string[] $allowed Allowed tags.
+     *
+     * ### Example
+     * ```php
+     * str('<p>Lorem ipsum</p>')->stripTags(); // Lorem ipsum
+     * str('<p>Lorem <strong>ipsum</strong></p>')->stripTags(allowed: 'strong'); // Lorem <strong>ipsum</strong>
+     * ```
+     */
+    public function stripTags(null|string|array $allowed = null): self
+    {
+        $allowed = arr($allowed)
+            ->map(fn (string $tag) => str($tag)->wrap('<', '>')->toString())
+            ->toArray();
+
+        return new self(strip_tags($this->string, $allowed));
+    }
+
+    /**
      * Inserts the specified `$string` at the specified `$position`.
      *
      * ### Example
