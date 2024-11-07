@@ -7,7 +7,6 @@ namespace Tempest\Console\Commands\Generators;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\DatabaseModelStub;
-use Tempest\Console\Stubs\ModelStub;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\HasGeneratorCommand;
 
@@ -25,10 +24,6 @@ final class MakeModelCommand
             help: 'The name of the model class to create',
         )]
         string $className,
-        #[ConsoleArgument(
-            help: 'Whether the model is a database model',
-        )]
-        bool $isDatabaseModel = false,
     ): void {
         $suggestedPath = $this->getSuggestedPath(
             className: $className,
@@ -39,9 +34,7 @@ final class MakeModelCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         $this->stubFileGenerator->generateClassFile(
-            stubFile: StubFile::fromClassString(
-                $isDatabaseModel ? DatabaseModelStub::class : ModelStub::class,
-            ),
+            stubFile: StubFile::fromClassString( DatabaseModelStub::class ),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
         );
