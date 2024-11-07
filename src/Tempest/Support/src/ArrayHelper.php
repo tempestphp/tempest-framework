@@ -811,6 +811,37 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Flattens the instance to a single-level array, or until the specified `$depth` is reached.
+     *
+     * ### Example
+     * ```php
+     * arr(['foo', ['bar', 'baz']])->flatten(); // ['foo', 'bar', 'baz']
+     * ```
+     */
+    public function flatten(int|float $depth = INF): self
+    {
+        $result = [];
+
+        foreach ($this->array as $item) {
+            if (! is_array($item)) {
+                $result[] = $item;
+
+                continue;
+            }
+
+            $values = $depth === 1
+                ? array_values($item)
+                : arr($item)->flatten($depth - 1);
+
+            foreach ($values as $value) {
+                $result[] = $value;
+            }
+        }
+
+        return new self($result);
+    }
+
+    /**
      * Dumps the instance.
      */
     public function dump(mixed ...$dumps): self
