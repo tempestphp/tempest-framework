@@ -34,7 +34,7 @@ final class MakeModelCommand
         try {
 
             $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::fromClassString(DatabaseModelStub::class),
+                stubFile: StubFile::from(DatabaseModelStub::class),
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
             );

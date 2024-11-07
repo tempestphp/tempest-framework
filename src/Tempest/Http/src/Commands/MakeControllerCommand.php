@@ -41,7 +41,7 @@ final class MakeControllerCommand
 
         try {
             $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::fromClassString(ControllerStub::class),
+                stubFile: StubFile::from(ControllerStub::class),
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
                 replacements: [

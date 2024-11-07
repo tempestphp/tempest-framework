@@ -6,6 +6,7 @@ namespace Tempest\Generation\DataObjects;
 
 use Exception;
 use Nette\InvalidStateException;
+use ReflectionException;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\ClassNotFoundException;
@@ -23,33 +24,26 @@ final class StubFile
     ) {
     }
 
-    public static function fromFilePath(string $filePath): self
-    {
-        // Every file that can't be constructed in class manipulator is considered raw
-        if (! file_exists($filePath)) {
-            throw new Exception(sprintf('The file "%s" does not exist.', $filePath));
-        }
-
+    /**
+     * @param string|class-string $pathOrClass The path of the file or the class-string 
+     */
+    public static function from(string $pathOrClass): self {
         try {
-            new ClassManipulator($filePath);
-
-            return new self($filePath, StubFileType::CLASS_FILE);
-        } catch (InvalidStateException) {
-            return new self($filePath, StubFileType::RAW_FILE);
-        }
-    }
-
-    public static function fromClassString(string $className): self
-    {
-        try {
-            $classReflector = new ClassReflector($className);
+            $classReflector = new ClassReflector($pathOrClass);
 
             return new self(
                 filePath: $classReflector->getFileName(),
                 type: StubFileType::CLASS_FILE,
             );
-        } catch (Throwable) {
-            throw new ClassNotFoundException(sprintf('The class "%s" does not exist.', $className));
+        } catch (ReflectionException) {
+            if ( ! file_exists($pathOrClass)) {
+                throw new Exception(sprintf('The file "%s" does not exist.', $pathOrClass));
+            }
+
+            return new self(
+                filePath: $pathOrClass,
+                type: StubFileType::RAW_FILE,
+            );
         }
     }
 }

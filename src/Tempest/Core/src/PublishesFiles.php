@@ -46,7 +46,7 @@ trait PublishesFiles
                 throw new FileGenerationAbortedException('Skipped.');
             }
 
-            $stubFile = StubFile::fromFilePath($source);
+            $stubFile = StubFile::from($source);
 
             // Handle class files
             if ($stubFile->type === StubFileType::CLASS_FILE) {
