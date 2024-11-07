@@ -842,6 +842,16 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Returns a new instance of the array, with each item transformed by the given callback, then flattens it by the specified depth.
+     *
+     * @param Closure(mixed $value, mixed $key): mixed $map
+     */
+    public function flatMap(Closure $map, int|float $depth = 1): self
+    {
+        return $this->map($map)->flatten($depth);
+    }
+
+    /**
      * Dumps the instance.
      */
     public function dump(mixed ...$dumps): self
