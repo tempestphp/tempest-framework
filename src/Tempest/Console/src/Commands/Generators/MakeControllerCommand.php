@@ -8,6 +8,8 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\ControllerStub;
 use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\HasGeneratorCommand;
 
 final class MakeControllerCommand
@@ -33,22 +35,24 @@ final class MakeControllerCommand
         )]
         ?string $controllerView = null,
     ): void {
-        $suggestedPath = $this->getSuggestedPath(
-            className: $className,
-            pathPrefix: 'Controllers',
-            classSuffix: 'Controller',
-        );
+        $suggestedPath = $this->getSuggestedPath($className);
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        $this->stubFileGenerator->generateClassFile(
-            stubFile: StubFile::fromClassString(ControllerStub::class),
-            targetPath: $targetPath,
-            shouldOverride: $shouldOverride,
-            replacements: [
-                'dummy-path' => $controllerPath,
-                'dummy-view' => $controllerView,
-            ],
-        );
+        try {
+            $this->stubFileGenerator->generateClassFile(
+                stubFile: StubFile::fromClassString(ControllerStub::class),
+                targetPath: $targetPath,
+                shouldOverride: $shouldOverride,
+                replacements: [
+                    'dummy-path' => $controllerPath,
+                    'dummy-view' => $controllerView,
+                ],
+            );
+    
+            $this->console->success(sprintf('File successfully created at "%s".', $targetPath));
+        } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
+            $this->console->error($e->getMessage());
+        }
     }
 }

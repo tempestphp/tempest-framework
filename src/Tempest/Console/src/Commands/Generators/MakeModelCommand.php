@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands\Generators;
 
-use Tempest\Console\ConsoleArgument;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\Stubs\DatabaseModelStub;
-use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Console\Stubs\DatabaseModelStub;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ConsoleArgument;
 
 final class MakeModelCommand
 {
@@ -25,18 +27,21 @@ final class MakeModelCommand
         )]
         string $className,
     ): void {
-        $suggestedPath = $this->getSuggestedPath(
-            className: $className,
-            pathPrefix: 'Models',
-            classSuffix: 'Model',
-        );
+        $suggestedPath = $this->getSuggestedPath($className);
         $targetPath = $this->promptTargetPath($suggestedPath);
         $shouldOverride = $this->askForOverride($targetPath);
 
-        $this->stubFileGenerator->generateClassFile(
-            stubFile: StubFile::fromClassString( DatabaseModelStub::class ),
-            targetPath: $targetPath,
-            shouldOverride: $shouldOverride,
-        );
+        try {
+            
+            $this->stubFileGenerator->generateClassFile(
+                stubFile: StubFile::fromClassString( DatabaseModelStub::class ),
+                targetPath: $targetPath,
+                shouldOverride: $shouldOverride,
+            );
+    
+            $this->console->success(sprintf('File successfully created at "%s".', $targetPath));
+        } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
+            $this->console->error($e->getMessage());
+        }
     }
 }

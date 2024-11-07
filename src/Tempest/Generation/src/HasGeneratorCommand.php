@@ -40,13 +40,13 @@ trait HasGeneratorCommand
         $inputPath = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
         $className = str($inputClassName)
             ->pascal()
-            ->finish($classSuffix)
+            ->finish($classSuffix ?? '')
             ->toString();
 
         // Prepare the suggested path from the project namespace
         $suggestedPath = str(PathHelper::make(
             $this->composer->mainNamespace->path,
-            $pathPrefix,
+            $pathPrefix ?? '',
             $inputPath,
         ))
             ->finish(DIRECTORY_SEPARATOR)
