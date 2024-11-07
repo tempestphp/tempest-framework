@@ -510,4 +510,14 @@ b'));
         // negative
         $this->assertSame('ipsum', str('Lorem ipsum')->take(-5)->toString());
     }
+
+    public function test_split(): void
+    {
+        $this->assertSame([], str()->split(1)->toArray());
+        $this->assertSame([], str('123')->split(-1)->toArray());
+        $this->assertSame(['1', '2', '3'], str('123')->split(1)->toArray());
+        $this->assertSame(['123'], str('123')->split(1000)->toArray());
+        $this->assertSame(['foo', 'bar', 'baz'], str('foobarbaz')->split(3)->toArray());
+        $this->assertSame(['foo', 'bar', 'baz', '22'], str('foobarbaz22')->split(3)->toArray());
+    }
 }

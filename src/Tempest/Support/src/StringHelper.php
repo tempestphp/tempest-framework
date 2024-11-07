@@ -679,6 +679,24 @@ final readonly class StringHelper implements Stringable
         return $this->substr(0, $length);
     }
 
+    /**
+     * Splits the instance into chunks of the specified `$length`.
+     */
+    public function split(int $length): ArrayHelper
+    {
+        if ($length <= 0) {
+            return new ArrayHelper();
+        }
+
+        $chunks = [];
+
+        foreach (str_split($this->string, $length) as $chunk) {
+            $chunks[] = $chunk;
+        }
+
+        return new ArrayHelper($chunks);
+    }
+
     private function normalizeString(mixed $value): mixed
     {
         if ($value instanceof Stringable) {
