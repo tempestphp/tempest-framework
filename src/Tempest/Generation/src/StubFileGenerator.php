@@ -29,7 +29,7 @@ final class StubFileGenerator
      *     The values are the replacements for the placeholders (e.g. 'App\Models')
      *
      * @param array<Closure(ClassManipulator): ClassManipulator> $manipulations An array of manipulations to apply to the generated class.
-     * 
+     *
      * @throws FileGenerationFailedException
      */
     public function generateClassFile(
@@ -91,7 +91,7 @@ final class StubFileGenerator
      *     The values are the replacements for the placeholders (e.g. 'real content')
      *
      * @param array<Closure(StringHelper): StringHelper> $manipulations An array of manipulations to apply to the generated file raw content.
-     * 
+     *
      * @throws FileGenerationFailedException
      */
     public function generateRawFile(
@@ -131,7 +131,7 @@ final class StubFileGenerator
             if (file_exists($targetPath) && $shouldOverride) {
                 @unlink($targetPath);
             }
-            
+
             file_put_contents($targetPath, $fileContent);
         } catch (Throwable $throwable) {
             throw new FileGenerationFailedException(sprintf('The file could not be written. %s', $throwable->getMessage()));
@@ -144,7 +144,8 @@ final class StubFileGenerator
      *
      * @param string $targetPath The path where the generated file will be saved including the filename and extension.
      */
-    private function prepareFilesystem( string $targetPath ): void {
+    private function prepareFilesystem(string $targetPath): void
+    {
         // Recursively create directories before writing the file
         $directory = dirname($targetPath);
         if (! is_dir($directory)) {

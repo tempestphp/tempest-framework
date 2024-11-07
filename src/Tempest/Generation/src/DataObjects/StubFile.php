@@ -6,12 +6,8 @@ namespace Tempest\Generation\DataObjects;
 
 use Exception;
 use Nette\InvalidStateException;
-use ReflectionException;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\Exceptions\ClassNotFoundException;
-use Tempest\Reflection\ClassReflector;
-use Throwable;
 
 /**
  * Represents a file that is to be generated.
@@ -25,9 +21,10 @@ final class StubFile
     }
 
     /**
-     * @param string|class-string $pathOrClass The path of the file or the class-string 
+     * @param string|class-string $pathOrClass The path of the file or the class-string
      */
-    public static function from(string $pathOrClass): self {
+    public static function from(string $pathOrClass): self
+    {
         try {
             new ClassManipulator($pathOrClass);
 
@@ -36,7 +33,7 @@ final class StubFile
                 type: StubFileType::CLASS_FILE,
             );
         } catch (InvalidStateException) {
-            if ( ! file_exists($pathOrClass)) {
+            if (! file_exists($pathOrClass)) {
                 throw new Exception(sprintf('The file "%s" does not exist.', $pathOrClass));
             }
 
