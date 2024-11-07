@@ -6,6 +6,7 @@ namespace Tempest\Support\Tests;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\PathHelper;
 
@@ -109,6 +110,24 @@ final class PathHelperTest extends TestCase
         yield 'last path is backward slash' => [
             'paths' => ['foo\\', '\\'],
             'expected' => 'foo' . DIRECTORY_SEPARATOR,
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('toClassNameProvider')]
+    public function toClassName(string $path, string $expected): void {
+        $this->assertSame(
+            actual: PathHelper::toClassName($path),
+            expected: $expected,
+        );
+    }
+
+    public static function toClassNameProvider(): array {
+        return [
+            'single path' => ['/Foo/Bar', 'Bar'],
+            'single path end with forward slash' => ['Foo/Bar/', 'Bar'],
+            'single path end with backward slash' => ['Foo/Bar\\', 'Bar'],
+            'path with extension' => ['Foo/Bar.php', 'Bar'],
         ];
     }
 }
