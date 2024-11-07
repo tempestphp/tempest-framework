@@ -39,6 +39,8 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             $this->array = $input;
         } elseif ($input instanceof self) {
             $this->array = $input->array;
+        } elseif ($input === null) {
+            $this->array = [];
         } else {
             $this->array = [$input];
         }
