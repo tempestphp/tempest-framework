@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Commands\Generators;
+namespace Tempest\Database\Commands;
 
 use Tempest\Generation\HasGeneratorCommand;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Console\Stubs\DatabaseModelStub;
+use Tempest\Database\Stubs\DatabaseModelStub;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
 

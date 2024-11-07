@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Console\Stubs;
+namespace Tempest\Database\Stubs;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
