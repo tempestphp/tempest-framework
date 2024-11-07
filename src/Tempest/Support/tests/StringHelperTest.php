@@ -481,4 +481,14 @@ b'));
         $this->assertSame('Leon Scott Kennedy', str('Scott Kennedy')->start('Leon ')->toString());
         $this->assertSame('Leon Scott Kennedy', str('Leon Scott Kennedy')->start('Leon ')->toString());
     }
+
+    public function test_limit(): void
+    {
+        $this->assertSame('Lorem', str('Lorem ipsum')->limit(5)->toString());
+        $this->assertSame('Lorem...', str('Lorem ipsum')->limit(5, end: '...')->toString());
+        $this->assertSame('...', str('Lorem ipsum')->limit(0, end: '...')->toString());
+        $this->assertSame('L...', str('Lorem ipsum')->limit(1, end: '...')->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100)->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100, end: '...')->toString());
+    }
 }
