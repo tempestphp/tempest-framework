@@ -45,9 +45,9 @@ final class ClassManipulator
             mkdir($dir, recursive: true);
         }
 
-        $is_success = (bool) file_put_contents($path, $this->print());
+        $isSuccess = (bool) file_put_contents($path, $this->print());
 
-        if (! $is_success) {
+        if (! $isSuccess) {
             throw new FileGenerationFailedException(sprintf('The file "%s" could not be written.', $path));
         }
 
