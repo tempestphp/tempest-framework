@@ -453,7 +453,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the first item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the first item.
      *
-     * @param Closure(mixed $value, mixed $key): bool $filter
+     * @param Closure(TValue $value, TKey $key)|null: bool $filter
+     *
+     * @return TValue
      */
     public function first(?Closure $filter = null): mixed
     {
@@ -478,7 +480,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the last item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
-     * @param Closure(mixed $value, mixed $key): bool $filter
+     * @param Closure(TValue $value, TKey $key)|null: bool $filter
+     *
+     * @return TValue
      */
     public function last(?Closure $filter = null): mixed
     {
@@ -612,7 +616,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of the array, with each item transformed by the given callback.
      *
-     * @param Closure(mixed $value, mixed $key): mixed $map
+     * @template TMapValue
+     *
+     * @param  Closure(TValue, TKey): TMapValue $map
+     *
+     * @return static<TKey, TMapValue>
      */
     public function map(Closure $map): self
     {
@@ -844,7 +852,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of the array, with each item transformed by the given callback, then flattens it by the specified depth.
      *
-     * @param Closure(mixed $value, mixed $key): mixed $map
+     * @template TMapValue
+     *
+     * @param  Closure(TValue, TKey): TMapValue[] $map
+     *
+     * @return static<TKey, TMapValue>
      */
     public function flatMap(Closure $map, int|float $depth = 1): self
     {
