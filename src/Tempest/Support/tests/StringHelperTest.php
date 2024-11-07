@@ -513,7 +513,8 @@ b'));
 
     public function test_split(): void
     {
-        $this->assertSame([], str()->split(1)->toArray());
+        $this->assertSame([PHP_EOL], str(PHP_EOL)->split(100)->toArray());
+        $this->assertSame([''], str('')->split(1)->toArray());
         $this->assertSame([], str('123')->split(-1)->toArray());
         $this->assertSame(['1', '2', '3'], str('123')->split(1)->toArray());
         $this->assertSame(['123'], str('123')->split(1000)->toArray());

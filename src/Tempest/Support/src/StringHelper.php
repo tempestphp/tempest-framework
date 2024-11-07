@@ -690,6 +690,10 @@ final readonly class StringHelper implements Stringable
             return new ArrayHelper();
         }
 
+        if ($this->equals('')) {
+            return new ArrayHelper(['']);
+        }
+
         $chunks = [];
 
         foreach (str_split($this->string, $length) as $chunk) {
