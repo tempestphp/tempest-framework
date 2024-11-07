@@ -15,7 +15,7 @@ use Tempest\Console\Console;
 /**
  * Provides a bunch of methods to generate files and work with common user input.
  */
-trait HasGeneratorCommand
+trait HasGeneratorConsoleInteractions
 {
     #[Inject]
     protected readonly Console $console;

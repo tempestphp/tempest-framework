@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Commands;
 
-use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\HasGeneratorConsoleInteractions;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\DataObjects\StubFile;
@@ -14,7 +14,7 @@ use Tempest\Console\ConsoleArgument;
 
 final class MakeModelCommand
 {
-    use HasGeneratorCommand;
+    use HasGeneratorConsoleInteractions;
 
     #[ConsoleCommand(
         name: 'make:model',

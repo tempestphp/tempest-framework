@@ -10,13 +10,13 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\HasGeneratorConsoleInteractions;
 use function Tempest\Support\str;
 use Throwable;
 
 trait PublishesFiles
 {
-    use HasGeneratorCommand;
+    use HasGeneratorConsoleInteractions;
 
     private array $publishedFiles = [];
 

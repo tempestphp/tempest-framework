@@ -10,11 +10,11 @@ use Tempest\Http\Stubs\ControllerStub;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\HasGeneratorCommand;
+use Tempest\Generation\HasGeneratorConsoleInteractions;
 
 final class MakeControllerCommand
 {
-    use HasGeneratorCommand;
+    use HasGeneratorConsoleInteractions;
 
     #[ConsoleCommand(
         name: 'make:controller',
