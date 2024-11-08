@@ -11,7 +11,9 @@ use Tempest\Http\Request;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
+use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -112,5 +114,34 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(UPLOAD_ERR_OK, $upload->getError());
         $this->assertSame('hello', $upload->getClientFilename());
         $this->assertSame('application/octet-stream', $upload->getClientMediaType());
+    }
+
+    public function test_map_upload_file_into_request_property(): void
+    {
+        $currentPath = __DIR__ . '/Fixtures/upload.txt';
+
+        $mapper = new PsrRequestToRequestMapper();
+
+        $psrRequest = $this->http->makePsrRequest(
+            uri: '/books',
+            body: ['title' => 'Timeline Taxi'],
+            files: ['cover' => new UploadedFile(
+                streamOrFile: $currentPath,
+                size: null,
+                errorStatus: UPLOAD_ERR_OK,
+            )]
+        );
+
+        $request = $mapper->map(
+            from: $psrRequest,
+            to: CreateBookRequest::class
+        );
+
+
+        $this->assertInstanceOf(CreateBookRequest::class, $request);
+        $this->assertInstanceOf(Upload::class, $request->cover);
+
+        $this->assertTrue(arr($request->getFiles())->isAssoc());
+        $this->assertSame('cover', array_key_first($request->getFiles()));
     }
 }
