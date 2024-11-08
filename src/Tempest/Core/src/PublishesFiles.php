@@ -14,9 +14,9 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Support\PathHelper;
+use function Tempest\Support\str;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
-use function Tempest\Support\str;
 use Throwable;
 
 /**
@@ -47,8 +47,7 @@ trait PublishesFiles
         string $source,
         string $destination,
         ?Closure $callback = null,
-    ): void
-    {
+    ): void {
         try {
             if (! $this->console->confirm(
                 question: sprintf('Do you want to create "%s"', $destination),
