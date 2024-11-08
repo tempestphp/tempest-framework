@@ -45,6 +45,6 @@ final class ConsoleArgumentDefinitionTest extends TestCase
             }
         }
 
-        throw new RuntimeException("Parameter not found: $name");
+        throw new RuntimeException("Parameter not found: {$name}");
     }
 }
