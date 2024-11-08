@@ -38,9 +38,20 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
     public function test_make_with_other_namespace(): void
     {
         $this->console
-            ->call('make:controller App\\Books\\BookController')
+            ->call('make:controller Books\\BookController')
             ->submit();
+        
+        $this->installer
+            ->assertFileExists('App/Books/BookController.php')
+            ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');
+    }
 
+    public function test_make_with_input_path(): void
+    {
+        $this->console
+            ->call('make:controller Books/BookController')
+            ->submit();
+        
         $this->installer
             ->assertFileExists('App/Books/BookController.php')
             ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');
