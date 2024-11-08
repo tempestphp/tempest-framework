@@ -5,18 +5,33 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Closure;
+use Tempest\Console\Console;
+use Tempest\Container\Inject;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\HasGeneratorConsoleInteractions;
+use Tempest\Generation\StubFileGenerator;
+use Tempest\Support\PathHelper;
+use Tempest\Validation\Rules\EndsWith;
+use Tempest\Validation\Rules\NotEmpty;
 use function Tempest\Support\str;
 use Throwable;
 
+/**
+ * Provides a bunch of methods to publish and generate files and work with common user input.
+ */
 trait PublishesFiles
 {
-    use HasGeneratorConsoleInteractions;
+    #[Inject]
+    private readonly Console $console;
+
+    #[Inject]
+    private readonly Composer $composer;
+
+    #[Inject]
+    private readonly StubFileGenerator $stubFileGenerator;
 
     private array $publishedFiles = [];
 
@@ -24,7 +39,6 @@ trait PublishesFiles
 
     /**
      * Publishes a file from a source to a destination.
-     *
      * @param string $source The path to the source file.
      * @param string $destination The path to the destination file.
      * @param Closure(string $source, string $destination): void|null $callback A callback to run after the file is published.
@@ -33,7 +47,8 @@ trait PublishesFiles
         string $source,
         string $destination,
         ?Closure $callback = null,
-    ): void {
+    ): void
+    {
         try {
             if (! $this->console->confirm(
                 question: sprintf('Do you want to create "%s"', $destination),
@@ -58,7 +73,7 @@ trait PublishesFiles
                     shouldOverride: true,
                     manipulations: [
                         fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
-                    ]
+                    ],
                 );
 
                 $newClass = new ClassManipulator($destination);
@@ -85,7 +100,10 @@ trait PublishesFiles
         } catch (FileGenerationAbortedException $exception) {
             $this->console->info($exception->getMessage());
         } catch (Throwable $throwable) {
-            throw new FileGenerationFailedException(sprintf('The file could not be published. %s', $throwable->getMessage()));
+            throw new FileGenerationFailedException(
+                message: 'The file could not be published.',
+                previous: $throwable,
+            );
         }
     }
 
@@ -104,5 +122,68 @@ trait PublishesFiles
 
             file_put_contents($file, $contents);
         }
+    }
+
+    /**
+     * Gets a suggested path for the given class name.
+     * This will use the user's main namespace as the base path.
+     * @param string $className The class name to generate the path for, can include path parts (e.g. 'Models/User').
+     * @param string|null $pathPrefix The prefix to add to the path (e.g. 'Models').
+     * @param string|null $classSuffix The suffix to add to the class name (e.g. 'Model').
+     * @return string The fully suggested path including the filename and extension.
+     */
+    public function getSuggestedPath(string $className, ?string $pathPrefix = null, ?string $classSuffix = null): string
+    {
+        // Separate input path and classname
+        $inputClassName = PathHelper::toClassName($className);
+        $inputPath = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
+        $className = str($inputClassName)
+            ->pascal()
+            ->finish($classSuffix ?? '')
+            ->toString();
+
+        // Prepare the suggested path from the project namespace
+        $suggestedPath = str(PathHelper::make(
+            $this->composer->mainNamespace->path,
+            $pathPrefix ?? '',
+            $inputPath,
+        ))
+            ->finish(DIRECTORY_SEPARATOR)
+            ->append($className . '.php')
+            ->toString();
+
+        return $suggestedPath;
+    }
+
+    /**
+     * Prompt the user for the target path to save the generated file.
+     * @param string $suggestedPath The suggested path to show to the user.
+     * @return string The target path that the user has chosen.
+     */
+    public function promptTargetPath(string $suggestedPath): string
+    {
+        $className = PathHelper::toClassName($suggestedPath);
+
+        return $this->console->ask(
+            question: sprintf('Where do you want to save the file "%s"?', $className),
+            default: $suggestedPath,
+            validation: [new NotEmpty(), new EndsWith('.php')],
+        );
+    }
+
+    /**
+     * Ask the user if they want to override the file if it already exists.
+     * @param string $targetPath The target path to check for existence.
+     * @return bool Whether the user wants to override the file.
+     */
+    public function askForOverride(string $targetPath): bool
+    {
+        if (! file_exists($targetPath)) {
+            return true;
+        }
+
+        return $this->console->confirm(
+            question: sprintf('The file "%s" already exists. Do you want to override it?', $targetPath),
+        );
     }
 }

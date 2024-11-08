@@ -6,15 +6,15 @@ namespace Tempest\Database\Commands;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Core\PublishesFiles;
 use Tempest\Database\Stubs\DatabaseModelStub;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\HasGeneratorConsoleInteractions;
 
 final class MakeModelCommand
 {
-    use HasGeneratorConsoleInteractions;
+    use PublishesFiles;
 
     #[ConsoleCommand(
         name: 'make:model',
