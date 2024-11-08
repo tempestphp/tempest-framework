@@ -142,7 +142,7 @@ trait PublishesFiles
             ->toString();
 
         // Prepare the suggested path from the project namespace
-        $suggestedPath = str(PathHelper::make(
+        return str(PathHelper::make(
             $this->composer->mainNamespace->path,
             $pathPrefix ?? '',
             $inputPath,
@@ -150,8 +150,6 @@ trait PublishesFiles
             ->finish(DIRECTORY_SEPARATOR)
             ->append($className . '.php')
             ->toString();
-
-        return $suggestedPath;
     }
 
     /**
