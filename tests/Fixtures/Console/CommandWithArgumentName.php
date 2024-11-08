@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Fixtures\Console;
 
 use Tempest\Console\ConsoleArgument;
@@ -16,8 +18,7 @@ final readonly class CommandWithArgumentName
         string $input,
         #[ConsoleArgument(name: 'new-flag')]
         bool $flag = false,
-    ): void
-    {
+    ): void {
         $this->writeln($input);
         $this->writeln($flag ? 'true' : 'false');
     }
