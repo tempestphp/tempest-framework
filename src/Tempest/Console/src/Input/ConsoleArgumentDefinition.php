@@ -6,6 +6,7 @@ namespace Tempest\Console\Input;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Reflection\ParameterReflector;
+use function Tempest\Support\str;
 
 final readonly class ConsoleArgumentDefinition
 {
@@ -25,11 +26,13 @@ final readonly class ConsoleArgumentDefinition
     {
         $attribute = $parameter->getAttribute(ConsoleArgument::class);
         $type = $parameter->getType();
+        $default = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
+        $boolean = $type?->getName() === 'bool' || is_bool($default);
 
         return new ConsoleArgumentDefinition(
-            name: $attribute?->name ?? $parameter->getName(),
+            name: static::normalizeName($attribute?->name ?? $parameter->getName(), boolean: $boolean),
             type: $type->getName(),
-            default: $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null,
+            default: $default,
             hasDefault: $parameter->isDefaultValueAvailable(),
             position: $parameter->getPosition(),
             description: $attribute?->description,
@@ -49,11 +52,22 @@ final readonly class ConsoleArgumentDefinition
         }
 
         foreach ([$this->name, ...$this->aliases] as $match) {
-            if ($argument->matches($match)) {
+            if ($argument->matches(static::normalizeName($match, $this->type === 'bool'))) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static function normalizeName(string $name, bool $boolean): string
+    {
+        $normalizedName = str($name)->kebab();
+
+        if ($boolean) {
+            $normalizedName->replaceStart('no-', '');
+        }
+
+        return $normalizedName->toString();
     }
 }
