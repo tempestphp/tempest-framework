@@ -137,6 +137,12 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
                 'classSuffix' => 'Galaxy',
                 'expected' => 'Universe/Hello/WorldGalaxy.php',
             ],
+            'ClassName with multiple parts and classname contained in path' => [
+                'className' => 'Books/Book',
+                'pathPrefix' => null,
+                'classSuffix' => null,
+                'expected' => 'Books/Book.php',
+            ],
         ];
     }
 }
