@@ -14,9 +14,9 @@ final readonly class DispatchAsyncCommand
     use HasConsole;
 
     #[ConsoleCommand(name: 'command:dispatch')]
-    public function __invoke(): void
+    public function __invoke(int $times = 10): void
     {
-        foreach (range(1, 10) as $i) {
+        foreach (range(1, $times) as $i) {
             command(new MyAsyncCommand("{$i}"));
         }
 

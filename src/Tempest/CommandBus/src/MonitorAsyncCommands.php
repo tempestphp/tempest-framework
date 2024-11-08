@@ -49,13 +49,13 @@ final readonly class MonitorAsyncCommands
                 ->filter(fn (string $uuid) => ! in_array($uuid, array_keys($processes)));
 
             if (count($processes) === 5) {
-                sleep(1);
+                $this->sleep(0.5);
 
                 continue;
             }
 
             if ($availableUuids->isEmpty()) {
-                sleep(1);
+                $this->sleep(0.5);
 
                 continue;
             }
@@ -68,5 +68,10 @@ final readonly class MonitorAsyncCommands
             $process->start();
             $processes[$uuid] = $process;
         }
+    }
+
+    private function sleep(float $seconds): void
+    {
+        usleep((int) ($seconds * 1_000_000));
     }
 }
