@@ -53,7 +53,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,
-            ...$data,
+            ...$data + $uploads,
         ])->to($requestClass);
 
         $validator = new Validator();
