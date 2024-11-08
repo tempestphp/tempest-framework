@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -40,7 +45,7 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('make:controller Books\\BookController')
             ->submit();
-        
+
         $this->installer
             ->assertFileExists('App/Books/BookController.php')
             ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');
@@ -51,7 +56,7 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('make:controller Books/BookController')
             ->submit();
-        
+
         $this->installer
             ->assertFileExists('App/Books/BookController.php')
             ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');

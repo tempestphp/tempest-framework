@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Closure;
-use Tempest\Console\Console;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
 use Tempest\Generation\ClassManipulator;
