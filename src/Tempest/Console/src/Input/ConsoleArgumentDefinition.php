@@ -27,7 +27,7 @@ final readonly class ConsoleArgumentDefinition
         $attribute = $parameter->getAttribute(ConsoleArgument::class);
         $type = $parameter->getType();
         $default = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
-        $boolean = $type?->getName() === 'bool' || is_bool($default);
+        $boolean = $type->getName() === 'bool' || is_bool($default);
 
         return new ConsoleArgumentDefinition(
             name: static::normalizeName($attribute?->name ?? $parameter->getName(), boolean: $boolean),
