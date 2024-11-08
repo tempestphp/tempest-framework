@@ -20,7 +20,12 @@ final class MemoryRepository implements AsyncCommandRepository
         return $this->commands[$uuid];
     }
 
-    public function remove(string $uuid): void
+    public function markAsDone(string $uuid): void
+    {
+        unset($this->commands[$uuid]);
+    }
+
+    public function markAsFailed(string $uuid): void
     {
         unset($this->commands[$uuid]);
     }
