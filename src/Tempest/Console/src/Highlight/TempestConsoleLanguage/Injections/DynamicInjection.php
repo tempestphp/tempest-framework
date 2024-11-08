@@ -24,12 +24,7 @@ final readonly class DynamicInjection implements Injection
         $result = preg_replace_callback(
             pattern: $pattern,
             callback: function ($matches) use ($highlighter, $pattern) {
-                $content = $matches['match'] ?? '';
-
-                if (! $content) {
-                    return $matches[0];
-                }
-
+                $content = $matches['match'];
                 $tag = $matches['tag'];
                 $mod = $matches['mod'];
                 $token = new DynamicTokenType($tag, $mod);
