@@ -6,6 +6,7 @@ namespace Tempest\Core;
 
 use Closure;
 use Tempest\Console\Console;
+use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
@@ -24,8 +25,7 @@ use Throwable;
  */
 trait PublishesFiles
 {
-    #[Inject]
-    private readonly Console $console;
+    use HasConsole;
 
     #[Inject]
     private readonly Composer $composer;

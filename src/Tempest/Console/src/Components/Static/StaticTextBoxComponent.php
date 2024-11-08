@@ -21,7 +21,7 @@ final readonly class StaticTextBoxComponent implements StaticConsoleComponent
             return $this->default;
         }
 
-        $console->write("<question>{$this->label}</question> ");
+        $console->write("<question>{$this->label}</question> ({$this->default})");
 
         return trim($console->readln()) ?: $this->default;
     }
