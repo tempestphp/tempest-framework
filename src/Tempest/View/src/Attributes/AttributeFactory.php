@@ -5,19 +5,21 @@ declare(strict_types=1);
 namespace Tempest\View\Attributes;
 
 use Tempest\View\Attribute;
+use Tempest\View\Element;
 
 final readonly class AttributeFactory
 {
-    public function make(string $name): Attribute
+    public function make(Element $element, string $attributeName): Attribute
     {
         return match(true) {
-            $name === ':if' => new IfAttribute(),
-            $name === ':elseif' => new ElseIfAttribute(),
-            $name === ':else' => new ElseAttribute(),
-            $name === ':foreach' => new ForeachAttribute(),
-            $name === ':forelse' => new ForelseAttribute(),
-            str_starts_with($name, ':') => new ExpressionAttribute($name),
-            default => new DataAttribute($name),
+            $attributeName === ':if' => new IfAttribute(),
+            $attributeName === ':elseif' => new ElseIfAttribute(),
+            $attributeName === ':else' => new ElseAttribute(),
+            $attributeName === ':foreach' => new ForeachAttribute(),
+            $attributeName === ':forelse' => new ForelseAttribute(),
+            BooleanAttribute::matches($element, $attributeName) => new BooleanAttribute($attributeName),
+            str_starts_with($attributeName, ':') => new ExpressionAttribute($attributeName),
+            default => new DataAttribute($attributeName),
         };
     }
 }
