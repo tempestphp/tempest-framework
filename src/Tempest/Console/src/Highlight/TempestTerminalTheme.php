@@ -16,6 +16,10 @@ final readonly class TempestTerminalTheme implements TerminalTheme
 
     public function before(TokenType $tokenType): string
     {
+        if ($tokenType instanceof DynamicTokenType) {
+            return $this->style($tokenType->getStyle());
+        }
+
         return match ($tokenType) {
             TokenTypeEnum::KEYWORD => $this->style(TerminalStyle::FG_DARK_BLUE),
             TokenTypeEnum::PROPERTY => $this->style(TerminalStyle::FG_DARK_GREEN),
