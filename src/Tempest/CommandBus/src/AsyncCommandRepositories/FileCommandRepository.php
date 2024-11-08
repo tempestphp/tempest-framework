@@ -48,7 +48,9 @@ final readonly class FileCommandRepository implements AsyncCommandRepository
     public function available(): array
     {
         return arr(glob(__DIR__ . "/../stored-commands/*.pending.txt"))
-            ->map(fn (string $path) => pathinfo($path, PATHINFO_FILENAME))
+            ->map(function (string $path) {
+                return str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
+            })
             ->toArray();
     }
 }
