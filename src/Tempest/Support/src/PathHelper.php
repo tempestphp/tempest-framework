@@ -27,18 +27,18 @@ final readonly class PathHelper
         $parts = array_filter($parts);
 
         // Glue parts together
-        $path = implode(DIRECTORY_SEPARATOR, $parts);
+        $path = implode('/', $parts);
 
-        // Add DIRECTORY_SEPARATOR if first entry starts with forward- or backward slash
+        // Add / if first entry starts with forward- or backward slash
         $firstEntry = $paths[0];
         if (str_starts_with($firstEntry, '/') || str_starts_with($firstEntry, '\\')) {
-            $path = DIRECTORY_SEPARATOR . $path;
+            $path = '/' . $path;
         }
 
-        // Add DIRECTORY_SEPARATOR if last entry ends with forward- or backward slash
+        // Add / if last entry ends with forward- or backward slash
         $lastEntry = $paths[count($paths) - 1];
         if ((count($paths) > 1 || strlen($lastEntry) > 1) && (str_ends_with($lastEntry, '/') || str_ends_with($lastEntry, '\\'))) {
-            $path .= DIRECTORY_SEPARATOR;
+            $path .= '/';
         }
 
         return $path;
@@ -73,9 +73,9 @@ final readonly class PathHelper
     public static function toMainNamespace(string $path): string
     {
         return self::toNamespace(
-            src_namespace() . DIRECTORY_SEPARATOR . str($path)
+            src_namespace() . '/' . str($path)
                 ->replaceStart(src_path(), '')
-                ->trim(DIRECTORY_SEPARATOR)
+                ->trim('/')
                 ->toString()
         );
     }
@@ -111,10 +111,10 @@ final readonly class PathHelper
     public static function toClassName(string $path): string
     {
         return str($path)
-            ->replace(['/', '\\'], DIRECTORY_SEPARATOR)
-            ->replaceEnd(DIRECTORY_SEPARATOR, '')
+            ->replace(['/', '\\'], '/')
+            ->replaceEnd('/', '')
             ->replaceEnd('.php', '')
-            ->afterLast(DIRECTORY_SEPARATOR)
+            ->afterLast('/')
             ->classBasename()
             ->toString();
     }

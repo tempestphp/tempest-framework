@@ -147,7 +147,7 @@ trait PublishesFiles
             $pathPrefix ?? '',
             $inputPath,
         ))
-            ->finish(DIRECTORY_SEPARATOR)
+            ->finish('/')
             ->append($className . '.php')
             ->toString();
     }
