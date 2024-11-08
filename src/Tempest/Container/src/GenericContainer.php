@@ -334,6 +334,12 @@ final class GenericContainer implements Container
             $this->singleton($className, $instance);
         }
 
+        foreach ($classReflector->getProperties() as $property) {
+            if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
+                $property->set($instance, $this->get($property->getType()->getName()));
+            }
+        }
+
         return $instance;
     }
 

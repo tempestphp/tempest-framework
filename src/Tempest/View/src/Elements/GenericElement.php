@@ -11,11 +11,25 @@ final class GenericElement implements Element
 {
     use IsElement;
 
+    private array $rawAttributes = [];
+
     public function __construct(
         private readonly string $tag,
         array $attributes,
     ) {
         $this->attributes = $attributes;
+    }
+
+    public function getTag(): string
+    {
+        return $this->tag;
+    }
+
+    public function addRawAttribute(string $attribute): self
+    {
+        $this->rawAttributes[] = $attribute;
+
+        return $this;
     }
 
     public function compile(): string
@@ -46,7 +60,7 @@ final class GenericElement implements Element
             }
         }
 
-        $attributes = implode(' ', $attributes);
+        $attributes = implode(' ', [...$attributes, ...$this->rawAttributes]);
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;

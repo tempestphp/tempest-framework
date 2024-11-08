@@ -384,6 +384,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function first(?Closure $filter = null): mixed
     {
+        if ($this->array === []) {
+            return null;
+        }
+
         if ($filter === null) {
             return $this->array[array_key_first($this->array)];
         }
@@ -405,6 +409,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function last(?Closure $filter = null): mixed
     {
+        if ($this->array === []) {
+            return null;
+        }
+
         if ($filter === null) {
             return $this->array[array_key_last($this->array)];
         }
@@ -423,7 +431,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @param mixed $value The popped value will be stored in this variable
      */
-    public function pop(mixed &$value): self
+    public function pop(mixed &$value = null): self
     {
         $value = $this->last();
 
@@ -435,7 +443,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @param mixed $value The unshifted value will be stored in this variable
      */
-    public function unshift(mixed &$value): self
+    public function unshift(mixed &$value = null): self
     {
         $value = $this->first();
 
