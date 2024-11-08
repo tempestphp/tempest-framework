@@ -139,7 +139,7 @@ trait PublishesFiles
             ->pascal()
             ->finish($classSuffix ?? '')
             ->toString();
-
+        
         // Prepare the suggested path from the project namespace
         return str(PathHelper::make(
             $this->composer->mainNamespace->path,
