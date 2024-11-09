@@ -10,6 +10,7 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Throwable;
+use function Tempest\Support\arr;
 
 final readonly class HandleAsyncCommand
 {
@@ -20,30 +21,28 @@ final readonly class HandleAsyncCommand
         private Container $container,
         private Console $console,
         private CommandRepository $repository,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'command:handle')]
     public function __invoke(?string $uuid = null): ExitCode
     {
-        $uuid ??= $this->repository->getPendingUuids()[0] ?? null;
-
-        if (! $uuid) {
-            $this->error('No pending command found');
-
-            return ExitCode::ERROR;
-        }
-
         try {
-            $command = $this->repository->find($uuid);
+            if ($uuid) {
+                $command = $this->repository->findPendingCommand($uuid);
+            } else {
+                $command = arr($this->repository->getPendingCommands())->first();
+            }
+
+            if (! $command) {
+                $this->error('No pending command found');
+                return ExitCode::ERROR;
+            }
 
             $commandHandler = $this->commandBusConfig->handlers[$command::class] ?? null;
 
             if (! $commandHandler) {
                 $commandClass = $command::class;
-
                 $this->error("No handler found for command {$commandClass}");
-
                 return ExitCode::ERROR;
             }
 
@@ -53,15 +52,11 @@ final readonly class HandleAsyncCommand
             );
 
             $this->repository->markAsDone($uuid);
-
             $this->success('Done');
-
             return ExitCode::SUCCESS;
         } catch (Throwable $throwable) {
             $this->repository->markAsFailed($uuid);
-
             $this->error($throwable->getMessage());
-
             return ExitCode::ERROR;
         }
     }

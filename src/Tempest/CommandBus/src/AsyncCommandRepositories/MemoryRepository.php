@@ -15,7 +15,12 @@ final class MemoryRepository implements CommandRepository
         $this->commands[$uuid] = $command;
     }
 
-    public function find(string $uuid): object
+    public function getPendingCommands(): array
+    {
+        return $this->commands;
+    }
+
+    public function findPendingCommand(string $uuid): object
     {
         return $this->commands[$uuid];
     }
@@ -28,10 +33,5 @@ final class MemoryRepository implements CommandRepository
     public function markAsFailed(string $uuid): void
     {
         unset($this->commands[$uuid]);
-    }
-
-    public function getPendingUuids(): array
-    {
-        return array_keys($this->commands);
     }
 }

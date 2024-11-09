@@ -12,6 +12,7 @@ use Tempest\Highlight\Themes\TerminalStyle;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -31,16 +32,15 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         command(new MyAsyncCommand('Brent'));
 
-        $uuids = $repository->getPendingUuids();
+        $pendingCommands = arr($repository->getPendingCommands());
 
-        $this->assertCount(1, $uuids);
-        $uuid = $uuids[0];
-        $command = $repository->find($uuid);
+        $this->assertCount(1, $pendingCommands);
+        $command = $pendingCommands->first();
         $this->assertSame('Brent', $command->name);
         $this->assertFalse(MyAsyncCommandHandler::$isHandled);
 
         $this->console
-            ->call("command:handle {$uuid}")
+            ->call("command:handle " . $pendingCommands->keys()->first())
             ->assertSee('Done');
 
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);

@@ -17,7 +17,7 @@ final readonly class FileCommandRepository implements CommandRepository
         file_put_contents(__DIR__ . "/../stored-commands/{$uuid}.pending.txt", $payload);
     }
 
-    public function find(string $uuid): object
+    public function findPendingCommand(string $uuid): object
     {
         $path = __DIR__ . "/../stored-commands/{$uuid}.pending.txt";
 
@@ -45,11 +45,15 @@ final readonly class FileCommandRepository implements CommandRepository
         );
     }
 
-    public function getPendingUuids(): array
+    public function getPendingCommands(): array
     {
         return arr(glob(__DIR__ . "/../stored-commands/*.pending.txt"))
-            ->map(function (string $path) {
-                return str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
+            ->mapWithKeys(function (string $path) {
+                $uuid = str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
+
+                $payload = file_get_contents($path);
+
+                yield $uuid => unserialize($payload);
             })
             ->toArray();
     }

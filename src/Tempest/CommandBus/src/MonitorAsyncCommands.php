@@ -54,8 +54,8 @@ final readonly class MonitorAsyncCommands
                 }
             }
 
-            $availableUuids = arr($this->repository->getPendingUuids())
-                ->filter(fn (string $uuid) => ! in_array($uuid, array_keys($processes)));
+            $availableCommands = arr($this->repository->getPendingCommands())
+                ->filter(fn (object $command, string $uuid) => ! in_array($uuid, array_keys($processes)));
 
             if (count($processes) === 5) {
                 $this->sleep(0.5);
@@ -63,14 +63,14 @@ final readonly class MonitorAsyncCommands
                 continue;
             }
 
-            if ($availableUuids->isEmpty()) {
+            if ($availableCommands->isEmpty()) {
                 $this->sleep(0.5);
 
                 continue;
             }
 
             // Start a task
-            $uuid = $availableUuids->first();
+            $uuid = $availableCommands->keys()->first();
 
             $time = new DateTimeImmutable();
             $this->writeln("<h2>{$uuid}</h2> started at {$time->format('Y-m-d H:i:s')}");
