@@ -29,6 +29,8 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\InjectA;
+use Tempest\Container\Tests\Fixtures\InjectB;
 use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\InvokableClass;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
@@ -378,5 +380,15 @@ TXT,
         $this->assertSame("Hallo dependency!", $a->stringValue);
         $this->assertSame(["hallo", "array", 42], $a->arrayValue);
         $this->assertTrue($a->boolValue);
+    }
+
+    public function test_inject(): void
+    {
+        $container = new GenericContainer();
+
+        /** @var InjectA $a */
+        $a = $container->get(InjectA::class);
+
+        $this->assertInstanceOf(InjectB::class, $a->getB());
     }
 }

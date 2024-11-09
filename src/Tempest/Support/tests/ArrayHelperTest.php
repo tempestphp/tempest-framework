@@ -166,6 +166,12 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame('c', $value);
         $this->assertTrue($array->equals(['a', 'b']));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->pop()->equals(['a', 'b']));
+        $this->assertTrue(arr()->pop()->isEmpty());
+
+        arr()->pop($value);
+        $this->assertNull($value);
     }
 
     public function test_unshift(): void
@@ -174,16 +180,24 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame('a', $value);
         $this->assertTrue($array->equals(['b', 'c']));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->unshift()->equals(['b', 'c']));
+        $this->assertTrue(arr()->unshift()->isEmpty());
+
+        arr()->unshift($value);
+        $this->assertNull($value);
     }
 
     public function test_last(): void
     {
+        $this->assertSame(null, arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
     }
 
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
+        $this->assertSame(null, arr()->first());
     }
 
     public function test_is_empty(): void

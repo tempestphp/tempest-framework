@@ -20,7 +20,6 @@
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
-        "nunomaduro/collision": "^8.4",
         "php": "^8.3",
         "psr-discovery/http-client-implementations": "1.x-dev",
         "psr-discovery/http-factory-implementations": "1.x-dev",

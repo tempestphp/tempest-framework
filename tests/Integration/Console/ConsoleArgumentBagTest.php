@@ -54,8 +54,7 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('complex a --c=c --b=b --flag')
             ->assertContains('abc')
-            ->assertContains('true')
-        ;
+            ->assertContains('true');
     }
 
     public function test_combined_flags(): void
@@ -137,5 +136,13 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame($expected, $bag->findFor($definition)->value);
+    }
+
+    public function test_name_mapping(): void
+    {
+        $this->console
+            ->call('command-with-argument-name --new-name=foo --new-flag')
+            ->assertSee('foo')
+            ->assertSee('true');
     }
 }

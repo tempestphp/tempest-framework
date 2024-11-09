@@ -70,7 +70,7 @@ trait PublishesFiles
             $contents = str(file_get_contents($file));
 
             foreach ($this->publishedClasses as $old => $new) {
-                $contents = $contents->replace("use {$old};", "use {$new};");
+                $contents = $contents->replace($old, $new);
             }
 
             file_put_contents($file, $contents);

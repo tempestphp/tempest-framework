@@ -20,7 +20,7 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertContains('Hello')
             ->assertDoesNotContain('hidden')
             ->assertContains('hello:world <input>')
-            ->assertContains('hello:test [optionalValue=null] [--flag=false] - description')
+            ->assertContains('hello:test [optional-value=null] [--flag=false] - description')
             ->assertContains('testcommand:test');
     }
 
