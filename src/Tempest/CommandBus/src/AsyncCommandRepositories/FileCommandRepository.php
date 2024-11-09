@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
 use Tempest\CommandBus\AsyncCommandRepository;
-use Throwable;
 use function Tempest\Support\arr;
+use Throwable;
 
 final readonly class FileCommandRepository implements AsyncCommandRepository
 {
@@ -25,7 +25,7 @@ final readonly class FileCommandRepository implements AsyncCommandRepository
 
         try {
             return unserialize($payload);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $this->markAsFailed($uuid);
         }
     }

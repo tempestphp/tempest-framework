@@ -6,10 +6,8 @@ namespace Tempest\CommandBus;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Throwable;
 
 final readonly class HandleAsyncCommand
 {
@@ -20,7 +18,8 @@ final readonly class HandleAsyncCommand
         private Container $container,
         private Console $console,
         private AsyncCommandRepository $repository,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'command:handle')]
     public function __invoke(string $uuid): void
