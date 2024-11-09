@@ -27,6 +27,7 @@ trait IsRequest
     ) {
         $this->path ??= $this->resolvePath();
         $this->query ??= $this->resolveQuery();
+        $this->files ??= [];
     }
 
     public function get(string $key, mixed $default = null): mixed
