@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use function Tempest\Support\arr;
 use Laminas\Diactoros\UploadedFile;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToRequestMapper;
@@ -13,7 +14,6 @@ use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -137,11 +137,9 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
             to: CreateBookRequest::class
         );
 
-
         $this->assertInstanceOf(CreateBookRequest::class, $request);
         $this->assertInstanceOf(Upload::class, $request->cover);
 
-        $this->assertTrue(arr($request->getFiles())->isAssoc());
-        $this->assertSame('cover', array_key_first($request->getFiles()));
+        $this->assertEquals('cover', array_key_first($request->getFiles()));
     }
 }
