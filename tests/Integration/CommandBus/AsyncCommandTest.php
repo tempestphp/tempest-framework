@@ -9,10 +9,10 @@ use function Tempest\command;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\CommandRepository;
 use Tempest\Highlight\Themes\TerminalStyle;
+use function Tempest\Support\arr;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -25,7 +25,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         $this->container->singleton(
             CommandRepository::class,
-            fn () => $repository
+            fn () => $repository,
         );
 
         MyAsyncCommandHandler::$isHandled = false;
@@ -78,6 +78,11 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('failed at', $output);
         $this->assertStringContainsString('Failed command', $output);
         $process->stop();
+
+        arr(glob(__DIR__ . '/../../../src/Tempest/CommandBus/src/stored-commands/*.failed.txt'))
+            ->each(function (string $filename): void {
+                unlink($filename);
+            });
     }
 
     private function getOutput(Process $process): string

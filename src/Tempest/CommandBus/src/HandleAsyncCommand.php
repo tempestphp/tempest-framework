@@ -9,8 +9,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
-use Throwable;
 use function Tempest\Support\arr;
+use Throwable;
 
 final readonly class HandleAsyncCommand
 {
@@ -21,7 +21,8 @@ final readonly class HandleAsyncCommand
         private Container $container,
         private Console $console,
         private CommandRepository $repository,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(name: 'command:handle')]
     public function __invoke(?string $uuid = null): ExitCode
@@ -35,6 +36,7 @@ final readonly class HandleAsyncCommand
 
             if (! $command) {
                 $this->error('No pending command found');
+
                 return ExitCode::ERROR;
             }
 
@@ -43,6 +45,7 @@ final readonly class HandleAsyncCommand
             if (! $commandHandler) {
                 $commandClass = $command::class;
                 $this->error("No handler found for command {$commandClass}");
+
                 return ExitCode::ERROR;
             }
 
@@ -53,10 +56,12 @@ final readonly class HandleAsyncCommand
 
             $this->repository->markAsDone($uuid);
             $this->success('Done');
+
             return ExitCode::SUCCESS;
         } catch (Throwable $throwable) {
             $this->repository->markAsFailed($uuid);
             $this->error($throwable->getMessage());
+
             return ExitCode::ERROR;
         }
     }
