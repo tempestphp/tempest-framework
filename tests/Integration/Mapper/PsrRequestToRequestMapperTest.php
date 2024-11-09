@@ -10,8 +10,8 @@ use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
+use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\Support\arr;
 
