@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use function Tempest\Support\arr;
 
@@ -30,18 +31,27 @@ final readonly class MonitorAsyncCommands
         $processes = [];
 
         while (true) { // @phpstan-ignore-line
-            foreach ($processes as $key => $process) {
-                $errorOutput = trim($process->getErrorOutput());
-
+            foreach ($processes as $uuid => $process) {
                 $time = new DateTimeImmutable();
 
-                if ($errorOutput) {
-                    $this->error($errorOutput);
-                    $this->writeln("<error>{$key}</error> failed at {$time->format('Y-m-d H:i:s')}");
-                    unset($processes[$key]);
+                if ($process->getExitCode() !== ExitCode::SUCCESS) {
+                    $errorOutput = trim($process->getErrorOutput());
+
+                    if ($errorOutput) {
+                        $this->error($errorOutput);
+                    }
+
+                    $this->repository->markAsFailed($uuid);
+
+                    $this->writeln("<error>{$uuid}</error> failed at {$time->format('Y-m-d H:i:s')}");
+
+                    unset($processes[$uuid]);
                 } elseif ($process->isTerminated()) {
-                    $this->writeln("<success>{$key}</success> finished at {$time->format('Y-m-d H:i:s')}");
-                    unset($processes[$key]);
+                    $this->writeln("<success>{$uuid}</success> finished at {$time->format('Y-m-d H:i:s')}");
+
+                    $this->repository->markAsDone($uuid);
+
+                    unset($processes[$uuid]);
                 }
             }
 
@@ -49,13 +59,13 @@ final readonly class MonitorAsyncCommands
                 ->filter(fn (string $uuid) => ! in_array($uuid, array_keys($processes)));
 
             if (count($processes) === 5) {
-                sleep(1);
+                $this->sleep(0.5);
 
                 continue;
             }
 
             if ($availableUuids->isEmpty()) {
-                sleep(1);
+                $this->sleep(0.5);
 
                 continue;
             }
@@ -68,5 +78,10 @@ final readonly class MonitorAsyncCommands
             $process->start();
             $processes[$uuid] = $process;
         }
+    }
+
+    private function sleep(float $seconds): void
+    {
+        usleep((int) ($seconds * 1_000_000));
     }
 }

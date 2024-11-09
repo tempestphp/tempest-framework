@@ -10,7 +10,9 @@ interface AsyncCommandRepository
 
     public function find(string $uuid): object;
 
-    public function remove(string $uuid): void;
+    public function markAsDone(string $uuid): void;
+
+    public function markAsFailed(string $uuid): void;
 
     /** @return string[] */
     public function available(): array;
