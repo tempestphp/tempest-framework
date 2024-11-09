@@ -23,6 +23,7 @@ final class DynamicInjectionTest extends TestCase
     #[TestWith(['<mod=bold>foo</mod>', "\e[1mfoo\e[0m"])]
     #[TestWith(['<mod=underline>foo</mod>', "\e[4mfoo\e[0m"])]
     #[TestWith(['<mod=reset>foo</mod>', "\e[0mfoo\e[0m"])]
+    #[TestWith(['<mod=reversetext>foo</mod>', "\e[7mfoo\e[0m"])]
     #[TestWith(['<bg=darkcyan><fg=cyan><mod=underline>Tempest</mod></fg></bg>', "\e[46m\e[96m\e[4mTempest\e[0m\e[0m\e[0m"])]
     #[Test]
     public function language(string $content, string $expected): void

@@ -21,7 +21,7 @@ final readonly class DynamicTokenType implements TokenType
         foreach (TerminalStyle::cases() as $case) {
             $styleName = str($case->name)->lower();
 
-            if ($this->tag === 'mod' && $styleName->equals($this->mod)) {
+            if ($this->tag === 'mod' && $styleName->replace('_', '')->equals($this->mod)) {
                 return $case;
             }
 
