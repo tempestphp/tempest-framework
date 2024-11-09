@@ -15,13 +15,15 @@ final readonly class DispatchAsyncCommand
     use HasConsole;
 
     #[ConsoleCommand(name: 'command:dispatch')]
-    public function __invoke(int $times = 10, bool $failing = false): void
+    public function __invoke(int $times = 10, bool $fail = false): void
     {
         foreach (range(1, $times) as $i) {
-            command(
-                $failing
+            $command = $fail
                 ? new MyFailingAsyncCommand("{$i}")
-                : new MyAsyncCommand("{$i}"),
+                : new MyAsyncCommand("{$i}");
+
+            command(
+                $command,
             );
         }
 

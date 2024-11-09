@@ -31,7 +31,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
 
         command(new MyAsyncCommand('Brent'));
 
-        $uuids = $repository->available();
+        $uuids = $repository->getPendingUuids();
 
         $this->assertCount(1, $uuids);
         $uuid = $uuids[0];
@@ -43,7 +43,6 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
             ->call("command:handle {$uuid}")
             ->assertSee('Done');
 
-        $this->assertEmpty($repository->available());
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
     }
 
@@ -57,10 +56,28 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         sleep(1);
 
         $output = $this->getOutput($process);
-
         $this->assertStringContainsString('Monitoring for new commands', $output);
         $this->assertStringContainsString('started at', $output);
         $this->assertStringContainsString('finished at', $output);
+        $this->assertStringContainsString('Done', $output);
+        $process->stop();
+    }
+
+    public function test_async_failed_command_monitor(): void
+    {
+        $process = new Process(['php', 'tempest', 'command:monitor']);
+        $process->start();
+
+        $this->console->call("command:dispatch 1 --fail");
+
+        sleep(1);
+
+        $output = $this->getOutput($process);
+        $this->assertStringContainsString('Monitoring for new commands', $output);
+        $this->assertStringContainsString('started at', $output);
+        $this->assertStringContainsString('failed at', $output);
+        $this->assertStringContainsString('Failed command', $output);
+        $process->stop();
     }
 
     private function getOutput(Process $process): string

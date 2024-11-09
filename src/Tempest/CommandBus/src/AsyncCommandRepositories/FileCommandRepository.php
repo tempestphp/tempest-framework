@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
 use Tempest\CommandBus\AsyncCommandRepository;
+use Tempest\CommandBus\Exceptions\CouldNotResolveCommand;
 use function Tempest\Support\arr;
-use Throwable;
 
 final readonly class FileCommandRepository implements AsyncCommandRepository
 {
@@ -21,13 +21,13 @@ final readonly class FileCommandRepository implements AsyncCommandRepository
     {
         $path = __DIR__ . "/../stored-commands/{$uuid}.pending.txt";
 
+        if (! file_exists($path)) {
+            throw new CouldNotResolveCommand($uuid);
+        }
+
         $payload = file_get_contents($path);
 
-        try {
-            return unserialize($payload);
-        } catch (Throwable) {
-            $this->markAsFailed($uuid);
-        }
+        return unserialize($payload);
     }
 
     public function markAsDone(string $uuid): void
@@ -41,11 +41,11 @@ final readonly class FileCommandRepository implements AsyncCommandRepository
     {
         rename(
             from: __DIR__ . "/../stored-commands/{$uuid}.pending.txt",
-            to: __DIR__ . "/../stored-commands/{$uuid}.failed.txt"
+            to: __DIR__ . "/../stored-commands/{$uuid}.failed.txt",
         );
     }
 
-    public function available(): array
+    public function getPendingUuids(): array
     {
         return arr(glob(__DIR__ . "/../stored-commands/*.pending.txt"))
             ->map(function (string $path) {

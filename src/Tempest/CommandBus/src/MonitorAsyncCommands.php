@@ -8,7 +8,6 @@ use DateTimeImmutable;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use function Tempest\Support\arr;
 
@@ -34,28 +33,26 @@ final readonly class MonitorAsyncCommands
             foreach ($processes as $uuid => $process) {
                 $time = new DateTimeImmutable();
 
-                if ($process->getExitCode() !== ExitCode::SUCCESS) {
-                    $errorOutput = trim($process->getErrorOutput());
-
-                    if ($errorOutput) {
-                        $this->error($errorOutput);
+                if ($process->isTerminated()) {
+                    if ($process->isSuccessful()) {
+                        $this->writeln("<success>{$uuid}</success> finished at {$time->format('Y-m-d H:i:s')}");
+                    } else {
+                        $this->writeln("<error>{$uuid}</error> failed at {$time->format('Y-m-d H:i:s')}");
                     }
 
-                    $this->repository->markAsFailed($uuid);
+                    if ($output = trim($process->getOutput())) {
+                        $this->writeln($output);
+                    }
 
-                    $this->writeln("<error>{$uuid}</error> failed at {$time->format('Y-m-d H:i:s')}");
-
-                    unset($processes[$uuid]);
-                } elseif ($process->isTerminated()) {
-                    $this->writeln("<success>{$uuid}</success> finished at {$time->format('Y-m-d H:i:s')}");
-
-                    $this->repository->markAsDone($uuid);
+                    if ($errorOutput = trim($process->getErrorOutput())) {
+                        $this->writeln($errorOutput);
+                    }
 
                     unset($processes[$uuid]);
                 }
             }
 
-            $availableUuids = arr($this->repository->available())
+            $availableUuids = arr($this->repository->getPendingUuids())
                 ->filter(fn (string $uuid) => ! in_array($uuid, array_keys($processes)));
 
             if (count($processes) === 5) {

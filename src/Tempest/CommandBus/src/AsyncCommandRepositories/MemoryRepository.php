@@ -30,7 +30,7 @@ final class MemoryRepository implements AsyncCommandRepository
         unset($this->commands[$uuid]);
     }
 
-    public function available(): array
+    public function getPendingUuids(): array
     {
         return array_keys($this->commands);
     }

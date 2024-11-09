@@ -15,5 +15,5 @@ interface AsyncCommandRepository
     public function markAsFailed(string $uuid): void;
 
     /** @return string[] */
-    public function available(): array;
+    public function getPendingUuids(): array;
 }

@@ -6,8 +6,10 @@ namespace Tempest\CommandBus;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
+use Throwable;
 
 final readonly class HandleAsyncCommand
 {
@@ -22,25 +24,45 @@ final readonly class HandleAsyncCommand
     }
 
     #[ConsoleCommand(name: 'command:handle')]
-    public function __invoke(string $uuid): void
+    public function __invoke(?string $uuid = null): ExitCode
     {
-        $command = $this->repository->find($uuid);
+        $uuid ??= $this->repository->getPendingUuids()[0] ?? null;
 
-        $commandHandler = $this->commandBusConfig->handlers[$command::class] ?? null;
+        if (! $uuid) {
+            $this->error('No pending command found');
 
-        if (! $commandHandler) {
-            $commandClass = $command::class;
-
-            $this->error("No handler found for command {$commandClass}");
-
-            return;
+            return ExitCode::ERROR;
         }
 
-        $commandHandler->handler->invokeArgs(
-            $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
-            [$command],
-        );
+        try {
+            $command = $this->repository->find($uuid);
 
-        $this->success('Done');
+            $commandHandler = $this->commandBusConfig->handlers[$command::class] ?? null;
+
+            if (! $commandHandler) {
+                $commandClass = $command::class;
+
+                $this->error("No handler found for command {$commandClass}");
+
+                return ExitCode::ERROR;
+            }
+
+            $commandHandler->handler->invokeArgs(
+                $this->container->get($commandHandler->handler->getDeclaringClass()->getName()),
+                [$command],
+            );
+
+            $this->repository->markAsDone($uuid);
+
+            $this->success('Done');
+
+            return ExitCode::SUCCESS;
+        } catch (Throwable $throwable) {
+            $this->repository->markAsFailed($uuid);
+
+            $this->error($throwable->getMessage());
+
+            return ExitCode::ERROR;
+        }
     }
 }
