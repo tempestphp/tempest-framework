@@ -17,7 +17,7 @@ final class RouteTreeNode
     /** @var array<string, RouteTreeNode> */
     private array $dynamicPaths = [];
 
-    private ?MarkedRoute $leaf = null;
+    private ?MarkedRoute $targetRoute = null;
 
     private function __construct(
         public readonly RouteTreeNodeType $type,
@@ -40,34 +40,26 @@ final class RouteTreeNode
         return new self(RouteTreeNodeType::Static, $name);
     }
 
-    public function addPath(array $pathSegments, MarkedRoute $markedRoute): void
+    public function findOrCreateNodeForSegment(string $routeSegment): self
     {
-        // If path segments is empty this node should target to given marked route
-        if ($pathSegments === []) {
-            if ($this->leaf !== null) {
-                throw new DuplicateRouteException($markedRoute->route);
-            }
-
-            $this->leaf = $markedRoute;
-
-            return;
-        }
-
-        // Removes the first element of the pathSegments and use it to determin the next routing node
-        $currentPathSegment = array_shift($pathSegments);
-
         // Translates a path segment like {id} into it's matching regex. Static segments remain the same
-        $regexPathSegment = self::convertDynamicSegmentToRegex($currentPathSegment);
+        $regexRouteSegment = self::convertDynamicSegmentToRegex($routeSegment);
 
-        // Find or create the next node to recurse into
-        if ($currentPathSegment !== $regexPathSegment) {
-            $node = $this->dynamicPaths[$regexPathSegment] ??= self::createDynamicRouteNode($regexPathSegment);
-        } else {
-            $node = $this->staticPaths[$regexPathSegment] ??= self::createStaticRouteNode($currentPathSegment);
+        // Returns a static or dynamic child node depending on the segment is dynamic or static
+        if ($routeSegment === $regexRouteSegment) {
+            return $this->staticPaths[$regexRouteSegment] ??= self::createStaticRouteNode($routeSegment);
         }
 
-        // Recurse into the newly created node to add the remainder of the path segments
-        $node->addPath($pathSegments, $markedRoute);
+        return $this->dynamicPaths[$regexRouteSegment] ??= self::createDynamicRouteNode($regexRouteSegment);
+    }
+
+    public function setTargetRoute(MarkedRoute $markedRoute): void
+    {
+        if ($this->targetRoute !== null) {
+            throw new DuplicateRouteException($markedRoute->route);
+        }
+
+        $this->targetRoute = $markedRoute;
     }
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string
@@ -107,14 +99,14 @@ final class RouteTreeNode
             // Add a leaf alteration with an optional slash and end of line match `$`.
             // The `(*MARK:x)` is a marker which when this regex is matched will cause the matches array to contain
             // a key `"MARK"` with value `"x"`, it is used to track which route has been matched
-            if ($this->leaf !== null) {
-                $regexp .= '|\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+            if ($this->targetRoute !== null) {
+                $regexp .= '|\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->targetRoute->mark . ')';
             }
 
             $regexp .= ")";
-        } elseif ($this->leaf !== null) {
+        } elseif ($this->targetRoute !== null) {
             // Add a singular leaf regex without alteration
-            $regexp .= '\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->leaf->mark . ')';
+            $regexp .= '\/?$(*' . MarkedRoute::REGEX_MARK_TOKEN . ':' . $this->targetRoute->mark . ')';
         }
 
         return $regexp;
