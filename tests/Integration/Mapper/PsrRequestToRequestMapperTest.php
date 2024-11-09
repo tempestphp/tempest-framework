@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use function Tempest\Support\arr;
 use Laminas\Diactoros\UploadedFile;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use function Tempest\Support\arr;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
