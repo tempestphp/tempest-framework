@@ -9,6 +9,7 @@ use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use function Tempest\Support\arr;
 
 final readonly class MonitorAsyncCommands
@@ -17,6 +18,7 @@ final readonly class MonitorAsyncCommands
 
     public function __construct(
         private AsyncCommandRepository $repository,
+        private ConsoleArgumentBag $argumentBag,
         private Console $console,
     ) {
     }
@@ -69,10 +71,19 @@ final readonly class MonitorAsyncCommands
 
             // Start a task
             $uuid = $availableUuids->first();
+
             $time = new DateTimeImmutable();
             $this->writeln("<h2>{$uuid}</h2> started at {$time->format('Y-m-d H:i:s')}");
-            $process = new Process(['php', 'tempest', 'command:handle', $uuid], getcwd());
+
+            $process = new Process([
+                $this->argumentBag->getBinaryPath(),
+                $this->argumentBag->getCliName(),
+                'command:handle',
+                $uuid
+            ], getcwd());
+
             $process->start();
+
             $processes[$uuid] = $process;
         }
     }
