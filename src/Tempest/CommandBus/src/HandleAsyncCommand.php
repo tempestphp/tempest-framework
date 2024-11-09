@@ -19,7 +19,7 @@ final readonly class HandleAsyncCommand
         private CommandBusConfig $commandBusConfig,
         private Container $container,
         private Console $console,
-        private AsyncCommandRepository $repository,
+        private CommandRepository $repository,
     ) {
     }
 

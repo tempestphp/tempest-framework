@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
-use Tempest\CommandBus\AsyncCommandRepository;
+use Tempest\CommandBus\CommandRepository;
 use Tempest\CommandBus\Exceptions\CouldNotResolveCommand;
 use function Tempest\Support\arr;
 
-final readonly class FileCommandRepository implements AsyncCommandRepository
+final readonly class FileCommandRepository implements CommandRepository
 {
     public function store(string $uuid, object $command): void
     {

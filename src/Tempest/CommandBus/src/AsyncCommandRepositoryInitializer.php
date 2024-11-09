@@ -10,7 +10,7 @@ use Tempest\Container\Initializer;
 
 final readonly class AsyncCommandRepositoryInitializer implements Initializer
 {
-    public function initialize(Container $container): AsyncCommandRepository
+    public function initialize(Container $container): CommandRepository
     {
         // TODO: refactor to make it configurable
 

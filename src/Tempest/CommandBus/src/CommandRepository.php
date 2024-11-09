@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-interface AsyncCommandRepository
+interface CommandRepository
 {
     public function store(string $uuid, object $command): void;
 

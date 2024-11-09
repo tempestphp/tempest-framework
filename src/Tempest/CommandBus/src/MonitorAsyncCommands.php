@@ -17,7 +17,7 @@ final readonly class MonitorAsyncCommands
     use HasConsole;
 
     public function __construct(
-        private AsyncCommandRepository $repository,
+        private CommandRepository $repository,
         private ConsoleArgumentBag $argumentBag,
         private Console $console,
     ) {
@@ -79,7 +79,7 @@ final readonly class MonitorAsyncCommands
                 $this->argumentBag->getBinaryPath(),
                 $this->argumentBag->getCliName(),
                 'command:handle',
-                $uuid
+                $uuid,
             ], getcwd());
 
             $process->start();

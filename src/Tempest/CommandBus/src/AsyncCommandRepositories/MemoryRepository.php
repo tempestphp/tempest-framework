@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus\AsyncCommandRepositories;
 
-use Tempest\CommandBus\AsyncCommandRepository;
+use Tempest\CommandBus\CommandRepository;
 
-final class MemoryRepository implements AsyncCommandRepository
+final class MemoryRepository implements CommandRepository
 {
     private array $commands = [];
 

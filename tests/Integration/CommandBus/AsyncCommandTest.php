@@ -7,7 +7,7 @@ namespace Tests\Tempest\Integration\CommandBus;
 use Symfony\Component\Process\Process;
 use function Tempest\command;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
-use Tempest\CommandBus\AsyncCommandRepository;
+use Tempest\CommandBus\CommandRepository;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
@@ -23,7 +23,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $repository = new MemoryRepository();
 
         $this->container->singleton(
-            AsyncCommandRepository::class,
+            CommandRepository::class,
             fn () => $repository
         );
 

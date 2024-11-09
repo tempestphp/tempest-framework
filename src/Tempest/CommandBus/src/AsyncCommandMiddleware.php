@@ -13,7 +13,7 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
 {
     public function __construct(
         private CommandBusConfig $commandBusConfig,
-        private AsyncCommandRepository $repository,
+        private CommandRepository $repository,
     ) {
     }
 
