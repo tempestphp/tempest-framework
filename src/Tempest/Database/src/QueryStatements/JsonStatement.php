@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\QueryStatement;
 
 final readonly class JsonStatement implements QueryStatement
@@ -18,6 +19,10 @@ final readonly class JsonStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        if ($this->default && false === json_validate($this->default)) {
+            throw new InvalidDefaultValue($this->name, $this->default);
+        }
+
         return match($dialect) {
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` JSON %s',
