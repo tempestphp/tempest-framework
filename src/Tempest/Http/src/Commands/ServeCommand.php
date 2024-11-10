@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Commands;
 
+use Symfony\Component\Process\Process;
 use Tempest\Console\ConsoleCommand;
 
 final readonly class ServeCommand
@@ -14,8 +15,19 @@ final readonly class ServeCommand
     )]
     public function __invoke(string $host = 'localhost', int $port = 8000, string $publicDir = 'public/'): void
     {
-        putenv("TEMPEST_PUBLIC_DIR={$publicDir}");
         $routerFile = __DIR__ . '/router.php';
-        passthru("php -S {$host}:{$port} -t {$publicDir} {$routerFile}");
+
+        $process = new Process(
+            command: ['php', '-S', "{$host}:{$port}", $routerFile],
+            cwd: $publicDir,
+        );
+
+        $process->start(function ($type, $buffer): void {
+            echo $buffer;
+        });
+
+        while ($process->isRunning()) {
+            usleep(500 * 1000);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$publicPath = getcwd() . '/' . rtrim($_ENV['TEMPEST_PUBLIC_DIR'], '/');
+$publicPath = getcwd();
 
 if (file_exists($publicPath . $_SERVER['REQUEST_URI'])) {
     return false;
