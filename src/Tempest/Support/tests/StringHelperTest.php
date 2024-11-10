@@ -475,4 +475,10 @@ b'));
         $this->assertSame('value', str('value]')->unwrap('[', ']', strict: false)->toString());
         $this->assertSame('Scott', str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false)->toString());
     }
+
+    public function test_start(): void
+    {
+        $this->assertSame('Leon Scott Kennedy', str('Scott Kennedy')->start('Leon ')->toString());
+        $this->assertSame('Leon Scott Kennedy', str('Leon Scott Kennedy')->start('Leon ')->toString());
+    }
 }
