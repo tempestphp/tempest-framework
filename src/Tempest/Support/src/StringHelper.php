@@ -183,7 +183,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Prefix the instance with the given string.
+     * Prefixes the instance with the given string.
      */
     public function start(string $prefix): self
     {
