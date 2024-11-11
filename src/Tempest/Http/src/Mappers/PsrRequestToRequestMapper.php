@@ -7,6 +7,7 @@ namespace Tempest\Http\Mappers;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Psr\Http\Message\UploadedFileInterface;
 use Tempest\Http\GenericRequest;
+use Tempest\Http\Json\JsonParserServerRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
@@ -24,6 +25,8 @@ final readonly class PsrRequestToRequestMapper implements Mapper
     public function map(mixed $from, mixed $to): array|object
     {
         /** @var PsrRequest $from */
+        $from = (new JsonParserServerRequest())($from);
+
         /** @var class-string<\Tempest\Http\Request> $requestClass */
         $requestClass = is_object($to) ? $to::class : $to;
 
