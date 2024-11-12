@@ -5,34 +5,40 @@
  * Though this script attempts to simplify, it borrows heavily from Symfony's approach.
  *
  * @see https://github.com/symfony/symfony/blob/7.2/.github/build-packages.php
+ *
+ * TODO: This script is not really optimized, because it runs on every unit test action.
  */
 
 $tempestPackages = json_decode(
-        json: exec(__DIR__  . '/get-packages'),
-        associative: true
+    json: exec(__DIR__  . '/get-packages'),
+    associative: true
 );
 
-$composerPackages = [];
+$composerPackages = [
+    'packages' => [],
+];
 
 foreach ($tempestPackages as $package) {
     // Find out if there are changes in this package.
     $diff = exec(sprintf('git diff --name-only HEAD^ -- %s', $package['directory']));
 
-    // If there are not any changes, move on to the next package.
-    if (empty($diff)) {
-        continue;
-    }
-
-    // Bundle the current package as a tar file.
-    passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $package['directory']));
-
     $composerPath = sprintf('%s/composer.json', $package['directory']);
     $composerFile = json_decode(file_get_contents($composerPath), true);
 
-    // TODO: Update this version.
-    $composerFile['version'] = 'dev-main';
-    $composerFile['dist']['type'] = 'tar';
-    $composerFile['dist']['source'] = $package['directory'] . '/package.tar';
+    // If there are changes, bundle the package and
+    // add it to our root packages.json file.
+    if (empty($diff) === false) {
+        // Bundle the current package as a tar file.
+        passthru(sprintf("cd %s && tar -cf package.tar --exclude='package.tar' *", $package['directory']));
+
+        // TODO: Update the package version.
+        $composerFile['version'] = 'dev-main';
+        $composerFile['dist']['type'] = 'tar';
+        $composerFile['dist']['url'] = 'file://'. $package['directory'] . '/package.tar';
+
+        // Add the package details to the root "packages.json."
+        $composerPackages['packages'][$composerFile['name']][$composerFile['version']] = $composerFile;
+    }
 
     // Load the packages from the root "packages.json" file we will write in a second.
     $composerFile['repositories'] = [
@@ -42,10 +48,9 @@ foreach ($tempestPackages as $package) {
         ]
     ];
 
-    // Add the package details to the root "packages.json."
-    $composerPackages[$composerFile['name']][$composerFile['version']] = $composerFile;
+    file_put_contents($composerPath, json_encode($composerFile, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 }
 
-file_put_contents(__DIR__ . '/../packages.json', json_encode($composerPackages, JSON_PRETTY_PRINT));
+file_put_contents(__DIR__ . '/../packages.json', json_encode($composerPackages, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
 var_dump(file_get_contents(__DIR__ . '/../packages.json'));

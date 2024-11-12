@@ -6,8 +6,9 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\Exceptions\InvalidElement;
+use Tempest\View\WrapsElement;
 
-final class PhpIfElement implements Element
+final class PhpIfElement implements Element, WrapsElement
 {
     use IsElement;
 
@@ -19,6 +20,11 @@ final class PhpIfElement implements Element
     public function __construct(
         private readonly Element $wrappingElement,
     ) {
+    }
+
+    public function getWrappingElement(): Element
+    {
+        return $this->wrappingElement;
     }
 
     public function addElseif(Element $element): self
@@ -44,7 +50,7 @@ final class PhpIfElement implements Element
         $compiled = sprintf(
             "<?php if(%s): ?>
                 %s",
-            $this->wrappingElement->getAttribute('if'),
+            $this->wrappingElement->consumeAttribute('if'),
             $this->wrappingElement->compile(),
         );
 
@@ -54,12 +60,14 @@ final class PhpIfElement implements Element
                 <?php elseif(%s): ?>
                 %s",
                 $compiled,
-                $elseif->getAttribute('elseif'),
+                $elseif->consumeAttribute('elseif'),
                 $elseif->compile(),
             );
         }
 
         if ($this->else !== null) {
+            $this->else->consumeAttribute('else');
+
             $compiled = sprintf(
                 "%s
                 <?php else: ?>

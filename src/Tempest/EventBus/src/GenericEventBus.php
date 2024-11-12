@@ -24,36 +24,59 @@ final readonly class GenericEventBus implements EventBus
 
     public function dispatch(string|object $event): void
     {
-        $eventName = match(true) {
+        $eventHandlers = $this->resolveHandlers($event);
+
+        $dispatch = $this->getCallable($eventHandlers);
+
+        $dispatch($event);
+    }
+
+    /** @return \Tempest\EventBus\CallableEventHandler[] */
+    private function resolveHandlers(string|object $event): array
+    {
+        $eventName = match (true) {
             $event instanceof BackedEnum => $event->value,
             $event instanceof UnitEnum => $event->name,
             is_string($event) => $event,
             default => $event::class,
         };
 
-        /** @var \Tempest\EventBus\CallableEventHandler[] $eventHandlers */
-        $eventHandlers = $this->eventBusConfig->handlers[$eventName] ?? [];
+        $handlers = $this->eventBusConfig->handlers[$eventName] ?? [];
 
-        foreach ($eventHandlers as $eventHandler) {
-            $callable = $eventHandler->normalizeCallable($this->container);
-            $callable = $this->applyMiddleware($callable);
+        if (is_object($event)) {
+            $interfaces = class_implements($event);
 
-            $callable($event);
+            foreach ($interfaces as $interface) {
+                $handlers = [
+                    ...$handlers,
+                    ...($this->eventBusConfig->handlers[$interface] ?? []),
+                ];
+            }
         }
+
+        return $handlers;
     }
 
-    private function applyMiddleware(Closure $handler): Closure
+    private function getCallable(array $eventHandlers): EventBusMiddlewareCallable
     {
+        $callable = new EventBusMiddlewareCallable(function (string|object $event) use ($eventHandlers): void {
+            foreach ($eventHandlers as $eventHandler) {
+                $callable = $eventHandler->normalizeCallable($this->container);
+
+                $callable($event);
+            }
+        });
+
         $middlewareStack = $this->eventBusConfig->middleware;
 
         while ($middlewareClass = array_pop($middlewareStack)) {
-            $handler = fn (string|object $event) => $this->container->invoke(
+            $callable = new EventBusMiddlewareCallable(fn (string|object $event) => $this->container->invoke(
                 $middlewareClass,
                 event: $event,
-                next: $handler
-            );
+                next: $callable,
+            ));
         }
 
-        return $handler;
+        return $callable;
     }
 }

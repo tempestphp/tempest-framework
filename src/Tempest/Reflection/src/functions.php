@@ -9,6 +9,9 @@ namespace Tempest {
     use Tempest\Reflection\ClassReflector;
     use Tempest\Reflection\PropertyReflector;
 
+    /**
+     * Creates a new {@see Reflector} instance based on the given `$classOrProperty`.
+     */
     function reflect(mixed $classOrProperty, ?string $propertyName = null): ClassReflector|PropertyReflector
     {
         if ($classOrProperty instanceof PHPReflectionClass) {

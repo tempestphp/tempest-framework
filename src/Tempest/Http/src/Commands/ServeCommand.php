@@ -14,6 +14,8 @@ final readonly class ServeCommand
     )]
     public function __invoke(string $host = 'localhost', int $port = 8000, string $publicDir = 'public/'): void
     {
-        passthru("php -S {$host}:{$port} -t {$publicDir}");
+        putenv("TEMPEST_PUBLIC_DIR={$publicDir}");
+        $routerFile = __DIR__ . '/router.php';
+        passthru("php -S {$host}:{$port} -t {$publicDir} {$routerFile}");
     }
 }

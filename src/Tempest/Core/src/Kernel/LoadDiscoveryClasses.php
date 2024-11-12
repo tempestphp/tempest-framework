@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
+use Error;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -92,10 +93,16 @@ final readonly class LoadDiscoveryClasses
                             $file->getPathname(),
                         );
 
-                        try {
+                        // Discovery errors (syntax errors, missing imports, etc.)
+                        // are ignored when they happen in vendor files,
+                        // but they are allowed to be thrown in project code
+                        if ($discoveryLocation->isVendor()) {
+                            try {
+                                $input = new ClassReflector($className);
+                            } catch (Throwable|Error) {
+                            }
+                        } elseif (class_exists($className)) {
                             $input = new ClassReflector($className);
-                        } catch (Throwable) {
-                            // Nothing should happen
                         }
                     }
 

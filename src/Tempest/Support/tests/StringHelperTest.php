@@ -420,6 +420,21 @@ final class StringHelperTest extends TestCase
         $this->assertSame('john doe', StringHelper::implode(arr(['john', 'doe']))->toString());
     }
 
+    #[TestWith([['Jon', 'Jane'], 'Jon and Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], 'Jon, Jane and Jill'])]
+    public function test_join(array $initial, string $expected): void
+    {
+        $this->assertEquals($expected, StringHelper::join($initial));
+    }
+
+    #[TestWith([['Jon', 'Jane'], ', ', ' and maybe ', 'Jon and maybe Jane'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', ' and ', 'Jon + Jane and Jill'])]
+    #[TestWith([['Jon', 'Jane', 'Jill'], ' + ', null, 'Jon + Jane + Jill'])]
+    public function test_join_with_glues(array $initial, string $glue, ?string $finalGlue, string $expected): void
+    {
+        $this->assertTrue(StringHelper::join($initial, $glue, $finalGlue)->equals($expected));
+    }
+
     public function test_excerpt(): void
     {
         $content = str('a
@@ -440,5 +455,30 @@ b'));
         $this->assertTrue($content->excerpt(7, 100)->equals('g'));
 
         $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
+    }
+
+    public function test_wrap(): void
+    {
+        $this->assertSame('Leon Scott Kennedy', str('Scott')->wrap(before: 'Leon ', after: ' Kennedy')->toString());
+        $this->assertSame('"value"', str('value')->wrap('"')->toString());
+    }
+
+    public function test_unwrap(): void
+    {
+        $this->assertSame('Scott', str('Leon Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy')->toString());
+        $this->assertSame('value', str('"value"')->unwrap('"')->toString());
+        $this->assertSame('"value"', str('"value"')->unwrap('`')->toString());
+        $this->assertSame('[value', str('[value')->unwrap('[', ']')->toString());
+        $this->assertEquals('some: "json"', str('{some: "json"}')->unwrap('{', '}')->toString());
+
+        $this->assertSame('value', str('[value')->unwrap('[', ']', strict: false)->toString());
+        $this->assertSame('value', str('value]')->unwrap('[', ']', strict: false)->toString());
+        $this->assertSame('Scott', str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false)->toString());
+    }
+
+    public function test_start(): void
+    {
+        $this->assertSame('Leon Scott Kennedy', str('Scott Kennedy')->start('Leon ')->toString());
+        $this->assertSame('Leon Scott Kennedy', str('Leon Scott Kennedy')->start('Leon ')->toString());
     }
 }

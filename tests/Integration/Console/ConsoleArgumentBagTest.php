@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -53,8 +54,7 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('complex a --c=c --b=b --flag')
             ->assertContains('abc')
-            ->assertContains('true')
-        ;
+            ->assertContains('true');
     }
 
     public function test_combined_flags(): void
@@ -106,5 +106,43 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('array_input --input=a')
             ->assertContains('["a"]');
+    }
+
+    #[TestWith(['foo', false])]
+    #[TestWith(['bar', true])]
+    #[TestWith(['baz', false])]
+    #[TestWith(['qux', true])]
+    #[TestWith(['bux', true])]
+    public function test_negative_input(string $name, bool $expected): void
+    {
+        $argv = [
+            'tempest',
+            'test',
+            '--no-foo',
+            '--qux',
+            '--bux=true',
+            '--no-bar=false',
+            '--baz=false',
+        ];
+
+        $bag = new ConsoleArgumentBag($argv);
+
+        $definition = new ConsoleArgumentDefinition(
+            name: $name,
+            type: 'bool',
+            default: null,
+            hasDefault: false,
+            position: 0,
+        );
+
+        $this->assertSame($expected, $bag->findFor($definition)->value);
+    }
+
+    public function test_name_mapping(): void
+    {
+        $this->console
+            ->call('command-with-argument-name --new-name=foo --new-flag')
+            ->assertSee('foo')
+            ->assertSee('true');
     }
 }

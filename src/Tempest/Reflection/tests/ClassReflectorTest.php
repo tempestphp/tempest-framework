@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\Tests\Fixtures\TestClassA;
+use Tempest\Reflection\Tests\Fixtures\TestClassB;
 
 /**
  * @internal
@@ -35,5 +36,11 @@ final class ClassReflectorTest extends TestCase
         $reflection = new ReflectionClass(TestClassA::class);
 
         $this->assertSame($reflector->getShortName(), $reflection->getShortName());
+    }
+
+    public function test_nullable_property_type(): void
+    {
+        $reflector = new ClassReflector(TestClassB::class);
+        $this->assertTrue($reflector->getProperty('name')->isNullable());
     }
 }

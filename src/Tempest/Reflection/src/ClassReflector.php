@@ -46,6 +46,14 @@ final readonly class ClassReflector implements Reflector
         }
     }
 
+    /** @return Generator<PropertyReflector> */
+    public function getProperties(): Generator
+    {
+        foreach ($this->reflectionClass->getProperties() as $property) {
+            yield new PropertyReflector($property);
+        }
+    }
+
     /** @return Generator<MethodReflector> */
     public function getPublicMethods(): Generator
     {

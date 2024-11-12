@@ -6,11 +6,15 @@ namespace Tempest\Http;
 
 use Tempest\Container\Container;
 use Tempest\Core\Discovery;
+use Tempest\Core\KernelEvent;
+use Tempest\EventBus\EventHandler;
+use Tempest\Http\Routing\Construction\RouteConfigurator;
 use Tempest\Reflection\ClassReflector;
 
 final readonly class RouteDiscovery implements Discovery
 {
     public function __construct(
+        private RouteConfigurator $configurator,
         private RouteConfig $routeConfig,
     ) {
     }
@@ -18,27 +22,35 @@ final readonly class RouteDiscovery implements Discovery
     public function discover(ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $routeAttribute = $method->getAttribute(Route::class);
+            $routeAttributes = $method->getAttributes(Route::class);
 
-            if (! $routeAttribute) {
-                continue;
+            foreach ($routeAttributes as $routeAttribute) {
+                $routeAttribute->setHandler($method);
+
+                $this->configurator->addRoute($routeAttribute);
             }
+        }
+    }
 
-            $this->routeConfig->addRoute($method, $routeAttribute);
+    #[EventHandler(KernelEvent::BOOTED)]
+    public function finishDiscovery(): void
+    {
+        if ($this->configurator->isDirty()) {
+            $this->routeConfig->apply($this->configurator->toRouteConfig());
         }
     }
 
     public function createCachePayload(): string
     {
+        $this->finishDiscovery();
+
         return serialize($this->routeConfig);
     }
 
     public function restoreCachePayload(Container $container, string $payload): void
     {
-        $routeConfig = unserialize($payload);
+        $routeConfig = unserialize($payload, [ 'allowed_classes' => true ]);
 
-        $this->routeConfig->staticRoutes = $routeConfig->staticRoutes;
-        $this->routeConfig->dynamicRoutes = $routeConfig->dynamicRoutes;
-        $this->routeConfig->matchingRegexes = $routeConfig->matchingRegexes;
+        $this->routeConfig->apply($routeConfig);
     }
 }

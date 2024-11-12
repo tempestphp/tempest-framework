@@ -20,9 +20,9 @@
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
-        "nunomaduro/collision": "^8.4",
         "php": "^8.3",
-        "php-http/discovery": "^1.19.2",
+        "psr-discovery/http-client-implementations": "1.x-dev",
+        "psr-discovery/http-factory-implementations": "1.x-dev",
         "psr/cache": "^3.0",
         "psr/clock": "^1.0.0",
         "psr/http-client": "^1.0.0",
@@ -43,11 +43,11 @@
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
         "nyholm/psr7": "^1.8",
-        "php-http/mock-client": "^1.6",
         "phpat/phpat": "^0.10.14",
+        "phpbench/phpbench": "84.x-dev",
         "phpstan/phpstan": "^1.10.0",
         "phpunit/phpunit": "^11.3.5",
-        "rector/rector": "^1.2",
+        "rector/rector": "1.2.8",
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^3.1",
         "symplify/monorepo-builder": "^11.2"
@@ -74,6 +74,7 @@
         "tempest/view": "self.version"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Tempest\\Auth\\": "src/Tempest/Auth/src/",
@@ -134,11 +135,6 @@
     "bin": [
         "src/Tempest/Console/bin/tempest"
     ],
-    "config": {
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
@@ -150,8 +146,8 @@
             "composer merge",
             "./bin/validate-packages",
             "./tempest discovery:clear",
-            "vendor/bin/rector process",
             "composer csfixer",
+            "composer rector",
             "composer phpunit",
             "composer phpstan"
         ]

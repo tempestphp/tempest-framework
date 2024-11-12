@@ -18,4 +18,10 @@ final class CreateUserCommandHandler
         $this->firstName = $command->firstName;
         $this->lastName = $command->lastName;
     }
+
+    #[CommandHandler]
+    public function double(CreateUserCommand $command): void
+    {
+        // throws a CommandHandlerAlreadyExists exception since the command is already being handled by the __invoke method
+    }
 }

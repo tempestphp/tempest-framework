@@ -7,11 +7,8 @@ use Tempest\Http\HttpApplication;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-HttpApplication::boot(
-    __DIR__ . '/../',
-    discoveryLocations: [
-    new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../tests/Fixtures'),
-],
-)->run();
+HttpApplication::boot(__DIR__ . '/../', discoveryLocations: [
+    new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', __DIR__ . '/../tests/Fixtures/'),
+])->run();
 
 exit;

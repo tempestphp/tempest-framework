@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Auth\Fixtures;
 
 use Tempest\Auth\Authorizer;
 use Tempest\Auth\CanAuthorize;
-use Tempest\Auth\User;
+use Tempest\Auth\Install\User;
 
 final readonly class CustomAuthorizer implements Authorizer
 {

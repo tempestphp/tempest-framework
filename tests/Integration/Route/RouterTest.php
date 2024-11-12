@@ -10,8 +10,12 @@ use Tempest\Http\GenericRouter;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
+use function Tempest\uri;
+use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
+use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -85,6 +89,15 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertEquals('https://test.com/test/1/a/b/c/d', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
     }
 
+    public function test_uri_generation_with_query_param(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $uri = $router->toUri(TestController::class, test: 'foo');
+
+        $this->assertSame('/test?test=foo', $uri);
+    }
+
     public function test_with_view(): void
     {
         $router = $this->container->get(GenericRouter::class);
@@ -136,5 +149,43 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->http
             ->get('/test/1/a/')
             ->assertOk();
+    }
+
+    public function test_repeated_routes(): void
+    {
+        $this->http->get('/repeated/a')->assertOk();
+        $this->http->get('/repeated/b')->assertOk();
+        $this->http->get('/repeated/c')->assertOk();
+        $this->http->get('/repeated/d')->assertOk();
+        $this->http->post('/repeated/e')->assertOk();
+        $this->http->post('/repeated/f')->assertOk();
+    }
+
+    public function test_enum_route_binding(): void
+    {
+        $this->http->get('/with-enum/foo')->assertOk();
+        $this->http->get('/with-enum/bar')->assertOk();
+        $this->http->get('/with-enum/unknown')->assertNotFound();
+    }
+
+    public function test_generate_uri_with_enum(): void
+    {
+        $this->assertSame(
+            '/with-enum/foo',
+            uri(ControllerWithEnumBinding::class, input: EnumForController::FOO),
+        );
+
+        $this->assertSame(
+            '/with-enum/bar',
+            uri(ControllerWithEnumBinding::class, input: EnumForController::BAR),
+        );
+    }
+
+    public function test_uri_with_query_param_that_collides_partially_with_route_param(): void
+    {
+        $this->assertSame(
+            '/test-with-collision/hi?id=1',
+            uri([UriGeneratorController::class, 'withCollidingNames'], id: '1', idea: 'hi')
+        );
     }
 }

@@ -58,13 +58,13 @@ Read how to get started with Tempest [here](https://tempestphp.com).
 Install Tempest in any project, including existing projects:
 
 ```
-composer require tempest/framework:1.0-alpha1
+composer require tempest/framework:1.0-alpha.3
 ```
 
 Or create a Tempest project from scratch:
 
 ```
-composer create-project tempest/app:1.0-alpha1 <name>
+composer create-project tempest/app:1.0-alpha.3 <name>
 ```
 
 Continue to read how Tempest works in [the docs](https://tempestphp.com).

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Authenticator;
-use Tempest\Auth\CreatePermissionsTable;
-use Tempest\Auth\CreateUserPermissionTable;
-use Tempest\Auth\CreateUsersTable;
-use Tempest\Auth\User;
+use Tempest\Auth\Install\PermissionMigration;
+use Tempest\Auth\Install\User;
+use Tempest\Auth\Install\UserMigration;
+use Tempest\Auth\Install\UserPermissionMigration;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Session\Managers\FileSessionManager;
@@ -32,9 +32,9 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateUsersTable::class,
-            CreatePermissionsTable::class,
-            CreateUserPermissionTable::class,
+            UserMigration::class,
+            PermissionMigration::class,
+            UserPermissionMigration::class,
         );
 
         $this->path = __DIR__ . '/sessions';

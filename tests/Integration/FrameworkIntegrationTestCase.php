@@ -19,8 +19,10 @@ use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Http\HttpApplication;
+use Tempest\View\Components\AnonymousViewComponent;
 use Tempest\View\GenericView;
 use Tempest\View\View;
+use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
@@ -43,7 +45,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.php';
+        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
             copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
@@ -89,6 +91,13 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $view->data(...$params);
 
         return $this->container->get(ViewRenderer::class)->render($view);
+    }
+
+    protected function registerViewComponent(string $name, string $html): void
+    {
+        $viewComponent = new AnonymousViewComponent($html, '');
+
+        $this->container->get(ViewConfig::class)->addViewComponent($name, $viewComponent);
     }
 
     protected function rollbackDatabase(): void

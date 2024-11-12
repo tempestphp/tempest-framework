@@ -61,8 +61,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
             <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
+            
+            
             </div>
             <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
+            
+            
             
             </form>
             HTML,
@@ -110,12 +114,14 @@ HTML, $html);
         $between = new Between(min: 1, max: 10);
         $alphaNumeric = new AlphaNumeric();
 
-        $this->container->get(Session::class)->flash(
+        $session = $this->container->get(Session::class);
+
+        $session->flash(
             Session::VALIDATION_ERRORS,
             ['name' => [$between, $alphaNumeric]],
         );
 
-        $this->container->get(Session::class)->flash(
+        $session->flash(
             Session::ORIGINAL_VALUES,
             ['name' => 'original name'],
         );

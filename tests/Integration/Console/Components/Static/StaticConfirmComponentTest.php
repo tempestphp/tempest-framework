@@ -68,4 +68,18 @@ final class StaticConfirmComponentTest extends FrameworkIntegrationTestCase
             ->input(Key::ENTER)
             ->assertContains('not continued');
     }
+
+    public function test_with_default_without_prompting(): void
+    {
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                if ($console->confirm('continue', default: true)) {
+                    $console->writeln('continued');
+                } else {
+                    $console->writeln('not continued');
+                }
+            })
+            ->assertContains('continued');
+    }
 }

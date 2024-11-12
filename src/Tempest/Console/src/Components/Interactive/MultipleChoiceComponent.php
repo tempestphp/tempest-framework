@@ -20,7 +20,12 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
     public function __construct(
         public string $question,
         public array $options,
+        public array $default = [],
     ) {
+        foreach ($this->default as $key => $value) {
+            $this->selectedOptions[array_is_list($options) ? $key : $value] = true;
+        }
+
         $this->activeOption = array_key_first($this->options);
     }
 
@@ -105,8 +110,9 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticMultipleChoiceComponent(
-            $this->question,
-            $this->options,
+            question: $this->question,
+            options: $this->options,
+            default: $this->default,
         );
     }
 }

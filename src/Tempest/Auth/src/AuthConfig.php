@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
+use Tempest\Auth\Install\User;
+
 final class AuthConfig
 {
     public function __construct(

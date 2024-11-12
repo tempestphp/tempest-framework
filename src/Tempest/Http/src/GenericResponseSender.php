@@ -27,6 +27,10 @@ final readonly class GenericResponseSender implements ResponseSender
         $this->sendContent($response);
         ob_end_flush();
 
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+
         return $response;
     }
 

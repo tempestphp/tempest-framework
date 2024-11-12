@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
+use function Tempest\env;
 use Tempest\EventBus\EventBus;
+use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 final class Kernel
 {
@@ -23,7 +29,8 @@ final class Kernel
     ];
 
     public function __construct(
-        public readonly string $root,
+        public string $root,
+        /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
     ) {
@@ -31,13 +38,14 @@ final class Kernel
 
         $this
             ->loadEnv()
+            ->registerKernelErrorHandler()
             ->registerShutdownFunction()
             ->registerKernel()
             ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
-            ->loadExceptionHandler()
             ->loadDiscovery()
+            ->registerErrorHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -47,6 +55,15 @@ final class Kernel
             root: $root,
             container: $container,
         );
+    }
+
+    public function shutdown(int|string $status = ''): never
+    {
+        $this
+            ->finishDeferredTasks()
+            ->event(KernelEvent::SHUTDOWN);
+
+        exit($status);
     }
 
     private function createContainer(): Container
@@ -121,11 +138,30 @@ final class Kernel
         return $this;
     }
 
-    private function loadExceptionHandler(): self
+    private function registerErrorHandler(): self
     {
         $appConfig = $this->container->get(AppConfig::class);
 
-        $appConfig->exceptionHandlerSetup->setup($appConfig);
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $handler = $this->container->get(ConsoleErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } elseif ($appConfig->environment->isProduction()) {
+            $handler = $this->container->get(HttpProductionErrorHandler::class);
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        }
+
+        return $this;
+    }
+
+    private function finishDeferredTasks(): self
+    {
+        ($this->container->get(FinishDeferredTasks::class))();
 
         return $this;
     }
@@ -134,6 +170,27 @@ final class Kernel
     {
         if (interface_exists(EventBus::class)) {
             $this->container->get(EventBus::class)->dispatch($event);
+        }
+
+        return $this;
+    }
+
+    private function registerKernelErrorHandler(): self
+    {
+        $environment = Environment::tryFrom(env('ENVIRONMENT', 'production'));
+
+        if ($environment->isTesting()) {
+            return $this;
+        }
+
+        if ($environment->isProduction()) {
+            $handler = new HttpProductionErrorHandler();
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } else {
+            $whoops = new Run();
+            $whoops->pushHandler(new PrettyPageHandler());
+            $whoops->register();
         }
 
         return $this;

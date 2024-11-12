@@ -21,12 +21,26 @@ final class Invalid implements Response
         /** @var \Tempest\Validation\Rule[][] $failingRules */
         array $failingRules = [],
     ) {
-        $referer = $request->getHeader('referer')[0] ?? throw new Exception("No referer found, could not redirect (this shouldn't happen, please create a bug report)");
+        $referer = $this->getReferer($request);
         $body = $request instanceof PsrRequest ? $request->getParsedBody() : $request->getBody();
 
         $this->addHeader('Location', $referer);
         $this->status = Status::FOUND;
         $this->flash(Session::VALIDATION_ERRORS, $failingRules);
         $this->flash(Session::ORIGINAL_VALUES, $body);
+    }
+
+    private function getReferer(PsrRequest|Request $request): string
+    {
+        $referer = match (true) {
+            $request instanceof Request => $request->getHeaders()['referer'] ?? null,
+            $request instanceof PsrRequest => $request->getHeader('referer')[0] ?? null,
+        };
+
+        if (! $referer) {
+            throw new Exception("No referer found, could not redirect (this shouldn't happen, please create a bug report)");
+        }
+
+        return $referer;
     }
 }

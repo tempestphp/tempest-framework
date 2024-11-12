@@ -27,7 +27,7 @@ final class MemoryInputBuffer implements InputBuffer
                 : (string) $line;
         }
 
-        $this->fiber->resume();
+        $this->fiber?->resume();
     }
 
     public function read(int $bytes): string

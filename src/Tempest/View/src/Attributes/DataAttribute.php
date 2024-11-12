@@ -8,6 +8,7 @@ use function Tempest\Support\str;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
+use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\ViewComponentElement;
 
 final readonly class DataAttribute implements Attribute
@@ -19,16 +20,23 @@ final readonly class DataAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
-        if (! $element instanceof ViewComponentElement) {
+        $value = str($element->getAttribute($this->name));
+
+        // Render {{ and {!! tags
+        if ($value->startsWith(['{{', '{!!']) && $value->endsWith(['}}', '!!}'])) {
+            $value = (new TextElement($value->toString()))->compile();
+            $element->setAttribute($this->name, $value);
+        }
+
+        // Data attributes should only be parsed for view components
+        if ($element->unwrap(ViewComponentElement::class) === null) {
             return $element;
         }
 
-        $value = str($element->getAttribute($this->name));
-
         return new PhpDataElement(
-            $this->name,
-            $value->toString(),
-            $element,
+            name: $this->name,
+            value: $element->getAttribute($this->name),
+            wrappingElement: $element,
         );
     }
 }
