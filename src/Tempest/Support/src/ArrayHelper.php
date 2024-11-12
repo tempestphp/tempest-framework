@@ -90,7 +90,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Reduce the array to a single value using a callback.
+     * Reduces the array to a single value using a callback.
      *
      * @template TReduceInitial
      * @template TReduceReturnType
