@@ -166,6 +166,20 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function json(
+        string $name,
+        bool $nullable = false,
+        ?string $default = null
+    ): self {
+        $this->statements[] = new JsonStatement(
+            name: $name,
+            nullable: $nullable,
+            default: $default,
+        );
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $compiled = sprintf(
