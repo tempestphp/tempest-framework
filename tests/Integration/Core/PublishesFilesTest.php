@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
+use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class PublishesFilesTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -29,7 +32,7 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
 
         parent::tearDown();
     }
-    
+
     #[Test]
     #[DataProvider('suggested_path_provider')]
     public function get_suggested_path(
@@ -51,7 +54,8 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
         );
     }
 
-    public static function suggested_path_provider(): array {
+    public static function suggested_path_provider(): array
+    {
         return [
             'Basic' => [
                 'className' => 'Hello',

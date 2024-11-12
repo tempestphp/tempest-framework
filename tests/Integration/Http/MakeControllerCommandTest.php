@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
@@ -53,18 +53,18 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
             'make_with_defaults' => [
                 'commandArgs' => 'BookController',
                 'expectedPath' => 'App/BookController.php',
-                'expectedNamespace' => 'App'
+                'expectedNamespace' => 'App',
             ],
             'make_with_other_namespace' => [
                 'commandArgs' => 'Books\\BookController',
                 'expectedPath' => 'App/Books/BookController.php',
-                'expectedNamespace' => 'App\\Books'
+                'expectedNamespace' => 'App\\Books',
             ],
             'make_with_input_path' => [
                 'commandArgs' => 'Books/BookController',
                 'expectedPath' => 'App/Books/BookController.php',
-                'expectedNamespace' => 'App\\Books'
-            ]
+                'expectedNamespace' => 'App\\Books',
+            ],
         ];
     }
 }

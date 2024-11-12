@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Commands;
 
-use Tempest\Core\ComposerNamespace;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-
+/**
+ * @internal
+ */
 class MakeModelCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -45,23 +47,24 @@ class MakeModelCommandTest extends FrameworkIntegrationTestCase
             ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';');
     }
 
-    public static function command_input_provider(): array {
+    public static function command_input_provider(): array
+    {
         return [
             'make_with_defaults' => [
                 'commandArgs' => 'Book',
                 'expectedPath' => 'App/Book.php',
-                'expectedNamespace' => 'App'
+                'expectedNamespace' => 'App',
             ],
             'make_with_other_namespace' => [
                 'commandArgs' => 'Books\\BookModel',
                 'expectedPath' => 'App/Books/BookModel.php',
-                'expectedNamespace' => 'App\\Books'
+                'expectedNamespace' => 'App\\Books',
             ],
             'make_with_input_path' => [
                 'commandArgs' => 'Books/BookModel',
                 'expectedPath' => 'App/Books/BookModel.php',
-                'expectedNamespace' => 'App\\Books'
-            ]
+                'expectedNamespace' => 'App\\Books',
+            ],
         ];
     }
 }
