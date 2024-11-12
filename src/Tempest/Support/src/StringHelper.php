@@ -183,6 +183,16 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Prefixes the instance with the given string.
+     */
+    public function start(string $prefix): self
+    {
+        return new self(
+            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string)
+        );
+    }
+
+    /**
      * Returns the remainder of the string after the first occurrence of the given value.
      */
     public function after(Stringable|string|array $search): self

@@ -22,10 +22,14 @@ final class RoutingTree
         $method = $markedRoute->route->method;
 
         // Find the root tree node based on HTTP method
-        $root = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
+        $node = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
-        // Add path to tree using recursion
-        $root->addPath($markedRoute->route->split(), $markedRoute);
+        // Traverse the tree and find the node for each route segment
+        foreach ($markedRoute->route->split() as $routeSegment) {
+            $node = $node->findOrCreateNodeForSegment($routeSegment);
+        }
+
+        $node->setTargetRoute($markedRoute);
     }
 
     /** @return array<string, string> */
