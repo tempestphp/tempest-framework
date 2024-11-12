@@ -10,7 +10,6 @@ use Countable;
 use Generator;
 use InvalidArgumentException;
 use Iterator;
-use PhpParser\Node\Expr\Instanceof_;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
@@ -48,13 +47,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Search for a given value in the array and return the corresponding key if successful.
      *
-     * @param \Closure|mixed $value The value to search for, a Closure will check the first item that returns true.
-     * @param boolean $strict Whether to use strict comparison.
+     * @param Closure|mixed $value The value to search for, a Closure will check the first item that returns true.
+     * @param bool $strict Whether to use strict comparison.
      *
      * @return array-key|false The key for `$value` if found, otherwise `false`.
      */
-    public function search(mixed $value, bool $strict = false): int|string|false {
-        if ( ! $value instanceof Closure ) {
+    public function search(mixed $value, bool $strict = false): int|string|false
+    {
+        if (! $value instanceof Closure) {
             return array_search($value, $this->array, $strict);
         }
 
@@ -70,19 +70,20 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Chunk the array into chunks of the given size.
      *
-     * @param integer $size The size of each chunk.
+     * @param int $size The size of each chunk.
      * @param bool $preserveKeys Whether to preserve the keys of the original array.
      *
      * @return self<TKey, TValue>
      */
-    public function chunk(int $size, bool $preserveKeys = true): self {
-        if ( $size <= 0 ) {
-            return new self;
+    public function chunk(int $size, bool $preserveKeys = true): self
+    {
+        if ($size <= 0) {
+            return new self();
         }
 
         $chunks = [];
 
-        foreach ( array_chunk($this->array, $size, $preserveKeys) as $chunk ) {
+        foreach (array_chunk($this->array, $size, $preserveKeys) as $chunk) {
             $chunks[] = new self($chunk);
         }
 
@@ -94,13 +95,14 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @template TReduceInitial
      * @template TReduceReturnType
-     * 
+     *
      * @param callable(TReduceInitial|TReduceReturnType, TValue, TKey): TReduceReturnType $callback
      * @param TReduceInitial $initial
-     * 
+     *
      * @return TReduceReturnType
      */
-    public function reduce(callable $callback, mixed $initial = null): mixed {
+    public function reduce(callable $callback, mixed $initial = null): mixed
+    {
         $result = $initial;
 
         foreach ($this->array as $key => $value) {
