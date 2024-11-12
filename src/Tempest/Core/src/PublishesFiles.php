@@ -134,7 +134,7 @@ trait PublishesFiles
     {
         // Separate input path and classname
         $inputClassName = PathHelper::toClassName($className);
-        $inputPath = str(PathHelper::make($className))->replace($inputClassName, '')->toString();
+        $inputPath = str(PathHelper::make($className))->replaceLast($inputClassName, '')->toString();
         $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix ?? '')
