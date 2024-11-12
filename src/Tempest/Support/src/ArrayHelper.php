@@ -455,7 +455,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the first item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the first item.
      *
-     * @param Closure(TValue $value, TKey $key)|null: bool $filter
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
      *
      * @return TValue
      */
@@ -482,7 +482,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the last item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
-     * @param Closure(TValue $value, TKey $key)|null: bool $filter
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
      *
      * @return TValue
      */
