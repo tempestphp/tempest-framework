@@ -9,6 +9,7 @@ use Tempest\Console\Highlight\DynamicTokenType;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
 use Tempest\Highlight\ParsedInjection;
+use function Tempest\Support\str;
 
 final readonly class DynamicInjection implements Injection
 {
@@ -19,24 +20,29 @@ final readonly class DynamicInjection implements Injection
 
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
-        $pattern = '/(?<match>\<(?<tag>mod|fg|bg)=(?<mod>[a-zA-Z]+)\>(.|\n)*?\<\/\k<tag>\>)/';
+        $pattern = '/(?<match>\<style=\"(?<styles>(?:[a-z-]+\s*)+)\"\>(.|\n)*\<\/style\>)/';
 
         $result = preg_replace_callback(
             pattern: $pattern,
             callback: function ($matches) use ($highlighter, $pattern) {
-                $content = $matches['match'];
-                $tag = $matches['tag'];
-                $mod = $matches['mod'];
-                $token = new DynamicTokenType($tag, $mod);
                 $theme = $highlighter->getTheme();
+                $content = $matches['match'];
+                $styles = $matches['styles'];
+                $before = '';
+                $after = '';
+
+                foreach (explode(' ', $styles) as $style) {
+                    $token = new DynamicTokenType($style);
+                    $before .= $theme->before($token);
+                    $after .= $theme->after($token);
+                }
 
                 $result = str_replace(
                     search: $content,
-                    replace: str_replace(
-                        search: ["<{$tag}={$mod}>", "</{$tag}>"],
-                        replace: [$theme->before($token), $theme->after($token)],
-                        subject: $content
-                    ),
+                    replace: str($content)
+                        ->replaceFirst("<style=\"{$styles}\">", $before)
+                        ->replaceLast("</style>", $after)
+                        ->toString(),
                     subject: $matches[0],
                 );
 

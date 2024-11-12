@@ -11,30 +11,22 @@ use function Tempest\Support\str;
 final readonly class DynamicTokenType implements TokenType
 {
     public function __construct(
-        private string $tag,
-        private string $mod,
+        private string $style,
     ) {
     }
 
     public function getStyle(): TerminalStyle
     {
+        $normalizedStyle = str($this->style)
+            ->lower()
+            ->replace(['_', '-'], '');
+
         foreach (TerminalStyle::cases() as $case) {
-            $styleName = str($case->name)->lower();
+            $normalizedCase = str($case->name)
+                ->lower()
+                ->replace(['_', '-'], '');
 
-            if ($this->tag === 'mod' && $styleName->replace('_', '')->equals($this->mod)) {
-                return $case;
-            }
-
-            if (! $styleName->startsWith("{$this->tag}_")) {
-                continue;
-            }
-
-            $mod = $styleName
-                ->replaceStart('fg_', '')
-                ->replaceStart('bg_', '')
-                ->replace('_', '');
-
-            if ($mod->equals($this->mod)) {
+            if ($normalizedCase->equals($normalizedStyle)) {
                 return $case;
             }
         }

@@ -16,15 +16,15 @@ use Tempest\Highlight\Highlighter;
  */
 final class TempestConsoleLanguageTest extends TestCase
 {
-    #[TestWith(['<fg=cyan>foo</fg>', "\e[96mfoo\e[0m"])]
-    #[TestWith(['<fg=darkcyan>foo</fg>', "\e[36mfoo\e[0m"])]
-    #[TestWith(['<bg=red>foo</bg>', "\e[101mfoo\e[0m"])]
-    #[TestWith(['<bg=darkred>foo</bg>', "\e[41mfoo\e[0m"])]
-    #[TestWith(['<mod=bold>foo</mod>', "\e[1mfoo\e[0m"])]
-    #[TestWith(['<mod=underline>foo</mod>', "\e[4mfoo\e[0m"])]
-    #[TestWith(['<mod=reset>foo</mod>', "\e[0mfoo\e[0m"])]
-    #[TestWith(['<mod=reversetext>foo</mod>', "\e[7mfoo\e[0m"])]
-    #[TestWith(['<bg=darkcyan><fg=cyan><mod=underline>Tempest</mod></fg></bg>', "\e[46m\e[96m\e[4mTempest\e[0m\e[0m\e[0m"])]
+    #[TestWith(['<style="fg-cyan">foo</style>', "\e[96mfoo\e[0m"])]
+    #[TestWith(['<style="bg-red">foo</style>', "\e[101mfoo\e[0m"])]
+    #[TestWith(['<style="bold">foo</style>', "\e[1mfoo\e[0m"])]
+    #[TestWith(['<style="underline">foo</style>', "\e[4mfoo\e[0m"])]
+    #[TestWith(['<style="reset">foo</style>', "\e[0mfoo\e[0m"])]
+    #[TestWith(['<style="reverse-text">foo</style>', "\e[7mfoo\e[0m"])]
+    #[TestWith(['<style="bg-darkcyan fg-cyan underline">Tempest</style>', "\e[46m\e[96m\e[4mTempest\e[0m\e[0m\e[0m"])]
+    #[TestWith(['<style="bg-dark-cyan fg-cyan underline">Tempest</style>', "\e[46m\e[96m\e[4mTempest\e[0m\e[0m\e[0m"])]
+    #[TestWith(['<style="fg-cyan"><style="bg-dark-red">foo</style></style>', "\e[96m\e[41mfoo\e[0m\e[0m"])]
     #[Test]
     public function language(string $content, string $expected): void
     {
