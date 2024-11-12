@@ -73,7 +73,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * @param int $size The size of each chunk.
      * @param bool $preserveKeys Whether to preserve the keys of the original array.
      *
-     * @return self<TKey, TValue>
+     * @return self<array-key, self>
      */
     public function chunk(int $size, bool $preserveKeys = true): self
     {
@@ -82,7 +82,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
 
         $chunks = [];
-
         foreach (array_chunk($this->array, $size, $preserveKeys) as $chunk) {
             $chunks[] = new self($chunk);
         }
