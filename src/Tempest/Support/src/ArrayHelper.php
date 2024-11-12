@@ -45,6 +45,27 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Reduce the array to a single value using a callback.
+     *
+     * @template TReduceInitial
+     * @template TReduceReturnType
+     * 
+     * @param callable(TReduceInitial|TReduceReturnType, TValue, TKey): TReduceReturnType $callback
+     * @param TReduceInitial $initial
+     * 
+     * @return TReduceReturnType
+     */
+    public function reduce(callable $callback, mixed $initial = null): mixed {
+        $result = $initial;
+
+        foreach ($this->array as $key => $value) {
+            $result = $callback($result, $value, $key);
+        }
+
+        return $result;
+    }
+
+    /**
      * Gets a value from the array and remove it.
      *
      * @param array-key $key

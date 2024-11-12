@@ -1381,4 +1381,40 @@ final class ArrayHelperTest extends TestCase
             actual: $array->sortKeysByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
         );
     }
+
+    public function test_basic_reduce(): void
+    {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertSame(
+            actual: $collection->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'Hello'),
+            expected: 'Hello John Doe 42',
+        );
+    }
+
+    public function test_reduce_with_existing_function(): void
+    {
+        $collection = arr([
+            [1, 2, 2, 3],
+            [2, 3, 3, 4],
+            [3, 1, 3, 1]
+        ]);
+
+        $this->assertSame(
+            actual: $collection->reduce('max'),
+            expected: [3, 1, 3, 1],
+        );
+    }
+
+    public function test_empty_array_reduce(): void
+    {
+        $this->assertSame(
+            actual: arr()->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'default'),
+            expected: 'default',
+        );
+    }
 }
