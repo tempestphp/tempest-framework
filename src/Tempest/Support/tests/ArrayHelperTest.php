@@ -1417,4 +1417,67 @@ final class ArrayHelperTest extends TestCase
             expected: 'default',
         );
     }
+
+    public function test_chunk(): void
+    {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(2, preserveKeys: false)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [1, 2],
+                [3, 4],
+                [5, 6],
+                [7, 8],
+                [9, 10],
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(3, preserveKeys: false)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                [10],
+            ],
+        );
+    }
+
+    public function test_chunk_preserve_keys(): void {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(2)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [0 => 1, 1 => 2],
+                [2 => 3, 3 => 4],
+                [4 => 5, 5 => 6],
+                [6 => 7, 7 => 8],
+                [8 => 9, 9 => 10],
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(3)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [0 => 1, 1 => 2, 2 => 3],
+                [3 => 4, 4 => 5, 5 => 6],
+                [6 => 7, 7 => 8, 8 => 9],
+                [9 => 10],
+            ],
+        );
+    }
 }

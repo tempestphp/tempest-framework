@@ -44,6 +44,29 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
     }
 
+
+    /**
+     * Chunk the array into chunks of the given size.
+     *
+     * @param integer $size The size of each chunk.
+     * @param bool $preserveKeys Whether to preserve the keys of the original array.
+     *
+     * @return self<TKey, TValue>
+     */
+    public function chunk(int $size, bool $preserveKeys = true): self {
+        if ( $size <= 0 ) {
+            return new self;
+        }
+
+        $chunks = [];
+
+        foreach ( array_chunk($this->array, $size, $preserveKeys) as $chunk ) {
+            $chunks[] = new self($chunk);
+        }
+
+        return new self($chunks);
+    }
+
     /**
      * Reduce the array to a single value using a callback.
      *
