@@ -7,7 +7,7 @@ namespace Tempest\Http\Routing\Matching;
 use RuntimeException;
 use Tempest\Http\Routing\Construction\MarkedRoute;
 
-final readonly class MatchingRegexes
+final readonly class MatchingRegex
 {
     /**
      * @param string[] $patterns

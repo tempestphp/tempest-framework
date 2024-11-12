@@ -6,21 +6,21 @@ namespace Tempest\Http\Tests\Routing\Matching;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\Routing\Matching\MatchingRegexes;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 use Tempest\Http\Routing\Matching\RouteMatch;
 
 /**
  * @internal
  */
-final class MatchingRegexesTest extends TestCase
+final class MatchingRegexTest extends TestCase
 {
-    private MatchingRegexes $subject;
+    private MatchingRegex $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->subject = new MatchingRegexes([
+        $this->subject = new MatchingRegex([
             '#^(a)(*MARK:a)$#',
             '#^(b)(*MARK:b)$#',
             '#^(c)(*MARK:c)$#',
@@ -29,7 +29,7 @@ final class MatchingRegexesTest extends TestCase
 
     public function test_empty(): void
     {
-        $subject = new MatchingRegexes([]);
+        $subject = new MatchingRegex([]);
 
         $this->assertEquals(RouteMatch::notFound(), $subject->match(''));
     }
@@ -41,7 +41,7 @@ final class MatchingRegexesTest extends TestCase
     {
         $match = $this->subject->match($expectedMatch);
 
-        $this->assertTrue($match->isFound);
+        $this->assertTrue($match->isFound());
         $this->assertEquals($expectedMatch, $match->mark);
         $this->assertEquals($expectedMatch, $match->matches[1]);
     }

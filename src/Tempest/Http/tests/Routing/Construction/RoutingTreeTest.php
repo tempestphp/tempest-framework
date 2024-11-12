@@ -10,7 +10,7 @@ use Tempest\Http\Route;
 use Tempest\Http\Routing\Construction\DuplicateRouteException;
 use Tempest\Http\Routing\Construction\MarkedRoute;
 use Tempest\Http\Routing\Construction\RoutingTree;
-use Tempest\Http\Routing\Matching\MatchingRegexes;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 /**
  * @internal
@@ -42,7 +42,7 @@ final class RoutingTreeTest extends TestCase
         $subject->add(new MarkedRoute('e', new Route('/{greeting}/brent', Method::GET)));
 
         $this->assertEquals([
-            'GET' => new MatchingRegexes([
+            'GET' => new MatchingRegex([
                 '#^(?|\/?$(*MARK:a)|/([^/]++)(?|/brent\/?$(*MARK:e)|/hello(?|/brent\/?$(*MARK:c)|/([^/]++)\/?$(*MARK:b))|/([^/]++)\/?$(*MARK:d)))#',
             ]),
         ], $subject->toMatchingRegexes());
@@ -61,8 +61,8 @@ final class RoutingTreeTest extends TestCase
         $matchingRegexes = $subject->toMatchingRegexes()['GET'];
         $this->assertGreaterThan(1, count($matchingRegexes->patterns));
 
-        $this->assertTrue($matchingRegexes->match('/test/0/route_0')->isFound);
-        $this->assertTrue($matchingRegexes->match('/test/1000/route_1000')->isFound);
+        $this->assertTrue($matchingRegexes->match('/test/0/route_0')->isFound());
+        $this->assertTrue($matchingRegexes->match('/test/1000/route_1000')->isFound());
     }
 
     public function test_multiple_http_methods(): void
@@ -72,8 +72,8 @@ final class RoutingTreeTest extends TestCase
         $subject->add(new MarkedRoute('b', new Route('/', Method::POST)));
 
         $this->assertEquals([
-            'GET' => new MatchingRegexes(['#^\/?$(*MARK:a)#']),
-            'POST' => new MatchingRegexes(['#^\/?$(*MARK:b)#']),
+            'GET' => new MatchingRegex(['#^\/?$(*MARK:a)#']),
+            'POST' => new MatchingRegex(['#^\/?$(*MARK:b)#']),
         ], $subject->toMatchingRegexes());
     }
 }

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
-use Tempest\Http\Routing\Matching\MatchingRegexes;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
-final readonly class RouteMatchingRegexesBuilder
+final readonly class RouteMatchingRegexBuilder
 {
     // This limit is guesstimated using a small script with an ever in pattern feed into preg_match
-    private const int PREG_REGEX_SIZE_LIMIT = 32764;
+    private const int PREG_REGEX_SIZE_LIMIT = 32768;
 
-    private const int REGEX_SIZE_MARGIN = 264;
+    private const int REGEX_SIZE_MARGIN = 256;
 
     private const REGEX_SIZE_LIMIT = self::PREG_REGEX_SIZE_LIMIT - self::REGEX_SIZE_MARGIN;
 
@@ -19,7 +19,7 @@ final readonly class RouteMatchingRegexesBuilder
     {
     }
 
-    public function toRegex(): MatchingRegexes
+    public function toRegex(): MatchingRegex
     {
         // Holds all regex "chunks"
         $regexes = [];
@@ -101,7 +101,7 @@ final readonly class RouteMatchingRegexesBuilder
         }
 
         // Return all regex chunks including the current one
-        return new MatchingRegexes([
+        return new MatchingRegex([
             ...$regexes,
             '#' . substr($regex, 1) . '#',
         ]);

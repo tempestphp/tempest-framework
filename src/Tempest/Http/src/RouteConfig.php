@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Http\Routing\Matching\MatchingRegexes;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 final class RouteConfig
 {
@@ -13,7 +13,7 @@ final class RouteConfig
         public array $staticRoutes = [],
         /** @var array<string, array<string, Route>> */
         public array $dynamicRoutes = [],
-        /** @var array<string, MatchingRegexes> */
+        /** @var array<string, MatchingRegex> */
         public array $matchingRegexes = [],
     ) {
     }
