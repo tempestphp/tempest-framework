@@ -68,7 +68,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Chunk the array into chunks of the given size.
+     * Chunks the array into chunks of the given size.
      *
      * @param int $size The size of each chunk.
      * @param bool $preserveKeys Whether to preserve the keys of the original array.
