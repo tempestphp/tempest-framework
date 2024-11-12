@@ -10,7 +10,7 @@ use Stringable;
 
 final class GenericLogger implements Logger
 {
-    /** @var array<class-string, Monolog> */
+    /** @var array<int, Monolog> */
     private array $drivers = [];
 
     public function __construct(
@@ -74,14 +74,14 @@ final class GenericLogger implements Logger
 
     private function resolveDriver(LogChannel $channel, Level $level): Monolog
     {
-        if (! isset($this->drivers[$channel::class])) {
-            $this->drivers[$channel::class] = new Monolog(
+        if (! isset($this->drivers[spl_object_id($channel)])) {
+            $this->drivers[spl_object_id($channel)] = new Monolog(
                 name: $this->logConfig->prefix,
                 handlers: $channel->getHandlers($level),
                 processors: $channel->getProcessors(),
             );
         }
 
-        return $this->drivers[$channel::class];
+        return $this->drivers[spl_object_id($channel)];
     }
 }
