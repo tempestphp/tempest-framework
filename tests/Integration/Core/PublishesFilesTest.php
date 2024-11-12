@@ -11,6 +11,8 @@ use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\path;
+
 /**
  * @internal
  */
@@ -43,6 +45,7 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
     ): void {
         $composer = $this->container->get(Composer::class);
         $concreteClass = $this->container->get(PublishesFilesConcreteClass::class);
+        $appPath = str_replace( '\\', '/', $composer->mainNamespace->path ); // Normalize windows path
 
         $this->assertSame(
             actual: $concreteClass->getSuggestedPath(
@@ -50,7 +53,7 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
                 pathPrefix: $pathPrefix,
                 classSuffix: $classSuffix
             ),
-            expected: $composer->mainNamespace->path . '/' . $expected
+            expected: path($appPath, $expected)
         );
     }
 
