@@ -10,6 +10,7 @@ use Countable;
 use Generator;
 use InvalidArgumentException;
 use Iterator;
+use PhpParser\Node\Expr\Instanceof_;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
@@ -44,6 +45,27 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
     }
 
+    /**
+     * Search for a given value in the array and return the corresponding key if successful.
+     *
+     * @param \Closure|mixed $value The value to search for, a Closure will check the first item that returns true.
+     * @param boolean $strict Whether to use strict comparison.
+     *
+     * @return array-key|false The key for `$value` if found, otherwise `false`.
+     */
+    public function search(mixed $value, bool $strict = false): int|string|false {
+        if ( ! $value instanceof Closure ) {
+            return array_search($value, $this->array, $strict);
+        }
+
+        foreach ($this->array as $key => $item) {
+            if ($value($item, $key) === true) {
+                return $key;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Chunk the array into chunks of the given size.
