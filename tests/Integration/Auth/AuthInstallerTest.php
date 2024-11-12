@@ -55,5 +55,10 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
             'App/Auth/User.php',
             'use App\Auth\UserPermission',
         );
+
+        $this->installer->assertFileContains(
+            'App/Auth/User.php',
+            '/** @var \App\Auth\UserPermission[] $userPermissions */',
+        );
     }
 }

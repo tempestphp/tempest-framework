@@ -19,6 +19,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Routing\Matching\RouteMatcher;
 use function Tempest\map;
 use Tempest\Reflection\ClassReflector;
+use function Tempest\Support\str;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
@@ -125,11 +126,11 @@ final class GenericRouter implements Router
             $uri = $action;
         }
 
+        $uri = str($uri);
         $queryParams = [];
 
-
         foreach ($params as $key => $value) {
-            if (! str_contains($uri, sprintf('{%s', $key))) {
+            if (! $uri->matches(sprintf('/\{%s(\}|:)/', $key))) {
                 $queryParams[$key] = $value;
 
                 continue;
@@ -139,17 +140,19 @@ final class GenericRouter implements Router
                 $value = $value->value;
             }
 
-            $pattern = '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
-            $uri = preg_replace($pattern, (string)$value, $uri);
+            $uri = $uri->replaceRegex(
+                '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
+                (string)$value
+            );
         }
 
-        $uri = rtrim($this->appConfig->baseUri, '/') . $uri;
+        $uri = $uri->prepend(rtrim($this->appConfig->baseUri, '/'));
 
         if ($queryParams !== []) {
-            return $uri . '?' . http_build_query($queryParams);
+            return $uri->append('?' . http_build_query($queryParams))->toString();
         }
 
-        return $uri;
+        return $uri->toString();
     }
 
     private function createResponse(Response|View $input): Response
