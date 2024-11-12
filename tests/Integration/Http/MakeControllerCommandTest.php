@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Core\ComposerNamespace;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @internal
@@ -29,36 +31,40 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    public function test_make_with_defaults(): void
-    {
+    #[Test]
+    #[DataProvider('command_input_provider')]
+    public function make_command(
+        string $commandArgs,
+        string $expectedPath,
+        string $expectedNamespace
+    ): void {
         $this->console
-            ->call('make:controller BookController')
+            ->call("make:controller {$commandArgs}")
             ->submit();
 
         $this->installer
-            ->assertFileExists('App/BookController.php')
-            ->assertFileContains('App/BookController.php', 'namespace App;');
+            ->assertFileExists($expectedPath)
+            ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';');
     }
 
-    public function test_make_with_other_namespace(): void
+    public static function command_input_provider(): array
     {
-        $this->console
-            ->call('make:controller Books\\BookController')
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/Books/BookController.php')
-            ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');
-    }
-
-    public function test_make_with_input_path(): void
-    {
-        $this->console
-            ->call('make:controller Books/BookController')
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/Books/BookController.php')
-            ->assertFileContains('App/Books/BookController.php', 'namespace App\\Books;');
+        return [
+            'make_with_defaults' => [
+                'commandArgs' => 'BookController',
+                'expectedPath' => 'App/BookController.php',
+                'expectedNamespace' => 'App'
+            ],
+            'make_with_other_namespace' => [
+                'commandArgs' => 'Books\\BookController',
+                'expectedPath' => 'App/Books/BookController.php',
+                'expectedNamespace' => 'App\\Books'
+            ],
+            'make_with_input_path' => [
+                'commandArgs' => 'Books/BookController',
+                'expectedPath' => 'App/Books/BookController.php',
+                'expectedNamespace' => 'App\\Books'
+            ]
+        ];
     }
 }
