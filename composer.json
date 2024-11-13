@@ -117,6 +117,7 @@
             "Tempest\\Cache\\Tests\\": "src/Tempest/Cache/tests",
             "Tempest\\Clock\\Tests\\": "src/Tempest/Clock/tests",
             "Tempest\\CommandBus\\Tests\\": "src/Tempest/CommandBus/tests",
+            "Tempest\\Console\\Tests\\": "src/Tempest/Console/tests",
             "Tempest\\Container\\Tests\\": "src/Tempest/Container/tests",
             "Tempest\\Core\\Tests\\": "src/Tempest/Core/tests",
             "Tempest\\Database\\Tests\\": "src/Tempest/Database/tests",

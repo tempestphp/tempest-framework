@@ -21,6 +21,11 @@
             "Tempest\\Console\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Console\\Tests\\": "tests"
+        }
+    },
     "bin": [
         "bin/tempest"
     ]
