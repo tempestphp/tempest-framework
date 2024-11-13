@@ -1495,11 +1495,9 @@ final class ArrayHelperTest extends TestCase
     {
         $collection = arr([1, '1', 2, '2']);
 
-        // Non-strict
         $this->assertSame(0, $collection->search(1, strict: false));
         $this->assertSame(0, $collection->search('1', strict: false));
 
-        // Strict
         $this->assertSame(0, $collection->search(1, strict: true));
         $this->assertSame(1, $collection->search('1', strict: true));
     }
@@ -1512,15 +1510,12 @@ final class ArrayHelperTest extends TestCase
             ['id' => 3, 'name' => 'Bob'],
         ]);
 
-        // Recherche par condition
         $result = $collection->search(fn ($item) => $item['name'] === 'Jane');
         $this->assertSame(1, $result);
 
-        // Recherche avec clé
         $result = $collection->search(fn ($item, $key) => $key === 2);
         $this->assertSame(2, $result);
 
-        // Recherche qui échoue
         $result = $collection->search(fn ($item) => $item['name'] === 'Alice');
         $this->assertFalse($result);
     }
