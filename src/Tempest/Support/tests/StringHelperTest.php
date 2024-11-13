@@ -484,12 +484,12 @@ b'));
 
     public function test_limit(): void
     {
-        $this->assertSame('Lorem', str('Lorem ipsum')->limit(5)->toString());
-        $this->assertSame('Lorem...', str('Lorem ipsum')->limit(5, end: '...')->toString());
-        $this->assertSame('...', str('Lorem ipsum')->limit(0, end: '...')->toString());
-        $this->assertSame('L...', str('Lorem ipsum')->limit(1, end: '...')->toString());
-        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100)->toString());
-        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->limit(100, end: '...')->toString());
+        $this->assertSame('Lorem', str('Lorem ipsum')->truncate(5)->toString());
+        $this->assertSame('Lorem...', str('Lorem ipsum')->truncate(5, end: '...')->toString());
+        $this->assertSame('...', str('Lorem ipsum')->truncate(0, end: '...')->toString());
+        $this->assertSame('L...', str('Lorem ipsum')->truncate(1, end: '...')->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncate(100)->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncate(100, end: '...')->toString());
     }
 
     public function test_substr(): void

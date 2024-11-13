@@ -657,20 +657,20 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Limits the number of characters of the instance.
+     * Truncates the instance to the specified amount of characters.
      *
      * ### Example
      * ```php
-     * str('Lorem ipsum')->limit(5, end: '...'); // Lorem...
+     * str('Lorem ipsum')->truncate(5, end: '...'); // Lorem...
      * ```
      */
-    public function limit(int $characters, string $end = ''): self
+    public function truncate(int $characters, string $end = ''): self
     {
         if (mb_strwidth($this->string, 'UTF-8') <= $characters) {
             return $this;
         }
 
-        return new self(rtrim(mb_strimwidth($this->string, 0, $characters, '', 'UTF-8')) . $end);
+        return new self(rtrim(mb_strimwidth($this->string, 0, $characters, encoding: 'UTF-8')) . $end);
     }
 
     /**
