@@ -1382,6 +1382,66 @@ final class ArrayHelperTest extends TestCase
         );
     }
 
+    public function test_flatten(): void
+    {
+        $this->assertTrue(arr(['#foo', '#bar', '#baz'])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', '#bar'], '#baz'])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', null], '#baz', null])->flatten()->equals(['#foo', null, '#baz', null]));
+        $this->assertTrue(arr([['#foo', '#bar'], ['#baz']])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', ['#bar']], ['#baz']])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten()->equals(['#foo', '#bar', '#baz', '#zap']));
+
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten(depth: 1)->equals(['#foo', ['#bar', ['#baz']], '#zap']));
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten(depth: 2)->equals(['#foo', '#bar', ['#baz'], '#zap']));
+    }
+
+    public function test_flatmap(): void
+    {
+        // basic
+        $this->assertTrue(
+            arr([
+                ['name' => 'Makise', 'hobbies' => ['Science', 'Programming']],
+                ['name' => 'Okabe', 'hobbies' => ['Science', 'Anime']],
+            ])->flatMap(fn (array $person) => $person['hobbies'])
+                ->equals(['Science', 'Programming', 'Science', 'Anime']),
+        );
+
+        // deeply nested
+        $likes = arr([
+            ['name' => 'Enzo', 'likes' => [
+                'manga' => ['Tower of God', 'The Beginning After The End'],
+                'languages' => ['PHP', 'TypeScript'],
+            ]],
+            ['name' => 'Jon', 'likes' => [
+                'manga' => ['One Piece', 'Naruto'],
+                'languages' => ['Python'],
+            ]],
+        ]);
+
+        $this->assertTrue(
+            $likes->flatMap(fn (array $person) => $person['likes'], depth: 1)
+                ->equals([
+                    ['Tower of God', 'The Beginning After The End'],
+                    ['PHP', 'TypeScript'],
+                    ['One Piece', 'Naruto'],
+                    ['Python'],
+                ]),
+        );
+
+        $this->assertTrue(
+            $likes->flatMap(fn (array $person) => $person['likes'], depth: INF)
+                ->equals([
+                    'Tower of God',
+                    'The Beginning After The End',
+                    'PHP',
+                    'TypeScript',
+                    'One Piece',
+                    'Naruto',
+                    'Python',
+                ]),
+        );
+    }
+
     public function test_basic_reduce(): void
     {
         $collection = arr([
