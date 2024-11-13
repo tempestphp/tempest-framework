@@ -32,6 +32,10 @@ final readonly class RenderConsoleCommand
 
     private function renderArgument(ConsoleArgumentDefinition $argument): string
     {
+        if ($argument->isBackedEnum()) {
+            return $this->renderEnumArgument($argument);
+        }
+
         $name = str($argument->name)
             ->prepend('<em>')
             ->append('</em>');
@@ -52,5 +56,25 @@ final readonly class RenderConsoleCommand
             is_array($argument->default) => "[{$asString}=array]",
             default => "[{$asString}={$argument->default}]"
         };
+    }
+
+    private function renderEnumArgument(ConsoleArgumentDefinition $argument): string
+    {
+        $enum = $argument->type;
+        $values = $enum::cases();
+        $parts = [];
+
+        foreach ($values as $value) {
+            $parts[] = $value->value;
+        }
+
+        $partsAsString = ' {<em>' . implode('|', $parts) . '</em>}';
+        $line = "<em>{$argument->name}</em>";
+
+        if ($argument->hasDefault) {
+            return "[{$line}={$argument->default->value}{$partsAsString}]";
+        }
+
+        return "<{$line}{$partsAsString}>";
     }
 }
