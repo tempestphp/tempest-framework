@@ -20,41 +20,33 @@ final readonly class DynamicInjection implements Injection
 
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
-        $pattern = '/(?<match>\<style=\"(?<styles>(?:[a-z-]+\s*)+)\"\>(.|\n)*\<\/style\>)/';
+        $pattern = '/(?<match>\<style=\"(?<styles>(?:[a-z-]+\s*)+)\"\>(?:(?!\<style).|\n)*?\<\/style\>)/';
 
-        $result = preg_replace_callback(
-            pattern: $pattern,
-            callback: function ($matches) use ($highlighter, $pattern) {
-                $theme = $highlighter->getTheme();
-                $content = $matches['match'];
-                $styles = $matches['styles'];
-                $before = '';
-                $after = '';
+        do {
+            $content = preg_replace_callback(
+                subject: $content,
+                pattern: $pattern,
+                callback: function ($matches) use ($highlighter) {
+                    $theme = $highlighter->getTheme();
+                    $match = $matches['match'];
+                    $styles = $matches['styles'];
+                    $before = '';
+                    $after = '';
 
-                foreach (explode(' ', $styles) as $style) {
-                    $token = new DynamicTokenType($style);
-                    $before .= $theme->before($token);
-                    $after .= $theme->after($token);
-                }
+                    foreach (explode(' ', $styles) as $style) {
+                        $token = new DynamicTokenType($style);
+                        $before .= $theme->before($token);
+                        $after .= $theme->after($token);
+                    }
 
-                $result = str_replace(
-                    search: $content,
-                    replace: str($content)
+                    return str($match)
                         ->replaceFirst("<style=\"{$styles}\">", $before)
                         ->replaceLast("</style>", $after)
-                        ->toString(),
-                    subject: $matches[0],
-                );
-
-                if (preg_match($pattern, $result)) {
-                    return $this->parse($result, $highlighter)->content;
+                        ->toString();
                 }
+            );
+        } while (preg_match($pattern, $content));
 
-                return $result;
-            },
-            subject: $content,
-        );
-
-        return new ParsedInjection($result ?? $content);
+        return new ParsedInjection($content);
     }
 }
