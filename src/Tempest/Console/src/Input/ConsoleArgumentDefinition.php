@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Input;
 
+use BackedEnum;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Reflection\ParameterReflector;
 use function Tempest\Support\str;
@@ -69,5 +70,10 @@ final readonly class ConsoleArgumentDefinition
         }
 
         return $normalizedName->toString();
+    }
+
+    public function isBackedEnum(): bool
+    {
+        return is_subclass_of($this->type, BackedEnum::class);
     }
 }
