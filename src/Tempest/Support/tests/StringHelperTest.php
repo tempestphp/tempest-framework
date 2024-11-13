@@ -522,16 +522,16 @@ b'));
         $this->assertSame(['foo', 'bar', 'baz', '22'], str('foobarbaz22')->split(3)->toArray());
     }
 
-    public function test_insert(): void
+    public function test_insert_at(): void
     {
-        $this->assertSame('foo', str()->insert(0, 'foo')->toString());
-        $this->assertSame('foo', str()->insert(-1, 'foo')->toString());
-        $this->assertSame('foo', str()->insert(100, 'foo')->toString());
-        $this->assertSame('foo', str()->insert(-100, 'foo')->toString());
-        $this->assertSame('foobar', str('bar')->insert(0, 'foo')->toString());
-        $this->assertSame('barfoo', str('bar')->insert(3, 'foo')->toString());
-        $this->assertSame('foobarbaz', str('foobaz')->insert(3, 'bar')->toString());
-        $this->assertSame('123', str('13')->insert(-1, '2')->toString());
+        $this->assertSame('foo', str()->insertAt(0, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(-1, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(100, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(-100, 'foo')->toString());
+        $this->assertSame('foobar', str('bar')->insertAt(0, 'foo')->toString());
+        $this->assertSame('barfoo', str('bar')->insertAt(3, 'foo')->toString());
+        $this->assertSame('foobarbaz', str('foobaz')->insertAt(3, 'bar')->toString());
+        $this->assertSame('123', str('13')->insertAt(-1, '2')->toString());
     }
 
     public function test_replace_at(): void

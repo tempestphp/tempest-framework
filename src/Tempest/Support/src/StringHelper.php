@@ -763,10 +763,10 @@ final readonly class StringHelper implements Stringable
      *
      * ### Example
      * ```php
-     * str('Lorem ipsum sit amet')->insert(11, ' dolor'); // Lorem ipsum dolor sit amet
+     * str('Lorem ipsum sit amet')->insertAt(11, ' dolor'); // Lorem ipsum dolor sit amet
      * ```
      */
-    public function insert(int $position, string $string): self
+    public function insertAt(int $position, string $string): self
     {
         return new self(
             mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
