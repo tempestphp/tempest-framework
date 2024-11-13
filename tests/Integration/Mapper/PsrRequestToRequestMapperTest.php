@@ -113,4 +113,23 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('hello', $upload->getClientFilename());
         $this->assertSame('application/octet-stream', $upload->getClientMediaType());
     }
+
+    public function test_json_parse(): void
+    {
+        $mapper = new PsrRequestToRequestMapper();
+
+        $request = $mapper->map(
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                rawBody: '{"title": "a", "text": "b"}',
+                headers: ['content-type' => 'application/json'],
+            ),
+            to: PostRequest::class,
+        );
+
+        $this->assertInstanceOf(PostRequest::class, $request);
+        $this->assertEquals('a', $request->title);
+        $this->assertEquals('b', $request->text);
+        $this->assertEquals(['content-type' => 'application/json'], $request->getHeaders());
+    }
 }

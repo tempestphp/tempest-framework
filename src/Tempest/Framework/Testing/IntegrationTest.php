@@ -83,6 +83,8 @@ abstract class IntegrationTest extends TestCase
     {
         parent::tearDown();
 
+        $this->http->reset();
+
         unset($this->root);
         unset($this->discoveryLocations);
         unset($this->appConfig);
