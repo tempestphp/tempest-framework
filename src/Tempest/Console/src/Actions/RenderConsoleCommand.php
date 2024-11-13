@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
+use BackedEnum;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
@@ -60,13 +61,10 @@ final readonly class RenderConsoleCommand
 
     private function renderEnumArgument(ConsoleArgumentDefinition $argument): string
     {
-        $enum = $argument->type;
-        $values = $enum::cases();
-        $parts = [];
-
-        foreach ($values as $value) {
-            $parts[] = $value->value;
-        }
+        $parts = array_map(
+            callback: fn (BackedEnum $case) => $case->value,
+            array: $argument->type::cases()
+        );
 
         $partsAsString = ' {<em>' . implode('|', $parts) . '</em>}';
         $line = "<em>{$argument->name}</em>";

@@ -114,21 +114,25 @@ final class ConsoleArgumentBag
         ConsoleArgumentDefinition $argumentDefinition,
         ConsoleInputArgument $argument,
     ): ConsoleInputArgument {
-        if ($argumentDefinition->isBackedEnum()) {
-            $resolved = $argumentDefinition->type::tryFrom($argument->value);
-
-            if ($resolved === null) {
-                throw new InvalidEnumArgument(
-                    $argumentDefinition->name,
-                    $argumentDefinition->type,
-                    $argument->value,
-                );
-            }
-
-            $argument->value = $resolved;
+        if (! $argumentDefinition->isBackedEnum()) {
+            return $argument;
         }
 
-        return $argument;
+        $resolved = $argumentDefinition->type::tryFrom($argument->value);
+
+        if ($resolved === null) {
+            throw new InvalidEnumArgument(
+                $argumentDefinition->name,
+                $argumentDefinition->type,
+                $argument->value,
+            );
+        }
+
+        return new ConsoleInputArgument(
+            name: $argumentDefinition->name,
+            position: $argumentDefinition->position,
+            value: $resolved,
+        );
     }
 
     public function findArrayFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
