@@ -28,7 +28,7 @@ final readonly class SetStatement implements QueryStatement
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` SET (%s) %s %s',
                 $this->name,
-                implode(',', $this->values),
+                "'" . implode(',', ${$this}->values) . "'",
                 $this->default ? "DEFAULT '$this->default'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
