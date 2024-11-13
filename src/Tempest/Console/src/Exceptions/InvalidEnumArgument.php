@@ -25,10 +25,9 @@ final class InvalidEnumArgument extends ConsoleException
 
     public function render(Console $console): void
     {
-        if (is_string($this->value)) {
+        if (is_string($this->value) || is_numeric($this->value)) {
             $value = "`{$this->value}`";
         } else {
-            // rather unreachable, but just in case
             $value = 'of type `' . gettype($this->value) . '`';
         }
 
