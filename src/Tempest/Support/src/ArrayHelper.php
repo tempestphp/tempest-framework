@@ -45,17 +45,19 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
-     * Search for a given value in the array and return the corresponding key if successful.
+     * Finds a value in the array and return the corresponding key if successful.
      *
-     * @param Closure|mixed $value The value to search for, a Closure will check the first item that returns true.
+     * @param (Closure(TValue, TKey): bool)|mixed $value The value to search for, a Closure will find the first item that returns true.
      * @param bool $strict Whether to use strict comparison.
      *
-     * @return array-key|false The key for `$value` if found, otherwise `false`.
+     * @return array-key|null The key for `$value` if found, `null` otherwise.
      */
-    public function search(mixed $value, bool $strict = false): int|string|false
+    public function findKey(mixed $value, bool $strict = false): int|string|null
     {
         if (! $value instanceof Closure) {
-            return array_search($value, $this->array, $strict);
+            $search = array_search($value, $this->array, $strict);
+
+            return $search === false ? null : $search; // Keep empty values but convert false to null
         }
 
         foreach ($this->array as $key => $item) {
@@ -64,7 +66,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
