@@ -45,6 +45,75 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Finds a value in the array and return the corresponding key if successful.
+     *
+     * @param (Closure(TValue, TKey): bool)|mixed $value The value to search for, a Closure will find the first item that returns true.
+     * @param bool $strict Whether to use strict comparison.
+     *
+     * @return array-key|null The key for `$value` if found, `null` otherwise.
+     */
+    public function findKey(mixed $value, bool $strict = false): int|string|null
+    {
+        if (! $value instanceof Closure) {
+            $search = array_search($value, $this->array, $strict);
+
+            return $search === false ? null : $search; // Keep empty values but convert false to null
+        }
+
+        foreach ($this->array as $key => $item) {
+            if ($value($item, $key) === true) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Chunks the array into chunks of the given size.
+     *
+     * @param int $size The size of each chunk.
+     * @param bool $preserveKeys Whether to preserve the keys of the original array.
+     *
+     * @return self<array-key, self>
+     */
+    public function chunk(int $size, bool $preserveKeys = true): self
+    {
+        if ($size <= 0) {
+            return new self();
+        }
+
+        $chunks = [];
+        foreach (array_chunk($this->array, $size, $preserveKeys) as $chunk) {
+            $chunks[] = new self($chunk);
+        }
+
+        return new self($chunks);
+    }
+
+    /**
+     * Reduces the array to a single value using a callback.
+     *
+     * @template TReduceInitial
+     * @template TReduceReturnType
+     *
+     * @param callable(TReduceInitial|TReduceReturnType, TValue, TKey): TReduceReturnType $callback
+     * @param TReduceInitial $initial
+     *
+     * @return TReduceReturnType
+     */
+    public function reduce(callable $callback, mixed $initial = null): mixed
+    {
+        $result = $initial;
+
+        foreach ($this->array as $key => $value) {
+            $result = $callback($result, $value, $key);
+        }
+
+        return $result;
+    }
+
+    /**
      * Gets a value from the array and remove it.
      *
      * @param array-key $key
