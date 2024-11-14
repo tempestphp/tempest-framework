@@ -13,15 +13,17 @@ use function str_contains;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
+use Tempest\Console\Terminal\Terminal;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Highlight\Languages\Json\JsonLanguage;
 use Tempest\Highlight\Languages\Php\PhpLanguage;
 use Tempest\Reflection\ClassReflector;
 use function var_export;
 
-final readonly class ConfigStatusCommand
+final readonly class ConfigShowCommand
 {
     use HasConsole;
+
     private const int MAX_JSON_DEPTH = 32;
 
     public function __construct(
@@ -29,12 +31,17 @@ final readonly class ConfigStatusCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'config:status', description: 'Show resolved configuration')]
+    #[ConsoleCommand(
+        name: 'config:show',
+        description: 'Show resolved configuration',
+        aliases: ['config'],
+    )]
     public function __invoke(
-        ConfigStatusFormat $format = ConfigStatusFormat::JSON,
+        ConfigShowFormat $format = ConfigShowFormat::PRETTY,
+        ?bool $search = false,
         ?string $filter = null,
     ): ExitCode {
-        $configs = $this->resolveConfig($filter);
+        $configs = $this->resolveConfig($filter, $search);
 
         if (empty($configs)) {
             $this->console->error('No configuration found');
@@ -43,9 +50,9 @@ final readonly class ConfigStatusCommand
         }
 
         match ($format) {
-            ConfigStatusFormat::DUMP => $this->dump($configs),
-            ConfigStatusFormat::JSON => $this->json($configs),
-            ConfigStatusFormat::FILE => $this->file($configs),
+            ConfigShowFormat::DUMP => $this->dump($configs),
+            ConfigShowFormat::PRETTY => $this->pretty($configs),
+            ConfigShowFormat::FILE => $this->file($configs),
         };
 
         return ExitCode::SUCCESS;
@@ -54,9 +61,9 @@ final readonly class ConfigStatusCommand
     /**
      * @return array<string, mixed>
      */
-    private function resolveConfig(?string $filter): array
+    private function resolveConfig(?string $filter, bool $search): array
     {
-        $configPaths = $this->loadConfig->load();
+        $configPaths = $this->loadConfig->find();
         $configs = [];
         $uniqueMap = [];
 
@@ -82,7 +89,43 @@ final readonly class ConfigStatusCommand
             $resolvedConfigs[$configPath] = $configs[$configPath];
         }
 
-        return $resolvedConfigs;
+        if (! $search) {
+            return $resolvedConfigs;
+        }
+
+        $selectedPath = $this->search($resolvedConfigs);
+
+        return [$selectedPath => $resolvedConfigs[$selectedPath]];
+    }
+
+    /**
+     * @param array<string, mixed> $configs
+     */
+    private function search(array $configs): string
+    {
+        $data = array_keys($configs);
+        sort($data);
+
+        $return = $this->console->search(
+            label: 'Which configuration file would you like to view?',
+            search: function (string $query) use ($data): array {
+                if ($query === '') {
+                    return $data;
+                }
+
+                return array_filter(
+                    array: $data,
+                    callback: fn (string $path) => str_contains($path, $query),
+                );
+            },
+            default: $data[0],
+        );
+
+        // FIXME: This is a workaround for SearchComponent not clearing the terminal properly
+        $terminal = new Terminal($this->console);
+        $terminal->cursor->clearAfter();
+
+        return $return;
     }
 
     /**
@@ -102,7 +145,7 @@ final readonly class ConfigStatusCommand
     /**
      * @param array<string, mixed> $configs
      */
-    private function json(array $configs): void
+    private function pretty(array $configs): void
     {
         $formatted = $this->formatForJson($configs);
 

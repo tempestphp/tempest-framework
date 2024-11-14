@@ -24,7 +24,7 @@ final readonly class LoadConfig
     {
         $configPaths = $this->cache->resolve(
             'config_cache',
-            fn () => $this->load()
+            fn () => $this->find()
         );
 
         foreach ($configPaths as $path) {
@@ -37,7 +37,7 @@ final readonly class LoadConfig
     /**
      * @return string[]
      */
-    public function load(): array
+    public function find(): array
     {
         $configPaths = [];
 

@@ -7,9 +7,9 @@ namespace Tempest\Framework\Commands;
 /**
  * @internal
  */
-enum ConfigStatusFormat: string
+enum ConfigShowFormat: string
 {
     case DUMP = 'dump';
-    case JSON = 'json';
+    case PRETTY = 'pretty';
     case FILE = 'file';
 }
