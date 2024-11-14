@@ -158,9 +158,10 @@ final readonly class ConfigStatusCommand
         foreach (array_keys($configs) as $path) {
             $this->console->writeln("<em>{$path}</em>");
             $this->console->writeWithLanguage(
-                file_get_contents($path) . PHP_EOL,
+                file_get_contents($path),
                 $phpLanguage,
             );
+            $this->console->writeln();
         }
     }
 }
