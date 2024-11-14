@@ -160,9 +160,9 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         $caster = $this->casterFactory->forProperty($property);
 
-        foreach ($data as $item) {
+        foreach ($data as $key => $item) {
             if (! is_array($item)) {
-                $values[] = $caster?->cast($item) ?? $item;
+                $values[$key] = $caster?->cast($item) ?? $item;
 
                 continue;
             }
