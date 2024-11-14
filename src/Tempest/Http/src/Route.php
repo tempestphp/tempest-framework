@@ -16,7 +16,7 @@ class Route
     public readonly bool $isDynamic;
 
     /** @var string[] Route parameters */
-    public readonly array $params;
+    public array $params;
 
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
@@ -48,7 +48,7 @@ class Route
     /** @return string[] */
     public static function getRouteParams(string $uriPart): array
     {
-        $regex = '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+        $regex = '#\{' . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         preg_match_all($regex, $uriPart, $matches);
 
@@ -58,15 +58,20 @@ class Route
     /**
      * Splits the route URI into separate segments
      *
-     * @example '/test/{id}/edit' becomes ['test', '{id}', 'edit']
      * @return string[]
+     * @example '/test/{id}/edit' becomes ['test', '{id}', 'edit']
      */
     public function split(): array
     {
         $parts = explode('/', $this->uri);
 
         return array_values(
-            array_filter($parts, static fn (string $part) => $part !== '')
+            array_filter($parts, static fn (string $part) => $part !== ''),
         );
+    }
+
+    public function setParams(array $params): self
+    {
+        $this->params = $params;
     }
 }

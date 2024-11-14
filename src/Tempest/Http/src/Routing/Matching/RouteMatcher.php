@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Http\Routing\Matching;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Tempest\Http\MatchedRoute;
+use Tempest\Http\Route;
 
 interface RouteMatcher
 {
-    public function match(PsrRequest $request): ?MatchedRoute;
+    public function match(PsrRequest $request): ?Route;
 }

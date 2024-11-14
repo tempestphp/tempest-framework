@@ -20,11 +20,11 @@ final class RouteModelBindingInitializer implements DynamicInitializer
 
     public function initialize(ClassReflector $class, Container $container): object
     {
-        $matchedRoute = $container->get(MatchedRoute::class);
+        $matchedRoute = $container->get(Route::class, tag: 'current');
 
         $parameter = null;
 
-        foreach ($matchedRoute->route->handler->getParameters() as $searchParameter) {
+        foreach ($matchedRoute->handler->getParameters() as $searchParameter) {
             if ($searchParameter->getType()->equals($class->getType())) {
                 $parameter = $searchParameter;
 

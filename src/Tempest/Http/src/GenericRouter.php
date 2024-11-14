@@ -51,8 +51,9 @@ final class GenericRouter implements Router
         }
 
         $this->container->singleton(
-            MatchedRoute::class,
-            fn () => $matchedRoute,
+            className: Route::class,
+            definition: fn () => $matchedRoute,
+            tag: 'current'
         );
 
         $callable = $this->getCallable($matchedRoute);
@@ -69,14 +70,12 @@ final class GenericRouter implements Router
         return $response;
     }
 
-    private function getCallable(MatchedRoute $matchedRoute): HttpMiddlewareCallable
+    private function getCallable(Route $route): HttpMiddlewareCallable
     {
-        $route = $matchedRoute->route;
-
-        $callControllerAction = function (Request $request) use ($route, $matchedRoute) {
+        $callControllerAction = function (Request $request) use ($route) {
             $response = $this->container->invoke(
                 $route->handler,
-                ...$matchedRoute->params,
+                ...$route->params,
             );
 
             if ($response === null) {
@@ -164,13 +163,13 @@ final class GenericRouter implements Router
         return $input;
     }
 
-    private function resolveRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
+    private function resolveRequest(PsrRequest $psrRequest, Route $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
         $requestClass = GenericRequest::class;
 
         // We'll loop over all the handler's parameters
-        foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
+        foreach ($matchedRoute->handler->getParameters() as $parameter) {
 
             // If the parameter's type is an instance of Request…
             if ($parameter->getType()->matches(Request::class)) {

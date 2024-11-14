@@ -5,26 +5,27 @@ declare(strict_types=1);
 namespace Tempest\Auth;
 
 use Tempest\Container\Container;
+use Tempest\Container\Tag;
 use Tempest\Http\HttpMiddleware;
 use Tempest\Http\HttpMiddlewareCallable;
-use Tempest\Http\MatchedRoute;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Forbidden;
+use Tempest\Http\Route;
 
 final readonly class AuthorizerMiddleware implements HttpMiddleware
 {
     public function __construct(
         private Authenticator $authenticator,
-        private MatchedRoute $matchedRoute,
+        #[Tag('current')]
+        private Route $currentRoute,
         private Container $container,
     ) {
     }
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $attribute = $this->matchedRoute
-            ->route
+        $attribute = $this->currentRoute
             ->handler
             ->getAttribute(Allow::class);
 

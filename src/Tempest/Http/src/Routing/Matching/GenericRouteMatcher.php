@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Http\Routing\Matching;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Tempest\Http\MatchedRoute;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Http\Routing\Construction\MarkedRoute;
@@ -16,7 +15,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
     {
     }
 
-    public function match(PsrRequest $request): ?MatchedRoute
+    public function match(PsrRequest $request): ?Route
     {
         // Try to match routes without any parameters
         if (($staticRoute = $this->matchStaticRoute($request)) !== null) {
@@ -27,18 +26,12 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         return $this->matchDynamicRoute($request);
     }
 
-    private function matchStaticRoute(PsrRequest $request): ?MatchedRoute
+    private function matchStaticRoute(PsrRequest $request): ?Route
     {
-        $staticRoute = $this->routeConfig->staticRoutes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
-
-        if ($staticRoute === null) {
-            return null;
-        }
-
-        return new MatchedRoute($staticRoute, []);
+        return $this->routeConfig->staticRoutes[$request->getMethod()][$request->getUri()->getPath()] ?? null;
     }
 
-    private function matchDynamicRoute(PsrRequest $request): ?MatchedRoute
+    private function matchDynamicRoute(PsrRequest $request): ?Route
     {
         // If there are no routes for the given request method, we immediately stop
         $routesForMethod = $this->routeConfig->dynamicRoutes[$request->getMethod()] ?? null;
@@ -62,7 +55,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         // Extract the parameters based on the route and matches
         $routeParams = $this->extractParams($route, $routingMatches);
 
-        return new MatchedRoute($route, $routeParams);
+        return $route->setParams($routeParams);
     }
 
     /**
@@ -74,6 +67,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
     private function extractParams(Route $route, array $routeMatches): array
     {
         $valueMap = [];
+
         foreach ($route->params as $i => $param) {
             $valueMap[$param] = $routeMatches[$i + 1];
         }
