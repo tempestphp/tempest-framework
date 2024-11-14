@@ -18,7 +18,7 @@ final class ConfigStatusCommandTest extends FrameworkIntegrationTestCase
             ->assertJson()
             ->assertContains('database.config.php')
             ->assertContains('DatabaseConfig')
-            ->assertDoesNotContain('view.config.php')
+            ->assertDoesNotContain('views.config.php')
             ->assertContains('@type');
     }
 
@@ -28,7 +28,7 @@ final class ConfigStatusCommandTest extends FrameworkIntegrationTestCase
             ->call('config:status --format=file --filter=database.config.php')
             ->assertContains('database.config.php')
             ->assertContains('DatabaseConfig')
-            ->assertDoesNotContain('view.config.php')
+            ->assertDoesNotContain('views.config.php')
             ->assertContains('<?php');
     }
 }
