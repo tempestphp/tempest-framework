@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Fiber;
+use Tempest\Console\CanCancel;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
 use Tempest\Console\HandlesKey;
@@ -51,11 +52,7 @@ final class InteractiveComponentRenderer
                     if ($fiber->isTerminated()) {
                         unset($fibers[$key]);
 
-                        $return = $fiber->getReturn();
-
-                        if ($return !== null) {
-                            $this->closeTerminal($terminal);
-
+                        if (! is_null($return = $fiber->getReturn())) {
                             return $return;
                         }
                     }
@@ -68,12 +65,26 @@ final class InteractiveComponentRenderer
                 }
             }
         } catch (InterruptException $interruptException) {
+            // If the component cannot cancel gracefully, we re-throw.
+            // Otherwise, we handle the rendering in `finally`.
+            if (! $component instanceof CanCancel) {
+                throw $interruptException;
+            }
+        } finally {
+            // Render a last time the component,
+            // to display its proper state.
+            $render = match ($component->getState()) {
+                State::CANCELLED,
+                State::SUBMITTED => $terminal->render($component)->current(),
+                default => null
+            };
+
             $this->closeTerminal($terminal);
 
-            throw $interruptException;
+            if (! is_null($render)) {
+                return $render;
+            }
         }
-
-        $this->closeTerminal($terminal);
 
         return null;
     }
@@ -83,7 +94,7 @@ final class InteractiveComponentRenderer
         [$keyBindings, $inputHandlers] = $this->resolveHandlers($component);
 
         while (true) {
-            usleep(100);
+            usleep(50);
             $key = $console->read(16);
 
             // If there's no keypress, continue
@@ -93,12 +104,22 @@ final class InteractiveComponentRenderer
                 continue;
             }
 
+            if ($component->getState() === State::BLOCKED) {
+                $this->shouldRerender = true;
+
+                continue;
+            }
+
             /** @var MethodReflector[] $handlersForKey */
-            $handlersForKey = $keyBindings[$key] ?? null;
+            $handlersForKey = $keyBindings[$key] ?? [];
+
+            // If we have multiple handlers, we put the ones that return nothing
+            // first because the ones that return something will be overriden otherwise.
+            usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
             // If we pressed CTRL+C or CTRL+D, we want to exit.
             // However, if we overriden one of those handler, we don't leave.
-            if (! $handlersForKey && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
+            if ($handlersForKey === [] && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
                 throw new InterruptException();
             }
 
@@ -107,13 +128,13 @@ final class InteractiveComponentRenderer
             $return = null;
 
             // If we have handlers for that key, apply them.
-            foreach ($handlersForKey ?? [] as $handler) {
+            foreach ($handlersForKey as $handler) {
                 $return ??= $handler->invokeArgs($component);
             }
 
             // If we didn't have any handler for the key,
             // we call catch-all handlers.
-            if (! $handlersForKey) {
+            if ($handlersForKey === []) {
                 foreach ($inputHandlers as $handler) {
                     $return ??= $handler->invokeArgs($component, [$key]);
                 }
@@ -133,7 +154,7 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule !== null) {
-                $this->validationErrors[] = '<error>' . $failingRule->message() . '</error>';
+                $this->validationErrors[] = $failingRule->message();
                 Fiber::suspend();
 
                 continue;
@@ -160,7 +181,7 @@ final class InteractiveComponentRenderer
             // Rerender the frames, it could be one or more
             $frames = $terminal->render(
                 component: $component,
-                footerLines: $this->validationErrors,
+                validationErrors: $this->validationErrors,
             );
 
             // Looping over the frames will display them
@@ -228,7 +249,7 @@ final class InteractiveComponentRenderer
 
     private function closeTerminal(Terminal $terminal): void
     {
-        $terminal->cursor->moveDown()->clearLine()->moveUp();
+        $terminal->placeCursorToEnd();
         $terminal->switchToNormalMode();
         stream_set_blocking(STDIN, true);
     }

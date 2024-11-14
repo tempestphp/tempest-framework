@@ -16,11 +16,7 @@ final class TerminalCursor implements Cursor
         private readonly Console $console,
         private readonly Terminal $terminal,
     ) {
-        $this->console->write("\e[6n");
-
-        preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', $this->console->read(1024), $matches);
-
-        $this->position = new Point((int)($matches['x']), (int)($matches['y']));
+        $this->position = $this->getActualPosition();
     }
 
     public function getPosition(): Point
@@ -128,5 +124,24 @@ final class TerminalCursor implements Cursor
         $this->console->write("\e[?25h");
 
         return $this;
+    }
+
+    public function placeToEnd(): self
+    {
+        $this->place(new Point(
+            x: $this->terminal->width,
+            y: $this->terminal->height,
+        ));
+
+        return $this;
+    }
+
+    public function getActualPosition(): Point
+    {
+        $this->console->write("\e[6n");
+
+        preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', $this->console->read(1024), $matches);
+
+        return new Point((int)($matches['x']), (int)($matches['y']));
     }
 }

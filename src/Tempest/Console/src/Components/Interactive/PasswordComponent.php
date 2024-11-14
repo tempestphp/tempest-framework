@@ -4,62 +4,51 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\HandlesKey;
+use Tempest\Console\CanCancel;
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasTextInputRenderer;
+use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\Renderers\TextInputRenderer;
+use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
-use Tempest\Console\Key;
 use Tempest\Console\Point;
+use Tempest\Console\Terminal\Terminal;
 
-final class PasswordComponent implements InteractiveConsoleComponent, HasCursor
+final class PasswordComponent implements InteractiveConsoleComponent, HasCursor, CanCancel
 {
-    public string $password = '';
+    use RendersControls;
+    use HasErrors;
+    use HasTextInputRenderer;
 
     public function __construct(
         public string $label = 'Password',
     ) {
+        $this->buffer = new TextBuffer();
+        $this->renderer = new TextInputRenderer();
     }
 
-    public function render(): string
+    public function render(Terminal $terminal): string
     {
-        $output = "<question>{$this->label}</question> ";
+        $password = $this->buffer->text;
 
-        return $output . str_repeat('*', strlen($this->password));
-    }
+        $this->buffer->setText(str_repeat('*', mb_strlen($password)));
 
-    public function renderFooter(): string
-    {
-        return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
-    }
-
-    #[HandlesKey(Key::BACKSPACE)]
-    public function backspace(): void
-    {
-        $this->password = substr($this->password, 0, strlen($this->password) - 1);
-    }
-
-    #[HandlesKey(Key::ENTER)]
-    public function enter(): string
-    {
-        return $this->password;
-    }
-
-    #[HandlesKey]
-    public function input(string $key): void
-    {
-        preg_match('/[\w\s]+/', $key, $matches);
-
-        if (($matches[0] ?? null) !== $key) {
-            return;
-        }
-
-        $this->password .= $key;
-    }
-
-    public function getCursorPosition(): Point
-    {
-        return new Point(
-            x: strlen($this->password) + strlen($this->label) + 3,
-            y: 0,
+        $render = $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            buffer: $this->buffer,
+            label: $this->label,
+            placeholder: null,
         );
+
+        $this->buffer->setText($password);
+
+        return $render;
+    }
+
+    public function getCursorPosition(Terminal $terminal): Point
+    {
+        return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 }

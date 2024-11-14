@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Static\StaticMultipleChoiceComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
 final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+
     public array $selectedOptions = [];
 
     public int|string $activeOption;
@@ -29,7 +37,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
         $this->activeOption = array_key_first($this->options);
     }
 
-    public function render(): string
+    public function render(Terminal $terminal): string
     {
         $output = "<question>{$this->question}</question>";
 
@@ -46,9 +54,15 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasS
         return $output;
     }
 
-    public function renderFooter(): string
+    private function getControls(): array
     {
-        return "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
+        return [
+            '↑' => 'up',
+            '↓' => 'down',
+            'space' => 'select',
+            'enter' => 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
     }
 
     public function isActive(int|string $key): bool

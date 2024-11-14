@@ -10,6 +10,7 @@ use Tempest\Console\Cursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
+use function Tempest\Support\arr;
 
 final class Terminal
 {
@@ -29,8 +30,7 @@ final class Terminal
         private readonly Console $console,
     ) {
         $this->switchToInteractiveMode();
-        $this->width = (int)exec('tput cols');
-        $this->height = (int)exec('tput lines');
+        $this->updateActualSize();
         $this->initialCursor = new TerminalCursor($this->console, $this);
         $this->cursor = clone $this->initialCursor;
     }
@@ -63,11 +63,12 @@ final class Terminal
         return $this;
     }
 
-    public function render(
-        InteractiveConsoleComponent $component,
-        array $footerLines = []
-    ): Generator {
-        $rendered = $component->render();
+    /** @return Generator<string> */
+    public function render(InteractiveConsoleComponent $component, array $validationErrors = []): Generator
+    {
+        $rendered = $component
+            ->setErrors($validationErrors)
+            ->render($this);
 
         if (! $rendered instanceof Generator) {
             $rendered = (function (string $content): Generator {
@@ -78,20 +79,29 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
-            $footerLinesForContent = $footerLines;
+            $footerLinesForContent = [];
 
-            if ($footer = $component->renderFooter()) {
+            if ($validationErrors) {
+                $content .= PHP_EOL . arr($validationErrors)
+                    ->map(fn (string $error) => "   <style=\"fg-yellow\">$error</style>")
+                    ->implode(PHP_EOL)
+                    ->append(PHP_EOL)
+                    ->toString();
+            }
+
+            if ($footer = $component->renderFooter($this)) {
                 $footerLinesForContent[] = $footer;
             }
 
             if ($footerLinesForContent !== []) {
-                $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent);
+                $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent) . PHP_EOL;
             }
 
-            $this
-                ->clear()
-                ->write($content)
-                ->resetInitialCursor();
+            if ($this->previousRender !== $content) {
+                $this->clear();
+                $this->write($content);
+                $this->resetInitialCursor();
+            }
 
             if ($component instanceof HasCursor) {
                 $this->placeComponentCursor($component);
@@ -107,10 +117,6 @@ final class Terminal
 
     private function clear(): self
     {
-        if ($this->previousRender === null) {
-            return $this;
-        }
-
         $this->cursor
             ->place($this->initialCursor->getPosition())
             ->clearAfter();
@@ -120,6 +126,8 @@ final class Terminal
 
     private function resetInitialCursor(): void
     {
+        $this->updateActualSize();
+
         $requiredHeight = substr_count($this->previousRender, PHP_EOL);
         $availableHeight = $this->height - $this->initialCursor->getPosition()->y;
 
@@ -129,6 +137,16 @@ final class Terminal
                 y: $this->height - $requiredHeight,
             ));
         }
+    }
+
+    public function placeCursorToEnd(): void
+    {
+        $lastRenderHeight = substr_count($this->previousRender ?? '', PHP_EOL);
+
+        $this->cursor->place(new Point(
+            x: 0,
+            y: $this->initialCursor->getPosition()->y + $lastRenderHeight,
+        ));
     }
 
     private function write(string $content): self
@@ -144,7 +162,7 @@ final class Terminal
     {
         $initialCursorPosition = $this->initialCursor->getPosition();
 
-        $componentCursorPosition = $component->getCursorPosition();
+        $componentCursorPosition = $component->getCursorPosition($this);
 
         $this->cursor->place(new Point(
             x: $initialCursorPosition->x + $componentCursorPosition->x,
@@ -152,6 +170,14 @@ final class Terminal
         ));
 
         $this->cursor->show();
+
+        return $this;
+    }
+
+    private function updateActualSize(): self
+    {
+        $this->width = (int)exec('tput cols');
+        $this->height = (int)exec('tput lines');
 
         return $this;
     }

@@ -6,6 +6,9 @@ namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
@@ -14,9 +17,14 @@ use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
 final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+
     public Point $cursorPosition;
 
     public string $query = '';
@@ -33,7 +41,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         $this->cursorPosition = new Point(2, 1);
     }
 
-    public function render(): Generator|string
+    public function render(Terminal $terminal): Generator|string
     {
         $output = "<question>{$this->label}</question> {$this->query}";
 
@@ -45,9 +53,14 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         return $output;
     }
 
-    public function renderFooter(): string
+    private function getControls(): array
     {
-        return "Press <em>up</em>/<em>down</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
+        return [
+            '↑' => 'up',
+            '↓' => 'down',
+            'enter' => 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
     }
 
     #[HandlesKey]
@@ -148,7 +161,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         }
     }
 
-    public function getCursorPosition(): Point
+    public function getCursorPosition(Terminal $terminal): Point
     {
         return new Point(
             x: $this->cursorPosition->x + strlen($this->label) + 1,

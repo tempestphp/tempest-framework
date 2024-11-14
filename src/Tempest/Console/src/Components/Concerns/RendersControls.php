@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Console\Components\Concerns;
+
+use Tempest\Console\Components\State;
+use Tempest\Console\InteractiveConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
+use function Tempest\Support\arr;
+
+/** @mixin InteractiveConsoleComponent */
+trait RendersControls
+{
+    public function renderFooter(Terminal $terminal): ?string
+    {
+        if (in_array($this->getState(), [State::CANCELLED, State::SUBMITTED, State::BLOCKED])) {
+            return null;
+        }
+
+        return $this->renderControls($this->getControls(), maxWidth: $terminal->width);
+    }
+
+    private function getControls(): array
+    {
+        return [
+            'enter' => 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
+    }
+
+    private function renderControls(array $controls, int $maxWidth): string
+    {
+        if (! count($controls)) {
+            return '';
+        }
+
+        $separator = '  <style="dim fg-gray">·</style>  ';
+        $marginLeft = '  ';
+        $render = arr($controls)
+            ->map(fn (string $label, string $shortcut) => "<style=\"dim\"><style=\"fg-gray\">$shortcut</style> $label</style>")
+            ->implode($separator)
+            ->prepend($marginLeft);
+
+        if ($render->stripTags()->length() >= $maxWidth) {
+            $prefix = $marginLeft . '<style="fg-gray">·</style>';
+            $render = str($prefix)
+                ->append($render)
+                ->explode($separator)
+                ->implode(PHP_EOL . $prefix . $marginLeft);
+        }
+
+        return $render->toString();
+    }
+}

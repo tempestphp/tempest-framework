@@ -4,15 +4,23 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Static\StaticSingleChoiceComponent;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
 final class SingleChoiceComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+
     public int $selectedOption;
 
     public function __construct(
@@ -36,7 +44,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasSta
         }
     }
 
-    public function render(): string
+    public function render(Terminal $terminal): string
     {
         $output = "<question>{$this->question}</question>";
 
@@ -48,7 +56,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasSta
         return $output;
     }
 
-    public function renderFooter(): string
+    public function renderFooter(Terminal $terminal): string
     {
         return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
     }

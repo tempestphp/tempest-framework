@@ -36,12 +36,14 @@ interface Console
         mixed $default = null,
         bool $multiple = false,
         bool $asList = false,
+        bool $multiline = false,
+        ?string $placeholder = null,
         array $validation = [],
     ): null|string|array;
 
-    public function confirm(string $question, bool $default = false): bool;
+    public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool;
 
-    public function password(string $label = 'Password', bool $confirm = false): string;
+    public function password(string $label = 'Password', bool $confirm = false, array $validation = []): ?string;
 
     public function progressBar(iterable $data, Closure $handler): array;
 

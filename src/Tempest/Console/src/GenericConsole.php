@@ -12,8 +12,8 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
+use Tempest\Console\Components\Interactive\TextBoxComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
-use Tempest\Console\Components\TextBox\TextBoxComponent;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -171,6 +171,8 @@ final class GenericConsole implements Console
         mixed $default = null,
         bool $multiple = false,
         bool $asList = false,
+        bool $multiline = false,
+        ?string $placeholder = null,
         array $validation = [],
     ): null|string|array {
         if ($this->isForced && $default) {
@@ -178,7 +180,7 @@ final class GenericConsole implements Console
         }
 
         $component = match (true) {
-            $options === null || $options === [] => new TextBoxComponent($question, $default),
+            $options === null || $options === [] => new TextBoxComponent($question, $default, $placeholder, $multiline),
             $multiple => new MultipleChoiceComponent(
                 question: $question,
                 options: $options,
@@ -195,19 +197,19 @@ final class GenericConsole implements Console
         return $this->component($component, $validation);
     }
 
-    public function confirm(string $question, bool $default = false): bool
+    public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool
     {
         if ($this->isForced) {
             return true;
         }
 
-        return $this->component(new ConfirmComponent($question, $default));
+        return $this->component(new ConfirmComponent($question, $default, $yes, $no));
     }
 
-    public function password(string $label = 'Password', bool $confirm = false): string
+    public function password(string $label = 'Password', bool $confirm = false, array $validation = []): ?string
     {
         if (! $confirm) {
-            return $this->component(new PasswordComponent($label));
+            return $this->component(new PasswordComponent($label), $validation);
         }
 
         $password = null;
