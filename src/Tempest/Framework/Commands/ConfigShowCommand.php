@@ -81,7 +81,7 @@ final readonly class ConfigShowCommand
             }
         }
 
-        // LoadConfig::load() returns all config paths
+        // LoadConfig::find() returns all config paths
         // that are overwritten by container in their order
         $resolvedConfigs = [];
 
