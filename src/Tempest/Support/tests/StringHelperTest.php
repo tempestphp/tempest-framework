@@ -481,4 +481,80 @@ b'));
         $this->assertSame('Leon Scott Kennedy', str('Scott Kennedy')->start('Leon ')->toString());
         $this->assertSame('Leon Scott Kennedy', str('Leon Scott Kennedy')->start('Leon ')->toString());
     }
+
+    public function test_limit(): void
+    {
+        $this->assertSame('Lorem', str('Lorem ipsum')->truncate(5)->toString());
+        $this->assertSame('Lorem...', str('Lorem ipsum')->truncate(5, end: '...')->toString());
+        $this->assertSame('...', str('Lorem ipsum')->truncate(0, end: '...')->toString());
+        $this->assertSame('L...', str('Lorem ipsum')->truncate(1, end: '...')->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncate(100)->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->truncate(100, end: '...')->toString());
+    }
+
+    public function test_substr(): void
+    {
+        $this->assertSame('Lorem', str('Lorem ipsum')->substr(0, length: 5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(6, length: 5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(6)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5)->toString());
+        $this->assertSame('ipsum', str('Lorem ipsum')->substr(-5, length: 5)->toString());
+    }
+
+    public function test_take(): void
+    {
+        // positive
+        $this->assertSame('Lorem', str('Lorem ipsum')->take(5)->toString());
+        $this->assertSame('Lorem ipsum', str('Lorem ipsum')->take(100)->toString());
+
+        // negative
+        $this->assertSame('ipsum', str('Lorem ipsum')->take(-5)->toString());
+    }
+
+    public function test_split(): void
+    {
+        $this->assertSame([PHP_EOL], str(PHP_EOL)->split(100)->toArray());
+        $this->assertSame([''], str('')->split(1)->toArray());
+        $this->assertSame([], str('123')->split(-1)->toArray());
+        $this->assertSame(['1', '2', '3'], str('123')->split(1)->toArray());
+        $this->assertSame(['123'], str('123')->split(1000)->toArray());
+        $this->assertSame(['foo', 'bar', 'baz'], str('foobarbaz')->split(3)->toArray());
+        $this->assertSame(['foo', 'bar', 'baz', '22'], str('foobarbaz22')->split(3)->toArray());
+    }
+
+    public function test_insert_at(): void
+    {
+        $this->assertSame('foo', str()->insertAt(0, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(-1, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(100, 'foo')->toString());
+        $this->assertSame('foo', str()->insertAt(-100, 'foo')->toString());
+        $this->assertSame('foobar', str('bar')->insertAt(0, 'foo')->toString());
+        $this->assertSame('barfoo', str('bar')->insertAt(3, 'foo')->toString());
+        $this->assertSame('foobarbaz', str('foobaz')->insertAt(3, 'bar')->toString());
+        $this->assertSame('123', str('13')->insertAt(-1, '2')->toString());
+    }
+
+    public function test_replace_at(): void
+    {
+        $this->assertSame('foobar', str('foo2bar')->replaceAt(4, -1, '')->toString());
+        $this->assertSame('foobar', str('foo2bar')->replaceAt(3, 1, '')->toString());
+        $this->assertSame('fooquxbar', str('foo2bar')->replaceAt(3, 1, 'qux')->toString());
+        $this->assertSame('foobarbaz', str('barbaz')->replaceAt(0, 0, 'foo')->toString());
+        $this->assertSame('barbazfoo', str('barbaz')->replaceAt(6, 0, 'foo')->toString());
+        $this->assertSame('bar', str('foo')->replaceAt(0, 3, 'bar')->toString());
+        $this->assertSame('abc1', str('abcd')->replaceAt(-1, 1, '1')->toString());
+        $this->assertSame('ab1d', str('abcd')->replaceAt(-1, -1, '1')->toString());
+        $this->assertSame('abc', str('abc')->replaceAt(3, 1, '')->toString());
+    }
+
+    public function test_strip_tags(): void
+    {
+        $this->assertSame('Hello World', str('<p>Hello World</p>')->stripTags()->toString());
+        $this->assertSame('Hello World', str('<p>Hello <strong>World</strong></p>')->stripTags()->toString());
+        $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: '<strong>')->toString());
+        $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: '<p>')->toString());
+
+        $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'strong')->toString());
+        $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'p')->toString());
+    }
 }

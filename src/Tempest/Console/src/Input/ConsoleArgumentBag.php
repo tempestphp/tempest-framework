@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Input;
 
+use Tempest\Console\Exceptions\InvalidEnumArgument;
+
 final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
@@ -93,7 +95,7 @@ final class ConsoleArgumentBag
     {
         foreach ($this->arguments as $argument) {
             if ($argumentDefinition->matchesArgument($argument)) {
-                return $argument;
+                return $this->resolveArgumentValue($argumentDefinition, $argument);
             }
         }
 
@@ -106,6 +108,31 @@ final class ConsoleArgumentBag
         }
 
         return null;
+    }
+
+    private function resolveArgumentValue(
+        ConsoleArgumentDefinition $argumentDefinition,
+        ConsoleInputArgument $argument,
+    ): ConsoleInputArgument {
+        if (! $argumentDefinition->isBackedEnum()) {
+            return $argument;
+        }
+
+        $resolved = $argumentDefinition->type::tryFrom($argument->value);
+
+        if ($resolved === null) {
+            throw new InvalidEnumArgument(
+                $argumentDefinition->name,
+                $argumentDefinition->type,
+                $argument->value,
+            );
+        }
+
+        return new ConsoleInputArgument(
+            name: $argumentDefinition->name,
+            position: $argumentDefinition->position,
+            value: $resolved,
+        );
     }
 
     public function findArrayFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
