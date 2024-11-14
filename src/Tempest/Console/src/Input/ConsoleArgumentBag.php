@@ -159,6 +159,11 @@ final class ConsoleArgumentBag
         return $this;
     }
 
+    public function getBinaryPath(): string
+    {
+        return PHP_BINARY;
+    }
+
     public function getCliName(): string
     {
         return $this->path[0] ?? '';
