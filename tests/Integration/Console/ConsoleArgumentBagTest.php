@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Console\Exceptions\InvalidEnumArgument;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
+use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -136,6 +138,49 @@ final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame($expected, $bag->findFor($definition)->value);
+    }
+
+    public function test_backed_enum_input(): void
+    {
+        $argv = [
+            'tempest',
+            'test',
+            '--type=a',
+        ];
+
+        $bag = new ConsoleArgumentBag($argv);
+
+        $definition = new ConsoleArgumentDefinition(
+            name: 'type',
+            type: TestStringEnum::class,
+            default: null,
+            hasDefault: false,
+            position: 0,
+        );
+
+        $this->assertSame(TestStringEnum::A, $bag->findFor($definition)->value);
+    }
+
+    public function test_invalid_backed_enum_input(): void
+    {
+        $argv = [
+            'tempest',
+            'test',
+            '--type=invalid',
+        ];
+
+        $bag = new ConsoleArgumentBag($argv);
+
+        $definition = new ConsoleArgumentDefinition(
+            name: 'type',
+            type: TestStringEnum::class,
+            default: null,
+            hasDefault: false,
+            position: 0,
+        );
+
+        $this->expectException(InvalidEnumArgument::class);
+        $bag->findFor($definition);
     }
 
     public function test_name_mapping(): void

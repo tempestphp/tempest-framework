@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 use Tempest\Core\KernelEvent;
 use Tempest\EventBus\EventHandler;
 use Tempest\Reflection\ClassReflector;
@@ -28,7 +28,7 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
         $reflector = new ClassReflector($command);
 
         if ($reflector->hasAttribute(AsyncCommand::class)) {
-            $this->repository->store(Uuid::uuid7()->toString(), $command);
+            $this->repository->store(Uuid::v7()->toString(), $command);
 
             return;
         }

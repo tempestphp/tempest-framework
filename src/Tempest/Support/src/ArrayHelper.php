@@ -39,9 +39,80 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             $this->array = $input;
         } elseif ($input instanceof self) {
             $this->array = $input->array;
+        } elseif ($input === null) {
+            $this->array = [];
         } else {
             $this->array = [$input];
         }
+    }
+
+    /**
+     * Finds a value in the array and return the corresponding key if successful.
+     *
+     * @param (Closure(TValue, TKey): bool)|mixed $value The value to search for, a Closure will find the first item that returns true.
+     * @param bool $strict Whether to use strict comparison.
+     *
+     * @return array-key|null The key for `$value` if found, `null` otherwise.
+     */
+    public function findKey(mixed $value, bool $strict = false): int|string|null
+    {
+        if (! $value instanceof Closure) {
+            $search = array_search($value, $this->array, $strict);
+
+            return $search === false ? null : $search; // Keep empty values but convert false to null
+        }
+
+        foreach ($this->array as $key => $item) {
+            if ($value($item, $key) === true) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Chunks the array into chunks of the given size.
+     *
+     * @param int $size The size of each chunk.
+     * @param bool $preserveKeys Whether to preserve the keys of the original array.
+     *
+     * @return self<array-key, self>
+     */
+    public function chunk(int $size, bool $preserveKeys = true): self
+    {
+        if ($size <= 0) {
+            return new self();
+        }
+
+        $chunks = [];
+        foreach (array_chunk($this->array, $size, $preserveKeys) as $chunk) {
+            $chunks[] = new self($chunk);
+        }
+
+        return new self($chunks);
+    }
+
+    /**
+     * Reduces the array to a single value using a callback.
+     *
+     * @template TReduceInitial
+     * @template TReduceReturnType
+     *
+     * @param callable(TReduceInitial|TReduceReturnType, TValue, TKey): TReduceReturnType $callback
+     * @param TReduceInitial $initial
+     *
+     * @return TReduceReturnType
+     */
+    public function reduce(callable $callback, mixed $initial = null): mixed
+    {
+        $result = $initial;
+
+        foreach ($this->array as $key => $value) {
+            $result = $callback($result, $value, $key);
+        }
+
+        return $result;
     }
 
     /**
@@ -363,6 +434,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return new self([(string) $string]);
         }
 
+        if ((string) $string === '') {
+            return new self();
+        }
+
         return new self(explode($separator, (string) $string));
     }
 
@@ -380,7 +455,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the first item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the first item.
      *
-     * @param Closure(mixed $value, mixed $key): bool $filter
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     *
+     * @return TValue
      */
     public function first(?Closure $filter = null): mixed
     {
@@ -405,7 +482,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      * Returns the last item in the instance that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
-     * @param Closure(mixed $value, mixed $key): bool $filter
+     * @param null|Closure(TValue $value, TKey $key): bool $filter
+     *
+     * @return TValue
      */
     public function last(?Closure $filter = null): mixed
     {
@@ -539,7 +618,11 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Returns a new instance of the array, with each item transformed by the given callback.
      *
-     * @param Closure(mixed $value, mixed $key): mixed $map
+     * @template TMapValue
+     *
+     * @param  Closure(TValue, TKey): TMapValue $map
+     *
+     * @return static<TKey, TMapValue>
      */
     public function map(Closure $map): self
     {
@@ -585,11 +668,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @return mixed|ArrayHelper
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get(int|string $key, mixed $default = null): mixed
     {
         $value = $this->array;
 
-        $keys = explode('.', $key);
+        $keys = is_int($key)
+            ? [$key]
+            : explode('.', $key);
 
         foreach ($keys as $key) {
             if (! isset($value[$key])) {
@@ -609,11 +694,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Asserts whether a value identified by the specified `$key` exists.
      */
-    public function has(string $key): bool
+    public function has(int|string $key): bool
     {
         $array = $this->array;
 
-        $keys = explode('.', $key);
+        $keys = is_int($key)
+            ? [$key]
+            : explode('.', $key);
 
         foreach ($keys as $key) {
             if (! isset($array[$key])) {
@@ -731,6 +818,51 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
 
         return str($last);
+    }
+
+    /**
+     * Flattens the instance to a single-level array, or until the specified `$depth` is reached.
+     *
+     * ### Example
+     * ```php
+     * arr(['foo', ['bar', 'baz']])->flatten(); // ['foo', 'bar', 'baz']
+     * ```
+     */
+    public function flatten(int|float $depth = INF): self
+    {
+        $result = [];
+
+        foreach ($this->array as $item) {
+            if (! is_array($item)) {
+                $result[] = $item;
+
+                continue;
+            }
+
+            $values = $depth === 1
+                ? array_values($item)
+                : arr($item)->flatten($depth - 1);
+
+            foreach ($values as $value) {
+                $result[] = $value;
+            }
+        }
+
+        return new self($result);
+    }
+
+    /**
+     * Returns a new instance of the array, with each item transformed by the given callback, then flattens it by the specified depth.
+     *
+     * @template TMapValue
+     *
+     * @param  Closure(TValue, TKey): TMapValue[] $map
+     *
+     * @return static<TKey, TMapValue>
+     */
+    public function flatMap(Closure $map, int|float $depth = 1): self
+    {
+        return $this->map($map)->flatten($depth);
     }
 
     /**
