@@ -56,13 +56,12 @@ final readonly class TempestTerminalTheme implements TerminalTheme
         } . TerminalStyle::RESET();
     }
 
-    // TODO: only accept TerminalStyle once `tempest/highlight` is up-to-date
-    private function style(string|TerminalStyle ...$styles): string
+    private function style(TerminalStyle ...$styles): string
     {
         return implode(
             '',
             array_map(
-                fn (string|TerminalStyle $style) => TerminalStyle::ESC->value . (is_string($style) ? $style : $style->value),
+                fn (TerminalStyle $style) => TerminalStyle::ESC->value .  $style->value,
                 $styles,
             ),
         );

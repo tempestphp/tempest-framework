@@ -15,7 +15,7 @@ final readonly class DynamicTokenType implements TokenType
     ) {
     }
 
-    public function getBeforeStyle(): TerminalStyle|string
+    public function getBeforeStyle(): TerminalStyle
     {
         $normalizedStyle = str($this->style)
             ->lower()
@@ -34,7 +34,7 @@ final readonly class DynamicTokenType implements TokenType
         return TerminalStyle::RESET;
     }
 
-    public function getAfterStyle(): TerminalStyle|string
+    public function getAfterStyle(): TerminalStyle
     {
         return match ($this->getBeforeStyle()) {
             // Mods
@@ -45,7 +45,7 @@ final readonly class DynamicTokenType implements TokenType
             TerminalStyle::UNDERLINE => TerminalStyle::RESET_UNDERLINE,
             TerminalStyle::OVERLINE => TerminalStyle::RESET_OVERLINE,
             TerminalStyle::STRIKETHROUGH => TerminalStyle::RESET_STRIKETHROUGH,
-            TerminalStyle::REVERSE_TEXT => TerminalStyle::NON_REVERSE_TEXT,
+            TerminalStyle::REVERSE_TEXT => TerminalStyle::RESET_REVERSE_TEXT,
             // Foregrounds
             TerminalStyle::FG_BLACK,
             TerminalStyle::FG_DARK_RED,
@@ -62,7 +62,7 @@ final readonly class DynamicTokenType implements TokenType
             TerminalStyle::FG_BLUE,
             TerminalStyle::FG_MAGENTA,
             TerminalStyle::FG_CYAN,
-            TerminalStyle::FG_WHITE => "39m",
+            TerminalStyle::FG_WHITE => TerminalStyle::RESET_FOREGROUND,
             // Backgrounds
             TerminalStyle::BG_BLACK,
             TerminalStyle::BG_DARK_RED,
@@ -79,7 +79,7 @@ final readonly class DynamicTokenType implements TokenType
             TerminalStyle::BG_BLUE,
             TerminalStyle::BG_MAGENTA,
             TerminalStyle::BG_CYAN,
-            TerminalStyle::BG_WHITE => "49m",
+            TerminalStyle::BG_WHITE => TerminalStyle::RESET_BACKGROUND,
             default => TerminalStyle::RESET,
         };
     }
