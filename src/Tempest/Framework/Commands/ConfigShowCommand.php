@@ -121,7 +121,7 @@ final readonly class ConfigShowCommand
             default: $data[0],
         );
 
-        // FIXME: This is a workaround for SearchComponent not clearing the terminal properly
+        // TODO: This is a workaround for SearchComponent not clearing the terminal properly
         $terminal = new Terminal($this->console);
         $terminal->cursor->clearAfter();
 
