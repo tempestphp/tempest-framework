@@ -7,6 +7,7 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\InvalidValue;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\UnsupportedDialect;
 
 final readonly class SetStatement implements QueryStatement
 {
@@ -28,11 +29,11 @@ final readonly class SetStatement implements QueryStatement
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` SET (%s) %s %s',
                 $this->name,
-                "'" . implode(',', ${$this}->values) . "'",
+                "'" . implode(',', $this->values) . "'",
                 $this->default ? "DEFAULT '$this->default'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            default => ''
+            default => throw new UnsupportedDialect()
         };
     }
 }
