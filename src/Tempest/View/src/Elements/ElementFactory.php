@@ -63,8 +63,11 @@ final class ElementFactory
 
         if (! $node instanceof DOMElement
             || $node->tagName === 'pre'
-            || $node->tagName === 'code') {
+            || $node->tagName === 'code'
+            || $node->tagName === 'x-raw'
+        ) {
             $content = '';
+
             foreach ($node->childNodes as $child) {
                 $content .= $node->ownerDocument->saveHTML($child);
             }
@@ -82,9 +85,9 @@ final class ElementFactory
             }
 
             $element = new ViewComponentElement(
-                $this->compiler,
-                $viewComponentClass,
-                $attributes,
+                compiler: $this->compiler,
+                viewComponent: $viewComponentClass,
+                attributes: $attributes,
             );
         } elseif ($node->tagName === 'x-slot') {
             $element = new SlotElement(
