@@ -24,26 +24,7 @@ final readonly class LoadConfig
     {
         $configPaths = $this->cache->resolve(
             'config_cache',
-            function () {
-                $configPaths = [];
-
-                // Scan for config files in all discovery locations
-                foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-                    $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
-                    $files = new RecursiveIteratorIterator($directories);
-
-                    /** @var SplFileInfo $file */
-                    foreach ($files as $file) {
-                        if (! str_ends_with($file->getPathname(), '.config.php')) {
-                            continue;
-                        }
-
-                        $configPaths[] = $file->getPathname();
-                    }
-                }
-
-                return $configPaths;
-            }
+            fn () => $this->find()
         );
 
         foreach ($configPaths as $path) {
@@ -51,5 +32,30 @@ final readonly class LoadConfig
 
             $this->kernel->container->config($configFile);
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function find(): array
+    {
+        $configPaths = [];
+
+        // Scan for config files in all discovery locations
+        foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
+            $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
+            $files = new RecursiveIteratorIterator($directories);
+
+            /** @var SplFileInfo $file */
+            foreach ($files as $file) {
+                if (! str_ends_with($file->getPathname(), '.config.php')) {
+                    continue;
+                }
+
+                $configPaths[] = $file->getPathname();
+            }
+        }
+
+        return $configPaths;
     }
 }

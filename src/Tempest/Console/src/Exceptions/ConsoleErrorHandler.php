@@ -57,7 +57,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
 
     public function handleError(int $errNo, string $errstr, string $errFile, int $errLine): void
     {
-        ll('error');
+        ll(error: $errstr);
 
         $this->console
             ->writeln()

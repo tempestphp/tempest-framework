@@ -17,7 +17,7 @@ final readonly class TempestTerminalTheme implements TerminalTheme
     public function before(TokenType $tokenType): string
     {
         if ($tokenType instanceof DynamicTokenType) {
-            return $this->style($tokenType->getStyle());
+            return $this->style($tokenType->getBeforeStyle());
         }
 
         return match ($tokenType) {
@@ -42,6 +42,10 @@ final readonly class TempestTerminalTheme implements TerminalTheme
 
     public function after(TokenType $tokenType): string
     {
+        if ($tokenType instanceof DynamicTokenType) {
+            return $this->style($tokenType->getAfterStyle());
+        }
+
         return match ($tokenType) {
             ConsoleTokenType::ERROR,
             ConsoleTokenType::QUESTION,
@@ -57,7 +61,7 @@ final readonly class TempestTerminalTheme implements TerminalTheme
         return implode(
             '',
             array_map(
-                fn (TerminalStyle $style) => TerminalStyle::ESC->value . $style->value,
+                fn (TerminalStyle $style) => TerminalStyle::ESC->value .  $style->value,
                 $styles,
             ),
         );

@@ -46,7 +46,7 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
         (new RenderConsoleCommand($console))($consoleCommand);
 
         $this->assertSame(
-            'test <path> [times=1] [--force=false] - description',
+            'test <path> <type {a|b|c}> [fallback=a {a|b|c}] [times=1] [--force=false] - description',
             trim($output->getBufferWithoutFormatting()[0]),
         );
     }

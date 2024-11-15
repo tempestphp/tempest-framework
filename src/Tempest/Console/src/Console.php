@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Tempest\Highlight\Language;
 
 interface Console
 {
@@ -17,6 +18,8 @@ interface Console
     public function write(string $contents): self;
 
     public function writeln(string $line = ''): self;
+
+    public function writeWithLanguage(string $contents, Language $language): self;
 
     /**
      * @param \Tempest\Validation\Rule[] $validation
