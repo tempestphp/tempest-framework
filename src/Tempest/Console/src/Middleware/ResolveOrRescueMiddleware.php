@@ -42,7 +42,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         $similarCommands = $this->getSimilarCommands($commandName);
 
         if ($similarCommands === []) {
-            return ExitCode::ERROR;
+            return ExitCode::error();
         }
 
         if (count($similarCommands) === 1) {
@@ -50,7 +50,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
                 return $this->runIntendedCommand($similarCommands[0]);
             }
 
-            return ExitCode::CANCELLED;
+            return ExitCode::cancelled();
         }
 
         $intendedCommand = $this->console->ask(

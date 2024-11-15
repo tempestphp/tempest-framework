@@ -26,6 +26,6 @@ final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
             $consoleException->render($this->console);
         }
 
-        return ExitCode::ERROR;
+        return ExitCode::error();
     }
 }

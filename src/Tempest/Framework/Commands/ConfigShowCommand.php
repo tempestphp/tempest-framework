@@ -46,7 +46,7 @@ final readonly class ConfigShowCommand
         if (empty($configs)) {
             $this->console->error('No configuration found');
 
-            return ExitCode::ERROR;
+            return ExitCode::error();
         }
 
         match ($format) {
@@ -55,7 +55,7 @@ final readonly class ConfigShowCommand
             ConfigShowFormat::FILE => $this->file($configs),
         };
 
-        return ExitCode::SUCCESS;
+        return ExitCode::success();
     }
 
     /**

@@ -27,7 +27,7 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
             $continue = $this->console->confirm('Caution! Do you wish to continue?');
 
             if (! $continue) {
-                return ExitCode::CANCELLED;
+                return ExitCode::cancelled();
             }
         }
 

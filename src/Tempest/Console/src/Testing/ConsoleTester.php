@@ -79,7 +79,7 @@ final class ConsoleTester
 
         if ($command instanceof Closure) {
             $fiber = new Fiber(function () use ($clone, $command, $console): void {
-                $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
+                $clone->exitCode = $command($console) ?? ExitCode::success();
             });
         } else {
             if (is_string($command) && class_exists($command)) {
@@ -252,37 +252,37 @@ final class ConsoleTester
 
     public function assertExitCode(ExitCode $exitCode): self
     {
-        Assert::assertNotNull($this->exitCode, "Expected {$exitCode->name}, but instead no exit code was set — maybe you missed providing some input?");
+        Assert::assertNotNull($this->exitCode, "Expected the exit code to be {$exitCode->code}, but instead no exit code was set — maybe you missed providing some input?");
 
-        Assert::assertSame($exitCode, $this->exitCode, "Expected the exit code to be {$exitCode->name}, instead got {$this->exitCode->name}");
+        Assert::assertTrue($exitCode->equals($this->exitCode), "Expected the exit code to be {$exitCode->code}, instead got {$this->exitCode->code}");
 
         return $this;
     }
 
     public function assertSuccess(): self
     {
-        $this->assertExitCode(ExitCode::SUCCESS);
+        $this->assertExitCode(ExitCode::success());
 
         return $this;
     }
 
     public function assertError(): self
     {
-        $this->assertExitCode(ExitCode::ERROR);
+        $this->assertExitCode(ExitCode::error());
 
         return $this;
     }
 
     public function assertCancelled(): self
     {
-        $this->assertExitCode(ExitCode::CANCELLED);
+        $this->assertExitCode(ExitCode::cancelled());
 
         return $this;
     }
 
     public function assertInvalid(): self
     {
-        $this->assertExitCode(ExitCode::INVALID);
+        $this->assertExitCode(ExitCode::invalid());
 
         return $this;
     }

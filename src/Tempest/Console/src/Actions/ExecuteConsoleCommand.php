@@ -48,7 +48,11 @@ final readonly class ExecuteConsoleCommand
                 $inputBuilder->build(),
             );
 
-            return $exitCode ?? ExitCode::SUCCESS;
+            if (is_int($exitCode)) {
+                $exitCode = new ExitCode($exitCode);
+            }
+
+            return $exitCode ?? ExitCode::success();
         });
 
         $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];

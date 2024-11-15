@@ -27,7 +27,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         if (! $invocation->argumentBag->getCommandName()) {
             $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));
 
-            return ExitCode::SUCCESS;
+            return ExitCode::success();
         }
 
         return $next($invocation);

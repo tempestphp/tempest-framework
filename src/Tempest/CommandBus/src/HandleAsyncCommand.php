@@ -37,7 +37,7 @@ final readonly class HandleAsyncCommand
             if (! $command) {
                 $this->error('No pending command found');
 
-                return ExitCode::ERROR;
+                return ExitCode::error();
             }
 
             $commandHandler = $this->commandBusConfig->handlers[$command::class] ?? null;
@@ -46,7 +46,7 @@ final readonly class HandleAsyncCommand
                 $commandClass = $command::class;
                 $this->error("No handler found for command {$commandClass}");
 
-                return ExitCode::ERROR;
+                return ExitCode::error();
             }
 
             $commandHandler->handler->invokeArgs(
@@ -57,12 +57,12 @@ final readonly class HandleAsyncCommand
             $this->repository->markAsDone($uuid);
             $this->success('Done');
 
-            return ExitCode::SUCCESS;
+            return ExitCode::success();
         } catch (Throwable $throwable) {
             $this->repository->markAsFailed($uuid);
             $this->error($throwable->getMessage());
 
-            return ExitCode::ERROR;
+            return ExitCode::error();
         }
     }
 }

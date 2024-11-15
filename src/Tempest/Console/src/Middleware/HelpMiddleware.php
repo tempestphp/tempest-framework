@@ -24,7 +24,7 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
         if ($invocation->argumentBag->get('-h') || $invocation->argumentBag->get('help')) {
             $this->renderHelp($invocation->consoleCommand);
 
-            return ExitCode::SUCCESS;
+            return ExitCode::success();
         }
 
         return $next($invocation);

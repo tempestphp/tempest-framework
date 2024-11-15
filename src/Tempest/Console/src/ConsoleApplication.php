@@ -57,7 +57,7 @@ final readonly class ConsoleApplication implements Application
         try {
             $exitCode = ($this->container->get(ExecuteConsoleCommand::class))($this->argumentBag->getCommandName());
 
-            $this->container->get(Kernel::class)->shutdown($exitCode->value);
+            $this->container->get(Kernel::class)->shutdown($exitCode->code);
         } catch (Throwable $throwable) {
             foreach ($this->appConfig->errorHandlers as $exceptionHandler) {
                 $exceptionHandler->handleException($throwable);

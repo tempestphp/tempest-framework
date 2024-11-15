@@ -49,28 +49,28 @@ final class ConsoleTesterTest extends FrameworkIntegrationTestCase
     public function test_exit_code_success(): void
     {
         $this->console
-            ->call(fn () => ExitCode::SUCCESS)
+            ->call(fn () => ExitCode::success())
             ->assertSuccess();
     }
 
     public function test_exit_code_invalid(): void
     {
         $this->console
-            ->call(fn () => ExitCode::INVALID)
+            ->call(fn () => ExitCode::invalid())
             ->assertInvalid();
     }
 
     public function test_exit_code_error(): void
     {
         $this->console
-            ->call(fn () => ExitCode::ERROR)
+            ->call(fn () => ExitCode::error())
             ->assertError();
     }
 
     public function test_exit_code_cancelled(): void
     {
         $this->console
-            ->call(fn () => ExitCode::CANCELLED)
+            ->call(fn () => ExitCode::cancelled())
             ->assertCancelled();
     }
 
