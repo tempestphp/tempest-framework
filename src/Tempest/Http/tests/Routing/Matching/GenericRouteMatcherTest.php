@@ -10,6 +10,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Http\Routing\Matching\GenericRouteMatcher;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 /**
  * @internal
@@ -41,8 +42,8 @@ final class GenericRouteMatcherTest extends TestCase
                 ],
             ],
             [
-                'GET' => '#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#',
-                'PATCH' => '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+                'GET' => new MatchingRegex(['#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#']),
+                'PATCH' => new MatchingRegex(['#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#']),
             ]
         );
 

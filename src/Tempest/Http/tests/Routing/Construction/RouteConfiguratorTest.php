@@ -10,6 +10,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 /**
  * @internal
@@ -100,9 +101,15 @@ final class RouteConfiguratorTest extends TestCase
         ], $config->dynamicRoutes);
 
         $this->assertEquals([
-            'GET' => '#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#',
-            'PATCH' => '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
-            'DELETE' => '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
+            'GET' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)(?|\/?$(*MARK:b)|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e))))))#',
+            ]),
+            'PATCH' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+            ]),
+            'DELETE' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
+            ]),
         ], $config->matchingRegexes);
     }
 }

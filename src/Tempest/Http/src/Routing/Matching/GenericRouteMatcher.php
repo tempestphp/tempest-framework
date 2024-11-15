@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\MatchedRoute;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\MarkedRoute;
 
 final readonly class GenericRouteMatcher implements RouteMatcher
 {
@@ -50,17 +49,17 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         $matchingRegexForMethod = $this->routeConfig->matchingRegexes[$request->getMethod()];
 
         // Then we'll use this regex to see whether we have a match or not
-        $matchResult = preg_match($matchingRegexForMethod, $request->getUri()->getPath(), $routingMatches);
+        $matchResult = $matchingRegexForMethod->match($request->getUri()->getPath());
 
-        if (! $matchResult || ! array_key_exists(MarkedRoute::REGEX_MARK_TOKEN, $routingMatches)) {
+        if ($matchResult === null) {
             return null;
         }
 
         // Get the route based on the matched mark
-        $route = $routesForMethod[$routingMatches[MarkedRoute::REGEX_MARK_TOKEN]];
+        $route = $routesForMethod[$matchResult->mark];
 
         // Extract the parameters based on the route and matches
-        $routeParams = $this->extractParams($route, $routingMatches);
+        $routeParams = $this->extractParams($route, $matchResult->matches);
 
         return new MatchedRoute($route, $routeParams);
     }

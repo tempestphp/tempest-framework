@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
+use Tempest\Http\Routing\Matching\MatchingRegex;
+
 /**
  * @internal
  */
@@ -32,9 +34,9 @@ final class RoutingTree
         $node->setTargetRoute($markedRoute);
     }
 
-    /** @return array<string, string> */
+    /** @return array<string, MatchingRegex> */
     public function toMatchingRegexes(): array
     {
-        return array_map(static fn (RouteTreeNode $node) => "#{$node->toRegex()}#", $this->roots);
+        return array_map(static fn (RouteTreeNode $node) => (new RouteMatchingRegexBuilder($node))->toRegex(), $this->roots);
     }
 }
