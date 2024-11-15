@@ -12,7 +12,7 @@ final class RawElement implements Element
     use IsElement;
 
     public function __construct(
-        private readonly string $tag,
+        private readonly ?string $tag,
         private readonly string $content,
         array $attributes,
     ) {
@@ -21,7 +21,9 @@ final class RawElement implements Element
 
     public function compile(): string
     {
-        $content = $this->content;
+        if ($this->tag === null) {
+            return $this->content;
+        }
 
         $attributes = [];
 

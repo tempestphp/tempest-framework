@@ -60,15 +60,17 @@ final class ElementFactory
 
             $attributes[$name] = $attribute->value;
         }
+
         if (! $node instanceof DOMElement
-        || $node->tagName === 'pre'
-        || $node->tagName === 'code') {
+            || $node->tagName === 'pre'
+            || $node->tagName === 'code') {
             $content = '';
             foreach ($node->childNodes as $child) {
                 $content .= $node->ownerDocument->saveHTML($child);
             }
+
             return new RawElement(
-                tag: $node->tagName,
+                tag: $node->tagName ?? null,
                 content: $content,
                 attributes: $attributes,
             );
@@ -78,6 +80,7 @@ final class ElementFactory
             if (! $viewComponentClass instanceof ViewComponent) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
+
             $element = new ViewComponentElement(
                 $this->compiler,
                 $viewComponentClass,
@@ -87,8 +90,7 @@ final class ElementFactory
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
             );
-        }
-        else {
+        } else {
             $element = new GenericElement(
                 tag: $node->tagName,
                 attributes: $attributes,
