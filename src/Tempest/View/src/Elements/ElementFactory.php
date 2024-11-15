@@ -55,7 +55,7 @@ final class ElementFactory
         $attributes = [];
 
         /** @var DOMAttr $attribute */
-        foreach ($node->attributes as $attribute) {
+        foreach ($node->attributes ?? [] as $attribute) {
             $name = str($attribute->name)->camel()->toString();
 
             $attributes[$name] = $attribute->value;
