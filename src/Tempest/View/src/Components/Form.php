@@ -7,7 +7,7 @@ namespace Tempest\View\Components;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 
-final readonly class XForm implements ViewComponent
+final readonly class Form implements ViewComponent
 {
     public static function getName(): string
     {

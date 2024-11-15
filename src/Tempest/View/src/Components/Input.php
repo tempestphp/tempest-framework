@@ -9,7 +9,7 @@ use Tempest\Validation\Rule;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 
-final readonly class XInput implements ViewComponent
+final readonly class Input implements ViewComponent
 {
     public function __construct(
         private Session $session,

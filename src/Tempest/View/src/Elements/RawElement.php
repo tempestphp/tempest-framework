@@ -21,7 +21,7 @@ final class RawElement implements Element
 
     public function compile(): string
     {
-        if ($this->tag === null || $this->tag === 'x-raw') {
+        if ($this->tag === null) {
             return $this->content;
         }
 
