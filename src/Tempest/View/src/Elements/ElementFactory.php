@@ -52,12 +52,28 @@ final class ElementFactory
             );
         }
 
-        if (
-            ! $node instanceof DOMElement
+        $attributes = [];
+
+        /** @var DOMAttr $attribute */
+        foreach ($node->attributes as $attribute) {
+            $name = str($attribute->name)->camel()->toString();
+
+            $attributes[$name] = $attribute->value;
+        }
+
+        if (! $node instanceof DOMElement
             || $node->tagName === 'pre'
-            || $node->tagName === 'code'
-        ) {
-            return new RawElement($node->ownerDocument->saveHTML($node));
+            || $node->tagName === 'code') {
+            $content = '';
+            foreach ($node->childNodes as $child) {
+                $content .= $node->ownerDocument->saveHTML($child);
+            }
+
+            return new RawElement(
+                tag: $node->tagName ?? null,
+                content: $content,
+                attributes: $attributes,
+            );
         }
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$node->tagName] ?? null) {
@@ -65,34 +81,16 @@ final class ElementFactory
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
 
-            $attributes = [];
-
-            /** @var DOMAttr $attribute */
-            foreach ($node->attributes as $attribute) {
-                $name = (string)str($attribute->name)->camel();
-
-                $attributes[$name] = $attribute->value;
-            }
-
             $element = new ViewComponentElement(
                 $this->compiler,
                 $viewComponentClass,
-                $attributes
+                $attributes,
             );
         } elseif ($node->tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
             );
         } else {
-            $attributes = [];
-
-            /** @var DOMAttr $attribute */
-            foreach ($node->attributes as $attribute) {
-                $name = (string)str($attribute->name)->camel();
-
-                $attributes[$name] = $attribute->value;
-            }
-
             $element = new GenericElement(
                 tag: $node->tagName,
                 attributes: $attributes,
