@@ -108,7 +108,7 @@ final class RouteConfiguratorTest extends TestCase
                 '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
             ]),
             'DELETE' => new MatchingRegex([
-                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#'
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
             ]),
         ], $config->matchingRegexes);
     }

@@ -17,7 +17,7 @@ final readonly class MatchingRegex
     ) {
     }
 
-    public function match(string $uri): RouteMatch
+    public function match(string $uri): ?RouteMatch
     {
         foreach ($this->patterns as $pattern) {
             $matchResult = preg_match($pattern, $uri, $matches);
@@ -37,6 +37,6 @@ final readonly class MatchingRegex
             return RouteMatch::match($matches);
         }
 
-        return RouteMatch::notFound();
+        return null;
     }
 }

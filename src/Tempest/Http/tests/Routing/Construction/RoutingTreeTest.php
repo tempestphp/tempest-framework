@@ -61,8 +61,8 @@ final class RoutingTreeTest extends TestCase
         $matchingRegexes = $subject->toMatchingRegexes()['GET'];
         $this->assertGreaterThan(1, count($matchingRegexes->patterns));
 
-        $this->assertTrue($matchingRegexes->match('/test/0/route_0')->isFound());
-        $this->assertTrue($matchingRegexes->match('/test/1000/route_1000')->isFound());
+        $this->assertNotNull($matchingRegexes->match('/test/0/route_0'));
+        $this->assertNotNull($matchingRegexes->match('/test/1000/route_1000'));
     }
 
     public function test_multiple_http_methods(): void
