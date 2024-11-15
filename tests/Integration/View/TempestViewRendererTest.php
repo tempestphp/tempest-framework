@@ -416,4 +416,11 @@ HTML, foo: []),
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
+
+    public function test_raw_component(): void
+    {
+        $html = $this->render('<x-raw><div :prop="$foo">{{ $bar }}</div></x-raw>');
+
+        $this->assertStringEqualsStringIgnoringLineEndings('<div :prop="$foo">{{ $bar }}</div>', $html);
+    }
 }
