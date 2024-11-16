@@ -15,7 +15,7 @@ final class RootPathHelperTest extends FrameworkIntegrationTestCase
 {
     public function test_can_get_base_path(): void
     {
-        $this->assertSame(path(realpath($this->root)), root_path());
-        $this->assertSame(path(realpath($this->root . '/tests/Fixtures')), root_path('/tests/Fixtures'));
+        $this->assertSame(path(realpath($this->root))->toString(), root_path());
+        $this->assertSame(path(realpath($this->root . '/tests/Fixtures'))->toString(), root_path('/tests/Fixtures'));
     }
 }

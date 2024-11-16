@@ -13,6 +13,7 @@ use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
+use function Tempest\path;
 use Tempest\Support\PathHelper;
 use function Tempest\Support\str;
 use Tempest\Validation\Rules\EndsWith;
@@ -134,14 +135,14 @@ trait PublishesFiles
     {
         // Separate input path and classname
         $inputClassName = PathHelper::toClassName($className);
-        $inputPath = str(PathHelper::make($className))->replaceLast($inputClassName, '')->toString();
+        $inputPath = str(path($className))->replaceLast($inputClassName, '')->toString();
         $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix ?? '')
             ->toString();
 
         // Prepare the suggested path from the project namespace
-        return str(PathHelper::make(
+        return str(path(
             $this->composer->mainNamespace->path,
             $pathPrefix ?? '',
             $inputPath,

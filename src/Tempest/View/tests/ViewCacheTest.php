@@ -7,7 +7,6 @@ namespace Tempest\tests;
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;
 use function Tempest\path;
-use function Tempest\Support\arr;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
 
@@ -38,9 +37,11 @@ final class ViewCacheTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (is_dir(self::DIRECTORY)) {
+        $directory = path(self::DIRECTORY);
+
+        if ($directory->isDirectory()) {
             /** @phpstan-ignore-next-line */
-            arr(glob(path(self::DIRECTORY, '/*.php')))->each(fn (string $file) => unlink($file));
+            $directory->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             rmdir(self::DIRECTORY);
         }

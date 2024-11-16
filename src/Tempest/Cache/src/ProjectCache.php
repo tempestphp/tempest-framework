@@ -18,7 +18,7 @@ final class ProjectCache implements Cache
         private readonly CacheConfig $cacheConfig,
     ) {
         $this->pool = $this->cacheConfig->projectCachePool ?? new FilesystemAdapter(
-            directory: path($this->cacheConfig->directory, 'project'),
+            directory: path($this->cacheConfig->directory, 'project')->toString(),
         );
     }
 

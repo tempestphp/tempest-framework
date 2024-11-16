@@ -3,10 +3,13 @@
 declare(strict_types=1);
 
 namespace Tempest\Support {
+
+    use Stringable;
+
     /**
      * Creates an instance of {@see StringHelper} using the given `$string`.
      */
-    function str(?string $string = ''): StringHelper
+    function str(Stringable|string|null $string = ''): StringHelper
     {
         return new StringHelper($string);
     }

@@ -16,9 +16,9 @@ final readonly class StringHelper implements Stringable
 {
     private string $string;
 
-    public function __construct(?string $string = '')
+    public function __construct(Stringable|string|null $string = '')
     {
-        $this->string = $string ?? '';
+        $this->string = (string) ($string ?? '');
     }
 
     /**

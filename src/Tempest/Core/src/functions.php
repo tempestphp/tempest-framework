@@ -5,23 +5,19 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Closure;
+    use Stringable;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
+    use Tempest\Support\PathHelper;
     use function Tempest\Support\str;
 
     /**
      * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
      */
-    function path(string ...$parts): string
+    function path(Stringable|string ...$parts): PathHelper
     {
-        $path = implode('/', $parts);
-
-        return str_replace(
-            ['///', '//', '\\', '\\\\'],
-            '/',
-            $path,
-        );
+        return new PathHelper(...$parts);
     }
 
     /**
@@ -29,7 +25,7 @@ namespace Tempest {
      */
     function root_path(string ...$parts): string
     {
-        return path(realpath(get(Kernel::class)->root), ...$parts);
+        return path(realpath(get(Kernel::class)->root), ...$parts)->toString();
     }
 
     /**
@@ -39,7 +35,7 @@ namespace Tempest {
     {
         $composer = get(Composer::class);
 
-        return path($composer->mainNamespace->path, ...$parts);
+        return path($composer->mainNamespace->path, ...$parts)->toString();
     }
 
     /**

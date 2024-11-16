@@ -74,7 +74,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
     {
         $session = $this->container->get(Session::class);
 
-        $path = path($this->path, (string) $session->id);
+        $path = path($this->path, (string) $session->id)->toString();
         $this->assertFileExists($path);
         $session->destroy();
         $this->assertFileDoesNotExist($path);
