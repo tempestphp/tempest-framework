@@ -180,6 +180,22 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
+    public function set(
+        string $name,
+        array $values,
+        bool $nullable = false,
+        ?string $default = null
+    ): self {
+        $this->statements[] = new SetStatement(
+            name: $name,
+            values: $values,
+            nullable: $nullable,
+            default: $default,
+        );
+
+        return $this;
+    }
+
     public function compile(DatabaseDialect $dialect): string
     {
         $compiled = sprintf(
