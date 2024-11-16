@@ -57,7 +57,13 @@ final readonly class ConsoleApplication implements Application
         try {
             $exitCode = ($this->container->get(ExecuteConsoleCommand::class))($this->argumentBag->getCommandName());
 
-            $this->container->get(Kernel::class)->shutdown($exitCode->value);
+            $exitCode = is_int($exitCode) ? $exitCode : $exitCode->value;
+
+            if ($exitCode < 0 || $exitCode > 255) {
+                throw new InvalidExitCode($exitCode);
+            }
+
+            $this->container->get(Kernel::class)->shutdown($exitCode);
         } catch (Throwable $throwable) {
             foreach ($this->appConfig->errorHandlers as $exceptionHandler) {
                 $exceptionHandler->handleException($throwable);

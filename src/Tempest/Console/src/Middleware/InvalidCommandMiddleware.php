@@ -22,7 +22,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
         try {
             return $next($invocation);
@@ -31,7 +31,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
         }
     }
 
-    private function retry(Invocation $invocation, InvalidCommandException $exception): ExitCode
+    private function retry(Invocation $invocation, InvalidCommandException $exception): ExitCode|int
     {
         $this->console->writeln("<em>Provide missing input:</em>");
 
