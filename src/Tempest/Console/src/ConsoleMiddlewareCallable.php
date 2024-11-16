@@ -14,7 +14,7 @@ final readonly class ConsoleMiddlewareCallable
     ) {
     }
 
-    public function __invoke(Invocation $invocation): ExitCode
+    public function __invoke(Invocation $invocation): ExitCode|int
     {
         return ($this->closure)($invocation);
     }

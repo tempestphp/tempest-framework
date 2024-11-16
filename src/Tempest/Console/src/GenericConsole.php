@@ -43,7 +43,7 @@ final class GenericConsole implements Console
     ) {
     }
 
-    public function call(string $command): ExitCode
+    public function call(string $command): ExitCode|int
     {
         return ($this->executeConsoleCommand)($command);
     }

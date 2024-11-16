@@ -21,7 +21,7 @@ final readonly class ExecuteConsoleCommand
     ) {
     }
 
-    public function __invoke(string $commandName): ExitCode
+    public function __invoke(string $commandName): ExitCode|int
     {
         $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
 

@@ -17,7 +17,7 @@ final readonly class ForceMiddleware implements ConsoleMiddleware
     {
     }
 
-    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
         if ($invocation->argumentBag->get('-f') || $invocation->argumentBag->get('force')) {
             if ($this->console instanceof GenericConsole) {

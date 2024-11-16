@@ -9,7 +9,7 @@ use Tempest\Highlight\Language;
 
 interface Console
 {
-    public function call(string $command): ExitCode;
+    public function call(string $command): ExitCode|int;
 
     public function readln(): string;
 
