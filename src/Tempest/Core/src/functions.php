@@ -9,8 +9,8 @@ namespace Tempest {
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
-    use Tempest\Support\PathHelper;
     use function Tempest\Support\path as supportPath;
+    use Tempest\Support\PathHelper;
     use function Tempest\Support\str;
 
     /**
