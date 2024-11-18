@@ -19,7 +19,7 @@ final readonly class PathHelper implements Stringable
     public function __construct(Stringable|string ...$paths)
     {
         $paths = array_map(
-            fn (self|string $path) => (string) $path,
+            fn (self|string $path) => (string)$path,
             $paths,
         );
 
@@ -51,63 +51,51 @@ final readonly class PathHelper implements Stringable
         $this->path = $path;
     }
 
-    private static function prepareStringForNamespace(string $path, string $root = ''): StringHelper
+    public function toNamespace(string $root = ''): string
     {
-        $normalized = str($path)
-            ->replaceStart($root, '')
-            ->replaceStart('/', '')
-            ->replace(['/', '//'], '\\');
-
-        // If the path is a to a PHP file, we exclude the file name. Otherwise,
-        // it's a path to a directory, which should be included in the namespace.
-        if ($normalized->endsWith('.php')) {
-            return $normalized->beforeLast(['/', '\\']);
-        }
-
-        return $normalized;
-    }
-
-    public static function toNamespace(string $path, string $root = ''): string
-    {
-        $path = static::prepareStringForNamespace($path, $root)->replaceEnd('\\', '');
-
-        return arr(explode('\\', (string) $path))
-            ->map(fn (string $segment) => (string) str($segment)->pascal())
+        return $this
+            ->prepareForNamespace($root)
+            ->explode('\\')
+            ->map(fn (string $segment) => (string)str($segment)->pascal())
             ->implode('\\')
             ->toString();
     }
 
-    public static function toMainNamespace(string $path): string
+    public function toMainNamespace(): string
     {
-        return self::toNamespace(
-            src_namespace() . '/' . str($path)
+        return $this->toNamespace(
+            src_namespace()
+            . '/'
+            . str($this->dirname())
                 ->replaceStart(src_path(), '')
                 ->trim('/')
-                ->toString()
+                ->toString(),
         );
     }
 
-    public static function toRegisteredNamespace(string $path): string
+    public function toRegisteredNamespace(): string
     {
         $composer = get(Composer::class);
         $kernel = get(Kernel::class);
 
-        $relativePath = static::prepareStringForNamespace($path, $kernel->root)
+        $relativePath = $this
+            ->prepareForNamespace($kernel->root)
             ->replaceEnd('\\', '')
             ->replace('\\', '/')
             ->finish('/');
 
         foreach ($composer->namespaces as $namespace) {
             if ($relativePath->startsWith($namespace->path)) {
-                return (string) $relativePath
+                return $relativePath
                     ->replace($namespace->path, $namespace->namespace)
                     ->replace(['/', '//'], '\\')
                     ->replaceEnd('.php', '')
-                    ->replaceEnd('\\', '');
+                    ->replaceEnd('\\', '')
+                    ->toString();
             }
         }
 
-        throw new Exception(sprintf('No registered namespace matches the specified path [%s].', $path));
+        throw new Exception(sprintf('No registered namespace matches the specified path [%s].', $this->path));
     }
 
     /**
@@ -115,9 +103,9 @@ final readonly class PathHelper implements Stringable
      *
      * @param string $path The path to convert.
      */
-    public static function toClassName(string $path): string
+    public function toClassName(): string
     {
-        return str($path)
+        return str($this->path)
             ->replace(['/', '\\'], '/')
             ->replaceEnd('/', '')
             ->replaceEnd('.php', '')
@@ -164,7 +152,7 @@ final readonly class PathHelper implements Stringable
     public function glob(string $pattern): ArrayHelper
     {
         return arr(
-            glob((new self($this->path, $pattern))->toString())
+            glob((new self($this->path, $pattern))->toString()),
         );
     }
 
@@ -185,11 +173,28 @@ final readonly class PathHelper implements Stringable
 
     public function equals(Stringable $other): bool
     {
-        return $this->path === (string) $other;
+        return $this->path === (string)$other;
     }
 
     public function __toString(): string
     {
         return $this->path;
+    }
+
+    private function prepareForNamespace(string $root = ''): StringHelper
+    {
+        $normalized = str($this->path)
+            ->replaceStart($root, '')
+            ->replaceStart('/', '')
+            ->replace(['/', '//'], '\\')
+            ->replaceEnd('\\', '');
+
+        // If the path is a to a PHP file, we exclude the file name. Otherwise,
+        // it's a path to a directory, which should be included in the namespace.
+        if ($normalized->endsWith('.php')) {
+            return $normalized->beforeLast(['/', '\\']);
+        }
+
+        return $normalized;
     }
 }
