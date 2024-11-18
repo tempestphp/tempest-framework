@@ -992,4 +992,19 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
         return new self($array);
     }
+
+    /**
+     * Extracts a part of the instance.
+     *
+     * ### Example
+     * ```php
+     * arr([1, 2, 3, 4, 5])->slice(2); // [3, 4, 5]
+     * ```
+     */
+    public function slice(int $offset, ?int $length = null): self
+    {
+        $length ??= $this->count() - $offset;
+
+        return new self(array_slice($this->array, $offset, $length));
+    }
 }
