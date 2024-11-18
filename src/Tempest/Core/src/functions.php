@@ -5,20 +5,11 @@ declare(strict_types=1);
 namespace Tempest {
 
     use Closure;
-    use Stringable;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
-    use Tempest\Support\PathHelper;
+    use function Tempest\Support\path;
     use function Tempest\Support\str;
-
-    /**
-     * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
-     */
-    function path(Stringable|string ...$parts): PathHelper
-    {
-        return new PathHelper(...$parts);
-    }
 
     /**
      * Creates a path scoped within the root of the project

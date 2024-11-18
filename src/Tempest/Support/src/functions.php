@@ -21,4 +21,12 @@ namespace Tempest\Support {
     {
         return new ArrayHelper($input);
     }
+
+    /**
+     * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
+     */
+    function path(Stringable|string ...$parts): PathHelper
+    {
+        return new PathHelper(...$parts);
+    }
 }
