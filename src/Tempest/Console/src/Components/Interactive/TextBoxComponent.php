@@ -54,9 +54,9 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
     private function getControls(): array
     {
         return [
-            ...($this->multiline ? ['alt+enter' => 'newline'] : []),
+            ...($this->multiline ? ['enter' => 'newline'] : []),
             ...($this->multiline && $this->supportsOpeningInEditor() ? ['ctrl+b' => 'open in editor'] : []),
-            'enter' => 'confirm',
+            ...($this->multiline ? ['alt+enter' => 'confirm'] : ['enter' => 'confirm']),
             'ctrl+c' => 'cancel',
         ];
     }

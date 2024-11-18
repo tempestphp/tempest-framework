@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Concerns;
 
 use Tempest\Console\Components\Renderers\TextInputRenderer;
+use Tempest\Console\Components\State;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\Key;
 
@@ -17,9 +18,28 @@ trait HasTextInputRenderer
     public bool $multiline = false;
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): string
+    public function enter(): ?string
     {
+        if ($this->multiline) {
+            $this->state = State::ACTIVE;
+            $this->buffer->input(PHP_EOL);
+
+            return null;
+        }
+
         return $this->buffer->text ?? '';
+    }
+
+    #[HandlesKey(Key::ALT_ENTER)]
+    public function newLine(): ?string
+    {
+        if ($this->multiline) {
+            $this->state = State::SUBMITTED;
+
+            return $this->buffer->text ?? '';
+        }
+
+        $this->buffer->input(PHP_EOL);
     }
 
     #[HandlesKey(Key::CTRL_LEFT)]
@@ -92,16 +112,6 @@ trait HasTextInputRenderer
     public function deletePreviousWord(): void
     {
         $this->buffer->deletePreviousWord();
-    }
-
-    #[HandlesKey(Key::ALT_ENTER)]
-    public function newLine(): void
-    {
-        if (! $this->multiline) {
-            return;
-        }
-
-        $this->buffer->input(PHP_EOL);
     }
 
     #[HandlesKey(Key::UP)]
