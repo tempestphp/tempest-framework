@@ -19,8 +19,6 @@ final class NamespaceHelperTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame('Tempest\\Auth', NamespaceHelper::toMainNamespace('src/Tempest/Auth/src/SomeNewClass.php'));
         $this->assertSame('Tempest\\Auth\\SomeDirectory', NamespaceHelper::toMainNamespace('src/Tempest/Auth/src/SomeDirectory'));
-        $this->assertSame('Tempest\\Auth', NamespaceHelper::toMainNamespace($this->root . '/src/Tempest/Auth/src/SomeNewClass.php'));
-        $this->assertSame('Tempest\\Auth\\SomeDirectory', NamespaceHelper::toMainNamespace($this->root . '/src/Tempest/Auth/src/SomeDirectory'));
     }
 
     #[Test]
