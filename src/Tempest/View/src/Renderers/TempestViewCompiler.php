@@ -67,7 +67,7 @@ final readonly class TempestViewCompiler
         $searchPath = $path;
 
         while (! file_exists($searchPath) && $location = current($discoveryLocations)) {
-            $searchPath = path($location->path, $path);
+            $searchPath = path($location->path, $path)->toString();
             next($discoveryLocations);
         }
 

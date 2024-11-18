@@ -22,7 +22,7 @@ final class ViewCache implements Cache
         ?ViewCachePool $pool = null,
     ) {
         $this->cachePool = $pool ?? new ViewCachePool(
-            directory: path($this->cacheConfig->directory, 'views'),
+            directory: path($this->cacheConfig->directory, 'views')->toString(),
         );
     }
 
@@ -38,7 +38,7 @@ final class ViewCache implements Cache
             $this->cachePool->save($cacheItem);
         }
 
-        return path($this->cachePool->directory, $cacheItem->getKey() . '.php');
+        return path($this->cachePool->directory, $cacheItem->getKey() . '.php')->toString();
     }
 
     protected function getCachePool(): CacheItemPoolInterface

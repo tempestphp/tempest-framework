@@ -26,11 +26,11 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
         $root = $this->kernel->root;
 
-        $this->assertFileExists(path($root, '/public/static/a/b/index.html'));
-        $this->assertFileExists(path($root, '/public/static/c/d/index.html'));
+        $this->assertFileExists(path($root, '/public/static/a/b/index.html')->toString());
+        $this->assertFileExists(path($root, '/public/static/c/d/index.html')->toString());
 
-        $b = file_get_contents(path($root, '/public/static/a/b/index.html'));
-        $d = file_get_contents(path($root, '/public/static/c/d/index.html'));
+        $b = file_get_contents(path($root, '/public/static/a/b/index.html')->toString());
+        $d = file_get_contents(path($root, '/public/static/c/d/index.html')->toString());
 
         $this->assertStringContainsString('a', $b);
         $this->assertStringContainsString('b', $b);

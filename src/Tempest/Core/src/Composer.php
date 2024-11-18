@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use function Tempest\path;
 use function Tempest\Support\arr;
-use Tempest\Support\PathHelper;
 
 final class Composer
 {
@@ -19,7 +19,7 @@ final class Composer
     public function __construct(
         string $root,
     ) {
-        $composerFilePath = PathHelper::make($root, 'composer.json');
+        $composerFilePath = path($root, 'composer.json')->toString();
 
         $this->composer = $this->loadComposerFile($composerFilePath);
         $this->namespaces = arr($this->composer)

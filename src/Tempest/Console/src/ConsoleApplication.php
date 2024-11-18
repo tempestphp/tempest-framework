@@ -13,7 +13,7 @@ use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use Tempest\Support\PathHelper;
+use function Tempest\path;
 use Throwable;
 
 final readonly class ConsoleApplication implements Application
@@ -45,8 +45,8 @@ final readonly class ConsoleApplication implements Application
             $logConfig->debugLogPath === null
             && $logConfig->channels === []
         ) {
-            $logConfig->debugLogPath = PathHelper::make($container->get(Kernel::class)->root, '/log/debug.log');
-            $logConfig->channels[] = new AppendLogChannel(PathHelper::make($container->get(Kernel::class)->root, '/log/tempest.log'));
+            $logConfig->debugLogPath = path($container->get(Kernel::class)->root, '/log/debug.log')->toString();
+            $logConfig->channels[] = new AppendLogChannel(path($container->get(Kernel::class)->root, '/log/tempest.log')->toString());
         }
 
         return $application;

@@ -9,7 +9,8 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Support\PathHelper;
+use function Tempest\path;
+use Tempest\Support\NamespaceHelper;
 use function Tempest\Support\str;
 use Tempest\Support\StringHelper;
 use Throwable;
@@ -51,8 +52,8 @@ final class StubFileGenerator
             $this->prepareFilesystem($targetPath);
 
             // Transform stub to class
-            $namespace = PathHelper::toMainNamespace($targetPath);
-            $classname = PathHelper::toClassName($targetPath);
+            $namespace = NamespaceHelper::toMainNamespace($targetPath);
+            $classname = NamespaceHelper::toClassName($targetPath);
             $classManipulator = (new ClassManipulator($stubFile->filePath))
                 ->setNamespace($namespace)
                 ->setClassName($classname);
@@ -68,8 +69,8 @@ final class StubFileGenerator
             // Run all manipulations
             $classManipulator = array_reduce(
                 array: $manipulations,
-                initial: $classManipulator,
-                callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator)
+                callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
+                initial: $classManipulator
             );
 
             if (file_exists($targetPath) && $shouldOverride) {

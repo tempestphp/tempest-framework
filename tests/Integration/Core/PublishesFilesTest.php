@@ -47,12 +47,12 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
         $appPath = str_replace('\\', '/', $composer->mainNamespace->path); // Normalize windows path
 
         $this->assertSame(
+            expected: path($appPath, $expected)->toString(),
             actual: $concreteClass->getSuggestedPath(
                 className: $className,
                 pathPrefix: $pathPrefix,
                 classSuffix: $classSuffix
-            ),
-            expected: path($appPath, $expected)
+            )
         );
     }
 
