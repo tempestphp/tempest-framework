@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-final class PathHelperTest extends FrameworkIntegrationTestCase
+final class NamespaceHelperTest extends FrameworkIntegrationTestCase
 {
     #[Test]
     public function path_to_registered_namespace(): void
