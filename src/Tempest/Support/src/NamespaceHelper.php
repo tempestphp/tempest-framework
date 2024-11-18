@@ -8,7 +8,6 @@ use Exception;
 use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
 use function Tempest\get;
-use function Tempest\root_path;
 use function Tempest\src_namespace;
 use function Tempest\src_path;
 
@@ -28,7 +27,6 @@ final readonly class NamespaceHelper
     {
         return self::toNamespace(
             src_namespace() . '/' . str($path)
-                ->replaceStart(root_path(), '')
                 ->replaceStart(src_path(), '')
                 ->trim('/')
                 ->toString()
