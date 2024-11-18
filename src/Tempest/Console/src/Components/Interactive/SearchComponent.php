@@ -31,7 +31,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     private SearchRenderer $renderer;
 
     private null|int|string $activeOption = null;
-    private int $hiddenOptions = 0;
     private array $options = [];
     private ?string $previousQuery = null;
 
@@ -39,7 +38,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         public string $label,
         public Closure $search,
         public ?string $default = null,
-        public int $maxDisplayOptions = 5,
     ) {
         $this->buffer = new TextBuffer();
         $this->renderer = new SearchRenderer();
@@ -57,7 +55,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             query: $this->buffer,
             options: $this->options,
             selected: $this->activeOption,
-            hiddenOptions: $this->hiddenOptions,
         );
     }
 
@@ -83,14 +80,13 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             return;
         }
 
-        $this->previousQuery = $this->buffer->text;
-        $this->options = array_slice($options = ($this->search)($this->buffer->text), 0, $this->maxDisplayOptions);
-        $this->hiddenOptions = count($options) - $this->maxDisplayOptions;
+        $this->options = array_values(($this->search)($this->buffer->text));
         $this->activeOption = array_key_first($this->options);
+        $this->previousQuery = $this->buffer->text;
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): ?string
+    public function enter(): null|int|string
     {
         if (! $value = $this->options[$this->activeOption] ?? null) {
             return $this->default;

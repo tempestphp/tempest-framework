@@ -24,6 +24,8 @@ trait RendersInput
     private string $paddingX;
     private string $leftBorder;
 
+    private int $scrollOffset = 0;
+
     private function prepareRender(Terminal $terminal, State $state): self
     {
         $this->terminal = $terminal;
@@ -131,5 +133,24 @@ trait RendersInput
         }
 
         return $this;
+    }
+
+    private function calculateScrollOffset(iterable $lines, int $maximumLines, int $cursorPosition, ?int $currentOffset = null): int
+    {
+        $currentOffset ??= $this->scrollOffset;
+
+        if (count($lines) <= $maximumLines) {
+            return $this->scrollOffset = 0;
+        }
+
+        if ($cursorPosition >= $currentOffset + $maximumLines) {
+            return $this->scrollOffset = $cursorPosition - $maximumLines + 1;
+        }
+
+        if ($cursorPosition < $currentOffset) {
+            return $this->scrollOffset = $cursorPosition;
+        }
+
+        return $this->scrollOffset = $currentOffset;
     }
 }

@@ -41,8 +41,7 @@ final class TextInputRenderer
             ->map(static fn (string $line) => str($line)->replaceEnd(PHP_EOL, ' '));
 
         // calculates scroll offset based on cursor position
-        $cursorPosition = $buffer->getRelativeCursorPosition($this->maxLineCharacters);
-        $this->scrollOffset = $this->calculateScrollOffset($lines, $cursorPosition->y, $this->scrollOffset);
+        $this->scrollOffset = $this->calculateScrollOffset($lines, $this->maximumLines, $buffer->getRelativeCursorPosition($this->maxLineCharacters)->y);
 
         // slices lines to display only the visible portion
         $displayLines = $lines->slice($this->scrollOffset, $this->maximumLines);
@@ -72,22 +71,5 @@ final class TextInputRenderer
             x: $position->x + (self::MARGIN_X + 1 + self::PADDING_X), // +1 is the border width
             y: $position->y - $this->scrollOffset + (self::MARGIN_TOP + 1), // +1 is the label, subtract scroll offset
         );
-    }
-
-    private function calculateScrollOffset(iterable $lines, int $cursorPosition, int $currentOffset): int
-    {
-        if ($lines->count() <= $this->maximumLines) {
-            return 0;
-        }
-
-        if ($cursorPosition >= $currentOffset + $this->maximumLines) {
-            return $cursorPosition - $this->maximumLines + 1;
-        }
-
-        if ($cursorPosition < $currentOffset) {
-            return $cursorPosition;
-        }
-
-        return $currentOffset;
     }
 }

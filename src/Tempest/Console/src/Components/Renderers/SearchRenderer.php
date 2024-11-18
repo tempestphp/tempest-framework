@@ -13,6 +13,11 @@ final class SearchRenderer
 {
     use RendersInput;
 
+    public function __construct(
+        private $maximumOptions = 5,
+    ) {
+    }
+
     public function render(
         Terminal $terminal,
         State $state,
@@ -20,7 +25,6 @@ final class SearchRenderer
         TextBuffer $query,
         array $options,
         null|int|string $selected,
-        int $hiddenOptions,
     ): string {
         $this->prepareRender($terminal, $state);
         $this->label($label);
@@ -30,18 +34,17 @@ final class SearchRenderer
         );
         $this->newLine();
 
-        foreach ($options as $key => $value) {
+        $displayOptions = array_slice(
+            array: $options,
+            offset: $this->calculateScrollOffset($options, $this->maximumOptions, array_search($selected, array_keys($options), strict: true) ?? 0),
+            length: $this->maximumOptions,
+            preserve_keys: true,
+        );
+
+        foreach ($displayOptions as $key => $value) {
             $this->line(
                 $key === $selected ? $this->style('fg-magenta', '→ ') : '  ',
                 $this->style($key === $selected ? 'fg-green bold' : 'fg-white', $value),
-            );
-            $this->newLine();
-        }
-
-        if ($hiddenOptions > 0) {
-            $this->line(
-                $this->style('fg-gray', '  '),
-                $this->style('fg-gray', sprintf('and %d more...', $hiddenOptions)),
             );
             $this->newLine();
         }
