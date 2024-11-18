@@ -33,7 +33,6 @@ final class TextInputRenderer
         $this->prepareRender($terminal, $state);
 
         $this->label($label);
-        $this->newLine();
 
         // splits the text to an array so we can work with individual lines
         $lines = str($buffer->text ?: $placeholder ?: '')

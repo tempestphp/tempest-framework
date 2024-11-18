@@ -105,7 +105,7 @@ trait RendersInput
 
     private function label(string $label): self
     {
-        return $this->line($this->style('bold fg-cyan', $this->truncate($label)));
+        return $this->line($this->style('bold fg-cyan', $this->truncate($label)), PHP_EOL);
     }
 
     private function line(string|Stringable ...$append): self
@@ -123,10 +123,10 @@ trait RendersInput
 
     private function newLine(bool $border = false): self
     {
-        $this->frame = $this->frame->append(PHP_EOL);
 
         if ($border) {
-            $this->line('');
+            $this->line(PHP_EOL);
+        } else {
             $this->frame = $this->frame->append(PHP_EOL);
         }
 

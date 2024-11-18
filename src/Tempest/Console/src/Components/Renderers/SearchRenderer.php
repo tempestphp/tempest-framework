@@ -24,7 +24,6 @@ final class SearchRenderer
     ): string {
         $this->prepareRender($terminal, $state);
         $this->label($label);
-        $this->newLine();
         $this->line(
             $this->style('fg-magenta', '/ '),
             $this->style('bold fg-cyan', $this->truncateLeft($query->text, maxLineOffset: 2))
