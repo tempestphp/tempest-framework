@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use function Tempest\path;
-use Tempest\Support\PathHelper;
+use Tempest\Support\NamespaceHelper;
 
 /**
  * @internal
@@ -119,8 +119,8 @@ final class PathHelperTest extends TestCase
     public function toClassName(string $path, string $expected): void
     {
         $this->assertSame(
-            actual: PathHelper::toClassName($path),
             expected: $expected,
+            actual: NamespaceHelper::toClassName($path),
         );
     }
 

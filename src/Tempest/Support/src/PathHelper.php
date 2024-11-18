@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-use Exception;
 use Stringable;
-use Tempest\Core\Composer;
-use Tempest\Core\Kernel;
-use function Tempest\get;
-use function Tempest\src_namespace;
-use function Tempest\src_path;
 
 final readonly class PathHelper implements Stringable
 {
@@ -49,69 +43,6 @@ final readonly class PathHelper implements Stringable
         }
 
         $this->path = $path;
-    }
-
-    public function toNamespace(string $root = ''): string
-    {
-        return $this
-            ->prepareForNamespace($root)
-            ->explode('\\')
-            ->map(fn (string $segment) => (string)str($segment)->pascal())
-            ->implode('\\')
-            ->toString();
-    }
-
-    public function toMainNamespace(): string
-    {
-        return $this->toNamespace(
-            src_namespace()
-            . '/'
-            . str($this->dirname())
-                ->replaceStart(src_path(), '')
-                ->trim('/')
-                ->toString(),
-        );
-    }
-
-    public function toRegisteredNamespace(): string
-    {
-        $composer = get(Composer::class);
-        $kernel = get(Kernel::class);
-
-        $relativePath = $this
-            ->prepareForNamespace($kernel->root)
-            ->replaceEnd('\\', '')
-            ->replace('\\', '/')
-            ->finish('/');
-
-        foreach ($composer->namespaces as $namespace) {
-            if ($relativePath->startsWith($namespace->path)) {
-                return $relativePath
-                    ->replace($namespace->path, $namespace->namespace)
-                    ->replace(['/', '//'], '\\')
-                    ->replaceEnd('.php', '')
-                    ->replaceEnd('\\', '')
-                    ->toString();
-            }
-        }
-
-        throw new Exception(sprintf('No registered namespace matches the specified path [%s].', $this->path));
-    }
-
-    /**
-     * Convert a path to a class name.
-     *
-     * @param string $path The path to convert.
-     */
-    public function toClassName(): string
-    {
-        return str($this->path)
-            ->replace(['/', '\\'], '/')
-            ->replaceEnd('/', '')
-            ->replaceEnd('.php', '')
-            ->afterLast('/')
-            ->classBasename()
-            ->toString();
     }
 
     public function toString(): string
@@ -179,22 +110,5 @@ final readonly class PathHelper implements Stringable
     public function __toString(): string
     {
         return $this->path;
-    }
-
-    private function prepareForNamespace(string $root = ''): StringHelper
-    {
-        $normalized = str($this->path)
-            ->replaceStart($root, '')
-            ->replaceStart('/', '')
-            ->replace(['/', '//'], '\\')
-            ->replaceEnd('\\', '');
-
-        // If the path is a to a PHP file, we exclude the file name. Otherwise,
-        // it's a path to a directory, which should be included in the namespace.
-        if ($normalized->endsWith('.php')) {
-            return $normalized->beforeLast(['/', '\\']);
-        }
-
-        return $normalized;
     }
 }

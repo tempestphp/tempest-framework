@@ -14,7 +14,7 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
 use function Tempest\path;
-use Tempest\Support\PathHelper;
+use Tempest\Support\NamespaceHelper;
 use function Tempest\Support\str;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
@@ -134,7 +134,7 @@ trait PublishesFiles
     public function getSuggestedPath(string $className, ?string $pathPrefix = null, ?string $classSuffix = null): string
     {
         // Separate input path and classname
-        $inputClassName = PathHelper::toClassName($className);
+        $inputClassName = NamespaceHelper::toClassName($className);
         $inputPath = str(path($className))->replaceLast($inputClassName, '')->toString();
         $className = str($inputClassName)
             ->pascal()
@@ -159,7 +159,7 @@ trait PublishesFiles
      */
     public function promptTargetPath(string $suggestedPath): string
     {
-        $className = PathHelper::toClassName($suggestedPath);
+        $className = NamespaceHelper::toClassName($suggestedPath);
 
         return $this->console->ask(
             question: sprintf('Where do you want to save the file "%s"?', $className),
