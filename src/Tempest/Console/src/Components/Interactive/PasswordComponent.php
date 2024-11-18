@@ -25,7 +25,7 @@ final class PasswordComponent implements InteractiveConsoleComponent, HasCursor,
         public string $label = 'Password',
     ) {
         $this->buffer = new TextBuffer();
-        $this->renderer = new TextInputRenderer();
+        $this->renderer = new TextInputRenderer(minimumLines: 1, maximumLines: 1);
     }
 
     public function render(Terminal $terminal): string

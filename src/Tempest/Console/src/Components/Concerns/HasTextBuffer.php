@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Concerns;
 
 use Tempest\Console\Components\TextBuffer;
+use Tempest\Console\HandlesKey;
+use Tempest\Console\Key;
 
 trait HasTextBuffer
 {
@@ -20,73 +22,75 @@ trait HasTextBuffer
         return $this->buffer->text;
     }
 
-    public function input(string $key): void
-    {
-        $this->buffer->input($key);
-    }
-
-    public function deletePreviousCharacter(): void
-    {
-        $this->buffer->deletePreviousCharacter();
-    }
-
-    public function deleteNextCharacter(): void
-    {
-        $this->buffer->deleteNextCharacter();
-    }
-
-    public function deletePreviousWord(): void
-    {
-        $this->buffer->deletePreviousWord();
-    }
-
-    public function deleteNextWord(): void
-    {
-        $this->buffer->deleteNextWord();
-    }
-
-    public function setCursorIndex(int $index): void
-    {
-        $this->buffer->setCursorIndex($index);
-    }
-
-    public function moveCursorX(int $offset): void
-    {
-        $this->buffer->moveCursorX($offset);
-    }
-
-    public function moveCursorY(int $offset): void
-    {
-        $this->buffer->moveCursorY($offset);
-    }
-
-    public function moveCursorToStart(): void
-    {
-        $this->buffer->moveCursorToStart();
-    }
-
-    public function moveCursorToEnd(): void
-    {
-        $this->buffer->moveCursorToEnd();
-    }
-
-    public function moveCursorToNextWord(): void
-    {
-        $this->buffer->moveCursorToNextWord();
-    }
-
+    #[HandlesKey(Key::CTRL_LEFT)]
     public function moveCursorToPreviousWord(): void
     {
         $this->buffer->moveCursorToPreviousWord();
     }
 
-    public function moveCursorToStartOfLine(): void
+    #[HandlesKey(Key::HOME)]
+    public function start(): void
+    {
+        $this->buffer->moveCursorToStart();
+    }
+
+    #[HandlesKey(Key::END_OF_LINE)]
+    public function endOfLine(): void
+    {
+        $this->buffer->moveCursorToEndOfLine();
+    }
+
+    #[HandlesKey(Key::CTRL_RIGHT)]
+    public function moveCursorToNextWord(): void
+    {
+        $this->buffer->moveCursorToNextWord();
+    }
+
+    #[HandlesKey(Key::END)]
+    public function end(): void
+    {
+        $this->buffer->moveCursorToEnd();
+    }
+
+    #[HandlesKey(Key::START_OF_LINE)]
+    public function startOfLine(): void
     {
         $this->buffer->moveCursorToStartOfLine();
     }
 
-    public function moveCursorToEndOfLine(): void
+    #[HandlesKey(Key::LEFT)]
+    public function left(): void
     {
-        $this->buffer->moveCursorToEndOfLine();
+        $this->buffer->moveCursorX(-1);
+    }
+
+    #[HandlesKey(Key::RIGHT)]
+    public function right(): void
+    {
+        $this->buffer->moveCursorX(1);
+    }
+
+    #[HandlesKey(Key::DELETE)]
+    public function deleteNextCharacter(): void
+    {
+        $this->buffer->deleteNextCharacter();
+    }
+
+    #[HandlesKey(Key::CTRL_DELETE)]
+    public function deleteNextWord(): void
+    {
+        $this->buffer->deleteNextWord();
+    }
+
+    #[HandlesKey(Key::BACKSPACE)]
+    public function deletePreviousCharacter(): void
+    {
+        $this->buffer->deletePreviousCharacter();
+    }
+
+    #[HandlesKey(Key::CTRL_BACKSPACE)]
+    public function deletePreviousWord(): void
+    {
+        $this->buffer->deletePreviousWord();
     }
 }

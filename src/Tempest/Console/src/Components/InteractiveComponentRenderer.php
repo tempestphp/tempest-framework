@@ -69,6 +69,8 @@ final class InteractiveComponentRenderer
             // Otherwise, we handle the rendering in `finally`.
             if (! $component instanceof CanCancel) {
                 throw $interruptException;
+            } else {
+                $component->setState(State::CANCELLED);
             }
         } finally {
             // Render a last time the component,

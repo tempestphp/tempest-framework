@@ -58,6 +58,8 @@ final class TextInputRenderer
             for ($i = $displayLines->count(); $i < $this->maximumLines; $i++) {
                 $this->line(PHP_EOL);
             }
+        } elseif ($displayLines->count() === 0) {
+            $this->line(PHP_EOL);
         }
 
         return $this->finishRender();

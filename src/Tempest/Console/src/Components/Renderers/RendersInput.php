@@ -48,15 +48,30 @@ trait RendersInput
         return $this->frame->toString();
     }
 
-    private function truncate(?string $string = null): string
+    private function truncate(?string $string = null, int $maxLineOffset = 0): string
     {
         if (! $string) {
             return '';
         }
 
         return (new StringHelper($string))
-            ->truncate($this->maxLineCharacters - 1, end: '…') // -1 is for the ellipsis
+            ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
+    }
+
+    private function truncateLeft(?string $string = null, int $maxLineOffset = 0): string
+    {
+        if (! $string) {
+            return '';
+        }
+
+        $length = $this->maxLineCharacters - 1 - $maxLineOffset;
+
+        if (mb_strwidth($string, 'UTF-8') <= $length) {
+            return $string;
+        }
+
+        return '…' . strrev(rtrim(mb_strimwidth(strrev($string), 0, $length, encoding: 'UTF-8')));
     }
 
     private function getStyle(): string
@@ -68,8 +83,9 @@ trait RendersInput
         };
     }
 
-    private function centerText(string $text, int $width, int $padding = 2): string
+    private function centerText(?string $text, int $width, int $padding = 2): string
     {
+        $text ??= '';
         $textLength = strlen($text);
         $actualWidth = max($width, $textLength + (2 * $padding));
         $leftPadding = (int) floor(($actualWidth - $textLength) / 2);

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Generator;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\Renderers\SearchRenderer;
 use Tempest\Console\Components\Static\StaticSearchComponent;
+use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -24,33 +26,39 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     use HasErrors;
     use HasState;
     use RendersControls;
+    use HasTextBuffer;
 
-    public Point $cursorPosition;
+    private SearchRenderer $renderer;
 
-    public string $query = '';
-
-    public int $selectedOption = 0;
-
-    public array $options = [];
+    private null|int|string $activeOption = null;
+    private int $hiddenOptions = 0;
+    private array $options = [];
+    private ?string $previousQuery = null;
 
     public function __construct(
         public string $label,
         public Closure $search,
-        public ?string $default = null
+        public ?string $default = null,
+        public int $maxDisplayOptions = 5,
     ) {
-        $this->cursorPosition = new Point(2, 1);
+        $this->buffer = new TextBuffer();
+        $this->renderer = new SearchRenderer();
+        $this->updateQuery();
     }
 
-    public function render(Terminal $terminal): Generator|string
+    public function render(Terminal $terminal): string
     {
-        $output = "<question>{$this->label}</question> {$this->query}";
+        $this->updateQuery();
 
-        foreach ($this->options as $key => $option) {
-            $output .= PHP_EOL;
-            $output .= $this->isSelected($key) ? "[x] <em>{$option}</em>" : "[ ] {$option}";
-        }
-
-        return $output;
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            label: $this->label,
+            query: $this->buffer,
+            options: $this->options,
+            selected: $this->activeOption,
+            hiddenOptions: $this->hiddenOptions,
+        );
     }
 
     private function getControls(): array
@@ -66,119 +74,60 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     #[HandlesKey]
     public function input(string $key): void
     {
-        if (str_starts_with($key, "\e")) {
+        $this->buffer->input($key);
+    }
+
+    private function updateQuery(): void
+    {
+        if ($this->previousQuery === $this->buffer->text) {
             return;
         }
 
-        $offset = $this->cursorPosition->x - 2;
-
-        $this->updateQuery(substr($this->query, 0, $offset) . $key . substr($this->query, $offset));
-
-        $this->right();
+        $this->previousQuery = $this->buffer->text;
+        $this->options = array_slice($options = ($this->search)($this->buffer->text), 0, $this->maxDisplayOptions);
+        $this->hiddenOptions = count($options) - $this->maxDisplayOptions;
+        $this->activeOption = array_key_first($this->options);
     }
 
     #[HandlesKey(Key::ENTER)]
     public function enter(): ?string
     {
-        $selected = $this->options[$this->selectedOption] ?? null;
-
-        if (! $selected && $this->default) {
+        if (! $value = $this->options[$this->activeOption] ?? null) {
             return $this->default;
         }
 
-        if (! $selected) {
-            return null;
-        }
-
-        $this->query = $selected;
-
-        return $selected;
-    }
-
-    #[HandlesKey(Key::BACKSPACE)]
-    public function backspace(): void
-    {
-        $offset = $this->cursorPosition->x - 2;
-
-        if ($offset <= 0) {
-            return;
-        }
-
-        $this->updateQuery(substr($this->query, 0, $offset - 1) . substr($this->query, $offset));
-
-        $this->left();
-    }
-
-    #[HandlesKey(Key::DELETE)]
-    public function delete(): void
-    {
-        $offset = $this->cursorPosition->x - 2;
-
-        $this->updateQuery(substr($this->query, 0, $offset) . substr($this->query, $offset + 1));
-    }
-
-    #[HandlesKey(Key::HOME)]
-    public function home(): void
-    {
-        $this->cursorPosition->x = 2;
-    }
-
-    #[HandlesKey(Key::END)]
-    public function end(): void
-    {
-        $this->cursorPosition->x = strlen($this->query) + 2;
-    }
-
-    #[HandlesKey(Key::LEFT)]
-    public function left(): void
-    {
-        $this->cursorPosition->x = max(2, $this->cursorPosition->x - 1);
-    }
-
-    #[HandlesKey(Key::RIGHT)]
-    public function right(): void
-    {
-        $this->cursorPosition->x = min(strlen($this->query) + 2, $this->cursorPosition->x + 1);
+        return array_is_list($this->options)
+            ? $value
+            : $this->activeOption;
     }
 
     #[HandlesKey(Key::UP)]
     public function up(): void
     {
-        $this->selectedOption = $this->selectedOption - 1;
+        $previousValue = prev($this->options);
 
-        if ($this->selectedOption < 0) {
-            $this->selectedOption = count($this->options) - 1;
+        if ($previousValue === false) {
+            end($this->options);
         }
+
+        $this->activeOption = key($this->options);
     }
 
     #[HandlesKey(Key::DOWN)]
     public function down(): void
     {
-        $this->selectedOption = $this->selectedOption + 1;
+        $nextValue = next($this->options);
 
-        if ($this->selectedOption > count($this->options) - 1) {
-            $this->selectedOption = 0;
+        if ($nextValue === false) {
+            reset($this->options);
         }
+
+        $this->activeOption = key($this->options);
     }
 
     public function getCursorPosition(Terminal $terminal): Point
     {
-        return new Point(
-            x: $this->cursorPosition->x + strlen($this->label) + 1,
-            y: $this->cursorPosition->y - 1,
-        );
-    }
-
-    private function updateQuery(string $query): void
-    {
-        $this->selectedOption = 0;
-        $this->query = $query;
-        $this->options = array_values(($this->search)($this->query));
-    }
-
-    private function isSelected(int $key): bool
-    {
-        return $this->selectedOption === $key;
+        return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
     public function getStaticComponent(): StaticConsoleComponent
