@@ -12,7 +12,6 @@ use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
-use function Tempest\env;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -177,7 +176,7 @@ final class Kernel
 
     private function registerKernelErrorHandler(): self
     {
-        $environment = Environment::tryFrom(env('ENVIRONMENT', 'production'));
+        $environment = Environment::fromEnv();
 
         if ($environment->isTesting()) {
             return $this;
