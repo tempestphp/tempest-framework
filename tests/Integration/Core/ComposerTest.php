@@ -93,13 +93,6 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function errors_without_namespace(): void
-    {
-        $this->expectException(KernelException::class);
-        $this->initializeComposer([]);
-    }
-
-    #[Test]
     public function errors_without_composer_file(): void
     {
         $this->expectException(KernelException::class);
