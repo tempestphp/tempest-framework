@@ -31,6 +31,7 @@ trait RendersInput
     {
         $this->terminal = $terminal;
         $this->state = $state;
+        $this->offsetY = 0;
 
         $this->marginX = str_repeat(' ', self::MARGIN_X);
         $this->paddingX = str_repeat(' ', self::PADDING_X);
