@@ -21,9 +21,7 @@ final class AppConfig
             // …,
         ],
     ) {
-        $this->environment = $environment
-            ?? Environment::tryFrom(env('ENVIRONMENT', 'local'))
-            ?? Environment::LOCAL;
+        $this->environment = $environment ?? Environment::fromEnv();
 
         $this->baseUri = $baseUri ?? env('BASE_URI') ?? '';
     }
