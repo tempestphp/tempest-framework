@@ -8,8 +8,8 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use function Tempest\path;
 use Tempest\Support\NamespaceHelper;
+use function Tempest\Support\path;
 
 /**
  * @internal
