@@ -14,7 +14,9 @@ use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
 use function Tempest\Support\str;
+use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\Numeric;
 
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 {
@@ -46,7 +48,13 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
                 question: str($argument->name)->snake(' ')->upperFirst()->toString(),
                 default: (string) $argument->default,
                 hint: $argument->help ?? $argument->description,
-                validation: [new NotEmpty()]
+                validation: [
+                    match ($argument->type) {
+                        'bool' => new Boolean(),
+                        'int' => new Numeric(),
+                        default => new NotEmpty(),
+                    },
+                ]
             );
 
             $invocation->argumentBag->add(new ConsoleInputArgument(
