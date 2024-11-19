@@ -19,6 +19,8 @@ final class FrameworkInstaller implements Installer
 
     public function install(): void
     {
+        $this->installMainNamespace();
+
         $this->publish(
             source: __DIR__ . '/../../../../.env.example',
             destination: root_path('.env.example'),
@@ -44,5 +46,31 @@ final class FrameworkInstaller implements Installer
                 }
             },
         );
+    }
+
+    private function installMainNamespace(): void
+    {
+        if ($this->composer->mainNamespace !== null) {
+            return;
+        }
+
+        if (! $this->confirm('Tempest detected no main project namespace. Do you want to create it?', default: true)) {
+            return;
+        }
+
+        $appPath = root_path('app/');
+
+        if (! is_dir($appPath)) {
+            mkdir($appPath);
+        }
+
+        $this->composer
+            ->addNamespace(
+                'App\\',
+                $appPath,
+            )
+            ->save();
+
+        $this->success("Project namespace created: {$appPath}");
     }
 }
