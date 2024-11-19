@@ -38,6 +38,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         iterable $options,
         public ?string $default = null,
     ) {
+        $this->bufferEnabled = false;
         $this->options = new OptionCollection($options);
         $this->buffer = new TextBuffer();
         $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
@@ -54,25 +55,25 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
             label: $this->label,
             query: $this->buffer,
             options: $this->options,
-            placeholder: 'Filter...'
+            filtering: $this->bufferEnabled,
+            placeholder: 'Filter...',
         );
     }
 
     private function getControls(): array
     {
         return [
-            'type' => 'filter',
+            ...($this->bufferEnabled ? [
+                'esc' => 'select',
+            ] : [
+                '/' => 'filter',
+                'space' => 'select',
+            ]),
             '↑' => 'up',
             '↓' => 'down',
             'enter' => 'confirm',
             'ctrl+c' => 'cancel',
         ];
-    }
-
-    #[HandlesKey]
-    public function input(string $key): void
-    {
-        $this->buffer->input($key);
     }
 
     private function updateQuery(): void
@@ -85,13 +86,40 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
+    public function cursorVisible(): bool
+    {
+        return $this->bufferEnabled;
+    }
+
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticSingleChoiceComponent(
             question: $this->question,
-            options: $this->options->rawOptions(),
+            options: $this->options->getRawOptions(),
             default: $this->default,
         );
+    }
+
+    #[HandlesKey]
+    public function input(string $key): void
+    {
+        if (! $this->bufferEnabled && $key === '/') {
+            $this->bufferEnabled = true;
+
+            return;
+        }
+
+        if (! $this->bufferEnabled) {
+            match (mb_strtolower($key)) {
+                'h', 'k' => $this->options->previous(),
+                'j', 'l' => $this->options->next(),
+                default => null,
+            };
+
+            return;
+        }
+
+        $this->buffer->input($key);
     }
 
     #[HandlesKey(Key::ENTER)]
@@ -104,13 +132,23 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
             : $active->key;
     }
 
+    #[HandlesKey(Key::ESCAPE)]
+    public function stopFiltering(): void
+    {
+        $this->bufferEnabled = false;
+    }
+
     #[HandlesKey(Key::UP)]
+    #[HandlesKey(Key::HOME)]
+    #[HandlesKey(Key::START_OF_LINE)]
     public function up(): void
     {
         $this->options->previous();
     }
 
     #[HandlesKey(Key::DOWN)]
+    #[HandlesKey(Key::END)]
+    #[HandlesKey(Key::END_OF_LINE)]
     public function down(): void
     {
         $this->options->next();

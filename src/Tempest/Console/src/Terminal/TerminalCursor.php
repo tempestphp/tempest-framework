@@ -80,7 +80,7 @@ final class TerminalCursor implements Cursor
 
         $this->console->write(
             sprintf(
-                "\x1b[%d;%dH",
+                "\e[%d;%dH",
                 $position->y,
                 $position->x,
             ),
@@ -93,28 +93,28 @@ final class TerminalCursor implements Cursor
 
     public function clearLine(): self
     {
-        $this->console->write("\x1b[2K");
+        $this->console->write("\e[2K");
 
         return $this;
     }
 
     public function clearAfter(): self
     {
-        $this->console->write("\x1b[0J");
+        $this->console->write("\e[0J");
 
         return $this;
     }
 
     public function startOfLine(): self
     {
-        $this->console->writeln("\r");
+        $this->console->writeln("\e[1G");
 
         return $this;
     }
 
     public function hide(): self
     {
-        //        $this->console->write("\e[?25l");
+        $this->console->write("\e[?25l");
 
         return $this;
     }

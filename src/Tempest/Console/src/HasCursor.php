@@ -9,4 +9,6 @@ use Tempest\Console\Terminal\Terminal;
 interface HasCursor
 {
     public function getCursorPosition(Terminal $terminal): Point;
+
+    public function cursorVisible(): bool;
 }

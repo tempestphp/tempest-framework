@@ -83,6 +83,11 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
+    public function cursorVisible(): bool
+    {
+        return true;
+    }
+
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticSearchComponent(

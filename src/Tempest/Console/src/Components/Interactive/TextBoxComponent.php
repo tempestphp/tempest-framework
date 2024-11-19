@@ -74,6 +74,11 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
         return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
+    public function cursorVisible(): bool
+    {
+        return true;
+    }
+
     #[HandlesKey(Key::CTRL_B)]
     public function editor(): void
     {

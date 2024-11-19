@@ -182,7 +182,7 @@ final class GenericConsole implements Console
         $component = match (true) {
             $options === null || $options === [] => new TextBoxComponent($question, $default, $placeholder, $multiline),
             $multiple => new MultipleChoiceComponent(
-                question: $question,
+                label: $question,
                 options: $options,
                 default: is_array($default) ? $default : [$default],
             ),

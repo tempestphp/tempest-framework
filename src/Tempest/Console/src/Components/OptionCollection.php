@@ -42,7 +42,7 @@ final class OptionCollection implements Iterator, Countable
             ->toArray();
 
         $this->selectedOptions = array_filter($this->filteredOptions, fn (Option $option) => in_array($option, $previouslySelectedOptions, strict: true));
-        $this->activeOption = array_search($previouslyActiveOption ?? $this->filteredOptions[0], $this->filteredOptions, strict: true) ?: 0;
+        $this->activeOption = array_search($previouslyActiveOption ?? $this->filteredOptions[0] ?? '', $this->filteredOptions, strict: true) ?: 0;
     }
 
     public function count(): int
@@ -86,7 +86,7 @@ final class OptionCollection implements Iterator, Countable
         return arr($this->filteredOptions)->values();
     }
 
-    public function rawOptions(): array
+    public function getRawOptions(): array
     {
         return array_map(fn (Option $option) => $option->value, $this->options);
     }
@@ -95,6 +95,14 @@ final class OptionCollection implements Iterator, Countable
     public function getSelectedOptions(): array
     {
         return $this->selectedOptions;
+    }
+
+    /** @var array<mixed> */
+    public function getRawSelectedOptions(): array
+    {
+        return arr($this->selectedOptions)
+            ->mapWithKeys(fn (Option $option) => yield $option->key => $option->value)
+            ->toArray();
     }
 
     /** @return array<Option> */

@@ -26,4 +26,5 @@ enum Key: string
     case HOME = "\e[H";
     case END_OF_LINE = "\x05";
     case END = "\e[F";
+    case ESCAPE = "\e";
 }

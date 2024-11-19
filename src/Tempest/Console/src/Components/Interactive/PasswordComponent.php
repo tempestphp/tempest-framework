@@ -51,4 +51,9 @@ final class PasswordComponent implements InteractiveConsoleComponent, HasCursor,
     {
         return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
+
+    public function cursorVisible(): bool
+    {
+        return true;
+    }
 }

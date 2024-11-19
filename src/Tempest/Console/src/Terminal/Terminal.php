@@ -169,15 +169,19 @@ final class Terminal
             y: $initialCursorPosition->y + $componentCursorPosition->y,
         ));
 
-        $this->cursor->show();
+        if ($component->cursorVisible()) {
+            $this->cursor->show();
+        } else {
+            $this->cursor->hide();
+        }
 
         return $this;
     }
 
     private function updateActualSize(): self
     {
-        $this->width = (int)exec('tput cols');
-        $this->height = (int)exec('tput lines');
+        $this->width = (int) exec('tput cols');
+        $this->height = (int) exec('tput lines');
 
         return $this;
     }
