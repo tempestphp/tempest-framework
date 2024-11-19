@@ -63,10 +63,12 @@ trait SimplifiesClassNames
                     }
                 }
 
-                // if $this->simplifyAttributes
-
                 foreach ($class->getAttributes() as $attribute) {
                     $types[] = $attribute->getName();
+                }
+
+                foreach ($class->getTraits() as $trait) {
+                    $types[] = $trait->getName();
                 }
 
                 foreach ($class->getMethods() as $method) {
