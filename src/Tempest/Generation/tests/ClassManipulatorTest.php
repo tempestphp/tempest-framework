@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests;
 
-use PHPUnit\Framework\Attributes\Test;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
-use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
-use Tempest\Generation\Tests\Fixtures\TestAttribute;
-use Tempest\Generation\Tests\Fixtures\WelcomeController;
 use Tempest\Support\StringHelper;
+use Tempest\Generation\Tests\Fixtures\WelcomeController;
+use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
+use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
+use Tempest\Generation\ClassManipulator;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * @internal
@@ -158,6 +159,13 @@ final class ClassManipulatorTest extends TestCase
         $class->setNamespace('App\\Controllers');
         $class->setClassName('WelcomeController');
         $class->manipulate(fn (StringHelper $string) => $string->replace('welcome', 'home'));
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function simplifies_trait_from_another_namespace(): void {
+        $class = new ClassManipulator(ClassWithTraitInAnotherNamespace::class);
 
         $this->assertMatchesSnapshot($class->print());
     }

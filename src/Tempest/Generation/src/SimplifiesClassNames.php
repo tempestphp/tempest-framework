@@ -77,9 +77,9 @@ trait SimplifiesClassNames
                     foreach ($method->getParameters() as $parameter) {
                         $types[] = $parameter->getType(true);
 
-                        foreach ($parameter->getAttributes() as $attribute) {
-                            $types[] = $attribute->getName();
-                        }
+                        // foreach ($parameter->getAttributes() as $attribute) {
+                        //     $types[] = $attribute->getName();
+                        // }
                     }
 
                     foreach ($method->getAttributes() as $attribute) {
