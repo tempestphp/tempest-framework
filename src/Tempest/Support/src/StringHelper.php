@@ -779,6 +779,61 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Pads the instance to the given `$width` and centers the text in it.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignCenter(width: 20);
+     * ```
+     */
+    public function alignCenter(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $leftPadding = (int) floor(($actualWidth - $textLength) / 2);
+        $rightPadding = $actualWidth - $leftPadding - $textLength;
+
+        return new self(str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $rightPadding));
+    }
+
+    /**
+     * Pads the instance to the given `$width` and aligns the text to the right.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignRight(width: 20);
+     * ```
+     */
+    public function alignRight(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $leftPadding = $actualWidth - $textLength - $padding;
+
+        return new self(str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $padding));
+    }
+
+    /**
+     * Pads the instance to the given `$width` and aligns the text to the left.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignLeft(width: 20);
+     * ```
+     */
+    public function alignLeft(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $rightPadding = $actualWidth - $textLength - $padding;
+
+        return new self(str_repeat(' ', $padding) . $text . str_repeat(' ', $rightPadding));
+    }
+
+    /**
      * Inserts the specified `$string` at the specified `$position`.
      *
      * ### Example
