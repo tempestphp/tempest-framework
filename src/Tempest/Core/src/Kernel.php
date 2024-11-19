@@ -186,7 +186,7 @@ final class Kernel
             $handler = new HttpProductionErrorHandler();
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
-        } else {
+        } elseif (PHP_SAPI !== 'cli') {
             $whoops = new Run();
             $whoops->pushHandler(new PrettyPageHandler());
             $whoops->register();

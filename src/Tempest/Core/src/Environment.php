@@ -47,7 +47,7 @@ enum Environment: string
 
     public static function fromEnv(): self
     {
-        $value = env('ENVIRONMENT', 'production');
+        $value = env('ENVIRONMENT', 'local');
 
         return self::tryFrom($value) ?? throw new InvalidEnvironment($value);
     }
