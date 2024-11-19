@@ -6,7 +6,7 @@ namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes  ;
+use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes;
 use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
