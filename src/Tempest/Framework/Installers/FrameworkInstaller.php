@@ -6,7 +6,6 @@ namespace Tempest\Framework\Installers;
 
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
-use Tempest\Support\NamespaceHelper;
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
