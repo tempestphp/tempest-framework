@@ -14,17 +14,14 @@ final class Composer
 
     public ?ComposerNamespace $mainNamespace = null;
 
-    private string $root;
-
     private string $composerPath;
 
     private array $composer;
 
     public function __construct(
-        string $root,
+        private string $root,
     ) {
-        $this->root = $root;
-        $this->composerPath = path($root, 'composer.json')->toString();
+        $this->composerPath = path($this->root, 'composer.json')->toString();
         $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
             ->get('autoload.psr-4', default: arr())
@@ -56,7 +53,7 @@ final class Composer
     {
         $path = str_replace($this->root, '.', $path);
 
-        $this->composer['autoload']['psr-4'][$namespace] =  $path;
+        $this->composer['autoload']['psr-4'][$namespace] = $path;
 
         return $this;
     }

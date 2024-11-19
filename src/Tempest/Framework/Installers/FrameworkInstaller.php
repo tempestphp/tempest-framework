@@ -50,7 +50,7 @@ final class FrameworkInstaller implements Installer
 
     private function installMainNamespace(): void
     {
-        if ($this->composer->mainNamespace) {
+        if ($this->composer->mainNamespace !== null) {
             return;
         }
 
