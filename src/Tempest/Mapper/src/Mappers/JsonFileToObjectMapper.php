@@ -6,9 +6,6 @@ namespace Tempest\Mapper\Mappers;
 
 use function Tempest\map;
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo;
-use Tempest\Reflection\ClassReflector;
-use Throwable;
 use function Tempest\path;
 
 final readonly class JsonFileToObjectMapper implements Mapper
