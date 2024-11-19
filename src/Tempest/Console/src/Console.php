@@ -53,11 +53,15 @@ interface Console
      */
     public function search(string $label, Closure $search, ?string $default = null): mixed;
 
-    public function info(string $line): self;
+    public function header(string $header, ?string $subheader = null): self;
 
-    public function error(string $line): self;
+    public function info(string $line, ?string $symbol = null): self;
 
-    public function success(string $line): self;
+    public function error(string $line, ?string $symbol = null): self;
+
+    public function warning(string $line, ?string $symbol = null): self;
+
+    public function success(string $line, ?string $symbol = null): self;
 
     /**
      * @param mixed|Closure(self): bool $condition

@@ -34,7 +34,11 @@ final class ChoiceRenderer
         $this->label($label);
 
         if ($state === State::SUBMITTED) {
-            $this->line($options->getActive()->value)->newLine();
+            $this->line(
+                $this->multiple
+                    ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'
+                    : $options->getActive()->value
+            )->newLine();
         } elseif ($state === State::CANCELLED) {
             $this->line($this->style('italic', $this->default ?? ''))->newLine();
         } else {

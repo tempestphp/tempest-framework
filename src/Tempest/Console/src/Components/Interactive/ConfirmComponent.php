@@ -9,6 +9,7 @@ use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Renderers\ConfirmRenderer;
 use Tempest\Console\Components\Static\StaticConfirmComponent;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
@@ -16,7 +17,7 @@ use Tempest\Console\Key;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticComponent
+final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticComponent, HandlesInterruptions
 {
     use HasErrors;
     use HasState;

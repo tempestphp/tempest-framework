@@ -21,7 +21,7 @@ final readonly class ScheduleRunCommand
     ) {
     }
 
-    #[ConsoleCommand('schedule:run')]
+    #[ConsoleCommand('schedule:run', description: 'Executes due tasks')]
     public function __invoke(): void
     {
         $this->scheduler->run();

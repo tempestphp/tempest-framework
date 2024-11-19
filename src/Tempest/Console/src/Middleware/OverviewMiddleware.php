@@ -6,12 +6,15 @@ namespace Tempest\Console\Middleware;
 
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\DiscoveryCache;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final readonly class OverviewMiddleware implements ConsoleMiddleware
 {
@@ -35,8 +38,15 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
     private function renderOverview(bool $showHidden = false): void
     {
-        $this->console
-            ->writeln("<h1>{$this->consoleConfig->name}</h1>");
+        $this->console->header(
+            header: $this->consoleConfig->name,
+            subheader: 'This is an overview of available commands.' . PHP_EOL . 'Type <em><command> --help</em> to get more help about a specific command.'
+        );
+
+        if ($this->discoveryCache->isEnabled()) {
+            $this->console->writeln();
+            $this->console->error('<style="bold">Caution</style>: discovery cache is enabled');
+        }
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
@@ -55,13 +65,26 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
         ksort($commands);
 
+        $longestCommandName = max(
+            arr($commands)
+                ->flatMap(fn (array $group) => $group)
+                ->map(fn (ConsoleCommand $command) => mb_strlen($command->getName()))
+                ->toArray()
+        ) + 4;
+
         foreach ($commands as $group => $commandsForGroup) {
+            $title = str(ucfirst($group))
+                ->alignRight($longestCommandName, padding: 4)
+                ->replaceRegex('/^( *)(.*?)( *)$/', '$1<h2>$2</h2>$3')
+                ->toString();
+
             $this->console
                 ->writeln()
-                ->writeln('<h2>' . ucfirst($group) . '</h2>');
+                ->writeln()
+                ->writeln($title);
 
             foreach ($commandsForGroup as $consoleCommand) {
-                (new RenderConsoleCommand($this->console))($consoleCommand);
+                (new RenderConsoleCommand($this->console, $longestCommandName))($consoleCommand);
             }
         }
 

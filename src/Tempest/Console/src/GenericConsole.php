@@ -104,6 +104,18 @@ final class GenericConsole implements Console
         return $this;
     }
 
+    public function header(string $header, ?string $subheader = null): static
+    {
+        $this->writeln();
+        $this->writeln("<h1>{$header}</h1>");
+
+        if ($subheader) {
+            $this->writeln($subheader);
+        }
+
+        return $this;
+    }
+
     public function writeln(string $line = ''): static
     {
         $this->write($line . PHP_EOL);
@@ -122,23 +134,38 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function info(string $line): self
+    public function info(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<em>{$line}</em>");
+        $symbol ??= 'ℹ';
+
+        $this->writeln("<style=\"bg-dark-blue fg-white\"> $symbol </style> <style=\"fg-blue\">{$line}</style>");
 
         return $this;
     }
 
-    public function error(string $line): self
+    public function error(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<error>{$line}</error>");
+        $symbol ??= '×';
+
+        $this->writeln("<style=\"bg-dark-red fg-white\"> $symbol </style> <style=\"fg-red\">{$line}</style>");
 
         return $this;
     }
 
-    public function success(string $line): self
+    public function warning(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<success>{$line}</success>");
+        $symbol ??= '⚠';
+
+        $this->writeln("<style=\"bg-dark-yellow fg-white\"> $symbol </style> <style=\"fg-yellow\">{$line}</style>");
+
+        return $this;
+    }
+
+    public function success(string $line, ?string $symbol = null): self
+    {
+        $symbol ??= '✔︎';
+
+        $this->writeln("<style=\"bg-dark-green fg-white\"> $symbol </style> <style=\"fg-green\">{$line}</style>");
 
         return $this;
     }
