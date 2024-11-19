@@ -74,6 +74,22 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Changes the case of the first letter to uppercase.
+     */
+    public function upperFirst(): self
+    {
+        return new self(ucfirst($this->string));
+    }
+
+    /**
+     * Changes the case of the first letter to lowercase.
+     */
+    public function lowerFirst(): self
+    {
+        return new self(lcfirst($this->string));
+    }
+
+    /**
      * Converts the instance to snake case.
      */
     public function snake(string $delimiter = '_'): self
