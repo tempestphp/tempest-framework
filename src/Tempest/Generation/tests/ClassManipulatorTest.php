@@ -10,7 +10,7 @@ use Tempest\Generation\Tests\Fixtures\TestAttribute;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
-use Tempest\Generation\Tests\Fixtures\ClassWithMethodPropertyAttributes;
+use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes as ClassWithMethodParameterAttributes;
 use Tempest\Generation\ClassManipulator;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -172,8 +172,8 @@ final class ClassManipulatorTest extends TestCase
     }
 
     #[Test]
-    public function simplifies_method_property_attributes(): void {
-        $class = new ClassManipulator(ClassWithMethodPropertyAttributes::class);
+    public function simplifies_method_parameter_attributes(): void {
+        $class = new ClassManipulator(ClassWithMethodParameterAttributes::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
