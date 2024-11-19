@@ -179,6 +179,10 @@ final class GenericConsole implements Console
         bool $asList = false,
         array $validation = [],
     ): null|string|array {
+        if ($this->isForced && $default) {
+            return $default;
+        }
+
         if ($options === null || $options === []) {
             $component = new TextBoxComponent($question, $default);
         } elseif ($multiple) {

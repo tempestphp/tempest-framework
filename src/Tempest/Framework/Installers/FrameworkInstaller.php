@@ -6,7 +6,9 @@ namespace Tempest\Framework\Installers;
 
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
+use Tempest\Support\NamespaceHelper;
 use function Tempest\root_path;
+use function Tempest\Support\str;
 
 final class FrameworkInstaller implements Installer
 {
@@ -58,15 +60,29 @@ final class FrameworkInstaller implements Installer
             return;
         }
 
-        $appPath = root_path('app/');
+        $appPath = root_path($this->ask('Which path do you wish to use as your main project directory?', default: 'app/'));
+
+        $defaultAppNamespace = str($appPath)
+            ->replaceStart(root_path(), '')
+            ->trim('/')
+            ->explode('/')
+            ->map(fn (string $part) => ucfirst($part))
+            ->implode('\\')
+            ->append('\\')
+            ->toString();
+
+        $appNamespace = str($this->ask('Which namespace do you wish to use?', default: $defaultAppNamespace))
+            ->trim('\\')
+            ->append('\\')
+            ->toString();
 
         if (! is_dir($appPath)) {
-            mkdir($appPath);
+            mkdir($appPath, recursive: true);
         }
 
         $this->composer
             ->addNamespace(
-                'App\\',
+                $appNamespace,
                 $appPath,
             )
             ->save();
