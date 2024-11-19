@@ -11,5 +11,6 @@ final class ClassWithMethodParameterAttributes
     public function example(
         #[SampleParameterAttribute]
         string $parameter
-    ): void {}
+    ): void {
+    }
 }

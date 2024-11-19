@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests;
 
-use Tempest\Support\StringHelper;
-use Tempest\Generation\Tests\Fixtures\WelcomeController;
-use Tempest\Generation\Tests\Fixtures\TestAttribute;
-use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
-use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
-use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
-use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes as ClassWithMethodParameterAttributes;
-use Tempest\Generation\ClassManipulator;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes  ;
+use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
+use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
+use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tempest\Generation\Tests\Fixtures\WelcomeController;
+use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -165,14 +165,16 @@ final class ClassManipulatorTest extends TestCase
     }
 
     #[Test]
-    public function simplifies_traits_from_another_namespace(): void {
+    public function simplifies_traits_from_another_namespace(): void
+    {
         $class = new ClassManipulator(ClassWithTraitInAnotherNamespace::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
 
     #[Test]
-    public function simplifies_method_parameter_attributes(): void {
+    public function simplifies_method_parameter_attributes(): void
+    {
         $class = new ClassManipulator(ClassWithMethodParameterAttributes::class);
 
         $this->assertMatchesSnapshot($class->print());
