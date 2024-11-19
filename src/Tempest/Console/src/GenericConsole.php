@@ -12,7 +12,7 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
-use Tempest\Console\Components\Interactive\TextBoxComponent;
+use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
@@ -173,6 +173,7 @@ final class GenericConsole implements Console
         bool $asList = false,
         bool $multiline = false,
         ?string $placeholder = null,
+        ?string $hint = null,
         array $validation = [],
     ): null|string|array {
         if ($this->isForced && $default) {
@@ -180,7 +181,7 @@ final class GenericConsole implements Console
         }
 
         $component = match (true) {
-            $options === null || $options === [] => new TextBoxComponent($question, $default, $placeholder, $multiline),
+            $options === null || $options === [] => new TextInputComponent($question, $default, $placeholder, $hint, $multiline),
             $multiple => new MultipleChoiceComponent(
                 label: $question,
                 options: $options,

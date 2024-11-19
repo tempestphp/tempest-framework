@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\CanCancel;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasTextInputRenderer;
 use Tempest\Console\Components\Concerns\RendersControls;
@@ -15,7 +15,7 @@ use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
 
-final class PasswordComponent implements InteractiveConsoleComponent, HasCursor, CanCancel
+final class PasswordComponent implements InteractiveConsoleComponent, HasCursor, HandlesInterruptions
 {
     use RendersControls;
     use HasErrors;

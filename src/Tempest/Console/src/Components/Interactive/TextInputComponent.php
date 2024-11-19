@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\CanCancel;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\CanOpenInEditor;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasTextInputRenderer;
@@ -22,7 +22,7 @@ use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanCancel, CanOpenInEditor
+final class TextInputComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions, CanOpenInEditor
 {
     use RendersControls;
     use HasErrors;
@@ -33,6 +33,7 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
         public string $label,
         public ?string $default = null,
         public ?string $placeholder = null,
+        public ?string $hint = null,
         bool $multiline = false,
     ) {
         $this->multiline = $multiline;
@@ -48,6 +49,7 @@ final class TextBoxComponent implements InteractiveConsoleComponent, HasCursor, 
             buffer: $this->buffer,
             label: $this->label,
             placeholder: $this->placeholder,
+            hint: $this->hint,
         );
     }
 

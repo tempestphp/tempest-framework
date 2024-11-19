@@ -29,10 +29,16 @@ final class TextInputRenderer
         TextBuffer $buffer,
         ?string $label,
         ?string $placeholder = null,
+        ?string $hint = null,
     ): string {
         $this->prepareRender($terminal, $state);
 
         $this->label($label);
+
+        if ($hint) {
+            $this->offsetY++;
+            $this->line($this->style('fg-gray', $hint))->newLine();
+        }
 
         // splits the text to an array so we can work with individual lines
         $lines = str($buffer->text ?: $placeholder ?: '')
@@ -69,7 +75,7 @@ final class TextInputRenderer
 
         return new Point(
             x: $position->x + (self::MARGIN_X + 1 + self::PADDING_X), // +1 is the border width
-            y: $position->y - $this->scrollOffset + (self::MARGIN_TOP + 1), // +1 is the label, subtract scroll offset
+            y: $position->y - $this->scrollOffset + (self::MARGIN_TOP + $this->offsetY), // subtract scroll offset
         );
     }
 }

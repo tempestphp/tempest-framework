@@ -51,7 +51,7 @@ final class ConfirmRenderer
 
         return new Point(
             x: $position->x + (self::MARGIN_X + 1 + self::PADDING_X), // +1 is the border width
-            y: $position->y + (self::MARGIN_TOP + 1), // +1 is the label
+            y: $position->y + (self::MARGIN_TOP + $this->offsetY),
         );
     }
 }

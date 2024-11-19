@@ -24,6 +24,7 @@ trait RendersInput
     private string $paddingX;
     private string $leftBorder;
 
+    private int $offsetY = 0;
     private int $scrollOffset = 0;
 
     private function prepareRender(Terminal $terminal, State $state): self
@@ -107,6 +108,8 @@ trait RendersInput
 
     private function label(string $label): self
     {
+        $this->offsetY += 1;
+
         return $this->line($this->style('bold fg-cyan', $this->truncate($label)), PHP_EOL);
     }
 

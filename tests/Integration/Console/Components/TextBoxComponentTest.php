@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
-use Tempest\Console\Components\Interactive\TextBoxComponent;
+use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Point;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -15,7 +15,7 @@ final class TextBoxComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_text_question_component(): void
     {
-        $component = new TextBoxComponent('q');
+        $component = new TextInputComponent('q');
         $this->assertTrue($component->cursorPosition->equals(new Point(2, 1)));
 
         $component->backspace();

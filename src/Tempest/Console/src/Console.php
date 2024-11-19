@@ -38,6 +38,7 @@ interface Console
         bool $asList = false,
         bool $multiline = false,
         ?string $placeholder = null,
+        ?string $hint = null,
         array $validation = [],
     ): null|string|array;
 

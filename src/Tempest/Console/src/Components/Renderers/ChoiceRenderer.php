@@ -83,7 +83,7 @@ final class ChoiceRenderer
 
         return new Point(
             x: $actual + (self::MARGIN_X + 1 + self::PADDING_X) + 2, // +1 is the border width, +2 is for decoration
-            y: self::MARGIN_TOP + 1, // +1 because of label
+            y: self::MARGIN_TOP + $this->offsetY,
         );
     }
 }

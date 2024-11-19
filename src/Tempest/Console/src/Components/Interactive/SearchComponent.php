@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Tempest\Console\CanCancel;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
-use Tempest\Console\Components\State;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
@@ -24,7 +23,7 @@ use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanCancel
+final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions
 {
     use HasErrors;
     use HasState;
@@ -119,13 +118,5 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     public function down(): void
     {
         $this->options->next();
-    }
-
-    #[HandlesKey(Key::CTRL_C)]
-    public function cancel(): ?string
-    {
-        $this->state = State::CANCELLED;
-
-        return $this->default;
     }
 }
