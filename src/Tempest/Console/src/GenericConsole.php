@@ -187,10 +187,9 @@ final class GenericConsole implements Console
                 default: is_array($default) ? $default : [$default],
             ),
             default => new SingleChoiceComponent(
-                question: $question,
+                label: $question,
                 options: $options,
                 default: $default,
-                asList: $asList,
             )
         };
 

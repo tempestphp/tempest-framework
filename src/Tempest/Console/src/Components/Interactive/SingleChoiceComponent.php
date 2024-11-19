@@ -4,103 +4,123 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Tempest\Console\CanCancel;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\OptionCollection;
+use Tempest\Console\Components\Renderers\ChoiceRenderer;
+use Tempest\Console\Components\State;
 use Tempest\Console\Components\Static\StaticSingleChoiceComponent;
+use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
+use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class SingleChoiceComponent implements InteractiveConsoleComponent, HasStaticComponent
+final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanCancel
 {
     use HasErrors;
     use HasState;
     use RendersControls;
+    use HasTextBuffer;
 
-    public int $selectedOption;
+    private ChoiceRenderer $renderer;
+    private OptionCollection $options;
 
     public function __construct(
-        public string $question,
-        public array $options,
-        public mixed $default = null,
-        public bool $asList = false,
+        public string $label,
+        iterable $options,
+        public ?string $default = null,
     ) {
-        if ($this->default) {
-            foreach ($this->options as $key => $option) {
-                if ($option === $this->default) {
-                    $this->selectedOption = $key;
-
-                    break;
-                }
-            }
-        }
-
-        if (! isset($this->selectedOption)) {
-            $this->selectedOption = array_key_first($this->options);
-        }
+        $this->options = new OptionCollection($options);
+        $this->buffer = new TextBuffer();
+        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
+        $this->updateQuery();
     }
 
     public function render(Terminal $terminal): string
     {
-        $output = "<question>{$this->question}</question>";
+        $this->updateQuery();
 
-        foreach ($this->options as $key => $option) {
-            $output .= PHP_EOL;
-            $output .= $this->isSelected($key) ? "[x] <em>{$option}</em>" : "[ ] {$option}";
-        }
-
-        return $output;
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            label: $this->label,
+            query: $this->buffer,
+            options: $this->options,
+            placeholder: 'Filter...'
+        );
     }
 
-    public function renderFooter(Terminal $terminal): string
+    private function getControls(): array
     {
-        return "Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
+        return [
+            'type' => 'filter',
+            '↑' => 'up',
+            '↓' => 'down',
+            'enter' => 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
     }
 
-    public function isSelected(int $key): bool
+    #[HandlesKey]
+    public function input(string $key): void
     {
-        return $this->selectedOption === $key;
+        $this->buffer->input($key);
     }
 
-    #[HandlesKey(Key::ENTER)]
-    public function enter(): string
+    private function updateQuery(): void
     {
-        return $this->options[$this->selectedOption] ?? '';
+        $this->options->filter($this->buffer->text);
     }
 
-    #[HandlesKey(Key::UP)]
-    #[HandlesKey(Key::LEFT)]
-    public function up(): void
+    public function getCursorPosition(Terminal $terminal): Point
     {
-        $this->selectedOption = $this->selectedOption - 1;
-
-        if ($this->selectedOption < 0) {
-            $this->selectedOption = count($this->options) - 1;
-        }
-    }
-
-    #[HandlesKey(Key::DOWN)]
-    #[HandlesKey(Key::RIGHT)]
-    public function down(): void
-    {
-        $this->selectedOption = $this->selectedOption + 1;
-
-        if ($this->selectedOption > count($this->options) - 1) {
-            $this->selectedOption = 0;
-        }
+        return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticSingleChoiceComponent(
             question: $this->question,
-            options: $this->options,
+            options: $this->options->rawOptions(),
             default: $this->default,
-            asList: $this->asList,
         );
+    }
+
+    #[HandlesKey(Key::ENTER)]
+    public function enter(): null|int|string
+    {
+        $active = $this->options->getActive();
+
+        return $this->options->isList()
+            ? $active->value
+            : $active->key;
+    }
+
+    #[HandlesKey(Key::UP)]
+    public function up(): void
+    {
+        $this->options->previous();
+    }
+
+    #[HandlesKey(Key::DOWN)]
+    public function down(): void
+    {
+        $this->options->next();
+    }
+
+    #[HandlesKey(Key::CTRL_C)]
+    public function cancel(): ?string
+    {
+        $this->state = State::CANCELLED;
+
+        return $this->default;
     }
 }

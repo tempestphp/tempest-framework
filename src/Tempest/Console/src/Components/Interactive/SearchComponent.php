@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
+use Tempest\Console\CanCancel;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
-use Tempest\Console\Components\Renderers\SearchRenderer;
+use Tempest\Console\Components\OptionCollection;
+use Tempest\Console\Components\Renderers\ChoiceRenderer;
+use Tempest\Console\Components\State;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
@@ -21,17 +24,15 @@ use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
+final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanCancel
 {
     use HasErrors;
     use HasState;
     use RendersControls;
     use HasTextBuffer;
 
-    private SearchRenderer $renderer;
-
-    private null|int|string $activeOption = null;
-    private array $options = [];
+    private ChoiceRenderer $renderer;
+    private OptionCollection $options;
     private ?string $previousQuery = null;
 
     public function __construct(
@@ -40,7 +41,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         public ?string $default = null,
     ) {
         $this->buffer = new TextBuffer();
-        $this->renderer = new SearchRenderer();
+        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
         $this->updateQuery();
     }
 
@@ -54,8 +55,17 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             label: $this->label,
             query: $this->buffer,
             options: $this->options,
-            selected: $this->activeOption,
         );
+    }
+
+    private function updateQuery(): void
+    {
+        if ($this->previousQuery === $this->buffer->text) {
+            return;
+        }
+
+        $this->options = new OptionCollection(array_values(($this->search)($this->buffer->text)));
+        $this->previousQuery = $this->buffer->text;
     }
 
     private function getControls(): array
@@ -66,59 +76,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             'enter' => 'confirm',
             'ctrl+c' => 'cancel',
         ];
-    }
-
-    #[HandlesKey]
-    public function input(string $key): void
-    {
-        $this->buffer->input($key);
-    }
-
-    private function updateQuery(): void
-    {
-        if ($this->previousQuery === $this->buffer->text) {
-            return;
-        }
-
-        $this->options = array_values(($this->search)($this->buffer->text));
-        $this->activeOption = array_key_first($this->options);
-        $this->previousQuery = $this->buffer->text;
-    }
-
-    #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string
-    {
-        if (! $value = $this->options[$this->activeOption] ?? null) {
-            return $this->default;
-        }
-
-        return array_is_list($this->options)
-            ? $value
-            : $this->activeOption;
-    }
-
-    #[HandlesKey(Key::UP)]
-    public function up(): void
-    {
-        $previousValue = prev($this->options);
-
-        if ($previousValue === false) {
-            end($this->options);
-        }
-
-        $this->activeOption = key($this->options);
-    }
-
-    #[HandlesKey(Key::DOWN)]
-    public function down(): void
-    {
-        $nextValue = next($this->options);
-
-        if ($nextValue === false) {
-            reset($this->options);
-        }
-
-        $this->activeOption = key($this->options);
     }
 
     public function getCursorPosition(Terminal $terminal): Point
@@ -133,5 +90,37 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             search: $this->search,
             default: $this->default,
         );
+    }
+
+    #[HandlesKey]
+    public function input(string $key): void
+    {
+        $this->buffer->input($key);
+    }
+
+    #[HandlesKey(Key::ENTER)]
+    public function enter(): null|int|string
+    {
+        return $this->options->getActive()->value;
+    }
+
+    #[HandlesKey(Key::UP)]
+    public function up(): void
+    {
+        $this->options->previous();
+    }
+
+    #[HandlesKey(Key::DOWN)]
+    public function down(): void
+    {
+        $this->options->next();
+    }
+
+    #[HandlesKey(Key::CTRL_C)]
+    public function cancel(): ?string
+    {
+        $this->state = State::CANCELLED;
+
+        return $this->default;
     }
 }
