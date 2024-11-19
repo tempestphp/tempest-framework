@@ -39,10 +39,6 @@ final class Composer
         if (! isset($this->mainNamespace) && count($this->namespaces)) {
             $this->mainNamespace = $this->namespaces[0];
         }
-
-        if (! isset($this->mainNamespace)) {
-            throw new KernelException("Tempest requires at least one PSR-4 namespace to be defined in composer.json.");
-        }
     }
 
     public function setMainNamespace(ComposerNamespace $namespace): self
