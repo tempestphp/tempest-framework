@@ -9,9 +9,11 @@ use Tempest\Reflection\ClassReflector;
 
 interface Discovery
 {
-    public function discover(ClassReflector $class): void;
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void;
 
-    public function createCachePayload(): string;
+    public function getItems(): DiscoveryItems;
 
-    public function restoreCachePayload(Container $container, string $payload): void;
+    public function setItems(DiscoveryItems $items): Discovery;
+
+    public function apply(): void;
 }

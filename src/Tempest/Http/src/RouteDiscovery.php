@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Core\KernelEvent;
 use Tempest\EventBus\EventHandler;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
@@ -13,13 +14,15 @@ use Tempest\Reflection\ClassReflector;
 
 final readonly class RouteDiscovery implements Discovery
 {
+    use IsDiscovery;
+
     public function __construct(
         private RouteConfigurator $configurator,
         private RouteConfig $routeConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
             $routeAttributes = $method->getAttributes(Route::class);
@@ -33,24 +36,10 @@ final readonly class RouteDiscovery implements Discovery
     }
 
     #[EventHandler(KernelEvent::BOOTED)]
-    public function finishDiscovery(): void
+    public function apply(): void
     {
         if ($this->configurator->isDirty()) {
             $this->routeConfig->apply($this->configurator->toRouteConfig());
         }
-    }
-
-    public function createCachePayload(): string
-    {
-        $this->finishDiscovery();
-
-        return serialize($this->routeConfig);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $routeConfig = unserialize($payload, [ 'allowed_classes' => true ]);
-
-        $this->routeConfig->apply($routeConfig);
     }
 }
