@@ -27,10 +27,12 @@ final class MakeControllerCommand
         )]
         string $className,
         #[ConsoleArgument(
+            name: 'path',
             help: 'The path of the route',
         )]
         ?string $controllerPath = null,
         #[ConsoleArgument(
+            name: 'view',
             help: 'The name of the view returned from the controller',
         )]
         ?string $controllerView = null,
@@ -50,7 +52,7 @@ final class MakeControllerCommand
                 ],
             );
 
-            $this->success(sprintf('File successfully created at "%s".', $targetPath));
+            $this->success(sprintf('Controller successfully created at "%s".', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->error($e->getMessage());
         }
