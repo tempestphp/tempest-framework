@@ -12,15 +12,22 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
     public function __construct(
         public string $question,
         public array $options,
+        public array $default = [],
     ) {
     }
 
     public function render(Console $console): array
     {
+        if (! $console->supportsPrompting()) {
+            return array_is_list($this->options)
+                ? array_filter($this->default, fn (mixed $value) => in_array($value, $this->options))
+                : array_filter($this->default, fn (mixed $value) => array_key_exists($value, $this->options));
+        }
+
         do {
             $answer = $this->askQuestion($console);
 
-            $answerAsString = implode(', ', $answer);
+            $answerAsString = implode(', ', $answer) ?: 'no option';
 
             $confirm = $console->confirm(
                 question: "You picked {$answerAsString}; continue?",

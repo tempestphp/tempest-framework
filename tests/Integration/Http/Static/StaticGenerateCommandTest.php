@@ -13,7 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_generate(): void
+    public function test_static_site_generate_command(): void
     {
         $appConfig = new AppConfig(baseUri: 'https://test.com');
         $this->container->config($appConfig);
@@ -26,11 +26,11 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
         $root = $this->kernel->root;
 
-        $this->assertFileExists(path($root, '/public/static/a/b/index.html'));
-        $this->assertFileExists(path($root, '/public/static/c/d/index.html'));
+        $this->assertFileExists(path($root, '/public/static/a/b/index.html')->toString());
+        $this->assertFileExists(path($root, '/public/static/c/d/index.html')->toString());
 
-        $b = file_get_contents(path($root, '/public/static/a/b/index.html'));
-        $d = file_get_contents(path($root, '/public/static/c/d/index.html'));
+        $b = file_get_contents(path($root, '/public/static/a/b/index.html')->toString());
+        $d = file_get_contents(path($root, '/public/static/c/d/index.html')->toString());
 
         $this->assertStringContainsString('a', $b);
         $this->assertStringContainsString('b', $b);

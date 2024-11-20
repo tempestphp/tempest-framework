@@ -11,13 +11,18 @@ final readonly class StaticTextBoxComponent implements StaticConsoleComponent
 {
     public function __construct(
         public string $label,
+        public ?string $default = null,
     ) {
     }
 
-    public function render(Console $console): string
+    public function render(Console $console): ?string
     {
-        $console->write("<question>{$this->label}</question> ");
+        if (! $console->supportsPrompting()) {
+            return $this->default;
+        }
 
-        return trim($console->readln());
+        $console->write("<question>{$this->label}</question> ({$this->default})");
+
+        return trim($console->readln()) ?: $this->default;
     }
 }

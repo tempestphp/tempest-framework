@@ -92,6 +92,15 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('Paul', $result);
     }
 
+    public function test_supports_default_value(): void
+    {
+        $component = new SearchComponent('Search', $this->search(...));
+        $this->assertSame(null, $component->enter());
+
+        $component = new SearchComponent('Search', $this->search(...), default: 'foo');
+        $this->assertSame('foo', $component->enter());
+    }
+
     public function search(string $query): array
     {
         if ($query === '') {

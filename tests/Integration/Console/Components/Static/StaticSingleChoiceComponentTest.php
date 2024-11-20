@@ -62,4 +62,16 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->input(Key::ENTER)
             ->assertContains('picked b');
     }
+
+    public function test_with_default_option_without_prompting(): void
+    {
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', ['a', 'b'], default: 'b');
+
+                $console->writeln("picked {$answer}");
+            })
+            ->assertContains('picked b');
+    }
 }

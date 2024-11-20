@@ -14,9 +14,11 @@ use function trim;
 
 final readonly class StringHelper implements Stringable
 {
-    public function __construct(
-        private string $string = '',
-    ) {
+    private string $string;
+
+    public function __construct(Stringable|string|null $string = '')
+    {
+        $this->string = (string) ($string ?? '');
     }
 
     /**
@@ -179,6 +181,16 @@ final readonly class StringHelper implements Stringable
     {
         return new self(
             preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap
+        );
+    }
+
+    /**
+     * Prefixes the instance with the given string.
+     */
+    public function start(string $prefix): self
+    {
+        return new self(
+            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string)
         );
     }
 
@@ -472,6 +484,24 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Replaces the portion of the specified `$length` at the specified `$position` with the specified `$replace`.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem dolor')->replaceAt(6, 5, 'ipsum'); // Lorem ipsum
+     * ```
+     */
+    public function replaceAt(int $position, int $length, Stringable|string $replace): self
+    {
+        if ($length < 0) {
+            $position += $length;
+            $length = abs($length);
+        }
+
+        return new self(substr_replace($this->string, (string) $replace, $position, $length));
+    }
+
+    /**
      * Appends the given strings to the instance.
      */
     public function append(string|Stringable ...$append): self
@@ -485,6 +515,51 @@ final readonly class StringHelper implements Stringable
     public function prepend(string|Stringable ...$prepend): self
     {
         return new self(implode('', $prepend) . $this->string);
+    }
+
+    /**
+     * Wraps the instance with the given string. If `$after` is specified, it will be appended instead of `$before`.
+     *
+     * ### Example
+     * ```php
+     * str('Scott')->wrap(before: 'Leon ', after: ' Kennedy'); // Leon Scott Kennedy
+     * ```
+     */
+    public function wrap(string|Stringable $before, string|Stringable $after = null): self
+    {
+        return new self($before . $this->string . ($after ??= $before));
+    }
+
+    /**
+     * Removes the specified `$before` and `$after` from the beginning and the end of the instance. If `$after` is null, `$before` is used instead.
+     * Setting `$strict` to `false` will unwrap the instance even if both ends do not correspond to the specified `$before` and `$after`.
+     *
+     * ### Example
+     * ```php
+     *  str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false); // Scott
+     * ```
+     */
+    public function unwrap(string|Stringable $before, string|Stringable $after = null, bool $strict = true): self
+    {
+        $string = $this->string;
+
+        if ($string === '') {
+            return $this;
+        }
+
+        if ($after === null) {
+            $after = $before;
+        }
+
+        if (! $strict) {
+            return (new self($string))->after($before)->beforeLast($after);
+        }
+
+        if ($this->startsWith($before) && $this->endsWith($after)) {
+            $string = (string) (new self($string))->after($before)->beforeLast($after);
+        }
+
+        return new self($string);
     }
 
     /**
@@ -581,6 +656,71 @@ final readonly class StringHelper implements Stringable
         return new self(implode(PHP_EOL, $lines));
     }
 
+    /**
+     * Truncates the instance to the specified amount of characters.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->truncate(5, end: '...'); // Lorem...
+     * ```
+     */
+    public function truncate(int $characters, string $end = ''): self
+    {
+        if (mb_strwidth($this->string, 'UTF-8') <= $characters) {
+            return $this;
+        }
+
+        return new self(rtrim(mb_strimwidth($this->string, 0, $characters, encoding: 'UTF-8')) . $end);
+    }
+
+    /**
+     * Gets parts of the instance.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->substr(0, length: 5); // Lorem
+     * str('Lorem ipsum')->substr(6); // ipsum
+     * ```
+     */
+    public function substr(int $start, ?int $length = null): self
+    {
+        return new self(mb_substr($this->string, $start, $length));
+    }
+
+    /**
+     * Takes the specified amount of characters. If `$length` is negative, starts from the end.
+     */
+    public function take(int $length): self
+    {
+        if ($length < 0) {
+            return $this->substr($length);
+        }
+
+        return $this->substr(0, $length);
+    }
+
+    /**
+     * Splits the instance into chunks of the specified `$length`.
+     */
+    public function split(int $length): ArrayHelper
+    {
+        if ($length <= 0) {
+            return new ArrayHelper();
+        }
+
+        if ($this->equals('')) {
+            return new ArrayHelper(['']);
+        }
+
+        $chunks = [];
+
+        foreach (str_split($this->string, $length) as $chunk) {
+            $chunks[] = $chunk;
+        }
+
+        return new ArrayHelper($chunks);
+    }
+
     private function normalizeString(mixed $value): mixed
     {
         if ($value instanceof Stringable) {
@@ -596,6 +736,41 @@ final readonly class StringHelper implements Stringable
     public function explode(string $separator = ' '): ArrayHelper
     {
         return ArrayHelper::explode($this->string, $separator);
+    }
+
+    /**
+     * Strips HTML and PHP tags from the instance.
+     *
+     * @param null|string|string[] $allowed Allowed tags.
+     *
+     * ### Example
+     * ```php
+     * str('<p>Lorem ipsum</p>')->stripTags(); // Lorem ipsum
+     * str('<p>Lorem <strong>ipsum</strong></p>')->stripTags(allowed: 'strong'); // Lorem <strong>ipsum</strong>
+     * ```
+     */
+    public function stripTags(null|string|array $allowed = null): self
+    {
+        $allowed = arr($allowed)
+            ->map(fn (string $tag) => str($tag)->wrap('<', '>')->toString())
+            ->toArray();
+
+        return new self(strip_tags($this->string, $allowed));
+    }
+
+    /**
+     * Inserts the specified `$string` at the specified `$position`.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum sit amet')->insertAt(11, ' dolor'); // Lorem ipsum dolor sit amet
+     * ```
+     */
+    public function insertAt(int $position, string $string): self
+    {
+        return new self(
+            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
+        );
     }
 
     /**

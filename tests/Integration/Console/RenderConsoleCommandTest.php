@@ -10,6 +10,7 @@ use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Highlight\TextTerminalTheme;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Highlight\Highlighter;
@@ -38,13 +39,14 @@ final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
             output: $output,
             input: new UnsupportedInputBuffer(),
             highlighter: $highlighter,
-            executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class)
+            executeConsoleCommand: $this->container->get(ExecuteConsoleCommand::class),
+            argumentBag: $this->container->get(ConsoleArgumentBag::class),
         );
 
         (new RenderConsoleCommand($console))($consoleCommand);
 
         $this->assertSame(
-            'test <path> [times=1] [--force=false] - description',
+            'test <path> <type {a|b|c}> [fallback=a {a|b|c}] [times=1] [--force=false] - description',
             trim($output->getBufferWithoutFormatting()[0]),
         );
     }

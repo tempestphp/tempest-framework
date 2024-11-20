@@ -151,9 +151,12 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent('x-link', <<<'HTML'
+        $this->registerViewComponent(
+            'x-link',
+            <<<'HTML'
         <a :href="$object->url"><x-slot/></a>
-        HTML);
+        HTML,
+        );
 
         $this->assertSame(
             '<a href="https://">a</a>',
@@ -172,9 +175,12 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$href" />        💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent('x-link', <<<'HTML'
+        $this->registerViewComponent(
+            'x-link',
+            <<<'HTML'
         <a :href="$href"><x-slot/></a>
-        HTML);
+        HTML,
+        );
 
         $this->assertSame(
             '<a href="https://">a</a>',
@@ -191,9 +197,12 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button href="http://…" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent('x-link', <<<'HTML'
+        $this->registerViewComponent(
+            'x-link',
+            <<<'HTML'
         <a :href="$href"><x-slot/></a>
-        HTML);
+        HTML,
+        );
 
         $this->assertSame(
             '<a href="https://">a</a>',
@@ -209,9 +218,12 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
     {
         // <x-button :href="$object" />      💯 always pass as variable, never set directly as attribute
 
-        $this->registerViewComponent('x-link', <<<'HTML'
+        $this->registerViewComponent(
+            'x-link',
+            <<<'HTML'
         <a :href="$href->url"><x-slot/></a>
-        HTML);
+        HTML,
+        );
 
         /* There's a name collision here:
             <?php $href = $href->url ?? null; ?>
@@ -231,6 +243,47 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                     public string $url = 'https://';
                 },
             ),
+        );
+    }
+
+    public function test_boolean_attributes(): void
+    {
+        $this->assertSame(
+            '<option value="value" selected>name</option>',
+            $this->render(<<<'HTML'
+            <option value="<?= $value ?>" :selected="$selected"><?= $name ?></option>
+            HTML, value: 'value', selected: true, name: 'name'),
+        );
+
+        $this->assertSame(
+            '<option value="value" >name</option>',
+            $this->render(<<<'HTML'
+            <option value="<?= $value ?>" :selected="$selected"><?= $name ?></option>
+            HTML, value: 'value', selected: false, name: 'name'),
+        );
+    }
+
+    public function test_expression_attribute_in_raw_element(): void
+    {
+        $this->registerViewComponent(
+            'x-test',
+            <<<'HTML'
+            <div><x-slot/></div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <pre :data-lang="$language"><hello></hello>foo<p>bar</p></pre>
+        </x-test>
+        HTML, language: 'php');
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+            <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre>
+            </div>
+            HTML,
+            $html
         );
     }
 }

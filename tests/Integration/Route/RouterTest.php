@@ -15,6 +15,7 @@ use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Controllers\TestGlobalMiddleware;
+use Tests\Tempest\Fixtures\Controllers\UriGeneratorController;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -86,6 +87,15 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('https://test.com/abc', $router->toUri('/abc'));
         $this->assertEquals('https://test.com/test/1/a/b/c/d', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
+    }
+
+    public function test_uri_generation_with_query_param(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $uri = $router->toUri(TestController::class, test: 'foo');
+
+        $this->assertSame('/test?test=foo', $uri);
     }
 
     public function test_with_view(): void
@@ -168,6 +178,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '/with-enum/bar',
             uri(ControllerWithEnumBinding::class, input: EnumForController::BAR),
+        );
+    }
+
+    public function test_uri_with_query_param_that_collides_partially_with_route_param(): void
+    {
+        $this->assertSame(
+            '/test-with-collision/hi?id=1',
+            uri([UriGeneratorController::class, 'withCollidingNames'], id: '1', idea: 'hi')
         );
     }
 }

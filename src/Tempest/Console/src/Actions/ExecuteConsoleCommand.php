@@ -21,7 +21,7 @@ final readonly class ExecuteConsoleCommand
     ) {
     }
 
-    public function __invoke(string $commandName): ExitCode
+    public function __invoke(string $commandName): ExitCode|int
     {
         $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
 
@@ -43,12 +43,12 @@ final readonly class ExecuteConsoleCommand
 
             $inputBuilder = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
 
-            $consoleCommand->handler->invokeArgs(
+            $exitCode = $consoleCommand->handler->invokeArgs(
                 $consoleCommandClass,
                 $inputBuilder->build(),
             );
 
-            return ExitCode::SUCCESS;
+            return $exitCode ?? ExitCode::SUCCESS;
         });
 
         $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];

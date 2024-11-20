@@ -46,6 +46,14 @@ final readonly class ClassReflector implements Reflector
         }
     }
 
+    /** @return Generator<PropertyReflector> */
+    public function getProperties(): Generator
+    {
+        foreach ($this->reflectionClass->getProperties() as $property) {
+            yield new PropertyReflector($property);
+        }
+    }
+
     /** @return Generator<MethodReflector> */
     public function getPublicMethods(): Generator
     {
@@ -75,6 +83,11 @@ final readonly class ClassReflector implements Reflector
     public function getShortName(): string
     {
         return $this->reflectionClass->getShortName();
+    }
+
+    public function getFileName(): string
+    {
+        return $this->reflectionClass->getFileName();
     }
 
     public function getType(): TypeReflector

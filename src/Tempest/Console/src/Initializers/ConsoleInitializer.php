@@ -40,6 +40,7 @@ final class ConsoleInitializer implements Initializer
             input: new UnsupportedInputBuffer(),
             highlighter: $container->get(Highlighter::class, tag: 'console'),
             executeConsoleCommand: $container->get(ExecuteConsoleCommand::class),
+            argumentBag: $container->get(ConsoleArgumentBag::class),
         );
     }
 
@@ -50,6 +51,7 @@ final class ConsoleInitializer implements Initializer
             input: $container->get(StdinInputBuffer::class),
             highlighter: $container->get(Highlighter::class, tag: 'console'),
             executeConsoleCommand: $container->get(ExecuteConsoleCommand::class),
+            argumentBag: $container->get(ConsoleArgumentBag::class),
         ))->setComponentRenderer($container->get(InteractiveComponentRenderer::class));
     }
 }

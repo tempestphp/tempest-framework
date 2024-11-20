@@ -27,7 +27,7 @@ final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 
         $root = $this->kernel->root;
 
-        $this->assertFileDoesNotExist(path($root, '/public/static/a/b/index.html'));
-        $this->assertFileDoesNotExist(path($root, '/public/static/c/d/index.html'));
+        $this->assertFileDoesNotExist(path($root, '/public/static/a/b/index.html')->toString());
+        $this->assertFileDoesNotExist(path($root, '/public/static/c/d/index.html')->toString());
     }
 }

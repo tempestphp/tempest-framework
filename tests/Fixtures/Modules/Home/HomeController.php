@@ -18,6 +18,7 @@ final readonly class HomeController
     #[Get(uri: '/')]
     public function __invoke(Request $request): View
     {
+        //        ld('hi')
         //        throw new Exception('Home');
         ll('ll');
         $this->logger->debug('logger');

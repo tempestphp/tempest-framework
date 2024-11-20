@@ -166,6 +166,12 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame('c', $value);
         $this->assertTrue($array->equals(['a', 'b']));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->pop()->equals(['a', 'b']));
+        $this->assertTrue(arr()->pop()->isEmpty());
+
+        arr()->pop($value);
+        $this->assertNull($value);
     }
 
     public function test_unshift(): void
@@ -174,16 +180,24 @@ final class ArrayHelperTest extends TestCase
 
         $this->assertSame('a', $value);
         $this->assertTrue($array->equals(['b', 'c']));
+
+        $this->assertTrue(arr(['a', 'b', 'c'])->unshift()->equals(['b', 'c']));
+        $this->assertTrue(arr()->unshift()->isEmpty());
+
+        arr()->unshift($value);
+        $this->assertNull($value);
     }
 
     public function test_last(): void
     {
+        $this->assertSame(null, arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
     }
 
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
+        $this->assertSame(null, arr()->first());
     }
 
     public function test_is_empty(): void
@@ -1279,5 +1293,333 @@ final class ArrayHelperTest extends TestCase
                 'age' => 42,
             ],
         );
+    }
+
+    public function test_sort(): void
+    {
+        $array = arr([1 => 'c', 2 => 'a', 3 => 'b']);
+
+        // Test auto-detects key preservation
+        $this->assertSame(
+            expected: ['a', 'b', 'c'],
+            actual: arr(['c', 'a', 'b'])->sort()->toArray(),
+        );
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sort()->toArray(),
+        );
+
+        $this->assertSame(
+            expected: ['a', 'b', 'c'],
+            actual: $array->sort(desc: false, preserveKeys: false)->toArray(),
+        );
+        $this->assertSame(
+            expected: ['c', 'b', 'a'],
+            actual: $array->sort(desc: true, preserveKeys: false)->toArray(),
+        );
+
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sort(desc: false, preserveKeys: true)->toArray(),
+        );
+        $this->assertSame(
+            expected: [1 => 'c', 3 => 'b', 2 => 'a'],
+            actual: $array->sort(desc: true, preserveKeys: true)->toArray(),
+        );
+    }
+
+    public function test_sort_by_callback(): void
+    {
+        $array = arr([1 => 'c', 2 => 'a', 3 => 'b']);
+
+        // Test auto-detects key preservation
+        $this->assertSame(
+            expected: ['a', 'b', 'c'],
+            actual: arr(['c', 'a', 'b'])->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+        );
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+        );
+
+        $this->assertSame(
+            expected: ['a', 'b', 'c'],
+            actual: $array->sortByCallback(
+                callback: fn ($a, $b) => $a <=> $b,
+                preserveKeys: false,
+            )->toArray(),
+        );
+        $this->assertSame(
+            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
+            actual: $array->sortByCallback(
+                callback: fn ($a, $b) => $a <=> $b,
+                preserveKeys: true,
+            )->toArray(),
+        );
+    }
+
+    public function test_sort_keys(): void
+    {
+        $array = arr([2 => 'a', 1 => 'c', 3 => 'b']);
+
+        $this->assertSame(
+            expected: [1 => 'c', 2 => 'a', 3 => 'b'],
+            actual: $array->sortKeys(desc: false)->toArray(),
+        );
+        $this->assertSame(
+            expected: [3 => 'b', 2 => 'a', 1 => 'c'],
+            actual: $array->sortKeys(desc: true)->toArray(),
+        );
+    }
+
+    public function test_sort_keys_by_callback(): void
+    {
+        $array = arr([2 => 'a', 1 => 'c', 3 => 'b']);
+
+        $this->assertSame(
+            expected: [1 => 'c', 2 => 'a', 3 => 'b'],
+            actual: $array->sortKeysByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+        );
+    }
+
+    public function test_flatten(): void
+    {
+        $this->assertTrue(arr(['#foo', '#bar', '#baz'])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', '#bar'], '#baz'])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', null], '#baz', null])->flatten()->equals(['#foo', null, '#baz', null]));
+        $this->assertTrue(arr([['#foo', '#bar'], ['#baz']])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', ['#bar']], ['#baz']])->flatten()->equals(['#foo', '#bar', '#baz']));
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten()->equals(['#foo', '#bar', '#baz', '#zap']));
+
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten(depth: 1)->equals(['#foo', ['#bar', ['#baz']], '#zap']));
+        $this->assertTrue(arr([['#foo', ['#bar', ['#baz']]], '#zap'])->flatten(depth: 2)->equals(['#foo', '#bar', ['#baz'], '#zap']));
+    }
+
+    public function test_flatmap(): void
+    {
+        // basic
+        $this->assertTrue(
+            arr([
+                ['name' => 'Makise', 'hobbies' => ['Science', 'Programming']],
+                ['name' => 'Okabe', 'hobbies' => ['Science', 'Anime']],
+            ])->flatMap(fn (array $person) => $person['hobbies'])
+                ->equals(['Science', 'Programming', 'Science', 'Anime']),
+        );
+
+        // deeply nested
+        $likes = arr([
+            ['name' => 'Enzo', 'likes' => [
+                'manga' => ['Tower of God', 'The Beginning After The End'],
+                'languages' => ['PHP', 'TypeScript'],
+            ]],
+            ['name' => 'Jon', 'likes' => [
+                'manga' => ['One Piece', 'Naruto'],
+                'languages' => ['Python'],
+            ]],
+        ]);
+
+        $this->assertTrue(
+            $likes->flatMap(fn (array $person) => $person['likes'], depth: 1)
+                ->equals([
+                    ['Tower of God', 'The Beginning After The End'],
+                    ['PHP', 'TypeScript'],
+                    ['One Piece', 'Naruto'],
+                    ['Python'],
+                ]),
+        );
+
+        $this->assertTrue(
+            $likes->flatMap(fn (array $person) => $person['likes'], depth: INF)
+                ->equals([
+                    'Tower of God',
+                    'The Beginning After The End',
+                    'PHP',
+                    'TypeScript',
+                    'One Piece',
+                    'Naruto',
+                    'Python',
+                ]),
+        );
+    }
+
+    public function test_basic_reduce(): void
+    {
+        $collection = arr([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertSame(
+            actual: $collection->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'Hello'),
+            expected: 'Hello John Doe 42',
+        );
+    }
+
+    public function test_reduce_with_existing_function(): void
+    {
+        $collection = arr([
+            [1, 2, 2, 3],
+            [2, 3, 3, 4],
+            [3, 1, 3, 1],
+        ]);
+
+        $this->assertSame(
+            actual: $collection->reduce('max'),
+            expected: [3, 1, 3, 1],
+        );
+    }
+
+    public function test_empty_array_reduce(): void
+    {
+        $this->assertSame(
+            actual: arr()->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'default'),
+            expected: 'default',
+        );
+    }
+
+    public function test_chunk(): void
+    {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(2, preserveKeys: false)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [1, 2],
+                [3, 4],
+                [5, 6],
+                [7, 8],
+                [9, 10],
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(3, preserveKeys: false)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                [10],
+            ],
+        );
+    }
+
+    public function test_chunk_preserve_keys(): void
+    {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(2)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [0 => 1, 1 => 2],
+                [2 => 3, 3 => 4],
+                [4 => 5, 5 => 6],
+                [6 => 7, 7 => 8],
+                [8 => 9, 9 => 10],
+            ],
+        );
+
+        $this->assertSame(
+            actual: $collection
+                ->chunk(3)
+                ->map(fn ($chunk) => $chunk->toArray())
+                ->toArray(),
+            expected: [
+                [0 => 1, 1 => 2, 2 => 3],
+                [3 => 4, 4 => 5, 5 => 6],
+                [6 => 7, 7 => 8, 8 => 9],
+                [9 => 10],
+            ],
+        );
+    }
+
+    public function test_find_key_with_simple_value(): void
+    {
+        $collection = arr(['apple', 'banana', 'orange']);
+
+        $this->assertSame(1, $collection->findKey('banana'));
+        $this->assertSame(0, $collection->findKey('apple'));
+        $this->assertNull($collection->findKey('grape'));
+    }
+
+    public function test_find_key_with_strict_comparison(): void
+    {
+        $collection = arr([1, '1', 2, '2']);
+
+        $this->assertSame(0, $collection->findKey(1, strict: false));
+        $this->assertSame(0, $collection->findKey('1', strict: false));
+
+        $this->assertSame(0, $collection->findKey(1, strict: true));
+        $this->assertSame(1, $collection->findKey('1', strict: true));
+    }
+
+    public function test_find_key_with_closure(): void
+    {
+        $collection = arr([
+            ['id' => 1, 'name' => 'John'],
+            ['id' => 2, 'name' => 'Jane'],
+            ['id' => 3, 'name' => 'Bob'],
+        ]);
+
+        $result = $collection->findKey(fn ($item) => $item['name'] === 'Jane');
+        $this->assertSame(1, $result);
+
+        $result = $collection->findKey(fn ($item, $key) => $key === 2);
+        $this->assertSame(2, $result);
+
+        $result = $collection->findKey(fn ($item) => $item['name'] === 'Alice');
+        $this->assertNull($result);
+    }
+
+    public function test_find_key_with_string_keys(): void
+    {
+        $collection = arr([
+            'first' => 'value1',
+            'second' => 'value2',
+            'third' => 'value3',
+        ]);
+
+        $this->assertSame('second', $collection->findKey('value2'));
+        $this->assertNull($collection->findKey('value4'));
+    }
+
+    public function test_find_key_with_null_values(): void
+    {
+        $collection = arr(['a', null, 'b', '']);
+
+        $this->assertSame(1, $collection->findKey(null));
+        $this->assertSame(1, $collection->findKey(''));
+    }
+
+    public function test_find_key_with_complex_closure(): void
+    {
+        $collection = arr([
+            ['age' => 25, 'active' => true],
+            ['age' => 30, 'active' => false],
+            ['age' => 35, 'active' => true],
+        ]);
+
+        $result = $collection->findKey(function ($item) {
+            return $item['age'] > 28 && $item['active'] === true;
+        });
+
+        $this->assertSame(2, $result);
+    }
+
+    public function test_find_key_with_empty_array(): void
+    {
+        $collection = arr([]);
+
+        $this->assertNull($collection->findKey('anything'));
+        $this->assertNull($collection->findKey(fn () => true));
     }
 }

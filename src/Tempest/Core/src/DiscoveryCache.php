@@ -27,7 +27,7 @@ final readonly class DiscoveryCache implements Cache
         ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new FilesystemAdapter(
-            directory: path($this->cacheConfig->directory, 'discovery'),
+            directory: path($this->cacheConfig->directory, 'discovery')->toString(),
         );
     }
 

@@ -23,4 +23,28 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
             ->submit('Brent')
             ->assertContains("Hello Brent");
     }
+
+    public function test_supports_default(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $name = $console->ask('test', default: 'Brent');
+
+                $console->writeln("Hello {$name}");
+            })
+            ->submit()
+            ->assertContains("Hello Brent");
+    }
+
+    public function test_supports_default_without_prompting(): void
+    {
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $name = $console->ask('test', default: 'Brent');
+
+                $console->writeln("Hello {$name}");
+            })
+            ->assertContains("Hello Brent");
+    }
 }

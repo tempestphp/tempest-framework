@@ -29,6 +29,7 @@ final class Kernel
 
     public function __construct(
         public string $root,
+        /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
     ) {
@@ -36,13 +37,14 @@ final class Kernel
 
         $this
             ->loadEnv()
+            ->registerKernelErrorHandler()
             ->registerShutdownFunction()
             ->registerKernel()
             ->loadComposer()
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadDiscovery()
-            ->loadExceptionHandler()
+            ->registerErrorHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -135,7 +137,7 @@ final class Kernel
         return $this;
     }
 
-    private function loadExceptionHandler(): self
+    private function registerErrorHandler(): self
     {
         $appConfig = $this->container->get(AppConfig::class);
 
@@ -151,10 +153,6 @@ final class Kernel
             $handler = $this->container->get(HttpProductionErrorHandler::class);
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
-        } else {
-            $whoops = new Run();
-            $whoops->pushHandler(new PrettyPageHandler());
-            $whoops->register();
         }
 
         return $this;
@@ -171,6 +169,27 @@ final class Kernel
     {
         if (interface_exists(EventBus::class)) {
             $this->container->get(EventBus::class)->dispatch($event);
+        }
+
+        return $this;
+    }
+
+    private function registerKernelErrorHandler(): self
+    {
+        $environment = Environment::fromEnv();
+
+        if ($environment->isTesting()) {
+            return $this;
+        }
+
+        if ($environment->isProduction()) {
+            $handler = new HttpProductionErrorHandler();
+            set_exception_handler($handler->handleException(...));
+            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        } elseif (PHP_SAPI !== 'cli') {
+            $whoops = new Run();
+            $whoops->pushHandler(new PrettyPageHandler());
+            $whoops->register();
         }
 
         return $this;

@@ -1,0 +1,14 @@
+<?php
+
+namespace Tempest\Generation\Tests\Fixtures;
+
+use Tempest\Generation\Tests\Fixtures\SampleNamespace\SamplePropertyAttribute;
+
+final class ClassWithMethodPropertyAttributes
+{
+    public function example(
+        #[SamplePropertyAttribute]
+        string $parameter,
+    ): void {
+    }
+}

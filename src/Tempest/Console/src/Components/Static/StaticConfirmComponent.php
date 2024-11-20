@@ -17,6 +17,10 @@ final readonly class StaticConfirmComponent implements StaticConsoleComponent
 
     public function render(Console $console): bool
     {
+        if (! $console->supportsPrompting()) {
+            return $this->default;
+        }
+
         $answer = $console->ask(
             question: $this->question,
             options: ['yes', 'no'],

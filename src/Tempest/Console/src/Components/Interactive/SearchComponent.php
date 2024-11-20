@@ -28,6 +28,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     public function __construct(
         public string $label,
         public Closure $search,
+        public ?string $default = null
     ) {
         $this->cursorPosition = new Point(2, 1);
     }
@@ -67,6 +68,10 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     public function enter(): ?string
     {
         $selected = $this->options[$this->selectedOption] ?? null;
+
+        if (! $selected && $this->default) {
+            return $this->default;
+        }
 
         if (! $selected) {
             return null;
@@ -168,6 +173,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         return new StaticSearchComponent(
             label: $this->label,
             search: $this->search,
+            default: $this->default,
         );
     }
 }

@@ -21,7 +21,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
         $consoleCommand = $this->consoleConfig->commands[$invocation->argumentBag->getCommandName()] ?? null;
 
@@ -35,7 +35,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         ));
     }
 
-    private function rescue(string $commandName): ExitCode
+    private function rescue(string $commandName): ExitCode|int
     {
         $this->console->writeln("<error>Command {$commandName} not found</error>");
 
@@ -86,7 +86,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         return $similarCommands;
     }
 
-    private function runIntendedCommand(string $commandName): ExitCode
+    private function runIntendedCommand(string $commandName): ExitCode|int
     {
         return ($this->executeConsoleCommand)($commandName);
     }

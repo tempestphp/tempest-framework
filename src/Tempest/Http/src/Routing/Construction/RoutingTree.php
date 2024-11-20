@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Routing\Construction;
 
+use Tempest\Http\Routing\Matching\MatchingRegex;
+
 /**
  * @internal
  */
@@ -22,15 +24,19 @@ final class RoutingTree
         $method = $markedRoute->route->method;
 
         // Find the root tree node based on HTTP method
-        $root = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
+        $node = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
-        // Add path to tree using recursion
-        $root->addPath($markedRoute->route->split(), $markedRoute);
+        // Traverse the tree and find the node for each route segment
+        foreach ($markedRoute->route->split() as $routeSegment) {
+            $node = $node->findOrCreateNodeForSegment($routeSegment);
+        }
+
+        $node->setTargetRoute($markedRoute);
     }
 
-    /** @return array<string, string> */
+    /** @return array<string, MatchingRegex> */
     public function toMatchingRegexes(): array
     {
-        return array_map(static fn (RouteTreeNode $node) => "#{$node->toRegex()}#", $this->roots);
+        return array_map(static fn (RouteTreeNode $node) => (new RouteMatchingRegexBuilder($node))->toRegex(), $this->roots);
     }
 }
