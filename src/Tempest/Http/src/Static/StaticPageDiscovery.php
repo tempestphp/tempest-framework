@@ -11,12 +11,12 @@ use Tempest\Core\IsDiscovery;
 use Tempest\Http\StaticPage;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class StaticPageDiscovery implements Discovery
+final class StaticPageDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private StaticPageConfig $staticPageConfig,
+        private readonly StaticPageConfig $staticPageConfig,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

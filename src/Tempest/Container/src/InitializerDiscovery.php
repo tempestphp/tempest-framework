@@ -12,12 +12,12 @@ use Tempest\Reflection\ClassReflector;
 /**
  * @property GenericContainer $container
  */
-final readonly class InitializerDiscovery implements Discovery
+final class InitializerDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private Container $container,
+        private readonly Container $container,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

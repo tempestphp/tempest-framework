@@ -12,7 +12,7 @@ trait IsDiscovery
         return $this->discoveryItems;
     }
 
-    public function setItems(DiscoveryItems $items): Discovery
+    public function setItems(DiscoveryItems $items): void
     {
         $this->discoveryItems = $items;
     }

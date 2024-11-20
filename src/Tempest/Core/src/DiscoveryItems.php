@@ -2,34 +2,31 @@
 
 namespace Tempest\Core;
 
-use Tempest\Support\ArrayHelper;
+use function Tempest\Support\arr;
 
 final class DiscoveryItems
 {
-    private ArrayHelper $items;
-
-    public function __construct()
-    {
-        $this->items = new ArrayHelper();
-    }
+    private array $items = [];
 
     public function add(DiscoveryLocation $location, mixed $value): self
     {
+        $this->items[$location->path] ??= [];
+
         $this->items[$location->path][] = $value;
 
         return $this;
     }
 
-    public function without(DiscoveryLocation ...$locations): ArrayHelper
+    public function without(DiscoveryLocation ...$locations): array
     {
-        return $this
-            ->items
-            ->filter(fn (mixed $value, string $location) => ! in_array($location, $locations));
+        return arr($this->items)
+            ->filter(fn (mixed $value, string $location) => ! in_array($location, $locations))
+            ->toArray();
     }
 
     // TODO: make this class directly iterable
-    public function flatten(): ArrayHelper
+    public function flatten(): array
     {
-        return $this->items->flatten();
+        return arr($this->items)->flatten(1)->toArray();
     }
 }

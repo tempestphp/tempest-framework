@@ -12,12 +12,12 @@ use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
-final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
+final class ViewComponentDiscovery implements Discovery, DiscoversPath
 {
     use IsDiscovery;
 
     public function __construct(
-        private ViewConfig $viewConfig,
+        private readonly ViewConfig $viewConfig,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

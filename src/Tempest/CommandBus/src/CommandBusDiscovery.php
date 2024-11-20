@@ -9,12 +9,12 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class CommandBusDiscovery implements Discovery
+final class CommandBusDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private CommandBusConfig $commandBusConfig,
+        private readonly CommandBusConfig $commandBusConfig,
     ) {
     }
 

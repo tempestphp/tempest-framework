@@ -11,12 +11,12 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class ConsoleCommandDiscovery implements Discovery
+final class ConsoleCommandDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private ConsoleConfig $consoleConfig,
+        private readonly ConsoleConfig $consoleConfig,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void

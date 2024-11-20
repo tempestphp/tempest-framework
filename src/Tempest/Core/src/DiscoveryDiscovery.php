@@ -6,12 +6,12 @@ namespace Tempest\Core;
 
 use Tempest\Reflection\ClassReflector;
 
-final readonly class DiscoveryDiscovery implements Discovery
+final class DiscoveryDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private Kernel $kernel,
+        private readonly Kernel $kernel,
     ) {
     }
 

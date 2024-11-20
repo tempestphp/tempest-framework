@@ -12,13 +12,13 @@ use Tempest\EventBus\EventHandler;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class RouteDiscovery implements Discovery
+final class RouteDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private RouteConfigurator $configurator,
-        private RouteConfig $routeConfig,
+        private readonly RouteConfigurator $configurator,
+        private readonly RouteConfig $routeConfig,
     ) {
     }
 

@@ -13,7 +13,7 @@ interface Discovery
 
     public function getItems(): DiscoveryItems;
 
-    public function setItems(DiscoveryItems $items): Discovery;
+    public function setItems(DiscoveryItems $items): void;
 
     public function apply(): void;
 }

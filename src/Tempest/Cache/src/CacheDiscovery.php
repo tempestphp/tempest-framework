@@ -10,12 +10,12 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class CacheDiscovery implements Discovery
+final class CacheDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private CacheConfig $cacheConfig,
+        private readonly CacheConfig $cacheConfig,
     ) {
     }
 

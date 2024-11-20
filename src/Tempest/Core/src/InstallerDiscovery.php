@@ -6,12 +6,12 @@ namespace Tempest\Core;
 
 use Tempest\Reflection\ClassReflector;
 
-final readonly class InstallerDiscovery implements Discovery
+final class InstallerDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private InstallerConfig $installerConfig,
+        private readonly InstallerConfig $installerConfig,
     ) {
     }
 

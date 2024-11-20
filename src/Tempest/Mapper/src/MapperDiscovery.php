@@ -9,12 +9,12 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class MapperDiscovery implements Discovery
+final class MapperDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private MapperConfig $config,
+        private readonly MapperConfig $config,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
