@@ -12,7 +12,8 @@ final class ResponseStub implements Response
 {
     use IsResponse;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->setStatus(Status::OK);
         $this->addHeader('Content-Type', 'application/json');
     }
