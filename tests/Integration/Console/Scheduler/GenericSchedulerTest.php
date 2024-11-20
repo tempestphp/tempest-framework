@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Console\Scheduler;
 use DateTime;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
@@ -40,12 +41,13 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         );
 
         $executor = new NullShellExecutor();
-        $scheduler = new GenericScheduler($config, $executor);
+        $argumentBag = new ConsoleArgumentBag(['tempest']);
+        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
 
         $scheduler->run();
 
         $this->assertSame(
-            '(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
+            '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
             $executor->executedCommand,
         );
     }
@@ -61,11 +63,12 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         );
 
         $executor = new NullShellExecutor();
-        $scheduler = new GenericScheduler($config, $executor);
+        $argumentBag = new ConsoleArgumentBag(['tempest']);
+        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
         $scheduler->run();
 
         $this->assertSame(
-            '(php tempest command) >> /dev/null &',
+            '(' . PHP_BINARY . ' tempest command) >> /dev/null &',
             $executor->executedCommand,
         );
     }
@@ -81,11 +84,12 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         );
 
         $executor = new NullShellExecutor();
-        $scheduler = new GenericScheduler($config, $executor);
+        $argumentBag = new ConsoleArgumentBag(['tempest']);
+        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
         $scheduler->run($at);
 
         $this->assertSame(
-            '(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
+            '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
             $executor->executedCommand,
         );
 
@@ -97,12 +101,12 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $executor = new NullShellExecutor();
 
-        $scheduler = new GenericScheduler($config, $executor);
+        $scheduler = new GenericScheduler($config, $argumentBag, $executor);
 
         $scheduler->run($at->modify('+1 minute'));
 
         $this->assertSame(
-            '(php tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
+            '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
             $executor->executedCommand,
         );
     }
