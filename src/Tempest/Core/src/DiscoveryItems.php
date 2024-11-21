@@ -8,7 +8,9 @@ use function Tempest\Support\arr;
 
 final class DiscoveryItems
 {
-    private array $items = [];
+    public function __construct(
+        private array $items = [],
+    ) {}
 
     public function add(DiscoveryLocation $location, mixed $value): self
     {
@@ -19,16 +21,33 @@ final class DiscoveryItems
         return $this;
     }
 
-    public function without(DiscoveryLocation ...$locations): array
+    public function hasLocation(DiscoveryLocation $location): bool
     {
-        return arr($this->items)
-            ->filter(fn (mixed $value, string $location) => ! in_array($location, $locations))
-            ->toArray();
+        return array_key_exists($location->path, $this->items);
     }
 
     // TODO: make this class directly iterable
     public function flatten(): array
     {
         return arr($this->items)->flatten(1)->toArray();
+    }
+
+    public function onlyVendor(): self
+    {
+        return new self(
+            arr($this->items)
+                ->filter(fn (array $items, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
+                ->toArray(),
+        );
+    }
+
+    public function __serialize(): array
+    {
+        return $this->items;
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->items = $data;
     }
 }

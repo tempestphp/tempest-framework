@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
+use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
@@ -36,11 +37,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     private function renderOverview(bool $showHidden = false): void
     {
         $this->console
-            ->writeln("<h1>{$this->consoleConfig->name}</h1>")
-            ->when(
-                expression: $this->discoveryCache->isEnabled(),
-                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
-            );
+            ->writeln("<h1>{$this->consoleConfig->name}</h1>");
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
@@ -68,5 +65,16 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
                 (new RenderConsoleCommand($this->console))($consoleCommand);
             }
         }
+
+        $this->console
+            ->writeln()
+            ->when(
+                expression: $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::PARTIAL,
+                callback: fn (Console $console) => $console->success('Partial discovery cache is enabled!')
+            )
+            ->when(
+                expression: $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::ALL,
+                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
+            );
     }
 }

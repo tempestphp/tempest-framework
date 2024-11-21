@@ -4,41 +4,62 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use DateTimeInterface;
-use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
+use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Cache\IsCache;
 use function Tempest\path;
 
-final readonly class DiscoveryCache implements Cache
+final class DiscoveryCache implements Cache
 {
-    use IsCache {
-        IsCache::get as getParent;
-        IsCache::put as putParent;
-    }
+    use IsCache;
 
     private CacheItemPoolInterface $pool;
 
+    private array $restored = [];
+
     public function __construct(
-        private CacheConfig $cacheConfig,
+        private readonly CacheConfig $cacheConfig,
         ?CacheItemPoolInterface $pool = null,
     ) {
-        $this->pool = $pool ?? new FilesystemAdapter(
+        $this->pool = $pool ?? new PhpFilesAdapter(
             directory: path($this->cacheConfig->directory, 'discovery')->toString(),
         );
     }
 
-    public function get(string $key): mixed
+    public function restore(string $className): ?DiscoveryItems
     {
-        return $this->getParent(str_replace('\\', '_', $key));
+        if (isset($this->restored[$className])) {
+            return $this->restored[$className];
+        }
+
+        $discoveryItems = $this->get(str_replace('\\', '_', $className));
+
+        $this->restored[$className] = $discoveryItems;
+
+        return $discoveryItems;
     }
 
-    public function put(string $key, mixed $value, ?DateTimeInterface $expiresAt = null): CacheItemInterface
+    public function hasCache(Discovery $discovery, DiscoveryLocation $location): bool
     {
-        return $this->putParent(str_replace('\\', '_', $key), $value, $expiresAt);
+        $discoveryItems = $this->restore($discovery::class);
+
+        if ($discoveryItems === null) {
+            return false;
+        }
+
+        return $discoveryItems->hasLocation($location);
+    }
+
+    public function store(Discovery $discovery, DiscoveryItems $discoveryItems): void
+    {
+        $this->put(
+            key: str_replace('\\', '_', $discovery::class),
+            value: $discoveryItems,
+        );
     }
 
     protected function getCachePool(): CacheItemPoolInterface
@@ -48,6 +69,15 @@ final readonly class DiscoveryCache implements Cache
 
     public function isEnabled(): bool
     {
-        return $this->cacheConfig->enable ?? $this->cacheConfig->discoveryCache;
+        if ($this->cacheConfig->enable) {
+            return true;
+        }
+
+        return $this->cacheConfig->discoveryCache !== DiscoveryCacheStrategy::NONE;
+    }
+
+    public function getStrategy(): DiscoveryCacheStrategy
+    {
+        return $this->cacheConfig->discoveryCache;
     }
 }
