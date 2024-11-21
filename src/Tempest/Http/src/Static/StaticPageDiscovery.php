@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Static;
 
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
@@ -17,7 +16,8 @@ final class StaticPageDiscovery implements Discovery
 
     public function __construct(
         private readonly StaticPageConfig $staticPageConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

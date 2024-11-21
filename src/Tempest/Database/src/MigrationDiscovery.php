@@ -14,7 +14,9 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 {
     use IsDiscovery;
 
-    public function __construct(private readonly DatabaseConfig $databaseConfig) {}
+    public function __construct(private readonly DatabaseConfig $databaseConfig)
+    {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

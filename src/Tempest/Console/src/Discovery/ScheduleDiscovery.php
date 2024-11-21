@@ -6,15 +6,11 @@ namespace Tempest\Console\Discovery;
 
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Schedule;
-use Tempest\Console\Scheduler\Interval;
-use Tempest\Console\Scheduler\ScheduledInvocation;
 use Tempest\Console\Scheduler\SchedulerConfig;
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Reflection\MethodReflector;
 
 final class ScheduleDiscovery implements Discovery
 {
@@ -22,7 +18,8 @@ final class ScheduleDiscovery implements Discovery
 
     public function __construct(
         private readonly SchedulerConfig $schedulerConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

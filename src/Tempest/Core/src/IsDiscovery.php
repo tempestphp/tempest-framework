@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Core;
 
 /** @phpstan-require-implements \Tempest\Core\Discovery */

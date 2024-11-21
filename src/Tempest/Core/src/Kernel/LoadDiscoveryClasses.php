@@ -25,7 +25,6 @@ final readonly class LoadDiscoveryClasses
 {
     public function __construct(
         private Kernel $kernel,
-        private DiscoveryCache $discoveryCache,
         private Container $container,
     ) {
     }
@@ -39,18 +38,18 @@ final readonly class LoadDiscoveryClasses
             $discovery = $this->container->get($discoveryClass);
             $discovery->setItems(new DiscoveryItems());
 
-//            try {
-//                $cachedPayload = $this->discoveryCache->get($discoveryClass);
-//
-//                if ($cachedPayload) {
-//                    $discovery->restoreCachePayload($this->container, $cachedPayload);
-//                    next($this->kernel->discoveryClasses);
-//
-//                    continue;
-//                }
-//            } catch (ReflectionException) {
-//                // Invalid cache
-//            }
+            //            try {
+            //                $cachedPayload = $this->discoveryCache->get($discoveryClass);
+            //
+            //                if ($cachedPayload) {
+            //                    $discovery->restoreCachePayload($this->container, $cachedPayload);
+            //                    next($this->kernel->discoveryClasses);
+            //
+            //                    continue;
+            //                }
+            //            } catch (ReflectionException) {
+            //                // Invalid cache
+            //            }
 
             foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
                 $directories = new RecursiveDirectoryIterator($discoveryLocation->path, FilesystemIterator::UNIX_PATHS | FilesystemIterator::SKIP_DOTS);
@@ -122,7 +121,7 @@ final readonly class LoadDiscoveryClasses
 
             next($this->kernel->discoveryClasses);
 
-//            $this->discoveryCache->put($discoveryClass, $discovery->createCachePayload());
+            //            $this->discoveryCache->put($discoveryClass, $discovery->createCachePayload());
         }
     }
 

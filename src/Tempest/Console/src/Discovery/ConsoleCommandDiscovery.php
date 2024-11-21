@@ -17,7 +17,8 @@ final class ConsoleCommandDiscovery implements Discovery
 
     public function __construct(
         private readonly ConsoleConfig $consoleConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

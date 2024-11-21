@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
@@ -18,7 +17,8 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
     public function __construct(
         private readonly ViewConfig $viewConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
@@ -63,7 +63,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             new AnonymousViewComponent(
                 contents: $matches['header'] . $matches['view'],
                 file: $path,
-            )
+            ),
         ]);
 
     }

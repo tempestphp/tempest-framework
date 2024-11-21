@@ -18,7 +18,8 @@ final class EventBusDiscovery implements Discovery
 
     public function __construct(
         private readonly EventBusConfig $eventBusConfig,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

@@ -18,7 +18,8 @@ final class InitializerDiscovery implements Discovery
 
     public function __construct(
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
