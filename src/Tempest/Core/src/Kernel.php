@@ -23,9 +23,7 @@ final class Kernel
 
     public bool $discoveryCache;
 
-    public array $discoveryClasses = [
-        DiscoveryDiscovery::class,
-    ];
+    public array $discoveryClasses = [];
 
     public function __construct(
         public string $root,

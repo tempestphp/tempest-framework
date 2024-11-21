@@ -10,10 +10,12 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Tempest\Cache\DiscoveryCacheStrategy;
+use Tempest\CommandBus\CommandBusDiscovery;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryDiscovery;
 use Tempest\Core\DiscoveryItems;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\DoNotDiscover;
@@ -32,14 +34,12 @@ final readonly class LoadDiscoveryClasses
 
     public function __invoke(): void
     {
-        reset($this->kernel->discoveryClasses);
+        $this->applyDiscovery($this->buildDiscovery(DiscoveryDiscovery::class));
 
-        while ($discoveryClass = current($this->kernel->discoveryClasses)) {
+        foreach ($this->kernel->discoveryClasses as $discoveryClass)
+        {
             $discovery = $this->buildDiscovery($discoveryClass);
-
             $this->applyDiscovery($discovery);
-
-            next($this->kernel->discoveryClasses);
         }
     }
 
