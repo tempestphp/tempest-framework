@@ -10,7 +10,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use Tempest\Cache\DiscoveryCacheStrategy;
-use Tempest\CommandBus\CommandBusDiscovery;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
@@ -36,8 +35,7 @@ final readonly class LoadDiscoveryClasses
     {
         $this->applyDiscovery($this->buildDiscovery(DiscoveryDiscovery::class));
 
-        foreach ($this->kernel->discoveryClasses as $discoveryClass)
-        {
+        foreach ($this->kernel->discoveryClasses as $discoveryClass) {
             $discovery = $this->buildDiscovery($discoveryClass);
             $this->applyDiscovery($discovery);
         }
@@ -70,6 +68,13 @@ final readonly class LoadDiscoveryClasses
     private function buildDiscovery(string $discoveryClass): Discovery
     {
         $discovery = $this->resolveDiscovery($discoveryClass);
+
+        if (
+            $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::ALL
+            && $discovery->getItems()->isLoaded()
+        ) {
+            return $discovery;
+        }
 
         foreach ($this->kernel->discoveryLocations as $location) {
             if ($this->shouldSkipLocation($location, $discovery)) {

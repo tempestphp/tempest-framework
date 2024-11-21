@@ -32,6 +32,11 @@ final class DiscoveryItems
         return arr($this->items)->flatten(1)->toArray();
     }
 
+    public function isLoaded(): bool
+    {
+        return $this->items !== [];
+    }
+
     public function onlyVendor(): self
     {
         return new self(
