@@ -64,7 +64,7 @@ final readonly class LoadDiscoveryClasses
     }
 
     /**
-     * Build the one specific discovery instance.
+     * Build one specific discovery instance.
      */
     private function buildDiscovery(string $discoveryClass): Discovery
     {
