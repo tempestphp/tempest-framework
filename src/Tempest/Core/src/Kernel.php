@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Commands\DiscoveryGenerateCommand;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
+use function Tempest\env;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -30,15 +33,17 @@ final class Kernel
         /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
-    ) {
+    )
+    {
         $this->container = $container ?? $this->createContainer();
     }
 
     public static function boot(
         string $root,
         array $discoveryLocations = [],
-        ?Container $container = null
-    ): self{
+        ?Container $container = null,
+    ): self
+    {
         return (new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
@@ -85,8 +90,27 @@ final class Kernel
 
     public function loadEnv(): self
     {
+        // The discovery:generate command must always run without discovery cache enabled
+        if (PHP_SAPI === 'cli') {
+            $command = $_SERVER['argv'][1] ?? null;
+
+            if ($command === 'discovery:generate' || $command === 'dg') {
+                putenv('DISCOVERY_CACHE=false');
+            }
+        }
+
+        // Load from .env
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
+
+        // Check whether the discovery caching strategy in .env has changed
+        $current = env('DISCOVERY_CACHE');
+
+        if ($current && $original = @file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY)) {
+            if (DiscoveryCacheStrategy::make($original) !== DiscoveryCacheStrategy::make($current)) {
+                throw new DiscoveryCachingStrategyChangedException($original, $current);
+            }
+        }
 
         return $this;
     }

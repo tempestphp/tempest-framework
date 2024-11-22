@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Core\Commands;
 
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
+use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
@@ -15,6 +19,8 @@ use function Tempest\Support\str;
 final readonly class DiscoveryGenerateCommand
 {
     use HasConsole;
+
+    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/../.cache/current_discovery_strategy';
 
     public function __construct(
         private Kernel $kernel,
@@ -36,18 +42,11 @@ final readonly class DiscoveryGenerateCommand
 
         $this->info(sprintf('Generating new discovery cache… (%s)', $strategy->value));
 
-        $kernel = (new Kernel($this->kernel->root))
-            ->registerKernel()
-            ->loadComposer()
-            ->loadDiscoveryLocations()
-            ->loadConfig();
-
-        // TODO: avoid container singleton
-        $container = $kernel->container;
+        $kernel = $this->resolveKernel();
 
         $loadDiscoveryClasses = new LoadDiscoveryClasses(
             kernel: $kernel,
-            container: $container,
+            container: $kernel->container,
             discoveryCache: $this->discoveryCache,
         );
 
@@ -81,11 +80,35 @@ final readonly class DiscoveryGenerateCommand
         if (is_file($envPath)) {
             $contents = file_get_contents($envPath);
 
-            $cachingStrategyFromEnv = str($contents)->match('/DISCOVERY_CACHE=(' . $possibleValues . ')/')[1] ?? 'none';
+            $cachingStrategyFromEnv = str($contents)->match('/DISCOVERY_CACHE=(' . $possibleValues . '|true|false)/')[1] ?? 'none';
         }
 
-        $cachingStrategyFromEnv ??= 'none';
+        $strategy = DiscoveryCacheStrategy::make($cachingStrategyFromEnv ?? null);
 
-        return DiscoveryCacheStrategy::tryFrom($cachingStrategyFromEnv) ?? DiscoveryCacheStrategy::NONE;
+        // Store the current env variable
+        $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, recursive: true);
+        }
+
+        file_put_contents(self::CURRENT_DISCOVERY_STRATEGY, $strategy->value);
+
+        return $strategy;
+    }
+
+    public function resolveKernel(): Kernel
+    {
+        $container = new GenericContainer();
+        $container->singleton(Container::class, $container);
+
+        return (new Kernel(
+            root: $this->kernel->root,
+            discoveryLocations: $this->kernel->discoveryLocations,
+            container: $container,
+        ))
+            ->registerKernel()
+            ->loadComposer()
+            ->loadConfig();
     }
 }

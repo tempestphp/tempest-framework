@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Container;
 
-use Tempest\Console\Highlight\ConsoleHighlighterInitializer;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
@@ -19,7 +18,8 @@ final class InitializerDiscovery implements Discovery
 
     public function __construct(
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

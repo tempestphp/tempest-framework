@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use Serializable;
 use function Tempest\Support\arr;
 
 final class DiscoveryItems
 {
     public function __construct(
         private array $items = [],
-    ) {}
+    ) {
+    }
 
     public function add(DiscoveryLocation $location, mixed $value): self
     {

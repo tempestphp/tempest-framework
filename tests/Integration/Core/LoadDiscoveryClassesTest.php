@@ -35,9 +35,9 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         ];
 
         (new LoadDiscoveryClasses(
-            $this->kernel,
-            $this->container->get(DiscoveryCache::class),
-            $this->container,
+            kernel: $this->kernel,
+            container: $this->container,
+            discoveryCache: $this->container->get(DiscoveryCache::class),
         ));
 
         $migrations = get(DatabaseConfig::class)->getMigrations();

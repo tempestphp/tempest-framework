@@ -26,21 +26,11 @@ final class CacheConfig
 
         /** Used as a global override, should be true in production, null in local */
         ?bool $enable = null,
-    )
-    {
+    ) {
         $this->enable = $enable ?? env('CACHE') ?? null;
         $this->projectCache = (bool)env('PROJECT_CACHE', false);
         $this->viewCache = (bool)env('VIEW_CACHE', false);
-
-        $discoveryCache = env('DISCOVERY_CACHE', 'none');
-
-        if ($discoveryCache === true) {
-            $this->discoveryCache = DiscoveryCacheStrategy::ALL;
-        } elseif ($discoveryCache === false) {
-            $this->discoveryCache = DiscoveryCacheStrategy::NONE;
-        } else {
-            $this->discoveryCache = DiscoveryCacheStrategy::tryFrom($discoveryCache) ?? DiscoveryCacheStrategy::NONE;
-        }
+        $this->discoveryCache = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */

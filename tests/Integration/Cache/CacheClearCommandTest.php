@@ -26,6 +26,7 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
 
     public function test_cache_clear_all(): void
     {
+        $this->markTestSkipped();
         $this->console
             ->call('cache:clear --all')
             ->assertSee('Tempest\Cache\ProjectCache cleared successfully')

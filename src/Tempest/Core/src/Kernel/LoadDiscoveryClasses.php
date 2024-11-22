@@ -31,7 +31,8 @@ final class LoadDiscoveryClasses
         private readonly Kernel $kernel,
         private readonly Container $container,
         private readonly DiscoveryCache $discoveryCache,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): void
     {
@@ -105,8 +106,13 @@ final class LoadDiscoveryClasses
             /** @var SplFileInfo $file */
             foreach ($files as $file) {
                 $fileName = $file->getFilename();
-
-                if ($fileName === '' || $fileName === '.' || $fileName === '..') {
+                if ($fileName === '') {
+                    continue;
+                }
+                if ($fileName === '.') {
+                    continue;
+                }
+                if ($fileName === '..') {
                     continue;
                 }
 
@@ -179,7 +185,7 @@ final class LoadDiscoveryClasses
     {
         return match ($this->discoveryCache->getStrategy()) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
-            DiscoveryCacheStrategy::NONE => false,
+            DiscoveryCacheStrategy::NONE, => false,
 
             // If discover cache is enabled, all locations cache should be skipped
             DiscoveryCacheStrategy::ALL => true,

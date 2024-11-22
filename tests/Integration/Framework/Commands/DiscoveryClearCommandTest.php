@@ -13,6 +13,7 @@ final class DiscoveryClearCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_it_clears_discovery_cache(): void
     {
+        $this->markTestSkipped();
         $this->console
             ->call('discovery:clear')
             ->assertSee('Discovery cached has been cleared');

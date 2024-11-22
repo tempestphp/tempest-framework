@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
@@ -24,8 +23,7 @@ final class DiscoveryCache implements Cache
     public function __construct(
         private readonly CacheConfig $cacheConfig,
         ?CacheItemPoolInterface $pool = null,
-    )
-    {
+    ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
             directory: path($this->cacheConfig->directory, 'discovery')->toString(),
         );
@@ -43,11 +41,11 @@ final class DiscoveryCache implements Cache
     {
         $key = str_replace('\\', '_', $discovery::class);
 
-        $item = $this->getCachePool()
+        $item = $this->pool
             ->getItem($key)
             ->set($discoveryItems);
 
-        $this->getCachePool()->save($item);
+        $this->pool->save($item);
     }
 
     protected function getCachePool(): CacheItemPoolInterface
