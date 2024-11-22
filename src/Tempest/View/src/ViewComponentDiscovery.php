@@ -28,7 +28,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         $this->discoveryItems->add($location, [
             forward_static_call($class->getName() . '::getName'),
-            $class,
+            $class->getName(),
         ]);
     }
 
@@ -71,6 +71,10 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
     public function apply(): void
     {
         foreach ($this->discoveryItems->flatten() as [$name, $viewComponent]) {
+            if (is_string($viewComponent)) {
+                $viewComponent = new ClassReflector($viewComponent);
+            }
+
             $this->viewConfig->addViewComponent(
                 name: $name,
                 viewComponent: $viewComponent,

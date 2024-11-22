@@ -20,26 +20,43 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\DoNotDiscover;
 use Tempest\Core\Kernel;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Support\NamespaceHelper;
 use Throwable;
 
 /** @internal */
-final readonly class LoadDiscoveryClasses
+final class LoadDiscoveryClasses
 {
+    private array $appliedDiscovery = [];
+
     public function __construct(
-        private Kernel $kernel,
-        private Container $container,
-        private DiscoveryCache $discoveryCache,
+        private readonly Kernel $kernel,
+        private readonly Container $container,
+        private readonly DiscoveryCache $discoveryCache,
     ) {}
 
     public function __invoke(): void
     {
-        $this->applyDiscovery($this->buildDiscovery(DiscoveryDiscovery::class));
+        $discoveries = $this->build();
+
+        foreach ($discoveries as $discovery) {
+            $this->applyDiscovery($discovery);
+        }
+    }
+
+    /** @return Discovery[] */
+    public function build(): array
+    {
+        // DiscoveryDiscovery needs to be applied before we can build all other discoveries
+        $discoveryDiscovery = $this->buildDiscovery(DiscoveryDiscovery::class);
+        $this->applyDiscovery($discoveryDiscovery);
+
+        $builtDiscovery = [$discoveryDiscovery];
 
         foreach ($this->kernel->discoveryClasses as $discoveryClass) {
             $discovery = $this->buildDiscovery($discoveryClass);
-            $this->applyDiscovery($discovery);
+            $builtDiscovery[] = $discovery;
         }
+
+        return $builtDiscovery;
     }
 
     /**
@@ -78,7 +95,7 @@ final readonly class LoadDiscoveryClasses
         }
 
         foreach ($this->kernel->discoveryLocations as $location) {
-            if ($this->shouldSkipLocation($location, $discovery)) {
+            if ($this->shouldSkipLocation($location)) {
                 continue;
             }
 
@@ -132,17 +149,13 @@ final readonly class LoadDiscoveryClasses
      */
     private function applyDiscovery(Discovery $discovery): void
     {
+        if ($this->appliedDiscovery[$discovery::class] ?? null) {
+            return;
+        }
+
         $discovery->apply();
 
-        if ($this->discoveryCache->isEnabled()) {
-            $discoveryItems = $discovery->getItems();
-
-            if ($this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::PARTIAL) {
-                $discoveryItems = $discoveryItems->onlyVendor();
-            }
-
-            $this->discoveryCache->store($discovery, $discoveryItems);
-        }
+        $this->appliedDiscovery[$discovery::class] = true;
     }
 
     /**
@@ -162,17 +175,17 @@ final readonly class LoadDiscoveryClasses
     /**
      * Check whether a discovery location should be skipped based on what's cached for a specific discovery class
      */
-    private function shouldSkipLocation(DiscoveryLocation $location, Discovery $discovery): bool
+    private function shouldSkipLocation(DiscoveryLocation $location): bool
     {
         return match ($this->discoveryCache->getStrategy()) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
             DiscoveryCacheStrategy::NONE => false,
 
-            // If discover cache is enabled, all locations with valid cache should be skipped
-            DiscoveryCacheStrategy::ALL => $this->discoveryCache->hasCache($discovery, $location),
+            // If discover cache is enabled, all locations cache should be skipped
+            DiscoveryCacheStrategy::ALL => true,
 
-            // If partial discovery cache is enabled, vendor locations with valid cache should be skipped
-            DiscoveryCacheStrategy::PARTIAL => $location->isVendor() && $this->discoveryCache->hasCache($discovery, $location),
+            // If partial discovery cache is enabled, vendor locations cache should be skipped
+            DiscoveryCacheStrategy::PARTIAL => $location->isVendor(),
         };
     }
 }

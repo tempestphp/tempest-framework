@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Serializable;
 use function Tempest\Support\arr;
 
 final class DiscoveryItems
@@ -44,6 +45,11 @@ final class DiscoveryItems
                 ->filter(fn (array $items, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
                 ->toArray(),
         );
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
     }
 
     public function __serialize(): array

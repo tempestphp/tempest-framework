@@ -24,7 +24,8 @@ final class DiscoveryCache implements Cache
     public function __construct(
         private readonly CacheConfig $cacheConfig,
         ?CacheItemPoolInterface $pool = null,
-    ) {
+    )
+    {
         $this->pool = $pool ?? new PhpFilesAdapter(
             directory: path($this->cacheConfig->directory, 'discovery')->toString(),
         );
@@ -32,34 +33,20 @@ final class DiscoveryCache implements Cache
 
     public function restore(string $className): ?DiscoveryItems
     {
-        if (isset($this->restored[$className])) {
-            return $this->restored[$className];
-        }
+        $key = str_replace('\\', '_', $className);
 
-        $discoveryItems = $this->get(str_replace('\\', '_', $className));
-
-        $this->restored[$className] = $discoveryItems;
-
-        return $discoveryItems;
-    }
-
-    public function hasCache(Discovery $discovery, DiscoveryLocation $location): bool
-    {
-        $discoveryItems = $this->restore($discovery::class);
-
-        if ($discoveryItems === null) {
-            return false;
-        }
-
-        return $discoveryItems->hasLocation($location);
+        return $this->get($key);
     }
 
     public function store(Discovery $discovery, DiscoveryItems $discoveryItems): void
     {
-        $this->put(
-            key: str_replace('\\', '_', $discovery::class),
-            value: $discoveryItems,
-        );
+        $key = str_replace('\\', '_', $discovery::class);
+
+        $item = $this->getCachePool()
+            ->getItem($key)
+            ->set($discoveryItems);
+
+        $this->getCachePool()->save($item);
     }
 
     protected function getCachePool(): CacheItemPoolInterface
