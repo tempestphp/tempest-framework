@@ -33,6 +33,7 @@ final class DiscoveryCache implements Cache
 
     public function restore(string $className): ?DiscoveryItems
     {
+        // TODO: cache and check whether the strategy has been changed
         $key = str_replace('\\', '_', $className);
 
         return $this->get($key);

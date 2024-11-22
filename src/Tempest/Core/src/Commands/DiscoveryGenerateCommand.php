@@ -8,6 +8,9 @@ use Tempest\Console\HasConsole;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
+use function Tempest\root_path;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final readonly class DiscoveryGenerateCommand
 {
@@ -29,7 +32,9 @@ final readonly class DiscoveryGenerateCommand
 
         $this->console->call('discovery:clear');
 
-        $this->info('Generating new discovery cache…');
+        $strategy = $this->resolveDiscoveryCacheStrategy();
+
+        $this->info(sprintf('Generating new discovery cache… (%s)', $strategy->value));
 
         $kernel = (new Kernel($this->kernel->root))
             ->registerKernel()
@@ -37,6 +42,7 @@ final readonly class DiscoveryGenerateCommand
             ->loadDiscoveryLocations()
             ->loadConfig();
 
+        // TODO: avoid container singleton
         $container = $kernel->container;
 
         $loadDiscoveryClasses = new LoadDiscoveryClasses(
@@ -50,17 +56,36 @@ final readonly class DiscoveryGenerateCommand
         foreach ($discoveries as $discovery) {
             $discoveryItems = $discovery->getItems();
 
-            if ($this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::PARTIAL) {
+            if ($strategy === DiscoveryCacheStrategy::PARTIAL) {
                 $discoveryItems = $discoveryItems->onlyVendor();
             }
 
             $this->discoveryCache->store($discovery, $discoveryItems);
 
             $this->writeln(sprintf(
-                '<success>%s</success> %d classes cached',
+                '<success>%s</success> %d items cached',
                 $discovery::class,
                 $discoveryItems->count(),
             ));
         }
+    }
+
+    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
+    {
+        $possibleValues = arr(DiscoveryCacheStrategy::cases())
+            ->map(fn (DiscoveryCacheStrategy $strategy) => $strategy->value)
+            ->implode('|');
+
+        $envPath = root_path('.env');
+
+        if (is_file($envPath)) {
+            $contents = file_get_contents($envPath);
+
+            $cachingStrategyFromEnv = str($contents)->match('/DISCOVERY_CACHE=(' . $possibleValues . ')/')[1] ?? 'none';
+        }
+
+        $cachingStrategyFromEnv ??= 'none';
+
+        return DiscoveryCacheStrategy::tryFrom($cachingStrategyFromEnv) ?? DiscoveryCacheStrategy::NONE;
     }
 }
