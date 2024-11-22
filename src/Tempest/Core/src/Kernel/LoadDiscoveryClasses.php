@@ -20,6 +20,7 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\DoNotDiscover;
 use Tempest\Core\Kernel;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\NamespaceHelper;
 use Throwable;
 
 /** @internal */
@@ -94,27 +95,9 @@ final readonly class LoadDiscoveryClasses
 
                 $input = $file->getPathname();
 
-                if (ucfirst($fileName) === $fileName) {
-                    // TODO refactor to namespace helper
-                    // Trim ending slashing from path
-                    $pathWithoutSlashes = rtrim($location->path, '\\/');
-
-                    // Try to create a PSR-compliant class name from the path
-                    $className = str_replace(
-                        [
-                            $pathWithoutSlashes,
-                            '/',
-                            '\\\\',
-                            '.php',
-                        ],
-                        [
-                            $location->namespace,
-                            '\\',
-                            '\\',
-                            '',
-                        ],
-                        $file->getPathname(),
-                    );
+                // We assume that any PHP file that starts with an uppercase letter will be a class
+                if ($file->getExtension() === 'php' && ucfirst($fileName) === $fileName) {
+                    $className = $location->toClassName($file->getPathname());
 
                     // Discovery errors (syntax errors, missing imports, etc.)
                     // are ignored when they happen in vendor files,
@@ -130,10 +113,12 @@ final readonly class LoadDiscoveryClasses
                 }
 
                 if ($input instanceof ClassReflector) {
+                    // If the input is a class, we'll call `discover`
                     if (! $this->shouldSkipDiscoveryForClass($discovery, $input)) {
                         $discovery->discover($location, $input);
                     }
                 } elseif ($discovery instanceof DiscoversPath) {
+                    // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
                     $discovery->discoverPath($location, $input);
                 }
             }
