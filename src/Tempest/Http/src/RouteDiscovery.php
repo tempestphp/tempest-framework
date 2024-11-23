@@ -7,8 +7,6 @@ namespace Tempest\Http;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
-use Tempest\Core\KernelEvent;
-use Tempest\EventBus\EventHandler;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
 use Tempest\Reflection\ClassReflector;
 

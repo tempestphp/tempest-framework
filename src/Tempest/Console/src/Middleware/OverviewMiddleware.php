@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
-use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\Actions\RenderConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
@@ -67,14 +66,9 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         }
 
         $this->console
-            ->writeln()
             ->when(
-                expression: $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::PARTIAL,
-                callback: fn (Console $console) => $console->success('Partial discovery cache is enabled!')
-            )
-            ->when(
-                expression: $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::ALL,
-                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
+                expression: ! $this->discoveryCache->isValid(),
+                callback: fn (Console $console) => $console->writeln(PHP_EOL . '<error>Discovery cache invalid. Run discovery:generate to enable discovery caching.</error>')
             );
     }
 }

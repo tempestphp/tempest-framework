@@ -31,7 +31,6 @@ final class DiscoveryCache implements Cache
 
     public function restore(string $className): ?DiscoveryItems
     {
-        // TODO: cache and check whether the strategy has been changed
         $key = str_replace('\\', '_', $className);
 
         return $this->get($key);
@@ -55,11 +54,20 @@ final class DiscoveryCache implements Cache
 
     public function isEnabled(): bool
     {
+        if (! $this->isValid()) {
+            return false;
+        }
+
         if ($this->cacheConfig->enable) {
             return true;
         }
 
-        return $this->cacheConfig->discoveryCache !== DiscoveryCacheStrategy::NONE;
+        return $this->getStrategy()->isEnabled();
+    }
+
+    public function isValid(): bool
+    {
+        return $this->getStrategy()->isValid();
     }
 
     public function getStrategy(): DiscoveryCacheStrategy

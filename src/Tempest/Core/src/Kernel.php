@@ -50,6 +50,7 @@ final class Kernel
             container: $container,
         ))
             ->loadEnv()
+            ->validateDiscoveryCache()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
             ->registerKernel()
@@ -90,26 +91,26 @@ final class Kernel
 
     public function loadEnv(): self
     {
-        // The discovery:generate command must always run without discovery cache enabled
-        if (PHP_SAPI === 'cli') {
-            $command = $_SERVER['argv'][1] ?? null;
-
-            if ($command === 'discovery:generate' || $command === 'dg') {
-                putenv('DISCOVERY_CACHE=false');
-            }
-        }
-
         // Load from .env
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
 
-        // Check whether the discovery caching strategy in .env has changed
-        $current = env('DISCOVERY_CACHE');
+        return $this;
+    }
 
-        if ($current && $original = @file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY)) {
-            if (DiscoveryCacheStrategy::make($original) !== DiscoveryCacheStrategy::make($current)) {
-                throw new DiscoveryCachingStrategyChangedException($original, $current);
-            }
+    public function validateDiscoveryCache(): self
+    {
+        // TODO all of this can be moved to CacheConfig
+        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+
+        if ($current === DiscoveryCacheStrategy::NONE) {
+            return $this;
+        }
+
+        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY));
+
+        if ($current !== $original) {
+            putenv('DISCOVERY_CACHE=invalid');
         }
 
         return $this;

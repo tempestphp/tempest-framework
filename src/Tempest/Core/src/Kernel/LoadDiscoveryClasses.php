@@ -109,9 +109,11 @@ final class LoadDiscoveryClasses
                 if ($fileName === '') {
                     continue;
                 }
+
                 if ($fileName === '.') {
                     continue;
                 }
+
                 if ($fileName === '..') {
                     continue;
                 }
@@ -183,9 +185,13 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipLocation(DiscoveryLocation $location): bool
     {
+        if (! $this->discoveryCache->isEnabled()) {
+            return false;
+        }
+
         return match ($this->discoveryCache->getStrategy()) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
-            DiscoveryCacheStrategy::NONE, => false,
+            DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
 
             // If discover cache is enabled, all locations cache should be skipped
             DiscoveryCacheStrategy::ALL => true,
