@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Scheduler;
 
 use DateTime;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
 use Tempest\Console\ShellExecutor;
 use function Tempest\event;
@@ -15,6 +16,7 @@ final readonly class GenericScheduler implements Scheduler
 
     public function __construct(
         private SchedulerConfig $config,
+        private ConsoleArgumentBag $argumentBag,
         private ShellExecutor $executor
     ) {
     }
@@ -41,8 +43,10 @@ final readonly class GenericScheduler implements Scheduler
 
     private function compileInvocation(ScheduledInvocation $invocation): string
     {
-        return join(' ', [
-            '(' . $this->config->path,
+        $binary = $this->argumentBag->getBinaryPath() . ' ' . $this->argumentBag->getCliName();
+
+        return implode(' ', [
+            '(' . $binary,
             $invocation->getCommandName() . ')',
             $invocation->schedule->outputMode->value,
             $invocation->schedule->output,

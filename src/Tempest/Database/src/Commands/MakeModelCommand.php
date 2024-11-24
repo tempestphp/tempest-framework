@@ -39,7 +39,7 @@ final class MakeModelCommand
                 shouldOverride: $shouldOverride,
             );
 
-            $this->console->success(sprintf('File successfully created at "%s".', $targetPath));
+            $this->console->success(sprintf('Model successfully created at "%s".', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->console->error($e->getMessage());
         }

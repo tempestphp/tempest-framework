@@ -10,32 +10,22 @@ use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Http\Stubs\ControllerStub;
+use Tempest\Http\Stubs\ResponseStub;
 
-final class MakeControllerCommand
+final class MakeResponseCommand
 {
     use PublishesFiles;
 
     #[ConsoleCommand(
-        name: 'make:controller',
-        description: 'Creates a new controller class with a route',
-        aliases: ['controller:make', 'controller:create', 'create:controller'],
+        name: 'make:response',
+        description: 'Creates a new response class',
+        aliases: ['response:make', 'response:create', 'create:response'],
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The name of the controller class to create',
+            help: 'The name of the response class to create',
         )]
         string $className,
-        #[ConsoleArgument(
-            name: 'path',
-            help: 'The path of the route',
-        )]
-        ?string $controllerPath = null,
-        #[ConsoleArgument(
-            name: 'view',
-            help: 'The name of the view returned from the controller',
-        )]
-        ?string $controllerView = null,
     ): void {
         $suggestedPath = $this->getSuggestedPath($className);
         $targetPath = $this->promptTargetPath($suggestedPath);
@@ -43,16 +33,12 @@ final class MakeControllerCommand
 
         try {
             $this->stubFileGenerator->generateClassFile(
-                stubFile: StubFile::from(ControllerStub::class),
+                stubFile: StubFile::from(ResponseStub::class),
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
-                replacements: [
-                    'dummy-path' => $controllerPath,
-                    'dummy-view' => $controllerView,
-                ],
             );
 
-            $this->success(sprintf('Controller successfully created at "%s".', $targetPath));
+            $this->success(sprintf('Response successfully created at "%s".', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->error($e->getMessage());
         }
