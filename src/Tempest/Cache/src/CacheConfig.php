@@ -43,7 +43,7 @@ final class CacheConfig
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
         if (PHP_SAPI === 'cli') {
-            $command = $_SERVER['argv'][1];
+            $command = $_SERVER['argv'][1] ?? null;
 
             if ($command === 'dg' || $command === 'discovery:generate') {
                 return DiscoveryCacheStrategy::NONE;

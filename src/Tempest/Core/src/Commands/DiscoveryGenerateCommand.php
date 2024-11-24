@@ -33,13 +33,30 @@ final readonly class DiscoveryGenerateCommand
     )]
     public function __invoke(): void
     {
+        $strategy = $this->resolveDiscoveryCacheStrategy();
+
+        if ($strategy === DiscoveryCacheStrategy::NONE) {
+            $this->info("Discovery cache disabled, nothing to generate.");
+            return;
+        }
+
+        $this->clearDiscoveryCache();
+
+        $this->generateDiscoveryCache($strategy);
+
+        $this->storeDiscoveryCacheStrategy($strategy);
+    }
+
+    public function clearDiscoveryCache(): void
+    {
         $this->info('Clearing existing discovery cache…');
 
         $this->console->call('discovery:clear');
+    }
 
-        $strategy = $this->resolveDiscoveryCacheStrategy();
-
-        $this->info(sprintf('Generating new discovery cache… (%s)', $strategy->value));
+    public function generateDiscoveryCache(DiscoveryCacheStrategy $strategy): void
+    {
+        $this->info(sprintf('Generating new discovery cache… (cache strategy used: %s)', $strategy->value));
 
         $kernel = $this->resolveKernel();
 
@@ -51,6 +68,8 @@ final readonly class DiscoveryGenerateCommand
 
         $discoveries = $loadDiscoveryClasses->build();
 
+        $count = 0;
+
         foreach ($discoveries as $discovery) {
             $discoveryItems = $discovery->getItems();
 
@@ -60,19 +79,22 @@ final readonly class DiscoveryGenerateCommand
 
             $this->discoveryCache->store($discovery, $discoveryItems);
 
-            $this->writeln(sprintf(
-                '<success>%s</success> %d items cached',
-                $discovery::class,
-                $discoveryItems->count(),
-            ));
+            $count += $discoveryItems->count();
         }
+
+        $this->writeln(sprintf(
+            '<success>Done</success> %d items cached',
+            $count,
+        ));
     }
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
-        $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+        return DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+    }
 
-        // Store the current env variable
+    private function storeDiscoveryCacheStrategy(DiscoveryCacheStrategy $strategy): void
+    {
         $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);
 
         if (! is_dir($dir)) {
@@ -80,8 +102,6 @@ final readonly class DiscoveryGenerateCommand
         }
 
         file_put_contents(self::CURRENT_DISCOVERY_STRATEGY, $strategy->value);
-
-        return $strategy;
     }
 
     public function resolveKernel(): Kernel
