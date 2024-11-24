@@ -35,7 +35,7 @@ final class ConsoleCommandDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$method, $consoleCommand]) {
+        foreach ($this->discoveryItems as [$method, $consoleCommand]) {
             $this->consoleConfig->addCommand($method, $consoleCommand);
         }
     }

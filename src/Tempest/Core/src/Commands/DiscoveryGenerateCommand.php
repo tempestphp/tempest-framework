@@ -37,6 +37,7 @@ final readonly class DiscoveryGenerateCommand
 
         if ($strategy === DiscoveryCacheStrategy::NONE) {
             $this->info("Discovery cache disabled, nothing to generate.");
+
             return;
         }
 

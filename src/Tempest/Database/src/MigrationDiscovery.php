@@ -57,7 +57,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as $migration) {
+        foreach ($this->discoveryItems as $migration) {
             $this->databaseConfig->addMigration($migration);
         }
     }

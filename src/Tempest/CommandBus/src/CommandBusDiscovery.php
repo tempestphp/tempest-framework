@@ -45,7 +45,7 @@ final class CommandBusDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$commandHandler, $commandName, $method]) {
+        foreach ($this->discoveryItems as [$commandHandler, $commandName, $method]) {
             $this->commandBusConfig->addHandler(
                 commandHandler: $commandHandler,
                 commandName: $commandName,

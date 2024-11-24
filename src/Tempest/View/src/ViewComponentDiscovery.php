@@ -70,7 +70,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$name, $viewComponent]) {
+        foreach ($this->discoveryItems as [$name, $viewComponent]) {
             if (is_string($viewComponent)) {
                 $viewComponent = new ClassReflector($viewComponent);
             }

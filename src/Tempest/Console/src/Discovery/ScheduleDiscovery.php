@@ -38,7 +38,7 @@ final class ScheduleDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$method, $command, $schedule]) {
+        foreach ($this->discoveryItems as [$method, $command, $schedule]) {
             if ($command) {
                 $this->schedulerConfig->addCommandInvocation($method, $command, $schedule);
             } else {

@@ -33,7 +33,7 @@ final class RouteDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$method, $routeAttribute]) {
+        foreach ($this->discoveryItems as [$method, $routeAttribute]) {
             $routeAttribute->setHandler($method);
             $this->configurator->addRoute($routeAttribute);
         }

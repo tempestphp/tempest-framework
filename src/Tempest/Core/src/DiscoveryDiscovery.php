@@ -30,7 +30,7 @@ final class DiscoveryDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as $className) {
+        foreach ($this->discoveryItems as $className) {
             $this->kernel->discoveryClasses[] = $className;
         }
     }

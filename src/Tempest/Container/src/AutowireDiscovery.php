@@ -34,7 +34,7 @@ final class AutowireDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$class, $autowire]) {
+        foreach ($this->discoveryItems as [$class, $autowire]) {
             if ($autowire !== null) {
                 $this->discoverAsSingleton($class);
             } else {

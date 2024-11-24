@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use function Tempest\Support\arr;
+use Traversable;
 
-final class DiscoveryItems
+final class DiscoveryItems implements IteratorAggregate, Countable
 {
     public function __construct(
         private array $items = [],
@@ -16,7 +20,6 @@ final class DiscoveryItems
     public function add(DiscoveryLocation $location, mixed $value): self
     {
         $this->items[$location->path] ??= [];
-
         $this->items[$location->path][] = $value;
 
         return $this;
@@ -25,12 +28,6 @@ final class DiscoveryItems
     public function hasLocation(DiscoveryLocation $location): bool
     {
         return array_key_exists($location->path, $this->items);
-    }
-
-    // TODO: make this class directly iterable
-    public function flatten(): array
-    {
-        return arr($this->items)->flatten(1)->toArray();
     }
 
     public function isLoaded(): bool
@@ -47,9 +44,14 @@ final class DiscoveryItems
         );
     }
 
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator(arr($this->items)->flatten(1)->toArray());
+    }
+
     public function count(): int
     {
-        return count($this->items);
+        return iterator_count($this->items);
     }
 
     public function __serialize(): array

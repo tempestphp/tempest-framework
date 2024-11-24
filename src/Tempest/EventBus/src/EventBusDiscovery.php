@@ -60,7 +60,7 @@ final class EventBusDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$eventName, $eventHandler, $method]) {
+        foreach ($this->discoveryItems as [$eventName, $eventHandler, $method]) {
             $this->eventBusConfig->addClassMethodHandler(
                 event: $eventName,
                 handler: $eventHandler,

@@ -34,7 +34,7 @@ final class StaticPageDiscovery implements Discovery
 
     public function apply(): void
     {
-        foreach ($this->discoveryItems->flatten() as [$staticPage, $method]) {
+        foreach ($this->discoveryItems as [$staticPage, $method]) {
             $this->staticPageConfig->addHandler($staticPage, $method);
         }
     }
