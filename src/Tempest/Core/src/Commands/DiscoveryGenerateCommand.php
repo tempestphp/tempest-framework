@@ -12,9 +12,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
-use function Tempest\root_path;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
+use function Tempest\env;
 
 final readonly class DiscoveryGenerateCommand
 {
@@ -72,19 +70,7 @@ final readonly class DiscoveryGenerateCommand
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
-        $possibleValues = arr(DiscoveryCacheStrategy::cases())
-            ->map(fn (DiscoveryCacheStrategy $strategy) => $strategy->value)
-            ->implode('|');
-
-        $envPath = root_path('.env');
-
-        if (is_file($envPath)) {
-            $contents = file_get_contents($envPath);
-
-            $cachingStrategyFromEnv = str($contents)->match('/DISCOVERY_CACHE=(' . $possibleValues . '|true|false)/')[1] ?? 'none';
-        }
-
-        $strategy = DiscoveryCacheStrategy::make($cachingStrategyFromEnv ?? null);
+        $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
 
         // Store the current env variable
         $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);

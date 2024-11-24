@@ -18,8 +18,6 @@ final class DiscoveryCache implements Cache
 
     private CacheItemPoolInterface $pool;
 
-    private array $restored = [];
-
     public function __construct(
         private readonly CacheConfig $cacheConfig,
         ?CacheItemPoolInterface $pool = null,
@@ -62,12 +60,12 @@ final class DiscoveryCache implements Cache
             return true;
         }
 
-        return $this->getStrategy()->isEnabled();
+        return $this->cacheConfig->discoveryCache->isEnabled();
     }
 
     public function isValid(): bool
     {
-        return $this->getStrategy()->isValid();
+        return $this->cacheConfig->discoveryCache->isValid();
     }
 
     public function getStrategy(): DiscoveryCacheStrategy

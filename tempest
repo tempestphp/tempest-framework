@@ -8,6 +8,7 @@ require_once getcwd() . '/vendor/autoload.php';
 
 ConsoleApplication::boot(discoveryLocations: [
         new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
+        new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', getcwd() . '/tests/Integration/Console/Fixtures'),
 ])->run();
 
 exit;

@@ -14,6 +14,7 @@ use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
+use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
@@ -56,6 +57,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $config->connection = $connection;
 
         $this->rollbackDatabase();
+        //        ld($this->container->get(DiscoveryCache::class)->getStrategy());
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application

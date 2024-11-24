@@ -16,9 +16,6 @@ final class AutowireDiscovery implements Discovery
 {
     use IsDiscovery;
 
-    /** @var array<string, string> */
-    private array $trackedAutowireDefinitions = [];
-
     public function __construct(
         private readonly Container $container,
     ) {

@@ -89,7 +89,7 @@ final class LoadDiscoveryClasses
         $discovery = $this->resolveDiscovery($discoveryClass);
 
         if (
-            $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::ALL
+            $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::FULL
             && $discovery->getItems()->isLoaded()
         ) {
             return $discovery;
@@ -194,7 +194,7 @@ final class LoadDiscoveryClasses
             DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
 
             // If discover cache is enabled, all locations cache should be skipped
-            DiscoveryCacheStrategy::ALL => true,
+            DiscoveryCacheStrategy::FULL => true,
 
             // If partial discovery cache is enabled, vendor locations cache should be skipped
             DiscoveryCacheStrategy::PARTIAL => $location->isVendor(),

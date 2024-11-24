@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
-use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\Commands\DiscoveryGenerateCommand;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
-use function Tempest\env;
 use Tempest\EventBus\EventBus;
 use Tempest\Http\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -33,8 +30,7 @@ final class Kernel
         /** @var \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
         public array $discoveryLocations = [],
         ?Container $container = null,
-    )
-    {
+    ) {
         $this->container = $container ?? $this->createContainer();
     }
 
@@ -42,15 +38,13 @@ final class Kernel
         string $root,
         array $discoveryLocations = [],
         ?Container $container = null,
-    ): self
-    {
+    ): self {
         return (new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
             container: $container,
         ))
             ->loadEnv()
-            ->validateDiscoveryCache()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
             ->registerKernel()
@@ -94,24 +88,6 @@ final class Kernel
         // Load from .env
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
-
-        return $this;
-    }
-
-    public function validateDiscoveryCache(): self
-    {
-        // TODO all of this can be moved to CacheConfig
-        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
-
-        if ($current === DiscoveryCacheStrategy::NONE) {
-            return $this;
-        }
-
-        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY));
-
-        if ($current !== $original) {
-            putenv('DISCOVERY_CACHE=invalid');
-        }
 
         return $this;
     }
