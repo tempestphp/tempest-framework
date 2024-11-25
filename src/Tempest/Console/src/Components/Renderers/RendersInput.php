@@ -73,7 +73,7 @@ trait RendersInput
             return '';
         }
 
-        $length = $this->maxLineCharacters - 1 - $maxLineOffset;
+        $length = max(0, $this->maxLineCharacters - 1 - $maxLineOffset);
 
         if (mb_strwidth($string, 'UTF-8') <= $length) {
             return $string;

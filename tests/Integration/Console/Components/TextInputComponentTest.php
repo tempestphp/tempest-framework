@@ -132,4 +132,19 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $this->assertSame("a\n\n", $component->altEnter());
         });
     }
+
+    #[Test]
+    public function test_truncates_label(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $component = new TextInputComponent(label: str_repeat('a', 200), placeholder: 'Jon Doe');
+
+            $terminal->width = 20;
+            $this->assertStringContainsString('aaaaaaaaaaaaa…', $component->render($terminal));
+
+            $terminal->width = 25;
+            $this->assertStringContainsString('aaaaaaaaaaaaaaaaaa…', $component->render($terminal));
+        });
+    }
 }
