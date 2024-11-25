@@ -31,7 +31,7 @@ trait HasTextInputRenderer
     }
 
     #[HandlesKey(Key::ALT_ENTER)]
-    public function newLine(): ?string
+    public function altEnter(): ?string
     {
         if ($this->multiline) {
             $this->state = State::SUBMITTED;
@@ -69,6 +69,10 @@ trait HasTextInputRenderer
     #[HandlesKey]
     public function input(string $key): void
     {
+        if ($key === "\n" && ! $this->multiline) {
+            return;
+        }
+
         $this->buffer->input($key);
     }
 }

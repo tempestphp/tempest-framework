@@ -12,7 +12,7 @@ use Tempest\Support\ArrayHelper;
 final class OptionCollection implements Iterator, Countable
 {
     /** @var array<Option> */
-    private readonly array $options;
+    private array $options;
 
     /** @var array<Option> */
     private array $filteredOptions;
@@ -22,9 +22,19 @@ final class OptionCollection implements Iterator, Countable
 
     private int $activeOption = 0;
 
+    private bool $preserveKeys = false;
+
     public function __construct(iterable $options)
     {
-        $this->options = arr($options)
+        $this->setCollection($options);
+    }
+
+    public function setCollection(iterable $options): void
+    {
+        $options = arr($options);
+
+        $this->preserveKeys = $options->isAssoc();
+        $this->options = $options
             ->map(fn (mixed $value, string|int $key) => new Option($key, $value))
             ->toArray();
 
@@ -88,7 +98,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function getRawOptions(): array
     {
-        return array_map(fn (Option $option) => $option->value, $this->options);
+        return array_map(static fn (Option $option) => $option->value, $this->options);
     }
 
     /** @var array<Option> */
@@ -100,9 +110,16 @@ final class OptionCollection implements Iterator, Countable
     /** @var array<mixed> */
     public function getRawSelectedOptions(): array
     {
-        return arr($this->selectedOptions)
-            ->mapWithKeys(fn (Option $option) => yield $option->key => $option->value)
+        $selected = arr($this->selectedOptions)
+            ->mapWithKeys(static fn (Option $option) => yield $option->key => $option->value)
             ->toArray();
+
+        // TODO: PR `tap` to `ArrayHelper`
+        if (! $this->preserveKeys) {
+            $selected = array_values($selected);
+        }
+
+        return $selected;
     }
 
     /** @return array<Option> */

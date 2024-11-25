@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -14,6 +13,7 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\TextBuffer;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -22,6 +22,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
+use Tempest\Support\ArrayHelper;
 
 final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions
 {
@@ -31,16 +32,24 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     use HasTextBuffer;
 
     private ChoiceRenderer $renderer;
-    private OptionCollection $options;
+    public OptionCollection $options;
     private ?string $previousQuery = null;
 
     public function __construct(
         public string $label,
         public Closure $search,
-        public ?string $default = null,
+        public bool $multiple = false,
+        public null|array|string $default = null,
     ) {
+        $this->bufferEnabled = ! $this->multiple;
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
+        $this->renderer = new ChoiceRenderer(default: $default, multiple: $multiple);
+        $this->options = new OptionCollection([]);
+
+        if ($this->multiple) {
+            $this->default = ArrayHelper::wrap($this->default);
+        }
+
         $this->updateQuery();
     }
 
@@ -53,6 +62,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             state: $this->state,
             label: $this->label,
             query: $this->buffer,
+            filtering: $this->bufferEnabled,
             options: $this->options,
         );
     }
@@ -63,13 +73,21 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             return;
         }
 
-        $this->options = new OptionCollection(array_values(($this->search)($this->buffer->text)));
+        $this->options->setCollection(array_values(($this->search)($this->buffer->text)));
         $this->previousQuery = $this->buffer->text;
     }
 
     private function getControls(): array
     {
         return [
+            ...($this->multiple ? [
+                ...($this->bufferEnabled ? [
+                    'esc' => 'select',
+                ] : [
+                    '/' => 'filter',
+                    'space' => 'select',
+                ]),
+            ] : []),
             '↑' => 'up',
             '↓' => 'down',
             'enter' => 'confirm',
@@ -84,7 +102,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
 
     public function cursorVisible(): bool
     {
-        return true;
+        return $this->bufferEnabled;
     }
 
     public function getStaticComponent(): StaticConsoleComponent
@@ -99,22 +117,63 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     #[HandlesKey]
     public function input(string $key): void
     {
+        if ($this->multiple) {
+            if (! $this->bufferEnabled && $key === '/') {
+                $this->bufferEnabled = true;
+                $this->updateQuery();
+
+                return;
+            }
+
+            if (! $this->bufferEnabled) {
+                match (mb_strtolower($key)) {
+                    ' ' => $this->options->toggleCurrent(),
+                    'h', 'k' => $this->options->previous(),
+                    'j', 'l' => $this->options->next(),
+                    default => null,
+                };
+
+                $this->updateQuery();
+
+                return;
+            }
+        }
+
         $this->buffer->input($key);
+        $this->updateQuery();
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string
+    public function enter(): mixed
     {
+        if ($this->multiple) {
+            return $this->options->getRawSelectedOptions() ?: $this->default;
+        }
+
         return $this->options->getActive()->value;
     }
 
+    #[HandlesKey(Key::ESCAPE)]
+    public function stopFiltering(): void
+    {
+        if (! $this->multiple) {
+            return;
+        }
+
+        $this->bufferEnabled = false;
+    }
+
     #[HandlesKey(Key::UP)]
+    #[HandlesKey(Key::HOME)]
+    #[HandlesKey(Key::START_OF_LINE)]
     public function up(): void
     {
         $this->options->previous();
     }
 
     #[HandlesKey(Key::DOWN)]
+    #[HandlesKey(Key::END)]
+    #[HandlesKey(Key::END_OF_LINE)]
     public function down(): void
     {
         $this->options->next();

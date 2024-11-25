@@ -51,7 +51,7 @@ interface Console
     /**
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search, ?string $default = null): mixed;
+    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed;
 
     public function header(string $header, ?string $subheader = null): self;
 
