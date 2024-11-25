@@ -21,6 +21,7 @@ use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
 use Tempest\Support\Conditions\HasConditions;
+use Tempest\Support\ArrayHelper;
 
 final class GenericConsole implements Console
 {
@@ -211,7 +212,7 @@ final class GenericConsole implements Console
             $multiple => new MultipleChoiceComponent(
                 label: $question,
                 options: $options,
-                default: is_array($default) ? $default : [$default],
+                default: ArrayHelper::wrap($default),
             ),
             default => new SingleChoiceComponent(
                 label: $question,

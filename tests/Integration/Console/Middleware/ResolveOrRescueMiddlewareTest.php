@@ -30,8 +30,8 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $formatOutput = static fn (string $buffer) => str($buffer)
             ->trim()
-            ->replace(['[',']'], '')
-            ->explode('/')
+            ->explode(PHP_EOL)
+            ->map(fn (string $line) => str($line)->afterLast(' ')->toString())
             ->toArray();
 
         $output = $this->console
