@@ -4,53 +4,42 @@ declare(strict_types=1);
 
 namespace Tempest\Http;
 
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Core\KernelEvent;
-use Tempest\EventBus\EventHandler;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class RouteDiscovery implements Discovery
+final class RouteDiscovery implements Discovery
 {
+    use IsDiscovery;
+
     public function __construct(
-        private RouteConfigurator $configurator,
-        private RouteConfig $routeConfig,
+        private readonly RouteConfigurator $configurator,
+        private readonly RouteConfig $routeConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
             $routeAttributes = $method->getAttributes(Route::class);
 
             foreach ($routeAttributes as $routeAttribute) {
-                $routeAttribute->setHandler($method);
-
-                $this->configurator->addRoute($routeAttribute);
+                $this->discoveryItems->add($location, [$method, $routeAttribute]);
             }
         }
     }
 
-    #[EventHandler(KernelEvent::BOOTED)]
-    public function finishDiscovery(): void
+    public function apply(): void
     {
+        foreach ($this->discoveryItems as [$method, $routeAttribute]) {
+            $routeAttribute->setHandler($method);
+            $this->configurator->addRoute($routeAttribute);
+        }
+
         if ($this->configurator->isDirty()) {
             $this->routeConfig->apply($this->configurator->toRouteConfig());
         }
-    }
-
-    public function createCachePayload(): string
-    {
-        $this->finishDiscovery();
-
-        return serialize($this->routeConfig);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $routeConfig = unserialize($payload, [ 'allowed_classes' => true ]);
-
-        $this->routeConfig->apply($routeConfig);
     }
 }

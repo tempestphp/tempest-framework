@@ -4,30 +4,28 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class InstallerDiscovery implements Discovery
+final class InstallerDiscovery implements Discovery
 {
+    use IsDiscovery;
+
     public function __construct(
-        private InstallerConfig $installerConfig,
+        private readonly InstallerConfig $installerConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         if ($class->implements(Installer::class)) {
-            $this->installerConfig->installers[] = $class->getName();
+            $this->discoveryItems->add($location, $class->getName());
         }
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->installerConfig->installers);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $this->installerConfig->installers = unserialize($payload);
+        foreach ($this->discoveryItems as $className) {
+            $this->installerConfig->installers[] = $className;
+        }
     }
 }

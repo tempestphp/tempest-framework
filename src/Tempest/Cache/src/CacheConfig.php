@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Tempest\Core\Commands\DiscoveryGenerateCommand;
 use function Tempest\env;
 
 final class CacheConfig
@@ -18,7 +19,7 @@ final class CacheConfig
 
     public bool $viewCache = false;
 
-    public bool $discoveryCache = false;
+    public DiscoveryCacheStrategy $discoveryCache;
 
     public function __construct(
         public string $directory = __DIR__ . '/../../../../.cache',
@@ -28,14 +29,39 @@ final class CacheConfig
         ?bool $enable = null,
     ) {
         $this->enable = $enable ?? env('CACHE') ?? null;
-        $this->projectCache = (bool) env('PROJECT_CACHE', false);
-        $this->viewCache = (bool) env('VIEW_CACHE', false);
-        $this->discoveryCache = (bool) env('DISCOVERY_CACHE', false);
+        $this->projectCache = (bool)env('PROJECT_CACHE', false);
+        $this->viewCache = (bool)env('VIEW_CACHE', false);
+        $this->discoveryCache = $this->resolveDiscoveryCacheStrategy();
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */
     public function addCache(string $className): void
     {
         $this->caches[] = $className;
+    }
+
+    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
+    {
+        if (PHP_SAPI === 'cli') {
+            $command = $_SERVER['argv'][1] ?? null;
+
+            if ($command === 'dg' || $command === 'discovery:generate') {
+                return DiscoveryCacheStrategy::NONE;
+            }
+        }
+
+        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+
+        if ($current === DiscoveryCacheStrategy::NONE) {
+            return $current;
+        }
+
+        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY));
+
+        if ($current !== $original) {
+            return DiscoveryCacheStrategy::INVALID;
+        }
+
+        return $current;
     }
 }

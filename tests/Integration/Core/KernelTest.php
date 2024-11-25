@@ -18,7 +18,7 @@ final class KernelTest extends TestCase
     public function test_discovery_boot(): void
     {
         // TODO: Move this
-        $kernel = new Kernel(
+        $kernel = Kernel::boot(
             root: getcwd(),
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),

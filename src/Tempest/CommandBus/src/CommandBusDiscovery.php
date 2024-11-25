@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Reflection\MethodReflector;
 
-final readonly class CommandBusDiscovery implements Discovery
+final class CommandBusDiscovery implements Discovery
 {
-    use HandlesDiscoveryCache;
+    use IsDiscovery;
 
     public function __construct(
-        private CommandBusConfig $commandBusConfig,
+        private readonly CommandBusConfig $commandBusConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
             $commandHandler = $method->getAttribute(CommandHandler::class);
@@ -40,23 +39,18 @@ final readonly class CommandBusDiscovery implements Discovery
                 continue;
             }
 
-            $this->commandBusConfig->addHandler(
-                commandHandler: $commandHandler,
-                commandName: $type->getName(),
-                handler: $method,
-            );
+            $this->discoveryItems->add($location, [$commandHandler, $type->getName(), $method]);
         }
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->commandBusConfig->handlers);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $handlers = unserialize($payload, ['allowed_classes' => [CommandHandler::class, MethodReflector::class]]);
-
-        $this->commandBusConfig->handlers = $handlers;
+        foreach ($this->discoveryItems as [$commandHandler, $commandName, $method]) {
+            $this->commandBusConfig->addHandler(
+                commandHandler: $commandHandler,
+                commandName: $commandName,
+                handler: $method,
+            );
+        }
     }
 }

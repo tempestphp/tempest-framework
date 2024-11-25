@@ -43,7 +43,7 @@ abstract class IntegrationTest extends TestCase
 
         $this->root ??= __DIR__ . '/../../';
 
-        $this->kernel ??= new Kernel(
+        $this->kernel ??= Kernel::boot(
             root: $this->root,
             discoveryLocations: $this->discoveryLocations,
         );

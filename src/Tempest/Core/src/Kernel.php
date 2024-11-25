@@ -23,9 +23,7 @@ final class Kernel
 
     public bool $discoveryCache;
 
-    public array $discoveryClasses = [
-        DiscoveryDiscovery::class,
-    ];
+    public array $discoveryClasses = [];
 
     public function __construct(
         public string $root,
@@ -34,8 +32,18 @@ final class Kernel
         ?Container $container = null,
     ) {
         $this->container = $container ?? $this->createContainer();
+    }
 
-        $this
+    public static function boot(
+        string $root,
+        array $discoveryLocations = [],
+        ?Container $container = null,
+    ): self {
+        return (new self(
+            root: $root,
+            discoveryLocations: $discoveryLocations,
+            container: $container,
+        ))
             ->loadEnv()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
@@ -48,14 +56,6 @@ final class Kernel
             ->event(KernelEvent::BOOTED);
     }
 
-    public static function boot(string $root, ?Container $container = null): self
-    {
-        return new self(
-            root: $root,
-            container: $container,
-        );
-    }
-
     public function shutdown(int|string $status = ''): never
     {
         $this
@@ -65,7 +65,7 @@ final class Kernel
         exit($status);
     }
 
-    private function createContainer(): Container
+    public function createContainer(): Container
     {
         $container = new GenericContainer();
 
@@ -76,14 +76,14 @@ final class Kernel
         return $container;
     }
 
-    private function loadComposer(): self
+    public function loadComposer(): self
     {
         $this->container->singleton(Composer::class, new Composer($this->root));
 
         return $this;
     }
 
-    private function loadEnv(): self
+    public function loadEnv(): self
     {
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
@@ -91,14 +91,14 @@ final class Kernel
         return $this;
     }
 
-    private function registerKernel(): self
+    public function registerKernel(): self
     {
         $this->container->singleton(self::class, $this);
 
         return $this;
     }
 
-    private function registerShutdownFunction(): self
+    public function registerShutdownFunction(): self
     {
         // Fix for classes that don't have a proper PSR-4 namespace,
         // they break discovery with an unrecoverable error,
@@ -116,28 +116,28 @@ final class Kernel
         return $this;
     }
 
-    private function loadDiscoveryLocations(): self
+    public function loadDiscoveryLocations(): self
     {
         ($this->container->get(LoadDiscoveryLocations::class))();
 
         return $this;
     }
 
-    private function loadDiscovery(): self
+    public function loadDiscovery(): self
     {
         ($this->container->get(LoadDiscoveryClasses::class))();
 
         return $this;
     }
 
-    private function loadConfig(): self
+    public function loadConfig(): self
     {
         $this->container->get(LoadConfig::class)();
 
         return $this;
     }
 
-    private function registerErrorHandler(): self
+    public function registerErrorHandler(): self
     {
         $appConfig = $this->container->get(AppConfig::class);
 
@@ -158,14 +158,14 @@ final class Kernel
         return $this;
     }
 
-    private function finishDeferredTasks(): self
+    public function finishDeferredTasks(): self
     {
         ($this->container->get(FinishDeferredTasks::class))();
 
         return $this;
     }
 
-    private function event(object $event): self
+    public function event(object $event): self
     {
         if (interface_exists(EventBus::class)) {
             $this->container->get(EventBus::class)->dispatch($event);
@@ -174,7 +174,7 @@ final class Kernel
         return $this;
     }
 
-    private function registerKernelErrorHandler(): self
+    public function registerKernelErrorHandler(): self
     {
         $environment = Environment::fromEnv();
 

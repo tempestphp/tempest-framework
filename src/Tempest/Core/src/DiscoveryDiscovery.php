@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use Tempest\Container\Container;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class DiscoveryDiscovery implements Discovery
+final class DiscoveryDiscovery implements Discovery
 {
+    use IsDiscovery;
+
     public function __construct(
-        private Kernel $kernel,
+        private readonly Kernel $kernel,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         if ($class->getName() === self::class) {
             return;
@@ -24,20 +25,13 @@ final readonly class DiscoveryDiscovery implements Discovery
             return;
         }
 
-        $this->kernel->discoveryClasses[] = $class->getName();
+        $this->discoveryItems->add($location, $class->getName());
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->kernel->discoveryClasses);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $discoveryClasses = unserialize($payload, [
-            'allowed_classes' => true,
-        ]);
-
-        $this->kernel->discoveryClasses = $discoveryClasses;
+        foreach ($this->discoveryItems as $className) {
+            $this->kernel->discoveryClasses[] = $className;
+        }
     }
 }
