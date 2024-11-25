@@ -13,7 +13,6 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\TextBuffer;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -24,7 +23,7 @@ use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\ArrayHelper;
 
-final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions
+final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
     use HasErrors;
     use HasState;
@@ -92,7 +91,9 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             ] : []),
             '↑' => 'up',
             '↓' => 'down',
-            'enter' => 'confirm',
+            'enter' => $this->multiple && $this->default && $this->options->getSelectedOptions() === []
+                ? 'skip'
+                : 'confirm',
             'ctrl+c' => 'cancel',
         ];
     }

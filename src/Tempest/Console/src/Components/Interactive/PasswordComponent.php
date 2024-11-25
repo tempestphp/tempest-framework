@@ -9,13 +9,12 @@ use Tempest\Console\Components\Concerns\HasTextInputRenderer;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Renderers\TextInputRenderer;
 use Tempest\Console\Components\TextBuffer;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
 
-final class PasswordComponent implements InteractiveConsoleComponent, HasCursor, HandlesInterruptions
+final class PasswordComponent implements InteractiveConsoleComponent, HasCursor
 {
     use RendersControls;
     use HasErrors;
@@ -25,7 +24,7 @@ final class PasswordComponent implements InteractiveConsoleComponent, HasCursor,
         public string $label = 'Password',
     ) {
         $this->buffer = new TextBuffer();
-        $this->renderer = new TextInputRenderer(minimumLines: 1, maximumLines: 1);
+        $this->renderer = new TextInputRenderer(maximumLines: 1);
     }
 
     public function render(Terminal $terminal): string

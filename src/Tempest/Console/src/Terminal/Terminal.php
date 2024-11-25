@@ -63,7 +63,7 @@ final class Terminal
         return $this;
     }
 
-    /** @return Generator<string> */
+    /** @return Generator<string|null> */
     public function render(InteractiveConsoleComponent $component, array $validationErrors = []): Generator
     {
         $rendered = $component

@@ -53,10 +53,6 @@ trait RendersInput
 
     private function finishRender(): string
     {
-        if ($this->state === State::CANCELLED) {
-            $this->frame = $this->frame->append(PHP_EOL, $this->marginX, '<style="fg-red">Cancelled.</style>', PHP_EOL);
-        }
-
         return $this->frame->toString();
     }
 
@@ -119,7 +115,7 @@ trait RendersInput
     {
         $this->offsetY += 1;
 
-        return $this->line($this->style('bold fg-cyan', $this->truncate($label)), PHP_EOL);
+        return $this->line($this->style($this->state === State::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), PHP_EOL);
     }
 
     private function line(string|Stringable ...$append): self

@@ -101,13 +101,13 @@ final class OptionCollection implements Iterator, Countable
         return array_map(static fn (Option $option) => $option->value, $this->options);
     }
 
-    /** @var array<Option> */
+    /** @return array<Option> */
     public function getSelectedOptions(): array
     {
         return $this->selectedOptions;
     }
 
-    /** @var array<mixed> */
+    /** @return array<mixed> */
     public function getRawSelectedOptions(): array
     {
         $selected = arr($this->selectedOptions)

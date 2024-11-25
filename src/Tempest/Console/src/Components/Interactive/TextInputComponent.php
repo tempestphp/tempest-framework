@@ -12,7 +12,6 @@ use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Renderers\TextInputRenderer;
 use Tempest\Console\Components\Static\StaticTextBoxComponent;
 use Tempest\Console\Components\TextBuffer;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -22,7 +21,7 @@ use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class TextInputComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions, CanOpenInEditor
+final class TextInputComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanOpenInEditor
 {
     use RendersControls;
     use HasErrors;
@@ -38,7 +37,7 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
     ) {
         $this->multiline = $multiline;
         $this->buffer = new TextBuffer($default);
-        $this->renderer = new TextInputRenderer($multiline, minimumLines: 5);
+        $this->renderer = new TextInputRenderer($multiline);
     }
 
     public function render(Terminal $terminal): string

@@ -40,7 +40,9 @@ final class ChoiceRenderer
                     : $options->getActive()->value
             )->newLine();
         } elseif ($state === State::CANCELLED) {
-            $this->line($this->style('italic', $this->default ?? ''))->newLine();
+            if ($query->text ?: $this->default) {
+                $this->line($this->style('fg-gray italic strikethrough', $query->text ?: $this->default))->newLine();
+            }
         } else {
             $this->line(
                 $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),

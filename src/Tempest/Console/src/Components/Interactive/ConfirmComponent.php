@@ -9,7 +9,6 @@ use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Renderers\ConfirmRenderer;
 use Tempest\Console\Components\Static\StaticConfirmComponent;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
@@ -17,7 +16,7 @@ use Tempest\Console\Key;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticComponent, HandlesInterruptions
+final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
     use HasErrors;
     use HasState;
@@ -30,8 +29,8 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
     public function __construct(
         private readonly string $question,
         private readonly bool $default = false,
-        private readonly ?string $yes = null,
-        private readonly ?string $no = null,
+        readonly ?string $yes = null,
+        readonly ?string $no = null,
     ) {
         $this->answer = $default;
         $this->renderer = new ConfirmRenderer($yes ?? 'Yes', $no ?? 'No');

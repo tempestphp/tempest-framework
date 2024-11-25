@@ -7,7 +7,6 @@ namespace Tempest\Console\Components;
 use Fiber;
 use Tempest\Console\Console;
 use Tempest\Console\Exceptions\InterruptException;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
@@ -67,19 +66,7 @@ final class InteractiveComponentRenderer
                 }
             }
         } finally {
-            // Render a last time the component,
-            // to display its proper state.
-            $render = match ($component->getState()) {
-                State::CANCELLED,
-                State::SUBMITTED => $terminal->render($component)->current(),
-                default => null
-            };
-
             $this->closeTerminal($terminal);
-
-            if (! is_null($render)) {
-                return $render;
-            }
         }
 
         return null;
@@ -117,19 +104,16 @@ final class InteractiveComponentRenderer
             // first because the ones that return something will be overriden otherwise.
             usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
-            // If we pressed CTRL+C or CTRL+D, we want to exit.
-            // However, if we overriden one of those handler, we don't leave.
+            // CTRL+C and CTRL+D means we exit the CLI, but only if there is no custom
+            // handler. When we exit, we want one last render to display pretty
+            // styles, so we will throw the exception in the next loop.
             if ($handlersForKey === [] && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
-                // Components marked as `HandlesInterruptions` support being re-rendered
-                // before closing the cterminal, so we'll throw in the next iteration.
-                if ($component instanceof HandlesInterruptions) {
-                    $component->setState(State::CANCELLED);
-                    $this->afterRenderCallbacks[] = fn () => throw new InterruptException();
+                $component->setState(State::CANCELLED);
+                $this->afterRenderCallbacks[] = fn () => throw new InterruptException();
+                $this->shouldRerender = true;
+                Fiber::suspend();
 
-                    continue;
-                }
-
-                throw new InterruptException();
+                continue;
             }
 
             $this->shouldRerender = true;

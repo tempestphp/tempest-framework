@@ -12,7 +12,6 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticMultipleChoiceComponent;
 use Tempest\Console\Components\TextBuffer;
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -22,7 +21,7 @@ use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 
-final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, HandlesInterruptions
+final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
     use HasErrors;
     use HasState;
@@ -71,7 +70,9 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
             ]),
             '↑' => 'up',
             '↓' => 'down',
-            'enter' => 'confirm',
+            'enter' => $this->options->getSelectedOptions() === []
+                ? 'skip'
+                : 'confirm',
             'ctrl+c' => 'cancel',
         ];
     }

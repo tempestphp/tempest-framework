@@ -28,7 +28,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
         do {
             $answer = $this->askQuestion($console);
 
-            $answerAsString = arr($answer ?? $this->default)->join(', ', ' and ')->trim()->toString() ?: 'no option';
+            $answerAsString = arr($answer)->join(', ', ' and ')->trim()->toString() ?: 'no option';
 
             $continue = $console->confirm(
                 question: $answer

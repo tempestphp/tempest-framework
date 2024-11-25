@@ -34,13 +34,13 @@ trait HasTextInputRenderer
     #[HandlesKey(Key::ALT_ENTER)]
     public function altEnter(): ?string
     {
-        if ($this->multiline) {
-            $this->state = State::SUBMITTED;
-
-            return $this->buffer->text ?? '';
+        if (! $this->multiline) {
+            return null;
         }
 
-        $this->buffer->input(PHP_EOL);
+        $this->state = State::SUBMITTED;
+
+        return $this->buffer->text ?? '';
     }
 
     #[HandlesKey(Key::UP)]

@@ -18,7 +18,6 @@ final class TextInputRenderer
 
     public function __construct(
         private ?bool $multiline = false,
-        private ?int $minimumLines = null,
         private int $maximumLines = 5,
     ) {
     }
@@ -54,16 +53,23 @@ final class TextInputRenderer
 
         // renders visible lines
         foreach ($displayLines as $line) {
-            $this->line($this->style(empty($buffer->text) ? 'fg-gray' : null, $line))->newLine();
+            $this->line($this->style(
+                style: match (true) {
+                    $this->state === State::CANCELLED => 'italic fg-gray strikethrough',
+                    empty($buffer->text) => 'fg-gray',
+                    default => null,
+                },
+                content: $line
+            ))->newLine();
         }
 
         // fills remaining lines if less than max display lines
-        if ($this->multiline && $state !== State::CANCELLED) {
-            for ($i = $displayLines->count(); $i < $this->maximumLines; $i++) {
+        if ($state !== State::CANCELLED) {
+            $lines = $this->multiline ? $this->maximumLines : 1;
+
+            for ($i = $displayLines->count(); $i < $lines; $i++) {
                 $this->line(PHP_EOL);
             }
-        } elseif ($displayLines->count() === 0) {
-            $this->line(PHP_EOL);
         }
 
         return $this->finishRender();

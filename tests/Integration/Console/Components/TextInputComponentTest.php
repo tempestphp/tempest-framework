@@ -104,4 +104,32 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $this->assertSame("1\n2\n3\n4\n5\n6", $component->altEnter());
         });
     }
+
+    #[Test]
+    public function test_single_line_cannot_have_new_lines(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new TextInputComponent(label: 'Enter your name', placeholder: 'Jon Doe', multiline: false);
+
+            $component->input('a');
+            $component->input(PHP_EOL);
+
+            $this->assertNull($component->altEnter());
+            $this->assertSame('a', $component->enter());
+        });
+    }
+
+    #[Test]
+    public function test_multiline_may_have_new_lines(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new TextInputComponent(label: 'Enter your name', placeholder: 'Jon Doe', multiline: true);
+
+            $component->input('a');
+            $component->input(PHP_EOL);
+
+            $this->assertNull($component->enter());
+            $this->assertSame("a\n\n", $component->altEnter());
+        });
+    }
 }
