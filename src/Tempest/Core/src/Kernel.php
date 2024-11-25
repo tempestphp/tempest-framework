@@ -85,7 +85,6 @@ final class Kernel
 
     public function loadEnv(): self
     {
-        // Load from .env
         $dotenv = Dotenv::createUnsafeImmutable($this->root);
         $dotenv->safeLoad();
 
