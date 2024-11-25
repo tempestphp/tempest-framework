@@ -182,7 +182,7 @@ final class Kernel
             return $this;
         }
 
-        if ($environment->isProduction()) {
+        if (PHP_SAPI !== 'cli' && $environment->isProduction()) {
             $handler = new HttpProductionErrorHandler();
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
