@@ -57,7 +57,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $config->connection = $connection;
 
         $this->rollbackDatabase();
-        //        ld($this->container->get(DiscoveryCache::class)->getStrategy());
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application
