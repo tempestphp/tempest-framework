@@ -50,7 +50,13 @@ final class CacheConfig
             }
         }
 
-        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+        $cache = env('CACHE');
+
+        if ($cache !== null) {
+            $current = DiscoveryCacheStrategy::make($cache);
+        } else {
+            $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
+        }
 
         if ($current === DiscoveryCacheStrategy::NONE) {
             return $current;

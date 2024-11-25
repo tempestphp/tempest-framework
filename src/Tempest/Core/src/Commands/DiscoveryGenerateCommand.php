@@ -91,6 +91,12 @@ final readonly class DiscoveryGenerateCommand
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
+        $cache = env('CACHE');
+
+        if ($cache !== null) {
+            return DiscoveryCacheStrategy::make($cache);
+        }
+
         return DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
     }
 
