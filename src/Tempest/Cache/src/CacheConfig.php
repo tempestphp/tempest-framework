@@ -6,6 +6,7 @@ namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Core\Commands\DiscoveryGenerateCommand;
+use Tempest\Core\DiscoveryCache;
 use function Tempest\env;
 
 final class CacheConfig
@@ -62,7 +63,7 @@ final class CacheConfig
             return $current;
         }
 
-        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryGenerateCommand::CURRENT_DISCOVERY_STRATEGY));
+        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryCache::CURRENT_DISCOVERY_STRATEGY));
 
         if ($current !== $original) {
             return DiscoveryCacheStrategy::INVALID;

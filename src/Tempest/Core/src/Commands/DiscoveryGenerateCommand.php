@@ -18,8 +18,6 @@ final readonly class DiscoveryGenerateCommand
 {
     use HasConsole;
 
-    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/../.cache/current_discovery_strategy';
-
     public function __construct(
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
@@ -45,7 +43,7 @@ final readonly class DiscoveryGenerateCommand
 
         $this->generateDiscoveryCache($strategy);
 
-        $this->storeDiscoveryCacheStrategy($strategy);
+        $this->discoveryCache->storeStrategy($strategy);
     }
 
     public function clearDiscoveryCache(): void
@@ -98,17 +96,6 @@ final readonly class DiscoveryGenerateCommand
         }
 
         return DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
-    }
-
-    private function storeDiscoveryCacheStrategy(DiscoveryCacheStrategy $strategy): void
-    {
-        $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, recursive: true);
-        }
-
-        file_put_contents(self::CURRENT_DISCOVERY_STRATEGY, $strategy->value);
     }
 
     public function resolveKernel(): Kernel
