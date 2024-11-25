@@ -14,7 +14,11 @@ use function Tempest\path;
 
 final class DiscoveryCache implements Cache
 {
-    use IsCache;
+    use IsCache {
+        clear as parentClear;
+    }
+
+    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/.cache/current_discovery_strategy';
 
     private CacheItemPoolInterface $pool;
 
@@ -68,8 +72,26 @@ final class DiscoveryCache implements Cache
         return $this->cacheConfig->discoveryCache->isValid();
     }
 
+    public function clear(): void
+    {
+        $this->parentClear();
+
+        $this->storeStrategy(DiscoveryCacheStrategy::INVALID);
+    }
+
     public function getStrategy(): DiscoveryCacheStrategy
     {
         return $this->cacheConfig->discoveryCache;
+    }
+
+    public function storeStrategy(DiscoveryCacheStrategy $strategy): void
+    {
+        $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);
+
+        if (! is_dir($dir)) {
+            mkdir($dir, recursive: true);
+        }
+
+        file_put_contents(self::CURRENT_DISCOVERY_STRATEGY, $strategy->value);
     }
 }
