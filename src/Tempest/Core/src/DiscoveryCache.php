@@ -17,6 +17,7 @@ final class DiscoveryCache implements Cache
     use IsCache {
         clear as parentClear;
     }
+
     public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/.cache/current_discovery_strategy';
 
     private CacheItemPoolInterface $pool;
