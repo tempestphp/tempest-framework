@@ -25,6 +25,7 @@ return (new PhpCsFixer\Config())
         'no_leading_import_slash' => true,
         'fully_qualified_strict_types' => [
             'import_symbols' => true,
+            'phpdoc_tags' => [],
         ],
         'global_namespace_import' => [
             'import_classes' => true,
