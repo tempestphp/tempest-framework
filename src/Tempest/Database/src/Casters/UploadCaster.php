@@ -18,6 +18,6 @@ final readonly class UploadCaster implements Caster
             return $input;
         }
 
-        return new UploadedFile($input, filesize($input), UPLOAD_ERR_OK);
+        return new Upload(new UploadedFile($input, filesize($input), UPLOAD_ERR_OK));
     }
 }
