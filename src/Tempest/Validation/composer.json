@@ -7,8 +7,8 @@
         "php": "^8.3",
         "egulias/email-validator": "^4.0.2",
         "giggsey/libphonenumber-for-php": "^8.13.40",
-        "tempest/reflection": "dev-main",
-        "tempest/support": "dev-main"
+        "tempest/reflection": "^1.0.0-alpha.4",
+        "tempest/support": "^1.0.0-alpha.4"
     },
     "autoload": {
         "psr-4": {
