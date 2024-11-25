@@ -23,7 +23,8 @@ final readonly class DiscoveryGenerateCommand
     public function __construct(
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
-    ) {}
+    ) {
+    }
 
     #[ConsoleCommand(
         name: 'discovery:generate',
