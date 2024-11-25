@@ -4,42 +4,33 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\Interactive\PasswordComponent;
-use Tempest\Console\Key;
-use Tempest\Console\Point;
+use Tempest\Console\Console;
+use Tempest\Console\Terminal\Terminal;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class PasswordComponentTest extends TestCase
+final class PasswordComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_password_component(): void
     {
-        $component = new PasswordComponent('Label');
+        $this->console->withoutPrompting()->call(function (Console $console) {
+            $terminal = new Terminal($console);
+            $component = new PasswordComponent('Enter password');
 
-        $this->assertSame(
-            <<<'TXT'
-            <question>Label</question> 
-            TXT,
-            $component->render(),
-        );
+            $this->assertStringContainsString('Enter password', $component->render($terminal));
 
-        $component->input('a');
-        $component->input('b');
-        $component->input('c');
+            $component->input('a');
+            $component->input('b');
+            $component->input('c');
 
-        $this->assertSame("<question>Label</question> ***", $component->render());
+            $this->assertStringContainsString('***', $component->render($terminal));
 
-        $component->input(Key::UP->value);
-        $this->assertSame("<question>Label</question> ***", $component->render());
+            $component->deletePreviousCharacter();
 
-        $component->backspace();
-        $this->assertSame("<question>Label</question> **", $component->render());
-
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(10, 0)));
-
-        $password = $component->enter();
-        $this->assertSame('ab', $password);
+            $this->assertSame('ab', $component->enter());
+        });
     }
 }

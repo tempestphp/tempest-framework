@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -13,6 +12,7 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticMultipleChoiceComponent;
 use Tempest\Console\Components\TextBuffer;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -104,6 +104,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     {
         if (! $this->bufferEnabled && $key === '/') {
             $this->bufferEnabled = true;
+            $this->updateQuery();
 
             return;
         }
@@ -115,11 +116,13 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
                 'j', 'l' => $this->options->next(),
                 default => null,
             };
+            $this->updateQuery();
 
             return;
         }
 
         $this->buffer->input($key);
+        $this->updateQuery();
     }
 
     #[HandlesKey(Key::ESCAPE)]

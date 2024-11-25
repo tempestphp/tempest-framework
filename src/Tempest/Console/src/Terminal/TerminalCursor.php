@@ -142,6 +142,6 @@ final class TerminalCursor implements Cursor
 
         preg_match('/(?<y>[\d]+);(?<x>[\d]+)/', $this->console->read(1024), $matches);
 
-        return new Point((int)($matches['x']), (int)($matches['y']));
+        return new Point((int) ($matches['x'] ?? 100), (int) ($matches['y'] ?? 25));
     }
 }

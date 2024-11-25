@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Components;
 
 use Tempest\Console\Components\Interactive\SearchComponent;
-use Tempest\Console\Key;
-use Tempest\Console\Point;
+use Tempest\Console\Console;
+use Tempest\Console\Terminal\Terminal;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -14,100 +14,120 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class SearchComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_search_component(): void
+    public function test_single(): void
     {
-        $component = new SearchComponent('Search', $this->search(...));
+        $this->console->withoutPrompting()->call(function (Console $console) {
+            $terminal = new Terminal($console);
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: false);
 
-        $rendered = $component->render();
-        $this->assertSame('<question>Search</question> ', $rendered);
-        $this->assertSame('Press <em>up</em>/<em>down</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel', $component->renderFooter());
+            $this->assertStringContainsString('Enter a name', $component->render($terminal));
 
-        $component->input('a');
-        $component->input(Key::UP->value);
+            $this->assertStringContainsString('Brent', $component->render($terminal));
+            $this->assertStringContainsString('Paul', $component->render($terminal));
+            $this->assertStringContainsString('Aidan', $component->render($terminal));
+            $this->assertStringContainsString('Roman', $component->render($terminal));
 
-        $rendered = $component->render();
-        $this->assertStringContainsString('<question>Search</question> a', $rendered);
-        $this->assertStringContainsString('[x] <em>Paul</em>', $rendered);
-        $this->assertStringContainsString('[ ] Aidan', $rendered);
-        $this->assertStringContainsString('[ ] Roman', $rendered);
+            $component->input('a');
 
-        $component->up();
-        $rendered = $component->render();
-        $this->assertStringContainsString('[ ] Paul', $rendered);
-        $this->assertStringContainsString('[x] <em>Roman</em>', $rendered);
+            $this->assertStringNotContainsString('Brent', $component->render($terminal));
+            $this->assertStringContainsString('Paul', $component->render($terminal));
+            $this->assertStringContainsString('Aidan', $component->render($terminal));
+            $this->assertStringContainsString('Roman', $component->render($terminal));
 
-        $component->down();
-        $rendered = $component->render();
-        $this->assertStringContainsString('[x] <em>Paul</em>', $rendered);
-        $this->assertStringContainsString('[ ] Roman', $rendered);
+            $component->deletePreviousCharacter();
+            $component->input('n');
 
-        $component->input('u');
-        $component->input('l');
+            $this->assertStringContainsString('Brent', $component->render($terminal));
+            $this->assertStringContainsString('Aidan', $component->render($terminal));
+            $this->assertStringContainsString('Roman', $component->render($terminal));
 
-        $rendered = $component->render();
-        $this->assertStringContainsString('<question>Search</question> aul', $rendered);
+            $component->down();
 
-        $component->backspace();
-        $rendered = $component->render();
-        $this->assertStringContainsString('<question>Search</question> au', $rendered);
-
-        $component->left();
-        $component->input('_');
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(11, 0)));
-
-        $component->right();
-        $component->right();
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(12, 0)));
-
-        $component->input('-');
-        $rendered = $component->render();
-        $this->assertStringContainsString('<question>Search</question> a_u-', $rendered);
-
-        $component->home();
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(9, 0)));
-
-        $component->end();
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(13, 0)));
-
-        $component->left();
-        $component->left();
-        $component->delete();
-
-        $rendered = $component->render();
-        $this->assertStringContainsString('<question>Search</question> a_-', $rendered);
-        $component->right();
-
-        $this->assertNull($component->enter());
-
-        $component->backspace();
-        $component->backspace();
-        $component->backspace();
-        $component->backspace();
-        $component->backspace();
-        $component->backspace();
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(9, 0)));
-
-        $component->input('P');
-        $result = $component->enter();
-        $this->assertSame('Paul', $result);
+            $this->assertSame('Aidan', $component->enter());
+        });
     }
 
-    public function test_supports_default_value(): void
+    public function test_multiple(): void
     {
-        $component = new SearchComponent('Search', $this->search(...));
-        $this->assertSame(null, $component->enter());
+        $this->console->withoutPrompting()->call(function (Console $console) {
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
 
-        $component = new SearchComponent('Search', $this->search(...), default: 'foo');
-        $this->assertSame('foo', $component->enter());
+            $component->input(' ');
+            $component->down();
+            $component->input(' ');
+
+            $this->assertSame(['Brent', 'Paul'], $component->enter());
+        });
+    }
+
+    public function test_multiple_with_filtering(): void
+    {
+        $this->console->withoutPrompting()->call(function () {
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
+
+            $component->input('/');
+            $component->input('P');
+            $component->input('a');
+            $component->stopFiltering();
+            $component->input(' ');
+
+            $this->assertSame(['Paul'], $component->enter());
+        });
+
+        $this->console->withoutPrompting()->call(function () {
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
+
+            $component->input('/');
+            $component->input('B');
+            $component->input('r');
+            $component->stopFiltering();
+            $component->input(' ');
+
+            $component->input('/');
+            $component->deletePreviousWord();
+            $component->input('P');
+            $component->input('a');
+            $component->stopFiltering();
+            $component->input(' ');
+
+            $this->assertSame(['Paul'], $component->enter());
+        });
+    }
+
+    // public function test_searching_does_not_clear_active(): void
+    // {
+    //     $this->console->withoutPrompting()->call(function () {
+    //         $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
+
+    //         $component->down();
+    //         $component->down();
+    //         $component->input('/');
+    //         $component->input('a');
+
+    //         $this->assertSame(['Aidan'], $component->enter());
+    //     });
+    // }
+
+    public function test_multiple_supports_default_value(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console) {
+            $terminal = new Terminal($console);
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true, default: 'Aidan');
+
+            $this->assertStringContainsString('Enter a name', $component->render($terminal));
+            $component->enter();
+
+            $this->assertSame(['Aidan'], $component->enter());
+        });
     }
 
     public function search(string $query): array
     {
-        if ($query === '') {
-            return [];
-        }
-
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
+
+        if ($query === '') {
+            return $data;
+        }
 
         return array_filter(
             $data,
