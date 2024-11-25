@@ -14,7 +14,7 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_without_filtering(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SingleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $this->assertSame('Brent', $component->enter());
@@ -25,7 +25,7 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_with_filtering(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SingleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->input('/');
@@ -39,7 +39,7 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_associative_options_returns_keys(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SingleChoiceComponent(label: 'Enter a name', options: [
                 'brent' => 'Brent',
                 'paul' => 'Paul',
@@ -57,7 +57,7 @@ final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_searching_does_not_clear_active(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SingleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->down();

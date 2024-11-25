@@ -30,6 +30,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     use HasTextBuffer;
 
     private ChoiceRenderer $renderer;
+
     private OptionCollection $options;
 
     public function __construct(

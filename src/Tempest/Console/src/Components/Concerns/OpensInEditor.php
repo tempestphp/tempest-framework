@@ -36,7 +36,7 @@ trait OpensInEditor
 
         file_put_contents($tempFile, $text ?? '');
 
-        if (passthru(escapeshellcmd("$editor " . escapeshellarg($tempFile))) === false) {
+        if (passthru(escapeshellcmd("{$editor} " . escapeshellarg($tempFile))) === false) {
             // TODO: failed. handle that
             return $text;
         }

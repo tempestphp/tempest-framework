@@ -11,8 +11,9 @@ use Tempest\Support\ArrayHelper;
 
 final class StaticSearchComponent implements StaticConsoleComponent
 {
-    private const CANCEL = 'Cancel';
-    private const SEARCH_AGAIN = 'Search again';
+    private const string CANCEL = 'Cancel';
+
+    private const string SEARCH_AGAIN = 'Search again';
 
     public function __construct(
         public readonly string $label,

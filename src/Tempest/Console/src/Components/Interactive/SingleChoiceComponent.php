@@ -30,6 +30,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     use HasTextBuffer;
 
     private ChoiceRenderer $renderer;
+
     private OptionCollection $options;
 
     public function __construct(

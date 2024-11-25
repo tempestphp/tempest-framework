@@ -12,19 +12,27 @@ use Tempest\Support\StringHelper;
 trait RendersInput
 {
     public const MARGIN_X = 2;
+
     public const PADDING_X = 1;
+
     public const MARGIN_TOP = 1;
 
     private StringHelper $frame;
+
     private Terminal $terminal;
+
     private State $state;
 
     private int $maxLineCharacters;
+
     private string $marginX;
+
     private string $paddingX;
+
     private string $leftBorder;
 
     private int $offsetY = 0;
+
     private int $scrollOffset = 0;
 
     private function prepareRender(Terminal $terminal, State $state): self
@@ -104,7 +112,7 @@ trait RendersInput
             return implode('', $content);
         }
 
-        return "<style=\"$style\">" . implode('', $content) . '</style>';
+        return "<style=\"{$style}\">" . implode('', $content) . '</style>';
     }
 
     private function label(string $label): self

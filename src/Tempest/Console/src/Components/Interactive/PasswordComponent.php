@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
-use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasTextInputRenderer;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Renderers\TextInputRenderer;
 use Tempest\Console\Components\TextBuffer;
+use Tempest\Console\HandlesInterruptions;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;

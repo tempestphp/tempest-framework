@@ -16,7 +16,7 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_confirm_component(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new ConfirmComponent('Label', yes: 'Yes!', no: 'No!');
 
@@ -34,7 +34,7 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
 
     public function test_confirm_component_shortcuts(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new ConfirmComponent('Label');
 
             $component->input('n');
@@ -48,17 +48,17 @@ final class ConfirmComponentTest extends FrameworkIntegrationTestCase
     public function test_confirm_component_default(): void
     {
         // false by default
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new ConfirmComponent('Label');
             $this->assertFalse($component->enter());
         });
 
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new ConfirmComponent('Label', default: true);
             $this->assertTrue($component->enter());
         });
 
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new ConfirmComponent('Label', default: false);
             $this->assertFalse($component->enter());
         });

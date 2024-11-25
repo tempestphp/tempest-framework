@@ -16,7 +16,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_without_filtering(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->input(' ');
@@ -29,7 +29,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_with_filtering(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->input('/');
@@ -44,7 +44,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_list_options_do_not_retain_keys(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->down();
@@ -58,7 +58,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_associative_options_retain_keys(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: [
                 'brent' => 'Brent',
                 'paul' => 'Paul',
@@ -77,7 +77,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_searching_does_not_clear_active(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
             $component->down();
@@ -92,7 +92,7 @@ final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_supports_default_value(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman'], default: ['Aidan']);
 

@@ -15,6 +15,7 @@ trait HasTextInputRenderer
     use HasState;
 
     public TextInputRenderer $renderer;
+
     public bool $multiline = false;
 
     #[HandlesKey(Key::ENTER)]

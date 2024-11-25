@@ -44,7 +44,7 @@ final class OptionCollection implements Iterator, Countable
     public function filter(?string $query): void
     {
         $previouslyActiveOption = $this->getActive();
-        $previouslySelectedOptions = $this->getSelectedOptions();
+        $previouslySelectedOptions = $this->selectedOptions;
 
         $this->filteredOptions = arr($this->options)
             ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower($option->value), mb_strtolower(trim($query))))
@@ -80,7 +80,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function toggleCurrent(): void
     {
-        if (! $active = $this->getActive()) {
+        if (($active = $this->getActive()) === null) {
             return;
         }
 
@@ -116,7 +116,7 @@ final class OptionCollection implements Iterator, Countable
 
         // TODO: PR `tap` to `ArrayHelper`
         if (! $this->preserveKeys) {
-            $selected = array_values($selected);
+            return array_values($selected);
         }
 
         return $selected;
@@ -140,7 +140,7 @@ final class OptionCollection implements Iterator, Countable
 
     public function isSelected(Option $option): bool
     {
-        return (bool) arr($this->getSelectedOptions())->first(fn (Option $other) => $option->equals($other));
+        return (bool) arr($this->selectedOptions)->first(fn (Option $other) => $option->equals($other));
     }
 
     public function isActive(Option $option): bool

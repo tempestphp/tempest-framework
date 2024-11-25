@@ -138,7 +138,7 @@ final class GenericConsole implements Console
     {
         $symbol ??= 'ℹ';
 
-        $this->writeln("<style=\"bg-dark-blue fg-white\"> $symbol </style> <style=\"fg-blue\">{$line}</style>");
+        $this->writeln("<style=\"bg-dark-blue fg-white\"> {$symbol} </style> <style=\"fg-blue\">{$line}</style>");
 
         return $this;
     }
@@ -147,7 +147,7 @@ final class GenericConsole implements Console
     {
         $symbol ??= '×';
 
-        $this->writeln("<style=\"bg-dark-red fg-white\"> $symbol </style> <style=\"fg-red\">{$line}</style>");
+        $this->writeln("<style=\"bg-dark-red fg-white\"> {$symbol} </style> <style=\"fg-red\">{$line}</style>");
 
         return $this;
     }
@@ -156,7 +156,7 @@ final class GenericConsole implements Console
     {
         $symbol ??= '⚠';
 
-        $this->writeln("<style=\"bg-dark-yellow fg-white\"> $symbol </style> <style=\"fg-yellow\">{$line}</style>");
+        $this->writeln("<style=\"bg-dark-yellow fg-white\"> {$symbol} </style> <style=\"fg-yellow\">{$line}</style>");
 
         return $this;
     }
@@ -165,7 +165,7 @@ final class GenericConsole implements Console
     {
         $symbol ??= '✔︎';
 
-        $this->writeln("<style=\"bg-dark-green fg-white\"> $symbol </style> <style=\"fg-green\">{$line}</style>");
+        $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
 
         return $this;
     }

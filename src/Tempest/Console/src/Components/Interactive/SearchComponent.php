@@ -32,7 +32,9 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     use HasTextBuffer;
 
     private ChoiceRenderer $renderer;
+
     public OptionCollection $options;
+
     private ?string $previousQuery = null;
 
     public function __construct(

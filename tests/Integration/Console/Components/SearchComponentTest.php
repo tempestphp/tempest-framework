@@ -16,7 +16,7 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_single(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: false);
 
@@ -49,7 +49,7 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
 
     public function test_multiple(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
 
             $component->input(' ');
@@ -62,7 +62,7 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_with_filtering(): void
     {
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
 
             $component->input('/');
@@ -74,7 +74,7 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
             $this->assertSame(['Paul'], $component->enter());
         });
 
-        $this->console->withoutPrompting()->call(function () {
+        $this->console->withoutPrompting()->call(function (): void {
             $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true);
 
             $component->input('/');
@@ -110,7 +110,7 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_supports_default_value(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true, default: 'Aidan');
 

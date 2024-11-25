@@ -83,7 +83,7 @@ final class Terminal
 
             if ($validationErrors) {
                 $content .= PHP_EOL . arr($validationErrors)
-                    ->map(fn (string $error) => "   <style=\"fg-yellow\">$error</style>")
+                    ->map(fn (string $error) => "   <style=\"fg-yellow\">{$error}</style>")
                     ->implode(PHP_EOL)
                     ->append(PHP_EOL)
                     ->toString();

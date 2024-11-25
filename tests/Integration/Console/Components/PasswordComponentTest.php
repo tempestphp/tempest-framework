@@ -16,7 +16,7 @@ final class PasswordComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_password_component(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new PasswordComponent('Enter password');
 

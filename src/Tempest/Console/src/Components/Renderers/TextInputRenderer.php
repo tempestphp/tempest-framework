@@ -41,7 +41,7 @@ final class TextInputRenderer
         }
 
         // splits the text to an array so we can work with individual lines
-        $lines = str($buffer->text ?: $placeholder ?: '')
+        $lines = str(($buffer->text ?: $placeholder) ?: '')
             ->explode(PHP_EOL)
             ->flatMap(fn (string $line) => str($line)->split($this->maxLineCharacters)->toArray())
             ->map(static fn (string $line) => str($line)->replaceEnd(PHP_EOL, ' '));

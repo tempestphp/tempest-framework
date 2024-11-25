@@ -18,7 +18,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     #[Test]
     public function test_basic_input(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new TextInputComponent(label: 'Enter your name', placeholder: 'Jon Doe');
 
@@ -42,7 +42,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     #[Test]
     public function test_multiline_input(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new TextInputComponent(label: 'Enter your name', multiline: true);
 
@@ -67,7 +67,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     #[Test]
     public function test_multiline_input_with_scroll(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console) {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
             $component = new TextInputComponent(label: 'Enter your name', multiline: true);
 
