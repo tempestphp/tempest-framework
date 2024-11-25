@@ -10,15 +10,11 @@ final readonly class StdoutOutputBuffer implements OutputBuffer
 {
     public function write(string $contents): void
     {
-        // Using `/dev/tty` prevents truncation when
-        // there are too many escape codes.
-        if ($tty = @fopen('/dev/tty', 'w')) {
-            fwrite($tty, $contents);
-            fclose($tty);
-
-            return;
-        }
-
-        fwrite(STDOUT, $contents);
+        // Writing to php://stdout will truncate the output at some point,
+        // even with flushing. It's the same for /dev/tty or STDOUT.
+        // Using PHP's managed buffering seems to be the only way.
+        ob_start();
+        echo $contents;
+        ob_end_flush();
     }
 }
