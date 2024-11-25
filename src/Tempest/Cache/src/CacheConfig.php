@@ -40,7 +40,7 @@ final class CacheConfig
         $this->caches[] = $className;
     }
 
-    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
+    public function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
         if (PHP_SAPI === 'cli') {
             $command = $_SERVER['argv'][1] ?? null;
