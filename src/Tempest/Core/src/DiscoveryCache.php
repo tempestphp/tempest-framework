@@ -14,11 +14,10 @@ use function Tempest\path;
 
 final class DiscoveryCache implements Cache
 {
-    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/.cache/current_discovery_strategy';
-
     use IsCache {
         clear as parentClear;
     }
+    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/.cache/current_discovery_strategy';
 
     private CacheItemPoolInterface $pool;
 

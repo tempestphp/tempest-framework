@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Tempest\Core\Commands\DiscoveryGenerateCommand;
 use Tempest\Core\DiscoveryCache;
 use function Tempest\env;
 
