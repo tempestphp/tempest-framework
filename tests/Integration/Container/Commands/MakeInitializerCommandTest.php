@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Container\Commands;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

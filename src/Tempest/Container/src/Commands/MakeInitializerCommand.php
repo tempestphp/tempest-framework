@@ -6,6 +6,7 @@ namespace Tempest\Container\Commands;
 
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Container\Singleton;
 use Tempest\Container\Stubs\InitializerStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\ClassManipulator;
@@ -43,13 +44,13 @@ final class MakeInitializerCommand
                 targetPath: $targetPath,
                 shouldOverride: $shouldOverride,
                 manipulations: [
-                    function ( ClassManipulator $stubClass ) use ( $isSingleton ) {
-                        if ( $isSingleton ) {
-                            $stubClass->addMethodAttribute('initialize', \Tempest\Container\Singleton::class);
+                    function (ClassManipulator $stubClass) use ($isSingleton) {
+                        if ($isSingleton) {
+                            $stubClass->addMethodAttribute('initialize', Singleton::class);
                         }
 
                         return $stubClass;
-                    }
+                    },
                 ]
             );
 
