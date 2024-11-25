@@ -1007,4 +1007,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
         return new self(array_slice($this->array, $offset, $length));
     }
+
+    public static function wrap(mixed $input = []): array
+    {
+        return (new self($input))->toArray();
+    }
 }
