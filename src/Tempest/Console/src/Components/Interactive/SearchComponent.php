@@ -110,6 +110,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         return new StaticSearchComponent(
             label: $this->label,
             search: $this->search,
+            multiple: $this->multiple,
             default: $this->default,
         );
     }

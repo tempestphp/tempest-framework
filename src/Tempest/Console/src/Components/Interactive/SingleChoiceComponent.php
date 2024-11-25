@@ -93,7 +93,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticSingleChoiceComponent(
-            question: $this->question,
+            label: $this->label,
             options: $this->options->getRawOptions(),
             default: $this->default,
         );

@@ -93,7 +93,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticMultipleChoiceComponent(
-            question: $this->question,
+            label: $this->label,
             options: $this->options->getRawOptions(),
             default: $this->default,
         );

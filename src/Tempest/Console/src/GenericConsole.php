@@ -197,7 +197,6 @@ final class GenericConsole implements Console
         ?array $options = null,
         mixed $default = null,
         bool $multiple = false,
-        bool $asList = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,

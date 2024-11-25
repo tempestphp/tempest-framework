@@ -20,7 +20,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,1')
-            ->assertContains("You picked a, b;");
+            ->assertContains("You picked a and b;");
     }
 
     public function test_with_invalid_options(): void
@@ -30,7 +30,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,4,c,2')
-            ->assertContains("You picked a, c;");
+            ->assertContains("You picked a and c;");
     }
 
     public function test_confirm(): void
@@ -46,7 +46,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
             ->submit('no')
             ->assertContains('- [0] a')
             ->submit('0,1')
-            ->assertContains('You picked a, b;')
+            ->assertContains('You picked a and b;')
             ->submit('yes')
             ->assertContains('["a","b"]');
     }
@@ -79,13 +79,13 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                     question: 'test',
                     options: ['foo', 'bar'],
                     default: ['foo'],
-                    multiple: true
+                    multiple: true,
                 );
 
                 $console->writeln(json_encode($answer));
             })
             ->submit()
             ->submit()
-            ->assertContains(json_encode([])); // defaults are not compatible with no-tty-prompting
+            ->assertContains(json_encode(['foo']));
     }
 }
