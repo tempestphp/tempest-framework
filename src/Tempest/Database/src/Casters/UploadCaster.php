@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Casters;
 
 use function filesize;
-use function file_exists;
 use Laminas\Diactoros\UploadedFile;
 use Tempest\Http\Upload;
 use Tempest\Mapper\Caster;
