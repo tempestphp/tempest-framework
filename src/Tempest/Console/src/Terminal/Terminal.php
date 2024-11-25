@@ -180,8 +180,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = (int) exec('tput cols');
-        $this->height = (int) exec('tput lines');
+        $this->width = (int) exec('tput cols') ?? 80;
+        $this->height = (int) exec('tput lines') ?? 25;
 
         return $this;
     }
