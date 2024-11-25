@@ -23,8 +23,7 @@ final readonly class DiscoveryGenerateCommand
     public function __construct(
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'discovery:generate',
@@ -91,6 +90,12 @@ final readonly class DiscoveryGenerateCommand
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
+        $cache = env('CACHE');
+
+        if ($cache !== null) {
+            return DiscoveryCacheStrategy::make($cache);
+        }
+
         return DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
     }
 
