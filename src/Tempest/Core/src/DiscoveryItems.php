@@ -51,7 +51,7 @@ final class DiscoveryItems implements IteratorAggregate, Countable
 
     public function count(): int
     {
-        return iterator_count($this->items);
+        return iterator_count($this->getIterator());
     }
 
     public function __serialize(): array
