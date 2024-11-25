@@ -29,7 +29,6 @@ final class RouteConfigurator
 
     public function __construct()
     {
-
         $this->routingTree = new RoutingTree();
     }
 

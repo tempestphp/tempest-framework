@@ -84,13 +84,13 @@ final readonly class StaticGenerateCommand
                         continue;
                     }
 
-                    $directory = pathinfo($file, PATHINFO_DIRNAME);
+                    $directory = $file->dirname();
 
                     if (! is_dir($directory)) {
                         mkdir($directory, recursive: true);
                     }
 
-                    file_put_contents($file, $content);
+                    file_put_contents($file->path(), $content);
 
                     $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");
                 } catch (Throwable $e) {

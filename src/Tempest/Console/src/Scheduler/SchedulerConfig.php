@@ -11,8 +11,6 @@ use Tempest\Reflection\MethodReflector;
 final class SchedulerConfig
 {
     public function __construct(
-        public string $path = "php tempest",
-
         /** @var ScheduledInvocation[] $scheduledInvocations */
         public array $scheduledInvocations = [],
     ) {

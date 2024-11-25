@@ -5,48 +5,35 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 /**
  * @property GenericContainer $container
  */
-final readonly class InitializerDiscovery implements Discovery
+final class InitializerDiscovery implements Discovery
 {
-    use HandlesDiscoveryCache;
+    use IsDiscovery;
 
     public function __construct(
-        private Container $container,
+        private readonly Container $container,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         if (! $class->implements(Initializer::class) && ! $class->implements(DynamicInitializer::class)) {
             return;
         }
 
-        $this->container->addInitializer($class);
+        $this->discoveryItems->add($location, $class->getName());
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize(
-            [
-                'initializers' => $this->container->getInitializers(),
-                'dynamic_initializers' => $this->container->getDynamicInitializers(),
-            ],
-        );
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $data = unserialize($payload, ['allowed_classes' => [
-            Initializer::class,
-            DynamicInitializer::class,
-        ]]);
-
-        $this->container->setInitializers($data['initializers'] ?? []);
-        $this->container->setDynamicInitializers($data['dynamic_initializers'] ?? []);
+        foreach ($this->discoveryItems as $className) {
+            $this->container->addInitializer($className);
+        }
     }
 }

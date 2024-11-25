@@ -4,22 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
-use Tempest\Database\Migrations\Migration as MigrationModel;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 final class MigrationDiscovery implements Discovery, DiscoversPath
 {
-    use HandlesDiscoveryCache;
+    use IsDiscovery;
 
-    public function __construct(private DatabaseConfig $databaseConfig)
+    public function __construct(private readonly DatabaseConfig $databaseConfig)
     {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         if (! $class->implements(Migration::class)) {
             return;
@@ -29,10 +28,10 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        $this->databaseConfig->addMigration($class->getName());
+        $this->discoveryItems->add($location, $class->getName());
     }
 
-    public function discoverPath(string $path): void
+    public function discoverPath(DiscoveryLocation $location, string $path): void
     {
         if (! str_ends_with($path, '.sql')) {
             return;
@@ -52,19 +51,14 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
                 content: $content,
             );
 
-            $this->databaseConfig->addMigration($migration);
+            $this->discoveryItems->add($location, $migration);
         }
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->databaseConfig->getMigrations());
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $migrations = unserialize($payload, ['allowed_classes' => [MigrationModel::class, GenericMigration::class]]);
-
-        $this->databaseConfig->setMigrations($migrations);
+        foreach ($this->discoveryItems as $migration) {
+            $this->databaseConfig->addMigration($migration);
+        }
     }
 }

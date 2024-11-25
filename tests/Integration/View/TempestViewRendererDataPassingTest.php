@@ -262,4 +262,28 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
             HTML, value: 'value', selected: false, name: 'name'),
         );
     }
+
+    public function test_expression_attribute_in_raw_element(): void
+    {
+        $this->registerViewComponent(
+            'x-test',
+            <<<'HTML'
+            <div><x-slot/></div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <pre :data-lang="$language"><hello></hello>foo<p>bar</p></pre>
+        </x-test>
+        HTML, language: 'php');
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+            <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre>
+            </div>
+            HTML,
+            $html
+        );
+    }
 }

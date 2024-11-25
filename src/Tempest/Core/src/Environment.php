@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use function Tempest\env;
+
 enum Environment: string
 {
     case LOCAL = 'local';
@@ -41,5 +43,12 @@ enum Environment: string
     public function isOther(): bool
     {
         return $this === self::OTHER;
+    }
+
+    public static function fromEnv(): self
+    {
+        $value = env('ENVIRONMENT', 'local');
+
+        return self::tryFrom($value) ?? throw new InvalidEnvironment($value);
     }
 }

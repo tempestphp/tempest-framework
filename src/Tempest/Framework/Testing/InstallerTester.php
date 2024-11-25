@@ -48,7 +48,7 @@ final class InstallerTester
 
     public function path(string $path): string
     {
-        return path($this->root, $path);
+        return path($this->root, $path)->toString();
     }
 
     public function put(string $path, string $contents): self

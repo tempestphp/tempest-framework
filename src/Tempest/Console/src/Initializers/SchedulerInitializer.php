@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Initializers;
 
 use Tempest\Console\ConsoleApplication;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\NullScheduler;
@@ -28,6 +29,7 @@ final readonly class SchedulerInitializer implements Initializer
 
         return new GenericScheduler(
             $container->get(SchedulerConfig::class),
+            $container->get(ConsoleArgumentBag::class),
             $container->get(ShellExecutor::class),
         );
     }

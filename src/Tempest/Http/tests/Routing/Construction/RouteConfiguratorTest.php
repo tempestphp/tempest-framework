@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests\Routing\Construction;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Http\Delete;
 use Tempest\Http\Method;
+use Tempest\Http\Patch;
+use Tempest\Http\Put;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
 use Tempest\Http\Routing\Construction\RouteConfigurator;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 /**
  * @internal
@@ -35,11 +39,14 @@ final class RouteConfiguratorTest extends TestCase
             new Route('/1', Method::GET),
             new Route('/2', Method::POST),
             new Route('/3', Method::GET),
+            new Delete('/4'),
+            new Put('/5'),
+            new Patch('/6'),
         ];
 
-        $this->subject->addRoute($routes[0]);
-        $this->subject->addRoute($routes[1]);
-        $this->subject->addRoute($routes[2]);
+        foreach ($routes as $route) {
+            $this->subject->addRoute($route);
+        }
 
         $config = $this->subject->toRouteConfig();
 
@@ -54,6 +61,18 @@ final class RouteConfiguratorTest extends TestCase
                 '/2' => $routes[1],
                 '/2/' => $routes[1],
             ],
+            'DELETE' => [
+                '/4' => $routes[3],
+                '/4/' => $routes[3],
+            ],
+            'PUT' => [
+                '/5' => $routes[4],
+                '/5/' => $routes[4],
+            ],
+            'PATCH' => [
+                '/6' => $routes[5],
+                '/6/' => $routes[5],
+            ],
         ], $config->staticRoutes);
         $this->assertEquals([], $config->dynamicRoutes);
         $this->assertEquals([], $config->matchingRegexes);
@@ -66,12 +85,13 @@ final class RouteConfiguratorTest extends TestCase
             new Route('/dynamic/{id}', Method::PATCH),
             new Route('/dynamic/{id}/view', Method::GET),
             new Route('/dynamic/{id}/{tag}/{name}/{id}', Method::GET),
+            new Delete('/dynamic/{id}'),
+            new Put('/dynamic/{id}'),
         ];
 
-        $this->subject->addRoute($routes[0]);
-        $this->subject->addRoute($routes[1]);
-        $this->subject->addRoute($routes[2]);
-        $this->subject->addRoute($routes[3]);
+        foreach ($routes as $route) {
+            $this->subject->addRoute($route);
+        }
 
         $config = $this->subject->toRouteConfig();
 
@@ -82,14 +102,30 @@ final class RouteConfiguratorTest extends TestCase
                 'd' => $routes[2],
                 'e' => $routes[3],
             ],
+            'DELETE' => [
+                'f' => $routes[4],
+            ],
+            'PUT' => [
+                'g' => $routes[5],
+            ],
             'PATCH' => [
                 'c' => $routes[1],
             ],
         ], $config->dynamicRoutes);
 
         $this->assertEquals([
-            'GET' => '#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#',
-            'PATCH' => '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+            'GET' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)(?|\/?$(*MARK:b)|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e))))))#',
+            ]),
+            'DELETE' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:f)))#',
+            ]),
+            'PUT' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:g)))#',
+            ]),
+            'PATCH' => new MatchingRegex([
+                '#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#',
+            ]),
         ], $config->matchingRegexes);
     }
 }

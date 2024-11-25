@@ -19,6 +19,7 @@ use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
+use Tempest\Highlight\Language;
 
 final class GenericConsole implements Console
 {
@@ -42,7 +43,7 @@ final class GenericConsole implements Console
     ) {
     }
 
-    public function call(string $command): ExitCode
+    public function call(string $command): ExitCode|int
     {
         return ($this->executeConsoleCommand)($command);
     }
@@ -95,11 +96,7 @@ final class GenericConsole implements Console
 
     public function write(string $contents): static
     {
-        if ($this->label) {
-            $contents = "<h2>{$this->label}</h2> {$contents}";
-        }
-
-        $this->output->write($this->highlighter->parse($contents, new TempestConsoleLanguage()));
+        $this->writeWithLanguage($contents, new TempestConsoleLanguage());
 
         return $this;
     }
@@ -107,6 +104,17 @@ final class GenericConsole implements Console
     public function writeln(string $line = ''): static
     {
         $this->write($line . PHP_EOL);
+
+        return $this;
+    }
+
+    public function writeWithLanguage(string $contents, Language $language): Console
+    {
+        if ($this->label) {
+            $contents = "<h2>{$this->label}</h2> {$contents}";
+        }
+
+        $this->output->write($this->highlighter->parse($contents, $language));
 
         return $this;
     }
@@ -171,6 +179,10 @@ final class GenericConsole implements Console
         bool $asList = false,
         array $validation = [],
     ): null|string|array {
+        if ($this->isForced && $default) {
+            return $default;
+        }
+
         if ($options === null || $options === []) {
             $component = new TextBoxComponent($question, $default);
         } elseif ($multiple) {

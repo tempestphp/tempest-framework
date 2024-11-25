@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
 /**
@@ -13,16 +14,14 @@ use Tempest\Reflection\ClassReflector;
  */
 final class AutowireDiscovery implements Discovery
 {
-    use HandlesDiscoveryCache;
-    /** @var array<string, string> */
-    private array $trackedAutowireDefinitions = [];
+    use IsDiscovery;
 
     public function __construct(
         private readonly Container $container,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         $autowire = $class->getAttribute(Autowire::class);
 
@@ -30,22 +29,28 @@ final class AutowireDiscovery implements Discovery
             return;
         }
 
-        if ($class->getAttribute(Singleton::class) !== null) {
-            $this->discoverAsSingleton($class);
-        } else {
-            $this->discoverAsDefinition($class);
+        $this->discoveryItems->add($location, [$class, $autowire]);
+    }
+
+    public function apply(): void
+    {
+        foreach ($this->discoveryItems as [$class, $autowire]) {
+            if ($autowire !== null) {
+                $this->discoverAsSingleton($class);
+            } else {
+                $this->discoverAsDefinition($class);
+            }
         }
     }
 
     private function discoverAsSingleton(ClassReflector $class): void
     {
         $interfaces = $class->getReflection()->getInterfaceNames();
-        foreach ($interfaces as $interface) {
-            // No need to track this autowire definition as it will be cached as a singleton
 
+        foreach ($interfaces as $interface) {
             $this->container->singleton(
                 $interface,
-                static fn (Container $container) => $container->get($class->getName())
+                static fn (Container $container) => $container->get($class->getName()),
             );
         }
     }
@@ -53,27 +58,12 @@ final class AutowireDiscovery implements Discovery
     private function discoverAsDefinition(ClassReflector $class): void
     {
         $interfaces = $class->getReflection()->getInterfaceNames();
-        foreach ($interfaces as $interface) {
-            $this->trackedAutowireDefinitions[$interface] = $class->getName();
 
+        foreach ($interfaces as $interface) {
             $this->container->register(
                 $interface,
-                static fn (Container $container) => $container->get($class->getName())
+                static fn (Container $container) => $container->get($class->getName()),
             );
-        }
-    }
-
-    public function createCachePayload(): string
-    {
-        return serialize($this->trackedAutowireDefinitions);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $this->trackedAutowireDefinitions = unserialize($payload, ['allowed_classes' => false]);
-
-        foreach ($this->trackedAutowireDefinitions as $interface => $className) {
-            $this->container->register($interface, static fn (Container $container) => $container->get($className));
         }
     }
 }

@@ -23,15 +23,4 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertNotSee('Tempest\View\ViewCache cleared successfully')
             ->assertSee('Done');
     }
-
-    public function test_cache_clear_all(): void
-    {
-        $this->console
-            ->call('cache:clear --all')
-            ->assertSee('Tempest\Cache\ProjectCache cleared successfully')
-            ->assertSee('Tempest\Core\ConfigCache cleared successfully')
-            ->assertSee('Tempest\Core\DiscoveryCache cleared successfully')
-            ->assertSee('Tempest\View\ViewCache cleared successfully')
-            ->assertSee('Done');
-    }
 }

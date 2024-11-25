@@ -4,24 +4,25 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use function Tempest\path;
 use function Tempest\Support\arr;
-use Tempest\Support\PathHelper;
 
 final class Composer
 {
     /** @var array<ComposerNamespace> */
     public array $namespaces;
 
-    public ?ComposerNamespace $mainNamespace;
+    public ?ComposerNamespace $mainNamespace = null;
 
-    public array $composer;
+    private string $composerPath;
+
+    private array $composer;
 
     public function __construct(
-        string $root,
+        private string $root,
     ) {
-        $composerFilePath = PathHelper::make($root, 'composer.json');
-
-        $this->composer = $this->loadComposerFile($composerFilePath);
+        $this->composerPath = path($this->root, 'composer.json')->toString();
+        $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
             ->get('autoload.psr-4', default: arr())
             ->map(fn (string $path, string $namespace) => new ComposerNamespace($namespace, $path))
@@ -39,15 +40,27 @@ final class Composer
         if (! isset($this->mainNamespace) && count($this->namespaces)) {
             $this->mainNamespace = $this->namespaces[0];
         }
-
-        if (! isset($this->mainNamespace)) {
-            throw new KernelException("Tempest requires at least one PSR-4 namespace to be defined in composer.json.");
-        }
     }
 
     public function setMainNamespace(ComposerNamespace $namespace): self
     {
         $this->mainNamespace = $namespace;
+
+        return $this;
+    }
+
+    public function addNamespace(string $namespace, string $path): self
+    {
+        $path = str_replace($this->root, '.', $path);
+
+        $this->composer['autoload']['psr-4'][$namespace] = $path;
+
+        return $this;
+    }
+
+    public function save(): self
+    {
+        file_put_contents($this->composerPath, json_encode($this->composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         return $this;
     }

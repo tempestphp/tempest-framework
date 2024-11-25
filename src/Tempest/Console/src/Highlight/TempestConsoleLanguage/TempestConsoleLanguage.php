@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Highlight\TempestConsoleLanguage;
 
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\CommentInjection;
+use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\DynamicInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\EmphasizeInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\ErrorInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\H1Injection;
@@ -39,6 +40,7 @@ final readonly class TempestConsoleLanguage implements Language
             new H1Injection(),
             new H2Injection(),
             new SuccessInjection(),
+            new DynamicInjection(),
         ];
     }
 

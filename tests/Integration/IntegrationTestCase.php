@@ -22,7 +22,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->kernel = new Kernel(
+        $this->kernel = Kernel::boot(
             root: getcwd(),
             discoveryLocations: [
                 new DiscoveryLocation(

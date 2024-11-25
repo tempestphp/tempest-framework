@@ -243,6 +243,13 @@ final class ConsoleTester
         return $this;
     }
 
+    public function assertJson(): self
+    {
+        Assert::assertJson($this->output->asUnformattedString());
+
+        return $this;
+    }
+
     public function assertExitCode(ExitCode $exitCode): self
     {
         Assert::assertNotNull($this->exitCode, "Expected {$exitCode->name}, but instead no exit code was set — maybe you missed providing some input?");

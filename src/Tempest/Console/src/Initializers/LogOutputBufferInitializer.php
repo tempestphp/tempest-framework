@@ -10,7 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\Kernel;
-use Tempest\Support\PathHelper;
+use function Tempest\path;
 
 final readonly class LogOutputBufferInitializer implements Initializer
 {
@@ -20,7 +20,7 @@ final readonly class LogOutputBufferInitializer implements Initializer
         $consoleConfig = $container->get(ConsoleConfig::class);
         $kernel = $container->get(Kernel::class);
 
-        $path = $consoleConfig->logPath ?? PathHelper::make($kernel->root, 'console.log');
+        $path = $consoleConfig->logPath ?? path($kernel->root, 'console.log')->toString();
 
         return new LogOutputBuffer($path);
     }

@@ -6,6 +6,8 @@ namespace Tempest\Generation\Tests;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes;
+use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
 use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
 use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
@@ -158,6 +160,22 @@ final class ClassManipulatorTest extends TestCase
         $class->setNamespace('App\\Controllers');
         $class->setClassName('WelcomeController');
         $class->manipulate(fn (StringHelper $string) => $string->replace('welcome', 'home'));
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function simplifies_traits_from_another_namespace(): void
+    {
+        $class = new ClassManipulator(ClassWithTraitInAnotherNamespace::class);
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function simplifies_method_parameter_attributes(): void
+    {
+        $class = new ClassManipulator(ClassWithMethodParameterAttributes::class);
 
         $this->assertMatchesSnapshot($class->print());
     }

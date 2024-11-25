@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Http\Route;
 use Tempest\Http\RouteConfig;
+use Tempest\Http\Routing\Matching\MatchingRegex;
 
 /**
  * @internal
@@ -24,7 +25,7 @@ final class RouteConfigTest extends TestCase
                 'POST' => ['b' => new Route('/', Method::POST)],
             ],
             [
-                'POST' => '#^(?|/([^/]++)(?|/1\/?$(*MARK:b)|/3\/?$(*MARK:d)))#',
+                'POST' => new MatchingRegex(['#^(?|/([^/]++)(?|/1\/?$(*MARK:b)|/3\/?$(*MARK:d)))#']),
             ]
         );
 

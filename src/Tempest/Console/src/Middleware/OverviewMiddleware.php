@@ -22,7 +22,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     ) {
     }
 
-    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode
+    public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
         if (! $invocation->argumentBag->getCommandName()) {
             $this->renderOverview(showHidden: $invocation->argumentBag->has('--all', '-a'));
@@ -36,11 +36,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     private function renderOverview(bool $showHidden = false): void
     {
         $this->console
-            ->writeln("<h1>{$this->consoleConfig->name}</h1>")
-            ->when(
-                expression: $this->discoveryCache->isEnabled(),
-                callback: fn (Console $console) => $console->error('Discovery cache is enabled!')
-            );
+            ->writeln("<h1>{$this->consoleConfig->name}</h1>");
 
         /** @var \Tempest\Console\ConsoleCommand[][] $commands */
         $commands = [];
@@ -68,5 +64,11 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
                 (new RenderConsoleCommand($this->console))($consoleCommand);
             }
         }
+
+        $this->console
+            ->when(
+                expression: ! $this->discoveryCache->isValid(),
+                callback: fn (Console $console) => $console->writeln(PHP_EOL . '<error>Discovery cache invalid. Run discovery:generate to enable discovery caching.</error>')
+            );
     }
 }

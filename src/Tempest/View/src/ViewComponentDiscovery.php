@@ -4,35 +4,35 @@ declare(strict_types=1);
 
 namespace Tempest\View;
 
-use Tempest\Container\Container;
 use Tempest\Core\DiscoversPath;
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
-final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
+final class ViewComponentDiscovery implements Discovery, DiscoversPath
 {
-    use HandlesDiscoveryCache;
+    use IsDiscovery;
 
     public function __construct(
-        private ViewConfig $viewConfig,
+        private readonly ViewConfig $viewConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         if (! $class->implements(ViewComponent::class)) {
             return;
         }
 
-        $this->viewConfig->addViewComponent(
-            name: forward_static_call($class->getName() . '::getName'),
-            viewComponent: $class,
-        );
+        $this->discoveryItems->add($location, [
+            forward_static_call($class->getName() . '::getName'),
+            $class->getName(),
+        ]);
     }
 
-    public function discoverPath(string $path): void
+    public function discoverPath(DiscoveryLocation $location, string $path): void
     {
         if (! str_ends_with($path, '.view.php')) {
             return;
@@ -58,26 +58,27 @@ final readonly class ViewComponentDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        $this->viewConfig->addViewComponent(
-            name: $matches['name'],
-            viewComponent: new AnonymousViewComponent(
+        $this->discoveryItems->add($location, [
+            $matches['name'],
+            new AnonymousViewComponent(
                 contents: $matches['header'] . $matches['view'],
                 file: $path,
             ),
-        );
+        ]);
+
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->viewConfig->viewComponents);
-    }
+        foreach ($this->discoveryItems as [$name, $viewComponent]) {
+            if (is_string($viewComponent)) {
+                $viewComponent = new ClassReflector($viewComponent);
+            }
 
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $handlers = unserialize($payload, ['allowed_classes' => [
-            AnonymousViewComponent::class,
-        ]]);
-
-        $this->viewConfig->viewComponents = $handlers;
+            $this->viewConfig->addViewComponent(
+                name: $name,
+                viewComponent: $viewComponent,
+            );
+        }
     }
 }

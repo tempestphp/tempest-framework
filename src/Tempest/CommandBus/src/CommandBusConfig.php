@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus;
 
+use Tempest\CommandBus\AsyncCommandRepositories\FileCommandRepository;
 use Tempest\Reflection\MethodReflector;
 
 final class CommandBusConfig
@@ -14,6 +15,9 @@ final class CommandBusConfig
 
         /** @var array<array-key, class-string<\Tempest\CommandBus\CommandBusMiddleware>> */
         public array $middleware = [],
+
+        /** @var class-string<\Tempest\CommandBus\CommandRepository> $commandRepositoryClass */
+        public string $commandRepositoryClass = FileCommandRepository::class,
     ) {
     }
 

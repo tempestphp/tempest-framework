@@ -55,9 +55,11 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 
     public function clear(): bool
     {
-        if (is_dir($this->directory)) {
+        $path = path($this->directory);
+
+        if ($path->isDirectory()) {
             /** @phpstan-ignore-next-line  */
-            arr(glob(path($this->directory, '/*.php')))->each(fn (string $file) => unlink($file));
+            $path->glob('/*.php')->each(fn (string $file) => unlink($file));
 
             rmdir($this->directory);
         }
@@ -108,6 +110,6 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
     {
         $key = is_string($key) ? $key : $key->getKey();
 
-        return path($this->directory, "/{$key}.php");
+        return path($this->directory, "/{$key}.php")->toString();
     }
 }

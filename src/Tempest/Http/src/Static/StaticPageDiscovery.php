@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Static;
 
-use Tempest\Container\Container;
 use Tempest\Core\Discovery;
-use Tempest\Core\HandlesDiscoveryCache;
+use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\IsDiscovery;
 use Tempest\Http\StaticPage;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class StaticPageDiscovery implements Discovery
+final class StaticPageDiscovery implements Discovery
 {
-    use HandlesDiscoveryCache;
+    use IsDiscovery;
 
     public function __construct(
-        private StaticPageConfig $staticPageConfig,
+        private readonly StaticPageConfig $staticPageConfig,
     ) {
     }
 
-    public function discover(ClassReflector $class): void
+    public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
             $staticPage = $method->getAttribute(StaticPage::class);
@@ -28,17 +28,14 @@ final readonly class StaticPageDiscovery implements Discovery
                 continue;
             }
 
-            $this->staticPageConfig->addHandler($staticPage, $method);
+            $this->discoveryItems->add($location, [$staticPage, $method]);
         }
     }
 
-    public function createCachePayload(): string
+    public function apply(): void
     {
-        return serialize($this->staticPageConfig->staticPages);
-    }
-
-    public function restoreCachePayload(Container $container, string $payload): void
-    {
-        $this->staticPageConfig->staticPages = unserialize($payload);
+        foreach ($this->discoveryItems as [$staticPage, $method]) {
+            $this->staticPageConfig->addHandler($staticPage, $method);
+        }
     }
 }

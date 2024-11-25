@@ -14,7 +14,7 @@ use function Tempest\env;
 use Tempest\Http\Session\Session;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use Tempest\Support\PathHelper;
+use function Tempest\path;
 use Throwable;
 
 #[Singleton]
@@ -35,9 +35,16 @@ final readonly class HttpApplication implements Application
 
         // Application-specific setup
         $logConfig = $container->get(LogConfig::class);
-        $logConfig->debugLogPath = PathHelper::make($container->get(Kernel::class)->root, '/log/debug.log');
-        $logConfig->serverLogPath = env('SERVER_LOG');
-        $logConfig->channels[] = new AppendLogChannel(PathHelper::make($root, '/log/tempest.log'));
+
+        if (
+            $logConfig->debugLogPath === null
+            && $logConfig->serverLogPath === null
+            && $logConfig->channels === []
+        ) {
+            $logConfig->debugLogPath = path($container->get(Kernel::class)->root, '/log/debug.log')->toString();
+            $logConfig->serverLogPath = env('SERVER_LOG');
+            $logConfig->channels[] = new AppendLogChannel(path($root, '/log/tempest.log')->toString());
+        }
 
         return $application;
     }
