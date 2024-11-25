@@ -59,6 +59,6 @@ final readonly class InstallCommand
             );
         }
 
-        return $installers->first(fn (Installer $installer) => $installer::class === $search);
+        return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->getName() === $search);
     }
 }

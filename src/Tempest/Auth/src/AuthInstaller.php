@@ -14,7 +14,7 @@ final class AuthInstaller implements Installer
 
     public function getName(): string
     {
-        return 'Authentication scaffolding';
+        return 'auth';
     }
 
     public function install(): void

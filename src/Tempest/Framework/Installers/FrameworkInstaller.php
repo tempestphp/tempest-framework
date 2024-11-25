@@ -15,7 +15,7 @@ final class FrameworkInstaller implements Installer
 
     public function getName(): string
     {
-        return 'Framework basic setup';
+        return 'framework';
     }
 
     public function install(): void
