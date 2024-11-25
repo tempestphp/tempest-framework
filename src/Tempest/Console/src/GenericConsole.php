@@ -31,8 +31,6 @@ final class GenericConsole implements Console
 
     private bool $isForced = false;
 
-    private bool $supportsTty = true;
-
     private bool $supportsPrompting = true;
 
     private ?InteractiveComponentRenderer $componentRenderer = null;
@@ -62,13 +60,6 @@ final class GenericConsole implements Console
     public function setForced(): self
     {
         $this->isForced = true;
-
-        return $this;
-    }
-
-    public function disableTty(): self
-    {
-        $this->supportsTty = false;
 
         return $this;
     }
@@ -182,7 +173,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->supportsTty()) {
+        if ($this->componentRenderer) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -262,23 +253,6 @@ final class GenericConsole implements Console
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
     {
         return $this->component(new SearchComponent($label, $search, $multiple, $default));
-    }
-
-    public function supportsTty(): bool
-    {
-        if ($this->supportsTty === false) {
-            return false;
-        }
-
-        if ($this->componentRenderer === null) {
-            return false;
-        }
-
-        if (! $this->supportsPrompting()) {
-            return false;
-        }
-
-        return (bool) shell_exec('which tput && which stty');
     }
 
     public function supportsPrompting(): bool

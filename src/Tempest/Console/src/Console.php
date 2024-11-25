@@ -76,11 +76,7 @@ interface Console
 
     public function withLabel(string $label): self;
 
-    public function supportsTty(): bool;
-
     public function supportsPrompting(): bool;
-
-    public function disableTty(): self;
 
     public function disablePrompting(): self;
 }

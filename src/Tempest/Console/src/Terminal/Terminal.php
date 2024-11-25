@@ -7,6 +7,7 @@ namespace Tempest\Console\Terminal;
 use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
+use Tempest\Console\GenericCursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
@@ -26,17 +27,27 @@ final class Terminal
 
     private ?string $tty = null;
 
+    private bool $supportsTty = true;
+
     public function __construct(
         private readonly Console $console,
     ) {
         $this->switchToInteractiveMode();
         $this->updateActualSize();
-        $this->initialCursor = new TerminalCursor($this->console, $this);
+
+        $this->initialCursor = $this->supportsTty()
+            ? new TerminalCursor($this->console, $this)
+            : new GenericCursor();
+
         $this->cursor = clone $this->initialCursor;
     }
 
     public function switchToInteractiveMode(): self
     {
+        if (! $this->supportsTty()) {
+            return $this;
+        }
+
         $this->tty = exec('stty -g');
         system("stty -echo");
         system("stty -icanon");
@@ -47,6 +58,10 @@ final class Terminal
 
     public function switchToNormalMode(): self
     {
+        if (! $this->supportsTty()) {
+            return $this;
+        }
+
         $this->cursor->show();
 
         if ($this->tty) {
@@ -115,6 +130,22 @@ final class Terminal
         return $rendered->getReturn();
     }
 
+    public function disableTty(): self
+    {
+        $this->supportsTty = false;
+
+        return $this;
+    }
+
+    public function supportsTty(): bool
+    {
+        if ($this->supportsTty === false) {
+            return false;
+        }
+
+        return (bool) shell_exec('which tput && which stty');
+    }
+
     private function clear(): self
     {
         $this->cursor
@@ -180,8 +211,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = (int) exec('tput cols') ?? 80;
-        $this->height = (int) exec('tput lines') ?? 25;
+        $this->width = $this->supportsTty() ? (int) exec('tput cols') : 80;
+        $this->height = $this->supportsTty() ? (int) exec('tput lines') : 25;
 
         return $this;
     }
