@@ -23,6 +23,7 @@ final class HttpProductionErrorHandler implements ErrorHandler
         if (
             $errNo === E_USER_WARNING
             || $errNo === E_DEPRECATED
+            || $errNo === E_WARNING
         ) {
             return;
         }
