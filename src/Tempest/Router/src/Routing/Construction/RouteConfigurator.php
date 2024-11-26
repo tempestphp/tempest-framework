@@ -17,10 +17,8 @@ final class RouteConfigurator
     /** @var string The mark to give the next route in the matching Regex */
     private string $regexMark = 'a';
 
-    /** @var Route */
     private array $staticRoutes = [];
 
-    /** @var Route */
     private array $dynamicRoutes = [];
 
     private bool $isDirty = false;
