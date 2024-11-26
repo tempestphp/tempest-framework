@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Static;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Console\Middleware\CautionMiddleware;
@@ -19,7 +19,6 @@ final readonly class StaticCleanCommand
     use HasConsole;
 
     public function __construct(
-        private Console $console,
         private Kernel $kernel,
     ) {
     }
@@ -30,10 +29,20 @@ final readonly class StaticCleanCommand
     )]
     public function __invoke(): void
     {
+
+        $directoryIterator = new RecursiveDirectoryIterator($this->kernel->root.'/public');
+        $directoryIterator->setFlags(FilesystemIterator::SKIP_DOTS);
+
+        $this->removeFiles($directoryIterator);
+        $this->removeEmptyDirectories($directoryIterator);
+
+        $this->success('Done');
+    }
+
+    private function removeFiles(RecursiveDirectoryIterator $directoryIterator): void
+    {
         /** @var SplFileInfo[] $files */
         $files = [];
-
-        $directoryIterator = new RecursiveDirectoryIterator($this->kernel->root . '/public');
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator($directoryIterator) as $file) {
@@ -49,7 +58,25 @@ final readonly class StaticCleanCommand
 
             $this->writeln("- <u>{$pathName}</u> removed");
         }
+    }
 
-        $this->success('Done');
+    private function removeEmptyDirectories(RecursiveDirectoryIterator $directoryIterator): void
+    {
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+            if (! $file->isDir()) {
+                continue;
+            }
+
+            if (count(glob($file->getPathname().'/*')) > 0) {
+                continue;
+            }
+
+            rmdir($file->getPathname());
+
+            $pathName = str_replace('\\', '/', $file->getPathname());
+
+            $this->writeln("- <u>{$pathName}</u> directory removed");
+        }
     }
 }
