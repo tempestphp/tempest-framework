@@ -40,7 +40,7 @@ jobs:
           - ubuntu-latest
         package: ${{ fromJson(needs.get_packages.outputs.matrix) }}
         php:
-          - 8.3
+          - 8.4
         stability:
           - prefer-stable
           - prefer-lowest
