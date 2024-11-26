@@ -261,7 +261,7 @@ final class TextBuffer
         }
 
         // If the cursor is beyond the last line, set the x position to the length of the last line.
-        $xPosition = $lines->last()?->length() ?? 0;
+        $xPosition = str($lines->last())->length() ?? 0;
 
         return new Point($xPosition, $yPosition);
     }
