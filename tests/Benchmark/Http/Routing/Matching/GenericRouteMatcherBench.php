@@ -10,10 +10,10 @@ use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
-use Tempest\Http\Route;
-use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\RouteConfigurator;
-use Tempest\Http\Routing\Matching\GenericRouteMatcher;
+use Tempest\Router\Route;
+use Tempest\Router\RouteConfig;
+use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Routing\Matching\GenericRouteMatcher;
 
 final class GenericRouteMatcherBench
 {

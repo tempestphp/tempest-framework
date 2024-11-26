@@ -8,11 +8,11 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
-use Tempest\Http\Router;
 use function Tempest\map;
+use Tempest\Router\Mappers\RequestToPsrRequestMapper;
+use Tempest\Router\Router;
 
 final class HttpRouterTester
 {

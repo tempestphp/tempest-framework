@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Form;
 
-use Tempest\Http\Get;
-use Tempest\Http\Post;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
+use Tempest\Router\Get;
+use Tempest\Router\Post;
 use function Tempest\view;
 use Tempest\View\View;
 

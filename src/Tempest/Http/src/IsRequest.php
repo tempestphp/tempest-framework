@@ -16,7 +16,7 @@ trait IsRequest
 
     public array $query;
 
-    /** @var \Tempest\Http\Upload[] */
+    /** @var \Tempest\Router\Upload[] */
     public array $files;
 
     public function __construct(
@@ -73,7 +73,7 @@ trait IsRequest
         return $this->query;
     }
 
-    /** @return \Tempest\Http\Upload[] */
+    /** @return \Tempest\Router\Upload[] */
     public function getFiles(): array
     {
         return $this->files;

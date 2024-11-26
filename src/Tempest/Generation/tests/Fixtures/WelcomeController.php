@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests\Fixtures;
 
-use Tempest\Http\Get;
+use Tempest\Router\Get;
 use function Tempest\view;
 use Tempest\View\View;
 

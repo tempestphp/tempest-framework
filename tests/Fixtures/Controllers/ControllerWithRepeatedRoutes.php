@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\Get;
 use Tempest\Http\Method;
-use Tempest\Http\Post;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
-use Tempest\Http\Route;
+use Tempest\Router\Get;
+use Tempest\Router\Post;
+use Tempest\Router\Route;
 
 final readonly class ControllerWithRepeatedRoutes
 {

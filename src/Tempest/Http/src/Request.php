@@ -32,7 +32,7 @@ interface Request
 
     public function getCookie(string $name): ?Cookie;
 
-    /** @return \Tempest\Http\Upload[] */
+    /** @return \Tempest\Router\Upload[] */
     public function getFiles(): array;
 
     /** @return Cookie[] */

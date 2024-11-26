@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use Laminas\Diactoros\UploadedFile;
 use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\PsrRequestToRequestMapper;
 use Tempest\Http\Request;
-use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Router\Mappers\PsrRequestToRequestMapper;
+use Tempest\Router\Upload;
 use function Tempest\Support\arr;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;

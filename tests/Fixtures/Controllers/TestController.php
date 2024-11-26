@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\Get;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Created;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Responses\ServerError;
+use Tempest\Router\Get;
 use function Tempest\view;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
