@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "ext-pdo": "*",
         "tempest/container": "dev-main",
         "tempest/event-bus": "dev-main",

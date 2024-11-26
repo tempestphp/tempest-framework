@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
         "tempest/support": "dev-main"
