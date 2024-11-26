@@ -525,7 +525,7 @@ final readonly class StringHelper implements Stringable
      * str('Scott')->wrap(before: 'Leon ', after: ' Kennedy'); // Leon Scott Kennedy
      * ```
      */
-    public function wrap(string|Stringable $before, string|Stringable $after = null): self
+    public function wrap(string|Stringable $before, string|Stringable|null $after = null): self
     {
         return new self($before . $this->string . ($after ??= $before));
     }
@@ -539,7 +539,7 @@ final readonly class StringHelper implements Stringable
      *  str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false); // Scott
      * ```
      */
-    public function unwrap(string|Stringable $before, string|Stringable $after = null, bool $strict = true): self
+    public function unwrap(string|Stringable $before, string|Stringable|null $after = null, bool $strict = true): self
     {
         $string = $this->string;
 
