@@ -48,7 +48,7 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
         foreach ($consoleCommand->getArgumentDefinitions() as $argumentDefinition) {
             $this->console
                 ->writeln()
-                ->write("<style=\"fg-white underline\">{$argumentDefinition->name}</style>")
+                ->write("<style=\"underline\">{$argumentDefinition->name}</style>")
                 ->when($argumentDefinition->aliases !== [], fn (Console $console) => $console->write(' (' . implode(', ', $argumentDefinition->aliases) . ')'))
                 ->when($argumentDefinition->description, fn (Console $console) => $console->writeln()->writeln($argumentDefinition->description))
                 ->when($argumentDefinition->help, fn (Console $console) => $console->writeln()->writeln('<style="fg-gray">' . $argumentDefinition->help . '</style>'));

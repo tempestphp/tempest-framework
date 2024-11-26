@@ -62,13 +62,13 @@ final class ChoiceRenderer
                     if (! $this->multiple) {
                         $this->line(
                             $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
-                            $this->style($options->isSelected($option) ? 'fg-green bold' : 'fg-white', $option->value),
+                            $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
                         );
                     } else {
                         $this->line(
                             $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
                             $options->isSelected($option) ? $this->style('fg-green', '✔︎ ') : $this->style('fg-gray', '⋅ '),
-                            $this->style($options->isSelected($option) ? 'fg-green bold' : 'fg-white', $option->value),
+                            $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->value),
                         );
                     }
 

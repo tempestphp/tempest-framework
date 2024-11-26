@@ -32,7 +32,7 @@ final readonly class RenderConsoleCommand
 
         if ($this->renderDescription) {
             if ($consoleCommand->description !== null && $consoleCommand->description !== '') {
-                $parts[] = "<style=\"fg-white\">{$consoleCommand->description}</style>";
+                $parts[] = $consoleCommand->description;
             }
         }
 
