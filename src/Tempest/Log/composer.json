@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "monolog/monolog": "^3.7.0",
         "psr/log": "^3.0.0",
         "tempest/container": "dev-main"

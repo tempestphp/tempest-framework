@@ -2,7 +2,7 @@
     "name": "tempest/auth",
     "description": "A flexible authentication package for Tempest, providing user authentication and authorization.",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "tempest/core": "dev-main",
         "tempest/http": "dev-main",
         "tempest/database": "dev-main"
