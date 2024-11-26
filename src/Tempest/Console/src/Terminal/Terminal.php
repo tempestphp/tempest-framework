@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Terminal;
 
+use const DIRECTORY_SEPARATOR;
+use function function_exists;
 use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
@@ -143,7 +145,11 @@ final class Terminal
             return false;
         }
 
-        return (bool) shell_exec('which tput && which stty');
+        if (! function_exists('shell_exec')) {
+            return false;
+        }
+
+        return (bool) shell_exec('stty 2> '.('\\' === DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
     }
 
     private function clear(): self
