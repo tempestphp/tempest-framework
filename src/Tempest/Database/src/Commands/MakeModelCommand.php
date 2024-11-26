@@ -32,7 +32,6 @@ final class MakeModelCommand
         $shouldOverride = $this->askForOverride($targetPath);
 
         try {
-
             $this->stubFileGenerator->generateClassFile(
                 stubFile: StubFile::from(DatabaseModelStub::class),
                 targetPath: $targetPath,
