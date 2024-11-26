@@ -18,9 +18,6 @@
         "symfony/var-exporter": "^7.1",
         "symfony/uid": "^7.1"
     },
-    "files": [
-        "src/functions.php"
-    ],
     "autoload": {
         "files": [
             "src/functions.php"
