@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Session\Resolvers\HeaderSessionIdResolver;
@@ -34,9 +33,8 @@ final class SessionFromHeaderTest extends FrameworkIntegrationTestCase
 
     private function setSessionId(string $id): void
     {
-        $request = new GenericRequest(Method::GET, '/', [], [Session::ID => $id]);
+        $request = new Request(Method::GET, '/', [], [Session::ID => $id]);
 
         $this->container->singleton(Request::class, fn () => $request);
-        $this->container->singleton(GenericRequest::class, fn () => $request);
     }
 }

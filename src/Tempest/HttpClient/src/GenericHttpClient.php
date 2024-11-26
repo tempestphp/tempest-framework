@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient;
 
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Response;
@@ -99,7 +98,7 @@ final class GenericHttpClient implements HttpClient
 
     private function send(Method $method, string $uri, array $headers = [], ?string $body = null): Response
     {
-        $request = new GenericRequest(
+        $request = new Request(
             method: $method,
             uri: $uri,
             // TODO: This bit is dumb, but we need to refactor

@@ -7,8 +7,8 @@ namespace Tempest\HttpClient\Tests;
 use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
@@ -26,7 +26,7 @@ final class GenericHttpClientTest extends TestCase
 
     public function test_send_request_proxies_to_http_client(): void
     {
-        $request = new GenericRequest(method: Method::PUT, uri: '/testing-put', body: []);
+        $request = new Request(method: Method::PUT, uri: '/testing-put', body: []);
 
         $this->client->sendRequest($request);
 

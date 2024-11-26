@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http\Responses;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
@@ -23,7 +23,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
     public function test_invalid_with_psr_request(): void
     {
         /** @var PsrRequest $request */
-        $request = map(new GenericRequest(Method::GET, '/original', ['foo' => 'bar']))->with(RequestToPsrRequestMapper::class);
+        $request = map(new Request(Method::GET, '/original', ['foo' => 'bar']))->with(RequestToPsrRequestMapper::class);
         $request = $request->withHeader('Referer', '/original');
 
         $response = new Invalid(
@@ -46,7 +46,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_with_request(): void
     {
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/original',
             body: ['foo' => 'bar'],

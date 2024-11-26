@@ -54,7 +54,7 @@ abstract class IntegrationTest extends TestCase
         $this->http = $this->container->get(HttpRouterTester::class);
         $this->installer = $this->container->get(InstallerTester::class);
 
-        $request = new GenericRequest(Method::GET, '/', []);
+        $request = new Request(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton(GenericRequest::class, fn () => $request);
     }

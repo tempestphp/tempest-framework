@@ -7,7 +7,6 @@ namespace Tempest\Framework\Testing\Http;
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
@@ -23,7 +22,7 @@ final class HttpRouterTester
     public function get(string $uri, array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
-            new GenericRequest(
+            new Request(
                 method: Method::GET,
                 uri: $uri,
                 body: [],
@@ -35,7 +34,7 @@ final class HttpRouterTester
     public function post(string $uri, array $body = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
-            new GenericRequest(
+            new Request(
                 method: Method::POST,
                 uri: $uri,
                 body: $body,

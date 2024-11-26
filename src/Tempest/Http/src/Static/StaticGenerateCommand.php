@@ -10,8 +10,8 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
 use Tempest\Http\DataProvider;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
 use function Tempest\path;
@@ -60,7 +60,7 @@ final readonly class StaticGenerateCommand
 
                 try {
                     $response = $this->router->dispatch(
-                        new GenericRequest(
+                        new Request(
                             method: Method::GET,
                             uri: $uri,
                         ),
