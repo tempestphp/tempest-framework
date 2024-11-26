@@ -73,4 +73,36 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml"
+        run: phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml" --coverage-clover build/reports/clover.xml
+
+      # Only upload coverage once
+      - if: matrix.php == '8.4' && matrix.os == 'ubuntu-latest' && matrix.stability == 'prefer-stable'
+        name: Upload coverage results to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/reports/clover.xml
+          flag-name: "Unit-${{ matrix.package.name }}"
+
+  finish:
+    needs:
+      - get_packages
+      - phpunit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Package Flags
+        id: get-package-flags
+        run: |
+          packages=$(echo '${{ needs.get_packages.outputs.matrix }}' | jq -r '.[].name')
+
+          # Prepend "Unit-" to each .name value and join with commas
+          result=$(for package in $packages; do echo -n "Unit-$package,"; done | sed 's/,$//')
+
+          echo "Result: $result"
+          
+          echo "packages=$result" >> $GITHUB_OUTPUT
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
+          carryforward: ${{ steps.get-package-flags.outputs.packages }}
