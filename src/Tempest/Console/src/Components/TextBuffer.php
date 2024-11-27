@@ -21,7 +21,7 @@ final class TextBuffer
 
     public function setText(?string $text): void
     {
-        $this->text = $text ?? '';
+        $this->text = str_replace("\r\n", "\n", $text ?? '');
         $this->cursor = mb_strlen($this->text);
     }
 
@@ -32,7 +32,7 @@ final class TextBuffer
         }
 
         $this->text = str($this->text)
-            ->insertAt($this->cursor, $key)
+            ->insertAt($this->cursor, str_replace("\r\n", "\n", $key))
             ->toString();
 
         $this->moveCursorX(mb_strlen($key));
