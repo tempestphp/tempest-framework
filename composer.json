@@ -16,7 +16,6 @@
         "giggsey/libphonenumber-for-php": "^8.13.40",
         "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3",
-        "masterminds/html5": "^2.9",
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
