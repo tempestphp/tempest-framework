@@ -37,7 +37,7 @@ final class ChoiceRenderer
             $this->line(
                 $this->multiple
                     ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'
-                    : $options->getActive()->value
+                    : $options->getActive()?->value
             )->newLine();
         } elseif ($state === State::CANCELLED) {
             if ($query->text ?: $this->default) {

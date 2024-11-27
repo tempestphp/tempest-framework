@@ -121,6 +121,34 @@ final class SearchComponentTest extends FrameworkIntegrationTestCase
         });
     }
 
+    public function test_no_value_returns_null(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: false);
+
+            $this->assertStringContainsString('Enter a name', $component->render($terminal));
+            $component->input('_');
+            $component->input('_');
+
+            $this->assertNull($component->enter());
+        });
+    }
+
+    public function test_multiple_no_value_returns_default(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $component = new SearchComponent(label: 'Enter a name', search: $this->search(...), multiple: true, default: 'Bill');
+
+            $this->assertStringContainsString('Enter a name', $component->render($terminal));
+            $component->input('_');
+            $component->input('_');
+
+            $this->assertSame(['Bill'], $component->enter());
+        });
+    }
+
     public function search(string $query): array
     {
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
