@@ -51,7 +51,7 @@ final class ElementFactory
             );
         }
 
-        $tagName = strtolower($node->tagName);
+        $tagName = $node->tagName ? strtolower($node->tagName) : null;
 
         $attributes = [];
 
@@ -66,12 +66,13 @@ final class ElementFactory
             || $tagName === 'pre'
             || $tagName === 'code') {
             $content = '';
+
             foreach ($node->childNodes as $child) {
                 $content .= $node->ownerDocument->saveHTML($child);
             }
 
             return new RawElement(
-                tag: $tagName ?? null,
+                tag: $tagName,
                 content: $content,
                 attributes: $attributes,
             );

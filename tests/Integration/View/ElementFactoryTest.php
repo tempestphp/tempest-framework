@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Masterminds\HTML5;
+use const Dom\HTML_NO_DEFAULT_NS;
+use Dom\HTMLDocument;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
@@ -17,20 +18,20 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_parental_relations(): void
     {
+        // See https://github.com/php/php-src/issues/16960
         $contents = <<<'HTML'
         <a>
             <b>
                 <c>
                     Hello
                 </c>
-                <d />
-                <e />
+                <d></d>
+                <e></e>
             </b>    
         </a>
         HTML;
 
-        $html5 = new HTML5();
-        $dom = $html5->loadHTML("<div id='tempest_render'>{$contents}</div>");
+        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$contents}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 
         $elementFactory = $this->container->get(ElementFactory::class);
 
