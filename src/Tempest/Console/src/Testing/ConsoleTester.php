@@ -189,24 +189,21 @@ final class ConsoleTester
 
     public function assertSee(string $text): self
     {
-        return $this->assertContains($text, ignoreAnsi: true);
+        return $this->assertContains($text);
     }
 
     public function assertNotSee(string $text): self
     {
-        return $this->assertDoesNotContain($text, ignoreAnsi: true);
+        return $this->assertDoesNotContain($text);
     }
 
-    public function assertContains(string $text, bool $ignoreLineEndings = true, bool $ignoreAnsi = false): self
+    public function assertContains(string $text, bool $ignoreLineEndings = true): self
     {
         $method = $ignoreLineEndings ? 'assertStringContainsStringIgnoringLineEndings' : 'assertStringContainsString';
-        $output = $ignoreAnsi
-            ? preg_replace('/\x1b\[[0-9;]*m/', '', $this->output->asUnformattedString())
-            : $this->output->asUnformattedString();
 
         Assert::$method(
             $text,
-            $output,
+            $this->output->asUnformattedString(),
             sprintf(
                 'Failed to assert that console output included text: %s. These lines were printed: %s',
                 $text,
@@ -217,15 +214,11 @@ final class ConsoleTester
         return $this;
     }
 
-    public function assertDoesNotContain(string $text, bool $ignoreAnsi = false): self
+    public function assertDoesNotContain(string $text): self
     {
-        $output = $ignoreAnsi
-            ? preg_replace('/\x1b\[[0-9;]*m/', '', $this->output->asUnformattedString())
-            : $this->output->asUnformattedString();
-
         Assert::assertStringNotContainsString(
             $text,
-            $output,
+            $this->output->asUnformattedString(),
             sprintf(
                 'Failed to assert that console output did not include text: %s. These lines were printed: %s',
                 $text,

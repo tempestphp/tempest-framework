@@ -27,13 +27,8 @@ final class MemoryOutputBuffer implements OutputBuffer
 
     public function getBufferWithoutFormatting(): array
     {
-        $pattern = array_map(
-            fn (TerminalStyle $consoleStyle) => TerminalStyle::ESC->value . $consoleStyle->value,
-            TerminalStyle::cases(),
-        );
-
         return array_map(
-            fn (string $line) => str_replace($pattern, '', $line),
+            fn (string $line) => preg_replace('/\x1b\[[0-9;]*m/', '', $line),
             $this->buffer,
         );
     }
