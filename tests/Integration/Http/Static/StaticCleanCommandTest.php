@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Http\Static;
+namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Core\AppConfig;
 use function Tempest\path;
@@ -29,5 +29,6 @@ final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 
         $this->assertFileDoesNotExist(path($root, '/public/static/a/b/index.html')->toString());
         $this->assertFileDoesNotExist(path($root, '/public/static/c/d/index.html')->toString());
+        $this->assertDirectoryDoesNotExist(path($root, '/public/static')->toString());
     }
 }
