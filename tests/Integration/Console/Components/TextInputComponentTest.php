@@ -60,7 +60,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
 
             $component->deletePreviousCharacter();
 
-            $this->assertSame("1\n2\n", $component->altEnter());
+            $this->assertStringEqualsStringIgnoringLineEndings("1\n2\n", $component->altEnter());
         });
     }
 
@@ -101,7 +101,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $this->assertStringContainsString('1', $component->render($terminal));
             $this->assertStringNotContainsString('6', $component->render($terminal));
 
-            $this->assertSame("1\n2\n3\n4\n5\n6", $component->altEnter());
+            $this->assertStringEqualsStringIgnoringLineEndings("1\n2\n3\n4\n5\n6", $component->altEnter());
         });
     }
 
@@ -115,7 +115,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $component->input(PHP_EOL);
 
             $this->assertNull($component->altEnter());
-            $this->assertSame('a', $component->enter());
+            $this->assertStringEqualsStringIgnoringLineEndings('a', $component->enter());
         });
     }
 
@@ -129,7 +129,7 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
             $component->input(PHP_EOL);
 
             $this->assertNull($component->enter());
-            $this->assertSame("a\n\n", $component->altEnter());
+            $this->assertStringEqualsStringIgnoringLineEndings("a\n\n", $component->altEnter());
         });
     }
 
