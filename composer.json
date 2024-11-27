@@ -152,8 +152,8 @@
             "composer merge",
             "./bin/validate-packages",
             "./tempest discovery:clear",
-            "composer csfixer",
             "composer rector",
+            "composer csfixer",
             "composer phpunit",
             "composer phpstan"
         ]
