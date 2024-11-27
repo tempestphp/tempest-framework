@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use Dom\HTMLDocument;
+use Dom\NodeList;
 use DOMNodeList;
 use Exception;
 use Masterminds\HTML5;
@@ -12,6 +14,7 @@ use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler
 {
@@ -78,7 +81,7 @@ final readonly class TempestViewCompiler
         return file_get_contents($searchPath);
     }
 
-    private function parseDom(string $template): DOMNodeList
+    private function parseDom(string $template): NodeList
     {
         $template = str_replace(
             search: array_keys(self::TOKEN_MAPPING),
@@ -86,9 +89,7 @@ final readonly class TempestViewCompiler
             subject: $template,
         );
 
-        $html5 = new HTML5();
-
-        $dom = $html5->loadHTML("<div id='tempest_render'>{$template}</div>");
+        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 
         return $dom->getElementById('tempest_render')->childNodes;
     }
@@ -96,11 +97,11 @@ final readonly class TempestViewCompiler
     /**
      * @return Element[]
      */
-    private function mapToElements(DOMNodeList $domNodeList): array
+    private function mapToElements(NodeList $nodeList): array
     {
         $elements = [];
 
-        foreach ($domNodeList as $node) {
+        foreach ($nodeList as $node) {
             $element = $this->elementFactory->make($node);
 
             if ($element === null) {
