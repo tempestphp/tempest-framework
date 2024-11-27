@@ -7,7 +7,10 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\Components\State;
 use Tempest\Console\InteractiveConsoleComponent;
 
-/** @mixin InteractiveConsoleComponent */
+/**
+ * @mixin InteractiveConsoleComponent
+ * @phpstan-require-implements InteractiveConsoleComponent
+ */
 trait HasErrors
 {
     /** @var string[] */

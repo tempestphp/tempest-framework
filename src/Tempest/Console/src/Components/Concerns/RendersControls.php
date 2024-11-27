@@ -10,7 +10,10 @@ use Tempest\Console\Terminal\Terminal;
 use function Tempest\Support\arr;
 use Tempest\Support\StringHelper;
 
-/** @mixin InteractiveConsoleComponent */
+/**
+ * @mixin InteractiveConsoleComponent
+ * @phpstan-require-implements InteractiveConsoleComponent
+ */
 trait RendersControls
 {
     public function renderFooter(Terminal $terminal): ?string

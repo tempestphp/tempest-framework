@@ -9,7 +9,10 @@ use Tempest\Console\Components\State;
 use Tempest\Console\InteractiveConsoleComponent;
 use function Tempest\env;
 
-/** @mixin InteractiveConsoleComponent */
+/**
+ * @mixin InteractiveConsoleComponent
+ * @phpstan-require-implements InteractiveConsoleComponent
+ */
 trait OpensInEditor
 {
     private function supportsOpeningInEditor(): bool

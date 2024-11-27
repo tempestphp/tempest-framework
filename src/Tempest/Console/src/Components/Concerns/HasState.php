@@ -6,8 +6,13 @@ namespace Tempest\Console\Components\Concerns;
 
 use Tempest\Console\Components\State;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 
+/**
+ * @mixin InteractiveConsoleComponent
+ * @phpstan-require-implements InteractiveConsoleComponent
+ */
 trait HasState
 {
     private State $state = State::ACTIVE;
