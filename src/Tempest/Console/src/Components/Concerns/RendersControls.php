@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Concerns;
 
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use function Tempest\Support\arr;
@@ -18,7 +18,7 @@ trait RendersControls
 {
     public function renderFooter(Terminal $terminal): ?string
     {
-        if (in_array($this->getState(), [State::CANCELLED, State::SUBMITTED, State::BLOCKED])) {
+        if (in_array($this->getState(), [ComponentState::CANCELLED, ComponentState::SUBMITTED, ComponentState::BLOCKED])) {
             return null;
         }
 

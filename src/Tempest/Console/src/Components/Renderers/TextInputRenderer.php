@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
@@ -24,7 +24,7 @@ final class TextInputRenderer
 
     public function render(
         Terminal $terminal,
-        State $state,
+        ComponentState $state,
         TextBuffer $buffer,
         ?string $label,
         ?string $placeholder = null,
@@ -55,7 +55,7 @@ final class TextInputRenderer
         foreach ($displayLines as $line) {
             $this->line($this->style(
                 style: match (true) {
-                    $this->state === State::CANCELLED => 'italic fg-gray strikethrough',
+                    $this->state === ComponentState::CANCELLED => 'italic fg-gray strikethrough',
                     empty($buffer->text) => 'fg-gray',
                     default => null,
                 },
@@ -64,7 +64,7 @@ final class TextInputRenderer
         }
 
         // fills remaining lines if less than max display lines
-        if ($state !== State::CANCELLED) {
+        if ($state !== ComponentState::CANCELLED) {
             $lines = $this->multiline ? $this->maximumLines : 1;
 
             for ($i = $displayLines->count(); $i < $lines; $i++) {

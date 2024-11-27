@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
@@ -21,7 +21,7 @@ final class ConfirmRenderer
 
     public function render(
         Terminal $terminal,
-        State $state,
+        ComponentState $state,
         bool $answer,
         ?string $label,
     ): string {
@@ -30,7 +30,7 @@ final class ConfirmRenderer
         $this->newLine(border: true);
 
         match ($this->state) {
-            State::SUBMITTED => $this->line(
+            ComponentState::SUBMITTED => $this->line(
                 $this->style($answer === true ? 'bg-green bold' : 'bg-red bold', $this->centerText($answer ? $this->yes : $this->no, width: 9)),
                 PHP_EOL
             ),

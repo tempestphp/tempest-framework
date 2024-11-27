@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Concerns;
 
 use Tempest\Console\CanOpenInEditor;
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
 use function Tempest\env;
 
@@ -32,7 +32,7 @@ trait OpensInEditor
         }
 
         $previousState = $this->getState();
-        $this->setState(State::BLOCKED);
+        $this->setState(ComponentState::BLOCKED);
 
         $editor = $this->getEditorCommand();
         $tempFile = tempnam(sys_get_temp_dir(), '.TEMPEST_INPUT');

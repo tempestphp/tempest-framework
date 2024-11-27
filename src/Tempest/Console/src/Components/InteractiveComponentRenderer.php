@@ -91,7 +91,7 @@ final class InteractiveComponentRenderer
                 continue;
             }
 
-            if ($component->getState() === State::BLOCKED) {
+            if ($component->getState() === ComponentState::BLOCKED) {
                 $this->shouldRerender = true;
 
                 continue;
@@ -108,7 +108,7 @@ final class InteractiveComponentRenderer
             // handler. When we exit, we want one last render to display pretty
             // styles, so we will throw the exception in the next loop.
             if ($handlersForKey === [] && ($key === Key::CTRL_C->value || $key === Key::CTRL_D->value)) {
-                $component->setState(State::CANCELLED);
+                $component->setState(ComponentState::CANCELLED);
                 $this->afterRenderCallbacks[] = fn () => throw new InterruptException();
                 $this->shouldRerender = true;
                 Fiber::suspend();

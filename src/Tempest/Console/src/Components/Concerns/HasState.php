@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Concerns;
 
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
@@ -15,14 +15,14 @@ use Tempest\Console\Key;
  */
 trait HasState
 {
-    private State $state = State::ACTIVE;
+    private ComponentState $state = ComponentState::ACTIVE;
 
-    public function getState(): State
+    public function getState(): ComponentState
     {
         return $this->state;
     }
 
-    public function setState(State $state): void
+    public function setState(ComponentState $state): void
     {
         $this->state = $state;
     }
@@ -30,6 +30,6 @@ trait HasState
     #[HandlesKey(Key::ENTER)]
     public function setSubmitted(): void
     {
-        $this->state = State::SUBMITTED;
+        $this->state = ComponentState::SUBMITTED;
     }
 }

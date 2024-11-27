@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
 use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Components\Renderers\ChoiceRenderer;
-use Tempest\Console\Components\State;
 use Tempest\Console\Components\Static\StaticSearchComponent;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
@@ -161,7 +161,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             return $active->value;
         }
 
-        $this->state = State::ACTIVE;
+        $this->state = ComponentState::ACTIVE;
 
         return null;
     }

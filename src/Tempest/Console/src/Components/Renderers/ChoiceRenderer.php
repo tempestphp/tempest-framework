@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\OptionCollection;
-use Tempest\Console\Components\State;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
@@ -23,7 +23,7 @@ final class ChoiceRenderer
 
     public function render(
         Terminal $terminal,
-        State $state,
+        ComponentState $state,
         ?string $label,
         TextBuffer $query,
         OptionCollection $options,
@@ -33,13 +33,13 @@ final class ChoiceRenderer
         $this->prepareRender($terminal, $state);
         $this->label($label);
 
-        if ($state === State::SUBMITTED) {
+        if ($state === ComponentState::SUBMITTED) {
             $this->line(
                 $this->multiple
                     ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'
                     : $options->getActive()?->value
             )->newLine();
-        } elseif ($state === State::CANCELLED) {
+        } elseif ($state === ComponentState::CANCELLED) {
             if ($query->text ?: $this->default) {
                 $this->line($this->style('fg-gray italic strikethrough', $query->text ?: $this->default))->newLine();
             }
@@ -52,7 +52,7 @@ final class ChoiceRenderer
             );
             $this->newLine();
 
-            if ($state === State::ACTIVE) {
+            if ($state === ComponentState::ACTIVE) {
                 $displayOptions = $options->getScrollableSection(
                     offset: $this->calculateScrollOffset($options, $this->maximumOptions, $options->getCurrentIndex()),
                     count: $this->maximumOptions,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Renderers;
 
 use Stringable;
-use Tempest\Console\Components\State;
+use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Support\StringHelper;
 
@@ -21,7 +21,7 @@ trait RendersInput
 
     private Terminal $terminal;
 
-    private State $state;
+    private ComponentState $state;
 
     private int $maxLineCharacters;
 
@@ -35,7 +35,7 @@ trait RendersInput
 
     private int $scrollOffset = 0;
 
-    private function prepareRender(Terminal $terminal, State $state): self
+    private function prepareRender(Terminal $terminal, ComponentState $state): self
     {
         $this->terminal = $terminal;
         $this->state = $state;
@@ -85,8 +85,8 @@ trait RendersInput
     private function getStyle(): string
     {
         return match ($this->state) {
-            State::CANCELLED => 'fg-red',
-            State::ERROR => 'fg-yellow',
+            ComponentState::CANCELLED => 'fg-red',
+            ComponentState::ERROR => 'fg-yellow',
             default => 'fg-gray',
         };
     }
@@ -115,7 +115,7 @@ trait RendersInput
     {
         $this->offsetY += 1;
 
-        return $this->line($this->style($this->state === State::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), PHP_EOL);
+        return $this->line($this->style($this->state === ComponentState::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), PHP_EOL);
     }
 
     private function line(string|Stringable ...$append): self

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components;
 
-enum State
+enum ComponentState
 {
     /**
      * Component is available for input.
