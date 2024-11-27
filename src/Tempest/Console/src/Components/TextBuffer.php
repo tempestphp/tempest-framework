@@ -222,7 +222,7 @@ final class TextBuffer
     public function getRelativeCursorPosition(?int $maxLineCharacters = null): Point
     {
         $cursorPosition = $this->cursor;
-        $lines = str($this->text ?? '')->explode(PHP_EOL);
+        $lines = str($this->text ?? '')->explode("\n");
 
         $yPosition = 0;
         $xPosition = 0;
@@ -268,7 +268,7 @@ final class TextBuffer
 
     private function getLines(): array
     {
-        return str($this->text)->explode(PHP_EOL)->toArray();
+        return str($this->text)->explode("\n")->toArray();
     }
 
     private function getLinePositions(): array

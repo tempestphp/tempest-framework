@@ -269,13 +269,13 @@ final class TextBufferTest extends TestCase
     }
 
     #[TestWith(['123', 0, [0, 0]])]
-    #[TestWith(["123".PHP_EOL."456", 4, [0, 1]])]
-    #[TestWith(["123".PHP_EOL."456", 5, [1, 1]])]
-    #[TestWith(["123".PHP_EOL."".PHP_EOL."456", 5, [0, 2]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 9, [9, 0]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 10, [0, 1]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 11, [1, 1]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 21, [6, 2]])]
+    #[TestWith(["123\n456", 4, [0, 1]])]
+    #[TestWith(["123\n456", 5, [1, 1]])]
+    #[TestWith(["123\n\n456", 5, [0, 2]])]
+    #[TestWith(["different\nline\nlength", 9, [9, 0]])]
+    #[TestWith(["different\nline\nlength", 10, [0, 1]])]
+    #[TestWith(["different\nline\nlength", 11, [1, 1]])]
+    #[TestWith(["different\nline\nlength", 21, [6, 2]])]
     public function test_relative_cursor_index(string $initialText, int $cursor, array $expectedPoint): void
     {
         $buffer = new TextBuffer($initialText);
@@ -287,10 +287,10 @@ final class TextBufferTest extends TestCase
         $this->assertSame($expectedPoint[1], $point->y);
     }
 
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 5, 0, [0, 0]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 5, 9, [4, 1]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 5, 13, [3, 2]])]
-    #[TestWith(["different".PHP_EOL."line".PHP_EOL."length", 5, 21, [1, 4]])]
+    #[TestWith(["different\nline\nlength", 5, 0, [0, 0]])]
+    #[TestWith(["different\nline\nlength", 5, 9, [4, 1]])]
+    #[TestWith(["different\nline\nlength", 5, 13, [3, 2]])]
+    #[TestWith(["different\nline\nlength", 5, 21, [1, 4]])]
     public function test_relative_cursor_index_with_wrapping(string $initialText, int $maxLineWidth, int $cursor, array $expectedPoint): void
     {
         $buffer = new TextBuffer($initialText);
