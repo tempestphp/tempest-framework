@@ -28,7 +28,7 @@ trait HasTextInputRenderer
     {
         if ($this->multiline) {
             $this->state = ComponentState::ACTIVE;
-            $this->buffer->input(PHP_EOL);
+            $this->buffer->input("\n");
 
             return null;
         }
