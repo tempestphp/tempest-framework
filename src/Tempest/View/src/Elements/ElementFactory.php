@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use DOMAttr;
-use DOMElement;
-use DOMNode;
-use DOMText;
+use Dom\Element as DomElement;
+use Dom\Node;
+use Dom\Text;
 use Tempest\Container\Container;
 use function Tempest\Support\str;
 use Tempest\View\Element;
@@ -32,7 +31,7 @@ final class ElementFactory
         return $this;
     }
 
-    public function make(DOMNode $node): ?Element
+    public function make(Node $node): ?Element
     {
         return $this->makeElement(
             node: $node,
@@ -40,9 +39,9 @@ final class ElementFactory
         );
     }
 
-    private function makeElement(DOMNode $node, ?Element $parent): ?Element
+    private function makeElement(Node $node, ?Element $parent): ?Element
     {
-        if ($node instanceof DOMText) {
+        if ($node instanceof Text) {
             if (trim($node->textContent) === '') {
                 return null;
             }
@@ -52,31 +51,34 @@ final class ElementFactory
             );
         }
 
+        $tagName = $node->tagName ? strtolower($node->tagName) : null;
+
         $attributes = [];
 
-        /** @var DOMAttr $attribute */
+        /** @var \Dom\Attr $attribute */
         foreach ($node->attributes ?? [] as $attribute) {
             $name = str($attribute->name)->camel()->toString();
 
             $attributes[$name] = $attribute->value;
         }
 
-        if (! $node instanceof DOMElement
-            || $node->tagName === 'pre'
-            || $node->tagName === 'code') {
+        if (! $node instanceof DomElement
+            || $tagName === 'pre'
+            || $tagName === 'code') {
             $content = '';
+
             foreach ($node->childNodes as $child) {
                 $content .= $node->ownerDocument->saveHTML($child);
             }
 
             return new RawElement(
-                tag: $node->tagName ?? null,
+                tag: $tagName,
                 content: $content,
                 attributes: $attributes,
             );
         }
 
-        if ($viewComponentClass = $this->viewConfig->viewComponents[$node->tagName] ?? null) {
+        if ($viewComponentClass = $this->viewConfig->viewComponents[$tagName] ?? null) {
             if (! $viewComponentClass instanceof ViewComponent) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
@@ -86,13 +88,13 @@ final class ElementFactory
                 $viewComponentClass,
                 $attributes,
             );
-        } elseif ($node->tagName === 'x-slot') {
+        } elseif ($tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
             );
         } else {
             $element = new GenericElement(
-                tag: $node->tagName,
+                tag: $tagName,
                 attributes: $attributes,
             );
         }

@@ -5,7 +5,6 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "masterminds/html5": "^2.9",
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",
