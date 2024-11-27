@@ -80,15 +80,17 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
 
     private function getControls(): array
     {
+        $controls = [];
+
+        if ($this->multiple && $this->bufferEnabled) {
+            $controls['esc'] = 'select';
+        } elseif ($this->multiple) {
+            $controls['/'] = 'filter';
+            $controls['space'] = 'select';
+        }
+
         return [
-            ...($this->multiple ? [
-                ...($this->bufferEnabled ? [
-                    'esc' => 'select',
-                ] : [
-                    '/' => 'filter',
-                    'space' => 'select',
-                ]),
-            ] : []),
+            ...$controls,
             '↑' => 'up',
             '↓' => 'down',
             'enter' => $this->multiple && $this->default && $this->options->getSelectedOptions() === []

@@ -61,13 +61,17 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
 
     private function getControls(): array
     {
+        $controls = [];
+
+        if ($this->bufferEnabled) {
+            $controls['esc'] = 'select';
+        } else {
+            $controls['/'] = 'filter';
+            $controls['space'] = 'select';
+        }
+
         return [
-            ...($this->bufferEnabled ? [
-                'esc' => 'select',
-            ] : [
-                '/' => 'filter',
-                'space' => 'select',
-            ]),
+            ...$controls,
             '↑' => 'up',
             '↓' => 'down',
             'enter' => 'confirm',
