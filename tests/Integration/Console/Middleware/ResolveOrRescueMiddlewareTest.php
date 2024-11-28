@@ -30,7 +30,6 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $formatOutput = static fn (string $buffer) => str($buffer)
             ->trim()
-            ->dump()
             ->explode("\n")
             ->map(fn (string $line) => str($line)->afterLast(' ')->trim()->toString())
             ->toArray();
@@ -38,8 +37,6 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
         $output = $this->console
             ->call('discovery')
             ->getBuffer(fn (array $buffer) => $formatOutput(array_pop($buffer)));
-
-        var_dump($output);
 
         $this->assertContains('discovery:status', $output);
         $this->assertContains('discovery:clear', $output);
