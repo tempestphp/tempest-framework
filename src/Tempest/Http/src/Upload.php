@@ -6,8 +6,9 @@ namespace Tempest\Http;
 
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Stringable;
 
-final readonly class Upload
+final readonly class Upload implements Stringable
 {
     public function __construct(
         private UploadedFileInterface $uploadedFile,
@@ -46,6 +47,6 @@ final readonly class Upload
 
     public function __toString(): string
     {
-        return $this->ClientFilename();
+        return (string) $this->ClientFilename();
     }
 }
