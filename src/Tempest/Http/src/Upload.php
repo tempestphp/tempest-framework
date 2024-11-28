@@ -47,6 +47,6 @@ final readonly class Upload implements Stringable
 
     public function __toString(): string
     {
-        return (string) $this->ClientFilename();
+        return (string) $this->getClientFilename();
     }
 }
