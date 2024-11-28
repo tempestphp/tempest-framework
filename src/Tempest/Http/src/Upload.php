@@ -43,4 +43,9 @@ final readonly class Upload
     {
         return $this->uploadedFile->getClientMediaType();
     }
+
+    public function __toString(): string
+    {
+        return $this->ClientFilename;
+    }
 }
