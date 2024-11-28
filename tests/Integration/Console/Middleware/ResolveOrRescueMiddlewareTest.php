@@ -30,7 +30,8 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $formatOutput = static fn (string $buffer) => str($buffer)
             ->trim()
-            ->explode(PHP_EOL)
+            ->dump()
+            ->explode("\n")
             ->map(fn (string $line) => str($line)->afterLast(' ')->trim()->toString())
             ->toArray();
 
