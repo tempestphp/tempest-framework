@@ -38,6 +38,8 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
             ->call('discovery')
             ->getBuffer(fn (array $buffer) => $formatOutput(array_pop($buffer)));
 
+        var_dump($output);
+
         $this->assertContains('discovery:status', $output);
         $this->assertContains('discovery:clear', $output);
 
