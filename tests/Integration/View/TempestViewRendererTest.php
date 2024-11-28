@@ -135,10 +135,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsStringIgnoringLineEndings(
             <<<'HTML'
-        <html lang="en"><head><title>Home</title></head><body><table><tr><td>a</td></tr>
-        <tr><td>b</td></tr>
-        </table></body></html>
-        HTML,
+            <title>Home</title>
+            
+                
+                
+                
+            
+            <table><tbody><tr><td>b</td></tr></tbody></table>
+            HTML,
             $html
         );
     }
@@ -249,16 +253,14 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <pre>
-            a
+            <pre>a
                     <span class="hl-prop">b</span>
                <span class="hl-type">c</span>
             </pre>
             HTML,
             $this->render(
                 <<<'HTML'
-            <pre>
-            a
+            <pre>a
                     <span class="hl-prop">b</span>
                <span class="hl-type">c</span>
             </pre>

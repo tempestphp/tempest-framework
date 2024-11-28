@@ -4,8 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3",
-        "masterminds/html5": "^2.9",
+        "php": "^8.4",
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",

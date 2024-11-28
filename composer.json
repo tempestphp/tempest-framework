@@ -16,11 +16,10 @@
         "giggsey/libphonenumber-for-php": "^8.13.40",
         "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3",
-        "masterminds/html5": "^2.9",
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
-        "php": "^8.3",
+        "php": "^8.4",
         "psr-discovery/http-client-implementations": "1.x-dev",
         "psr-discovery/http-factory-implementations": "1.x-dev",
         "psr/cache": "^3.0",
@@ -144,7 +143,7 @@
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
-        "csfixer": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "csfixer": "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --allow-risky=yes",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "vendor/bin/monorepo-builder merge",
@@ -152,8 +151,8 @@
             "composer merge",
             "./bin/validate-packages",
             "./tempest discovery:clear",
-            "composer csfixer",
             "composer rector",
+            "composer csfixer",
             "composer phpunit",
             "composer phpstan"
         ]

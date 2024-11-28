@@ -2,7 +2,7 @@
     "name": "tempest/filesystem",
     "description": "The PHP framework that gets out of your way.",
     "require": {
-        "php": "^8.3"
+        "php": "^8.4"
     },
     "autoload": {
         "psr-4": {

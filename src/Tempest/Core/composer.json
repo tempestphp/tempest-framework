@@ -4,7 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "tempest/container": "dev-main",
         "tempest/support": "dev-main",
         "vlucas/phpdotenv": "^5.6",

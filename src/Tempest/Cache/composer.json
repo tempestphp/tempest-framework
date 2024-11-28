@@ -2,7 +2,7 @@
     "name": "tempest/cache",
     "description": "The PHP framework that gets out of your way.",
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "psr/cache": "^3.0",
         "symfony/cache": "^7.2",
         "tempest/core": "dev-main"
