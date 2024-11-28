@@ -20,14 +20,15 @@ final class TextInputComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console->withoutPrompting()->call(function (Console $console): void {
             $terminal = new Terminal($console);
-            $component = new TextInputComponent(label: 'Enter your name', placeholder: 'Jon Doe');
+            $component = new TextInputComponent(label: 'Enter your name', placeholder: 'Jon Doe', multiline: false);
 
             $this->assertStringContainsString('Enter your name', $component->render($terminal));
             $this->assertStringContainsString('Jon Doe', $component->render($terminal));
 
             $component->input('a');
             $component->input('b');
-            $component->input(PHP_EOL);
+            $component->input("\n");
+            $component->input("\r\n");
             $component->input('c');
 
             $this->assertStringContainsString('abc', $component->render($terminal));

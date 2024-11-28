@@ -51,7 +51,7 @@ trait RendersControls
             $render = (new StringHelper($prefix))
                 ->append($render)
                 ->explode($separator)
-                ->implode(PHP_EOL . $prefix . $marginLeft);
+                ->implode("\n" . $prefix . $marginLeft);
         }
 
         return $render->toString();

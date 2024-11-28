@@ -85,6 +85,6 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
     {
         $result = $this->openInEditor($this->buffer->text);
 
-        $this->setText($this->multiline ? $result : rtrim(str_replace(PHP_EOL, ' ', $result)));
+        $this->setText($this->multiline ? $result : rtrim(str_replace(["\n", "\r\n"], ' ', $result)));
     }
 }

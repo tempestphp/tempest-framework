@@ -41,9 +41,9 @@ final class TextInputRenderer
 
         // splits the text to an array so we can work with individual lines
         $lines = str(($buffer->text ?: $placeholder) ?: '')
-            ->explode(PHP_EOL)
+            ->explode("\n")
             ->flatMap(fn (string $line) => str($line)->split($this->maxLineCharacters)->toArray())
-            ->map(static fn (string $line) => str($line)->replaceEnd(PHP_EOL, ' '));
+            ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '));
 
         // calculates scroll offset based on cursor position
         $this->scrollOffset = $this->calculateScrollOffset($lines, $this->maximumLines, $buffer->getRelativeCursorPosition($this->maxLineCharacters)->y);
@@ -68,7 +68,7 @@ final class TextInputRenderer
             $lines = $this->multiline ? $this->maximumLines : 1;
 
             for ($i = $displayLines->count(); $i < $lines; $i++) {
-                $this->line(PHP_EOL);
+                $this->line("\n");
             }
         }
 

@@ -75,7 +75,7 @@ trait HasTextInputRenderer
     #[HandlesKey]
     public function input(string $key): void
     {
-        if ($key === "\n" && ! $this->multiline) {
+        if (in_array($key, ["\n", "\r\n"], strict: true) && ! $this->multiline) {
             return;
         }
 

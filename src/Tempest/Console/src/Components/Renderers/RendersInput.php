@@ -46,7 +46,7 @@ trait RendersInput
         $this->leftBorder = "<style=\"dim {$this->getStyle()}\">│</style>";
         $this->maxLineCharacters = $this->terminal->width - mb_strlen($this->marginX . ' ' . $this->paddingX) - self::MARGIN_X;
 
-        $this->frame = new StringHelper(str_repeat(PHP_EOL, self::MARGIN_TOP));
+        $this->frame = new StringHelper(str_repeat("\n", self::MARGIN_TOP));
 
         return $this;
     }
@@ -115,7 +115,7 @@ trait RendersInput
     {
         $this->offsetY += 1;
 
-        return $this->line($this->style($this->state === ComponentState::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), PHP_EOL);
+        return $this->line($this->style($this->state === ComponentState::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), "\n");
     }
 
     private function line(string|Stringable ...$append): self
@@ -135,9 +135,9 @@ trait RendersInput
     {
 
         if ($border) {
-            $this->line(PHP_EOL);
+            $this->line("\n");
         } else {
-            $this->frame = $this->frame->append(PHP_EOL);
+            $this->frame = $this->frame->append("\n");
         }
 
         return $this;
