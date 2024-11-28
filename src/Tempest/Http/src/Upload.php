@@ -46,6 +46,6 @@ final readonly class Upload
 
     public function __toString(): string
     {
-        return $this->ClientFilename;
+        return $this->ClientFilename();
     }
 }
