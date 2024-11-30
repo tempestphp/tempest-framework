@@ -54,7 +54,7 @@ final class ElementFactory
         $tagName = null;
 
         if ($node->nodeType == XML_ELEMENT_NODE) {
-            $tagName =strtolower($node->tagName);
+            $tagName = strtolower($node->tagName);
         }
 
         $attributes = [];
