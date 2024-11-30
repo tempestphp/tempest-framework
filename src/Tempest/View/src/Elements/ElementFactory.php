@@ -13,6 +13,7 @@ use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+use const XML_ELEMENT_NODE;
 
 final class ElementFactory
 {
