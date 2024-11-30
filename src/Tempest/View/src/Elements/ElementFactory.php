@@ -51,7 +51,11 @@ final class ElementFactory
             );
         }
 
-        $tagName = $node->tagName ? strtolower($node->tagName) : null;
+        $tagName = null;
+
+        if ($node->nodeType == XML_ELEMENT_NODE) {
+            $tagName =strtolower($node->tagName);
+        }
 
         $attributes = [];
 
