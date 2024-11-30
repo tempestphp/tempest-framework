@@ -8,21 +8,19 @@ use Attribute;
 use Tempest\Http\Method;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
-final class Get extends Route
+final class Get implements RouteInterface
 {
+    use IsRoute;
+
+    /**
+     * @param class-string<HttpMiddleware>[] $middleware
+     */
     public function __construct(
         string $uri,
-
-        /**
-         * @template MiddlewareClass of \Tempest\Router\HttpMiddleware
-         * @var class-string<MiddlewareClass>[] $middleware
-         */
         array $middleware = [],
     ) {
-        parent::__construct(
-            uri: $uri,
-            method: Method::GET,
-            middleware: $middleware,
-        );
+        $this->uri = $uri;
+        $this->method = Method::GET;
+        $this->middleware = $middleware;
     }
 }

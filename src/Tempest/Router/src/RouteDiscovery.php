@@ -7,8 +7,9 @@ namespace Tempest\Router;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
-use Tempest\Reflection\ClassReflector;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Reflection\ClassReflector;
 
 final class RouteDiscovery implements Discovery
 {
@@ -23,7 +24,7 @@ final class RouteDiscovery implements Discovery
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $routeAttributes = $method->getAttributes(Route::class);
+            $routeAttributes = $method->getAttributes(RouteInterface::class);
 
             foreach ($routeAttributes as $routeAttribute) {
                 $this->discoveryItems->add($location, [$method, $routeAttribute]);
@@ -34,8 +35,8 @@ final class RouteDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$method, $routeAttribute]) {
-            $routeAttribute->setHandler($method);
-            $this->configurator->addRoute($routeAttribute);
+            $route = DiscoveredRoute::fromRoute($routeAttribute, $method);
+            $this->configurator->addRoute($route);
         }
 
         if ($this->configurator->isDirty()) {

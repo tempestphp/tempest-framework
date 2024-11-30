@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Tempest\Router\Routing\Matching\MatchingRegex;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 
 final class RouteConfig
 {
     public function __construct(
-        /** @var array<string, array<string, Route>> */
+        /** @var array<string, array<string, DiscoveredRoute>> */
         public array $staticRoutes = [],
-        /** @var array<string, array<string, Route>> */
+        /** @var array<string, array<string, DiscoveredRoute>> */
         public array $dynamicRoutes = [],
         /** @var array<string, MatchingRegex> */
         public array $matchingRegexes = [],

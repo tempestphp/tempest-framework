@@ -6,8 +6,8 @@ namespace Tempest\Router\Routing\Matching;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Router\MatchedRoute;
-use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 
 final readonly class GenericRouteMatcher implements RouteMatcher
 {
@@ -70,10 +70,10 @@ final readonly class GenericRouteMatcher implements RouteMatcher
      * @param array<string|int, string> $routeMatches
      * @return array<string, string>
      */
-    private function extractParams(Route $route, array $routeMatches): array
+    private function extractParams(DiscoveredRoute $route, array $routeMatches): array
     {
         $valueMap = [];
-        foreach ($route->params as $i => $param) {
+        foreach ($route->parameters as $i => $param) {
             $valueMap[$param] = $routeMatches[$i + 1];
         }
 

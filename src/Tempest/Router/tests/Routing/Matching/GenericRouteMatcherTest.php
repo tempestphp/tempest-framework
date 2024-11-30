@@ -7,7 +7,7 @@ namespace Tempest\Router\Tests\Routing\Matching;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
-use Tempest\Router\Route;
+use Tempest\Router\Tests\FakeRouteBuilder;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
 use Tempest\Router\Routing\Matching\MatchingRegex;
@@ -25,20 +25,25 @@ final class GenericRouteMatcherTest extends TestCase
     {
         parent::setUp();
 
+        $routeBuilder = new FakeRouteBuilder();
+
         $this->routeConfig = new RouteConfig(
             [
                 'GET' => [
-                    '/static' => new Route('/static', Method::GET),
+                    '/static' => $routeBuilder->withUri('/static')->asDiscoveredRoute(),
                 ],
             ],
             [
                 'GET' => [
-                    'b' => new Route('/dynamic/{id}', Method::GET),
-                    'c' => new Route('/dynamic/{id}/view', Method::GET),
-                    'e' => new Route('/dynamic/{id}/{tag}/{name}/{id}', Method::GET),
+                    'b' => $routeBuilder->withUri('/dynamic/{id}')->asDiscoveredRoute(),
+                    'c' => $routeBuilder->withUri('/dynamic/{id}/view')->asDiscoveredRoute(),
+                    'e' => $routeBuilder->withUri('/dynamic/{id}/{tag}/{name}/{id}')->asDiscoveredRoute(),
                 ],
                 'PATCH' => [
-                    'c' => new Route('/dynamic/{id}', Method::PATCH),
+                    'c' => $routeBuilder
+                        ->withMethod(Method::PATCH)
+                        ->withUri('/dynamic/{id}')
+                        ->asDiscoveredRoute(),
                 ],
             ],
             [
