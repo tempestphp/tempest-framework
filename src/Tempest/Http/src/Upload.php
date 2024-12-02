@@ -7,7 +7,10 @@ namespace Tempest\Http;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Stringable;
+use Tempest\Database\Casters\UploadCaster;
+use Tempest\Mapper\CastWith;
 
+#[CastWith(UploadCaster::class)]
 final readonly class Upload implements Stringable
 {
     public function __construct(

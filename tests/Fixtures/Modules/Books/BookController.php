@@ -12,14 +12,24 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Responses\Redirect;
 use function Tempest\map;
 use function Tempest\uri;
+use function Tempest\view;
+use Tempest\View\View;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 
 final readonly class BookController
 {
+    #[Get('/book/create')]
+    public function index(): View
+    {
+        return view(__DIR__ . '/create.book.view.php');
+    }
+
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {
+        var_dump($book);
+
         return (new Ok($book->title));
     }
 

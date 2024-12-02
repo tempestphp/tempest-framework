@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Http\Upload;
 use Tempest\Validation\Rules\Length;
 
 final class Book implements DatabaseModel
@@ -14,6 +15,8 @@ final class Book implements DatabaseModel
 
     #[Length(min: 1, max: 120)]
     public string $title;
+
+    public Upload $cover;
 
     public ?Author $author = null;
 

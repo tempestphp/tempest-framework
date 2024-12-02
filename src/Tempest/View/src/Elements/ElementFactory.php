@@ -51,7 +51,7 @@ final class ElementFactory
             );
         }
 
-        $tagName = $node->tagName ? strtolower($node->tagName) : null;
+        $tagName = (property_exists($node, 'tagName')) ? strtolower($node->tagName) : null;
 
         $attributes = [];
 
