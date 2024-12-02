@@ -40,6 +40,17 @@ namespace {
         }
     }
 
+    if (! function_exists('le')) {
+        /**
+         * Emits a `ItemsDebugged` event.
+         * @see \Tempest\Debug\Debug::log()
+         */
+        function le(mixed ...$input): void
+        {
+            Debug::resolve()->log($input, writeToOut: false, writeToLog: false);
+        }
+    }
+
     if (! function_exists('dd')) {
         /**
          * Writes the given `$input` to the logs, dumps it, and stops the execution of the script.
