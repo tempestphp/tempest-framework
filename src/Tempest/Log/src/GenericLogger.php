@@ -61,7 +61,7 @@ final class GenericLogger implements Logger
         $this->log(LogLevel::DEBUG, $message, $context);
     }
 
-    /** @param LogLevel|string $level */
+    /** @param MonologLogLevel|LogLevel|string $level */
     public function log($level, Stringable|string $message, array $context = []): void
     {
         if (! $level instanceof MonologLogLevel) {
