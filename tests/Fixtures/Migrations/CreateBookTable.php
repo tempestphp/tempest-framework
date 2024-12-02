@@ -22,7 +22,7 @@ final readonly class CreateBookTable implements Migration
         return CreateTableStatement::forModel(Book::class)
             ->primary()
             ->text('title')
-            ->text('cover')
+            ->text('cover', nullable: true)
             ->belongsTo('books.author_id', 'authors.id', nullable: true);
     }
 
