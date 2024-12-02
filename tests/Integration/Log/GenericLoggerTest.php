@@ -8,6 +8,7 @@ use Monolog\Level;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LogLevel as PsrLogLevel;
 use ReflectionClass;
+use Tempest\EventBus\EventBus;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
 use Tempest\Log\Channels\WeeklyLogChannel;
@@ -32,6 +33,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             ],
         );
 
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
 
         $logger->info('test');
 
@@ -61,6 +63,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             ],
         );
 
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
 
         $logger->info('test');
 
@@ -79,6 +82,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             ],
         );
 
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
 
         $logger->info('test');
 
@@ -99,6 +103,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             ],
         );
 
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
         $logger->info('test');
 
         $this->assertFileExists($filePath);
@@ -121,11 +126,26 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $logger = new GenericLogger($config);
+        $logger = new GenericLogger($config, $this->container->get(EventBus::class));
         $logger->log($level, 'test');
 
         $this->assertFileExists($filePath);
         $this->assertStringContainsString("tempest." . $expected, file_get_contents($filePath));
+    }
+
+    #[DataProvider('tempestLevelProvider')]
+    public function test_message_logged_emitted(LogLevel $level): void
+    {
+        $eventBus = $this->container->get(EventBus::class);
+
+        $eventBus->listen(MessageLogged::class, function (MessageLogged $event) use ($level) {
+            $this->assertSame($level, $event->level);
+            $this->assertSame('This is a log message of level: ' . $level->value, $event->message);
+            $this->assertSame(['foo' => 'bar'], $event->context);
+        });
+
+        $logger = new GenericLogger(new LogConfig(), $eventBus);
+        $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
     public static function tempestLevelProvider(): array

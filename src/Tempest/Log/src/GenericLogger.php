@@ -8,6 +8,7 @@ use Monolog\Level as MonologLogLevel;
 use Monolog\Logger as Monolog;
 use Psr\Log\LogLevel as PsrLogLevel;
 use Stringable;
+use Tempest\EventBus\EventBus;
 
 final class GenericLogger implements Logger
 {
@@ -16,6 +17,7 @@ final class GenericLogger implements Logger
 
     public function __construct(
         private readonly LogConfig $logConfig,
+        private readonly EventBus $eventBus,
     ) {
     }
 
@@ -77,6 +79,8 @@ final class GenericLogger implements Logger
         }
 
         $this->writeLog($level, $message, $context);
+
+        $this->eventBus->dispatch(new MessageLogged(LogLevel::fromMonolog($level), $message, $context));
     }
 
     private function writeLog(MonologLogLevel $level, string $message, array $context): void
