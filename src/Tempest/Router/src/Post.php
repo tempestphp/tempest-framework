@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Http\Method;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD)]
-final class Post implements RouteInterface
+final class Post implements Route
 {
     use IsRoute;
 

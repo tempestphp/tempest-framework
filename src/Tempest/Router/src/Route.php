@@ -6,7 +6,7 @@ namespace Tempest\Router;
 
 use Tempest\Http\Method;
 
-interface RouteInterface
+interface Route
 {
     public function method(): Method;
 

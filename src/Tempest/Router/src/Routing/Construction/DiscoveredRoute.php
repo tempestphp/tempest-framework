@@ -6,9 +6,9 @@ namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\RouteInterface;
+use Tempest\Router\Route;
 
-final class DiscoveredRoute implements RouteInterface
+final class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
@@ -16,7 +16,7 @@ final class DiscoveredRoute implements RouteInterface
 
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
-    public static function fromRoute(RouteInterface $route, MethodReflector $methodReflector): self
+    public static function fromRoute(Route $route, MethodReflector $methodReflector): self
     {
         return new self(
             $route->uri(),

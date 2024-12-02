@@ -24,7 +24,7 @@ final class RouteDiscovery implements Discovery
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
         foreach ($class->getPublicMethods() as $method) {
-            $routeAttributes = $method->getAttributes(RouteInterface::class);
+            $routeAttributes = $method->getAttributes(Route::class);
 
             foreach ($routeAttributes as $routeAttribute) {
                 $this->discoveryItems->add($location, [$method, $routeAttribute]);

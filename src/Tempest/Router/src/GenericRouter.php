@@ -116,8 +116,8 @@ final class GenericRouter implements Router
                 $controllerMethod = $reflection->getMethod('__invoke');
             }
 
-            /** @var RouteInterface|null $routeAttribute */
-            $routeAttribute = $controllerMethod->getAttribute(RouteInterface::class);
+            /** @var Route|null $routeAttribute */
+            $routeAttribute = $controllerMethod->getAttribute(Route::class);
 
             $uri = $routeAttribute->uri();
         } catch (ReflectionException) {

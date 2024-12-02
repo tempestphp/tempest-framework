@@ -9,9 +9,9 @@ use Tempest\Http\Method;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\MarkedRoute;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\RouteInterface;
+use Tempest\Router\Route;
 
-final readonly class FakeRouteBuilder implements RouteInterface
+final readonly class FakeRouteBuilder implements Route
 {
     private MethodReflector $handler;
 
