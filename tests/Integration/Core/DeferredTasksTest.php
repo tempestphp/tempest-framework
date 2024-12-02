@@ -22,7 +22,7 @@ final class DeferredTasksTest extends FrameworkIntegrationTestCase
             ->get(uri(DeferController::class))
             ->assertOk();
 
-        $this->container->get(FinishDeferredTasks::class)();
+        $this->container->invoke(FinishDeferredTasks::class);
 
         $this->assertTrue(DeferController::$executed);
     }
