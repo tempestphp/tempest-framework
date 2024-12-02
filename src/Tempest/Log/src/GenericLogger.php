@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Log;
 
-use Monolog\Level;
+use Monolog\Level as MonologLogLevel;
 use Monolog\Logger as Monolog;
+use Psr\Log\LogLevel as PsrLogLevel;
 use Stringable;
 
 final class GenericLogger implements Logger
@@ -20,59 +21,72 @@ final class GenericLogger implements Logger
 
     public function emergency(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Emergency, $message, $context);
+        $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
     public function alert(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Alert, $message, $context);
+        $this->log(LogLevel::ALERT, $message, $context);
     }
 
     public function critical(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Critical, $message, $context);
+        $this->log(LogLevel::CRITICAL, $message, $context);
     }
 
     public function error(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Error, $message, $context);
+        $this->log(LogLevel::ERROR, $message, $context);
     }
 
     public function warning(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Warning, $message, $context);
+        $this->log(LogLevel::WARNING, $message, $context);
     }
 
     public function notice(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Notice, $message, $context);
+        $this->log(LogLevel::NOTICE, $message, $context);
     }
 
     public function info(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Info, $message, $context);
+        $this->log(LogLevel::INFO, $message, $context);
     }
 
     public function debug(Stringable|string $message, array $context = []): void
     {
-        $this->writeLog(Level::Debug, $message, $context);
+        $this->log(LogLevel::DEBUG, $message, $context);
     }
 
+    /** @param LogLevel|string $level */
     public function log($level, Stringable|string $message, array $context = []): void
     {
-        $level = Level::tryFrom($level) ?? Level::Info;
+        if (! $level instanceof MonologLogLevel) {
+            $level = match ($level) {
+                LogLevel::EMERGENCY, PsrLogLevel::EMERGENCY => MonologLogLevel::Emergency,
+                LogLevel::ALERT, PsrLogLevel::ALERT => MonologLogLevel::Alert,
+                LogLevel::CRITICAL, PsrLogLevel::CRITICAL => MonologLogLevel::Critical,
+                LogLevel::ERROR, PsrLogLevel::ERROR => MonologLogLevel::Error,
+                LogLevel::WARNING, PsrLogLevel::WARNING => MonologLogLevel::Warning,
+                LogLevel::NOTICE, PsrLogLevel::NOTICE => MonologLogLevel::Notice,
+                LogLevel::INFO, PsrLogLevel::INFO => MonologLogLevel::Info,
+                LogLevel::DEBUG, PsrLogLevel::DEBUG => MonologLogLevel::Debug,
+                default => MonologLogLevel::Info
+            };
+        }
 
         $this->writeLog($level, $message, $context);
     }
 
-    private function writeLog(Level $level, string $message, array $context): void
+    private function writeLog(MonologLogLevel $level, string $message, array $context): void
     {
         foreach ($this->logConfig->channels as $channel) {
             $this->resolveDriver($channel, $level)->log($level, $message, $context);
         }
     }
 
-    private function resolveDriver(LogChannel $channel, Level $level): Monolog
+    private function resolveDriver(LogChannel $channel, MonologLogLevel $level): Monolog
     {
         if (! isset($this->drivers[spl_object_id($channel)])) {
             $this->drivers[spl_object_id($channel)] = new Monolog(

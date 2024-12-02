@@ -2,19 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Log\Tests;
+namespace Tests\Tempest\Integration\Log;
 
-use PHPUnit\Framework\TestCase;
+use Monolog\Level;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Log\LogLevel as PsrLogLevel;
+use ReflectionClass;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
 use Tempest\Log\Channels\WeeklyLogChannel;
 use Tempest\Log\GenericLogger;
 use Tempest\Log\LogConfig;
+use Tempest\Log\LogLevel;
+use Tempest\Log\MessageLogged;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class GenericLoggerTest extends TestCase
+final class GenericLoggerTest extends FrameworkIntegrationTestCase
 {
     public function test_append_log_channel_works(): void
     {
@@ -26,7 +32,6 @@ final class GenericLoggerTest extends TestCase
             ],
         );
 
-        $logger = new GenericLogger($config);
 
         $logger->info('test');
 
@@ -56,7 +61,6 @@ final class GenericLoggerTest extends TestCase
             ],
         );
 
-        $logger = new GenericLogger($config);
 
         $logger->info('test');
 
@@ -75,7 +79,6 @@ final class GenericLoggerTest extends TestCase
             ],
         );
 
-        $logger = new GenericLogger($config);
 
         $logger->info('test');
 
@@ -96,7 +99,6 @@ final class GenericLoggerTest extends TestCase
             ],
         );
 
-        $logger = new GenericLogger($config);
         $logger->info('test');
 
         $this->assertFileExists($filePath);
@@ -104,5 +106,43 @@ final class GenericLoggerTest extends TestCase
 
         $this->assertFileExists($secondFilePath);
         $this->assertStringContainsString('test', file_get_contents($secondFilePath));
+    }
+
+    #[DataProvider('psrLogLevelProvider')]
+    #[DataProvider('monologLevelProvider')]
+    #[DataProvider('tempestLevelProvider')]
+    public function test_log_levels(mixed $level, string $expected): void
+    {
+        $filePath = __DIR__ . '/logs/tempest.log';
+        $config = new LogConfig(
+            prefix: 'tempest',
+            channels: [
+                new AppendLogChannel($filePath),
+            ],
+        );
+
+        $logger = new GenericLogger($config);
+        $logger->log($level, 'test');
+
+        $this->assertFileExists($filePath);
+        $this->assertStringContainsString("tempest." . $expected, file_get_contents($filePath));
+    }
+
+    public static function tempestLevelProvider(): array
+    {
+        return array_map(fn (LogLevel $level) => [$level, strtoupper($level->value)], LogLevel::cases());
+    }
+
+    public static function monologLevelProvider(): array
+    {
+        return array_map(fn (Level $level) => [$level, strtoupper($level->name)], Level::cases());
+    }
+
+    public static function psrLogLevelProvider(): array
+    {
+        $reflection = new ReflectionClass(PsrLogLevel::class);
+        $levels = $reflection->getConstants();
+
+        return array_map(fn (string $level) => [$level, strtoupper($level)], array_values($levels));
     }
 }
