@@ -16,7 +16,6 @@ final class DiscoveredRoute implements RouteInterface
 
     public const string ROUTE_PARAM_CUSTOM_REGEX = '(?::([^{}]*(?:\{(?-1)\}[^{}]*)*))?';
 
-
     public static function fromRoute(RouteInterface $route, MethodReflector $methodReflector): self
     {
         return new self(
@@ -37,7 +36,7 @@ final class DiscoveredRoute implements RouteInterface
         public readonly array $middleware,
         public readonly MethodReflector $handler,
     ) {
-        $this->isDynamic = count($parameters) > 0;
+        $this->isDynamic = $parameters !== [];
     }
 
     /** @return string[] */

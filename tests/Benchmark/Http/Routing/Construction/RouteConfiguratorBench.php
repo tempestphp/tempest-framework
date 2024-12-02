@@ -10,6 +10,7 @@ use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
 use Tempest\Router\Route;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Tests\FakeRouteBuilder;
 
 final class RouteConfiguratorBench
 {
@@ -33,12 +34,13 @@ final class RouteConfiguratorBench
     public function benchRouteConfigConstructionRouteAdding(): void
     {
         $configurator = new RouteConfigurator();
+        $routeBuilder = new FakeRouteBuilder();
 
         foreach (range(1, 100) as $i) {
-            $configurator->addRoute(new Route("/test/{$i}", Method::GET));
-            $configurator->addRoute(new Route("/test/{id}/{$i}", Method::GET));
-            $configurator->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
-            $configurator->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+            $configurator->addRoute($routeBuilder->withUri("/test/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/delete")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/edit")->asDiscoveredRoute());
         }
     }
 
@@ -47,13 +49,15 @@ final class RouteConfiguratorBench
         self::addRoutes($this->subject);
     }
 
-    private static function addRoutes(RouteConfigurator $constructor): void
+    private static function addRoutes(RouteConfigurator $configurator): void
     {
+        $routeBuilder = new FakeRouteBuilder();
+
         foreach (range(1, 100) as $i) {
-            $constructor->addRoute(new Route("/test/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+            $configurator->addRoute($routeBuilder->withUri("/test/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/delete")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/edit")->asDiscoveredRoute());
         }
     }
 }

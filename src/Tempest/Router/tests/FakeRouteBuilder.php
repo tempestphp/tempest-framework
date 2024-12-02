@@ -13,10 +13,14 @@ use Tempest\Router\RouteInterface;
 
 final readonly class FakeRouteBuilder implements RouteInterface
 {
+    private MethodReflector $handler;
+
     public function __construct(
         public Method $method = Method::GET,
         public string $uri = '/',
-    ) {}
+    ) {
+        $this->handler = new MethodReflector(new ReflectionMethod($this, 'handler'));
+    }
 
     public function withUri(string $uri): self
     {
@@ -35,8 +39,7 @@ final readonly class FakeRouteBuilder implements RouteInterface
 
     public function asDiscoveredRoute(): DiscoveredRoute
     {
-        $handler = new MethodReflector(new ReflectionMethod($this, 'handler'));
-        return DiscoveredRoute::fromRoute($this, $handler);
+        return DiscoveredRoute::fromRoute($this, $this->handler);
     }
 
     public function method(): Method
@@ -54,5 +57,7 @@ final readonly class FakeRouteBuilder implements RouteInterface
         return [];
     }
 
-    public function handler(): void {}
+    public function handler(): void
+    {
+    }
 }

@@ -9,7 +9,9 @@ use Tempest\Http\Method;
 interface RouteInterface
 {
     public function method(): Method;
+
     public function uri(): string;
-    /** @return HttpMiddleware[] */
+
+    /** @return class-string<HttpMiddleware>[] */
     public function middleware(): array;
 }

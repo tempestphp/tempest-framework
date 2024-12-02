@@ -71,7 +71,6 @@ final class ArchitectureTestCase
                 Selector::inNamespace('Tempest'),
                 Selector::NOT(Selector::isInterface()),
                 Selector::NOT(Selector::isAbstract()),
-                Selector::NOT(Selector::classname(Route::class)),
             ))
             ->shouldBeFinal();
     }

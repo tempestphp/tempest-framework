@@ -10,6 +10,7 @@ use Tempest\Http\Method;
 use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Tests\FakeRouteBuilder;
 
 final class RouteConfigBench
 {
@@ -30,14 +31,16 @@ final class RouteConfigBench
 
     private static function makeRouteConfig(): RouteConfig
     {
-        $constructor = new RouteConfigurator();
+        $routeBuilder = new FakeRouteBuilder();
+
+        $configurator = new RouteConfigurator();
         foreach (range(1, 100) as $i) {
-            $constructor->addRoute(new Route("/test/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+            $configurator->addRoute($routeBuilder->withUri("/test/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/delete")->asDiscoveredRoute());
+            $configurator->addRoute($routeBuilder->withUri("/test/{id}/{$i}/edit")->asDiscoveredRoute());
         }
 
-        return $constructor->toRouteConfig();
+        return $configurator->toRouteConfig();
     }
 }

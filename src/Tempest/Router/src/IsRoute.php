@@ -10,9 +10,10 @@ use Tempest\Reflection\MethodReflector;
 trait IsRoute
 {
     private Method $method;
+
     private string $uri;
 
-    /** @var class-string<HttpMiddleware>[] $middleware */
+    /** @var class-string<HttpMiddleware>[] */
     private array $middleware;
 
     private MethodReflector $handler;
