@@ -13,11 +13,50 @@ $finder = Symfony\Component\Finder\Finder::create()
     ->ignoreVCS(true);
 
 return (new PhpCsFixer\Config())
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setCacheFile('.cache/fixer/cs-fixer.cache')
     ->setRules([
         '@PSR12' => true,
+        '@PHP84Migration' => true,
+        'ordered_attributes' => true,
+        'ordered_traits' => true,
+        'attribute_empty_parentheses' => true,
+        'yoda_style' => [
+            'equal' => false,
+            'identical' => false,
+            'less_and_greater' => false
+        ],
+        'get_class_to_class_keyword' => true,
+        'cast_spaces' => true,
+        'single_space_around_construct' => true,
+        'heredoc_indentation' => true,
+        'types_spaces' => true,
+        'single_quote' => true,
+        'no_short_bool_cast' => true,
+        'explicit_string_variable' => true,
+        'no_extra_blank_lines' => [
+            'tokens' => [
+                'case',
+                'continue',
+                'curly_brace_block',
+                'default',
+                'extra',
+                'parenthesis_brace_block',
+                'square_brace_block',
+                'switch',
+                'throw',
+                'use',
+            ],
+        ],
         'array_syntax' => ['syntax' => 'short'],
-        'ordered_imports' => ['sort_algorithm' => 'alpha'],
+        'ordered_imports' => [
+            'sort_algorithm' => 'alpha',
+            'imports_order' => [
+                'class',
+                'function',
+                'const',
+            ],
+        ],
         'no_unused_imports' => true,
         'no_unneeded_import_alias' => true,
         'blank_line_between_import_groups' => false,
@@ -33,7 +72,9 @@ return (new PhpCsFixer\Config())
             'import_functions' => true,
         ],
         'not_operator_with_successor_space' => true,
-        'trailing_comma_in_multiline' => true,
+        'trailing_comma_in_multiline' => [
+            'elements' => ['arrays', 'arguments', 'parameters', 'match'],
+        ],
         'phpdoc_scalar' => true,
         'unary_operator_spaces' => true,
         'binary_operator_spaces' => true,
