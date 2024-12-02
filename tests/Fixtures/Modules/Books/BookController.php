@@ -28,8 +28,6 @@ final readonly class BookController
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {
-        var_dump($book);
-
         return (new Ok($book->title));
     }
 
