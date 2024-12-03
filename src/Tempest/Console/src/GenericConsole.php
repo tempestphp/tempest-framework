@@ -20,8 +20,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
-use Tempest\Support\Conditions\HasConditions;
 use Tempest\Support\ArrayHelper;
+use Tempest\Support\Conditions\HasConditions;
 
 final class GenericConsole implements Console
 {
