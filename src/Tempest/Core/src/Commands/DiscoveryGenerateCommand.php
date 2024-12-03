@@ -81,8 +81,8 @@ final readonly class DiscoveryGenerateCommand
             $count += $discoveryItems->count();
         }
 
-        $this->writeln(sprintf(
-            '<success>Done</success> %d items cached',
+        $this->success(sprintf(
+            'Cached <em>%d</em> items',
             $count,
         ));
     }

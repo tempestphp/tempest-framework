@@ -37,9 +37,9 @@ final readonly class MonitorAsyncCommands
 
                 if ($process->isTerminated()) {
                     if ($process->isSuccessful()) {
-                        $this->writeln("<success>{$uuid}</success> finished at {$time->format('Y-m-d H:i:s')}");
+                        $this->writeln("<style=\"fg-green\">{$uuid}</style> finished at {$time->format('Y-m-d H:i:s')}");
                     } else {
-                        $this->writeln("<error>{$uuid}</error> failed at {$time->format('Y-m-d H:i:s')}");
+                        $this->writeln("<style=\"fg-red\">{$uuid}</style> failed at {$time->format('Y-m-d H:i:s')}");
                     }
 
                     if ($output = trim($process->getOutput())) {

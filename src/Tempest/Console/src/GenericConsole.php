@@ -12,7 +12,7 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
-use Tempest\Console\Components\Interactive\TextBoxComponent;
+use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
@@ -20,6 +20,7 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
+use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
 
 final class GenericConsole implements Console
@@ -29,8 +30,6 @@ final class GenericConsole implements Console
     private ?string $label = null;
 
     private bool $isForced = false;
-
-    private bool $supportsTty = true;
 
     private bool $supportsPrompting = true;
 
@@ -61,13 +60,6 @@ final class GenericConsole implements Console
     public function setForced(): self
     {
         $this->isForced = true;
-
-        return $this;
-    }
-
-    public function disableTty(): self
-    {
-        $this->supportsTty = false;
 
         return $this;
     }
@@ -104,6 +96,18 @@ final class GenericConsole implements Console
         return $this;
     }
 
+    public function header(string $header, ?string $subheader = null): static
+    {
+        $this->writeln();
+        $this->writeln("<h1>{$header}</h1>");
+
+        if ($subheader) {
+            $this->writeln($subheader);
+        }
+
+        return $this;
+    }
+
     public function writeln(string $line = ''): static
     {
         $this->write($line . PHP_EOL);
@@ -122,23 +126,38 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function info(string $line): self
+    public function info(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<em>{$line}</em>");
+        $symbol ??= 'ℹ';
+
+        $this->writeln("<style=\"bg-dark-blue fg-white\"> {$symbol} </style> <style=\"fg-blue\">{$line}</style>");
 
         return $this;
     }
 
-    public function error(string $line): self
+    public function error(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<error>{$line}</error>");
+        $symbol ??= '×';
+
+        $this->writeln("<style=\"bg-dark-red fg-white\"> {$symbol} </style> <style=\"fg-red\">{$line}</style>");
 
         return $this;
     }
 
-    public function success(string $line): self
+    public function warning(string $line, ?string $symbol = null): self
     {
-        $this->writeln("<success>{$line}</success>");
+        $symbol ??= '⚠';
+
+        $this->writeln("<style=\"bg-dark-yellow fg-white\"> {$symbol} </style> <style=\"fg-yellow\">{$line}</style>");
+
+        return $this;
+    }
+
+    public function success(string $line, ?string $symbol = null): self
+    {
+        $symbol ??= '✔︎';
+
+        $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
 
         return $this;
     }
@@ -154,7 +173,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->supportsTty()) {
+        if ($this->componentRenderer !== null) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -170,46 +189,45 @@ final class GenericConsole implements Console
         ?array $options = null,
         mixed $default = null,
         bool $multiple = false,
-        bool $asList = false,
+        bool $multiline = false,
+        ?string $placeholder = null,
+        ?string $hint = null,
         array $validation = [],
     ): null|string|array {
         if ($this->isForced && $default) {
             return $default;
         }
 
-        if ($options === null || $options === []) {
-            $component = new TextBoxComponent($question, $default);
-        } elseif ($multiple) {
-            $component = new MultipleChoiceComponent(
-                question: $question,
+        $component = match (true) {
+            $options === null || $options === [] => new TextInputComponent($question, $default, $placeholder, $hint, $multiline),
+            $multiple => new MultipleChoiceComponent(
+                label: $question,
                 options: $options,
-                default: is_array($default) ? $default : [$default],
-            );
-        } else {
-            $component = new SingleChoiceComponent(
-                question: $question,
+                default: ArrayHelper::wrap($default),
+            ),
+            default => new SingleChoiceComponent(
+                label: $question,
                 options: $options,
                 default: $default,
-                asList: $asList,
-            );
-        }
+            )
+        };
 
         return $this->component($component, $validation);
     }
 
-    public function confirm(string $question, bool $default = false): bool
+    public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool
     {
         if ($this->isForced) {
             return true;
         }
 
-        return $this->component(new ConfirmComponent($question, $default));
+        return $this->component(new ConfirmComponent($question, $default, $yes, $no));
     }
 
-    public function password(string $label = 'Password', bool $confirm = false): string
+    public function password(string $label = 'Password', bool $confirm = false, array $validation = []): ?string
     {
         if (! $confirm) {
-            return $this->component(new PasswordComponent($label));
+            return $this->component(new PasswordComponent($label), $validation);
         }
 
         $password = null;
@@ -232,26 +250,9 @@ final class GenericConsole implements Console
         return $this->component(new ProgressBarComponent($data, $handler));
     }
 
-    public function search(string $label, Closure $search, ?string $default = null): mixed
+    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
     {
-        return $this->component(new SearchComponent($label, $search, $default));
-    }
-
-    public function supportsTty(): bool
-    {
-        if ($this->supportsTty === false) {
-            return false;
-        }
-
-        if ($this->componentRenderer === null) {
-            return false;
-        }
-
-        if (! $this->supportsPrompting()) {
-            return false;
-        }
-
-        return (bool) shell_exec('which tput && which stty');
+        return $this->component(new SearchComponent($label, $search, $multiple, $default));
     }
 
     public function supportsPrompting(): bool

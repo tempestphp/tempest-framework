@@ -42,11 +42,11 @@ final class StubFileGenerator
     ): void {
         try {
             if ($stubFile->type !== StubFileType::CLASS_FILE) {
-                throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, "%s" given.', $stubFile->type->name));
+                throw new FileGenerationFailedException(sprintf('The stub file must be of type CLASS_FILE, <em>%s</em> given.', $stubFile->type->name));
             }
 
             if (file_exists($targetPath) && ! $shouldOverride) {
-                throw new FileGenerationAbortedException(sprintf('The file "%s" already exists and the operation has been aborted.', $targetPath));
+                throw new FileGenerationAbortedException(sprintf('The file <em>%s</em> already exists and the operation has been aborted.', $targetPath));
             }
 
             $this->prepareFilesystem($targetPath);

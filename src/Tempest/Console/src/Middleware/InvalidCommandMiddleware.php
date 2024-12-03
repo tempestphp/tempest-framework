@@ -11,8 +11,12 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
+use function Tempest\Support\str;
+use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\Numeric;
 
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 {
@@ -33,10 +37,25 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 
     private function retry(Invocation $invocation, InvalidCommandException $exception): ExitCode|int
     {
-        $this->console->writeln("<em>Provide missing input:</em>");
+        $this->console->header(
+            header: $invocation->consoleCommand->getName(),
+            subheader: $invocation->consoleCommand->description,
+        );
 
+        /** @var ConsoleArgumentDefinition $argument */
         foreach ($exception->invalidArguments as $argument) {
-            $value = $this->console->ask($argument->name, validation: [new NotEmpty()]);
+            $value = $this->console->ask(
+                question: str($argument->name)->snake(' ')->upperFirst()->toString(),
+                default: (string) $argument->default,
+                hint: $argument->help ?? $argument->description,
+                validation: [
+                    match ($argument->type) {
+                        'bool' => new Boolean(),
+                        'int' => new Numeric(),
+                        default => new NotEmpty(),
+                    },
+                ]
+            );
 
             $invocation->argumentBag->add(new ConsoleInputArgument(
                 name: $argument->name,

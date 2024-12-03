@@ -4,116 +4,102 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
+use Tempest\Console\Console;
+use Tempest\Console\Terminal\Terminal;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class MultipleChoiceComponentTest extends TestCase
+final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
-    public function test_multiple_choice_component(): void
+    public function test_without_filtering(): void
     {
-        $component = new MultipleChoiceComponent('Label', ['a', 'b', 'c']);
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
-            <<<'TXT'
-            <question>Label</question>
-            > [ ]<em> a</em>
-              [ ] b
-              [ ] c
-            TXT,
-            $component->render(),
-        );
+            $component->input(' ');
+            $component->down();
+            $component->input(' ');
 
-        $component->down();
-        $this->assertStringContainsString('> [ ]<em> b</em>', $component->render());
-        $this->assertStringContainsString('[ ] a', $component->render());
-
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [x]<em> b</em>', $component->render());
-
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [ ]<em> b</em>', $component->render());
-
-        $component->up();
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [x]<em> a</em>', $component->render());
-
-        $component->down();
-        $component->toggleSelected();
-
-        $component->up();
-        $component->up();
-        $this->assertStringContainsString('> [ ]<em> c</em>', $component->render());
-
-        $component->down();
-        $this->assertStringContainsString('> [x]<em> a</em>', $component->render());
-
-        $this->assertSame(['a', 'b'],  $component->enter());
+            $this->assertSame(['Brent', 'Paul'], $component->enter());
+        });
     }
 
-    public function test_supports_key_values(): void
+    public function test_with_filtering(): void
     {
-        $component = new MultipleChoiceComponent('Label', [
-            'foo' => '1. Foo',
-            'bar' => '2. Bar',
-        ]);
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
-            <<<'TXT'
-            <question>Label</question>
-            > [ ]<em> 1. Foo</em>
-              [ ] 2. Bar
-            TXT,
-            $component->render(),
-        );
+            $component->input('/');
+            $component->input('P');
+            $component->input('a');
+            $component->stopFiltering();
+            $component->input(' ');
 
-        $component->down();
-        $this->assertStringContainsString('> [ ]<em> 2. Bar</em>', $component->render());
-        $this->assertStringContainsString('[ ] 1. Foo', $component->render());
-
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [x]<em> 2. Bar</em>', $component->render());
-
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [ ]<em> 2. Bar</em>', $component->render());
-
-        $component->up();
-        $component->toggleSelected();
-        $this->assertStringContainsString('> [x]<em> 1. Foo</em>', $component->render());
-
-        $component->down();
-        $component->toggleSelected();
-
-        $component->up();
-        $component->up();
-        $this->assertStringContainsString('> [x]<em> 2. Bar</em>', $component->render());
-
-        $component->down();
-        $this->assertStringContainsString('> [x]<em> 1. Foo</em>', $component->render());
-
-        $this->assertSame([
-            'foo' => '1. Foo',
-            'bar' => '2. Bar',
-        ], $component->enter());
+            $this->assertSame(['Paul'], $component->enter());
+        });
     }
 
-    public function test_supports_defaults(): void
+    public function test_list_options_do_not_retain_keys(): void
     {
-        $component = new MultipleChoiceComponent(
-            question: 'whatever',
-            options: [
-                'foo' => '1. Foo',
-                'bar' => '2. Bar',
-                'baz' => '3. Baz',
-            ],
-            default: ['foo', 'baz']
-        );
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
 
-        $this->assertSame([
-            'foo' => '1. Foo',
-            'baz' => '3. Baz',
-        ], $component->enter());
+            $component->down();
+            $component->input(' ');
+            $component->down();
+            $component->input(' ');
+
+            $this->assertSame(['Paul', 'Aidan'], $component->enter());
+        });
+    }
+
+    public function test_associative_options_retain_keys(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: [
+                'brent' => 'Brent',
+                'paul' => 'Paul',
+                'aidan' => 'Aidan',
+                'roman' => 'Roman',
+            ]);
+
+            $component->down();
+            $component->input(' ');
+            $component->down();
+            $component->input(' ');
+
+            $this->assertSame(['paul' => 'Paul', 'aidan' => 'Aidan'], $component->enter());
+        });
+    }
+
+    public function test_searching_does_not_clear_active(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman']);
+
+            $component->down();
+            $component->down();
+            $component->input(' ');
+            $component->input('/');
+            $component->input('a');
+
+            $this->assertSame(['Aidan'], $component->enter());
+        });
+    }
+
+    public function test_multiple_supports_default_value(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $component = new MultipleChoiceComponent(label: 'Enter a name', options: ['Brent', 'Paul', 'Aidan', 'Roman'], default: ['Aidan']);
+
+            $this->assertStringContainsString('Enter a name', $component->render($terminal));
+            $component->enter();
+
+            $this->assertSame(['Aidan'], $component->enter());
+        });
     }
 }

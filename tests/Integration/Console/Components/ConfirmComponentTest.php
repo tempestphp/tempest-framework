@@ -4,44 +4,63 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
-use Tempest\Console\Key;
-use Tempest\Console\Point;
+use Tempest\Console\Console;
+use Tempest\Console\Terminal\Terminal;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class ConfirmComponentTest extends TestCase
+final class ConfirmComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_confirm_component(): void
     {
-        $component = new ConfirmComponent('Label', default: true);
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $component = new ConfirmComponent('Label', yes: 'Yes!', no: 'No!');
 
-        $this->assertSame(
-            '<question>Label</question> [<em><u>yes</u></em>/no] ',
-            $component->render(),
-        );
+            $this->assertStringContainsString('<style="bg-gray dim">  Yes!   </style>', $component->render($terminal));
+            $this->assertStringContainsString('<style="bg-red bold">   No!   </style>', $component->render($terminal));
 
-        $component->input('a');
-        $component->input(Key::UP->value);
-        $this->assertStringContainsString('<question>Label</question> [<em><u>yes</u></em>/no]', $component->render());
+            $component->toggle();
 
-        $component->toggle();
-        $this->assertStringContainsString('<question>Label</question> [yes/<em><u>no</u></em>]', $component->render());
+            $this->assertStringContainsString('<style="bg-green bold">  Yes!   </style>', $component->render($terminal));
+            $this->assertStringContainsString('<style="bg-gray dim">   No!   </style>', $component->render($terminal));
 
-        $component->input('a');
-        $component->input(Key::UP->value);
-        $this->assertStringContainsString('<question>Label</question> [yes/<em><u>no</u></em>]', $component->render());
+            $this->assertTrue($component->enter());
+        });
+    }
 
-        $component->input('y');
-        $this->assertStringContainsString('<question>Label</question> [<em><u>yes</u></em>/no] y', $component->render());
+    public function test_confirm_component_shortcuts(): void
+    {
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new ConfirmComponent('Label');
 
-        $component->toggle();
-        $this->assertStringContainsString('<question>Label</question> [yes/<em><u>no</u></em>] n', $component->render());
+            $component->input('n');
+            $this->assertFalse($component->enter());
 
-        $this->assertFalse($component->enter());
+            $component->input('y');
+            $this->assertTrue($component->enter());
+        });
+    }
 
-        $this->assertTrue($component->getCursorPosition()->equals(new Point(17, 0)));
+    public function test_confirm_component_default(): void
+    {
+        // false by default
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new ConfirmComponent('Label');
+            $this->assertFalse($component->enter());
+        });
+
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new ConfirmComponent('Label', default: true);
+            $this->assertTrue($component->enter());
+        });
+
+        $this->console->withoutPrompting()->call(function (): void {
+            $component = new ConfirmComponent('Label', default: false);
+            $this->assertFalse($component->enter());
+        });
     }
 }

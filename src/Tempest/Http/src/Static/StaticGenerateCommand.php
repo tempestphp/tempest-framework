@@ -35,7 +35,8 @@ final readonly class StaticGenerateCommand
     }
 
     #[ConsoleCommand(
-        name: 'static:generate'
+        name: 'static:generate',
+        description: 'Compiles static pages',
     )]
     public function __invoke(): void
     {

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Terminal;
 
+use const DIRECTORY_SEPARATOR;
+use function function_exists;
 use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
+use Tempest\Console\GenericCursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
+use function Tempest\Support\arr;
 
 final class Terminal
 {
@@ -25,18 +29,27 @@ final class Terminal
 
     private ?string $tty = null;
 
+    private bool $supportsTty = true;
+
     public function __construct(
         private readonly Console $console,
     ) {
         $this->switchToInteractiveMode();
-        $this->width = (int)exec('tput cols');
-        $this->height = (int)exec('tput lines');
-        $this->initialCursor = new TerminalCursor($this->console, $this);
+        $this->updateActualSize();
+
+        $this->initialCursor = $this->supportsTty()
+            ? new TerminalCursor($this->console, $this)
+            : new GenericCursor();
+
         $this->cursor = clone $this->initialCursor;
     }
 
     public function switchToInteractiveMode(): self
     {
+        if (! $this->supportsTty()) {
+            return $this;
+        }
+
         $this->tty = exec('stty -g');
         system("stty -echo");
         system("stty -icanon");
@@ -47,6 +60,10 @@ final class Terminal
 
     public function switchToNormalMode(): self
     {
+        if (! $this->supportsTty()) {
+            return $this;
+        }
+
         $this->cursor->show();
 
         if ($this->tty) {
@@ -63,11 +80,12 @@ final class Terminal
         return $this;
     }
 
-    public function render(
-        InteractiveConsoleComponent $component,
-        array $footerLines = []
-    ): Generator {
-        $rendered = $component->render();
+    /** @return Generator<string|null> */
+    public function render(InteractiveConsoleComponent $component, array $validationErrors = []): Generator
+    {
+        $rendered = $component
+            ->setErrors($validationErrors)
+            ->render($this);
 
         if (! $rendered instanceof Generator) {
             $rendered = (function (string $content): Generator {
@@ -78,20 +96,29 @@ final class Terminal
         }
 
         foreach ($rendered as $content) {
-            $footerLinesForContent = $footerLines;
+            $footerLinesForContent = [];
 
-            if ($footer = $component->renderFooter()) {
+            if ($validationErrors) {
+                $content .= PHP_EOL . arr($validationErrors)
+                    ->map(fn (string $error) => "   <style=\"fg-yellow\">{$error}</style>")
+                    ->implode(PHP_EOL)
+                    ->append(PHP_EOL)
+                    ->toString();
+            }
+
+            if ($footer = $component->renderFooter($this)) {
                 $footerLinesForContent[] = $footer;
             }
 
             if ($footerLinesForContent !== []) {
-                $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent);
+                $content .= PHP_EOL . implode(PHP_EOL, $footerLinesForContent) . PHP_EOL;
             }
 
-            $this
-                ->clear()
-                ->write($content)
-                ->resetInitialCursor();
+            if ($this->previousRender !== $content) {
+                $this->clear();
+                $this->write($content);
+                $this->resetInitialCursor();
+            }
 
             if ($component instanceof HasCursor) {
                 $this->placeComponentCursor($component);
@@ -105,12 +132,28 @@ final class Terminal
         return $rendered->getReturn();
     }
 
-    private function clear(): self
+    public function disableTty(): self
     {
-        if ($this->previousRender === null) {
-            return $this;
+        $this->supportsTty = false;
+
+        return $this;
+    }
+
+    public function supportsTty(): bool
+    {
+        if ($this->supportsTty === false) {
+            return false;
         }
 
+        if (! function_exists('shell_exec')) {
+            return false;
+        }
+
+        return (bool) shell_exec('stty 2> '.('\\' === DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
+    }
+
+    private function clear(): self
+    {
         $this->cursor
             ->place($this->initialCursor->getPosition())
             ->clearAfter();
@@ -120,6 +163,8 @@ final class Terminal
 
     private function resetInitialCursor(): void
     {
+        $this->updateActualSize();
+
         $requiredHeight = substr_count($this->previousRender, PHP_EOL);
         $availableHeight = $this->height - $this->initialCursor->getPosition()->y;
 
@@ -129,6 +174,16 @@ final class Terminal
                 y: $this->height - $requiredHeight,
             ));
         }
+    }
+
+    public function placeCursorToEnd(): void
+    {
+        $lastRenderHeight = substr_count($this->previousRender ?? '', PHP_EOL);
+
+        $this->cursor->place(new Point(
+            x: 0,
+            y: $this->initialCursor->getPosition()->y + $lastRenderHeight,
+        ));
     }
 
     private function write(string $content): self
@@ -144,14 +199,26 @@ final class Terminal
     {
         $initialCursorPosition = $this->initialCursor->getPosition();
 
-        $componentCursorPosition = $component->getCursorPosition();
+        $componentCursorPosition = $component->getCursorPosition($this);
 
         $this->cursor->place(new Point(
             x: $initialCursorPosition->x + $componentCursorPosition->x,
             y: $initialCursorPosition->y + $componentCursorPosition->y,
         ));
 
-        $this->cursor->show();
+        if ($component->cursorVisible()) {
+            $this->cursor->show();
+        } else {
+            $this->cursor->hide();
+        }
+
+        return $this;
+    }
+
+    private function updateActualSize(): self
+    {
+        $this->width = $this->supportsTty() ? (int) exec('tput cols') : 80;
+        $this->height = $this->supportsTty() ? (int) exec('tput lines') : 25;
 
         return $this;
     }

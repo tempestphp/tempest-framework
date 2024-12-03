@@ -6,22 +6,30 @@ namespace Tempest\Console\Components\Interactive;
 
 use Closure;
 use Generator;
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\RendersControls;
 use Tempest\Console\Components\Static\StaticProgressBarComponent;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
-final readonly class ProgressBarComponent implements InteractiveConsoleComponent, HasStaticComponent
+final class ProgressBarComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+
     public function __construct(
-        private iterable $data,
-        private Closure $handler,
+        private readonly iterable $data,
+        private readonly Closure $handler,
         /** @var null|Closure(int $step, int $count): string $format */
-        private ?Closure $format = null,
+        private readonly ?Closure $format = null,
     ) {
     }
 
-    public function render(): Generator
+    public function render(Terminal $terminal): Generator
     {
         $result = [];
 
@@ -65,11 +73,6 @@ final readonly class ProgressBarComponent implements InteractiveConsoleComponent
         return $result;
     }
 
-    public function renderFooter(): string
-    {
-        return "Press <em>ctrl+c</em> to cancel";
-    }
-
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticProgressBarComponent(
@@ -77,5 +80,12 @@ final readonly class ProgressBarComponent implements InteractiveConsoleComponent
             handler: $this->handler,
             format: $this->format,
         );
+    }
+
+    private function getControls(): array
+    {
+        return [
+            'ctrl+c' => 'cancel',
+        ];
     }
 }

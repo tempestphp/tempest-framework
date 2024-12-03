@@ -12,23 +12,39 @@ use function Tempest\Support\str;
 
 final readonly class RenderConsoleCommand
 {
-    public function __construct(private Console $console)
-    {
+    public function __construct(
+        private Console $console,
+        private ?int $longestCommandName = null,
+        private bool $renderArguments = false,
+        private bool $renderDescription = true,
+    ) {
     }
 
     public function __invoke(ConsoleCommand $consoleCommand): void
     {
-        $parts = ["<em><strong>{$consoleCommand->getName()}</strong></em>"];
+        $parts = [$this->renderName($consoleCommand)];
 
-        foreach ($consoleCommand->getArgumentDefinitions() as $argument) {
-            $parts[] = $this->renderArgument($argument);
+        if ($this->renderArguments) {
+            foreach ($consoleCommand->getArgumentDefinitions() as $argument) {
+                $parts[] = '<style="fg-gray">' . $this->renderArgument($argument) . '</style>';
+            }
         }
 
-        if ($consoleCommand->description !== null && $consoleCommand->description !== '') {
-            $parts[] = "- {$consoleCommand->description}";
+        if ($this->renderDescription) {
+            if ($consoleCommand->description !== null && $consoleCommand->description !== '') {
+                $parts[] = $consoleCommand->description;
+            }
         }
 
-        $this->console->writeln(' ' . implode(' ', $parts));
+        $this->console->writeln(implode(' ', $parts));
+    }
+
+    private function renderName(ConsoleCommand $consoleCommand): string
+    {
+        return str($consoleCommand->getName())
+            ->alignRight($this->longestCommandName, padding: $this->longestCommandName ? 2 : 0)
+            ->wrap(before: '<style="fg-cyan">', after: '</style>')
+            ->toString();
     }
 
     private function renderArgument(ConsoleArgumentDefinition $argument): string
@@ -37,26 +53,32 @@ final readonly class RenderConsoleCommand
             return $this->renderEnumArgument($argument);
         }
 
-        $name = str($argument->name)
-            ->prepend('<em>')
-            ->append('</em>');
-
-        $asString = match($argument->type) {
-            'bool' => "<em>--</em>{$name}",
-            default => $name,
+        $formattedArgumentName = match($argument->type) {
+            'bool' => "--{$argument->name}",
+            default => $argument->name,
         };
+
+        $formattedArgumentName = str($formattedArgumentName)->wrap('<style="fg-cyan">', '</style>');
 
         if (! $argument->hasDefault) {
-            return "<{$asString}>";
+            return $formattedArgumentName->wrap('<style="fg-gray dim"><</style>', '<style="fg-gray dim">></style>')->toString();
         }
 
-        return match (true) {
-            $argument->default === true => "[{$asString}=true]",
-            $argument->default === false => "[{$asString}=false]",
-            is_null($argument->default) => "[{$asString}=null]",
-            is_array($argument->default) => "[{$asString}=array]",
-            default => "[{$asString}={$argument->default}]"
+        $defaultValue = match (true) {
+            $argument->default === true => "true",
+            $argument->default === false => "false",
+            is_null($argument->default) => "null",
+            is_array($argument->default) => "array",
+            default => "$argument->default",
         };
+
+        return str()
+            ->append(str('[')->wrap('<style="fg-gray dim">', '</style>'))
+            ->append($formattedArgumentName)
+            ->append(str('=')->wrap('<style="fg-gray dim">', '</style>'))
+            ->append(str($defaultValue)->wrap('<style="fg-gray">', '</style>'))
+            ->append(str(']')->wrap('<style="fg-gray dim">', '</style>'))
+            ->toString();
     }
 
     private function renderEnumArgument(ConsoleArgumentDefinition $argument): string
@@ -66,8 +88,8 @@ final readonly class RenderConsoleCommand
             array: $argument->type::cases()
         );
 
-        $partsAsString = ' {<em>' . implode('|', $parts) . '</em>}';
-        $line = "<em>{$argument->name}</em>";
+        $partsAsString = ' {<style="fg-cyan">' . implode('|', $parts) . '</style>}';
+        $line = "<style=\"fg-cyan\">{$argument->name}</style>";
 
         if ($argument->hasDefault) {
             return "[{$line}={$argument->default->value}{$partsAsString}]";

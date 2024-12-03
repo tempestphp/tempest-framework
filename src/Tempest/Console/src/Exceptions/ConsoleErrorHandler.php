@@ -79,7 +79,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
         $code = Escape::terminal($highlighter->parse(file_get_contents($file), 'php'));
         $lines = explode(PHP_EOL, $code);
 
-        $lines[$lineNumber - 1] = $lines[$lineNumber - 1] . ' <error><</error>';
+        $lines[$lineNumber - 1] = $lines[$lineNumber - 1] . ' <style="fg-red"><</style>';
 
         $excerptSize = 5;
         $start = max(0, $lineNumber - $excerptSize - 2);

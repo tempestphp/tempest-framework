@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Generator;
+use Tempest\Console\Components\ComponentState;
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\HasTextBuffer;
+use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\OptionCollection;
+use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticSearchComponent;
+use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
 use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
@@ -14,158 +21,94 @@ use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
+use Tempest\Support\ArrayHelper;
 
 final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
-    public Point $cursorPosition;
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+    use HasTextBuffer;
 
-    public string $query = '';
+    private ChoiceRenderer $renderer;
 
-    public int $selectedOption = 0;
+    public OptionCollection $options;
 
-    public array $options = [];
+    private ?string $previousQuery = null;
 
     public function __construct(
         public string $label,
         public Closure $search,
-        public ?string $default = null
+        public bool $multiple = false,
+        public null|array|string $default = null,
     ) {
-        $this->cursorPosition = new Point(2, 1);
-    }
+        $this->bufferEnabled = ! $this->multiple;
+        $this->buffer = new TextBuffer();
+        $this->renderer = new ChoiceRenderer(default: $default, multiple: $multiple);
+        $this->options = new OptionCollection([]);
 
-    public function render(): Generator|string
-    {
-        $output = "<question>{$this->label}</question> {$this->query}";
-
-        foreach ($this->options as $key => $option) {
-            $output .= PHP_EOL;
-            $output .= $this->isSelected($key) ? "[x] <em>{$option}</em>" : "[ ] {$option}";
+        if ($this->multiple) {
+            $this->default = ArrayHelper::wrap($this->default);
         }
 
-        return $output;
+        $this->updateQuery();
     }
 
-    public function renderFooter(): string
+    public function render(Terminal $terminal): string
     {
-        return "Press <em>up</em>/<em>down</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
-    }
+        $this->updateQuery();
 
-    #[HandlesKey]
-    public function input(string $key): void
-    {
-        if (str_starts_with($key, "\e")) {
-            return;
-        }
-
-        $offset = $this->cursorPosition->x - 2;
-
-        $this->updateQuery(substr($this->query, 0, $offset) . $key . substr($this->query, $offset));
-
-        $this->right();
-    }
-
-    #[HandlesKey(Key::ENTER)]
-    public function enter(): ?string
-    {
-        $selected = $this->options[$this->selectedOption] ?? null;
-
-        if (! $selected && $this->default) {
-            return $this->default;
-        }
-
-        if (! $selected) {
-            return null;
-        }
-
-        $this->query = $selected;
-
-        return $selected;
-    }
-
-    #[HandlesKey(Key::BACKSPACE)]
-    public function backspace(): void
-    {
-        $offset = $this->cursorPosition->x - 2;
-
-        if ($offset <= 0) {
-            return;
-        }
-
-        $this->updateQuery(substr($this->query, 0, $offset - 1) . substr($this->query, $offset));
-
-        $this->left();
-    }
-
-    #[HandlesKey(Key::DELETE)]
-    public function delete(): void
-    {
-        $offset = $this->cursorPosition->x - 2;
-
-        $this->updateQuery(substr($this->query, 0, $offset) . substr($this->query, $offset + 1));
-    }
-
-    #[HandlesKey(Key::HOME)]
-    public function home(): void
-    {
-        $this->cursorPosition->x = 2;
-    }
-
-    #[HandlesKey(Key::END)]
-    public function end(): void
-    {
-        $this->cursorPosition->x = strlen($this->query) + 2;
-    }
-
-    #[HandlesKey(Key::LEFT)]
-    public function left(): void
-    {
-        $this->cursorPosition->x = max(2, $this->cursorPosition->x - 1);
-    }
-
-    #[HandlesKey(Key::RIGHT)]
-    public function right(): void
-    {
-        $this->cursorPosition->x = min(strlen($this->query) + 2, $this->cursorPosition->x + 1);
-    }
-
-    #[HandlesKey(Key::UP)]
-    public function up(): void
-    {
-        $this->selectedOption = $this->selectedOption - 1;
-
-        if ($this->selectedOption < 0) {
-            $this->selectedOption = count($this->options) - 1;
-        }
-    }
-
-    #[HandlesKey(Key::DOWN)]
-    public function down(): void
-    {
-        $this->selectedOption = $this->selectedOption + 1;
-
-        if ($this->selectedOption > count($this->options) - 1) {
-            $this->selectedOption = 0;
-        }
-    }
-
-    public function getCursorPosition(): Point
-    {
-        return new Point(
-            x: $this->cursorPosition->x + strlen($this->label) + 1,
-            y: $this->cursorPosition->y - 1,
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            label: $this->label,
+            query: $this->buffer,
+            filtering: $this->bufferEnabled,
+            options: $this->options,
         );
     }
 
-    private function updateQuery(string $query): void
+    private function updateQuery(): void
     {
-        $this->selectedOption = 0;
-        $this->query = $query;
-        $this->options = array_values(($this->search)($this->query));
+        if ($this->previousQuery === $this->buffer->text) {
+            return;
+        }
+
+        $this->options->setCollection(array_values(($this->search)($this->buffer->text)));
+        $this->previousQuery = $this->buffer->text;
     }
 
-    private function isSelected(int $key): bool
+    private function getControls(): array
     {
-        return $this->selectedOption === $key;
+        $controls = [];
+
+        if ($this->multiple && $this->bufferEnabled) {
+            $controls['esc'] = 'select';
+        } elseif ($this->multiple) {
+            $controls['/'] = 'filter';
+            $controls['space'] = 'select';
+        }
+
+        return [
+            ...$controls,
+            '↑' => 'up',
+            '↓' => 'down',
+            'enter' => $this->multiple && $this->default && $this->options->getSelectedOptions() === []
+                ? 'skip'
+                : 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
+    }
+
+    public function getCursorPosition(Terminal $terminal): Point
+    {
+        return $this->renderer->getCursorPosition($terminal, $this->buffer);
+    }
+
+    public function cursorVisible(): bool
+    {
+        return $this->bufferEnabled;
     }
 
     public function getStaticComponent(): StaticConsoleComponent
@@ -173,7 +116,79 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         return new StaticSearchComponent(
             label: $this->label,
             search: $this->search,
+            multiple: $this->multiple,
             default: $this->default,
         );
+    }
+
+    #[HandlesKey]
+    public function input(string $key): void
+    {
+        if ($this->multiple) {
+            if (! $this->bufferEnabled && $key === '/') {
+                $this->bufferEnabled = true;
+                $this->updateQuery();
+
+                return;
+            }
+
+            if (! $this->bufferEnabled) {
+                match (mb_strtolower($key)) {
+                    ' ' => $this->options->toggleCurrent(),
+                    'h', 'k' => $this->options->previous(),
+                    'j', 'l' => $this->options->next(),
+                    default => null,
+                };
+
+                $this->updateQuery();
+
+                return;
+            }
+        }
+
+        $this->buffer->input($key);
+        $this->updateQuery();
+    }
+
+    #[HandlesKey(Key::ENTER)]
+    public function enter(): mixed
+    {
+        if ($this->multiple) {
+            return $this->options->getRawSelectedOptions() ?: $this->default;
+        }
+
+        if (($active = $this->options->getActive()) !== null) {
+            return $active->value;
+        }
+
+        $this->state = ComponentState::ACTIVE;
+
+        return null;
+    }
+
+    #[HandlesKey(Key::ESCAPE)]
+    public function stopFiltering(): void
+    {
+        if (! $this->multiple) {
+            return;
+        }
+
+        $this->bufferEnabled = false;
+    }
+
+    #[HandlesKey(Key::UP)]
+    #[HandlesKey(Key::HOME)]
+    #[HandlesKey(Key::START_OF_LINE)]
+    public function up(): void
+    {
+        $this->options->previous();
+    }
+
+    #[HandlesKey(Key::DOWN)]
+    #[HandlesKey(Key::END)]
+    #[HandlesKey(Key::END_OF_LINE)]
+    public function down(): void
+    {
+        $this->options->next();
     }
 }

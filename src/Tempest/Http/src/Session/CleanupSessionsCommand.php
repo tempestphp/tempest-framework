@@ -21,7 +21,7 @@ final readonly class CleanupSessionsCommand
     #[Schedule(Every::MINUTE)]
     #[ConsoleCommand(
         name: 'session:clean',
-        description: 'Find and remove all expired sessions',
+        description: 'Finds and removes all expired sessions',
     )]
     public function __invoke(): void
     {

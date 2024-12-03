@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Highlight\TempestConsoleLanguage\Injections;
 
-use Tempest\Console\Highlight\ConsoleTokenType;
 use Tempest\Console\Highlight\DynamicTokenType;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
@@ -13,11 +12,6 @@ use function Tempest\Support\str;
 
 final readonly class DynamicInjection implements Injection
 {
-    public function getTokenType(): ConsoleTokenType
-    {
-        return ConsoleTokenType::COMMENT;
-    }
-
     public function parse(string $content, Highlighter $highlighter): ParsedInjection
     {
         $pattern = '/(?<match>\<style=\"(?<styles>(?:[a-z-]+\s*)+)\"\>(?:(?!\<style).|\n)*?\<\/style\>)/';

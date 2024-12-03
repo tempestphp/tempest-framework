@@ -26,7 +26,7 @@ final class MigrateUpCommand
 
     #[ConsoleCommand(
         name: 'migrate:up',
-        description: 'Run all new migrations',
+        description: 'Runs all new migrations',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): void

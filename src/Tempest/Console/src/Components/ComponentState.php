@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tempest\Console\Components;
+
+enum ComponentState
+{
+    /**
+     * Component is available for input.
+     */
+    case ACTIVE;
+
+    /**
+     * There are validation errors.
+     */
+    case ERROR;
+
+    /**
+     * Input was cancelled.
+     */
+    case CANCELLED;
+
+    /**
+     * Input was submitted.
+     */
+    case SUBMITTED;
+
+    /**
+     * Input is blocked.
+     */
+    case BLOCKED;
+}

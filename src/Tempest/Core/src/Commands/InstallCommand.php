@@ -24,7 +24,7 @@ final readonly class InstallCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'install', middleware: [ForceMiddleware::class])]
+    #[ConsoleCommand(name: 'install', description: 'Applies the specified installer', middleware: [ForceMiddleware::class])]
     public function __invoke(?string $installer = null): void
     {
         $installer = $this->resolveInstaller($installer);
@@ -35,15 +35,15 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->confirm("Running the `{$installer->getName()}` installer, continue?")) {
-            $this->error('Aborted');
+        if (! $this->confirm("Running the <em>{$installer->getName()}</em> installer, continue?")) {
+            $this->error('Aborted.');
 
             return;
         }
 
         $installer->install();
 
-        $this->success('Done');
+        $this->success('Done.');
     }
 
     private function resolveInstaller(?string $search): ?Installer
@@ -55,10 +55,10 @@ final readonly class InstallCommand
         if (! $search) {
             $search = $this->ask(
                 question: 'Please choose an installer',
-                options: $installers->map(fn (Installer $installer) => $installer->getName())->toArray(),
+                options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->getName())->toArray(),
             );
         }
 
-        return $installers->first(fn (Installer $installer) => $installer->getName() === $search);
+        return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->getName() === $search);
     }
 }
