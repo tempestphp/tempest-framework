@@ -39,6 +39,8 @@ final class Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
     ): self {
+        define('TEMPEST_START', value: hrtime(true));
+
         return (new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
