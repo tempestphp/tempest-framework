@@ -4,34 +4,35 @@ declare(strict_types=1);
 
 namespace Tempest\Debug;
 
+use Exception;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\VarDumper;
 use Tempest\Container\GenericContainer;
+use Tempest\EventBus\EventBus;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tempest\Log\LogConfig;
 
 final readonly class Debug
 {
-    private function __construct(private ?LogConfig $logConfig = null)
-    {
+    private function __construct(
+        private ?LogConfig $logConfig = null,
+        private ?EventBus $eventBus = null,
+    ) {
     }
 
     public static function resolve(): self
     {
-        if (! class_exists(GenericContainer::class)) {
+        try {
+            $container = GenericContainer::instance();
+
+            return new self(
+                logConfig: $container?->get(LogConfig::class),
+                eventBus: $container?->get(EventBus::class),
+            );
+        } catch (Exception) {
             return new self();
         }
-
-        if (! class_exists(LogConfig::class)) {
-            return new self();
-        }
-
-        $container = GenericContainer::instance();
-
-        $logConfig = $container?->get(LogConfig::class);
-
-        return new self($logConfig);
     }
 
     public function log(array $items, bool $writeToLog = true, bool $writeToOut = true): void
@@ -46,6 +47,8 @@ final readonly class Debug
         if ($writeToOut) {
             $this->writeToOut($items, $callPath);
         }
+
+        $this->eventBus?->dispatch(new ItemsDebugged($items));
     }
 
     private function writeToLog(array $items, string $callPath): void
