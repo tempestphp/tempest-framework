@@ -7,50 +7,54 @@ namespace Tempest\Console\Components\Static;
 use Closure;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Support\ArrayHelper;
 
-final readonly class StaticSearchComponent implements StaticConsoleComponent
+final class StaticSearchComponent implements StaticConsoleComponent
 {
-    private const string SEARCH_AGAIN = 'Search again';
-
     private const string CANCEL = 'Cancel';
 
+    private const string SEARCH_AGAIN = 'Search again';
+
     public function __construct(
-        public string $label,
-        public Closure $search,
-        public ?string $default = null,
+        public readonly string $label,
+        public readonly Closure $search,
+        public readonly bool $multiple = false,
+        public null|array|string $default = null,
     ) {
+        if ($this->multiple) {
+            $this->default = ArrayHelper::wrap($this->default);
+        }
     }
 
-    public function render(Console $console): ?string
+    public function render(Console $console): null|array|string
     {
         if (! $console->supportsPrompting()) {
             return $this->default;
         }
 
-        $answer = null;
-
-        while ($answer === null) {
+        do {
             $query = $console->ask($this->label);
 
-            $options = ($this->search)($query);
-
-            $options = [self::SEARCH_AGAIN, ...(count($options) === 0 ? [self::CANCEL] : []), ...$options];
+            $options = $this->multiple
+                ? ($this->search)($query)
+                : [self::CANCEL, self::SEARCH_AGAIN, ...($this->search)($query)];
 
             $answer = $console->ask(
                 question: 'Please select a result',
                 options: $options,
-                asList: true,
+                multiple: $this->multiple,
+                default: $this->multiple ? [] : self::CANCEL,
             );
 
-            if ($answer === self::CANCEL) {
-                return $this->default;
+            if ($answer === self::SEARCH_AGAIN) {
+                $answer = false;
             }
 
-            if ($answer === self::SEARCH_AGAIN) {
+            if ($answer === self::CANCEL) {
                 $answer = null;
             }
-        }
+        } while ($answer === false);
 
-        return $answer;
+        return $answer ?: $this->default;
     }
 }

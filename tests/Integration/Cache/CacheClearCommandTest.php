@@ -12,7 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class CacheClearCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_cache_clear(): void
+    public function test_cache_clear_single(): void
     {
         $this->console
             ->call('cache:clear')
@@ -20,7 +20,6 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->submit('0')
             ->submit('yes')
             ->assertSee('Tempest\Cache\ProjectCache cleared successfully')
-            ->assertNotSee('Tempest\View\ViewCache cleared successfully')
-            ->assertSee('Done');
+            ->assertNotSee('Tempest\View\ViewCache cleared successfully');
     }
 }

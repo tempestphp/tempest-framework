@@ -22,19 +22,11 @@ final class MakeControllerCommand
         aliases: ['controller:make', 'controller:create', 'create:controller'],
     )]
     public function __invoke(
-        #[ConsoleArgument(
-            help: 'The name of the controller class to create',
-        )]
+        #[ConsoleArgument(description: 'The name of the controller class to create')]
         string $className,
-        #[ConsoleArgument(
-            name: 'path',
-            help: 'The path of the route',
-        )]
+        #[ConsoleArgument(name: 'path', description: 'The path of the route')]
         ?string $controllerPath = null,
-        #[ConsoleArgument(
-            name: 'view',
-            help: 'The name of the view returned from the controller',
-        )]
+        #[ConsoleArgument(name: 'view', description: 'The name of the view returned from the controller')]
         ?string $controllerView = null,
     ): void {
         $suggestedPath = $this->getSuggestedPath($className);
@@ -52,7 +44,7 @@ final class MakeControllerCommand
                 ],
             );
 
-            $this->success(sprintf('Controller successfully created at "%s".', $targetPath));
+            $this->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->error($e->getMessage());
         }

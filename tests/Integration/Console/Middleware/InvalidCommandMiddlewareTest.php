@@ -16,7 +16,7 @@ final class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(ComplexCommand::class)
-            ->assertContains('Provide missing input')
+            ->assertContains('complex')
             ->submit('a')
             ->submit('b')
             ->submit('c')

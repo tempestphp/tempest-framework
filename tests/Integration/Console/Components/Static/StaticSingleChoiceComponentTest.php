@@ -43,7 +43,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
-                $answer = $console->ask('test', ['a', 'b'], asList: true);
+                $answer = $console->ask('test', ['a', 'b'], multiple: true);
 
                 $console->writeln("picked {$answer}");
             })
@@ -55,12 +55,13 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
-                $answer = $console->ask('test', ['a', 'b'], default: 1, asList: true);
+                $answer = json_encode($console->ask('test', ['a', 'b'], default: 'a', multiple: true));
 
                 $console->writeln("picked {$answer}");
             })
             ->input(Key::ENTER)
-            ->assertContains('picked b');
+            ->input('yes')
+            ->assertContains('picked ["a"]');
     }
 
     public function test_with_default_option_without_prompting(): void

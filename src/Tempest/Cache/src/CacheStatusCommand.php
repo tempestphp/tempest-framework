@@ -20,7 +20,7 @@ final readonly class CacheStatusCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'cache:status', aliases: ['cs'])]
+    #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled', aliases: ['cs'])]
     public function __invoke(): void
     {
         $caches = $this->cacheConfig->caches;
@@ -38,7 +38,7 @@ final readonly class CacheStatusCommand
             $this->writeln(sprintf(
                 '<em>%s</em> %s%s',
                 $cacheClass,
-                $cache->isEnabled() ? '<success>enabled</success>' : '<error>disabled</error>',
+                $cache->isEnabled() ? '<style="fg-green">enabled</style>' : '<style="fg-red">disabled</style>',
                 $reason
             ));
         }

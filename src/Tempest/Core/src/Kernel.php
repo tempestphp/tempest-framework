@@ -39,6 +39,8 @@ final class Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
     ): self {
+        define('TEMPEST_START', value: hrtime(true));
+
         return (new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
@@ -118,21 +120,21 @@ final class Kernel
 
     public function loadDiscoveryLocations(): self
     {
-        ($this->container->get(LoadDiscoveryLocations::class))();
+        $this->container->invoke(LoadDiscoveryLocations::class);
 
         return $this;
     }
 
     public function loadDiscovery(): self
     {
-        ($this->container->get(LoadDiscoveryClasses::class))();
+        $this->container->invoke(LoadDiscoveryClasses::class);
 
         return $this;
     }
 
     public function loadConfig(): self
     {
-        $this->container->get(LoadConfig::class)();
+        $this->container->invoke(LoadConfig::class);
 
         return $this;
     }
@@ -160,7 +162,7 @@ final class Kernel
 
     public function finishDeferredTasks(): self
     {
-        ($this->container->get(FinishDeferredTasks::class))();
+        $this->container->invoke(FinishDeferredTasks::class);
 
         return $this;
     }

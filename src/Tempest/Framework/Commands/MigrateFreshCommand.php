@@ -28,7 +28,7 @@ final class MigrateFreshCommand
 
     #[ConsoleCommand(
         name: 'migrate:fresh',
-        description: 'Drop all tables and rerun migrations from scratch',
+        description: 'Drops all tables and rerun migrations from scratch',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): ExitCode

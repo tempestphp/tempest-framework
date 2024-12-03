@@ -45,7 +45,9 @@ trait HasConsole
         ?array $options = null,
         mixed $default = null,
         bool $multiple = false,
-        bool $asList = false,
+        bool $multiline = false,
+        ?string $placeholder = null,
+        ?string $hint = null,
         array $validation = [],
     ): string|array {
         return $this->console->ask(
@@ -53,7 +55,9 @@ trait HasConsole
             options: $options,
             default: $default,
             multiple: $multiple,
-            asList: $asList,
+            multiline: $multiline,
+            placeholder: $placeholder,
+            hint: $hint,
             validation: $validation,
         );
     }
@@ -85,31 +89,40 @@ trait HasConsole
     /**
      * @param Closure(string $search): array $search
      */
-    public function search(string $label, Closure $search): mixed
+    public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
     {
         return $this->console->search(
             label: $label,
             search: $search,
+            multiple: $multiple,
+            default: $default,
         );
     }
 
-    public function info(string $line): self
+    public function info(string $line, ?string $symbol = null): self
     {
-        $this->console->info($line);
+        $this->console->info($line, $symbol);
 
         return $this;
     }
 
-    public function error(string $line): self
+    public function error(string $line, ?string $symbol = null): self
     {
-        $this->console->error($line);
+        $this->console->error($line, $symbol);
 
         return $this;
     }
 
-    public function success(string $line): self
+    public function warning(string $line, ?string $symbol = null): self
     {
-        $this->console->success($line);
+        $this->console->warning($line, $symbol);
+
+        return $this;
+    }
+
+    public function success(string $line, ?string $symbol = null): self
+    {
+        $this->console->success($line, $symbol);
 
         return $this;
     }

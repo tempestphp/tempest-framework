@@ -4,115 +4,154 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\HasTextBuffer;
+use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\OptionCollection;
+use Tempest\Console\Components\Renderers\ChoiceRenderer;
 use Tempest\Console\Components\Static\StaticMultipleChoiceComponent;
+use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\HandlesKey;
+use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
+use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
-final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasStaticComponent
+final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
-    public array $selectedOptions = [];
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+    use HasTextBuffer;
 
-    public int|string $activeOption;
+    private ChoiceRenderer $renderer;
+
+    private OptionCollection $options;
 
     public function __construct(
-        public string $question,
-        public array $options,
+        public string $label,
+        iterable $options,
         public array $default = [],
     ) {
-        foreach ($this->default as $key => $value) {
-            $this->selectedOptions[array_is_list($options) ? $key : $value] = true;
-        }
-
-        $this->activeOption = array_key_first($this->options);
+        $this->bufferEnabled = false;
+        $this->options = new OptionCollection($options);
+        $this->buffer = new TextBuffer();
+        $this->renderer = new ChoiceRenderer(multiple: true);
+        $this->updateQuery();
     }
 
-    public function render(): string
+    public function render(Terminal $terminal): string
     {
-        $output = "<question>{$this->question}</question>";
+        $this->updateQuery();
 
-        foreach ($this->options as $key => $option) {
-            $output .= PHP_EOL;
-
-            $output .= $this->isActive($key) ? '> ' : '  ';
-            $output .= $this->isSelected($key) ? '[x]' : '[ ]';
-            $output .= $this->isActive($key) ? '<em>' : '';
-            $output .= " {$option}";
-            $output .= $this->isActive($key) ? '</em>' : '';
-        }
-
-        return $output;
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            label: $this->label,
+            query: $this->buffer,
+            options: $this->options,
+            filtering: $this->bufferEnabled,
+            placeholder: 'Filter...'
+        );
     }
 
-    public function renderFooter(): string
+    private function getControls(): array
     {
-        return "Press <em>space</em> to select, <em>enter</em> to confirm, <em>ctrl+c</em> to cancel";
+        return [
+            ...($this->bufferEnabled ? [
+                'esc' => 'select',
+            ] : [
+                '/' => 'filter',
+                'space' => 'select',
+            ]),
+            '↑' => 'up',
+            '↓' => 'down',
+            'enter' => $this->options->getSelectedOptions() === []
+                ? 'skip'
+                : 'confirm',
+            'ctrl+c' => 'cancel',
+        ];
     }
 
-    public function isActive(int|string $key): bool
+    private function updateQuery(): void
     {
-        return $this->activeOption === $key;
+        $this->options->filter($this->buffer->text);
     }
 
-    public function isSelected(int|string $key): bool
+    public function getCursorPosition(Terminal $terminal): Point
     {
-        return $this->selectedOptions[$key] ?? false;
+        return $this->renderer->getCursorPosition($terminal, $this->buffer);
     }
 
-    #[HandlesKey(Key::SPACE)]
-    public function toggleSelected(): void
+    public function cursorVisible(): bool
     {
-        $this->selectedOptions[$this->activeOption] = ! $this->isSelected($this->activeOption);
-    }
-
-    #[HandlesKey(Key::ENTER)]
-    public function enter(): array
-    {
-        $result = [];
-
-        foreach ($this->options as $key => $option) {
-            if ($this->isSelected($key)) {
-                $result[$key] = $option;
-            }
-        }
-
-        return $result;
-    }
-
-    #[HandlesKey(Key::UP)]
-    #[HandlesKey(Key::LEFT)]
-    public function up(): void
-    {
-        $previousValue = prev($this->options);
-
-        if ($previousValue === false) {
-            end($this->options);
-        }
-
-        $this->activeOption = key($this->options);
-    }
-
-    #[HandlesKey(Key::DOWN)]
-    #[HandlesKey(Key::RIGHT)]
-    public function down(): void
-    {
-        $nextValue = next($this->options);
-
-        if ($nextValue === false) {
-            reset($this->options);
-        }
-
-        $this->activeOption = key($this->options);
+        return $this->bufferEnabled;
     }
 
     public function getStaticComponent(): StaticConsoleComponent
     {
         return new StaticMultipleChoiceComponent(
-            question: $this->question,
-            options: $this->options,
+            label: $this->label,
+            options: $this->options->getRawOptions(),
             default: $this->default,
         );
+    }
+
+    #[HandlesKey]
+    public function input(string $key): void
+    {
+        if (! $this->bufferEnabled && $key === '/') {
+            $this->bufferEnabled = true;
+            $this->updateQuery();
+
+            return;
+        }
+
+        if (! $this->bufferEnabled) {
+            match (mb_strtolower($key)) {
+                ' ' => $this->options->toggleCurrent(),
+                'h', 'k' => $this->options->previous(),
+                'j', 'l' => $this->options->next(),
+                default => null,
+            };
+            $this->updateQuery();
+
+            return;
+        }
+
+        $this->buffer->input($key);
+        $this->updateQuery();
+    }
+
+    #[HandlesKey(Key::ESCAPE)]
+    public function stopFiltering(): void
+    {
+        $this->bufferEnabled = false;
+    }
+
+    #[HandlesKey(Key::ENTER)]
+    public function enter(): array
+    {
+        return $this->options->getRawSelectedOptions() ?: $this->default;
+    }
+
+    #[HandlesKey(Key::UP)]
+    #[HandlesKey(Key::HOME)]
+    #[HandlesKey(Key::START_OF_LINE)]
+    public function up(): void
+    {
+        $this->options->previous();
+    }
+
+    #[HandlesKey(Key::DOWN)]
+    #[HandlesKey(Key::END)]
+    #[HandlesKey(Key::END_OF_LINE)]
+    public function down(): void
+    {
+        $this->options->next();
     }
 }

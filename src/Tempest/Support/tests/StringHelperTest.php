@@ -557,4 +557,48 @@ b'));
         $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'strong')->toString());
         $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'p')->toString());
     }
+
+    public function test_when(): void
+    {
+        $this->assertTrue(str('foo')->when(true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(false, fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(fn () => true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(fn () => false, fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(fn ($s) => $s->startsWith('foo'), fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(fn ($s) => $s->startsWith('bar'), fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(false, fn ($s) => $s->append('bar'))->equals('foo'));
+    }
+
+    public function test_align_center(): void
+    {
+        $this->assertSame('  foo  ', str('foo')->alignCenter(7)->toString());
+        $this->assertSame('  foo  ', str(' foo ')->alignCenter(7)->toString());
+        $this->assertSame('   foo    ', str('foo')->alignCenter(10)->toString());
+
+        $this->assertSame('  foo  ', str('foo')->alignCenter(2, padding: 2)->toString());
+        $this->assertSame('   foo    ', str('foo')->alignCenter(10, padding: 2)->toString());
+        $this->assertSame('  foo  ', str(' foo ')->alignCenter(2, padding: 2)->toString());
+    }
+
+    public function test_align_right(): void
+    {
+        $this->assertSame('foo', str('foo')->alignRight(3)->toString());
+        $this->assertSame('       foo', str('foo')->alignRight(10)->toString());
+        $this->assertSame('       foo', str(' foo')->alignRight(10)->toString());
+        $this->assertSame('     foo  ', str(' foo')->alignRight(10, padding: 2)->toString());
+        $this->assertSame('  foo  ', str('foo')->alignRight(2, padding: 2)->toString());
+    }
+
+    public function test_align_left(): void
+    {
+        $this->assertSame('foo', str('foo')->alignLeft(3)->toString());
+        $this->assertSame('foo       ', str('foo')->alignLeft(10)->toString());
+        $this->assertSame('foo       ', str(' foo')->alignLeft(10)->toString());
+        $this->assertSame('  foo     ', str(' foo')->alignLeft(10, padding: 2)->toString());
+        $this->assertSame('  foo  ', str('foo')->alignLeft(2, padding: 2)->toString());
+    }
 }

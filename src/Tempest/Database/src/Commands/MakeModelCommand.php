@@ -22,9 +22,7 @@ final class MakeModelCommand
         aliases: ['model:make', 'model:create', 'create:model'],
     )]
     public function __invoke(
-        #[ConsoleArgument(
-            help: 'The name of the model class to create',
-        )]
+        #[ConsoleArgument(description: 'The name of the model class to create')]
         string $className,
     ): void {
         $suggestedPath = $this->getSuggestedPath($className);
@@ -38,7 +36,7 @@ final class MakeModelCommand
                 shouldOverride: $shouldOverride,
             );
 
-            $this->console->success(sprintf('Model successfully created at "%s".', $targetPath));
+            $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException $e) {
             $this->console->error($e->getMessage());
         }

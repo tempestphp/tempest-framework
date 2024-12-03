@@ -1622,4 +1622,34 @@ final class ArrayHelperTest extends TestCase
         $this->assertNull($collection->findKey('anything'));
         $this->assertNull($collection->findKey(fn () => true));
     }
+
+    public function test_slice(): void
+    {
+        $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+        $this->assertSame(
+            actual: $collection->slice(0, 3)->values()->toArray(),
+            expected: [1, 2, 3],
+        );
+
+        $this->assertSame(
+            actual: $collection->slice(3)->values()->toArray(),
+            expected: [4, 5, 6, 7, 8, 9, 10],
+        );
+
+        $this->assertSame(
+            actual: $collection->slice(-3)->values()->toArray(),
+            expected: [8, 9, 10],
+        );
+
+        $this->assertSame(
+            actual: $collection->slice(-3, 2)->values()->toArray(),
+            expected: [8, 9],
+        );
+
+        $this->assertSame(
+            actual: $collection->slice(-3, -1)->values()->toArray(),
+            expected: [8, 9],
+        );
+    }
 }

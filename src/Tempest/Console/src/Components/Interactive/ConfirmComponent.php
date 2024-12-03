@@ -4,42 +4,54 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Tempest\Console\Components\Concerns\HasErrors;
+use Tempest\Console\Components\Concerns\HasState;
+use Tempest\Console\Components\Concerns\RendersControls;
+use Tempest\Console\Components\Renderers\ConfirmRenderer;
 use Tempest\Console\Components\Static\StaticConfirmComponent;
 use Tempest\Console\HandlesKey;
-use Tempest\Console\HasCursor;
 use Tempest\Console\HasStaticComponent;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Key;
-use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
+use Tempest\Console\Terminal\Terminal;
 
-final class ConfirmComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
+final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticComponent
 {
+    use HasErrors;
+    use HasState;
+    use RendersControls;
+
     private bool $answer;
 
-    private string $textualAnswer = '';
+    public ConfirmRenderer $renderer;
 
     public function __construct(
         private readonly string $question,
         private readonly bool $default = false,
+        readonly ?string $yes = null,
+        readonly ?string $no = null,
     ) {
         $this->answer = $default;
+        $this->renderer = new ConfirmRenderer($yes ?? 'Yes', $no ?? 'No');
     }
 
-    public function render(): string
+    public function render(Terminal $terminal): string
     {
-        return sprintf(
-            '%s [%s/%s] %s',
-            "<question>{$this->question}</question>",
-            $this->answer ? '<em><u>yes</u></em>' : 'yes',
-            $this->answer ? 'no' : '<em><u>no</u></em>',
-            $this->textualAnswer,
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            answer: $this->answer,
+            label: $this->question,
         );
     }
 
-    public function renderFooter(): string
+    private function getControls(): array
     {
-        return 'Press <em>enter</em> to confirm, <em>ctrl+c</em> to cancel';
+        return [
+            '↔' => 'toggle',
+            'enter' => 'confirm',
+        ];
     }
 
     #[HandlesKey(Key::DOWN)]
@@ -49,10 +61,6 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasCursor, 
     public function toggle(): void
     {
         $this->answer = ! $this->answer;
-
-        if ($this->textualAnswer) {
-            $this->textualAnswer = $this->answer ? 'y' : 'n';
-        }
     }
 
     #[HandlesKey(Key::ENTER)]
@@ -64,25 +72,12 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasCursor, 
     #[HandlesKey]
     public function input(string $key): void
     {
-        preg_match('/([yn])/i', $key, $matches);
-
-        $answer = $matches[0] ?? null;
-
-        if ($answer !== $key) {
-            return;
-        }
-
-        $this->textualAnswer = strtolower($answer);
-
-        $this->answer = $this->textualAnswer === 'y';
-    }
-
-    public function getCursorPosition(): Point
-    {
-        return new Point(
-            x: strlen($this->question) + 12,
-            y: 0,
-        );
+        $this->answer = match (mb_strtolower($key)) {
+            'y', 'o' => true,
+            'n' => false,
+            'h', 'j', 'k', 'l' => ! $this->answer,
+            default => $this->answer,
+        };
     }
 
     public function getStaticComponent(): StaticConsoleComponent

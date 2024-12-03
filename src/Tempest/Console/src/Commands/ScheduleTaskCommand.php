@@ -22,6 +22,7 @@ final readonly class ScheduleTaskCommand
 
     #[ConsoleCommand(
         name: self::NAME,
+        description: 'Executes a scheduled task immediately'
     )]
     public function __invoke(string $task): void
     {

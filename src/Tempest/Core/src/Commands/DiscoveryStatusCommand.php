@@ -20,7 +20,7 @@ final readonly class DiscoveryStatusCommand
 
     #[ConsoleCommand(
         name: 'discovery:status',
-        description: 'List all discovery locations and discovery classes',
+        description: 'Lists all discovery locations and discovery classes',
         aliases: ['ds'],
     )]
     public function __invoke(): void
@@ -42,6 +42,6 @@ final readonly class DiscoveryStatusCommand
         $this->console
             ->writeln()
             ->when($this->discoveryCache->isEnabled(), fn (Console $console) => $console->success('Discovery cache enabled'))
-            ->when(! $this->discoveryCache->isEnabled(), fn (Console $console) => $console->error('Discovery cache disabled'));
+            ->unless($this->discoveryCache->isEnabled(), fn (Console $console) => $console->error('Discovery cache disabled'));
     }
 }

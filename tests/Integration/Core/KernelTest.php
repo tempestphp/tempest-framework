@@ -34,4 +34,14 @@ final class KernelTest extends TestCase
         $this->assertInstanceOf(TestDependency::class, $test);
         $this->assertSame('test', $test->input);
     }
+
+    public function test_kernel_start(): void
+    {
+        Kernel::boot(
+            root: getcwd(),
+            discoveryLocations: [],
+        );
+
+        $this->assertTrue(defined('TEMPEST_START'));
+    }
 }

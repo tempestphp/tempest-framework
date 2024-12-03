@@ -32,11 +32,95 @@ final class HttpRouterTester
         );
     }
 
+    public function head(string $uri, array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::HEAD,
+                uri: $uri,
+                body: [],
+                headers: $headers,
+            ),
+        );
+    }
+
     public function post(string $uri, array $body = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::POST,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function put(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::PUT,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function delete(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::DELETE,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function connect(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::CONNECT,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function options(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::OPTIONS,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function trace(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::TRACE,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function patch(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::PATCH,
                 uri: $uri,
                 body: $body,
                 headers: $headers,

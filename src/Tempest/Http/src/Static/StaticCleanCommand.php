@@ -25,6 +25,7 @@ final readonly class StaticCleanCommand
 
     #[ConsoleCommand(
         name: 'static:clean',
+        description: 'Removes statically generated pages',
         middleware: [ForceMiddleware::class, CautionMiddleware::class]
     )]
     public function __invoke(): void

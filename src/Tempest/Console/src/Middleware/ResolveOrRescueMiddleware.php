@@ -37,7 +37,9 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
     private function rescue(string $commandName): ExitCode|int
     {
-        $this->console->writeln("<error>Command {$commandName} not found</error>");
+        $this->console->writeln();
+        $this->console->writeln('<style="bg-dark-red fg-white"> Error </style>');
+        $this->console->writeln("<style=\"fg-red\">Command <em>{$commandName}</em> not found.</style>");
 
         $similarCommands = $this->getSimilarCommands($commandName);
 
@@ -46,7 +48,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         }
 
         if (count($similarCommands) === 1) {
-            if ($this->console->confirm("Did you mean {$similarCommands[0]}?")) {
+            if ($this->console->confirm("Did you mean <em>{$similarCommands[0]}</em>?")) {
                 return $this->runIntendedCommand($similarCommands[0]);
             }
 
