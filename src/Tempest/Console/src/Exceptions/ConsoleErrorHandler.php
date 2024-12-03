@@ -34,7 +34,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
             ->writeln()
             ->error($throwable::class)
             ->when(
-                expression: $throwable->getMessage(),
+                condition: $throwable->getMessage(),
                 callback: fn (Console $console) => $console->error($throwable->getMessage()),
             )
             ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))

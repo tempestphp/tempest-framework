@@ -56,7 +56,17 @@ interface Console
 
     public function success(string $line): self;
 
-    public function when(mixed $expression, callable $callback): self;
+    /**
+     * @param mixed|Closure(self): bool $condition
+     * @param Closure(self): self $callback
+     */
+    public function when(mixed $condition, Closure $callback): self;
+
+    /**
+     * @param mixed|Closure(self): bool $condition
+     * @param Closure(self): self $callback
+    */
+    public function unless(mixed $condition, Closure $callback): self;
 
     public function withLabel(string $label): self;
 

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
+use Closure;
 use Countable;
 use function ltrim;
 use function preg_quote;
 use function preg_replace;
 use function rtrim;
 use Stringable;
+use Tempest\Support\Conditions\HasConditions;
 use function trim;
 
 final readonly class StringHelper implements Stringable
 {
+    use HasConditions;
+
     private string $string;
 
     public function __construct(Stringable|string|null $string = '')
@@ -771,6 +775,21 @@ final readonly class StringHelper implements Stringable
         return new self(
             mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
         );
+    }
+
+    public function when(mixed $condition, Closure $callback): static
+    {
+        if ($condition instanceof Closure) {
+            $condition = $condition($this);
+        }
+
+        if ($condition) {
+            if (($result = $callback($this)) instanceof self) {
+                return $result;
+            }
+        }
+
+        return $this;
     }
 
     /**
