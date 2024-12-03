@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\EventBus\EventBus;
 
 final readonly class LoggerInitializer implements Initializer
 {
@@ -16,6 +17,7 @@ final readonly class LoggerInitializer implements Initializer
     {
         return new GenericLogger(
             $container->get(LogConfig::class),
+            $container->get(EventBus::class),
         );
     }
 }
