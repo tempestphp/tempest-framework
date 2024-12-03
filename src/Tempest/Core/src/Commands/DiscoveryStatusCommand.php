@@ -42,6 +42,6 @@ final readonly class DiscoveryStatusCommand
         $this->console
             ->writeln()
             ->when($this->discoveryCache->isEnabled(), fn (Console $console) => $console->success('Discovery cache enabled'))
-            ->when(! $this->discoveryCache->isEnabled(), fn (Console $console) => $console->error('Discovery cache disabled'));
+            ->unless($this->discoveryCache->isEnabled(), fn (Console $console) => $console->error('Discovery cache disabled'));
     }
 }

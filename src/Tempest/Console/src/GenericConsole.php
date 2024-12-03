@@ -20,9 +20,12 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
+use Tempest\Support\Conditions\HasConditions;
 
 final class GenericConsole implements Console
 {
+    use HasConditions;
+
     private ?string $label = null;
 
     private bool $isForced = false;
@@ -147,15 +150,6 @@ final class GenericConsole implements Console
         $clone->label = $label;
 
         return $clone;
-    }
-
-    public function when(mixed $expression, callable $callback): self
-    {
-        if ($expression) {
-            $callback($this);
-        }
-
-        return $this;
     }
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed

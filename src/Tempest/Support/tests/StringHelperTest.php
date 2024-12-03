@@ -557,4 +557,19 @@ b'));
         $this->assertSame('Hello <strong>World</strong>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'strong')->toString());
         $this->assertSame('<p>Hello World</p>', str('<p>Hello <strong>World</strong></p>')->stripTags(allowed: 'p')->toString());
     }
+
+    public function test_when(): void
+    {
+        $this->assertTrue(str('foo')->when(true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(false, fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(fn () => true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(fn () => false, fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(fn ($s) => $s->startsWith('foo'), fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(fn ($s) => $s->startsWith('bar'), fn ($s) => $s->append('bar'))->equals('foo'));
+
+        $this->assertTrue(str('foo')->when(true, fn ($s) => $s->append('bar'))->equals('foobar'));
+        $this->assertTrue(str('foo')->when(false, fn ($s) => $s->append('bar'))->equals('foo'));
+    }
 }
