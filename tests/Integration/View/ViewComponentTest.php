@@ -42,8 +42,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             expected: '<div foo="hello" bar="barValue"></div>',
             actual: $this->render(view(
                 <<<'HTML'
-                    <x-my :foo="$this->input" bar="barValue"></x-my>
-                    HTML,
+                <x-my :foo="$this->input" bar="barValue"></x-my>
+                HTML,
             )->data(input: 'hello')),
         );
     }
@@ -60,25 +60,25 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-                <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
-            
-            
-                </div>
-                <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
-            
-            
-            
-                </form>
-                HTML,
+            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
+        
+        
+            </div>
+            <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
+        
+        
+        
+            </form>
+            HTML,
             actual: $this->render(view(
                 <<<'HTML'
-                    <x-form action="#">
-                        <div>
-                            <x-input name="a" label="a" type="number"></x-input>
-                        </div>
-                        <x-input name="b" label="b" type="text" />
-                    </x-form>
-                    HTML,
+                <x-form action="#">
+                    <div>
+                        <x-input name="a" label="a" type="number"></x-input>
+                    </div>
+                    <x-input name="b" label="b" type="text" />
+                </x-form>
+                HTML,
             )),
         );
     }
@@ -88,11 +88,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render('<x-view-component-with-another-one-included-a/>');
 
         $this->assertStringContainsStringIgnoringLineEndings(<<<'HTML'
-            hi
+        hi
 
-                
-            <div class="slot-b"><div class="slot-a"></div></div>
-            HTML, $html);
+            
+        <div class="slot-b"><div class="slot-a"></div></div>
+        HTML, $html);
     }
 
     public function test_component_with_anther_component_included_with_slot(): void
@@ -100,13 +100,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render('<x-view-component-with-another-one-included-a>test</x-view-component-with-another-one-included-a>');
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-            hi
+        hi
 
-                
-            <div class="slot-b"><div class="slot-a">
-                        test
-                    </div></div>
-            HTML, $html);
+            
+        <div class="slot-b"><div class="slot-a">
+                    test
+                </div></div>
+        HTML, $html);
     }
 
     public function test_view_component_with_injected_view(): void
@@ -128,8 +128,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $html = $this->render(view(
             <<<'HTML'
-                <x-input name="name" label="a" type="number" />
-                HTML,
+            <x-input name="name" label="a" type="number" />
+            HTML,
         ));
 
         $this->assertStringContainsString('value="original name"', $html);
@@ -171,8 +171,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<HTML
-                <div class="anonymous">hi</div>
-                HTML,
+            <div class="anonymous">hi</div>
+            HTML,
             $this->render(view('<x-my-a>hi</x-my-a>')),
         );
     }
@@ -195,9 +195,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        test    </div>
-                HTML,
+            <div>
+                    test    </div>
+            HTML,
             $rendered,
         );
     }
@@ -210,9 +210,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        test    </div>
-                HTML,
+            <div>
+                    test    </div>
+            HTML,
             $rendered,
         );
     }
@@ -221,15 +221,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $rendered = $this->render(
             view(<<<HTML
-                <x-with-variable :variable="strtoupper('test')"></x-with-variable>
-                HTML),
+            <x-with-variable :variable="strtoupper('test')"></x-with-variable>
+            HTML),
         );
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        TEST    </div>
-                HTML,
+            <div>
+                    TEST    </div>
+            HTML,
             $rendered,
         );
     }
@@ -257,8 +257,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $rendered = $this->render(
             view(
                 <<<'HTML'
-                    <x-with-variable :foreach="$this->variables as $variable" :variable="$variable"></x-with-variable>
-                    HTML,
+                <x-with-variable :foreach="$this->variables as $variable" :variable="$variable"></x-with-variable>
+                HTML,
             )->data(
                 variables: ['a', 'b', 'c'],
             ),
@@ -266,19 +266,19 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        a    </div>
-            
-            
-                    
-                <div>
-                        b    </div>
-            
-            
-                    
-                <div>
-                        c    </div>
-                HTML,
+            <div>
+                    a    </div>
+        
+        
+                
+            <div>
+                    b    </div>
+        
+        
+                
+            <div>
+                    c    </div>
+            HTML,
             $rendered,
         );
     }
@@ -288,14 +288,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
-            fromPHP
-        
-        
-                fromString
-        
-        
-                nothing
-            HTML, $html);
+        fromPHP
+    
+    
+            fromString
+    
+    
+            nothing
+        HTML, $html);
     }
 
     public function test_view_component_attribute_variables_without_this(): void
@@ -303,8 +303,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-attribute-without-this-b.view.php'));
 
         $this->assertSame(<<<HTML
-            fromString
-            HTML, $html);
+        fromString
+        HTML, $html);
     }
 
     public function test_view_component_slots_without_self_closing_tags(): void
@@ -312,19 +312,19 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-non-self-closing-slot-b.view.php'));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
-            A: other slot
-                B: other slot
-                C: other slot
-        
-                A: 
-                main slot
-                
-                B: 
-                main slot
-                
-                C: 
-                main slot
-            HTML, $html);
+        A: other slot
+            B: other slot
+            C: other slot
+    
+            A: 
+            main slot
+            
+            B: 
+            main slot
+            
+            C: 
+            main slot
+        HTML, $html);
     }
 
     public function test_view_component_with_camelcase_attribute(): void
@@ -332,11 +332,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
 
         $this->assertStringContainsStringIgnoringLineEndings(<<<HTML
+        test
+    
+    
             test
-        
-        
-                test
-            HTML, $html);
+        HTML, $html);
     }
 
     public function test_php_code_in_attribute(): void
