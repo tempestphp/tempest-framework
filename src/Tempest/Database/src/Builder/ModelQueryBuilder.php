@@ -11,8 +11,9 @@ use function Tempest\map;
 
 /**
  * @template TModelClass of DatabaseModel
+ * @phpstan-ignore-next-line because this model query builder is extended
  */
-final class ModelQueryBuilder
+class ModelQueryBuilder
 {
     private ModelDefinition $modelDefinition;
 

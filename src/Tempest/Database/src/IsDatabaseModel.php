@@ -10,6 +10,7 @@ use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use function Tempest\get;
 use function Tempest\make;
+use function Tempest\reflect;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -73,7 +74,11 @@ trait IsDatabaseModel
      */
     public static function query(): ModelQueryBuilder
     {
-        return new ModelQueryBuilder(self::class);
+        $queryBuilderAttribute = reflect(self::class)->getAttribute(QueryBuilder::class);
+
+        return $queryBuilderAttribute === null
+            ? new ModelQueryBuilder(self::class)
+            : new ($queryBuilderAttribute->builderClass)(self::class);
     }
 
     /** @return self[] */
