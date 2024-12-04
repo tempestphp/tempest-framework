@@ -63,7 +63,7 @@ final class MakeMiddlewareCommand {
             MiddlewareType::HTTP        => StubFile::from( HttpMiddlewareStub::class ),
             MiddlewareType::EVENT_BUS   => StubFile::from( EventBusMiddlewareStub::class ),
             MiddlewareType::COMMAND_BUS => StubFile::from( CommandBusMiddlewareStub::class ),
-            default                     => throw new \InvalidArgumentException(sprintf('The "%s" middleware type has no supported stub file.', $middlewareType->value)),
+            default                     => throw new \InvalidArgumentException(sprintf('The "%s" middleware type has no supported stub file.', $middlewareType->value)), // @phpstan-ignore-line Because this is a guardrail for the future implementations
         };
     }
 }
