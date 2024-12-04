@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 namespace Tempest {
-
     use ReflectionClass as PHPReflectionClass;
     use ReflectionProperty as PHPReflectionProperty;
     use Tempest\Reflection\ClassReflector;

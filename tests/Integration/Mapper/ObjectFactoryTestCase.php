@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use function Tempest\make;
-use function Tempest\map;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
@@ -13,6 +11,8 @@ use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\ObjectFactory;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+use function Tempest\make;
+use function Tempest\map;
 
 /**
  * @internal

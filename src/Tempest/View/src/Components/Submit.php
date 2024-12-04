@@ -19,9 +19,9 @@ final readonly class Submit implements ViewComponent
         $label = $element->getAttribute('label') ?? 'Submit';
 
         return <<<HTML
-<div>
-<input type="submit" value="{$label}" />
-</div>
-HTML;
+            <div>
+            <input type="submit" value="{$label}" />
+            </div>
+            HTML;
     }
 }

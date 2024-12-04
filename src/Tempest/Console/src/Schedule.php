@@ -16,7 +16,7 @@ final readonly class Schedule
 
     public function __construct(
         Interval|Every $interval,
-        public string $output = "/dev/null",
+        public string $output = '/dev/null',
         public OutputMode $outputMode = OutputMode::Append,
         public bool $runInBackground = true,
     ) {

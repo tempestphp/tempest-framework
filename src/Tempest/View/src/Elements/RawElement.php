@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use function Tempest\Support\str;
 use Tempest\View\Element;
+use function Tempest\Support\str;
 
 final class RawElement implements Element
 {

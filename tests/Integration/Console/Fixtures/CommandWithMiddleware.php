@@ -15,7 +15,7 @@ final readonly class CommandWithMiddleware
 
     #[ConsoleCommand(
         name: 'with:middleware',
-        middleware: [SpecificMiddleware::class]
+        middleware: [SpecificMiddleware::class],
     )]
     public function __invoke(): void
     {

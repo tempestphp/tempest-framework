@@ -18,7 +18,7 @@ final readonly class TextStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return match($dialect) {
+        return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` TEXT %s',
                 $this->name,
@@ -29,7 +29,7 @@ final readonly class TextStatement implements QueryStatement
                 $this->name,
                 $this->default ? "DEFAULT \"{$this->default}\"" : '',
                 $this->nullable ? '' : 'NOT NULL',
-            )
+            ),
         };
     }
 }

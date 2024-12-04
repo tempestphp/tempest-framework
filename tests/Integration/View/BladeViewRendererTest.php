@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use function Tempest\view;
 use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\BladeViewRenderer;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\view;
 
 /**
  * @internal
@@ -32,10 +32,10 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
         $html = $renderer->render(view('index'));
 
         $this->assertSame(<<<HTML
-        <html>
-        Hi
-        </html>
-        HTML
+            <html>
+            Hi
+            </html>
+            HTML
             , $html);
     }
 }

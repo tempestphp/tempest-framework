@@ -21,9 +21,9 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
-use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
+use function Tempest\Support\arr;
 
 final class GenericConsole implements Console
 {
@@ -43,7 +43,7 @@ final class GenericConsole implements Console
         #[Tag('console')]
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
-        private readonly ConsoleArgumentBag $argumentBag
+        private readonly ConsoleArgumentBag $argumentBag,
     ) {
     }
 
@@ -225,7 +225,7 @@ final class GenericConsole implements Console
                 label: $question,
                 options: $options,
                 default: $default,
-            )
+            ),
         };
 
         return $this->component($component, $validation);

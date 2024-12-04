@@ -37,15 +37,15 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
             SessionManager::class,
             fn () => new FileSessionManager(
                 $this->container->get(Clock::class),
-                $this->container->get(SessionConfig::class)
-            )
+                $this->container->get(SessionConfig::class),
+            ),
         );
 
         $this->migrate(
             CreateMigrationsTable::class,
             UserMigration::class,
             PermissionMigration::class,
-            UserPermissionMigration::class
+            UserPermissionMigration::class,
         );
     }
 

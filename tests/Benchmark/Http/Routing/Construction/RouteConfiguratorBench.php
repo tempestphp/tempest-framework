@@ -20,16 +20,16 @@ final class RouteConfiguratorBench
         $this->subject = new RouteConfigurator();
     }
 
-    #[Warmup(10)]
+    #[BeforeMethods('setupRouteConfig')]
     #[Revs(1000)]
-    #[BeforeMethods("setupRouteConfig")]
+    #[Warmup(10)]
     public function benchRouteConfigConstructionToConfig(): void
     {
         $this->subject->toRouteConfig();
     }
 
-    #[Warmup(10)]
     #[Revs(1000)]
+    #[Warmup(10)]
     public function benchRouteConfigConstructionRouteAdding(): void
     {
         $configurator = new RouteConfigurator();

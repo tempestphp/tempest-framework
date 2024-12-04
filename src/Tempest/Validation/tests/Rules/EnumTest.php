@@ -22,9 +22,9 @@ final class EnumTest extends TestCase
         $this->assertSame(
             sprintf(
                 'The value must be a valid enumeration [%s] case',
-                SomeEnum::class
+                SomeEnum::class,
             ),
-            $rule->message()
+            $rule->message(),
         );
 
         $this->assertFalse($rule->isValid('NOPE_NOT_HERE'));
@@ -40,9 +40,9 @@ final class EnumTest extends TestCase
         $this->assertSame(
             sprintf(
                 'The value must be a valid enumeration [%s] case',
-                SomeBackedEnum::class
+                SomeBackedEnum::class,
             ),
-            $rule->message()
+            $rule->message(),
         );
 
         $this->assertFalse($rule->isValid('three'));
@@ -56,8 +56,8 @@ final class EnumTest extends TestCase
         $this->expectExceptionObject(new UnexpectedValueException(
             sprintf(
                 'The enum parameter must be a valid enum. Was given [%s].',
-                'Bob'
-            )
+                'Bob',
+            ),
         ));
 
         new Enum('Bob');

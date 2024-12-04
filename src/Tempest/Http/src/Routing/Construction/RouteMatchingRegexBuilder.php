@@ -93,7 +93,6 @@ final readonly class RouteMatchingRegexBuilder
                 foreach ($node->staticPaths as $child) {
                     $workingSet[] = $child;
                 }
-
             } else {
                 // Add target route to main regex without any children
                 $regex .= $targetRouteRegex;
@@ -127,7 +126,7 @@ final readonly class RouteMatchingRegexBuilder
      */
     private static function routeNodeSegmentRegex(RouteTreeNode $node): string
     {
-        return match($node->type) {
+        return match ($node->type) {
             RouteTreeNodeType::Root => '^',
             RouteTreeNodeType::Static => "/{$node->segment}",
             RouteTreeNodeType::Dynamic => '/(' . $node->segment . ')',

@@ -42,7 +42,7 @@ trait IsTagInjection
                             $theme->before($this->getTokenType()),
                             $theme->after($this->getTokenType()),
                         ],
-                        $content
+                        $content,
                     ),
                     subject: $matches[0],
                 );

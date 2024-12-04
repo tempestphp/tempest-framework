@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Tempest\Http\Status;
-use function Tempest\uri;
-use function Tempest\view;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
+use function Tempest\view;
 
 /**
  * @internal
@@ -24,12 +24,12 @@ final class ViewTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString(
             'Hello Brent!',
-            $html
+            $html,
         );
 
         $this->assertStringContainsString(
             '<title></title>',
-            $html
+            $html,
         );
     }
 
@@ -40,8 +40,8 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->render($view);
 
         $expected = <<<HTML
-ViewModel Brent, 2020-01-01
-HTML;
+            ViewModel Brent, 2020-01-01
+            HTML;
 
         $this->assertEquals($expected, $html);
     }

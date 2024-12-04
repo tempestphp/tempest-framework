@@ -113,7 +113,7 @@ final class Kernel
             $message = $error['message'] ?? '';
 
             if (str_contains($message, 'Cannot declare class')) {
-                echo "Does this class have the right namespace?" . PHP_EOL;
+                echo 'Does this class have the right namespace?' . PHP_EOL;
             }
         });
 

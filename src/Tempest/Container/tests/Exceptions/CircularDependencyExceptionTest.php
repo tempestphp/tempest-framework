@@ -27,15 +27,15 @@ final class CircularDependencyExceptionTest extends TestCase
             $this->assertStringContainsString('Cannot autowire ' . CircularA::class . '::__construct because it has a circular dependency on ' . CircularA::class . '::__construct', $circularDependencyException->getMessage());
 
             $expected = <<<'TXT'
-	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
-	│   CircularB::__construct(CircularC $c)
-	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
-TXT;
+                	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
+                	│   CircularB::__construct(CircularC $c)
+                	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
+                	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
+                TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 
-            $this->assertStringContainsString("CircularDependencyExceptionTest.php:", $circularDependencyException->getMessage());
+            $this->assertStringContainsString('CircularDependencyExceptionTest.php:', $circularDependencyException->getMessage());
 
             throw $circularDependencyException;
         }
@@ -53,12 +53,12 @@ TXT;
             $this->assertStringContainsString('Cannot autowire ' . CircularZ::class . '::__construct because it has a circular dependency on ' . CircularA::class . '::__construct:', $circularDependencyException->getMessage());
 
             $expected = <<<'TXT'
-	    CircularZ::__construct(CircularA $a)
-	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
-	│   CircularB::__construct(CircularC $c)
-	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
-	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
-TXT;
+                	    CircularZ::__construct(CircularA $a)
+                	┌─► CircularA::__construct(ContainerObjectA $other, CircularB $b)
+                	│   CircularB::__construct(CircularC $c)
+                	│   CircularC::__construct(ContainerObjectA $other, CircularA $a)
+                	└───────────────────────────────────────────────────▒▒▒▒▒▒▒▒▒▒▒▒
+                TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $circularDependencyException->getMessage());
 

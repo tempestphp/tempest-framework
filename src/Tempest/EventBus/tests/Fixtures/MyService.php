@@ -7,7 +7,7 @@ namespace Tempest\EventBus\Tests\Fixtures;
 final class MyService
 {
     public function __construct(
-        public readonly string $value
+        public readonly string $value,
     ) {
     }
 }

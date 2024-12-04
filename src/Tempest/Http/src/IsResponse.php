@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Http;
 
 use Generator;
-use function Tempest\get;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tempest\View\View;
+use function Tempest\get;
 
 /** @phpstan-require-implements \Tempest\Http\Response */
 trait IsResponse

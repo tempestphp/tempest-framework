@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 namespace {
-
     use Tempest\Debug\Debug;
 
     if (! function_exists('lw')) {

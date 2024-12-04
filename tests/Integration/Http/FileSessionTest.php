@@ -10,8 +10,8 @@ use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
-use function Tempest\path;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\path;
 
 /**
  * @internal
@@ -31,8 +31,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
             SessionManager::class,
             fn () => new FileSessionManager(
                 $this->container->get(Clock::class),
-                $this->container->get(SessionConfig::class)
-            )
+                $this->container->get(SessionConfig::class),
+            ),
         );
     }
 

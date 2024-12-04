@@ -16,8 +16,8 @@ use Tempest\Console\Key;
  */
 trait HasTextInputRenderer
 {
-    use HasTextBuffer;
     use HasState;
+    use HasTextBuffer;
 
     public TextInputRenderer $renderer;
 

@@ -44,7 +44,7 @@ final readonly class Dependency
             return $parts[array_key_last($parts)];
         }
 
-        return match($dependency::class) {
+        return match ($dependency::class) {
             ClassReflector::class => $dependency->getType()->getShortName(),
             MethodReflector::class => $dependency->getDeclaringClass()->getType()->getShortName(),
             ParameterReflector::class => $dependency->getType()->getShortName(),
@@ -59,7 +59,7 @@ final readonly class Dependency
             return $dependency;
         }
 
-        return match($dependency::class) {
+        return match ($dependency::class) {
             FunctionReflector::class => $dependency->getName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
             ClassReflector::class => $dependency->getName(),
             MethodReflector::class => $dependency->getDeclaringClass()->getName() . '::' . $dependency->getName(),
@@ -75,7 +75,7 @@ final readonly class Dependency
             return $dependency;
         }
 
-        return match($dependency::class) {
+        return match ($dependency::class) {
             FunctionReflector::class => $dependency->getShortName() . ' in ' . $dependency->getFileName() . ':' . $dependency->getStartLine(),
             ClassReflector::class => $dependency->getShortName(),
             MethodReflector::class => $dependency->getShortName(),

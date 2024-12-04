@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 namespace Tempest {
-
     use Closure;
     use Tempest\EventBus\EventBus;
     use Tempest\EventBus\EventBusConfig;

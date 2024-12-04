@@ -32,13 +32,13 @@ final class ConfirmRenderer
         match ($this->state) {
             ComponentState::SUBMITTED => $this->line(
                 $this->style($answer === true ? 'bg-green bold' : 'bg-red bold', $this->centerText($answer ? $this->yes : $this->no, width: 9)),
-                "\n"
+                "\n",
             ),
             default => $this->line(
                 $this->style($answer === true ? 'bg-green bold' : 'bg-gray dim', $this->centerText($this->yes, width: 9)),
                 ' ',
                 $this->style($answer === false ? 'bg-red bold' : 'bg-gray dim', $this->centerText($this->no, width: 9)),
-                "\n"
+                "\n",
             ),
         };
 

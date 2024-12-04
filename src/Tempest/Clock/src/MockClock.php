@@ -33,7 +33,7 @@ final class MockClock implements Clock
     public function sleep(int $seconds): void
     {
         $this->now = $this->now->add(
-            new DateInterval("PT{$seconds}S")
+            new DateInterval("PT{$seconds}S"),
         );
     }
 

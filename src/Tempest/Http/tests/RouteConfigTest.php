@@ -26,7 +26,7 @@ final class RouteConfigTest extends TestCase
             ],
             [
                 'POST' => new MatchingRegex(['#^(?|/([^/]++)(?|/1\/?$(*MARK:b)|/3\/?$(*MARK:d)))#']),
-            ]
+            ],
         );
 
         $serialized = serialize($original);

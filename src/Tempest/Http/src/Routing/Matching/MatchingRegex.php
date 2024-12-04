@@ -23,7 +23,7 @@ final readonly class MatchingRegex
             $matchResult = preg_match($pattern, $uri, $matches);
 
             if ($matchResult === false) {
-                throw new RuntimeException("Failed to use matching regex. Got error " . preg_last_error());
+                throw new RuntimeException('Failed to use matching regex. Got error ' . preg_last_error());
             }
 
             if (! $matchResult) {

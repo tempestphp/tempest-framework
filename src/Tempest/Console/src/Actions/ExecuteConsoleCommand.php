@@ -55,7 +55,7 @@ final readonly class ExecuteConsoleCommand
 
         while ($middlewareClass = array_pop($middlewareStack)) {
             $callable = new ConsoleMiddlewareCallable(
-                fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable)
+                fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable),
             );
         }
 

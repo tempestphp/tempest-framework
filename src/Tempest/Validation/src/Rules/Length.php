@@ -16,7 +16,7 @@ final readonly class Length implements Rule
         private ?int $max = null,
     ) {
         if ($min === null && $max === null) {
-            throw new InvalidArgumentException("At least one of min or max must be provided");
+            throw new InvalidArgumentException('At least one of min or max must be provided');
         }
     }
 

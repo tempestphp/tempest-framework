@@ -38,7 +38,7 @@ final class MigrateFreshCommand
         $this->migrationManager->dropAll();
 
         $this->console
-            ->success(sprintf("Dropped %s tables", $this->count))
+            ->success(sprintf('Dropped %s tables', $this->count))
             ->writeln();
 
         $this->console->info('Migrate up…');

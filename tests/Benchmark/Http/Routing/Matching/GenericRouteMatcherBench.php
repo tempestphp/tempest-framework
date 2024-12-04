@@ -26,13 +26,13 @@ final class GenericRouteMatcherBench
         $this->matcher = new GenericRouteMatcher($config);
     }
 
-    #[Warmup(10)]
-    #[Revs(1000)]
     #[ParamProviders('provideDynamicMatchingCases')]
+    #[Revs(1000)]
+    #[Warmup(10)]
     public function benchMatch(array $params): void
     {
         $this->matcher->match(
-            new ServerRequest(uri: $params['uri'], method: 'GET')
+            new ServerRequest(uri: $params['uri'], method: 'GET'),
         );
     }
 

@@ -34,7 +34,7 @@ final class MigrateUpCommand
         $this->migrationManager->up();
 
         $this->console
-            ->success(sprintf("Migrated %s migrations", $this->count));
+            ->success(sprintf('Migrated %s migrations', $this->count));
     }
 
     #[EventHandler]

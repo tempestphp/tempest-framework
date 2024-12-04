@@ -19,7 +19,7 @@ final class ComposerTest extends FrameworkIntegrationTestCase
         file_put_contents(__DIR__ . '/../../Fixtures/Core/Composer/composer.json', json_encode($composer, JSON_PRETTY_PRINT));
 
         return new Composer(
-            root: realpath(__DIR__ . '/../../Fixtures/Core/Composer')
+            root: realpath(__DIR__ . '/../../Fixtures/Core/Composer'),
         );
     }
 

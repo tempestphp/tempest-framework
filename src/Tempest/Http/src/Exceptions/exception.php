@@ -160,7 +160,7 @@ echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()',
                 <div>
                     in
 <!--                    <a href="idea://--><?php //= $item['file']?><!--:--><?php //=$item['line']?><!--">-->
-                        <?= $item['file']?>:<?=$item['line'] ?>
+                        <?= $item['file']?>:<?= $item['line'] ?>
 <!--                    </a>-->
                 </div>
             <?php } ?>

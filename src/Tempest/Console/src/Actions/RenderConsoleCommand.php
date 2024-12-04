@@ -53,7 +53,7 @@ final readonly class RenderConsoleCommand
             return $this->renderEnumArgument($argument);
         }
 
-        $formattedArgumentName = match($argument->type) {
+        $formattedArgumentName = match ($argument->type) {
             'bool' => "--{$argument->name}",
             default => $argument->name,
         };
@@ -65,11 +65,11 @@ final readonly class RenderConsoleCommand
         }
 
         $defaultValue = match (true) {
-            $argument->default === true => "true",
-            $argument->default === false => "false",
-            is_null($argument->default) => "null",
-            is_array($argument->default) => "array",
-            default => "$argument->default",
+            $argument->default === true => 'true',
+            $argument->default === false => 'false',
+            is_null($argument->default) => 'null',
+            is_array($argument->default) => 'array',
+            default => "{$argument->default}",
         };
 
         return str()
@@ -85,7 +85,7 @@ final readonly class RenderConsoleCommand
     {
         $parts = array_map(
             callback: fn (BackedEnum $case) => $case->value,
-            array: $argument->type::cases()
+            array: $argument->type::cases(),
         );
 
         $partsAsString = ' {<style="fg-cyan">' . implode('|', $parts) . '</style>}';

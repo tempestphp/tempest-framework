@@ -96,7 +96,7 @@ final readonly class QueryToModelMapper implements Mapper
                     $model = $this->parseHasMany(
                         $property,
                         $model,
-                        (string)$childId,
+                        (string) $childId,
                         $keyParts[2],
                         $value,
                     );

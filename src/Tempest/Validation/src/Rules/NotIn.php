@@ -12,9 +12,8 @@ final readonly class NotIn implements Rule
 {
     public function __construct(
         /** @var array<string|int> */
-        private array $values
+        private array $values,
     ) {
-
     }
 
     public function isValid(mixed $value): bool

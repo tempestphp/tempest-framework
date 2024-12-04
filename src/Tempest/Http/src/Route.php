@@ -33,7 +33,6 @@ class Route
          */
         public array $middleware = [],
     ) {
-
         $this->params = self::getRouteParams($this->uri);
         $this->isDynamic = ! empty($this->params);
     }
@@ -66,7 +65,7 @@ class Route
         $parts = explode('/', $this->uri);
 
         return array_values(
-            array_filter($parts, static fn (string $part) => $part !== '')
+            array_filter($parts, static fn (string $part) => $part !== ''),
         );
     }
 }

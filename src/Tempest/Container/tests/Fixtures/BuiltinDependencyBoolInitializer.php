@@ -10,7 +10,7 @@ use Tempest\Container\Singleton;
 
 final class BuiltinDependencyBoolInitializer implements Initializer
 {
-    #[Singleton(tag:"builtin-dependency-bool")]
+    #[Singleton(tag: 'builtin-dependency-bool')]
     public function initialize(Container $container): bool
     {
         return true;

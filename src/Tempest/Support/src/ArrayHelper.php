@@ -13,8 +13,8 @@ use Iterator;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
-use function Tempest\map;
 use Tempest\Support\Conditions\HasConditions;
+use function Tempest\map;
 
 /**
  * @template TKey of array-key
@@ -25,8 +25,8 @@ use Tempest\Support\Conditions\HasConditions;
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
-    use IsIterable;
     use HasConditions;
+    use IsIterable;
 
     /** @var array<TKey, TValue> */
     private array $array;

@@ -25,7 +25,7 @@ final class GenericHttpClient implements HttpClient
         return $this->send(
             method: Method::GET,
             uri: $uri,
-            headers: $headers
+            headers: $headers,
         );
     }
 
@@ -44,7 +44,7 @@ final class GenericHttpClient implements HttpClient
             method: Method::POST,
             uri: $uri,
             headers: $headers,
-            body: $body
+            body: $body,
         );
     }
 
@@ -53,7 +53,7 @@ final class GenericHttpClient implements HttpClient
         return $this->send(
             method: Method::TRACE,
             uri: $uri,
-            headers: $headers
+            headers: $headers,
         );
     }
 
@@ -63,7 +63,7 @@ final class GenericHttpClient implements HttpClient
             method: Method::PUT,
             uri: $uri,
             headers: $headers,
-            body: $body
+            body: $body,
         );
     }
 
@@ -73,7 +73,7 @@ final class GenericHttpClient implements HttpClient
             method: Method::PATCH,
             uri: $uri,
             headers: $headers,
-            body: $body
+            body: $body,
         );
     }
 
@@ -83,7 +83,7 @@ final class GenericHttpClient implements HttpClient
             method: Method::DELETE,
             uri: $uri,
             headers: $headers,
-            body: $body
+            body: $body,
         );
     }
 
@@ -93,7 +93,7 @@ final class GenericHttpClient implements HttpClient
             method: Method::OPTIONS,
             uri: $uri,
             headers: $headers,
-            body: $body
+            body: $body,
         );
     }
 
@@ -105,7 +105,7 @@ final class GenericHttpClient implements HttpClient
             // TODO: This bit is dumb, but we need to refactor
             // requests before we can change it.
             body: $body ? json_decode($body, true) : [],
-            headers: $headers
+            headers: $headers,
         );
 
         return $this->driver->send($request);

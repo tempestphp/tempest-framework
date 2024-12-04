@@ -106,7 +106,7 @@ trait SimplifiesClassNames
                             $methodBody = str_replace(
                                 search: '\\'.$fqcn,
                                 replace: (string) str($fqcn)->afterLast('\\'),
-                                subject: $methodBody
+                                subject: $methodBody,
                             );
 
                             $namespace->addUse($fqcn);
@@ -148,7 +148,7 @@ trait SimplifiesClassNames
         preg_match_all('/(?:\\\\?[A-Za-z_][\w\d_]*\\\\)+[A-Za-z_][\w\d_]*/', $body, $matches);
 
         return array_filter(array_unique(
-            array_map(fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0])
+            array_map(fn (string $fqcn) => rtrim(ltrim($fqcn, '\\'), ':'), $matches[0]),
         ));
     }
 }

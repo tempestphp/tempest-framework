@@ -11,7 +11,7 @@ use Tempest\Validation\Rule;
 final readonly class DoesNotStartWith implements Rule
 {
     public function __construct(
-        private string $needle
+        private string $needle,
     ) {
     }
 

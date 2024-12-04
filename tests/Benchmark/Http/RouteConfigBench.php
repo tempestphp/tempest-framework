@@ -20,8 +20,8 @@ final class RouteConfigBench
         $this->config = self::makeRouteConfig();
     }
 
-    #[Warmup(10)]
     #[Revs(1000)]
+    #[Warmup(10)]
     public function benchSerialization(): void
     {
         $serialized = serialize($this->config);

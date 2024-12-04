@@ -16,11 +16,11 @@ final readonly class Timestamp implements Rule
             return false;
         }
 
-        return (bool)date('Y-m-d H:i:s', $value);
+        return (bool) date('Y-m-d H:i:s', $value);
     }
 
     public function message(): string
     {
-        return "Value should be a valid timestamp";
+        return 'Value should be a valid timestamp';
     }
 }

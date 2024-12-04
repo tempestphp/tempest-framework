@@ -18,7 +18,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App')
+            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
         );
     }
 

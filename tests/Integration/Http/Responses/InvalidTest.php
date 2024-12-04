@@ -11,9 +11,9 @@ use Tempest\Http\Method;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use function Tempest\map;
 use Tempest\Validation\Rules\NotEmpty;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\map;
 
 /**
  * @internal
@@ -32,7 +32,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
                 'foo' => [
                     new NotEmpty(),
                 ],
-            ]
+            ],
         );
 
         $this->assertSame(Status::FOUND, $response->getStatus());
@@ -50,9 +50,8 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             method: Method::GET,
             uri: '/original',
             body: ['foo' => 'bar'],
-            headers: ['referer' => '/original']
+            headers: ['referer' => '/original'],
         );
-
 
         $response = new Invalid(
             $request,
@@ -60,7 +59,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
                 'foo' => [
                     new NotEmpty(),
                 ],
-            ]
+            ],
         );
 
         $this->assertSame(Status::FOUND, $response->getStatus());

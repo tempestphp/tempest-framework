@@ -13,7 +13,7 @@ final readonly class PathHelper implements Stringable
     public function __construct(Stringable|string ...$paths)
     {
         $paths = array_map(
-            fn (self|string $path) => (string)$path,
+            fn (self|string $path) => (string) $path,
             $paths,
         );
 
@@ -104,7 +104,7 @@ final readonly class PathHelper implements Stringable
 
     public function equals(Stringable $other): bool
     {
-        return $this->path === (string)$other;
+        return $this->path === (string) $other;
     }
 
     public function __toString(): string

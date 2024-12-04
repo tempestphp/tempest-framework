@@ -21,7 +21,7 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("Hello {$name}");
             })
             ->submit('Brent')
-            ->assertContains("Hello Brent");
+            ->assertContains('Hello Brent');
     }
 
     public function test_supports_default(): void
@@ -33,7 +33,7 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
                 $console->writeln("Hello {$name}");
             })
             ->submit()
-            ->assertContains("Hello Brent");
+            ->assertContains('Hello Brent');
     }
 
     public function test_supports_default_without_prompting(): void
@@ -45,6 +45,6 @@ final class StaticTextBoxComponentTest extends FrameworkIntegrationTestCase
 
                 $console->writeln("Hello {$name}");
             })
-            ->assertContains("Hello Brent");
+            ->assertContains('Hello Brent');
     }
 }

@@ -6,7 +6,7 @@ namespace Tempest\Filesystem;
 
 enum Permission: int
 {
-    case FULL = 0777;
+    case FULL = 0o777;
 
     // Owner permissions
     case OWNER_EXECUTE = 0o100;
@@ -54,7 +54,7 @@ enum Permission: int
         return array_reduce(
             $permissions,
             fn ($carry, Permission $permission) => $carry | $permission->value,
-            $this->value
+            $this->value,
         );
     }
 
@@ -63,7 +63,7 @@ enum Permission: int
         return array_reduce(
             $permissions,
             fn ($carry, Permission $permission) => $carry & ~$permission->value,
-            $this->value
+            $this->value,
         );
     }
 }

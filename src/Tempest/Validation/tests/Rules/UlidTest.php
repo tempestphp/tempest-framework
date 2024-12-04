@@ -23,6 +23,5 @@ final class UlidTest extends TestCase
         $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZU'));       // contains invalid character
         $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05'));           // too short
         $this->assertFalse($rule->isValid('01FV8CE8P3XVZTVK0S6F05Z5ZAAAAA'));   // too long
-
     }
 }

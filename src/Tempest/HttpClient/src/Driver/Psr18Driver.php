@@ -22,7 +22,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         private ClientInterface $client,
         private UriFactoryInterface $uriFactory,
         private RequestFactoryInterface $requestFactory,
-        private StreamFactoryInterface $streamFactory
+        private StreamFactoryInterface $streamFactory,
     ) {
     }
 
@@ -31,7 +31,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         $psrRequest = $this->convertTempestRequestToPsrRequest($request);
 
         return $this->convertPsrResponseToTempestResponse(
-            $this->sendRequest($psrRequest)
+            $this->sendRequest($psrRequest),
         );
     }
 
@@ -45,7 +45,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         $request = $this->requestFactory->createRequest(
             method: $tempestRequest->getMethod()->value,
             uri: $this->uriFactory->createUri(
-                $tempestRequest->getUri()
+                $tempestRequest->getUri(),
             ),
         );
 
@@ -58,7 +58,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         if ($tempestRequest->getBody() !== []) {
             $body = json_encode($tempestRequest->getBody());
             $request = $request->withBody(
-                $this->streamFactory->createStream($body)
+                $this->streamFactory->createStream($body),
             );
         }
 
@@ -70,7 +70,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         return new GenericResponse(
             status: Status::code($response->getStatusCode()),
             body: $response->getBody()->getContents(),
-            headers: $response->getHeaders()
+            headers: $response->getHeaders(),
         );
     }
 }

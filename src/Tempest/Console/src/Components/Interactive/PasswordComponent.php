@@ -16,9 +16,9 @@ use Tempest\Console\Terminal\Terminal;
 
 final class PasswordComponent implements InteractiveConsoleComponent, HasCursor
 {
-    use RendersControls;
     use HasErrors;
     use HasTextInputRenderer;
+    use RendersControls;
 
     public function __construct(
         public string $label = 'Password',

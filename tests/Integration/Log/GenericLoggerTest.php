@@ -130,7 +130,7 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->log($level, 'test');
 
         $this->assertFileExists($filePath);
-        $this->assertStringContainsString("tempest." . $expected, file_get_contents($filePath));
+        $this->assertStringContainsString('tempest.' . $expected, file_get_contents($filePath));
     }
 
     #[DataProvider('tempestLevelProvider')]

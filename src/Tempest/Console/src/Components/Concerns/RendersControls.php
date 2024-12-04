@@ -7,8 +7,8 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
-use function Tempest\Support\arr;
 use Tempest\Support\StringHelper;
+use function Tempest\Support\arr;
 
 /**
  * @mixin InteractiveConsoleComponent

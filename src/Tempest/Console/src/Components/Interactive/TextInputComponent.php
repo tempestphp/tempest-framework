@@ -23,10 +23,10 @@ use Tempest\Console\Terminal\Terminal;
 
 final class TextInputComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent, CanOpenInEditor
 {
-    use RendersControls;
     use HasErrors;
-    use OpensInEditor;
     use HasTextInputRenderer;
+    use OpensInEditor;
+    use RendersControls;
 
     public function __construct(
         public string $label,
@@ -66,7 +66,7 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
     {
         return new StaticTextBoxComponent(
             label: $this->label,
-            default: $this->default
+            default: $this->default,
         );
     }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Controllers;
 
 use Tempest\Http\Get;
-use function Tempest\view;
 use Tempest\View\View;
+use function Tempest\view;
 
 final readonly class FormController
 {

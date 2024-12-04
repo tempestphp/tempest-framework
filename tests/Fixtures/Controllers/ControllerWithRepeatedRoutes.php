@@ -13,12 +13,12 @@ use Tempest\Http\Route;
 
 final readonly class ControllerWithRepeatedRoutes
 {
-    #[Route('/repeated/a', Method::GET)]
-    #[Route('/repeated/b', Method::GET)]
     #[Get('/repeated/c')]
     #[Get('/repeated/d')]
     #[Post('/repeated/e')]
     #[Post('/repeated/f')]
+    #[Route('/repeated/a', Method::GET)]
+    #[Route('/repeated/b', Method::GET)]
     public function __invoke(): Response
     {
         return new Ok();

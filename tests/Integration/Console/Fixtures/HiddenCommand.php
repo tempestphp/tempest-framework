@@ -13,7 +13,7 @@ final readonly class HiddenCommand
     {
     }
 
-    #[ConsoleCommand(name:"hidden", hidden: true)]
+    #[ConsoleCommand(name: 'hidden', hidden: true)]
     public function __invoke(): void
     {
         $this->console->info('boo!');

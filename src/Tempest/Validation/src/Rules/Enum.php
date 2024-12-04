@@ -17,7 +17,7 @@ final readonly class Enum implements Rule
         if (! enum_exists($this->enum)) {
             throw new UnexpectedValueException(sprintf(
                 'The enum parameter must be a valid enum. Was given [%s].',
-                $this->enum
+                $this->enum,
             ));
         }
     }
@@ -65,7 +65,7 @@ final readonly class Enum implements Rule
 
     public function message(): string
     {
-        return "The value must be a valid enumeration [$this->enum] case";
+        return "The value must be a valid enumeration [{$this->enum}] case";
     }
 
     private function isDesirable($value): bool
@@ -83,6 +83,6 @@ final readonly class Enum implements Rule
             return $this->enum::tryFrom($value);
         }
 
-        return defined("$this->enum::{$value}") ? $this->enum::{$value} : null;
+        return defined("{$this->enum}::{$value}") ? $this->enum::{$value} : null;
     }
 }

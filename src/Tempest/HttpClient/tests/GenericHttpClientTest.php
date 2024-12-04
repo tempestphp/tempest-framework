@@ -139,14 +139,14 @@ final class GenericHttpClientTest extends TestCase
 
         $this->mock = new Client(
             responseFactory: $this->factory,
-            streamFactory: $this->factory
+            streamFactory: $this->factory,
         );
 
         $psr18Driver = new Psr18Driver(
             client: $this->mock,
             uriFactory: $this->factory,
             requestFactory: $this->factory,
-            streamFactory: $this->factory
+            streamFactory: $this->factory,
         );
 
         $this->client = new GenericHttpClient($psr18Driver);

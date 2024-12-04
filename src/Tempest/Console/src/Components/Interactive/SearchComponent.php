@@ -28,8 +28,8 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
 {
     use HasErrors;
     use HasState;
-    use RendersControls;
     use HasTextBuffer;
+    use RendersControls;
 
     private ChoiceRenderer $renderer;
 

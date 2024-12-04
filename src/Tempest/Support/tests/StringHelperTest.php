@@ -6,9 +6,9 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\Support\StringHelper;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
-use Tempest\Support\StringHelper;
 
 /**
  * @internal
@@ -223,7 +223,7 @@ final class StringHelperTest extends TestCase
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane'], 'luke')->equals('luke doe'));
         $this->assertTrue(str('jon doe')->replace(['jon', 'jane', 'doe'], ['Jon', 'Jane', 'Doe'])->equals('Jon Doe'));
         $this->assertTrue(
-            str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>')
+            str('jon doe')->replace(['jon', 'jane', 'doe'], '<censored>')->equals('<censored> <censored>'),
         );
     }
 

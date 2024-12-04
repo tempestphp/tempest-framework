@@ -14,7 +14,7 @@ use Tempest\Console\Initializers\Invocation;
 final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
 {
     public function __construct(
-        private Console $console
+        private Console $console,
     ) {
     }
 

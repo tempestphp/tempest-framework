@@ -10,9 +10,9 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Upload;
-use function Tempest\map;
 use Tempest\Mapper\Mapper;
 use Tempest\Validation\Validator;
+use function Tempest\map;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
@@ -31,7 +31,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             $requestClass = GenericRequest::class;
         }
 
-        $data = (array)$from->getParsedBody();
+        $data = (array) $from->getParsedBody();
 
         $headersAsString = array_map(
             fn (array $items) => implode(',', $items),
@@ -47,7 +47,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
 
         $newRequest = map([
             'method' => Method::from($from->getMethod()),
-            'uri' => (string)$from->getUri(),
+            'uri' => (string) $from->getUri(),
             'body' => $data,
             'headers' => $headersAsString,
             'path' => $from->getUri()->getPath(),

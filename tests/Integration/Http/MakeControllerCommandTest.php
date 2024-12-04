@@ -20,7 +20,7 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App')
+            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
@@ -31,12 +31,12 @@ final class MakeControllerCommandTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    #[Test]
     #[DataProvider('command_input_provider')]
+    #[Test]
     public function make_command(
         string $commandArgs,
         string $expectedPath,
-        string $expectedNamespace
+        string $expectedNamespace,
     ): void {
         $this->console
             ->call("make:controller {$commandArgs}")

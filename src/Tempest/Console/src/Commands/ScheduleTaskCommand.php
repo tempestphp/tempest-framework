@@ -22,7 +22,7 @@ final readonly class ScheduleTaskCommand
 
     #[ConsoleCommand(
         name: self::NAME,
-        description: 'Executes a scheduled task immediately'
+        description: 'Executes a scheduled task immediately',
     )]
     public function __invoke(string $task): void
     {
@@ -33,7 +33,7 @@ final readonly class ScheduleTaskCommand
         $parts = explode('::', $task);
 
         if (count($parts) !== 2) {
-            $console->error("Invalid task");
+            $console->error('Invalid task');
 
             return;
         }

@@ -14,7 +14,7 @@ use Tempest\Validation\Rule;
 final readonly class Email implements Rule
 {
     public function __construct(
-        private EmailValidation $validationMethod = new RFCValidation()
+        private EmailValidation $validationMethod = new RFCValidation(),
     ) {
     }
 
@@ -27,6 +27,6 @@ final readonly class Email implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid email address";
+        return 'Value should be a valid email address';
     }
 }

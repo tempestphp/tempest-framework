@@ -18,7 +18,7 @@ final readonly class RoutesCommand
 
     #[ConsoleCommand(
         name: 'routes',
-        description: 'Lists all registered routes'
+        description: 'Lists all registered routes',
     )]
     public function list(): void
     {

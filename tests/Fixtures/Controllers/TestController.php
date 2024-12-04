@@ -19,9 +19,9 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Trace;
-use function Tempest\view;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
+use function Tempest\view;
 
 final readonly class TestController
 {
@@ -43,15 +43,15 @@ final readonly class TestController
         return new Ok($id);
     }
 
+    #[Connect(uri: '/test')]
+    #[Delete(uri: '/test')]
     #[Get(uri: '/test')]
     #[Head(uri: '/test')]
+    #[Options(uri: '/test')]
+    #[Patch(uri: '/test')]
     #[Post(uri: '/test')]
     #[Put(uri: '/test')]
-    #[Delete(uri: '/test')]
-    #[Connect(uri: '/test')]
-    #[Options(uri: '/test')]
     #[Trace(uri: '/test')]
-    #[Patch(uri: '/test')]
     public function __invoke(): Response
     {
         return new Ok('test');
