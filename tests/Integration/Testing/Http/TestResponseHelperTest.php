@@ -8,8 +8,8 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Framework\Testing\Http\TestResponseHelper;
-use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
+use Tempest\Router\GenericResponse;
 
 /**
  * @internal

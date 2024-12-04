@@ -13,10 +13,10 @@ use Tempest\Auth\Install\UserPermissionMigration;
 use Tempest\Auth\SessionAuthenticator;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\Session\Managers\FileSessionManager;
-use Tempest\Http\Session\Session;
-use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionManager;
+use Tempest\Router\Session\Managers\FileSessionManager;
+use Tempest\Router\Session\Session;
+use Tempest\Router\Session\SessionConfig;
+use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

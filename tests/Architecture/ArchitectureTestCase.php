@@ -9,7 +9,7 @@ use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
-use Tempest\Http\Route;
+use Tempest\Router\Route;
 
 final class ArchitectureTestCase
 {

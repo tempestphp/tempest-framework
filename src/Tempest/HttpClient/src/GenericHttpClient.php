@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient;
 
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Http\Request;
-use Tempest\Http\Response;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
 
 final class GenericHttpClient implements HttpClient
 {

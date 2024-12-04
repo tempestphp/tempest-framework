@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\HttpMiddleware;
-use Tempest\Http\HttpMiddlewareCallable;
-use Tempest\Http\Request;
-use Tempest\Http\Response;
+use Tempest\Router\HttpMiddleware;
+use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
 
 final readonly class TestGlobalMiddleware implements HttpMiddleware
 {

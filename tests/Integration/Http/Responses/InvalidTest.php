@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http\Responses;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
-use Tempest\Http\Responses\Invalid;
-use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\Mappers\RequestToPsrRequestMapper;
+use Tempest\Router\Responses\Invalid;
+use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\NotEmpty;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\map;

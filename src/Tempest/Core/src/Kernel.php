@@ -13,7 +13,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
