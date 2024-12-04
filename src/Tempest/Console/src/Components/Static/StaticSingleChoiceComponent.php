@@ -9,14 +9,17 @@ use Tempest\Console\StaticConsoleComponent;
 
 final readonly class StaticSingleChoiceComponent implements StaticConsoleComponent
 {
+    private array $optionValues;
+
     public function __construct(
         public string $label,
         public array $options,
         public mixed $default = null,
     ) {
+        $this->optionValues = array_values($options);
     }
 
-    public function render(Console $console): ?string
+    public function render(Console $console): null|string|int
     {
         if (! $console->supportsPrompting()) {
             return $this->default;
@@ -26,7 +29,7 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
 
         $parsedOptions = [];
 
-        foreach ($this->options as $key => $option) {
+        foreach ($this->optionValues as $key => $option) {
             $key = $key === $this->default
                 ? "<em><strong>{$key}</strong></em>"
                 : $key;
@@ -39,15 +42,19 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
         $answer = trim($console->readln());
 
         if (! $answer && $this->default) {
-            return $this->options[$this->default] ?? $this->default;
+            return $this->default;
         }
 
-        if (array_is_list($this->options) && in_array($answer, $this->options)) {
-            return $answer;
+        if (array_key_exists($answer, $this->optionValues)) {
+            return array_is_list($this->options)
+                ? $this->optionValues[$answer]
+                : array_search($this->optionValues[$answer], $this->options, strict: false);
         }
 
-        if (array_key_exists($answer, $this->options)) {
-            return $this->options[$answer];
+        if (in_array($answer, $this->optionValues, strict: false)) {
+            return array_is_list($this->options)
+                ? $answer
+                : array_search($answer, $this->options, strict: false);
         }
 
         return $this->render($console);
