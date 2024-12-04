@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
-use Tempest\Console\Key;
 use Tests\Tempest\Integration\Console\Fixtures\ComplexCommand;
 use Tests\Tempest\Integration\Console\Fixtures\IntEnumCommand;
 use Tests\Tempest\Integration\Console\Fixtures\StringEnumCommand;

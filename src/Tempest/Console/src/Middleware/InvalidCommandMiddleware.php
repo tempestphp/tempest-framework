@@ -14,7 +14,6 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
-
 use function Tempest\Support\str;
 use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\Enum;
