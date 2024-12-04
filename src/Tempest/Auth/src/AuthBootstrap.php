@@ -6,7 +6,7 @@ namespace Tempest\Auth;
 
 use Tempest\Core\KernelEvent;
 use Tempest\EventBus\EventHandler;
-use Tempest\Http\Router;
+use Tempest\Router\Router;
 
 final readonly class AuthBootstrap
 {

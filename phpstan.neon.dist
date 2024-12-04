@@ -19,7 +19,7 @@ parameters:
 
 		-
 			message: '#.*#'
-			path: src/Tempest/Http/src/Exceptions/exception.php
+			path: src/Tempest/Router/src/Exceptions/exception.php
 		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php

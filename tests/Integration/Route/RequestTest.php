@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\RequestFactory;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;

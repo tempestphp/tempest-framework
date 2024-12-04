@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Controllers;
 
 use Generator;
-use Tempest\Http\DataProvider;
+use Tempest\Router\DataProvider;
 
 final readonly class StaticDataProvider implements DataProvider
 {

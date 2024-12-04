@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRouter;
-use Tempest\Http\Responses\Ok;
-use Tempest\Http\Router;
 use Tempest\Http\Status;
+use Tempest\Router\GenericRouter;
+use Tempest\Router\Responses\Ok;
+use Tempest\Router\Router;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
