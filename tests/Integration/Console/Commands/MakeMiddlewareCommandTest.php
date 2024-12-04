@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Enums\MiddlewareType;
+use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -75,21 +78,22 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call("make:middelware TestMiddleware {$middlewareType->value}")
             ->submit();
-        
+
         $filepath = 'App/TestMiddleware.php';
         $this->installer
             ->assertFileExists($filepath)
             ->assertFileContains($filepath, 'implements ' . $middlewareInterface);
     }
 
-    public static function middleware_type_provider(): array {
+    public static function middleware_type_provider(): array
+    {
         $cases = MiddlewareType::cases();
 
         return array_combine(
-            keys: array_map(fn ( MiddlewareType $case ) => $case->value, $cases),
-            values: array_map(fn( MiddlewareType $case) => [
+            keys: array_map(fn (MiddlewareType $case) => $case->value, $cases),
+            values: array_map(fn (MiddlewareType $case) => [
                 'middlewareType' => $case,
-                'middlewareInterface' => $case->relatedInterface()
+                'middlewareInterface' => $case->relatedInterface(),
             ], $cases)
         );
     }
