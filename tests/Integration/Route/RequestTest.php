@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Http\Request;
 use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
 use function Tempest\uri;
@@ -24,7 +24,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 {
     public function test_request_get(): void
     {
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/',
             body: [],
@@ -32,7 +32,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('default', $request->get('a', 'default'));
 
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/?a=1',
             body: [],
@@ -40,7 +40,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('1', $request->get('a', 'default'));
 
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/?a=1',
             body: [
@@ -50,7 +50,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('2', $request->get('a', 'default'));
 
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/',
             body: [
@@ -156,7 +156,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
 
     public function test_has(): void
     {
-        $request = new GenericRequest(
+        $request = new Request(
             method: Method::GET,
             uri: '/?bar',
             body: [

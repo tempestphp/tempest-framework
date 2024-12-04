@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Posts;
 
-use Tempest\Http\IsRequest;
 use Tempest\Http\Request;
 use Tempest\Mapper\Strict;
 
+// TODO: Clean this up.
 #[Strict]
-final class PostRequest implements Request
+final class PostRequest extends Request
 {
-    use IsRequest;
-
     public string $title;
 
     public string $text;
