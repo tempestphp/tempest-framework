@@ -25,7 +25,7 @@ final readonly class CacheClearCommand
 
         if ($all === false) {
             $caches = $this->ask(
-                question: "Which caches do you want to clear?",
+                question: 'Which caches do you want to clear?',
                 options: $this->cacheConfig->caches,
                 multiple: true,
             );

@@ -33,7 +33,7 @@ final class MigrateDownCommand
     {
         $this->migrationManager->down();
 
-        $this->console->success(sprintf("Rolled back %s migrations", $this->count));
+        $this->console->success(sprintf('Rolled back %s migrations', $this->count));
     }
 
     #[EventHandler]

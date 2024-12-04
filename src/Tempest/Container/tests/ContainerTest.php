@@ -285,10 +285,10 @@ final class ContainerTest extends TestCase
         } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
             $this->assertStringContainsStringIgnoringLineEndings(
                 <<<'TXT'
-	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
-	└── Tempest\Container\Tests\Fixtures\TaggedDependency
-TXT,
-                $cannotResolveTaggedDependency->getMessage()
+                    	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
+                    	└── Tempest\Container\Tests\Fixtures\TaggedDependency
+                    TXT,
+                $cannotResolveTaggedDependency->getMessage(),
             );
         }
     }
@@ -377,8 +377,8 @@ TXT,
         /** @var DependencyWithBuiltinDependencies $a */
         $a = $container->get(DependencyWithBuiltinDependencies::class);
 
-        $this->assertSame("Hallo dependency!", $a->stringValue);
-        $this->assertSame(["hallo", "array", 42], $a->arrayValue);
+        $this->assertSame('Hallo dependency!', $a->stringValue);
+        $this->assertSame(['hallo', 'array', 42], $a->arrayValue);
         $this->assertTrue($a->boolValue);
     }
 

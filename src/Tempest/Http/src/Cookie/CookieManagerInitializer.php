@@ -15,7 +15,7 @@ final readonly class CookieManagerInitializer implements Initializer
     public function initialize(Container $container): CookieManager
     {
         $cookieManager = new CookieManager(
-            clock: $container->get(Clock::class)
+            clock: $container->get(Clock::class),
         );
 
         foreach ($_COOKIE as $key => $value) {

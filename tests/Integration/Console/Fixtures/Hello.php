@@ -38,7 +38,7 @@ final readonly class Hello
     public function test(
         #[ConsoleArgument]
         ?int $optionalValue = null,
-        bool $flag = false
+        bool $flag = false,
     ): void {
         $value = $optionalValue ?? 'null';
 

@@ -22,7 +22,7 @@ final readonly class TailServerLogCommand
     ) {
     }
 
-    #[ConsoleCommand('tail:server', description: "Tails the server log", aliases: ['ts'])]
+    #[ConsoleCommand('tail:server', description: 'Tails the server log', aliases: ['ts'])]
     public function __invoke(): void
     {
         $serverLogPath = $this->logConfig->serverLogPath;
@@ -30,7 +30,7 @@ final readonly class TailServerLogCommand
         $this->console->write('<h1>Server</h1> ');
 
         if (! $serverLogPath) {
-            $this->console->error("No server log configured in LogConfig");
+            $this->console->error('No server log configured in LogConfig');
 
             return;
         }

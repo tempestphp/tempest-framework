@@ -10,8 +10,8 @@ use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\File;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
-use function Tempest\view;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\view;
 
 /**
  * @internal

@@ -42,7 +42,7 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('install framework --force')
-            ->assertDoesNotContain("Running the framework installer, continue?");
+            ->assertDoesNotContain('Running the framework installer, continue?');
 
         $this->installer
             ->assertFileExists(

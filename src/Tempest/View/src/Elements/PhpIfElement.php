@@ -48,17 +48,17 @@ final class PhpIfElement implements Element, WrapsElement
     public function compile(): string
     {
         $compiled = sprintf(
-            "<?php if(%s): ?>
-                %s",
+            '<?php if(%s): ?>
+                %s',
             $this->wrappingElement->consumeAttribute('if'),
             $this->wrappingElement->compile(),
         );
 
         foreach ($this->elseif as $elseif) {
             $compiled = sprintf(
-                "%s
+                '%s
                 <?php elseif(%s): ?>
-                %s",
+                %s',
                 $compiled,
                 $elseif->consumeAttribute('elseif'),
                 $elseif->compile(),
@@ -69,18 +69,18 @@ final class PhpIfElement implements Element, WrapsElement
             $this->else->consumeAttribute('else');
 
             $compiled = sprintf(
-                "%s
+                '%s
                 <?php else: ?>
-                %s",
+                %s',
                 $compiled,
                 $this->else->compile(),
             );
         }
 
         return sprintf(
-            "%s
-            <?php endif; ?>",
-            $compiled
+            '%s
+            <?php endif; ?>',
+            $compiled,
         );
     }
 }

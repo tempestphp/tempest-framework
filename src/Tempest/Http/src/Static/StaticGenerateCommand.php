@@ -14,11 +14,11 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Router;
 use Tempest\Http\Status;
-use function Tempest\path;
-use function Tempest\uri;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use Throwable;
+use function Tempest\path;
+use function Tempest\uri;
 
 final readonly class StaticGenerateCommand
 {

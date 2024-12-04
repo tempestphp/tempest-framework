@@ -7,9 +7,9 @@ namespace Tempest\Support\Tests;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\InvalidMapWithKeysUsage;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 /**
@@ -1246,7 +1246,6 @@ final class ArrayHelperTest extends TestCase
             ->forget(42)
             ->forget('foo')
             ->forget(['bar', 'first_name']);
-
 
         $this->assertTrue($first_collection->equals($second_collection));
     }

@@ -9,8 +9,8 @@ use Tempest\Database\Builder\Relations\HasManyRelation;
 use Tempest\Database\Builder\Relations\HasOneRelation;
 use Tempest\Database\Eager;
 use Tempest\Database\HasOne;
-use function Tempest\reflect;
 use Tempest\Reflection\ClassReflector;
+use function Tempest\reflect;
 
 final readonly class ModelDefinition
 {

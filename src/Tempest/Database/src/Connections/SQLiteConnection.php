@@ -15,7 +15,7 @@ final readonly class SQLiteConnection implements DatabaseConnection
     public function __construct(
         #[SensitiveParameter]
         public string $path = 'localhost',
-        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }
 

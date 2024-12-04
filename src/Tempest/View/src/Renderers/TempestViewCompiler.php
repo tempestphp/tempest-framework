@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
-use const Dom\HTML_NO_DEFAULT_NS;
 use Dom\HTMLDocument;
 use Dom\NodeList;
 use Exception;
 use Tempest\Core\Kernel;
-use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use function Tempest\path;
+use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler
 {

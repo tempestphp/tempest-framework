@@ -21,6 +21,6 @@ final readonly class RegEx implements Rule
 
     public function message(): string
     {
-        return "The value must match the regular expression pattern: $this->pattern";
+        return "The value must match the regular expression pattern: {$this->pattern}";
     }
 }

@@ -10,12 +10,12 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
-use function Tempest\env;
 use Tempest\Http\Session\Session;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use function Tempest\path;
 use Throwable;
+use function Tempest\env;
+use function Tempest\path;
 
 #[Singleton]
 final readonly class HttpApplication implements Application

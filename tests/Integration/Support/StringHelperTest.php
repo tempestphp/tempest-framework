@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
-use function Tempest\Support\str;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\str;
 
 /**
  * @internal

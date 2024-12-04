@@ -34,16 +34,16 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, MigrationModel::all());
         $this->assertSame(
             '0000-01-01_create_users_table',
-            MigrationModel::find(new Id(2))->name
+            MigrationModel::find(new Id(2))->name,
         );
 
         try {
             User::create(
                 name: 'Test',
-                email: 'test@example.com'
+                email: 'test@example.com',
             );
         } catch (QueryException $queryException) {
-            $message = match($this->container->get(DatabaseDialect::class)) {
+            $message = match ($this->container->get(DatabaseDialect::class)) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
                 DatabaseDialect::POSTGRESQL => 'table users has no column named email',
@@ -57,13 +57,13 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '0000-01-02_add_email_to_user_table',
-            MigrationModel::find(new Id(3))->name
+            MigrationModel::find(new Id(3))->name,
         );
 
         /** @var User $user */
         $user = User::create(
             name: 'Test',
-            email: 'test@example.com'
+            email: 'test@example.com',
         );
 
         $this->assertSame('test@example.com', $user->email);

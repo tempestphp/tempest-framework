@@ -23,7 +23,7 @@ final class PostgresConnection implements DatabaseConnection
         public string $password = '',
         #[SensitiveParameter]
         public string $database = 'postgres',
-        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }
 

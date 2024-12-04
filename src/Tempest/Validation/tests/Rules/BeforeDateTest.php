@@ -19,7 +19,7 @@ final class BeforeDateTest extends TestCase
         $date = new DateTimeImmutable();
         $rule = new BeforeDate($date);
 
-        $this->assertSame('Value must be a date before ' . $date->format("Y-m-d H:i:s"), $rule->message());
+        $this->assertSame('Value must be a date before ' . $date->format('Y-m-d H:i:s'), $rule->message());
 
         $this->assertFalse($rule->isValid($date->modify('+1 minute')));
         $this->assertTrue($rule->isValid($date->modify('-1 second')));
@@ -31,7 +31,7 @@ final class BeforeDateTest extends TestCase
         $date = new DateTimeImmutable();
         $rule = new BeforeDate($date, inclusive: true);
 
-        $this->assertSame('Value must be a date before or equal to ' . $date->format("Y-m-d H:i:s"), $rule->message());
+        $this->assertSame('Value must be a date before or equal to ' . $date->format('Y-m-d H:i:s'), $rule->message());
 
         $this->assertFalse($rule->isValid($date->modify('+1 minute')));
         $this->assertTrue($rule->isValid($date->modify('-1 second')));

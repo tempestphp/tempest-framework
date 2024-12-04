@@ -6,9 +6,9 @@ namespace Tempest\tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;
-use function Tempest\path;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
+use function Tempest\path;
 
 /**
  * @internal

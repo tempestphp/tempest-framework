@@ -23,7 +23,7 @@ final class CountTest extends TestCase
     #[DataProvider('provide_returns_the_proper_message_based_on_min_and_max_arguments_cases')]
     public function test_returns_the_proper_message_based_on_min_and_max_arguments(
         Count $rule,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->assertEquals($expectedMessage, $rule->message());
     }

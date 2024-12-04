@@ -17,11 +17,11 @@ use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Routing\Matching\RouteMatcher;
-use function Tempest\map;
 use Tempest\Reflection\ClassReflector;
-use function Tempest\Support\str;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
+use function Tempest\map;
+use function Tempest\Support\str;
 
 /**
  * @template MiddlewareClass of \Tempest\Http\HttpMiddleware
@@ -142,7 +142,7 @@ final class GenericRouter implements Router
 
             $uri = $uri->replaceRegex(
                 '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
-                (string)$value
+                (string) $value,
             );
         }
 
@@ -171,7 +171,6 @@ final class GenericRouter implements Router
 
         // We'll loop over all the handler's parameters
         foreach ($matchedRoute->route->handler->getParameters() as $parameter) {
-
             // If the parameter's type is an instance of Request…
             if ($parameter->getType()->matches(Request::class)) {
                 // We'll use that specific request class

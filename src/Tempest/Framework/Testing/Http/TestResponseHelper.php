@@ -6,13 +6,13 @@ namespace Tempest\Framework\Testing\Http;
 
 use Closure;
 use PHPUnit\Framework\Assert;
-use function Tempest\get;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+use function Tempest\get;
 
 final readonly class TestResponseHelper
 {
@@ -136,7 +136,7 @@ final readonly class TestResponseHelper
         Assert::assertNotNull(
             $data,
             sprintf(
-                "No session value was set for %s, available session keys: %s",
+                'No session value was set for %s, available session keys: %s',
                 $key,
                 implode(', ', array_keys($session->data)),
             ),
@@ -160,7 +160,7 @@ final readonly class TestResponseHelper
             $key,
             $validationErrors,
             sprintf(
-                "No validation error was set for %s, available validation errors: %s",
+                'No validation error was set for %s, available validation errors: %s',
                 $key,
                 implode(', ', array_keys($validationErrors)),
             ),
@@ -183,7 +183,7 @@ final readonly class TestResponseHelper
         Assert::assertEmpty(
             $validationErrors,
             sprintf(
-                "There should be no validation errors, but there were: %s",
+                'There should be no validation errors, but there were: %s',
                 implode(', ', array_keys($validationErrors)),
             ),
         );

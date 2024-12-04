@@ -47,7 +47,7 @@ final readonly class CompleteCommand
             return;
         }
 
-        $complete = match(true) {
+        $complete = match (true) {
             is_string($command->complete) && class_exists($command->complete) => $this->container->get($command->complete),
             default => $this->container->get(CompleteConsoleCommandArguments::class),
         };

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Support;
 
 use Countable;
-use function Tempest\get;
 use Tempest\Support\Pluralizer\Pluralizer;
+use function Tempest\get;
 
 final class LanguageHelper
 {

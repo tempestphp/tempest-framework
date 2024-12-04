@@ -8,7 +8,6 @@ use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use function Tempest\map;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
@@ -30,6 +29,7 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+use function Tempest\map;
 
 /**
  * @internal

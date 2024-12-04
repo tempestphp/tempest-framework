@@ -9,9 +9,9 @@ use Exception;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\CacheItem;
+use Tempest\Support\ArrayHelper;
 use function Tempest\path;
 use function Tempest\Support\arr;
-use Tempest\Support\ArrayHelper;
 
 final readonly class ViewCachePool implements CacheItemPoolInterface
 {
@@ -33,7 +33,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
                 return $item;
             },
             newThis: null,
-            newScope: CacheItem::class
+            newScope: CacheItem::class,
         );
 
         return $createCacheItem($key, $this->makePath($key), $this->hasItem($key));

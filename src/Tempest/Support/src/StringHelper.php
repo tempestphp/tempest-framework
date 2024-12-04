@@ -6,12 +6,12 @@ namespace Tempest\Support;
 
 use Closure;
 use Countable;
+use Stringable;
+use Tempest\Support\Conditions\HasConditions;
 use function ltrim;
 use function preg_quote;
 use function preg_replace;
 use function rtrim;
-use Stringable;
-use Tempest\Support\Conditions\HasConditions;
 use function trim;
 
 final readonly class StringHelper implements Stringable
@@ -104,7 +104,7 @@ final readonly class StringHelper implements Stringable
         $string = preg_replace(
             '![^' . preg_quote($delimiter) . '\pL\pN\s]+!u',
             $delimiter,
-            mb_strtolower($string, 'UTF-8')
+            mb_strtolower($string, 'UTF-8'),
         );
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
@@ -138,7 +138,7 @@ final readonly class StringHelper implements Stringable
      */
     public function camel(): self
     {
-        return new self(lcfirst((string)$this->pascal()));
+        return new self(lcfirst((string) $this->pascal()));
     }
 
     /**
@@ -186,7 +186,7 @@ final readonly class StringHelper implements Stringable
 
         while (($len = strlen($string)) < $length) {
             $size = $length - $len;
-            $bytesSize = (int)ceil($size / 3) * 3;
+            $bytesSize = (int) ceil($size / 3) * 3;
             $bytes = random_bytes($bytesSize);
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), offset: 0, length: $size);
         }
@@ -200,7 +200,7 @@ final readonly class StringHelper implements Stringable
     public function finish(string $cap): self
     {
         return new self(
-            preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap
+            preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap,
         );
     }
 
@@ -210,7 +210,7 @@ final readonly class StringHelper implements Stringable
     public function start(string $prefix): self
     {
         return new self(
-            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string)
+            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string),
         );
     }
 
@@ -844,7 +844,7 @@ final readonly class StringHelper implements Stringable
     public function insertAt(int $position, string $string): self
     {
         return new self(
-            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
+            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position),
         );
     }
 

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use function Tempest\defer;
 use Tempest\Http\Get;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
+use function Tempest\defer;
 
 final class DeferController
 {

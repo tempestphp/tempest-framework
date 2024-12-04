@@ -52,7 +52,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
             $firstLine = $throwable->getTrace()[0];
 
             $this->console
-                ->writeln("<h2>#0</h2> " . $this->formatTrace($firstLine))
+                ->writeln('<h2>#0</h2> ' . $this->formatTrace($firstLine))
                 ->writeln()
                 ->writeln('<em>-v</em> show more')
                 ->writeln();

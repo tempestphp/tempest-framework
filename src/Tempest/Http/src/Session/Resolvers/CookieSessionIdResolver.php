@@ -31,7 +31,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
             $this->cookies->set(
                 key: Session::ID,
                 value: $id,
-                expiresAt: $this->clock->time() + $this->sessionConfig->expirationInSeconds
+                expiresAt: $this->clock->time() + $this->sessionConfig->expirationInSeconds,
             );
         }
 

@@ -24,7 +24,7 @@ final class ObjectFactoryAMigration implements Migration
             [
                 new PrimaryKeyStatement(),
                 new TextStatement('prop'),
-            ]
+            ],
         );
     }
 

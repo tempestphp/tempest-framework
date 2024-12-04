@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 use DateTimeImmutable;
 use InvalidArgumentException;
 use Tempest\Http\Method;
-use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
@@ -19,6 +18,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
+use function Tempest\map;
 
 /**
  * @internal

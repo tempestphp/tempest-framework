@@ -26,7 +26,7 @@ final readonly class MonitorAsyncCommands
     #[ConsoleCommand(name: 'command:monitor')]
     public function __invoke(): void
     {
-        $this->success("Monitoring for new commands. Press ctrl+c to stop.");
+        $this->success('Monitoring for new commands. Press ctrl+c to stop.');
 
         /** @var \Symfony\Component\Process\Process[] $processes */
         $processes = [];

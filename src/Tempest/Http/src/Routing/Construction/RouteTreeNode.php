@@ -21,7 +21,7 @@ final class RouteTreeNode
 
     private function __construct(
         public readonly RouteTreeNodeType $type,
-        public readonly ?string $segment = null
+        public readonly ?string $segment = null,
     ) {
     }
 

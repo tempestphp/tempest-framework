@@ -6,9 +6,9 @@ namespace Tempest\Validation;
 
 use Closure;
 use Tempest\Reflection\ClassReflector;
-use function Tempest\Support\arr;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
+use function Tempest\Support\arr;
 
 final readonly class Validator
 {

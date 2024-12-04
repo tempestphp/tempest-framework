@@ -14,11 +14,11 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
-use function Tempest\Support\str;
 use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\Numeric;
+use function Tempest\Support\str;
 
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 {
@@ -63,13 +63,13 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
                         'int' => new Numeric(),
                         default => null,
                     },
-                ])
+                ]),
             );
 
             $invocation->argumentBag->add(new ConsoleInputArgument(
                 name: $argument->name,
                 position: $argument->position,
-                value: $value
+                value: $value,
             ));
         }
 

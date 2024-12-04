@@ -25,7 +25,7 @@ final readonly class CreateBTable implements Migration
             [
                 new PrimaryKeyStatement(),
                 new RawStatement('c_id INTEGER'),
-            ]
+            ],
         );
     }
 

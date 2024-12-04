@@ -15,22 +15,21 @@ final class HasOneParentModel implements DatabaseModel
 
     public static function table(): TableName
     {
-        return new TableName("has_one_parent_model");
+        return new TableName('has_one_parent_model');
     }
-
 
     #[HasOne]
     public HasOneRelatedModel $relatedModel;
 
-    #[HasOne("otherParent")]
+    #[HasOne('otherParent')]
     public HasOneRelatedModel $otherRelatedModel;
 
     #[HasOne]
     public HasOneInvalidRelatedModel $inversePropertyNotFound;
 
-    #[HasOne("non_existing_field")]
+    #[HasOne('non_existing_field')]
     public HasOneInvalidRelatedModel $inversePropertyMissing;
 
-    #[HasOne("invalidType")]
+    #[HasOne('invalidType')]
     public HasOneInvalidRelatedModel $inversePropertyInvalid;
 }

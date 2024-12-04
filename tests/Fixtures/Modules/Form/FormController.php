@@ -8,8 +8,8 @@ use Tempest\Http\Get;
 use Tempest\Http\Post;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
-use function Tempest\view;
 use Tempest\View\View;
+use function Tempest\view;
 
 final readonly class FormController
 {

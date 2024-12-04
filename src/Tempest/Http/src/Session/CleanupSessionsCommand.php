@@ -18,11 +18,11 @@ final readonly class CleanupSessionsCommand
     ) {
     }
 
-    #[Schedule(Every::MINUTE)]
     #[ConsoleCommand(
         name: 'session:clean',
         description: 'Finds and removes all expired sessions',
     )]
+    #[Schedule(Every::MINUTE)]
     public function __invoke(): void
     {
         $this->console->info('Cleaning up sessions...');

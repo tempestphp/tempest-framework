@@ -11,7 +11,7 @@ use Tempest\Http\Router;
 final readonly class AuthBootstrap
 {
     public function __construct(
-        private Router $router
+        private Router $router,
     ) {
     }
 

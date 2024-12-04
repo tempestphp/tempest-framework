@@ -29,7 +29,7 @@ final class GenericDatabaseTest extends TestCase
 
         $database = new GenericDatabase(
             $pdo,
-            new GenericTransactionManager($pdo)
+            new GenericTransactionManager($pdo),
         );
 
         $result = $database->withinTransaction(function () {
@@ -53,7 +53,7 @@ final class GenericDatabaseTest extends TestCase
 
         $database = new GenericDatabase(
             $pdo,
-            new GenericTransactionManager($pdo)
+            new GenericTransactionManager($pdo),
         );
 
         $result = $database->withinTransaction(function (): never {

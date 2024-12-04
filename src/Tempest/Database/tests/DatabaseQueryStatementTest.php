@@ -22,8 +22,8 @@ use Tempest\Database\QueryStatements\RawStatement;
  */
 final class DatabaseQueryStatementTest extends TestCase
 {
-    #[Test]
     #[DataProvider('provide_create_table_database_drivers')]
+    #[Test]
     public function it_can_create_a_table(DatabaseConnection $driver, string $validSql): void
     {
         $statement = (new CreateTableStatement('migrations', [
@@ -52,8 +52,8 @@ final class DatabaseQueryStatementTest extends TestCase
         ];
     }
 
-    #[Test]
     #[DataProvider('provide_fk_create_table_database_drivers')]
+    #[Test]
     public function it_can_create_a_foreign_key_constraint(DatabaseConnection $driver, string $validSql): void
     {
         $statement = (new CreateTableStatement('books'))

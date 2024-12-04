@@ -44,7 +44,7 @@ final class GenericRouteMatcherTest extends TestCase
             [
                 'GET' => new MatchingRegex(['#^(?|/dynamic(?|/([^/]++)(?|/view\/?$(*MARK:d)|/([^/]++)(?|/([^/]++)(?|/([^/]++)\/?$(*MARK:e)))|\/?$(*MARK:b))))#']),
                 'PATCH' => new MatchingRegex(['#^(?|/dynamic(?|/([^/]++)\/?$(*MARK:c)))#']),
-            ]
+            ],
         );
 
         $this->subject = new GenericRouteMatcher($this->routeConfig);

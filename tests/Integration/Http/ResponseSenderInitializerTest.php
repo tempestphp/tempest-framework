@@ -19,7 +19,7 @@ final class ResponseSenderInitializerTest extends FrameworkIntegrationTestCase
 
         $this->assertInstanceOf(
             GenericResponseSender::class,
-            $initializer->initialize($this->container)
+            $initializer->initialize($this->container),
         );
     }
 }

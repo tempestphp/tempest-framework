@@ -8,10 +8,10 @@ use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
-use function Tempest\get;
-use function Tempest\make;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use function Tempest\get;
+use function Tempest\make;
 
 /** @phpstan-require-implements \Tempest\Database\DatabaseModel */
 trait IsDatabaseModel
@@ -162,7 +162,7 @@ trait IsDatabaseModel
         $table = self::table();
 
         $query = new Query(sprintf(
-            "DELETE FROM %s WHERE `id` = :id",
+            'DELETE FROM %s WHERE `id` = :id',
             $table,
         ), [
             'id' => $this->getId()->id,

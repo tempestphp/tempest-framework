@@ -71,7 +71,7 @@ final readonly class HasOneRelation implements Relation
         throw InvalidRelation::inversePropertyNotFound(
             $currentModelClass->getName(),
             $property->getName(),
-            $propertyClass->getName()
+            $propertyClass->getName(),
         );
     }
 

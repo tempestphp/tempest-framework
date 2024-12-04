@@ -29,7 +29,7 @@ final readonly class CacheStatusCommand
             /** @var Cache $cache */
             $cache = $this->container->get($cacheClass);
 
-            $reason = match($this->cacheConfig->enable) {
+            $reason = match ($this->cacheConfig->enable) {
                 true => ' (global CACHE = true)',
                 false => ' (global CACHE = false)',
                 null => '',
@@ -39,7 +39,7 @@ final readonly class CacheStatusCommand
                 '<em>%s</em> %s%s',
                 $cacheClass,
                 $cache->isEnabled() ? '<style="fg-green">enabled</style>' : '<style="fg-red">disabled</style>',
-                $reason
+                $reason,
             ));
         }
     }

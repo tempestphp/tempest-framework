@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Http\Stubs;
 
 use Tempest\Http\Get;
-use function Tempest\view;
 use Tempest\View\View;
+use function Tempest\view;
 
 final class ControllerStub
 {

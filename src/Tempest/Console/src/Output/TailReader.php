@@ -13,7 +13,7 @@ final readonly class TailReader
     {
         $format ??= fn (string $text) => $text;
 
-        $handle = fopen($path, "r");
+        $handle = fopen($path, 'r');
 
         fseek($handle, -1, SEEK_END);
         $offset = ftell($handle);

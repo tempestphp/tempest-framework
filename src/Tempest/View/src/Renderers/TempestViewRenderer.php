@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tempest\View\Renderers;
 
 use Stringable;
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewRenderer;
 use Throwable;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final class TempestViewRenderer implements ViewRenderer
 {
@@ -98,6 +98,6 @@ final class TempestViewRenderer implements ViewRenderer
 
     public function escape(null|string|Stringable $value): string
     {
-        return htmlentities((string)$value);
+        return htmlentities((string) $value);
     }
 }

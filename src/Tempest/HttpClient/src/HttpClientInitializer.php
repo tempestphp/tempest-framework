@@ -12,7 +12,7 @@ final class HttpClientInitializer implements Initializer
     public function initialize(Container $container): HttpClient|GenericHttpClient
     {
         return new GenericHttpClient(
-            driver: $container->get(HttpClientDriver::class)
+            driver: $container->get(HttpClientDriver::class),
         );
     }
 }

@@ -65,7 +65,6 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
                 file: $path,
             ),
         ]);
-
     }
 
     public function apply(): void

@@ -24,8 +24,8 @@ final class DatabaseConfigTest extends FrameworkIntegrationTestCase
         $this->container->config(new DatabaseConfig(
             connection: new SQLiteConnection(
                 path: __DIR__ . '/../database.sqlite',
-                namingStrategy: new $strategy()
-            )
+                namingStrategy: new $strategy(),
+            ),
         ));
 
         $this->assertSame($expected, MultiWordModel::table()->tableName);

@@ -12,7 +12,7 @@ final readonly class DiscoveryClearCommand
 {
     public function __construct(
         private DiscoveryCache $discoveryCache,
-        private Console $console
+        private Console $console,
     ) {
     }
 
