@@ -44,6 +44,8 @@ jobs:
 
       - name: Run PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+        env:
+          PHP_CS_FIXER_IGNORE_ENV: true
 
   phpstan:
     name: Perform Static Analysis
