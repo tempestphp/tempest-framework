@@ -43,7 +43,7 @@ jobs:
         run: vendor/bin/phpstan --error-format=github
 
       - name: Run PHP-CS-Fixer
-        run: vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
+        run: vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
 
   phpstan:
     name: Perform Static Analysis

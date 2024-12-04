@@ -9,13 +9,19 @@ jobs:
     name: Run Style Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Run PHP-CS-Fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+          php-version: 8.4
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run php-cs-fixer
+        run: vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
 
   phpstan:
     name: "Run Static Analysis: PHPStan"
