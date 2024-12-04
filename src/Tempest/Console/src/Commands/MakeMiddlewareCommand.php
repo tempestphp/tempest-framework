@@ -36,8 +36,7 @@ final class MakeMiddlewareCommand
             help: 'The type of the middleware to create',
         )]
         MiddlewareType $middlewareType
-    ) {
-
+    ): void {
         try {
             $stubFile = $this->getStubFileFromMiddlewareType($middlewareType);
             $suggestedPath = $this->getSuggestedPath($className);
@@ -56,7 +55,7 @@ final class MakeMiddlewareCommand
         }
     }
 
-    protected function getStubFileFromMiddlewareType(MiddlewareType $middlewareType): StubFile
+    private function getStubFileFromMiddlewareType(MiddlewareType $middlewareType): StubFile
     {
         return match ($middlewareType) {
             MiddlewareType::CONSOLE => StubFile::from(ConsoleMiddlewareStub::class),

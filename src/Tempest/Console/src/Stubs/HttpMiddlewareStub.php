@@ -13,8 +13,6 @@ final class HttpMiddlewareStub implements HttpMiddleware
 {
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {
-        $response = $next($request);
-
-        return $response;
+        return $next($request);
     }
 }
