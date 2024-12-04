@@ -35,12 +35,12 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     public function __construct(
         public string $label,
         iterable $options,
-        public ?string $default = null,
+        public null|int|string $default = null,
     ) {
         $this->bufferEnabled = false;
         $this->options = new OptionCollection($options);
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
+        $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: false);
         $this->updateQuery();
     }
 

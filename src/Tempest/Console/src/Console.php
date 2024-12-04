@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use BackedEnum;
 use Closure;
 use Tempest\Highlight\Language;
+use Tempest\Support\ArrayHelper;
 
 interface Console
 {
@@ -27,19 +29,20 @@ interface Console
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed;
 
     /**
+     * @param null|array|ArrayHelper|class-string<BackedEnum> $options
      * @param mixed|null $default
      * @param \Tempest\Validation\Rule[] $validation
      */
     public function ask(
         string $question,
-        ?array $options = null,
+        null|array|ArrayHelper|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|string|array;
+    ): null|int|string|array;
 
     public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool;
 
