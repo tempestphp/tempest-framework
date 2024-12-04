@@ -9,6 +9,7 @@
         "psr/http-message": "^1.0|^2.0",
         "tempest/container": "dev-main",
         "tempest/http": "dev-main",
+        "tempest/router": "dev-main",
         "psr-discovery/http-factory-implementations": "1.x-dev",
         "psr-discovery/http-client-implementations": "1.x-dev"
     },
