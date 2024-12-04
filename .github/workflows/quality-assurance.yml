@@ -28,13 +28,22 @@ jobs:
     name: Check Styling
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan --error-format=github
 
       - name: Run PHP-CS-Fixer
-        uses: docker://oskarstark/php-cs-fixer-ga
-        with:
-          args: --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+        run: vendor/bin/php-cs-fixer --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
 
   phpstan:
     name: Perform Static Analysis
