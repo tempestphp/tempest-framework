@@ -29,7 +29,8 @@ return (new PhpCsFixer\Config())
         'get_class_to_class_keyword' => true,
         'cast_spaces' => true,
         'single_space_around_construct' => true,
-        'heredoc_indentation' => true,
+        // See: https://github.com/tempestphp/tempest-framework/pull/797
+        // 'heredoc_indentation' => true,
         'types_spaces' => true,
         'single_quote' => true,
         'no_short_bool_cast' => true,
