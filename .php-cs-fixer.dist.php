@@ -13,7 +13,7 @@ $finder = Symfony\Component\Finder\Finder::create()
     ->ignoreVCS(true);
 
 return (new PhpCsFixer\Config())
-    // ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setCacheFile('.cache/fixer/cs-fixer.cache')
     ->setRules([
         '@PSR12' => true,
