@@ -21,7 +21,7 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run php-cs-fixer
-        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
         env:
           PHP_CS_FIXER_IGNORE_ENV: true
 

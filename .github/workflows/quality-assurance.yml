@@ -43,7 +43,7 @@ jobs:
         run: vendor/bin/phpstan --error-format=github
 
       - name: Run PHP-CS-Fixer
-        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -v
+        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
         env:
           PHP_CS_FIXER_IGNORE_ENV: true
 
