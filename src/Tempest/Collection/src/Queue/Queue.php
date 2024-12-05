@@ -1,16 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tempest\Collection\Stack;
+namespace Tempest\Collection\Queue;
 
 use Exception;
-use LogicException;
 
 /**
  * @template TValue
  */
-final class Stack
+final class Queue
 {
     /**
      * @var array<TValue>
@@ -23,7 +20,7 @@ final class Stack
     public function __construct(array $items = [])
     {
         foreach ($items as $item) {
-            $this->push($item);
+            $this->enqueue($item);
         }
     }
 
@@ -31,7 +28,7 @@ final class Stack
      * @param TValue $item
      * @return self<TValue>
      */
-    public function push($item): self
+    public function enqueue($item): self
     {
         $this->items[] = $item;
 
@@ -41,13 +38,13 @@ final class Stack
     /**
      * @return TValue
      */
-    public function pop()
+    public function dequeue()
     {
-        $item = array_pop($this->items);
+        $item = array_shift($this->items);
 
         if ($item === null) {
-            // TODO: Update exception.
-            throw new LogicException();
+            // TODO: Update
+            throw new Exception();
         }
 
         return $item;
@@ -58,14 +55,7 @@ final class Stack
      */
     public function peek()
     {
-        $item = $this->items[array_key_last($this->items)] ?? null;
-
-        if ($item === null) {
-            // TODO: Update exception.
-            throw new Exception();
-        }
-
-        return $item;
+        return $this->items[0] ?? throw new Exception();
     }
 
     /**
@@ -77,11 +67,11 @@ final class Stack
     }
 
     /**
-     * @return Stack<TValue>
+     * @return Queue<TValue>
      */
-    public function clone(): Stack
+    public function clone(): Queue
     {
-        return new self($this->items);
+        return new Queue($this->items);
     }
 
     /**
