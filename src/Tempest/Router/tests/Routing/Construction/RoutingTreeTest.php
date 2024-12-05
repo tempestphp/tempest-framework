@@ -62,7 +62,7 @@ final class RoutingTreeTest extends TestCase
         for ($i = 0; $i <= 1000; $i++) {
             $mark = str_increment($mark);
             $subject->add(
-                $routeBuilder->withUri("/test/{$i}/route_{$i}")->asMarkedRoute($mark)
+                $routeBuilder->withUri("/test/{$i}/route_{$i}")->asMarkedRoute($mark),
             );
         }
 

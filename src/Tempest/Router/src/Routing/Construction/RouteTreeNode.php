@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Routing\Construction;
 
-
 /**
  * @internal
  */

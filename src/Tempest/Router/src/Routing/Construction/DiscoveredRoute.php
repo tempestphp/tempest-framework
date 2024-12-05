@@ -60,7 +60,7 @@ final class DiscoveredRoute implements Route
         $parts = explode('/', $this->uri);
 
         return array_values(
-            array_filter($parts, static fn (string $part) => $part !== '')
+            array_filter($parts, static fn (string $part) => $part !== ''),
         );
     }
 

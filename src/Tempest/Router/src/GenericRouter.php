@@ -144,7 +144,7 @@ final class GenericRouter implements Router
 
             $uri = $uri->replaceRegex(
                 '#\{' . $key . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
-                (string)$value
+                (string) $value,
             );
         }
 

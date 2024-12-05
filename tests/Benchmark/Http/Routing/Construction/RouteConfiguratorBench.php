@@ -7,8 +7,6 @@ namespace Tests\Tempest\Benchmark\Http\Routing\Construction;
 use PhpBench\Attributes\BeforeMethods;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use Tempest\Http\Method;
-use Tempest\Router\Route;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Tests\FakeRouteBuilder;
 

@@ -6,10 +6,6 @@ namespace Tempest\Router\Tests\Routing\Construction;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
-use Tempest\Router\Delete;
-use Tempest\Router\Patch;
-use Tempest\Router\Put;
-use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Routing\Matching\MatchingRegex;

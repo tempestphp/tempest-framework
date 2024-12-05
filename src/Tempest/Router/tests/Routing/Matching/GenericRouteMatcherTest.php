@@ -7,10 +7,10 @@ namespace Tempest\Router\Tests\Routing\Matching;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
-use Tempest\Router\Tests\FakeRouteBuilder;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
 use Tempest\Router\Routing\Matching\MatchingRegex;
+use Tempest\Router\Tests\FakeRouteBuilder;
 
 /**
  * @internal

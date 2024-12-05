@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Router\Routing\Matching\MatchingRegex;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
+use Tempest\Router\Routing\Matching\MatchingRegex;
 
 final class RouteConfig
 {

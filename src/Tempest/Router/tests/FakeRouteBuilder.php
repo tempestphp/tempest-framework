@@ -6,10 +6,10 @@ namespace Tempest\Router\Tests;
 
 use ReflectionMethod;
 use Tempest\Http\Method;
-use Tempest\Router\Routing\Construction\DiscoveredRoute;
-use Tempest\Router\Routing\Construction\MarkedRoute;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\Route;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
+use Tempest\Router\Routing\Construction\MarkedRoute;
 
 final readonly class FakeRouteBuilder implements Route
 {

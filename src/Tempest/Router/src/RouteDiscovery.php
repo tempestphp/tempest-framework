@@ -7,9 +7,9 @@ namespace Tempest\Router;
 use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
-use Tempest\Reflection\ClassReflector;
 
 final class RouteDiscovery implements Discovery
 {
