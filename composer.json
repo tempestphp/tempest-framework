@@ -69,6 +69,7 @@
         "tempest/http": "self.version",
         "tempest/http-client": "self.version",
         "tempest/log": "self.version",
+        "tempest/mailer": "self.version",
         "tempest/mapper": "self.version",
         "tempest/reflection": "self.version",
         "tempest/router": "self.version",
@@ -96,6 +97,7 @@
             "Tempest\\HttpClient\\": "src/Tempest/HttpClient/src",
             "Tempest\\Http\\": "src/Tempest/Http/src",
             "Tempest\\Log\\": "src/Tempest/Log/src",
+            "Tempest\\Mailer\\": "src/Tempest/Mailer/src",
             "Tempest\\Mapper\\": "src/Tempest/Mapper/src",
             "Tempest\\Reflection\\": "src/Tempest/Reflection/src",
             "Tempest\\Router\\": "src/Tempest/Router/src",
@@ -135,6 +137,7 @@
                 "src/Tempest/Router/tests"
             ],
             "Tempest\\Log\\Tests\\": "src/Tempest/Log/tests",
+            "Tempest\\Mailer\\Tests\\": "src/Tempest/Mailer/tests",
             "Tempest\\Mapper\\Tests\\": "src/Tempest/Mapper/tests",
             "Tempest\\Reflection\\Tests\\": "src/Tempest/Reflection/tests",
             "Tempest\\Router\\Tests\\": "src/Tempest/Router/tests",
