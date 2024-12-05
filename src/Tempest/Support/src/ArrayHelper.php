@@ -724,6 +724,26 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Asserts whether all items in the instance pass the given `$callback`.
+     *
+     * @param Closure(TValue, TKey): bool $callback
+     *
+     * @return bool If the collection is empty, returns `true`.
+     */
+    public function every(?Closure $callback = null): bool
+    {
+        $callback ??= static fn (mixed $value) => ! is_null($value);
+
+        foreach ($this->array as $key => $value) {
+            if (! $callback($value, $key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Associates the given `$value` to the given `$key` on the instance.
      */
     public function set(string $key, mixed $value): self

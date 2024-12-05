@@ -1651,4 +1651,13 @@ final class ArrayHelperTest extends TestCase
             expected: [8, 9],
         );
     }
+
+    public function test_every(): void
+    {
+        $this->assertTrue(arr([])->every(fn (int $value) => ($value % 2) === 0));
+        $this->assertTrue(arr([2, 4, 6])->every(fn (int $value) => ($value % 2) === 0));
+        $this->assertFalse(arr([1, 2, 4, 6])->every(fn (int $value) => ($value % 2) === 0));
+        $this->assertTrue(arr([0, 1, true, false, ''])->every());
+        $this->assertFalse(arr([0, 1, true, false, '', null])->every());
+    }
 }
