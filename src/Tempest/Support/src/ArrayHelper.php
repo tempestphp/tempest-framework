@@ -726,9 +726,9 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Asserts whether all items in the instance pass the given `$callback`.
      *
-     * @param Closure(TValue, TKey): bool $callback 
-     * 
-     * @return `true` if the collection is empty.
+     * @param Closure(TValue, TKey): bool $callback
+     *
+     * @return bool If the collection is empty, returns `true`.
      */
     public function every(?Closure $callback = null): bool
     {
