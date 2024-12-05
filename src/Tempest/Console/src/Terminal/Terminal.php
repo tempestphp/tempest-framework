@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Terminal;
 
-use const DIRECTORY_SEPARATOR;
-use function function_exists;
 use Generator;
 use Tempest\Console\Console;
 use Tempest\Console\Cursor;
@@ -13,7 +11,9 @@ use Tempest\Console\GenericCursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
+use function function_exists;
 use function Tempest\Support\arr;
+use const DIRECTORY_SEPARATOR;
 
 final class Terminal
 {
@@ -51,9 +51,9 @@ final class Terminal
         }
 
         $this->tty = exec('stty -g');
-        system("stty -echo");
-        system("stty -icanon");
-        system("stty -isig");
+        system('stty -echo');
+        system('stty -icanon');
+        system('stty -isig');
 
         return $this;
     }
@@ -70,9 +70,9 @@ final class Terminal
             system("stty {$this->tty}");
         }
 
-        system("stty echo");
-        system("stty icanon");
-        system("stty isig");
+        system('stty echo');
+        system('stty icanon');
+        system('stty isig');
         $this->tty = null;
 
         $this->console->writeln();

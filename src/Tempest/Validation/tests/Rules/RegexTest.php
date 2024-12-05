@@ -18,7 +18,7 @@ final class RegexTest extends TestCase
 
         $this->assertSame(
             'The value must match the regular expression pattern: /^[aA][bB]$/',
-            $rule->message()
+            $rule->message(),
         );
 
         $this->assertFalse($rule->isValid('cd'));

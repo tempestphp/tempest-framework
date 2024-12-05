@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\View\Exceptions;
 
 use Exception;
-use function Tempest\Support\str;
 use Throwable;
+use function Tempest\Support\str;
 
 final class ViewCompilationError extends Exception
 {
@@ -20,10 +20,10 @@ final class ViewCompilationError extends Exception
             )
             ->map(function (string $line, int $number) use ($previous) {
                 return sprintf(
-                    "%s%s | %s",
+                    '%s%s | %s',
                     $number === $previous->getLine() ? '> ' : '  ',
                     $number,
-                    $line
+                    $line,
                 );
             })
             ->implode(PHP_EOL);

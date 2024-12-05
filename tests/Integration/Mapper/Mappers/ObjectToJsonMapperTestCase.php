@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
-use function Tempest\map;
 use Tempest\Mapper\MapTo;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+use function Tempest\map;
 
 /**
  * @internal

@@ -29,7 +29,7 @@ final readonly class NamespaceHelper
             src_namespace() . '/' . str($path)
                 ->replaceStart(src_path(), '')
                 ->trim('/')
-                ->toString()
+                ->toString(),
         );
     }
 

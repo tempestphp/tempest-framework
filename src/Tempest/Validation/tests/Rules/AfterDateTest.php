@@ -19,7 +19,7 @@ final class AfterDateTest extends TestCase
         $date = new DateTimeImmutable();
         $rule = new AfterDate($date);
 
-        $this->assertSame('Value must be a date after ' . $date->format("Y-m-d H:i:s"), $rule->message());
+        $this->assertSame('Value must be a date after ' . $date->format('Y-m-d H:i:s'), $rule->message());
 
         $this->assertTrue($rule->isValid($date->modify('+1 minute')));
         $this->assertFalse($rule->isValid($date->modify('-1 second')));
@@ -31,7 +31,7 @@ final class AfterDateTest extends TestCase
         $date = new DateTimeImmutable();
         $rule = new AfterDate($date, inclusive: true);
 
-        $this->assertSame('Value must be a date after or equal to ' . $date->format("Y-m-d H:i:s"), $rule->message());
+        $this->assertSame('Value must be a date after or equal to ' . $date->format('Y-m-d H:i:s'), $rule->message());
 
         $this->assertTrue($rule->isValid($date->modify('+1 minute')));
         $this->assertFalse($rule->isValid($date->modify('-1 second')));

@@ -13,7 +13,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -39,7 +39,9 @@ final class Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
     ): self {
-        define('TEMPEST_START', value: hrtime(true));
+        if (! defined('TEMPEST_START')) {
+            define('TEMPEST_START', value: hrtime(true));
+        }
 
         return (new self(
             root: $root,
@@ -111,7 +113,7 @@ final class Kernel
             $message = $error['message'] ?? '';
 
             if (str_contains($message, 'Cannot declare class')) {
-                echo "Does this class have the right namespace?" . PHP_EOL;
+                echo 'Does this class have the right namespace?' . PHP_EOL;
             }
         });
 

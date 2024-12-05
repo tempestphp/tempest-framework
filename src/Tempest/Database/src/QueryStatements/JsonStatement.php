@@ -19,11 +19,11 @@ final readonly class JsonStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        if ($this->default && false === json_validate($this->default)) {
+        if ($this->default && json_validate($this->default) === false) {
             throw new InvalidDefaultValue($this->name, $this->default);
         }
 
-        return match($dialect) {
+        return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` JSON %s',
                 $this->name,
@@ -40,7 +40,7 @@ final readonly class JsonStatement implements QueryStatement
                 $this->name,
                 $this->default ? "DEFAULT (\"{$this->default}\")" : '',
                 $this->nullable ? '' : 'NOT NULL',
-            )
+            ),
         };
     }
 }

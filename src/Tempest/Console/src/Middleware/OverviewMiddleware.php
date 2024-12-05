@@ -40,7 +40,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
     {
         $this->console->header(
             header: $this->consoleConfig->name,
-            subheader: 'This is an overview of available commands.' . PHP_EOL . 'Type <em><command> --help</em> to get more help about a specific command.'
+            subheader: 'This is an overview of available commands.' . PHP_EOL . 'Type <em><command> --help</em> to get more help about a specific command.',
         );
 
         if ($this->discoveryCache->isEnabled()) {
@@ -69,7 +69,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
             arr($commands)
                 ->flatMap(fn (array $group) => $group)
                 ->map(fn (ConsoleCommand $command) => mb_strlen($command->getName()))
-                ->toArray()
+                ->toArray(),
         ) + 4;
 
         foreach ($commands as $group => $commandsForGroup) {
@@ -91,7 +91,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         $this->console
             ->unless(
                 condition: $this->discoveryCache->isValid(),
-                callback: fn (Console $console) => $console->writeln(PHP_EOL . '<error>Discovery cache invalid. Run discovery:generate to enable discovery caching.</error>')
+                callback: fn (Console $console) => $console->writeln(PHP_EOL . '<error>Discovery cache invalid. Run discovery:generate to enable discovery caching.</error>'),
             );
     }
 }

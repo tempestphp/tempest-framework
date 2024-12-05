@@ -30,7 +30,7 @@ final readonly class TailDebugLogCommand
         $this->console->write('<h1>Debug</h1> ');
 
         if (! $debugLogPath) {
-            $this->console->error("No debug log configured in LogConfig");
+            $this->console->error('No debug log configured in LogConfig');
 
             return;
         }
@@ -52,7 +52,7 @@ final readonly class TailDebugLogCommand
             format: fn (string $text) => $this->highlighter->parse(
                 $text,
                 new VarExportLanguage(),
-            )
+            ),
         );
     }
 }

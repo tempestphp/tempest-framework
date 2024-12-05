@@ -28,8 +28,8 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
 {
     use HasErrors;
     use HasState;
-    use RendersControls;
     use HasTextBuffer;
+    use RendersControls;
 
     private ChoiceRenderer $renderer;
 
@@ -45,7 +45,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     ) {
         $this->bufferEnabled = ! $this->multiple;
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: $default, multiple: $multiple);
+        $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: $multiple);
         $this->options = new OptionCollection([]);
 
         if ($this->multiple) {

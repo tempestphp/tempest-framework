@@ -3,14 +3,13 @@
 declare(strict_types=1);
 
 namespace Tempest {
-
     use Closure;
     use Stringable;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
-    use function Tempest\Support\path as supportPath;
     use Tempest\Support\PathHelper;
+    use function Tempest\Support\path as supportPath;
     use function Tempest\Support\str;
 
     /**

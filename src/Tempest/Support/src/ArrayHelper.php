@@ -13,8 +13,8 @@ use Iterator;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
-use function Tempest\map;
 use Tempest\Support\Conditions\HasConditions;
+use function Tempest\map;
 
 /**
  * @template TKey of array-key
@@ -25,8 +25,8 @@ use Tempest\Support\Conditions\HasConditions;
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
-    use IsIterable;
     use HasConditions;
+    use IsIterable;
 
     /** @var array<TKey, TValue> */
     private array $array;
@@ -721,6 +721,26 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function contains(mixed $search): bool
     {
         return $this->first(fn (mixed $value) => $value === $search) !== null;
+    }
+
+    /**
+     * Asserts whether all items in the instance pass the given `$callback`.
+     *
+     * @param Closure(TValue, TKey): bool $callback
+     *
+     * @return bool If the collection is empty, returns `true`.
+     */
+    public function every(?Closure $callback = null): bool
+    {
+        $callback ??= static fn (mixed $value) => ! is_null($value);
+
+        foreach ($this->array as $key => $value) {
+            if (! $callback($value, $key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

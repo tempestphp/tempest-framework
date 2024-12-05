@@ -15,9 +15,9 @@ final class CompleteConsoleCommandArgumentsTest extends FrameworkIntegrationTest
     {
         $this->console
             ->complete('completion:test')
-            ->assertSee("--value=" . PHP_EOL)
-            ->assertSee("--flag" . PHP_EOL)
-            ->assertSee("--items=" . PHP_EOL);
+            ->assertSee('--value=' . PHP_EOL)
+            ->assertSee('--flag' . PHP_EOL)
+            ->assertSee('--items=' . PHP_EOL);
     }
 
     public function test_existing_arguments_are_skipped(): void
@@ -46,8 +46,8 @@ final class CompleteConsoleCommandArgumentsTest extends FrameworkIntegrationTest
     {
         $this->console
             ->complete('completion:test --items=')
-            ->assertNotSee("--value=" . PHP_EOL)
-            ->assertNotSee("--flag" . PHP_EOL)
-            ->assertNotSee("--items=" . PHP_EOL);
+            ->assertNotSee('--value=' . PHP_EOL)
+            ->assertNotSee('--flag' . PHP_EOL)
+            ->assertNotSee('--items=' . PHP_EOL);
     }
 }

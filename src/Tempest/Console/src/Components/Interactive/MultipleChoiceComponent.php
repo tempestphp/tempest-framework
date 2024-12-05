@@ -25,8 +25,8 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
 {
     use HasErrors;
     use HasState;
-    use RendersControls;
     use HasTextBuffer;
+    use RendersControls;
 
     private ChoiceRenderer $renderer;
 
@@ -55,7 +55,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
             query: $this->buffer,
             options: $this->options,
             filtering: $this->bufferEnabled,
-            placeholder: 'Filter...'
+            placeholder: 'Filter...',
         );
     }
 

@@ -1,7 +1,7 @@
 <?php
 
-use function Tempest\uri;
 use Tests\Tempest\Fixtures\Controllers\DocsController;
+use function Tempest\uri;
 
 ?>
 

@@ -20,7 +20,7 @@ final readonly class AlterStatement implements QueryStatement
         return sprintf(
             '%s %s',
             $this->type->compile($dialect),
-            $this->statement->compile($dialect)
+            $this->statement->compile($dialect),
         );
     }
 }

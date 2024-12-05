@@ -6,8 +6,8 @@ namespace Tempest\Console\Components;
 
 use Countable;
 use Iterator;
-use function Tempest\Support\arr;
 use Tempest\Support\ArrayHelper;
+use function Tempest\Support\arr;
 
 final class OptionCollection implements Iterator, Countable
 {

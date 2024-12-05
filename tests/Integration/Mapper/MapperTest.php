@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use function Tempest\make;
-use function Tempest\map;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -18,6 +16,8 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use function Tempest\make;
+use function Tempest\map;
 
 /**
  * @internal

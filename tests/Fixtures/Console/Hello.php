@@ -30,7 +30,7 @@ final readonly class Hello
         #[ConsoleArgument(
             name: 'custom-flag',
         )]
-        bool $flag = false
+        bool $flag = false,
     ): void {
         $value = $optionalValue ?? 'null';
 

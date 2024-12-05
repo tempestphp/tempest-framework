@@ -125,7 +125,7 @@ final class ConsoleTester
 
             $inputString = implode(' ', array_map(
                 fn (string $item) => "--input=\"{$item}\"",
-                $input
+                $input,
             ));
         } else {
             $inputString = '';
@@ -145,7 +145,7 @@ final class ConsoleTester
 
     public function submit(int|string $input = ''): self
     {
-        $input = (string)$input;
+        $input = (string) $input;
 
         $this->input($input . Key::ENTER->value);
 
@@ -154,7 +154,7 @@ final class ConsoleTester
 
     public function print(): self
     {
-        echo "OUTPUT:" . PHP_EOL;
+        echo 'OUTPUT:' . PHP_EOL;
         echo $this->output->asUnformattedString();
 
         return $this;

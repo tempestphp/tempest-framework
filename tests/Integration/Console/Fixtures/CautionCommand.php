@@ -15,10 +15,10 @@ final readonly class CautionCommand
     }
 
     #[ConsoleCommand(
-        middleware: [CautionMiddleware::class]
+        middleware: [CautionMiddleware::class],
     )]
     public function __invoke(): void
     {
-        $this->console->error("CAUTION confirmed");
+        $this->console->error('CAUTION confirmed');
     }
 }

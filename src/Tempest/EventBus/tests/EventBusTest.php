@@ -19,9 +19,9 @@ use Tempest\EventBus\Tests\Fixtures\ItHappened;
 use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\EventBus\Tests\Fixtures\MyService;
+use Tempest\Reflection\MethodReflector;
 use function Tempest\get;
 use function Tempest\listen;
-use Tempest\Reflection\MethodReflector;
 
 /**
  * @internal
@@ -43,7 +43,7 @@ final class EventBusTest extends TestCase
             ],
             middleware: [
                 MyEventBusMiddleware::class,
-            ]
+            ],
         );
 
         $eventBus = new GenericEventBus($container, $config);
@@ -73,7 +73,7 @@ final class EventBusTest extends TestCase
             ],
             middleware: [
                 MyEventBusMiddleware::class,
-            ]
+            ],
         );
 
         $eventBus = new GenericEventBus($container, $config);
@@ -102,7 +102,7 @@ final class EventBusTest extends TestCase
             ],
             middleware: [
                 MyEventBusMiddleware::class,
-            ]
+            ],
         );
 
         $eventBus = new GenericEventBus($container, $config);
@@ -161,7 +161,7 @@ final class EventBusTest extends TestCase
                 EventInterface::class => [
                     new CallableEventHandler(EventInterface::class, $handler),
                 ],
-            ]
+            ],
         );
 
         $eventBus = new GenericEventBus($container, $config);

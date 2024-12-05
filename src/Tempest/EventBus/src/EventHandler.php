@@ -15,7 +15,7 @@ final class EventHandler
     public MethodReflector $handler;
 
     public function __construct(
-        public null|string|object $event = null
+        public null|string|object $event = null,
     ) {
     }
 

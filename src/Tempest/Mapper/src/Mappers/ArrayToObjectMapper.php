@@ -11,9 +11,9 @@ use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use function Tempest\Support\arr;
 use Tempest\Validation\Validator;
 use Throwable;
+use function Tempest\Support\arr;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {

@@ -16,7 +16,7 @@ final class StatusTest extends TestCase
     private function descriptionToStatus(string $description): Status
     {
         $description = strtoupper(
-            str_replace([' ', '-'], '_', $description)
+            str_replace([' ', '-'], '_', $description),
         );
 
         return Status::{$description};
@@ -29,7 +29,7 @@ final class StatusTest extends TestCase
 
         $this->assertSame(
             $this->descriptionToStatus($description),
-            $status
+            $status,
         );
 
         $this->assertSame($description, $status->description());

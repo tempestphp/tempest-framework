@@ -40,7 +40,7 @@ trait HasAttributes
     {
         return array_map(
             fn (PHPReflectionAttribute $attribute) => $attribute->newInstance(),
-            $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)
+            $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF),
         );
     }
 }

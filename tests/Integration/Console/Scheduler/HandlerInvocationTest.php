@@ -23,7 +23,7 @@ final class HandlerInvocationTest extends TestCase
             handler: new MethodReflector(new ReflectionMethod(
                 objectOrMethod: $this,
                 method: 'handler',
-            ))
+            )),
         );
 
         $this->assertSame('schedule:task Tests\\\\Tempest\\\\Integration\\\\Console\\\\Scheduler\\\\HandlerInvocationTest::handler', $invocation->getCommandName());

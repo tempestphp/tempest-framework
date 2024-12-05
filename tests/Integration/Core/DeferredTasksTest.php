@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Container\Container;
 use Tempest\Core\Kernel\FinishDeferredTasks;
-use function Tempest\defer;
-use function Tempest\uri;
 use Tests\Tempest\Fixtures\Controllers\DeferController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\defer;
+use function Tempest\uri;
 
 /**
  * @internal

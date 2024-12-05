@@ -25,15 +25,15 @@ final readonly class SetStatement implements QueryStatement
             throw new InvalidValue($this->name, json_encode($this->values));
         }
 
-        return match($dialect) {
+        return match ($dialect) {
             DatabaseDialect::MYSQL => sprintf(
                 '`%s` SET (%s) %s %s',
                 $this->name,
                 "'" . implode("', '", $this->values) . "'",
-                $this->default ? "DEFAULT '$this->default'" : '',
+                $this->default ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            default => throw new UnsupportedDialect()
+            default => throw new UnsupportedDialect(),
         };
     }
 }

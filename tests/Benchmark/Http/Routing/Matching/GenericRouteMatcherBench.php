@@ -10,10 +10,10 @@ use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
-use Tempest\Http\Route;
-use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\RouteConfigurator;
-use Tempest\Http\Routing\Matching\GenericRouteMatcher;
+use Tempest\Router\Route;
+use Tempest\Router\RouteConfig;
+use Tempest\Router\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Routing\Matching\GenericRouteMatcher;
 
 final class GenericRouteMatcherBench
 {
@@ -26,13 +26,13 @@ final class GenericRouteMatcherBench
         $this->matcher = new GenericRouteMatcher($config);
     }
 
-    #[Warmup(10)]
-    #[Revs(1000)]
     #[ParamProviders('provideDynamicMatchingCases')]
+    #[Revs(1000)]
+    #[Warmup(10)]
     public function benchMatch(array $params): void
     {
         $this->matcher->match(
-            new ServerRequest(uri: $params['uri'], method: 'GET')
+            new ServerRequest(uri: $params['uri'], method: 'GET'),
         );
     }
 

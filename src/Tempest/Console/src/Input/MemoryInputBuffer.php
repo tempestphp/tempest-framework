@@ -45,7 +45,7 @@ final class MemoryInputBuffer implements InputBuffer
         $this->fiber = Fiber::getCurrent();
 
         if (! $this->fiber?->isRunning()) {
-            throw new Exception("No fiber running");
+            throw new Exception('No fiber running');
         }
 
         Fiber::suspend();

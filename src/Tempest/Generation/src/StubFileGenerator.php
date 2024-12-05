@@ -9,11 +9,11 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use function Tempest\path;
 use Tempest\Support\NamespaceHelper;
-use function Tempest\Support\str;
 use Tempest\Support\StringHelper;
 use Throwable;
+use function Tempest\path;
+use function Tempest\Support\str;
 
 /**
  * This class can generate a file from a stub file with additional useful methods.
@@ -70,7 +70,7 @@ final class StubFileGenerator
             $classManipulator = array_reduce(
                 array: $manipulations,
                 callback: fn (ClassManipulator $manipulator, Closure $manipulation) => $manipulation($manipulator),
-                initial: $classManipulator
+                initial: $classManipulator,
             );
 
             if (file_exists($targetPath) && $shouldOverride) {
@@ -126,7 +126,7 @@ final class StubFileGenerator
             $fileContent = array_reduce(
                 array: $manipulations,
                 initial: $fileContent,
-                callback: fn (StringHelper $content, Closure $manipulation) => $manipulation($content)
+                callback: fn (StringHelper $content, Closure $manipulation) => $manipulation($content),
             );
 
             if (file_exists($targetPath) && $shouldOverride) {

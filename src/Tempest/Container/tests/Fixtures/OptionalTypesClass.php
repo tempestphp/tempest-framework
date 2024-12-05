@@ -7,7 +7,7 @@ namespace Tempest\Container\Tests\Fixtures;
 final class OptionalTypesClass
 {
     public function __construct(
-        public ?string $aString
+        public ?string $aString,
     ) {
     }
 }

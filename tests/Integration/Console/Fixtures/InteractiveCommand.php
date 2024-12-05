@@ -128,7 +128,7 @@ final readonly class InteractiveCommand
                     $data,
                     fn (string $name) => str_contains(strtolower($name), strtolower($query)),
                 );
-            }
+            },
         );
 
         $this->console->success("Hello {$result}");

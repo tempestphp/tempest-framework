@@ -11,7 +11,7 @@ use Tempest\Validation\Rule;
 final readonly class Time implements Rule
 {
     public function __construct(
-        private bool $twentyFourHour = false
+        private bool $twentyFourHour = false,
     ) {
     }
 

@@ -133,7 +133,6 @@ trait RendersInput
 
     private function newLine(bool $border = false): self
     {
-
         if ($border) {
             $this->line("\n");
         } else {

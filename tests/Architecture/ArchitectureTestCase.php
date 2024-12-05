@@ -9,7 +9,7 @@ use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
-use Tempest\Http\Route;
+use Tempest\Router\Route;
 
 final class ArchitectureTestCase
 {
@@ -80,7 +80,7 @@ final class ArchitectureTestCase
     {
         return PHPat::rule()
             ->classes(
-                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true),
             )
             ->shouldNotExtend()
             ->classes(
@@ -96,11 +96,11 @@ final class ArchitectureTestCase
     {
         return PHPat::rule()
             ->classes(
-                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true),
             )
             ->shouldNotDependOn()
             ->classes(
-                Selector::inNamespace('Tests\Tempest\Integration')
+                Selector::inNamespace('Tests\Tempest\Integration'),
             )
             ->because('Unit tests should not rely on integration fixtures.');
     }
@@ -109,11 +109,11 @@ final class ArchitectureTestCase
     {
         return PHPat::rule()
             ->classes(
-                Selector::inNamespace('Tests\Tempest\Integration')
+                Selector::inNamespace('Tests\Tempest\Integration'),
             )
             ->shouldNotDependOn()
             ->classes(
-                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true),
             )
             ->because('Integration tests should not rely on unit test fixtures.');
     }
@@ -122,11 +122,11 @@ final class ArchitectureTestCase
     {
         return PHPat::rule()
             ->classes(
-                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true)
+                Selector::inNamespace('/^Tempest\\\\.+\\\\Tests/', true),
             )
             ->shouldNotDependOn()
             ->classes(
-                Selector::inNamespace('Tests\Tempest\Fixtures')
+                Selector::inNamespace('Tests\Tempest\Fixtures'),
             )
             ->because('Unit tests should test objects in isolation, so they should not depend on framework fixtures.');
     }

@@ -7,9 +7,9 @@ namespace Tests\Tempest\Benchmark\Http;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Http\Method;
-use Tempest\Http\Route;
-use Tempest\Http\RouteConfig;
-use Tempest\Http\Routing\Construction\RouteConfigurator;
+use Tempest\Router\Route;
+use Tempest\Router\RouteConfig;
+use Tempest\Router\Routing\Construction\RouteConfigurator;
 
 final class RouteConfigBench
 {
@@ -20,8 +20,8 @@ final class RouteConfigBench
         $this->config = self::makeRouteConfig();
     }
 
-    #[Warmup(10)]
     #[Revs(1000)]
+    #[Warmup(10)]
     public function benchSerialization(): void
     {
         $serialized = serialize($this->config);

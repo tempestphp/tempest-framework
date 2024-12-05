@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Middleware;
 
 use PHPUnit\Framework\Attributes\Test;
-use function Tempest\Support\str;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\str;
 
 /**
  * @internal

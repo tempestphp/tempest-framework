@@ -59,7 +59,7 @@ final class TextInputRenderer
                     empty($buffer->text) => 'fg-gray',
                     default => null,
                 },
-                content: $line
+                content: $line,
             ))->newLine();
         }
 

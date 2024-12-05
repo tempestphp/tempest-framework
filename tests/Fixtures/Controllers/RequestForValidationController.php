@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\IsRequest;
-use Tempest\Http\Request;
+use Tempest\Router\IsRequest;
+use Tempest\Router\Request;
 use Tempest\Validation\Rules\Between;
 
 final class RequestForValidationController implements Request

@@ -11,7 +11,7 @@ final readonly class AttributeFactory
 {
     public function make(Element $element, string $attributeName): Attribute
     {
-        return match(true) {
+        return match (true) {
             $attributeName === ':if' => new IfAttribute(),
             $attributeName === ':elseif' => new ElseIfAttribute(),
             $attributeName === ':else' => new ElseAttribute(),

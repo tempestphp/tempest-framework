@@ -42,7 +42,7 @@ final class ValidationExceptionTest extends TestCase
         $this->expectException(ValidationException::class);
 
         $this->expectExceptionMessage('Value should be a valid email address');
-        $this->expectExceptionMessage("Value should praise tempest, old gods from the past and the new gods from the future");
+        $this->expectExceptionMessage('Value should praise tempest, old gods from the past and the new gods from the future');
 
         throw new ValidationException(new stdClass(), [
             'email' => [

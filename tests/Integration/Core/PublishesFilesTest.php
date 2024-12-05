@@ -8,9 +8,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
-use function Tempest\path;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\path;
 
 /**
  * @internal
@@ -23,7 +23,7 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App')
+            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
@@ -34,13 +34,13 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    #[Test]
     #[DataProvider('suggested_path_provider')]
+    #[Test]
     public function get_suggested_path(
         string $className,
         ?string $pathPrefix,
         ?string $classSuffix,
-        string $expected
+        string $expected,
     ): void {
         $composer = $this->container->get(Composer::class);
         $concreteClass = $this->container->get(PublishesFilesConcreteClass::class);
@@ -51,8 +51,8 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
             actual: $concreteClass->getSuggestedPath(
                 className: $className,
                 pathPrefix: $pathPrefix,
-                classSuffix: $classSuffix
-            )
+                classSuffix: $classSuffix,
+            ),
         );
     }
 

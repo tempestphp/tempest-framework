@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use function Tempest\view;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\view;
 
 /**
  * @internal
@@ -112,9 +112,9 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div>a</div>
-            <div>b</div>
-            HTML,
+                <div>a</div>
+                <div>b</div>
+                HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div>')->data(items: ['a', 'b'])),
         );
     }
@@ -123,27 +123,27 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(
             <<<'HTML'
-        <x-base>
-            <table>
-                <tr :foreach="$items as $item">
-                    <td>{{ $item }}</td>
-                </tr>
-            </table>
-        </x-base>
-        HTML,
+                <x-base>
+                    <table>
+                        <tr :foreach="$items as $item">
+                            <td>{{ $item }}</td>
+                        </tr>
+                    </table>
+                </x-base>
+                HTML,
         )->data(items: ['a', 'b']));
 
         $this->assertStringContainsStringIgnoringLineEndings(
             <<<'HTML'
-            <title>Home</title>
-            
-                
-                
-                
-            
-            <table><tbody><tr><td>b</td></tr></tbody></table>
-            HTML,
-            $html
+                <title>Home</title>
+
+                    
+                    
+                    
+
+                <table><tbody><tr><td>b</td></tr></tbody></table>
+                HTML,
+            $html,
         );
     }
 
@@ -151,15 +151,15 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertSame(
             <<<'HTML'
-            <div>Empty</div>
-            HTML,
+                <div>Empty</div>
+                HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: [])),
         );
 
         $this->assertSame(
             <<<'HTML'
-            <div>a</div>
-            HTML,
+                <div>a</div>
+                HTML,
             $this->render(view('<div :foreach="$this->items as $foo">{{ $foo }}</div><div :forelse>Empty</div>')->data(items: ['a'])),
         );
     }
@@ -168,20 +168,20 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div class="base">
-                
-                    Test
-                
-            </div>
-            HTML,
+                <div class="base">
+                    
+                        Test
+                    
+                </div>
+                HTML,
             $this->render(
                 <<<'HTML'
-                <x-base-layout>
-                    <x-slot>
-                        Test
-                    </x-slot>
-                </x-base-layout>
-                HTML,
+                    <x-base-layout>
+                        <x-slot>
+                            Test
+                        </x-slot>
+                    </x-base-layout>
+                    HTML,
             ),
         );
     }
@@ -190,18 +190,18 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div class="base">
-                
-                Test
-            
-            </div>
-            HTML,
+                <div class="base">
+                    
+                    Test
+
+                </div>
+                HTML,
             $this->render(
                 <<<'HTML'
-                <x-base-layout>
-                    Test
-                </x-base-layout>
-                HTML,
+                    <x-base-layout>
+                        Test
+                    </x-base-layout>
+                    HTML,
             ),
         );
     }
@@ -210,41 +210,41 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            injected scripts
-                
-            
-            
-            <div class="base">
-                
-                Test
-                
-                
-            
-                
-                Hi
-            
-            </div>
-            
-            
-            
-                injected styles
-            HTML,
+                injected scripts
+                    
+
+
+                <div class="base">
+                    
+                    Test
+                    
+                    
+
+                    
+                    Hi
+
+                </div>
+
+
+
+                    injected styles
+                HTML,
             $this->render(
                 <<<'HTML'
-            <x-complex-base>
-                Test
-                
-                <x-slot name="scripts">
-                injected scripts
-                </x-slot>
-                
-                <x-slot name="styles">
-                injected styles
-                </x-slot>
-                
-                Hi
-            </x-complex-base>
-            HTML,
+                    <x-complex-base>
+                        Test
+                        
+                        <x-slot name="scripts">
+                        injected scripts
+                        </x-slot>
+                        
+                        <x-slot name="styles">
+                        injected styles
+                        </x-slot>
+                        
+                        Hi
+                    </x-complex-base>
+                    HTML,
             ),
         );
     }
@@ -253,18 +253,18 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <pre>a
-                    <span class="hl-prop">b</span>
-               <span class="hl-type">c</span>
-            </pre>
-            HTML,
+                <pre>a
+                        <span class="hl-prop">b</span>
+                    <span class="hl-type">c</span>
+                </pre>
+                HTML,
             $this->render(
                 <<<'HTML'
-            <pre>a
-                    <span class="hl-prop">b</span>
-               <span class="hl-type">c</span>
-            </pre>
-            HTML,
+                    <pre>a
+                            <span class="hl-prop">b</span>
+                        <span class="hl-type">c</span>
+                    </pre>
+                    HTML,
             ),
         );
     }
@@ -281,10 +281,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: '<h1>hi</h1>'));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        &lt;h1&gt;hi&lt;/h1&gt;
-        &lt;H1&gt;HI&lt;/H1&gt;
-        <h1>hi</h1>
-        HTML, $html);
+            &lt;h1&gt;hi&lt;/h1&gt;
+            &lt;H1&gt;HI&lt;/H1&gt;
+            <h1>hi</h1>
+            HTML, $html);
     }
 
     public function test_no_double_else_attributes(): void
@@ -293,10 +293,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->render(
             <<<'HTML'
-<div :if="false"></div>
-<div :else></div>
-<div :else></div>
-HTML,
+                <div :if="false"></div>
+                <div :else></div>
+                <div :else></div>
+                HTML,
         );
     }
 
@@ -304,25 +304,25 @@ HTML,
     {
         $this->render(
             <<<'HTML'
-<div :if="false"></div>
-<div :else></div>
-HTML,
+                <div :if="false"></div>
+                <div :else></div>
+                HTML,
         );
 
         $this->render(
             <<<'HTML'
-<div :if="false"></div>
-<div :elseif="false"></div>
-<div :else></div>
-HTML,
+                <div :if="false"></div>
+                <div :elseif="false"></div>
+                <div :else></div>
+                HTML,
         );
 
         $this->expectException(InvalidElement::class);
 
         $this->render(
             <<<'HTML'
-<div :else></div>
-HTML,
+                <div :else></div>
+                HTML,
         );
     }
 
@@ -330,18 +330,18 @@ HTML,
     {
         $this->render(
             <<<'HTML'
-<div :if="false"></div>
-<div :elseif="false"></div>
-<div :elseif="false"></div>
-HTML,
+                <div :if="false"></div>
+                <div :elseif="false"></div>
+                <div :elseif="false"></div>
+                HTML,
         );
 
         $this->expectException(InvalidElement::class);
 
         $this->render(
             <<<'HTML'
-<div :elseif="false"></div>
-HTML,
+                <div :elseif="false"></div>
+                HTML,
         );
     }
 
@@ -349,17 +349,17 @@ HTML,
     {
         $this->render(
             view(<<<'HTML'
-<div :foreach="$foo as $bar"></div>
-<div :forelse></div>
-HTML, foo: []),
+                <div :foreach="$foo as $bar"></div>
+                <div :forelse></div>
+                HTML, foo: []),
         );
 
         $this->expectException(InvalidElement::class);
 
         $this->render(
             <<<'HTML'
-<div :forelse></div>
-HTML,
+                <div :forelse></div>
+                HTML,
         );
     }
 
@@ -367,19 +367,19 @@ HTML,
     {
         $this->render(
             view(<<<'HTML'
-<div :foreach="$foo as $bar"></div>
-<div :forelse></div>
-HTML, foo: []),
+                <div :foreach="$foo as $bar"></div>
+                <div :forelse></div>
+                HTML, foo: []),
         );
 
         $this->expectException(InvalidElement::class);
 
         $this->render(
             view(<<<'HTML'
-<div :foreach="$foo as $bar"></div>
-<div :forelse></div>
-<div :forelse></div>
-HTML, foo: []),
+                <div :foreach="$foo as $bar"></div>
+                <div :forelse></div>
+                <div :forelse></div>
+                HTML, foo: []),
         );
     }
 
@@ -387,8 +387,8 @@ HTML, foo: []),
     {
         $view = view(
             <<<HTML
-    <div data-theme="tempest"></div>
-    HTML,
+                <div data-theme="tempest"></div>
+                HTML,
         );
 
         $html = $this->render($view);

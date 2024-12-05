@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Auth;
 
 use Tempest\Container\Container;
-use Tempest\Http\HttpMiddleware;
-use Tempest\Http\HttpMiddlewareCallable;
-use Tempest\Http\MatchedRoute;
-use Tempest\Http\Request;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Forbidden;
+use Tempest\Router\HttpMiddleware;
+use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Router\MatchedRoute;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
+use Tempest\Router\Responses\Forbidden;
 
 final readonly class AuthorizerMiddleware implements HttpMiddleware
 {

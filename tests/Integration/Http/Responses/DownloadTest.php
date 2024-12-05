@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
-use Tempest\Http\Responses\Download;
+use Tempest\Router\Responses\Download;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
