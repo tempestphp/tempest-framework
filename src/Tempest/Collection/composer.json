@@ -1,0 +1,19 @@
+{
+    "name": "tempest/collection",
+    "description": "A collection package.",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Collection\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Collection\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
