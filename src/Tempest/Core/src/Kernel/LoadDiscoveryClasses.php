@@ -46,6 +46,8 @@ final class LoadDiscoveryClasses
     /** @return Discovery[] */
     public function build(): array
     {
+        $start = microtime(true);
+
         // DiscoveryDiscovery needs to be applied before we can build all other discoveries
         $discoveryDiscovery = $this->buildDiscovery(DiscoveryDiscovery::class);
         $this->applyDiscovery($discoveryDiscovery);
@@ -56,6 +58,10 @@ final class LoadDiscoveryClasses
             $discovery = $this->buildDiscovery($discoveryClass);
             $builtDiscovery[] = $discovery;
         }
+
+        $end = microtime(true);
+
+        var_dump($end - $start);die;
 
         return $builtDiscovery;
     }
