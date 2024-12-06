@@ -17,6 +17,7 @@ use Tempest\Router\Mappers\RequestToPsrRequestMapper;
 use Tempest\Router\Responses\Invalid;
 use Tempest\Router\Responses\NotFound;
 use Tempest\Router\Responses\Ok;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
@@ -115,9 +116,10 @@ final class GenericRouter implements Router
                 $controllerMethod = $reflection->getMethod('__invoke');
             }
 
+            /** @var Route|null $routeAttribute */
             $routeAttribute = $controllerMethod->getAttribute(Route::class);
 
-            $uri = $routeAttribute->uri;
+            $uri = $routeAttribute->uri();
         } catch (ReflectionException) {
             if (is_array($action)) {
                 throw new InvalidRouteException($action[0], $action[1]);
@@ -141,7 +143,7 @@ final class GenericRouter implements Router
             }
 
             $uri = $uri->replaceRegex(
-                '#\{' . $key . Route::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
+                '#\{' . $key . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#',
                 (string) $value,
             );
         }

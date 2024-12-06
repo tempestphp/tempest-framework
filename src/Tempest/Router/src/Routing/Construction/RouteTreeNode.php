@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Routing\Construction;
 
-use Tempest\Router\Route;
-
 /**
  * @internal
  */
@@ -64,11 +62,11 @@ final class RouteTreeNode
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string
     {
-        $regex = '#\{'. Route::ROUTE_PARAM_NAME_REGEX . Route::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+        $regex = '#\{'. DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
 
         return preg_replace_callback(
             $regex,
-            static fn ($matches) => trim($matches[2] ?? Route::DEFAULT_MATCHING_GROUP),
+            static fn ($matches) => trim($matches[2] ?? DiscoveredRoute::DEFAULT_MATCHING_GROUP),
             $uriPart,
         );
     }

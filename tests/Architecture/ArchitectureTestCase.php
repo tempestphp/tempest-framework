@@ -9,7 +9,6 @@ use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
 use Tempest\Framework\Testing\IntegrationTest;
-use Tempest\Router\Route;
 
 final class ArchitectureTestCase
 {
@@ -71,7 +70,6 @@ final class ArchitectureTestCase
                 Selector::inNamespace('Tempest'),
                 Selector::NOT(Selector::isInterface()),
                 Selector::NOT(Selector::isAbstract()),
-                Selector::NOT(Selector::classname(Route::class)),
             ))
             ->shouldBeFinal();
     }

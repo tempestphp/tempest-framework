@@ -17,10 +17,10 @@ final class RouteConfigurator
     /** @var string The mark to give the next route in the matching Regex */
     private string $regexMark = 'a';
 
-    /** @var array<string, array<string, Route>> */
+    /** @var array<string, array<string, DiscoveredRoute>> */
     private array $staticRoutes = [];
 
-    /** @var array<string, array<string, Route>> */
+    /** @var array<string, array<string, DiscoveredRoute>> */
     private array $dynamicRoutes = [];
 
     private bool $isDirty = false;
@@ -32,7 +32,7 @@ final class RouteConfigurator
         $this->routingTree = new RoutingTree();
     }
 
-    public function addRoute(Route $route): void
+    public function addRoute(DiscoveredRoute $route): void
     {
         $this->isDirty = true;
 
@@ -43,7 +43,7 @@ final class RouteConfigurator
         }
     }
 
-    private function addDynamicRoute(Route $route): void
+    private function addDynamicRoute(DiscoveredRoute $route): void
     {
         $markedRoute = $this->markRoute($route);
         $this->dynamicRoutes[$route->method->value][$markedRoute->mark] = $route;
@@ -51,7 +51,7 @@ final class RouteConfigurator
         $this->routingTree->add($markedRoute);
     }
 
-    private function addStaticRoute(Route $route): void
+    private function addStaticRoute(DiscoveredRoute $route): void
     {
         $uriWithTrailingSlash = rtrim($route->uri, '/');
 
@@ -59,7 +59,7 @@ final class RouteConfigurator
         $this->staticRoutes[$route->method->value][$uriWithTrailingSlash . '/'] = $route;
     }
 
-    private function markRoute(Route $route): MarkedRoute
+    private function markRoute(DiscoveredRoute $route): MarkedRoute
     {
         $this->regexMark = str_increment($this->regexMark);
 

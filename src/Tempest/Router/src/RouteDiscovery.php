@@ -8,6 +8,7 @@ use Tempest\Core\Discovery;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 
 final class RouteDiscovery implements Discovery
@@ -34,8 +35,8 @@ final class RouteDiscovery implements Discovery
     public function apply(): void
     {
         foreach ($this->discoveryItems as [$method, $routeAttribute]) {
-            $routeAttribute->setHandler($method);
-            $this->configurator->addRoute($routeAttribute);
+            $route = DiscoveredRoute::fromRoute($routeAttribute, $method);
+            $this->configurator->addRoute($route);
         }
 
         if ($this->configurator->isDirty()) {

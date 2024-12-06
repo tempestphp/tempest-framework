@@ -9,11 +9,10 @@ use Laminas\Diactoros\ServerRequest;
 use PhpBench\Attributes\ParamProviders;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
-use Tempest\Http\Method;
-use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
+use Tempest\Router\Tests\FakeRouteBuilder;
 
 final class GenericRouteMatcherBench
 {
@@ -46,12 +45,13 @@ final class GenericRouteMatcherBench
 
     private static function makeRouteConfig(): RouteConfig
     {
+        $routeBuilder = new FakeRouteBuilder();
         $constructor = new RouteConfigurator();
         foreach (range(1, 100) as $i) {
-            $constructor->addRoute(new Route("/test/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/delete", Method::GET));
-            $constructor->addRoute(new Route("/test/{id}/{$i}/edit", Method::GET));
+            $constructor->addRoute($routeBuilder->withUri("/test/{$i}")->asDiscoveredRoute());
+            $constructor->addRoute($routeBuilder->withUri("/test/{id}/{$i}")->asDiscoveredRoute());
+            $constructor->addRoute($routeBuilder->withUri("/test/{id}/{$i}/delete")->asDiscoveredRoute());
+            $constructor->addRoute($routeBuilder->withUri("/test/{id}/{$i}/edit")->asDiscoveredRoute());
         }
 
         return $constructor->toRouteConfig();

@@ -11,6 +11,6 @@ final class DuplicateRouteException extends InvalidArgumentException
 {
     public function __construct(Route $route)
     {
-        parent::__construct("Route '{$route->uri}' already exists.");
+        parent::__construct("Route '{$route->uri()}' already exists.");
     }
 }

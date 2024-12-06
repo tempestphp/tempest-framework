@@ -6,13 +6,10 @@ namespace Tempest\Router\Tests\Routing\Construction;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
-use Tempest\Router\Delete;
-use Tempest\Router\Patch;
-use Tempest\Router\Put;
-use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Routing\Matching\MatchingRegex;
+use Tempest\Router\Tests\FakeRouteBuilder;
 
 /**
  * @internal
@@ -35,13 +32,15 @@ final class RouteConfiguratorTest extends TestCase
 
     public function test_adding_static_routes(): void
     {
+        $routeBuilder = new FakeRouteBuilder();
+
         $routes = [
-            new Route('/1', Method::GET),
-            new Route('/2', Method::POST),
-            new Route('/3', Method::GET),
-            new Delete('/4'),
-            new Put('/5'),
-            new Patch('/6'),
+            $routeBuilder->withMethod(Method::GET)->withUri('/1')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::POST)->withUri('/2')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::GET)->withUri('/3')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::DELETE)->withUri('/4')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::PUT)->withUri('/5')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::PATCH)->withUri('/6')->asDiscoveredRoute(),
         ];
 
         foreach ($routes as $route) {
@@ -80,13 +79,15 @@ final class RouteConfiguratorTest extends TestCase
 
     public function test_adding_dynamic_routes(): void
     {
+        $routeBuilder = new FakeRouteBuilder();
+
         $routes = [
-            new Route('/dynamic/{id}', Method::GET),
-            new Route('/dynamic/{id}', Method::PATCH),
-            new Route('/dynamic/{id}/view', Method::GET),
-            new Route('/dynamic/{id}/{tag}/{name}/{id}', Method::GET),
-            new Delete('/dynamic/{id}'),
-            new Put('/dynamic/{id}'),
+            $routeBuilder->withMethod(Method::GET)->withUri('/dynamic/{id}')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::PATCH)->withUri('/dynamic/{id}')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::GET)->withUri('/dynamic/{id}/view')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::GET)->withUri('/dynamic/{id}/{tag}/{name}/{id}')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::DELETE)->withUri('/dynamic/{id}')->asDiscoveredRoute(),
+            $routeBuilder->withMethod(Method::PUT)->withUri('/dynamic/{id}')->asDiscoveredRoute(),
         ];
 
         foreach ($routes as $route) {
