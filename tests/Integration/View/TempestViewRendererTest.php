@@ -421,22 +421,21 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_slot_with_comment(): void
     {
-        $this->assertSame(
+        $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-            <div class="base">
-                
-            
-                Test
-            
-            </div>
-            HTML,
+                <div class="base"><!-- example of comment -->
+
+                    Test
+
+                </div>
+                HTML,
             $this->render(
                 <<<'HTML'
-                <x-base-layout>
-                    <!-- example of comment -->
-                    Test
-                </x-base-layout>
-                HTML,
+                    <x-base-layout>
+                        <!-- example of comment -->
+                        Test
+                    </x-base-layout>
+                    HTML,
             ),
         );
     }
