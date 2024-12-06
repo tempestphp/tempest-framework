@@ -418,4 +418,45 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
+
+    public function test_slot_with_comment(): void
+    {
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+                <div class="base"><!-- example of comment -->
+
+                    Test
+
+                </div>
+                HTML,
+            $this->render(
+                <<<'HTML'
+                    <x-base-layout>
+                        <!-- example of comment -->
+                        Test
+                    </x-base-layout>
+                    HTML,
+            ),
+        );
+    }
+
+    public function test_self_closing_component_tags_are_compiled(): void
+    {
+        $this->registerViewComponent('x-foo', '<div>foo</div>');
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo /><x-foo />')),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo/><x-foo/>')),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>')),
+        );
+    }
 }

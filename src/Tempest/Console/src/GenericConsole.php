@@ -157,7 +157,7 @@ final class GenericConsole implements Console
 
     public function success(string $line, ?string $symbol = null): self
     {
-        $symbol ??= '✔︎';
+        $symbol ??= '✓';
 
         $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
 

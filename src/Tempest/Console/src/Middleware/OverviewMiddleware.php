@@ -80,7 +80,6 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
             $this->console
                 ->writeln()
-                ->writeln()
                 ->writeln($title);
 
             foreach ($commandsForGroup as $consoleCommand) {
@@ -91,7 +90,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         $this->console
             ->unless(
                 condition: $this->discoveryCache->isValid(),
-                callback: fn (Console $console) => $console->writeln(PHP_EOL . '<error>Discovery cache invalid. Run discovery:generate to enable discovery caching.</error>'),
+                callback: fn (Console $console) => $console->writeln()->error('Discovery cache invalid. Run discovery:generate to enable discovery caching.'),
             );
     }
 }
