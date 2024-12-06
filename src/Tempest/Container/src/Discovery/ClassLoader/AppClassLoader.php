@@ -27,7 +27,7 @@ final class AppClassLoader implements ClassLoader
         $classes = [];
 
         foreach ($classMap as $class => $path) {
-            foreach ($namespaces as $namespace => $path) {
+            foreach ($namespaces as $namespace) {
                 if (str_starts_with($class, $namespace)) {
                     $classes[] = new ReflectionClass($class);
                 }
@@ -41,7 +41,7 @@ final class AppClassLoader implements ClassLoader
     {
         // TODO: This could probably be cached as well.
         $composer = json_decode(file_get_contents($this->rootDir . '/composer.json'), true);
-        $autoload = array_merge($composer['autoload'] ?? [], $composer['autoload-dev'] ?? []);
+        $autoload = array_merge_recursive($composer['autoload'] ?? [], $composer['autoload-dev'] ?? []);
         $namespaces = [];
 
         foreach ($autoload as $autoloadType => $autoloadNamespaces) {
@@ -50,7 +50,9 @@ final class AppClassLoader implements ClassLoader
                 continue;
             }
 
-            $namespaces = array_merge($namespaces, $autoloadNamespaces);
+            foreach ($autoloadNamespaces as $autoloadNamespace => $autoloadDir) {
+                $namespaces[] = $autoloadNamespace;
+            }
         }
 
         return $namespaces;

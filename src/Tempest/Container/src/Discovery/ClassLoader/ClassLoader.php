@@ -2,6 +2,7 @@
 
 namespace Tempest\Container\Discovery\ClassLoader;
 
+use Generator;
 use ReflectionClass;
 
 interface ClassLoader

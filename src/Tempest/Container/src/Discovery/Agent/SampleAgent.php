@@ -13,7 +13,7 @@ final class SampleAgent implements DiscoveryAgent
     {
         foreach (reflect($class)->getPublicMethods() as $method) {
             if ($method->hasAttribute(ConsoleCommand::class)) {
-                var_dump($class->getName() . '::' . $method->getName());
+//                var_dump($class->getName() . '::' . $method->getName());
             }
         }
     }

@@ -49,10 +49,14 @@ final class DiscoveryManager
         $this->classes = [];
 
         foreach ($this->loaders as $loader) {
-            $this->classes = array_merge($this->classes, $loader->load());
-        }
+            foreach ($loader->load() as $class) {
+                if ($class->isInstantiable() && $class->implementsInterface(DiscoveryAgent::class)) {
+                    $this->agents[] = $this->classFactory->create($class->getName());
+                }
 
-        $this->registerAgents($this->classes);
+                $this->classes[] = $class;
+            }
+        }
 
         $this->initialized = true;
 
@@ -66,18 +70,6 @@ final class DiscoveryManager
         foreach ($this->agents as $agent) {
             foreach ($this->classes as $class) {
                 $agent->inspect($class);
-            }
-        }
-    }
-
-    /**
-     * @param array<ReflectionClass> $classes
-     */
-    private function registerAgents(array $classes): void
-    {
-        foreach ($classes as $class) {
-            if ($class->implementsInterface(DiscoveryAgent::class)) {
-                $this->agents[] = $this->classFactory->create($class->getName());
             }
         }
     }
