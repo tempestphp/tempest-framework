@@ -52,11 +52,11 @@ final class ElementFactory
             );
         }
 
-        if ($node instanceof Comment) {
-            return new CommentElement(
-                content: $node->textContent,
-            );
-        }
+        //        if ($node instanceof Comment) {
+        //            return new CommentElement(
+        //                content: $node->textContent,
+        //            );
+        //        }
 
         $tagName = strtolower($node->tagName);
 
