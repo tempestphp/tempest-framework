@@ -439,4 +439,24 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             ),
         );
     }
+
+    public function test_self_closing_component_tags_are_compiled(): void
+    {
+        $this->registerViewComponent('x-foo', '<div>foo</div>');
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo /><x-foo />')),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo/><x-foo/>')),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            '<div>foo</div><div>foo</div>',
+            str_replace(PHP_EOL, '', $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>')),
+        );
+    }
 }
