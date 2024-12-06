@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Log;
 
 use Tempest\Log\LogConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 class LogConfigTest extends FrameworkIntegrationTestCase
 {
     public function test_log_path_by_env(): void
