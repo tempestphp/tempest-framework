@@ -9,6 +9,7 @@ $finder = Symfony\Component\Finder\Finder::create()
     ])
     ->name('*.php')
     ->notName('*.cache.php')
+    ->notPath('Tempest/Router/src/Route.php') // phpcs doesn't yet support property hooks in interfaces
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
 
