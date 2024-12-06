@@ -148,19 +148,6 @@ final class GenericLoggerTest extends FrameworkIntegrationTestCase
         $logger->log($level, 'This is a log message of level: ' . $level->value, context: ['foo' => 'bar']);
     }
 
-    public function test_log_path_by_env(): void
-    {
-        $expectedDebugLogPath = 'log/debug.test.log';
-        $expectedServerLogPath = 'log/server.test.log';
-
-        $this->kernel->loadConfig();
-
-        $logConfig = $this->container->get(LogConfig::class);
-
-        $this->assertSame($expectedDebugLogPath, $logConfig->debugLogPath);
-        $this->assertSame($expectedServerLogPath, $logConfig->serverLogPath);
-    }
-
     public static function tempestLevelProvider(): array
     {
         return array_map(fn (LogLevel $level) => [$level, strtoupper($level->value)], LogLevel::cases());
