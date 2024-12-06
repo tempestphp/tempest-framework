@@ -31,11 +31,7 @@ final readonly class ConfigShowCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'config:show',
-        description: 'Show resolved configuration',
-        aliases: ['config'],
-    )]
+    #[ConsoleCommand(name: 'config:show', description: 'Show resolved configuration', aliases: ['config'])]
     public function __invoke(
         ConfigShowFormat $format = ConfigShowFormat::PRETTY,
         ?bool $search = false,
