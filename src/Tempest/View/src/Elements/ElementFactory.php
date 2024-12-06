@@ -12,6 +12,7 @@ use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+use const XML_ELEMENT_NODE;
 use function Tempest\Support\str;
 
 final class ElementFactory
@@ -51,7 +52,11 @@ final class ElementFactory
             );
         }
 
-        $tagName = $node->tagName ? strtolower($node->tagName) : null;
+        $tagName = null;
+
+        if ($node->nodeType == XML_ELEMENT_NODE) {
+            $tagName = strtolower($node->tagName);
+        }
 
         $attributes = [];
 
