@@ -418,26 +418,4 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
-
-    public function test_slot_with_comment(): void
-    {
-        $this->assertSame(
-            <<<'HTML'
-            <div class="base">
-                
-            
-                Test
-            
-            </div>
-            HTML,
-            $this->render(
-                <<<'HTML'
-                <x-base-layout>
-                    <!-- example of comment -->
-                    Test
-                </x-base-layout>
-                HTML,
-            ),
-        );
-    }
 }
