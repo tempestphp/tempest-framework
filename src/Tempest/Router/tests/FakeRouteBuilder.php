@@ -18,6 +18,7 @@ final readonly class FakeRouteBuilder implements Route
     public function __construct(
         public Method $method = Method::GET,
         public string $uri = '/',
+        public array $middleware = [],
     ) {
         $this->handler = new MethodReflector(new ReflectionMethod($this, 'handler'));
     }
@@ -40,21 +41,6 @@ final readonly class FakeRouteBuilder implements Route
     public function asDiscoveredRoute(): DiscoveredRoute
     {
         return DiscoveredRoute::fromRoute($this, $this->handler);
-    }
-
-    public function method(): Method
-    {
-        return $this->method;
-    }
-
-    public function uri(): string
-    {
-        return $this->uri;
-    }
-
-    public function middleware(): array
-    {
-        return [];
     }
 
     public function handler(): void
