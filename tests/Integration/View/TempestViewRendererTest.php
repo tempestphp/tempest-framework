@@ -419,24 +419,24 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
     }
 
-//    public function test_slot_with_comment(): void
-//    {
-//        $this->assertStringEqualsStringIgnoringLineEndings(
-//            <<<'HTML'
-//                <div class="base"><!-- example of comment -->
-//
-//                    Test
-//
-//                </div>
-//                HTML,
-//            $this->render(
-//                <<<'HTML'
-//                    <x-base-layout>
-//                        <!-- example of comment -->
-//                        Test
-//                    </x-base-layout>
-//                    HTML,
-//            ),
-//        );
-//    }
+    public function test_slot_with_comment(): void
+    {
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<'HTML'
+                <div class="base"><!-- example of comment -->
+
+                    Test
+
+                </div>
+                HTML,
+            $this->render(
+                <<<'HTML'
+                    <x-base-layout>
+                        <!-- example of comment -->
+                        Test
+                    </x-base-layout>
+                    HTML,
+            ),
+        );
+    }
 }
