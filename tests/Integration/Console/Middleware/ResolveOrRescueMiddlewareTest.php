@@ -23,6 +23,10 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('bascovery:status')
             ->assertSee('Did you mean discovery:status?');
+
+        $this->console
+            ->call('c:cl')
+            ->assertSee('Did you mean cache:clear?');
     }
 
     #[Test]

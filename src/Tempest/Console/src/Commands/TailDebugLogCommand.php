@@ -22,7 +22,7 @@ final readonly class TailDebugLogCommand
     ) {
     }
 
-    #[ConsoleCommand('tail:debug', description: 'Tails the debug log', aliases: ['td'])]
+    #[ConsoleCommand('tail:debug', description: 'Tails the debug log')]
     public function __invoke(): void
     {
         $debugLogPath = $this->logConfig->debugLogPath;
