@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Actions;
 
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleInputBuilder;
 use Tempest\Console\ConsoleMiddlewareCallable;
@@ -11,6 +12,7 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
+use Throwable;
 
 final readonly class ExecuteConsoleCommand
 {
@@ -18,17 +20,23 @@ final readonly class ExecuteConsoleCommand
         private Container $container,
         private ConsoleConfig $consoleConfig,
         private ConsoleArgumentBag $argumentBag,
+        private ResolveConsoleCommand $resolveConsoleCommand,
     ) {
     }
 
-    public function __invoke(string $commandName): ExitCode|int
+    public function __invoke(string|array $command, string|array $arguments = []): ExitCode|int
     {
-        $callable = $this->getCallable($this->resolveCommandMiddleware($commandName));
+        [$commandName, $arguments] = $this->resolveCommandAndArguments($command, $arguments);
 
-        $this->argumentBag->setCommandName($commandName);
+        $consoleCommand = $this->resolveConsoleCommand($command) ?? $this->resolveConsoleCommand($commandName);
+        $callable = $this->getCallable($consoleCommand?->middleware ?? []);
+
+        $this->argumentBag->setCommandName($consoleCommand?->getName() ?? $commandName);
+        $this->argumentBag->addMany($arguments);
 
         return $callable(new Invocation(
             argumentBag: $this->argumentBag,
+            consoleCommand: $consoleCommand,
         ));
     }
 
@@ -37,9 +45,7 @@ final readonly class ExecuteConsoleCommand
         $callable = new ConsoleMiddlewareCallable(function (Invocation $invocation) {
             $consoleCommand = $invocation->consoleCommand;
 
-            $handler = $consoleCommand->handler;
-
-            $consoleCommandClass = $this->container->get($handler->getDeclaringClass()->getName());
+            $consoleCommandClass = $this->container->get($consoleCommand->handler->getDeclaringClass()->getName());
 
             $inputBuilder = new ConsoleInputBuilder($consoleCommand, $invocation->argumentBag);
 
@@ -62,10 +68,33 @@ final readonly class ExecuteConsoleCommand
         return $callable;
     }
 
-    private function resolveCommandMiddleware(string $commandName): array
+    private function resolveConsoleCommand(string|array $commandName): ?ConsoleCommand
     {
-        $consoleCommand = $this->consoleConfig->commands[$commandName] ?? null;
+        try {
+            return ($this->resolveConsoleCommand)($commandName);
+        } catch (Throwable) {
+            return null;
+        }
+    }
 
-        return $consoleCommand->middleware ?? [];
+    /** @return array{string,array} */
+    private function resolveCommandAndArguments(string|array $command, array $arguments = []): array
+    {
+        $commandName = $command;
+
+        if (is_array($command)) {
+            $commandName = $command[0] ?? '';
+        } elseif (str_contains($command, ' ')) {
+            $commandName = explode(' ', $command)[0];
+            $arguments = [
+                ...(array_slice(explode(' ', trim($command)), offset: 1)),
+                ...$arguments,
+            ];
+        }
+
+        return [
+            $commandName,
+            $arguments,
+        ];
     }
 }
