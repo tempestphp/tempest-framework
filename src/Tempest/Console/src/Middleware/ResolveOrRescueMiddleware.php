@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Console\Middleware;
 
 use Tempest\Console\Actions\ExecuteConsoleCommand;
+use Tempest\Console\Actions\ResolveConsoleCommand;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Throwable;
 
 final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 {
@@ -18,14 +20,15 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         private ConsoleConfig $consoleConfig,
         private Console $console,
         private ExecuteConsoleCommand $executeConsoleCommand,
+        private ResolveConsoleCommand $resolveConsoleCommand,
     ) {
     }
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        $consoleCommand = $this->consoleConfig->commands[$invocation->argumentBag->getCommandName()] ?? null;
-
-        if (! $consoleCommand) {
+        try {
+            $consoleCommand = ($this->resolveConsoleCommand)($invocation->argumentBag->getCommandName());
+        } catch (Throwable) {
             return $this->rescue($invocation->argumentBag->getCommandName());
         }
 

@@ -11,7 +11,7 @@ use Tempest\Support\ArrayHelper;
 
 interface Console
 {
-    public function call(string $command): ExitCode|int;
+    public function call(string|array $command, string|array $arguments = []): ExitCode|int;
 
     public function readln(): string;
 
