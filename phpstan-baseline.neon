@@ -1,6 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Using nullsafe property access "\?\-\>middleware" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Tempest/Console/src/Actions/ExecuteConsoleCommand.php
+
+		-
 			message: '#^Call to function is_subclass_of\(\) with ''Tempest\\\\Console\\\\Components\\\\Interactive\\\\TextInputComponent'' and ''Tempest\\\\Console\\\\CanOpenInEditor'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
