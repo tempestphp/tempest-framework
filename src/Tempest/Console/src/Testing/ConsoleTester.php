@@ -79,22 +79,13 @@ final class ConsoleTester
                 $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
             });
         } else {
-            $fiber = new Fiber(function () use ($command, $arguments, $clone, $console, $memoryOutputBuffer, $memoryInputBuffer): void {
-                // The original `ConsoleArgumentBag` contains the arguments used
-                // to run this test suite, so it needs to be replaced.
+            $fiber = new Fiber(function () use ($command, $arguments, $clone): void {
                 $clone->container->singleton(ConsoleArgumentBag::class, new ConsoleArgumentBag(['tempest']));
-
-                // We then need to recreate a console instance, so the
-                // proper `ConsoleArgumentBag` gets injected into it.
-                $console = new GenericConsole(
-                    output: $memoryOutputBuffer,
-                    input: $memoryInputBuffer,
-                    highlighter: $clone->container->get(Highlighter::class, 'console'),
-                    executeConsoleCommand: $clone->container->get(ExecuteConsoleCommand::class),
-                    argumentBag: $clone->container->get(ConsoleArgumentBag::class),
+                $clone->exitCode = $this->container->invoke(
+                    ExecuteConsoleCommand::class,
+                    command: $command,
+                    arguments: $arguments,
                 );
-
-                $clone->exitCode = $console->call($command, $arguments);
             });
         }
 
