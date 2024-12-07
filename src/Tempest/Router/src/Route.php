@@ -12,5 +12,6 @@ interface Route
 
     public string $uri { get; }
 
+    /** @var HttpMiddleware[]  */
     public array $middleware { get; }
 }
