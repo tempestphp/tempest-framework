@@ -124,7 +124,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         $psrRequest = $this->http->makePsrRequest(
             uri: '/books',
-            body: ['title' => 'Timeline Taxi'],
+            body: ['title' => 'Book'],
             files: ['cover' => new UploadedFile(
                 streamOrFile: $currentPath,
                 size: null,
