@@ -28,7 +28,7 @@ final class ValidationExceptionTest extends TestCase
                         return false;
                     }
 
-                    public function message(): string|array
+                    public function message(): string
                     {
                         return 'Value should be a valid email address';
                     }
@@ -52,7 +52,7 @@ final class ValidationExceptionTest extends TestCase
                         return false;
                     }
 
-                    public function message(): string|array
+                    public function message(): string
                     {
                         return 'Value should be a valid email address';
                     }
@@ -63,7 +63,8 @@ final class ValidationExceptionTest extends TestCase
                         return false;
                     }
 
-                    public function message(): string|array
+                    /** @return string[] */
+                    public function message(): array
                     {
                         return [
                             'Value should praise tempest',

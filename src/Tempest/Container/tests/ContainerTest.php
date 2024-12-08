@@ -138,7 +138,6 @@ final class ContainerTest extends TestCase
          */
         $class = $container->get(BuiltinArrayClass::class);
 
-        $this->assertIsArray($class->anArray);
         $this->assertEmpty($class->anArray);
     }
 

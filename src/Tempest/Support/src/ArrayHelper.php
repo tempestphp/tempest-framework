@@ -655,6 +655,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         foreach ($this->array as $key => $value) {
             $generator = $map($value, $key);
 
+            // @phpstan-ignore instanceof.alwaysTrue
             if (! $generator instanceof Generator) {
                 throw new InvalidMapWithKeysUsage();
             }

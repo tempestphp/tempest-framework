@@ -23,7 +23,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $id = $this->cookies->get(Session::ID)?->value ?? null;
+        $id = $this->cookies->get(Session::ID)->value ?? null;
 
         if (! $id) {
             $id = (string) Uuid::v4();

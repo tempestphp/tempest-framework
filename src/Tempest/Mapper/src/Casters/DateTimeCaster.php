@@ -22,7 +22,7 @@ final readonly class DateTimeCaster implements Caster
 
     public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {
-        $format = $property->getAttribute(DateTimeFormat::class)?->format ?? 'Y-m-d H:i:s';
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
 
         return match ($property->getType()->getName()) {
             DateTime::class => new DateTimeCaster($format, immutable: false),

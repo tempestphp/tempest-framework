@@ -51,7 +51,7 @@ final readonly class PropertyReflector implements Reflector
         return new ClassReflector($this->reflectionProperty->getDeclaringClass());
     }
 
-    public function getType(): ?TypeReflector
+    public function getType(): TypeReflector
     {
         return new TypeReflector($this->reflectionProperty);
     }
@@ -68,13 +68,7 @@ final readonly class PropertyReflector implements Reflector
 
     public function isNullable(): bool
     {
-        $type = $this->getType();
-
-        if ($type === null) {
-            return true;
-        }
-
-        return $type->isNullable();
+        return $this->getType()->isNullable();
     }
 
     public function getIterableType(): ?TypeReflector
