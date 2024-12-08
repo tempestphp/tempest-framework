@@ -26,6 +26,14 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Converts the instance to a {@see \Tempest\Support\HtmlString}.
+     */
+    public function toHtmlString(): HtmlString
+    {
+        return new HtmlString($this->string);
+    }
+
+    /**
      * Converts the instance to a string.
      */
     public function toString(): string

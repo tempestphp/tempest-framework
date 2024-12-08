@@ -6,6 +6,7 @@ namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Tempest\Support\HtmlString;
 use Tempest\Support\StringHelper;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -600,5 +601,11 @@ b'));
         $this->assertSame('foo       ', str(' foo')->alignLeft(10)->toString());
         $this->assertSame('  foo     ', str(' foo')->alignLeft(10, padding: 2)->toString());
         $this->assertSame('  foo  ', str('foo')->alignLeft(2, padding: 2)->toString());
+    }
+
+    public function test_to_html_string(): void
+    {
+        $this->assertInstanceOf(HtmlString::class, str('foo')->toHtmlString());
+        $this->assertSame('foo', (string) str('foo')->toHtmlString());
     }
 }
