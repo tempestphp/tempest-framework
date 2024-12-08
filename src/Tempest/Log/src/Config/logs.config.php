@@ -7,7 +7,7 @@ namespace Tempest\Config;
 use Tempest\Log\LogConfig;
 use function Tempest\env;
 
-$debugLogPath = env('LOG_PATH_DEBUG');
-$serverLogPath = env('LOG_PATH_SERVER');
-
-return new LogConfig(debugLogPath: $debugLogPath, serverLogPath: $serverLogPath);
+return new LogConfig(
+    debugLogPath: env('DEBUG_LOG_PATH'),
+    serverLogPath: env('SERVER_LOG_PATH')
+);
