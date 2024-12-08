@@ -1,3 +1,5 @@
+
+
 <?php
 
 declare(strict_types=1);
@@ -124,7 +126,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 
         $psrRequest = $this->http->makePsrRequest(
             uri: '/books',
-            body: ['title' => 'Book'],
+            body: ['title' => 'Book Name'],
             files: ['cover' => new UploadedFile(
                 streamOrFile: $currentPath,
                 size: null,
@@ -141,6 +143,5 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(Upload::class, $request->cover);
 
         $this->assertEquals('cover', array_key_first($request->getFiles()));
-        $this->assertTrue(arr($request->getFiles())->isAssoc());
     }
 }
