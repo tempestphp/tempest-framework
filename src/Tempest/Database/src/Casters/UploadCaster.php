@@ -6,7 +6,7 @@ namespace Tempest\Database\Casters;
 
 use function filesize;
 use Laminas\Diactoros\UploadedFile;
-use Tempest\Http\Upload;
+use Tempest\Router\Upload;
 use Tempest\Mapper\Caster;
 use function Tempest\root_path;
 use const UPLOAD_ERR_OK;
