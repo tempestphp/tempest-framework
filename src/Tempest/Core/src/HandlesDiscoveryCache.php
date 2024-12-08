@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 /** @phpstan-require-implements \Tempest\Core\Discovery */
+/** @phpstan-ignore trait.unused */
 trait HandlesDiscoveryCache
 {
     public function getCachePath(): string

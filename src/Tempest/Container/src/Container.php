@@ -19,9 +19,9 @@ interface Container
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
-     * @return TClassName
+     * @return null|TClassName
      */
-    public function get(string $className, ?string $tag = null, mixed ...$params): object;
+    public function get(string $className, ?string $tag = null, mixed ...$params): mixed;
 
     public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 

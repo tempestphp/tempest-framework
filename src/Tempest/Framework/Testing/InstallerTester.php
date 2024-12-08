@@ -74,8 +74,8 @@ final class InstallerTester
     public function assertFileExists(string $path, ?string $content = null): self
     {
         Assert::assertFileExists(
-            filename: $this->path($path),
-            message: sprintf('File "%s" does not exist', $path),
+            $this->path($path),
+            sprintf('File "%s" does not exist', $path),
         );
 
         if ($content) {
@@ -88,9 +88,9 @@ final class InstallerTester
     public function assertFileContains(string $path, string $search): self
     {
         Assert::assertStringContainsString(
-            needle: $search,
-            haystack: $this->get($path),
-            message: sprintf("File %s does not contain:\n %s", $path, $search),
+            $search,
+            $this->get($path),
+            sprintf("File %s does not contain:\n %s", $path, $search),
         );
 
         return $this;
@@ -99,9 +99,9 @@ final class InstallerTester
     public function assertFileNotContains(string $path, string $search): self
     {
         Assert::assertStringNotContainsString(
-            needle: $search,
-            haystack: $this->get($path),
-            message: sprintf("File %s contains something it shouldn't:\n %s", $path, $search),
+            $search,
+            $this->get($path),
+            sprintf("File %s contains something it shouldn't:\n %s", $path, $search),
         );
 
         return $this;

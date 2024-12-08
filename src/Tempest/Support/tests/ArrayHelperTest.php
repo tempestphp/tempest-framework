@@ -610,33 +610,33 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->unique('first_name')
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
             ],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->unique('last_name')
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Duplicate'],
             ],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->unique('id')
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
@@ -656,11 +656,11 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->unique('id')
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 3, 'first_name' => 'Jane', 'last_name' => 'Doe'],
@@ -671,7 +671,7 @@ final class ArrayHelperTest extends TestCase
     public function test_unique_unstrict_check(): void
     {
         $this->assertSame(
-            actual: arr([
+            arr([
                 42,
                 '42',
                 true,
@@ -680,7 +680,7 @@ final class ArrayHelperTest extends TestCase
                 ->unique(shouldBeStrict: false)
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 42,
                 'true',
             ],
@@ -690,7 +690,7 @@ final class ArrayHelperTest extends TestCase
     public function test_unique_strict_check(): void
     {
         $this->assertSame(
-            actual: arr([
+            arr([
                 42,
                 '42',
                 true,
@@ -699,7 +699,7 @@ final class ArrayHelperTest extends TestCase
                 ->unique(shouldBeStrict: true)
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 42,
                 '42',
                 true,
@@ -711,7 +711,7 @@ final class ArrayHelperTest extends TestCase
     public function test_unique_with_key_and_strict_check(): void
     {
         $this->assertSame(
-            actual: arr([
+            arr([
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => '1', 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
@@ -721,7 +721,7 @@ final class ArrayHelperTest extends TestCase
                 ->unique('id', shouldBeStrict: true)
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => '1', 'first_name' => 'John', 'last_name' => 'Doe'],
                 ['id' => 2, 'first_name' => 'John', 'last_name' => 'Doe'],
@@ -766,11 +766,11 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->unique('author.id')
                 ->values()
                 ->toArray(),
-            expected: [
+            [
                 [
                     'id' => 1,
                     'title' => 'First Post',
@@ -798,13 +798,13 @@ final class ArrayHelperTest extends TestCase
     public function test_flip(): void
     {
         $this->assertSame(
-            actual: arr([
+            arr([
                 'first_name' => 'John',
                 'last_name' => 'Doe',
             ])
                 ->flip()
                 ->toArray(),
-            expected: [
+            [
                 'John' => 'first_name',
                 'Doe' => 'last_name',
             ],
@@ -814,31 +814,31 @@ final class ArrayHelperTest extends TestCase
     public function test_pad(): void
     {
         $this->assertSame(
-            actual: arr([1, 2, 3])
+            arr([1, 2, 3])
                 ->pad(4, 0)
                 ->toArray(),
-            expected: [1, 2, 3, 0],
+            [1, 2, 3, 0],
         );
 
         $this->assertSame(
-            actual: arr([1, 2, 3, 4, 5])
+            arr([1, 2, 3, 4, 5])
                 ->pad(4, 0)
                 ->toArray(),
-            expected: [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
         );
 
         $this->assertSame(
-            actual: arr([1, 2, 3])
+            arr([1, 2, 3])
                 ->pad(-4, 0)
                 ->toArray(),
-            expected: [0, 1, 2, 3],
+            [0, 1, 2, 3],
         );
 
         $this->assertSame(
-            actual: arr([1, 2, 3, 4, 5])
+            arr([1, 2, 3, 4, 5])
                 ->pad(-4, 0)
                 ->toArray(),
-            expected: [1, 2, 3, 4, 5],
+            [1, 2, 3, 4, 5],
         );
     }
 
@@ -846,52 +846,52 @@ final class ArrayHelperTest extends TestCase
     {
         $collection = arr();
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add(1)
                 ->toArray(),
-            expected: [1],
+            [1],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add(2)
                 ->toArray(),
-            expected: [1, 2],
+            [1, 2],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add('')
                 ->toArray(),
-            expected: [1, 2, ''],
+            [1, 2, ''],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add(null)
                 ->toArray(),
-            expected: [1, 2, '', null],
+            [1, 2, '', null],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add(false)
                 ->toArray(),
-            expected: [1, 2, '', null, false],
+            [1, 2, '', null, false],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add([])
                 ->toArray(),
-            expected: [1, 2, '', null, false, []],
+            [1, 2, '', null, false, []],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->add('name')
                 ->toArray(),
-            expected: [1, 2, '', null, false, [], 'name'],
+            [1, 2, '', null, false, [], 'name'],
         );
     }
 
@@ -916,13 +916,13 @@ final class ArrayHelperTest extends TestCase
     public function test_pluck_without_arrays(): void
     {
         $this->assertSame(
-            actual: arr([
+            arr([
                 'name' => 'John',
                 'age' => 42,
             ])
                 ->pluck('name')
                 ->toArray(),
-            expected: [],
+            [],
         );
     }
 
@@ -935,24 +935,24 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('name')
                 ->toArray(),
-            expected: ['John', 'Jane', 'Alice'],
+            ['John', 'Jane', 'Alice'],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('age')
                 ->toArray(),
-            expected: [42, 35, 28],
+            [42, 35, 28],
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('name', 'age')
                 ->toArray(),
-            expected: [
+            [
                 42 => 'John',
                 35 => 'Jane',
                 28 => 'Alice',
@@ -960,10 +960,10 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('age', 'name')
                 ->toArray(),
-            expected: [
+            [
                 'John' => 42,
                 'Jane' => 35,
                 'Alice' => 28,
@@ -1007,10 +1007,10 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('author.name')
                 ->toArray(),
-            expected: [
+            [
                 'John Doe',
                 'Jane Smith',
                 'John Doe',
@@ -1021,10 +1021,10 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('author.name', 'id')
                 ->toArray(),
-            expected: [
+            [
                 1 => 'John Doe',
                 2 => 'Jane Smith',
                 3 => 'John Doe',
@@ -1035,10 +1035,10 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->pluck('author.name', 'author.id')
                 ->toArray(),
-            expected: [
+            [
                 1 => 'John Doe',
                 2 => 'Jane Smith',
                 3 => 'Alice Johnson',
@@ -1145,20 +1145,20 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove(1)
                 ->toArray(),
-            expected: [
+            [
                 0 => 1,
                 2 => 3,
             ],
         );
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove([0, 2])
                 ->toArray(),
-            expected: [],
+            [],
         );
     }
 
@@ -1171,20 +1171,20 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove('first_name')
                 ->toArray(),
-            expected: [
+            [
                 'last_name' => 'Doe',
                 'age' => 42,
             ],
         );
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove(['last_name', 'age'])
                 ->toArray(),
-            expected: [],
+            [],
         );
     }
 
@@ -1193,10 +1193,10 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove(42)
                 ->toArray(),
-            expected: [1, 2, 3],
+            [1, 2, 3],
         );
 
         $collection = arr([
@@ -1206,10 +1206,10 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove('foo')
                 ->toArray(),
-            expected: [
+            [
                 'first_name' => 'John',
                 'last_name' => 'Doe',
                 'age' => 42,
@@ -1217,10 +1217,10 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertEquals(
-            actual: $collection
+            $collection
                 ->remove(['bar', 'first_name'])
                 ->toArray(),
-            expected: [
+            [
                 'last_name' => 'Doe',
                 'age' => 42,
             ],
@@ -1254,10 +1254,8 @@ final class ArrayHelperTest extends TestCase
     {
         $array = range('a', 'z');
 
-        $this->assertFalse(
-            arr($array)->shuffle()->toArray() === $array
-            && arr($array)->shuffle()->toArray() === $array,
-        );
+        $this->assertNotEquals(arr($array)->shuffle()->toArray(), $array);
+        $this->assertNotEquals(arr($array)->shuffle()->toArray(), $array);
     }
 
     public function test_shuffle_keeps_same_values(): void
@@ -1266,10 +1264,7 @@ final class ArrayHelperTest extends TestCase
         $shuffled = arr($array)->shuffle()->toArray();
         sort($shuffled);
 
-        $this->assertSame(
-            actual  : $shuffled,
-            expected: $array,
-        );
+        $this->assertSame($shuffled, $array);
     }
 
     public function test_pull(): void
@@ -1281,13 +1276,13 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection->pull('first_name'),
-            expected: 'John',
+            $collection->pull('first_name'),
+            'John',
         );
 
         $this->assertSame(
-            actual: $collection->toArray(),
-            expected: [
+            $collection->toArray(),
+            [
                 'last_name' => 'Doe',
                 'age' => 42,
             ],
@@ -1300,30 +1295,30 @@ final class ArrayHelperTest extends TestCase
 
         // Test auto-detects key preservation
         $this->assertSame(
-            expected: ['a', 'b', 'c'],
-            actual: arr(['c', 'a', 'b'])->sort()->toArray(),
+            ['a', 'b', 'c'],
+            arr(['c', 'a', 'b'])->sort()->toArray(),
         );
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
-            actual: $array->sort()->toArray(),
-        );
-
-        $this->assertSame(
-            expected: ['a', 'b', 'c'],
-            actual: $array->sort(desc: false, preserveKeys: false)->toArray(),
-        );
-        $this->assertSame(
-            expected: ['c', 'b', 'a'],
-            actual: $array->sort(desc: true, preserveKeys: false)->toArray(),
+            [2 => 'a', 3 => 'b', 1 => 'c'],
+            $array->sort()->toArray(),
         );
 
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
-            actual: $array->sort(desc: false, preserveKeys: true)->toArray(),
+            ['a', 'b', 'c'],
+            $array->sort(desc: false, preserveKeys: false)->toArray(),
         );
         $this->assertSame(
-            expected: [1 => 'c', 3 => 'b', 2 => 'a'],
-            actual: $array->sort(desc: true, preserveKeys: true)->toArray(),
+            ['c', 'b', 'a'],
+            $array->sort(desc: true, preserveKeys: false)->toArray(),
+        );
+
+        $this->assertSame(
+            [2 => 'a', 3 => 'b', 1 => 'c'],
+            $array->sort(desc: false, preserveKeys: true)->toArray(),
+        );
+        $this->assertSame(
+            [1 => 'c', 3 => 'b', 2 => 'a'],
+            $array->sort(desc: true, preserveKeys: true)->toArray(),
         );
     }
 
@@ -1333,24 +1328,24 @@ final class ArrayHelperTest extends TestCase
 
         // Test auto-detects key preservation
         $this->assertSame(
-            expected: ['a', 'b', 'c'],
-            actual: arr(['c', 'a', 'b'])->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+            ['a', 'b', 'c'],
+            arr(['c', 'a', 'b'])->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
         );
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
-            actual: $array->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+            [2 => 'a', 3 => 'b', 1 => 'c'],
+            $array->sortByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
         );
 
         $this->assertSame(
-            expected: ['a', 'b', 'c'],
-            actual: $array->sortByCallback(
+            ['a', 'b', 'c'],
+            $array->sortByCallback(
                 callback: fn ($a, $b) => $a <=> $b,
                 preserveKeys: false,
             )->toArray(),
         );
         $this->assertSame(
-            expected: [2 => 'a', 3 => 'b', 1 => 'c'],
-            actual: $array->sortByCallback(
+            [2 => 'a', 3 => 'b', 1 => 'c'],
+            $array->sortByCallback(
                 callback: fn ($a, $b) => $a <=> $b,
                 preserveKeys: true,
             )->toArray(),
@@ -1362,12 +1357,12 @@ final class ArrayHelperTest extends TestCase
         $array = arr([2 => 'a', 1 => 'c', 3 => 'b']);
 
         $this->assertSame(
-            expected: [1 => 'c', 2 => 'a', 3 => 'b'],
-            actual: $array->sortKeys(desc: false)->toArray(),
+            [1 => 'c', 2 => 'a', 3 => 'b'],
+            $array->sortKeys(desc: false)->toArray(),
         );
         $this->assertSame(
-            expected: [3 => 'b', 2 => 'a', 1 => 'c'],
-            actual: $array->sortKeys(desc: true)->toArray(),
+            [3 => 'b', 2 => 'a', 1 => 'c'],
+            $array->sortKeys(desc: true)->toArray(),
         );
     }
 
@@ -1376,8 +1371,8 @@ final class ArrayHelperTest extends TestCase
         $array = arr([2 => 'a', 1 => 'c', 3 => 'b']);
 
         $this->assertSame(
-            expected: [1 => 'c', 2 => 'a', 3 => 'b'],
-            actual: $array->sortKeysByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
+            [1 => 'c', 2 => 'a', 3 => 'b'],
+            $array->sortKeysByCallback(fn ($a, $b) => $a <=> $b)->toArray(),
         );
     }
 
@@ -1450,8 +1445,8 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'Hello'),
-            expected: 'Hello John Doe 42',
+            $collection->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'Hello'),
+            'Hello John Doe 42',
         );
     }
 
@@ -1464,16 +1459,16 @@ final class ArrayHelperTest extends TestCase
         ]);
 
         $this->assertSame(
-            actual: $collection->reduce('max'),
-            expected: [3, 1, 3, 1],
+            $collection->reduce('max'),
+            [3, 1, 3, 1],
         );
     }
 
     public function test_empty_array_reduce(): void
     {
         $this->assertSame(
-            actual: arr()->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'default'),
-            expected: 'default',
+            arr()->reduce(fn ($carry, $value) => $carry . ' ' . $value, 'default'),
+            'default',
         );
     }
 
@@ -1482,11 +1477,11 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->chunk(2, preserveKeys: false)
                 ->map(fn ($chunk) => $chunk->toArray())
                 ->toArray(),
-            expected: [
+            [
                 [1, 2],
                 [3, 4],
                 [5, 6],
@@ -1496,11 +1491,11 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->chunk(3, preserveKeys: false)
                 ->map(fn ($chunk) => $chunk->toArray())
                 ->toArray(),
-            expected: [
+            [
                 [1, 2, 3],
                 [4, 5, 6],
                 [7, 8, 9],
@@ -1514,11 +1509,11 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->chunk(2)
                 ->map(fn ($chunk) => $chunk->toArray())
                 ->toArray(),
-            expected: [
+            [
                 [0 => 1, 1 => 2],
                 [2 => 3, 3 => 4],
                 [4 => 5, 5 => 6],
@@ -1528,11 +1523,11 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            actual: $collection
+            $collection
                 ->chunk(3)
                 ->map(fn ($chunk) => $chunk->toArray())
                 ->toArray(),
-            expected: [
+            [
                 [0 => 1, 1 => 2, 2 => 3],
                 [3 => 4, 4 => 5, 5 => 6],
                 [6 => 7, 7 => 8, 8 => 9],
@@ -1627,28 +1622,28 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
         $this->assertSame(
-            actual: $collection->slice(0, 3)->values()->toArray(),
-            expected: [1, 2, 3],
+            $collection->slice(0, 3)->values()->toArray(),
+            [1, 2, 3],
         );
 
         $this->assertSame(
-            actual: $collection->slice(3)->values()->toArray(),
-            expected: [4, 5, 6, 7, 8, 9, 10],
+            $collection->slice(3)->values()->toArray(),
+            [4, 5, 6, 7, 8, 9, 10],
         );
 
         $this->assertSame(
-            actual: $collection->slice(-3)->values()->toArray(),
-            expected: [8, 9, 10],
+            $collection->slice(-3)->values()->toArray(),
+            [8, 9, 10],
         );
 
         $this->assertSame(
-            actual: $collection->slice(-3, 2)->values()->toArray(),
-            expected: [8, 9],
+            $collection->slice(-3, 2)->values()->toArray(),
+            [8, 9],
         );
 
         $this->assertSame(
-            actual: $collection->slice(-3, -1)->values()->toArray(),
-            expected: [8, 9],
+            $collection->slice(-3, -1)->values()->toArray(),
+            [8, 9],
         );
     }
 
