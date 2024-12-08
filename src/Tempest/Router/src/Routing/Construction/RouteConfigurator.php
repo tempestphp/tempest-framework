@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Container\Singleton;
-use Tempest\Router\Route;
 use Tempest\Router\RouteConfig;
 
 /**

@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Console\Testing;
 
 use Closure;
-use Exception;
 use Fiber;
 use PHPUnit\Framework\Assert;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Console\ExitCode;
 use Tempest\Console\GenericConsole;
@@ -24,7 +22,6 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Highlight\Highlighter;
-use Tempest\Reflection\MethodReflector;
 
 final class ConsoleTester
 {
@@ -43,7 +40,7 @@ final class ConsoleTester
     ) {
     }
 
-    public function call(string|Closure|array $command): self
+    public function call(string|Closure|array $command, string|array $arguments = []): self
     {
         $clone = clone $this;
 
@@ -82,30 +79,13 @@ final class ConsoleTester
                 $clone->exitCode = $command($console) ?? ExitCode::SUCCESS;
             });
         } else {
-            if (is_string($command) && class_exists($command)) {
-                $command = [$command, '__invoke'];
-            }
-
-            if (is_array($command) || class_exists($command)) {
-                $handler = MethodReflector::fromParts(...$command);
-
-                $attribute = $handler->getAttribute(ConsoleCommand::class);
-
-                if ($attribute === null) {
-                    throw new Exception("Could not resolve console command from {$command[0]}::{$command[1]}");
-                }
-
-                $attribute->setHandler($handler);
-
-                $command = $attribute->getName();
-            }
-
-            $fiber = new Fiber(function () use ($command, $clone): void {
-                $argumentBag = new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]);
-
-                $clone->container->singleton(ConsoleArgumentBag::class, $argumentBag);
-
-                $clone->exitCode = ($this->container->get(ExecuteConsoleCommand::class))($argumentBag->getCommandName());
+            $fiber = new Fiber(function () use ($command, $arguments, $clone): void {
+                $clone->container->singleton(ConsoleArgumentBag::class, new ConsoleArgumentBag(['tempest']));
+                $clone->exitCode = $this->container->invoke(
+                    ExecuteConsoleCommand::class,
+                    command: $command,
+                    arguments: $arguments,
+                );
             });
         }
 

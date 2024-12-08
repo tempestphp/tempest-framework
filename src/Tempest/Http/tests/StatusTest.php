@@ -13,10 +13,10 @@ use Tempest\Http\Status;
  */
 final class StatusTest extends TestCase
 {
-    private function descriptionToStatus(string $description): Status
+    private static function descriptionToStatus(string $description): Status
     {
         $description = strtoupper(
-            str_replace([' ', '-'], '_', $description),
+            str_replace("'", '', str_replace([' ', '-'], '_', $description)),
         );
 
         return Status::{$description};
@@ -28,7 +28,7 @@ final class StatusTest extends TestCase
         $status = Status::code($code);
 
         $this->assertSame(
-            $this->descriptionToStatus($description),
+            self::descriptionToStatus($description),
             $status,
         );
 
@@ -100,6 +100,7 @@ final class StatusTest extends TestCase
             [303, 'See Other'],
             [304, 'Not Modified'],
             [305, 'Use Proxy'],
+            [306, 'Unused'],
             [307, 'Temporary Redirect'],
             [308, 'Permanent Redirect'],
 
@@ -121,6 +122,7 @@ final class StatusTest extends TestCase
             [415, 'Unsupported Media Type'],
             [416, 'Range Not Satisfiable'],
             [417, 'Expectation Failed'],
+            [418, "I'm a teapot"],
             [421, 'Misdirected Request'],
             [422, 'Unprocessable Content'],
             [423, 'Locked'],
