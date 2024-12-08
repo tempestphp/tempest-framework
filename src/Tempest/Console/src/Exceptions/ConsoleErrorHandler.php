@@ -34,7 +34,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
             ->writeln()
             ->error($throwable::class)
             ->when(
-                expression: $throwable->getMessage(),
+                condition: $throwable->getMessage(),
                 callback: fn (Console $console) => $console->error($throwable->getMessage()),
             )
             ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
@@ -52,7 +52,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
             $firstLine = $throwable->getTrace()[0];
 
             $this->console
-                ->writeln("<h2>#0</h2> " . $this->formatTrace($firstLine))
+                ->writeln('<h2>#0</h2> ' . $this->formatTrace($firstLine))
                 ->writeln()
                 ->writeln('<em>-v</em> show more')
                 ->writeln();
@@ -79,7 +79,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
         $code = Escape::terminal($highlighter->parse(file_get_contents($file), 'php'));
         $lines = explode(PHP_EOL, $code);
 
-        $lines[$lineNumber - 1] = $lines[$lineNumber - 1] . ' <error><</error>';
+        $lines[$lineNumber - 1] = $lines[$lineNumber - 1] . ' <style="fg-red"><</style>';
 
         $excerptSize = 5;
         $start = max(0, $lineNumber - $excerptSize - 2);

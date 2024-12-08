@@ -20,7 +20,7 @@ final readonly class DateTimeFormat implements Rule
     {
         $value = match ($value instanceof DateTimeInterface) {
             true => $value->format($this->format),
-            default => $value
+            default => $value,
         };
 
         if (! is_string($value) || empty($value)) {

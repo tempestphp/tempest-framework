@@ -27,7 +27,7 @@ final readonly class CreateAuthorTable implements Migration
                 new PrimaryKeyStatement(),
                 new TextStatement('name'),
                 new TextStatement('type', nullable: true),
-            ]
+            ],
         );
     }
 

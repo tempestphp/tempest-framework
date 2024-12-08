@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.4",
         "tempest/core": "dev-main",
-        "tempest/http": "dev-main",
+        "tempest/router": "dev-main",
         "tempest/database": "dev-main"
     },
     "autoload": {

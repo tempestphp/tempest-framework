@@ -64,6 +64,11 @@ final class TestCursor implements Cursor
         return $this;
     }
 
+    public function placeToEnd(): Cursor
+    {
+        return $this;
+    }
+
     public function clearLine(): Cursor
     {
         return $this;

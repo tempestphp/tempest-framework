@@ -7,11 +7,11 @@ namespace Tempest\HttpClient\Tests;
 use AidanCasey\MockClient\Client;
 use GuzzleHttp\Psr7\HttpFactory;
 use PHPUnit\Framework\TestCase;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\GenericHttpClient;
 use Tempest\HttpClient\HttpClient;
+use Tempest\Router\GenericRequest;
 
 /**
  * @internal
@@ -139,14 +139,14 @@ final class GenericHttpClientTest extends TestCase
 
         $this->mock = new Client(
             responseFactory: $this->factory,
-            streamFactory: $this->factory
+            streamFactory: $this->factory,
         );
 
         $psr18Driver = new Psr18Driver(
             client: $this->mock,
             uriFactory: $this->factory,
             requestFactory: $this->factory,
-            streamFactory: $this->factory
+            streamFactory: $this->factory,
         );
 
         $this->client = new GenericHttpClient($psr18Driver);

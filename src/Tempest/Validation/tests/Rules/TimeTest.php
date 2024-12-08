@@ -25,7 +25,6 @@ final class TimeTest extends TestCase
         $this->assertFalse($rule->isValid('23:00'));
         $this->assertFalse($rule->isValid('2300'));
 
-
         $this->assertTrue($rule->isValid('01:00 am'));
         $this->assertTrue($rule->isValid('01:00 a.m.'));
         $this->assertTrue($rule->isValid('01:00 A.M.'));

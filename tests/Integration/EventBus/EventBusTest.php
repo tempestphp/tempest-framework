@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\EventBus;
 
-use function Tempest\event;
 use Tests\Tempest\Fixtures\Events\EnumEvent;
 use Tests\Tempest\Fixtures\Events\EventInterfaceImplementation;
 use Tests\Tempest\Fixtures\Events\TestEventHandler;
 use Tests\Tempest\Fixtures\Handlers\EventInterfaceHandler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\event;
 
 /**
  * @internal

@@ -43,7 +43,7 @@ final readonly class ConsoleInputBuilder
         if ($invalidArguments !== []) {
             throw new InvalidCommandException(
                 $this->command,
-                $invalidArguments
+                $invalidArguments,
             );
         }
 

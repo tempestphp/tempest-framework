@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Tempest\Console\Middleware;
 
 use Tempest\Console\Actions\ExecuteConsoleCommand;
+use Tempest\Console\Actions\ResolveConsoleCommand;
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Support\ArrayHelper;
+use Throwable;
 
 final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 {
@@ -18,14 +22,15 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         private ConsoleConfig $consoleConfig,
         private Console $console,
         private ExecuteConsoleCommand $executeConsoleCommand,
+        private ResolveConsoleCommand $resolveConsoleCommand,
     ) {
     }
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        $consoleCommand = $this->consoleConfig->commands[$invocation->argumentBag->getCommandName()] ?? null;
-
-        if (! $consoleCommand) {
+        try {
+            $consoleCommand = ($this->resolveConsoleCommand)($invocation->argumentBag->getCommandName());
+        } catch (Throwable) {
             return $this->rescue($invocation->argumentBag->getCommandName());
         }
 
@@ -37,7 +42,9 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
     private function rescue(string $commandName): ExitCode|int
     {
-        $this->console->writeln("<error>Command {$commandName} not found</error>");
+        $this->console->writeln();
+        $this->console->writeln('<style="bg-dark-red fg-white"> Error </style>');
+        $this->console->writeln("<style=\"fg-red\">Command <em>{$commandName}</em> not found.</style>");
 
         $similarCommands = $this->getSimilarCommands($commandName);
 
@@ -46,7 +53,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         }
 
         if (count($similarCommands) === 1) {
-            if ($this->console->confirm("Did you mean {$similarCommands[0]}?")) {
+            if ($this->console->confirm("Did you mean <em>{$similarCommands[0]}</em>?")) {
                 return $this->runIntendedCommand($similarCommands[0]);
             }
 
@@ -65,9 +72,21 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
     {
         $similarCommands = [];
 
+        /** @var ConsoleCommand $consoleCommand */
         foreach ($this->consoleConfig->commands as $consoleCommand) {
             if (in_array($consoleCommand->getName(), $similarCommands, strict: true)) {
                 continue;
+            }
+
+            if (str_contains($name, ':')) {
+                $wantedParts = ArrayHelper::explode($name, separator: ':');
+                $currentParts = ArrayHelper::explode($consoleCommand->getName(), separator: ':');
+
+                if ($wantedParts->count() === $currentParts->count() && $wantedParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
+                    $similarCommands[] = $consoleCommand->getName();
+
+                    continue;
+                }
             }
 
             if (str_starts_with($consoleCommand->getName(), $name)) {
@@ -78,7 +97,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
             $levenshtein = levenshtein($name, $consoleCommand->getName());
 
-            if ($levenshtein <= 3) {
+            if ($levenshtein <= 2) {
                 $similarCommands[] = $consoleCommand->getName();
             }
         }

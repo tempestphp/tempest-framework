@@ -10,10 +10,10 @@ use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
-use function Tempest\get;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\get;
 
 /**
  * @internal
@@ -30,7 +30,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $this->kernel->discoveryLocations = [
             new DiscoveryLocation(
                 'Tests\Tempest\Fixtures',
-                __DIR__ . '../../Fixtures/Discovery'
+                __DIR__ . '../../Fixtures/Discovery',
             ),
         ];
 
@@ -56,7 +56,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $this->kernel->discoveryLocations = [
             new DiscoveryLocation(
                 'Tests\Tempest\Fixtures',
-                __DIR__ . '../../Fixtures/Discovery'
+                __DIR__ . '../../Fixtures/Discovery',
             ),
         ];
 

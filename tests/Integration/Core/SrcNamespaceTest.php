@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\root_path;
 use function Tempest\src_namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

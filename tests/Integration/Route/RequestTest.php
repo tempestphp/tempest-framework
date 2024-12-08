@@ -6,16 +6,16 @@ namespace Tests\Tempest\Integration\Route;
 
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
-use function Tempest\uri;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\RequestFactory;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 
 /**
  * @internal

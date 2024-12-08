@@ -9,58 +9,52 @@ use Tempest\Console\StaticConsoleComponent;
 
 final readonly class StaticSingleChoiceComponent implements StaticConsoleComponent
 {
+    private array $optionValues;
+
     public function __construct(
-        public string $question,
+        public string $label,
         public array $options,
         public mixed $default = null,
-        public bool $asList = false,
     ) {
+        $this->optionValues = array_values($options);
     }
 
-    public function render(Console $console): ?string
+    public function render(Console $console): null|string|int
     {
         if (! $console->supportsPrompting()) {
             return $this->default;
         }
 
-        $console->write("<h2>{$this->question}</h2> ");
+        $console->write("<h2>{$this->label}</h2> ");
 
         $parsedOptions = [];
 
-        if ($this->asList) {
-            foreach ($this->options as $key => $option) {
-                $key = $key === $this->default
-                    ? "<em><strong>{$key}</strong></em>"
-                    : $key;
+        foreach ($this->optionValues as $key => $option) {
+            $key = $key === $this->default
+                ? "<em><strong>{$key}</strong></em>"
+                : $key;
 
-                $parsedOptions[$key] = "- [{$key}] {$option}";
-            }
-
-            $console->write(PHP_EOL . implode(PHP_EOL, $parsedOptions) . PHP_EOL);
-        } else {
-            foreach ($this->options as $option) {
-                if ($option === $this->default) {
-                    $option = "<em><strong>{$option}</strong></em>";
-                }
-
-                $parsedOptions[] = $option;
-            }
-
-            $console->write('[' . implode('/', $parsedOptions) . '] ');
+            $parsedOptions[$key] = "- [{$key}] {$option}";
         }
+
+        $console->write(PHP_EOL . implode(PHP_EOL, $parsedOptions) . PHP_EOL);
 
         $answer = trim($console->readln());
 
-        if ($answer === '' && $this->default) {
-            return $this->options[$this->default] ?? $this->default;
+        if (! $answer && $this->default) {
+            return $this->default;
         }
 
-        if ($this->asList && array_key_exists($answer, $this->options)) {
-            return $this->options[$answer];
+        if (array_key_exists($answer, $this->optionValues)) {
+            return array_is_list($this->options)
+                ? $this->optionValues[$answer]
+                : array_search($this->optionValues[$answer], $this->options, strict: false);
         }
 
-        if (! $this->asList && in_array($answer, $this->options)) {
-            return $answer;
+        if (in_array($answer, $this->optionValues, strict: false)) {
+            return array_is_list($this->options)
+                ? $answer
+                : array_search($answer, $this->options, strict: false);
         }
 
         return $this->render($console);

@@ -7,11 +7,11 @@ namespace Tempest\Framework\Testing\Http;
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
-use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\RequestToPsrRequestMapper;
 use Tempest\Http\Method;
-use Tempest\Http\Request;
-use Tempest\Http\Router;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\Mappers\RequestToPsrRequestMapper;
+use Tempest\Router\Request;
+use Tempest\Router\Router;
 use function Tempest\map;
 
 final class HttpRouterTester
@@ -32,11 +32,95 @@ final class HttpRouterTester
         );
     }
 
+    public function head(string $uri, array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::HEAD,
+                uri: $uri,
+                body: [],
+                headers: $headers,
+            ),
+        );
+    }
+
     public function post(string $uri, array $body = [], array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(
             new GenericRequest(
                 method: Method::POST,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function put(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::PUT,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function delete(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::DELETE,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function connect(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::CONNECT,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function options(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::OPTIONS,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function trace(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::TRACE,
+                uri: $uri,
+                body: $body,
+                headers: $headers,
+            ),
+        );
+    }
+
+    public function patch(string $uri, array $body = [], array $headers = []): TestResponseHelper
+    {
+        return $this->sendRequest(
+            new GenericRequest(
+                method: Method::PATCH,
                 uri: $uri,
                 body: $body,
                 headers: $headers,

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Exceptions;
 
-use function array_map;
 use BackedEnum;
+use Tempest\Console\Console;
+use function array_map;
 use function gettype;
 use function implode;
 use function is_string;
-use Tempest\Console\Console;
 
 final class InvalidEnumArgument extends ConsoleException
 {

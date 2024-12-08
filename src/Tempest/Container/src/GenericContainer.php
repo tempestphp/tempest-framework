@@ -133,7 +133,7 @@ final class GenericContainer implements Container
         if (method_exists($callable, '__invoke')) {
             return $this->invokeClosure(
                 Closure::fromCallable([$this->get($callable), '__invoke']),
-                ...$params
+                ...$params,
             );
         }
 
@@ -146,7 +146,7 @@ final class GenericContainer implements Container
 
         $parameters = $this->autowireDependencies(
             method: $reflector = new FunctionReflector($closure),
-            parameters: $params
+            parameters: $params,
         );
 
         $this->stopChain();
@@ -171,7 +171,7 @@ final class GenericContainer implements Container
     {
         $this->resolveChain();
 
-        $reflector = match(true) {
+        $reflector = match (true) {
             $callback instanceof FunctionReflector => $callback,
             default => new ReflectionFunction($callback),
         };
@@ -377,12 +377,11 @@ final class GenericContainer implements Container
 
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
-
             try {
                 return $this->autowireObjectDependency(
                     type: $type,
                     tag: $tag,
-                    providedValue: $providedValue
+                    providedValue: $providedValue,
                 );
             } catch (Throwable $throwable) {
                 // We were unable to resolve the dependency for the last union

@@ -49,7 +49,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            $migration
+            $migration,
         );
 
         // Make sure there are no errors
@@ -76,7 +76,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        match($this->container->get(DatabaseDialect::class)) {
+        match ($this->container->get(DatabaseDialect::class)) {
             DatabaseDialect::MYSQL => '',
             DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
@@ -84,7 +84,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            $migration
+            $migration,
         );
 
         $this->assertTrue(true);
@@ -115,7 +115,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            $migration
+            $migration,
         );
     }
 
@@ -144,7 +144,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            $migration
+            $migration,
         );
     }
 }

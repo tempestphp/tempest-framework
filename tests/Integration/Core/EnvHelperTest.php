@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use function Tempest\env;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\env;
 
 /**
  * @internal

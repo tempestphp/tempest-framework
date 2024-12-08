@@ -19,19 +19,19 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertContains('General')
             ->assertContains('Hello')
             ->assertDoesNotContain('hidden')
-            ->assertContains('hello:world <input>')
-            ->assertContains('hello:test [optional-value=null] [--flag=false] - description')
+            ->assertContains('hello:world')
+            ->assertContains('hello:test   description')
             ->assertContains('testcommand:test');
     }
 
     public function test_overview_with_hidden(): void
     {
         $this->console
-            ->call('-a')
+            ->call('', ['-a'])
             ->assertContains('hidden');
 
         $this->console
-            ->call('--all')
+           ->call('', ['--all'])
             ->assertContains('hidden');
     }
 }

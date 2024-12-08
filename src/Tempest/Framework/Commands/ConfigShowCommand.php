@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Commands;
 
-use function file_get_contents;
-use function function_exists;
-use function is_array;
-use function is_object;
-use function realpath;
-use function str_contains;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
@@ -18,6 +12,12 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Highlight\Languages\Json\JsonLanguage;
 use Tempest\Highlight\Languages\Php\PhpLanguage;
 use Tempest\Reflection\ClassReflector;
+use function file_get_contents;
+use function function_exists;
+use function is_array;
+use function is_object;
+use function realpath;
+use function str_contains;
 use function var_export;
 
 final readonly class ConfigShowCommand
@@ -31,11 +31,7 @@ final readonly class ConfigShowCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'config:show',
-        description: 'Show resolved configuration',
-        aliases: ['config'],
-    )]
+    #[ConsoleCommand(name: 'config:show', description: 'Show resolved configuration', aliases: ['config'])]
     public function __invoke(
         ConfigShowFormat $format = ConfigShowFormat::PRETTY,
         ?bool $search = false,
@@ -152,7 +148,7 @@ final readonly class ConfigShowCommand
         $this->console->writeWithLanguage(
             json_encode(
                 $formatted,
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             ),
             new JsonLanguage(),
         );

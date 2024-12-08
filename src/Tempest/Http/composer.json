@@ -1,27 +1,12 @@
 {
     "name": "tempest/http",
-    "description": "A package for handle HTTP requests and responses.",
+    "description": "Standard HTTP request/response objects.",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
-        "tempest/core": "dev-main",
-        "tempest/clock": "dev-main",
-        "tempest/console": "dev-main",
-        "tempest/view": "dev-main",
-        "tempest/mapper": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/highlight": "^2.11.2",
-        "laminas/laminas-diactoros": "^3.3",
-        "psr/http-factory": "^1.0",
-        "psr/http-message": "^1.0|^2.0",
-        "symfony/var-exporter": "^7.1",
-        "symfony/uid": "^7.1"
+        "php": "^8.4"
     },
     "autoload": {
-        "files": [
-            "src/functions.php"
-        ],
         "psr-4": {
             "Tempest\\Http\\": "src"
         }

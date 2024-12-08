@@ -15,9 +15,9 @@ use Tempest\Database\Tests\Relations\Fixtures\HasOneParentModel;
  */
 final class HasOneRelationTest extends TestCase
 {
-    #[TestWith(["inversePropertyNotFound"], "not found")]
-    #[TestWith(["inversePropertyMissing"], "missing property")]
-    #[TestWith(["inversePropertyInvalid"], "invalid type")]
+    #[TestWith(['inversePropertyNotFound'], 'not found')]
+    #[TestWith(['inversePropertyMissing'], 'missing property')]
+    #[TestWith(['inversePropertyInvalid'], 'invalid type')]
     public function test_invalid_relations(string $relationName): void
     {
         $this->expectException(InvalidRelation::class);
@@ -29,12 +29,12 @@ final class HasOneRelationTest extends TestCase
     public function test_has_one_relation(): void
     {
         $definition = new ModelDefinition(HasOneParentModel::class);
-        $autoResolvedRelation = $definition->getRelations("relatedModel");
-        $namedRelation = $definition->getRelations("otherRelatedModel");
+        $autoResolvedRelation = $definition->getRelations('relatedModel');
+        $namedRelation = $definition->getRelations('otherRelatedModel');
 
         $this->assertCount(1, $autoResolvedRelation);
         $this->assertCount(1, $namedRelation);
-        $this->assertSame("has_one_parent_model.relatedModel", $autoResolvedRelation[0]->getRelationName());
-        $this->assertSame("has_one_parent_model.otherRelatedModel", $namedRelation[0]->getRelationName());
+        $this->assertSame('has_one_parent_model.relatedModel', $autoResolvedRelation[0]->getRelationName());
+        $this->assertSame('has_one_parent_model.otherRelatedModel', $namedRelation[0]->getRelationName());
     }
 }

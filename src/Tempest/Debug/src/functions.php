@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 namespace {
-
     use Tempest\Debug\Debug;
 
     if (! function_exists('lw')) {
@@ -37,6 +36,17 @@ namespace {
         function ll(mixed ...$input): void
         {
             Debug::resolve()->log($input, writeToOut: false);
+        }
+    }
+
+    if (! function_exists('le')) {
+        /**
+         * Emits a `ItemsDebugged` event.
+         * @see \Tempest\Debug\Debug::log()
+         */
+        function le(mixed ...$input): void
+        {
+            Debug::resolve()->log($input, writeToOut: false, writeToLog: false);
         }
     }
 

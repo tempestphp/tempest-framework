@@ -21,12 +21,12 @@ final class TestInstaller implements Installer
     {
         $this->publish(
             __DIR__ . '/TestInstallerClass.php',
-            src_path('Foo/Bar/TestInstallerClass.php')
+            src_path('Foo/Bar/TestInstallerClass.php'),
         );
 
         $this->publish(
             __DIR__ . '/TestInstallerFile.html',
-            src_path('View/TestInstallerFile.html')
+            src_path('View/TestInstallerFile.html'),
         );
     }
 }

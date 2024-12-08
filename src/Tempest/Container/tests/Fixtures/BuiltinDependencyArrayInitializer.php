@@ -10,9 +10,9 @@ use Tempest\Container\Singleton;
 
 final class BuiltinDependencyArrayInitializer implements Initializer
 {
-    #[Singleton(tag:"builtin-dependency-array")]
+    #[Singleton(tag: 'builtin-dependency-array')]
     public function initialize(Container $container): array
     {
-        return ["hallo", "array", 42];
+        return ['hallo', 'array', 42];
     }
 }

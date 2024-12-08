@@ -12,7 +12,7 @@ final class InvalidRelation extends Exception
     {
         return new self(
             "Unable to determine inverse property for {$modelClass}::{$modelProperty}, ".
-            "Related class {$relatedClass} doesn't have a property of type {$modelClass}."
+            "Related class {$relatedClass} doesn't have a property of type {$modelClass}.",
         );
     }
 
@@ -20,11 +20,11 @@ final class InvalidRelation extends Exception
         string $modelClass,
         string $modelProperty,
         string $relatedClass,
-        string $propertyName
+        string $propertyName,
     ): self {
         return new self(
             "Unable to determine inverse property for {$modelClass}::{$modelProperty}, ".
-            "Related class {$relatedClass} doesn't have a property named {$propertyName}."
+            "Related class {$relatedClass} doesn't have a property named {$propertyName}.",
         );
     }
 
@@ -39,7 +39,7 @@ final class InvalidRelation extends Exception
         return new self(
             "Unable to determine inverse property for {$modelClass}::{$modelProperty}, ".
             "Related class {$relatedClass} expected to have property {$propertyName} of type {$expectedType}, ".
-            "got {$actualType}."
+            "got {$actualType}.",
         );
     }
 

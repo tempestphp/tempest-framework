@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\CommandBus;
 
 use Symfony\Component\Process\Process;
-use function Tempest\command;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\CommandRepository;
 use Tempest\Highlight\Themes\TerminalStyle;
-use function Tempest\Support\arr;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\command;
+use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -40,7 +40,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertFalse(MyAsyncCommandHandler::$isHandled);
 
         $this->console
-            ->call("command:handle " . $pendingCommands->keys()->first())
+            ->call('command:handle ' . $pendingCommands->keys()->first())
             ->assertSee('Done');
 
         $this->assertTrue(MyAsyncCommandHandler::$isHandled);
@@ -51,7 +51,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $process = new Process(['php', 'tempest', 'command:monitor']);
         $process->start();
 
-        $this->console->call("command:dispatch 1");
+        $this->console->call('command:dispatch 1');
 
         sleep(1);
 
@@ -68,7 +68,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $process = new Process(['php', 'tempest', 'command:monitor']);
         $process->start();
 
-        $this->console->call("command:dispatch 1 --fail");
+        $this->console->call('command:dispatch 1 --fail');
 
         sleep(1);
 

@@ -16,8 +16,8 @@ final readonly class ScheduledCommand
     ) {
     }
 
-    #[Schedule(Every::MINUTE)]
     #[ConsoleCommand('scheduled')]
+    #[Schedule(Every::MINUTE)]
     public function command(): void
     {
         $this->console->writeln('A command got scheduled');

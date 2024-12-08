@@ -6,11 +6,12 @@ namespace Tempest\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
+use function Tempest\Support\arr;
 
 final readonly class StaticMultipleChoiceComponent implements StaticConsoleComponent
 {
     public function __construct(
-        public string $question,
+        public string $label,
         public array $options,
         public array $default = [],
     ) {
@@ -27,20 +28,23 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
         do {
             $answer = $this->askQuestion($console);
 
-            $answerAsString = implode(', ', $answer) ?: 'no option';
+            $answerAsString = arr($answer)->join(', ', ' and ')->trim()->toString() ?: 'no option';
 
-            $confirm = $console->confirm(
-                question: "You picked {$answerAsString}; continue?",
+            $continue = $console->confirm(
+                question: $answer
+                    ? "You picked {$answerAsString}; continue?"
+                    : "Continue with {$answerAsString}?",
                 default: true,
             );
-        } while ($confirm === false);
+        } while ($continue === false);
 
-        return $answer;
+        return $answer ?: $this->default;
     }
 
     private function askQuestion(Console $console): array
     {
-        $console->write("<h2>{$this->question}</h2> ");
+        $console->writeln("<h2>{$this->label}</h2> ");
+        $console->write('<style="fg-gray">Select multiple items using comas</style>');
 
         $parsedOptions = [];
 

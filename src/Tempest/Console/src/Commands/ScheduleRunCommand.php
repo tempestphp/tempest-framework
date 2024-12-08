@@ -21,7 +21,7 @@ final readonly class ScheduleRunCommand
     ) {
     }
 
-    #[ConsoleCommand('schedule:run')]
+    #[ConsoleCommand('schedule:run', description: 'Executes due tasks')]
     public function __invoke(): void
     {
         $this->scheduler->run();
@@ -33,8 +33,8 @@ final readonly class ScheduleRunCommand
     public function onScheduledInvocationRan(ScheduledInvocationRan $invocation): void
     {
         $this->writeln(sprintf(
-            "<em>%s</em> completed",
-            $invocation->invocation->getCommandName()
+            '<em>%s</em> completed',
+            $invocation->invocation->getCommandName(),
         ));
     }
 }

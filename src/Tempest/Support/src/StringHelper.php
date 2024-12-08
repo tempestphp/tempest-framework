@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
+use Closure;
 use Countable;
+use Stringable;
+use Tempest\Support\Conditions\HasConditions;
 use function ltrim;
 use function preg_quote;
 use function preg_replace;
 use function rtrim;
-use Stringable;
 use function trim;
 
 final readonly class StringHelper implements Stringable
 {
+    use HasConditions;
+
     private string $string;
 
     public function __construct(Stringable|string|null $string = '')
@@ -70,6 +74,22 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Changes the case of the first letter to uppercase.
+     */
+    public function upperFirst(): self
+    {
+        return new self(ucfirst($this->string));
+    }
+
+    /**
+     * Changes the case of the first letter to lowercase.
+     */
+    public function lowerFirst(): self
+    {
+        return new self(lcfirst($this->string));
+    }
+
+    /**
      * Converts the instance to snake case.
      */
     public function snake(string $delimiter = '_'): self
@@ -84,7 +104,7 @@ final readonly class StringHelper implements Stringable
         $string = preg_replace(
             '![^' . preg_quote($delimiter) . '\pL\pN\s]+!u',
             $delimiter,
-            mb_strtolower($string, 'UTF-8')
+            mb_strtolower($string, 'UTF-8'),
         );
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
@@ -118,7 +138,7 @@ final readonly class StringHelper implements Stringable
      */
     public function camel(): self
     {
-        return new self(lcfirst((string)$this->pascal()));
+        return new self(lcfirst((string) $this->pascal()));
     }
 
     /**
@@ -166,7 +186,7 @@ final readonly class StringHelper implements Stringable
 
         while (($len = strlen($string)) < $length) {
             $size = $length - $len;
-            $bytesSize = (int)ceil($size / 3) * 3;
+            $bytesSize = (int) ceil($size / 3) * 3;
             $bytes = random_bytes($bytesSize);
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), offset: 0, length: $size);
         }
@@ -180,7 +200,7 @@ final readonly class StringHelper implements Stringable
     public function finish(string $cap): self
     {
         return new self(
-            preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap
+            preg_replace('/(?:' . preg_quote($cap, '/') . ')+$/u', replacement: '', subject: $this->string) . $cap,
         );
     }
 
@@ -190,7 +210,7 @@ final readonly class StringHelper implements Stringable
     public function start(string $prefix): self
     {
         return new self(
-            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string)
+            $prefix.preg_replace('/^(?:'.preg_quote($prefix, '/').')+/u', replacement: '', subject: $this->string),
         );
     }
 
@@ -759,6 +779,61 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Pads the instance to the given `$width` and centers the text in it.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignCenter(width: 20);
+     * ```
+     */
+    public function alignCenter(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $leftPadding = (int) floor(($actualWidth - $textLength) / 2);
+        $rightPadding = $actualWidth - $leftPadding - $textLength;
+
+        return new self(str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $rightPadding));
+    }
+
+    /**
+     * Pads the instance to the given `$width` and aligns the text to the right.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignRight(width: 20);
+     * ```
+     */
+    public function alignRight(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $leftPadding = $actualWidth - $textLength - $padding;
+
+        return new self(str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $padding));
+    }
+
+    /**
+     * Pads the instance to the given `$width` and aligns the text to the left.
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->alignLeft(width: 20);
+     * ```
+     */
+    public function alignLeft(?int $width, int $padding = 0): self
+    {
+        $text = $this->trim();
+        $textLength = $text->length();
+        $actualWidth = max($width ?? 0, $textLength + (2 * $padding));
+        $rightPadding = $actualWidth - $textLength - $padding;
+
+        return new self(str_repeat(' ', $padding) . $text . str_repeat(' ', $rightPadding));
+    }
+
+    /**
      * Inserts the specified `$string` at the specified `$position`.
      *
      * ### Example
@@ -769,8 +844,23 @@ final readonly class StringHelper implements Stringable
     public function insertAt(int $position, string $string): self
     {
         return new self(
-            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position)
+            mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position),
         );
+    }
+
+    public function when(mixed $condition, Closure $callback): static
+    {
+        if ($condition instanceof Closure) {
+            $condition = $condition($this);
+        }
+
+        if ($condition) {
+            if (($result = $callback($this)) instanceof self) {
+                return $result;
+            }
+        }
+
+        return $this;
     }
 
     /**

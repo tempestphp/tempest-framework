@@ -7,8 +7,8 @@ namespace Tempest\Core;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use function Tempest\Support\arr;
 use Traversable;
+use function Tempest\Support\arr;
 
 final class DiscoveryItems implements IteratorAggregate, Countable
 {

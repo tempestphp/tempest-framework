@@ -32,19 +32,26 @@ final readonly class HelpMiddleware implements ConsoleMiddleware
 
     private function renderHelp(ConsoleCommand $consoleCommand): void
     {
-        $this->console
-            ->when($consoleCommand->help, fn (Console $console) => $console->writeln("<comment>{$consoleCommand->help}</comment>"))
-            ->write('<h2>Usage</h2>');
+        $this->console->header(
+            header: $consoleCommand->getName(),
+            subheader: $consoleCommand->description,
+        );
 
-        (new RenderConsoleCommand($this->console))($consoleCommand);
+        $this->console->header('Usage');
+        (new RenderConsoleCommand($this->console, renderArguments: true, renderDescription: false))($consoleCommand);
+
+        if ($consoleCommand->help) {
+            $this->console->writeln();
+            $this->console->writeln('<style="fg-gray">' . $consoleCommand->help . '</style>');
+        }
 
         foreach ($consoleCommand->getArgumentDefinitions() as $argumentDefinition) {
             $this->console
                 ->writeln()
-                ->when($argumentDefinition->help, fn (Console $console) => $console->writeln('<comment>' . $argumentDefinition->help . '</comment>'))
-                ->write("<em>{$argumentDefinition->name}</em>")
+                ->write("<style=\"underline\">{$argumentDefinition->name}</style>")
                 ->when($argumentDefinition->aliases !== [], fn (Console $console) => $console->write(' (' . implode(', ', $argumentDefinition->aliases) . ')'))
-                ->when($argumentDefinition->description, fn (Console $console) => $console->write(' — ' . $argumentDefinition->description));
+                ->when($argumentDefinition->description, fn (Console $console) => $console->writeln()->writeln($argumentDefinition->description))
+                ->when($argumentDefinition->help, fn (Console $console) => $console->writeln()->writeln('<style="fg-gray">' . $argumentDefinition->help . '</style>'));
         }
 
         $this->console->writeln();

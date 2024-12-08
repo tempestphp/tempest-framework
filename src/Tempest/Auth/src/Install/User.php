@@ -10,8 +10,8 @@ use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
-use function Tempest\Support\arr;
 use UnitEnum;
+use function Tempest\Support\arr;
 
 final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
 {

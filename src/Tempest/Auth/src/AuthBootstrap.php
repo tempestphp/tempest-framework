@@ -6,12 +6,12 @@ namespace Tempest\Auth;
 
 use Tempest\Core\KernelEvent;
 use Tempest\EventBus\EventHandler;
-use Tempest\Http\Router;
+use Tempest\Router\Router;
 
 final readonly class AuthBootstrap
 {
     public function __construct(
-        private Router $router
+        private Router $router,
     ) {
     }
 

@@ -23,7 +23,7 @@ final readonly class MySqlConnection implements DatabaseConnection
         public string $password = '',
         #[SensitiveParameter]
         public string $database = 'app',
-        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }
 

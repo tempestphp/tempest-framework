@@ -20,6 +20,8 @@ interface Cursor
 
     public function place(Point $position): self;
 
+    public function placeToEnd(): self;
+
     public function clearLine(): self;
 
     public function clearAfter(): self;

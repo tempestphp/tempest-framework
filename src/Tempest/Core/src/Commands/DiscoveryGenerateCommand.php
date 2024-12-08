@@ -24,17 +24,13 @@ final readonly class DiscoveryGenerateCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'discovery:generate',
-        description: 'Compile and cache all discovery according to the configured discovery caching strategy',
-        aliases: ['dg'],
-    )]
+    #[ConsoleCommand(name: 'discovery:generate', description: 'Compile and cache all discovery according to the configured discovery caching strategy')]
     public function __invoke(): void
     {
         $strategy = $this->resolveDiscoveryCacheStrategy();
 
         if ($strategy === DiscoveryCacheStrategy::NONE) {
-            $this->info("Discovery cache disabled, nothing to generate.");
+            $this->info('Discovery cache disabled, nothing to generate.');
 
             return;
         }
@@ -81,8 +77,8 @@ final readonly class DiscoveryGenerateCommand
             $count += $discoveryItems->count();
         }
 
-        $this->writeln(sprintf(
-            '<success>Done</success> %d items cached',
+        $this->success(sprintf(
+            'Cached <em>%d</em> items',
             $count,
         ));
     }

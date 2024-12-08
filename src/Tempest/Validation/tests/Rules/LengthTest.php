@@ -23,7 +23,7 @@ final class LengthTest extends TestCase
     #[DataProvider('provide_returns_the_proper_message_based_on_min_and_max_arguments_cases')]
     public function test_returns_the_proper_message_based_on_min_and_max_arguments(
         Length $rule,
-        string $expectedMessage
+        string $expectedMessage,
     ): void {
         $this->assertEquals($expectedMessage, $rule->message());
     }
@@ -89,7 +89,7 @@ final class LengthTest extends TestCase
             'Should return true when string is within minimum and maximum length requirement of 2-5' => [
                 new Length(
                     min: 2,
-                    max: 5
+                    max: 5,
                 ),
                 'aaaaa',
                 true,
@@ -97,7 +97,7 @@ final class LengthTest extends TestCase
             'Should return true when string is within minimum and maximum length requirement of 2-5 but shorter' => [
                 new Length(
                     min: 2,
-                    max: 5
+                    max: 5,
                 ),
                 'aaaa',
                 true,
@@ -105,7 +105,7 @@ final class LengthTest extends TestCase
             'Should return true when string meets minimum length requirement of 2 within 2-5 limit' => [
                 new Length(
                     min: 2,
-                    max: 5
+                    max: 5,
                 ),
                 'aa',
                 true,
@@ -113,7 +113,7 @@ final class LengthTest extends TestCase
             'Should return false when string does not meet minimum length requirement of 2 within 2-5 limit' => [
                 new Length(
                     min: 2,
-                    max: 5
+                    max: 5,
                 ),
                 'a',
                 false,
@@ -121,7 +121,7 @@ final class LengthTest extends TestCase
             'Should return false when string exceeds maximum length requirement of 5 within 2-5 limit' => [
                 new Length(
                     min: 2,
-                    max: 5
+                    max: 5,
                 ),
                 'aaaaaa',
                 false,

@@ -24,7 +24,7 @@ final class EventBusConfig
 
         $this->handlers[$event][$handlerKey] = new CallableEventHandler(
             event: $event,
-            handler: $handler
+            handler: $handler,
         );
 
         return $this;
@@ -37,7 +37,7 @@ final class EventBusConfig
 
         $this->handlers[$event][$handlerKey] = new CallableEventHandler(
             event: $event,
-            handler: $handler
+            handler: $handler,
         );
 
         return $this;

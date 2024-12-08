@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem;
 
-use const FILE_APPEND;
 use FilesystemIterator;
-use const LOCK_EX;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
@@ -16,6 +14,8 @@ use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
 use Tempest\Filesystem\Exceptions\UnableToReadFile;
 use Tempest\Filesystem\Exceptions\UnableToWriteFile;
+use const FILE_APPEND;
+use const LOCK_EX;
 
 final class LocalFilesystem implements Filesystem
 {
@@ -121,7 +121,7 @@ final class LocalFilesystem implements Filesystem
         // use helpers to delete the child items.
         $recursiveDirectoryIterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($directoryPath, FilesystemIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         foreach ($recursiveDirectoryIterator as $item) {

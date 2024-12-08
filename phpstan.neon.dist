@@ -1,12 +1,7 @@
 includes:
 	- phpstan-baseline.neon
-	- vendor/phpat/phpat/extension.neon
 	- vendor/spaze/phpstan-disallowed-calls/extension.neon
-services:
-	-
-		class: Tests\Tempest\Architecture\ArchitectureTestCase
-		tags:
-			- phpat.test
+
 parameters:
 	level: 5
 	tmpDir: .cache/phpstan
@@ -19,7 +14,7 @@ parameters:
 
 		-
 			message: '#.*#'
-			path: src/Tempest/Http/src/Exceptions/exception.php
+			path: src/Tempest/Router/src/Exceptions/exception.php
 		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
@@ -33,8 +28,6 @@ parameters:
 		    message: '#.*undefined property Dom*#'
 		-
 		    message: '#.*undefined method Dom*#'
-		-
-		    message: '#.* undefined static method Dom*#'
 
 	disallowedFunctionCalls:
 		-

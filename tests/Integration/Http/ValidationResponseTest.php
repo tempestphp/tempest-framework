@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Http\Session\Session;
-use function Tempest\uri;
+use Tempest\Router\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 
 /**
  * @internal

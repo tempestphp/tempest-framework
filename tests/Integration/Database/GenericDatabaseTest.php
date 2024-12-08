@@ -38,7 +38,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $database->withinTransaction(function (): never {
             (new Author(name: 'test'))->save();
 
-            throw new Exception("Dummy exception to force rollback");
+            throw new Exception('Dummy exception to force rollback');
         });
 
         $this->assertCount(0, Author::all());

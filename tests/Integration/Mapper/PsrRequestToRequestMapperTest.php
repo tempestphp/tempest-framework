@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use Laminas\Diactoros\UploadedFile;
-use Tempest\Http\GenericRequest;
-use Tempest\Http\Mappers\PsrRequestToRequestMapper;
-use Tempest\Http\Request;
-use Tempest\Http\Upload;
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use function Tempest\Support\arr;
+use Tempest\Router\GenericRequest;
+use Tempest\Router\Mappers\PsrRequestToRequestMapper;
+use Tempest\Router\Request;
+use Tempest\Router\Upload;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -129,12 +129,12 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
                 streamOrFile: $currentPath,
                 size: null,
                 errorStatus: UPLOAD_ERR_OK,
-            )]
+            )],
         );
 
         $request = $mapper->map(
             from: $psrRequest,
-            to: CreateBookRequest::class
+            to: CreateBookRequest::class,
         );
 
         $this->assertInstanceOf(CreateBookRequest::class, $request);

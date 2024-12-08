@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
+use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -39,30 +40,6 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
             ->assertContains('picked b');
     }
 
-    public function test_as_list(): void
-    {
-        $this->console
-            ->call(function (Console $console): void {
-                $answer = $console->ask('test', ['a', 'b'], asList: true);
-
-                $console->writeln("picked {$answer}");
-            })
-            ->submit(1)
-            ->assertContains('picked b');
-    }
-
-    public function test_as_list_with_default(): void
-    {
-        $this->console
-            ->call(function (Console $console): void {
-                $answer = $console->ask('test', ['a', 'b'], default: 1, asList: true);
-
-                $console->writeln("picked {$answer}");
-            })
-            ->input(Key::ENTER)
-            ->assertContains('picked b');
-    }
-
     public function test_with_default_option_without_prompting(): void
     {
         $this->console
@@ -72,6 +49,66 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
 
                 $console->writeln("picked {$answer}");
             })
+            ->assertContains('picked b');
+    }
+
+    public function test_assoc_submit_key(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', ['a' => 'A', 'b' => 'B']);
+
+                $console->writeln("picked {$answer}");
+            })
+            ->submit(1)
+            ->assertContains('picked b');
+    }
+
+    public function test_assoc_submit_value(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', ['a' => 'A', 'b' => 'B']);
+
+                $console->writeln("picked {$answer}");
+            })
+            ->submit('B')
+            ->assertContains('picked b');
+    }
+
+    public function test_enum_submit_name(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', options: TestStringEnum::class);
+
+                $console->writeln("picked {$answer}");
+            })
+            ->submit('B')
+            ->assertContains('picked b');
+    }
+
+    public function test_enum_submit_index(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', options: TestStringEnum::class);
+
+                $console->writeln("picked {$answer}");
+            })
+            ->submit(1)
+            ->assertContains('picked b');
+    }
+
+    public function test_enum_default_value(): void
+    {
+        $this->console
+            ->call(function (Console $console): void {
+                $answer = $console->ask('test', options: TestStringEnum::class, default: TestStringEnum::B);
+
+                $console->writeln("picked {$answer}");
+            })
+            ->submit()
             ->assertContains('picked b');
     }
 }

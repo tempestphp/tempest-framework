@@ -11,13 +11,13 @@ use Tempest\Auth\Install\UserMigration;
 use Tempest\Auth\Install\UserPermissionMigration;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Http\Session\Managers\FileSessionManager;
-use Tempest\Http\Session\SessionConfig;
-use Tempest\Http\Session\SessionManager;
-use function Tempest\uri;
+use Tempest\Router\Session\Managers\FileSessionManager;
+use Tempest\Router\Session\SessionConfig;
+use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Fixtures\Controllers\AdminController;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 
 /**
  * @internal
@@ -44,8 +44,8 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
             SessionManager::class,
             fn () => new FileSessionManager(
                 $this->container->get(Clock::class),
-                $this->container->get(SessionConfig::class)
-            )
+                $this->container->get(SessionConfig::class),
+            ),
         );
     }
 

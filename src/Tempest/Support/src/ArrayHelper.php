@@ -13,6 +13,7 @@ use Iterator;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
+use Tempest\Support\Conditions\HasConditions;
 use function Tempest\map;
 
 /**
@@ -24,6 +25,7 @@ use function Tempest\map;
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
+    use HasConditions;
     use IsIterable;
 
     /** @var array<TKey, TValue> */
@@ -722,6 +724,26 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Asserts whether all items in the instance pass the given `$callback`.
+     *
+     * @param Closure(TValue, TKey): bool $callback
+     *
+     * @return bool If the collection is empty, returns `true`.
+     */
+    public function every(?Closure $callback = null): bool
+    {
+        $callback ??= static fn (mixed $value) => ! is_null($value);
+
+        foreach ($this->array as $key => $value) {
+            if (! $callback($value, $key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Associates the given `$value` to the given `$key` on the instance.
      */
     public function set(string $key, mixed $value): self
@@ -989,5 +1011,25 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         uksort($array, $callback);
 
         return new self($array);
+    }
+
+    /**
+     * Extracts a part of the instance.
+     *
+     * ### Example
+     * ```php
+     * arr([1, 2, 3, 4, 5])->slice(2); // [3, 4, 5]
+     * ```
+     */
+    public function slice(int $offset, ?int $length = null): self
+    {
+        $length ??= $this->count() - $offset;
+
+        return new self(array_slice($this->array, $offset, $length));
+    }
+
+    public static function wrap(mixed $input = []): array
+    {
+        return (new self($input))->toArray();
     }
 }

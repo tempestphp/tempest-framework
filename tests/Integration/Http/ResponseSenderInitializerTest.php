@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Http\GenericResponseSender;
-use Tempest\Http\ResponseSenderInitializer;
+use Tempest\Router\GenericResponseSender;
+use Tempest\Router\ResponseSenderInitializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,7 +19,7 @@ final class ResponseSenderInitializerTest extends FrameworkIntegrationTestCase
 
         $this->assertInstanceOf(
             GenericResponseSender::class,
-            $initializer->initialize($this->container)
+            $initializer->initialize($this->container),
         );
     }
 }

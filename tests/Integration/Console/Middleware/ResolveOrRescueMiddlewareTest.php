@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Middleware;
 
 use PHPUnit\Framework\Attributes\Test;
-use function Tempest\Support\str;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Support\str;
 
 /**
  * @internal
@@ -23,6 +23,10 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('bascovery:status')
             ->assertSee('Did you mean discovery:status?');
+
+        $this->console
+            ->call('c:cl')
+            ->assertSee('Did you mean cache:clear?');
     }
 
     #[Test]
@@ -30,8 +34,8 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
     {
         $formatOutput = static fn (string $buffer) => str($buffer)
             ->trim()
-            ->replace(['[',']'], '')
-            ->explode('/')
+            ->explode("\n")
+            ->map(fn (string $line) => str($line)->afterLast(' ')->trim()->toString())
             ->toArray();
 
         $output = $this->console

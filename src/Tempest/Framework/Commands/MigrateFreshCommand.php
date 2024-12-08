@@ -28,7 +28,7 @@ final class MigrateFreshCommand
 
     #[ConsoleCommand(
         name: 'migrate:fresh',
-        description: 'Drop all tables and rerun migrations from scratch',
+        description: 'Drops all tables and rerun migrations from scratch',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): ExitCode
@@ -38,7 +38,7 @@ final class MigrateFreshCommand
         $this->migrationManager->dropAll();
 
         $this->console
-            ->success(sprintf("Dropped %s tables", $this->count))
+            ->success(sprintf('Dropped %s tables', $this->count))
             ->writeln();
 
         $this->console->info('Migrate up…');

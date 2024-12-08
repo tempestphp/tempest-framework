@@ -50,7 +50,7 @@ final readonly class InteractiveCommand
                 'a', 'b', 'c',
             ],
             default: 1,
-            asList: true,
+            multiple: true,
         );
 
         $result = json_encode($result);
@@ -66,7 +66,7 @@ final readonly class InteractiveCommand
             [
                 'a', 'b', 'c',
             ],
-            asList: true,
+            multiple: true,
         );
 
         $result = json_encode($result);
@@ -128,7 +128,7 @@ final readonly class InteractiveCommand
                     $data,
                     fn (string $name) => str_contains(strtolower($name), strtolower($query)),
                 );
-            }
+            },
         );
 
         $this->console->success("Hello {$result}");

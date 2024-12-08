@@ -13,7 +13,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -39,6 +39,10 @@ final class Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
     ): self {
+        if (! defined('TEMPEST_START')) {
+            define('TEMPEST_START', value: hrtime(true));
+        }
+
         return (new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
@@ -109,7 +113,7 @@ final class Kernel
             $message = $error['message'] ?? '';
 
             if (str_contains($message, 'Cannot declare class')) {
-                echo "Does this class have the right namespace?" . PHP_EOL;
+                echo 'Does this class have the right namespace?' . PHP_EOL;
             }
         });
 
@@ -118,21 +122,21 @@ final class Kernel
 
     public function loadDiscoveryLocations(): self
     {
-        ($this->container->get(LoadDiscoveryLocations::class))();
+        $this->container->invoke(LoadDiscoveryLocations::class);
 
         return $this;
     }
 
     public function loadDiscovery(): self
     {
-        ($this->container->get(LoadDiscoveryClasses::class))();
+        $this->container->invoke(LoadDiscoveryClasses::class);
 
         return $this;
     }
 
     public function loadConfig(): self
     {
-        $this->container->get(LoadConfig::class)();
+        $this->container->invoke(LoadConfig::class);
 
         return $this;
     }
@@ -160,7 +164,7 @@ final class Kernel
 
     public function finishDeferredTasks(): self
     {
-        ($this->container->get(FinishDeferredTasks::class))();
+        $this->container->invoke(FinishDeferredTasks::class);
 
         return $this;
     }

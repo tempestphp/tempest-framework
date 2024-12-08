@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
-use Tempest\Http\Get;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Created;
-use Tempest\Http\Responses\NotFound;
-use Tempest\Http\Responses\Ok;
-use Tempest\Http\Responses\Redirect;
-use Tempest\Http\Responses\ServerError;
-use function Tempest\view;
+use Tempest\Router\Connect;
+use Tempest\Router\Delete;
+use Tempest\Router\Get;
+use Tempest\Router\Head;
+use Tempest\Router\Options;
+use Tempest\Router\Patch;
+use Tempest\Router\Post;
+use Tempest\Router\Put;
+use Tempest\Router\Response;
+use Tempest\Router\Responses\Created;
+use Tempest\Router\Responses\NotFound;
+use Tempest\Router\Responses\Ok;
+use Tempest\Router\Responses\Redirect;
+use Tempest\Router\Responses\ServerError;
+use Tempest\Router\Trace;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
+use function Tempest\view;
 
 final readonly class TestController
 {
@@ -35,7 +43,15 @@ final readonly class TestController
         return new Ok($id);
     }
 
+    #[Connect(uri: '/test')]
+    #[Delete(uri: '/test')]
     #[Get(uri: '/test')]
+    #[Head(uri: '/test')]
+    #[Options(uri: '/test')]
+    #[Patch(uri: '/test')]
+    #[Post(uri: '/test')]
+    #[Put(uri: '/test')]
+    #[Trace(uri: '/test')]
     public function __invoke(): Response
     {
         return new Ok('test');

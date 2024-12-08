@@ -26,24 +26,26 @@ final class StaticSearchComponentTest extends FrameworkIntegrationTestCase
             ->submit('a')
             ->assertContains(
                 <<<TXT
-- [0] Search again
-- [1] Paul
-- [2] Aidan
-- [3] Roman
-TXT,
-                true
+                    - [0] Cancel
+                    - [1] Search again
+                    - [2] Paul
+                    - [3] Aidan
+                    - [4] Roman
+                    TXT,
+                true,
             )
-            ->submit(0)
+            ->submit(1)
             ->submit('b')
             ->assertContains(
                 <<<TXT
-- [0] Search again
-- [1] Brent
-TXT,
-                true
+                    - [0] Cancel
+                    - [1] Search again
+                    - [2] Brent
+                    TXT,
+                true,
             )
-            ->submit(1)
-            ->assertContains("Hello Brent");
+            ->submit(2)
+            ->assertContains('Hello Brent');
     }
 
     public function test_no_answer(): void
@@ -60,12 +62,12 @@ TXT,
             ->submit()
             ->assertContains(
                 text: <<<TXT
-                - [0] Search again
-                - [1] Cancel
-                TXT,
-                ignoreLineEndings: true
+                    - [0] Cancel
+                    - [1] Search again
+                    TXT,
+                ignoreLineEndings: true,
             )
-            ->submit(1)
+            ->submit(0)
             ->assertContains('<no answer>');
     }
 
@@ -76,7 +78,7 @@ TXT,
                 $result = $console->search(
                     label: 'Search',
                     search: $this->search(...),
-                    default: 'foo'
+                    default: 'foo',
                 );
 
                 $console->write($result);
@@ -84,12 +86,12 @@ TXT,
             ->submit()
             ->assertContains(
                 text: <<<TXT
-                - [0] Search again
-                - [1] Cancel
-                TXT,
-                ignoreLineEndings: true
+                    - [0] Cancel
+                    - [1] Search again
+                    TXT,
+                ignoreLineEndings: true,
             )
-            ->submit(1)
+            ->submit(0)
             ->assertContains('foo');
     }
 
@@ -116,7 +118,7 @@ TXT,
                 $result = $console->search(
                     label: 'Search',
                     search: $this->search(...),
-                    default: 'foo'
+                    default: 'foo',
                 );
 
                 $console->write($result);

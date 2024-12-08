@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Conditions;
 
+use Closure;
+
 trait HasConditions
 {
     /**
+     * Applies the given `$callback` if the `$condition` is true.
      *
-     * @return $this
+     * @param mixed|Closure(static): bool $condition
+     * @param Closure(static): static $callback
      */
-    public function when(bool $condition, callable $callback): self
+    public function when(mixed $condition, Closure $callback): static
     {
+        if ($condition instanceof Closure) {
+            $condition = $condition($this);
+        }
+
         if ($condition) {
             $callback($this);
         }
@@ -19,8 +27,18 @@ trait HasConditions
         return $this;
     }
 
-    public function unless(bool $condition, callable $callback): self
+    /**
+     * Applies the given `$callback` if the `$condition` is false.
+     *
+     * @param mixed|Closure(static): bool $condition
+     * @param Closure(static): static $callback
+     */
+    public function unless(mixed $condition, Closure $callback): static
     {
+        if ($condition instanceof Closure) {
+            $condition = $condition($this);
+        }
+
         return $this->when(! $condition, $callback);
     }
 }

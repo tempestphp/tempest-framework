@@ -18,8 +18,8 @@ use Tempest\Database\DatabaseConnection;
  */
 final class DatabaseDriverTest extends TestCase
 {
-    #[Test]
     #[DataProvider('provide_database_drivers')]
+    #[Test]
     public function driver_has_the_correct_dsn(DatabaseConnection $driver, string $dsn, ?string $username, ?string $password): void
     {
         $this->assertSame($dsn, $driver->getDsn());
@@ -42,7 +42,7 @@ final class DatabaseDriverTest extends TestCase
                 port: '3307',
                 username: 'user',
                 password: 'secret',
-                database: 'tempest'
+                database: 'tempest',
             ),
             'mysql:host=localhost:3307;dbname=tempest',
             'user',
@@ -55,7 +55,7 @@ final class DatabaseDriverTest extends TestCase
                 port: '5432',
                 username: 'postgres',
                 password: 'secret',
-                database: 'tempest'
+                database: 'tempest',
             ),
             'pgsql:host=localhost;port=5432;dbname=tempest;user=postgres;password=secret',
             'postgres',

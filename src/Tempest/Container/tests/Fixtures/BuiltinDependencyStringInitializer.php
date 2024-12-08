@@ -10,9 +10,9 @@ use Tempest\Container\Singleton;
 
 final class BuiltinDependencyStringInitializer implements Initializer
 {
-    #[Singleton(tag:"builtin-dependency-string")]
+    #[Singleton(tag: 'builtin-dependency-string')]
     public function initialize(Container $container): string
     {
-        return "Hallo dependency!";
+        return 'Hallo dependency!';
     }
 }

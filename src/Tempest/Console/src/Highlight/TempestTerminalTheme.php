@@ -26,14 +26,10 @@ final readonly class TempestTerminalTheme implements TerminalTheme
             TokenTypeEnum::TYPE => $this->style(TerminalStyle::FG_DARK_RED),
             TokenTypeEnum::GENERIC => $this->style(TerminalStyle::FG_DARK_CYAN),
             TokenTypeEnum::VALUE => $this->style(TerminalStyle::FG_BLACK),
-            TokenTypeEnum::COMMENT, ConsoleTokenType::COMMENT => $this->style(TerminalStyle::FG_GRAY),
+            TokenTypeEnum::COMMENT => $this->style(TerminalStyle::FG_GRAY),
             ConsoleTokenType::H1 => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_DARK_BLUE) . ' ',
             ConsoleTokenType::H2 => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE) . ' ',
-            ConsoleTokenType::HIGHLIGHT => $this->style(TerminalStyle::BOLD, TerminalStyle::BG_BLUE),
-            ConsoleTokenType::ERROR => $this->style(TerminalStyle::BOLD, TerminalStyle::FG_WHITE, TerminalStyle::BG_RED) . ' ',
-            ConsoleTokenType::QUESTION => $this->style(TerminalStyle::BG_BLUE) . ' ',
-            ConsoleTokenType::SUCCESS => $this->style(TerminalStyle::BG_DARK_GREEN) . ' ',
-            ConsoleTokenType::EM => $this->style(TerminalStyle::FG_BLUE),
+            ConsoleTokenType::EM => $this->style(TerminalStyle::BOLD, TerminalStyle::UNDERLINE),
             ConsoleTokenType::STRONG => $this->style(TerminalStyle::BOLD),
             ConsoleTokenType::UNDERLINE => $this->style(TerminalStyle::UNDERLINE),
             default => TerminalStyle::RESET(),
@@ -47,13 +43,11 @@ final readonly class TempestTerminalTheme implements TerminalTheme
         }
 
         return match ($tokenType) {
-            ConsoleTokenType::ERROR,
-            ConsoleTokenType::QUESTION,
             ConsoleTokenType::H2,
-            ConsoleTokenType::H1,
-            ConsoleTokenType::SUCCESS => ' ',
-            default => '',
-        } . TerminalStyle::RESET();
+            ConsoleTokenType::H1 => ' ' . TerminalStyle::RESET(),
+            ConsoleTokenType::EM => $this->style(TerminalStyle::RESET_INTENSITY, TerminalStyle::RESET_UNDERLINE),
+            default => TerminalStyle::RESET(),
+        };
     }
 
     private function style(TerminalStyle ...$styles): string

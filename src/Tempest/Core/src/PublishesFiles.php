@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Closure;
+use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
 use Tempest\Generation\ClassManipulator;
@@ -13,12 +14,12 @@ use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
-use function Tempest\path;
 use Tempest\Support\NamespaceHelper;
-use function Tempest\Support\str;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
+use function Tempest\path;
+use function Tempest\Support\str;
 
 /**
  * Provides a bunch of methods to publish and generate files and work with common user input.
@@ -50,7 +51,7 @@ trait PublishesFiles
     ): void {
         try {
             if (! $this->console->confirm(
-                question: sprintf('Do you want to create "%s"', $destination),
+                question: sprintf('Do you want to create <em>%s</em>?', $destination),
                 default: true,
             )) {
                 throw new FileGenerationAbortedException('Skipped.');
@@ -95,10 +96,14 @@ trait PublishesFiles
                 $callback($source, $destination);
             }
 
-            $this->console->success(sprintf('File successfully created at "%s".', $destination));
+            $this->console->success(sprintf('File successfully created at <em>%s</em>".', $destination));
         } catch (FileGenerationAbortedException $exception) {
             $this->console->info($exception->getMessage());
         } catch (Throwable $throwable) {
+            if ($throwable instanceof ConsoleException) {
+                throw $throwable;
+            }
+
             throw new FileGenerationFailedException(
                 message: 'The file could not be published.',
                 previous: $throwable,
@@ -180,7 +185,7 @@ trait PublishesFiles
         }
 
         return $this->console->confirm(
-            question: sprintf('The file "%s" already exists. Do you want to override it?', $targetPath),
+            question: sprintf('The file <em>%s</em> already exists. Do you want to override it?', $targetPath),
         );
     }
 }

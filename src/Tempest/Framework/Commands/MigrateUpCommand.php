@@ -26,7 +26,7 @@ final class MigrateUpCommand
 
     #[ConsoleCommand(
         name: 'migrate:up',
-        description: 'Run all new migrations',
+        description: 'Runs all new migrations',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(): void
@@ -34,7 +34,7 @@ final class MigrateUpCommand
         $this->migrationManager->up();
 
         $this->console
-            ->success(sprintf("Migrated %s migrations", $this->count));
+            ->success(sprintf('Migrated %s migrations', $this->count));
     }
 
     #[EventHandler]
