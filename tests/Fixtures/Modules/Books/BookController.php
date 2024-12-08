@@ -17,12 +17,6 @@ use function Tempest\uri;
 
 final readonly class BookController
 {
-    #[Get('/book/create')]
-    public function index(): View
-    {
-        return view(__DIR__ . '/create.book.view.php');
-    }
-
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {

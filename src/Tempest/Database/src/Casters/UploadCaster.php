@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Casters;
 
-use function filesize;
 use Laminas\Diactoros\UploadedFile;
-use Tempest\Router\Upload;
 use Tempest\Mapper\Caster;
+use Tempest\Router\Upload;
+use function filesize;
 use function Tempest\root_path;
 use const UPLOAD_ERR_OK;
 
@@ -28,8 +28,8 @@ final readonly class UploadCaster implements Caster
             new UploadedFile(
                 $movePath,
                 filesize($movePath),
-                UPLOAD_ERR_OK
-            )
+                UPLOAD_ERR_OK,
+            ),
         );
 
         $uploadedFile->moveTo(root_path($movePath));
