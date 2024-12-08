@@ -10,7 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-class LogConfigTest extends FrameworkIntegrationTestCase
+final class LogConfigTest extends FrameworkIntegrationTestCase
 {
     public function test_log_path_by_env(): void
     {
