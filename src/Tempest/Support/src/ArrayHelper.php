@@ -259,6 +259,38 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     }
 
     /**
+     * Prepends the specified values to the instance.
+     *
+     * @param TValue $values
+     */
+    public function prepend(mixed ...$values): self
+    {
+        $array = $this->array;
+
+        foreach (array_reverse($values) as $value) {
+            $array = [$value, ...$array];
+        }
+
+        return new self($array);
+    }
+
+    /**
+     * Appends the specified values to the instance.
+     *
+     * @param TValue $values
+     */
+    public function append(mixed ...$values): self
+    {
+        $array = $this->array;
+
+        foreach ($values as $value) {
+            $array = [...$array, $value];
+        }
+
+        return new self($array);
+    }
+
+    /**
      * @alias of `add`.
      */
     public function push(mixed $value): self

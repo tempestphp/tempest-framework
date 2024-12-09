@@ -1666,4 +1666,44 @@ final class ArrayHelperTest extends TestCase
         $this->assertTrue(arr([0, 1, true, false, ''])->every());
         $this->assertFalse(arr([0, 1, true, false, '', null])->every());
     }
+
+    public function test_append(): void
+    {
+        $collection = arr(['foo', 'bar']);
+
+        $this->assertSame(
+            actual: $collection->append('foo')->toArray(),
+            expected: ['foo', 'bar', 'foo'],
+        );
+
+        $this->assertSame(
+            actual: $collection->append(1, 'b')->toArray(),
+            expected: ['foo', 'bar', 1, 'b'],
+        );
+
+        $this->assertSame(
+            actual: $collection->append(['a' => 'b'])->toArray(),
+            expected: ['foo', 'bar', ['a' => 'b']],
+        );
+    }
+
+    public function test_prepend(): void
+    {
+        $collection = arr(['foo', 'bar']);
+
+        $this->assertSame(
+            actual: $collection->prepend('foo')->toArray(),
+            expected: ['foo', 'foo', 'bar'],
+        );
+
+        $this->assertSame(
+            actual: $collection->prepend(1, 'b')->toArray(),
+            expected: [1, 'b', 'foo', 'bar'],
+        );
+
+        $this->assertSame(
+            actual: $collection->prepend(['a' => 'b'])->toArray(),
+            expected: [['a' => 'b'], 'foo', 'bar'],
+        );
+    }
 }
