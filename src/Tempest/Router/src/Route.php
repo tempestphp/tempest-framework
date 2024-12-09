@@ -8,10 +8,10 @@ use Tempest\Http\Method;
 
 interface Route
 {
-    public function method(): Method;
+    public Method $method { get; }
 
-    public function uri(): string;
+    public string $uri { get; }
 
-    /** @return class-string<HttpMiddleware>[] */
-    public function middleware(): array;
+    /** @var HttpMiddleware[]  */
+    public array $middleware { get; }
 }

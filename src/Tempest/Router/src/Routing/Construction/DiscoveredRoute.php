@@ -19,10 +19,10 @@ final class DiscoveredRoute implements Route
     public static function fromRoute(Route $route, MethodReflector $methodReflector): self
     {
         return new self(
-            $route->uri(),
-            $route->method(),
-            self::getRouteParams($route->uri()),
-            $route->middleware(),
+            $route->uri,
+            $route->method,
+            self::getRouteParams($route->uri),
+            $route->middleware,
             $methodReflector,
         );
     }
@@ -62,20 +62,5 @@ final class DiscoveredRoute implements Route
         return array_values(
             array_filter($parts, static fn (string $part) => $part !== ''),
         );
-    }
-
-    public function method(): Method
-    {
-        return $this->method;
-    }
-
-    public function uri(): string
-    {
-        return $this->uri;
-    }
-
-    public function middleware(): array
-    {
-        return $this->middleware;
     }
 }

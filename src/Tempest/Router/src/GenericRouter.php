@@ -119,7 +119,7 @@ final class GenericRouter implements Router
             /** @var Route|null $routeAttribute */
             $routeAttribute = $controllerMethod->getAttribute(Route::class);
 
-            $uri = $routeAttribute->uri();
+            $uri = $routeAttribute->uri;
         } catch (ReflectionException) {
             if (is_array($action)) {
                 throw new InvalidRouteException($action[0], $action[1]);

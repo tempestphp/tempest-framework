@@ -24,11 +24,7 @@ final readonly class DiscoveryGenerateCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'discovery:generate',
-        description: 'Compile and cache all discovery according to the configured discovery caching strategy',
-        aliases: ['dg'],
-    )]
+    #[ConsoleCommand(name: 'discovery:generate', description: 'Compile and cache all discovery according to the configured discovery caching strategy')]
     public function __invoke(): void
     {
         $strategy = $this->resolveDiscoveryCacheStrategy();

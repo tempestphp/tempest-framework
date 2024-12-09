@@ -22,7 +22,7 @@ final readonly class TailServerLogCommand
     ) {
     }
 
-    #[ConsoleCommand('tail:server', description: 'Tails the server log', aliases: ['ts'])]
+    #[ConsoleCommand('tail:server', description: 'Tails the server log')]
     public function __invoke(): void
     {
         $serverLogPath = $this->logConfig->serverLogPath;

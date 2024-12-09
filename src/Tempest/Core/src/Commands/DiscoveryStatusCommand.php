@@ -18,11 +18,7 @@ final readonly class DiscoveryStatusCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'discovery:status',
-        description: 'Lists all discovery locations and discovery classes',
-        aliases: ['ds'],
-    )]
+    #[ConsoleCommand(name: 'discovery:status', description: 'Lists all discovery locations and discovery classes')]
     public function __invoke(): void
     {
         $this->console->writeln('<h2>Registered discovery classes</h2>');

@@ -16,11 +16,7 @@ final readonly class DiscoveryClearCommand
     ) {
     }
 
-    #[ConsoleCommand(
-        name: 'discovery:clear',
-        description: 'Clears all cached discovery files',
-        aliases: ['dc'],
-    )]
+    #[ConsoleCommand(name: 'discovery:clear', description: 'Clears all cached discovery files')]
     public function __invoke(): void
     {
         $this->discoveryCache->clear();

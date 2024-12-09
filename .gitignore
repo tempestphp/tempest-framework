@@ -13,3 +13,4 @@ debug.log
 tempest.log
 public/static
 tests/Unit/Log
+log/

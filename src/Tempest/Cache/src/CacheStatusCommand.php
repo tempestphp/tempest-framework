@@ -20,7 +20,7 @@ final readonly class CacheStatusCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled', aliases: ['cs'])]
+    #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
     public function __invoke(): void
     {
         $caches = $this->cacheConfig->caches;

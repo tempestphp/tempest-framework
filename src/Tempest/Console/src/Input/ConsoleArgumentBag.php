@@ -36,22 +36,7 @@ final class ConsoleArgumentBag
 
         $this->path = [$cli, $commandName];
 
-        foreach ($arguments as $argument) {
-            if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
-                $flags = str_split($argument);
-                unset($flags[0]);
-
-                foreach ($flags as $flag) {
-                    $arguments[] = "-{$flag}";
-                }
-            }
-        }
-
-        foreach (array_values($arguments) as $position => $argument) {
-            $this->add(
-                ConsoleInputArgument::fromString($argument, $position),
-            );
-        }
+        $this->addMany($arguments);
     }
 
     /**
@@ -155,6 +140,30 @@ final class ConsoleArgumentBag
     public function add(ConsoleInputArgument $argument): self
     {
         $this->arguments[] = $argument;
+
+        return $this;
+    }
+
+    public function addMany(array $arguments): self
+    {
+        foreach ($arguments as $argument) {
+            if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
+                $flags = str_split($argument);
+                unset($flags[0]);
+
+                foreach ($flags as $flag) {
+                    $arguments[] = "-{$flag}";
+                }
+            }
+        }
+
+        $position = count($this->arguments);
+
+        foreach (array_values($arguments) as $index => $argument) {
+            $this->add(
+                ConsoleInputArgument::fromString($argument, $position + $index),
+            );
+        }
 
         return $this;
     }
