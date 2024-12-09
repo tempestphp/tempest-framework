@@ -37,6 +37,8 @@ abstract class IntegrationTest extends TestCase
 
     protected InstallerTester $installer;
 
+    protected ViteTester $vite;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,6 +55,7 @@ abstract class IntegrationTest extends TestCase
         $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
         $this->installer = $this->container->get(InstallerTester::class);
+        $this->vite = $this->container->get(ViteTester::class);
 
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
