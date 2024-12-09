@@ -261,7 +261,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Prepends the specified values to the instance.
      *
-     * @param TValue $value
+     * @param TValue $values
      */
     public function prepend(mixed ...$values): self
     {
@@ -277,7 +277,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     /**
      * Appends the specified values to the instance.
      *
-     * @param TValue $value
+     * @param TValue $values
      */
     public function append(mixed ...$values): self
     {
