@@ -12,7 +12,7 @@ use function Tempest\Support\str;
 
 final class DevelopmentTagsResolver implements TagsResolver
 {
-    public const CLIENT_SCRIPT_PATH = '@vite/client';
+    public const string CLIENT_SCRIPT_PATH = '@vite/client';
 
     public function __construct(
         private readonly BridgeFile $bridgeFile,

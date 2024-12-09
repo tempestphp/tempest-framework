@@ -34,7 +34,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_in_development_with_custom_entrypoints(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
@@ -52,7 +52,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_in_development_with_configured_entrypoints(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $this->container->config(new ViteConfig(
                     build: new BuildConfig(
                         entrypoints: ['src/foo.ts', 'src/bar.css'],
@@ -76,7 +76,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_with_manifest_with_specified_entrypoints(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
@@ -96,7 +96,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
         $this->expectException(EntrypointNotFoundException::class);
 
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $vite->getTags(['src/file-that-does-not-exist.ts']);
             },
@@ -109,7 +109,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_with_manifest_with_css(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
@@ -127,7 +127,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_with_manifest_and_preloading(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['resources/js/app.js']);
 
@@ -145,7 +145,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     public function test_get_tags_with_entrypoints_and_global_entrypoints(): void
     {
         $this->vite->callWithFiles(
-            callback: function () {
+            callback: function (): void {
                 $this->container->config(new ViteConfig(
                     testing: true,
                     build: new BuildConfig(
@@ -170,7 +170,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     /**
      * @return ($array is true ? array : string)
      */
-    protected function fixture(string $name, bool $array = true): array|string
+    private function fixture(string $name, bool $array = true): array|string
     {
         $content = file_get_contents(__DIR__ . "/Fixtures/{$name}");
 

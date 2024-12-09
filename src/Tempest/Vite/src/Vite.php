@@ -18,9 +18,10 @@ use function Tempest\Support\arr;
 
 final class Vite
 {
-    public const CLIENT_SCRIPT_PATH = '@vite/client';
+    public const string CLIENT_SCRIPT_PATH = '@vite/client';
 
     private static ?BridgeFile $bridgeFile = null;
+
     private static ?Manifest $manifest = null;
 
     public function __construct(
@@ -76,7 +77,7 @@ final class Vite
 
     private function getManifest(): Manifest
     {
-        if (static::$manifest) {
+        if (static::$manifest !== null) {
             return static::$manifest;
         }
 
@@ -111,7 +112,7 @@ final class Vite
 
     private function getBridgeFile(): ?BridgeFile
     {
-        if (static::$bridgeFile) {
+        if (static::$bridgeFile !== null) {
             return static::$bridgeFile;
         }
 

@@ -83,12 +83,10 @@ final class ManifestTagsResolver implements TagsResolver
                 }
             }
 
-            $styleChunks = array_merge(
+            return array_merge(
                 $styleChunks,
                 array_map(fn (string $path) => ['file' => $path], $chunk->css),
             );
-
-            return $styleChunks;
         };
 
         $styleChunks = $getStyleChunks($chunk);

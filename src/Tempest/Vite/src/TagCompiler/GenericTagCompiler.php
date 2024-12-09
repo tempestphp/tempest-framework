@@ -43,7 +43,7 @@ final class GenericTagCompiler implements TagCompiler
         ]);
     }
 
-    protected function makeLegacyScriptTag(string $url, ?Chunk $chunk = null): string
+    private function makeLegacyScriptTag(string $url, ?Chunk $chunk = null): string
     {
         if ($chunk?->src && str_contains($chunk->src, 'vite/legacy-polyfills')) {
             $safariFix = '<script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()}),!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>';
