@@ -13,7 +13,9 @@ use Tempest\Vite\ViteConfig;
 final class ViteTester
 {
     private bool $shouldUseManifest = false;
+
     private bool $shouldCacheManifest = false;
+
     private ?string $root = null;
 
     public function __construct(
