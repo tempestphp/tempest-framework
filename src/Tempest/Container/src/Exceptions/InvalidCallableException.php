@@ -7,7 +7,7 @@ namespace Tempest\Container\Exceptions;
 use Exception;
 use Tempest\Container\Dependency;
 
-final class InvalidCallableException extends Exception
+final class InvalidCallableException extends Exception implements ContainerException
 {
     public function __construct(Dependency $dependency)
     {

@@ -8,7 +8,7 @@ use Exception;
 use Tempest\Container\Dependency;
 use Tempest\Container\DependencyChain;
 
-final class CannotResolveTaggedDependency extends Exception
+final class CannotResolveTaggedDependency extends Exception implements ContainerException
 {
     public function __construct(DependencyChain $chain, Dependency $brokenDependency, string $tag)
     {
