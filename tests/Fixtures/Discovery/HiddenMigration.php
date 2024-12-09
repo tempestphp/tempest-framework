@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Discovery;
 
 use Tempest\Core\DoNotDiscover;
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 
 #[DoNotDiscover]
-final class HiddenMigration implements Migration
+final class HiddenMigration implements DatabaseMigration
 {
     public function getName(): string
     {

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Auth\Install;
 
 use Tempest\Core\DoNotDiscover;
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
 #[DoNotDiscover]
-final readonly class UserMigration implements Migration
+final readonly class UserMigration implements DatabaseMigration
 {
     public function getName(): string
     {

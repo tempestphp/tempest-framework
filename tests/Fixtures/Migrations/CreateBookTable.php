@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Migrations;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 
-final readonly class CreateBookTable implements Migration
+final readonly class CreateBookTable implements DatabaseMigration
 {
     public function getName(): string
     {

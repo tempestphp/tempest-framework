@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Migrations;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 
-final readonly class CreateHasManyParentTable implements Migration
+final readonly class CreateHasManyParentTable implements DatabaseMigration
 {
     public function getName(): string
     {

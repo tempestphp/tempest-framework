@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-interface Migration
+interface DatabaseMigration
 {
     public function getName(): string;
 

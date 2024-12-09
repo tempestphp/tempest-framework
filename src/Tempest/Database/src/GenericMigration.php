@@ -6,7 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\QueryStatements\RawStatement;
 
-final readonly class GenericMigration implements Migration
+final readonly class GenericMigration implements DatabaseMigration
 {
     public function __construct(
         private string $fileName,

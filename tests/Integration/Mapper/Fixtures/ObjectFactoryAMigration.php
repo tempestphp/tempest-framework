@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
 
-final class ObjectFactoryAMigration implements Migration
+final class ObjectFactoryAMigration implements DatabaseMigration
 {
     public function getName(): string
     {

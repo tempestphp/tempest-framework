@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final class CreateUserMigration implements Migration
+final class CreateUserMigration implements DatabaseMigration
 {
     public function getName(): string
     {

@@ -20,7 +20,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(Migration::class)) {
+        if (! $class->implements(DatabaseMigration::class)) {
             return;
         }
 
