@@ -6,8 +6,12 @@ namespace Tempest\Router;
 
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use Stringable;
+use Tempest\Database\Casters\UploadCaster;
+use Tempest\Mapper\CastWith;
 
-final readonly class Upload
+#[CastWith(UploadCaster::class)]
+final readonly class Upload implements Stringable
 {
     public function __construct(
         private UploadedFileInterface $uploadedFile,
@@ -42,5 +46,10 @@ final readonly class Upload
     public function getClientMediaType(): ?string
     {
         return $this->uploadedFile->getClientMediaType();
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->getClientFilename();
     }
 }
