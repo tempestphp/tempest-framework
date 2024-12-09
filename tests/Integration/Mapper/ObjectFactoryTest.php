@@ -17,7 +17,7 @@ use function Tempest\map;
 /**
  * @internal
  */
-final class ObjectFactoryTestCase extends FrameworkIntegrationTestCase
+final class ObjectFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_single_object(): void
     {

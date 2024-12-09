@@ -17,6 +17,7 @@ trait OpensInEditor
 {
     private function supportsOpeningInEditor(): bool
     {
+        // @phpstan-ignore function.alreadyNarrowedType
         return is_subclass_of(static::class, CanOpenInEditor::class) && (bool) $this->getEditorCommand();
     }
 

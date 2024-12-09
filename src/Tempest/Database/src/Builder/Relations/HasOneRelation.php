@@ -92,7 +92,7 @@ final readonly class HasOneRelation implements Relation
         $inverseProperty = $relatedClass->getProperty($inversePropertyName);
         $expectedType = $currentModelClass->getType();
 
-        if ($inverseProperty->getType() === null || ! $inverseProperty->getType()->matches($expectedType->getName())) {
+        if (! $inverseProperty->getType()->matches($expectedType->getName())) {
             throw InvalidRelation::inversePropertyInvalidType(
                 $currentModelClass->getName(),
                 $property->getName(),

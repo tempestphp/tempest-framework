@@ -5,13 +5,16 @@ includes:
 parameters:
 	level: 5
 	tmpDir: .cache/phpstan
+	tips:
+	    treatPhpDocTypesAsCertain: false
 	excludePaths:
 	    - tests/Integration/View/blade/cache/**.php
 	paths:
 		- src
 		- tests
 	ignoreErrors:
-
+		-
+			identifier: argument.named
 		-
 			message: '#.*#'
 			path: src/Tempest/Router/src/Exceptions/exception.php

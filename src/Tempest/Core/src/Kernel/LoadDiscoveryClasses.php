@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Kernel;
 
-use Error;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -130,7 +129,7 @@ final class LoadDiscoveryClasses
                     if ($location->isVendor()) {
                         try {
                             $input = new ClassReflector($className);
-                        } catch (Throwable|Error) {
+                        } catch (Throwable) {
                         }
                     } elseif (class_exists($className)) {
                         $input = new ClassReflector($className);

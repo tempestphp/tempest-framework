@@ -97,7 +97,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className, ?string $tag = null, mixed ...$params): object
+    public function get(string $className, ?string $tag = null, mixed ...$params): null|object
     {
         $this->resolveChain();
 
@@ -213,7 +213,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, ?string $tag = null, mixed ...$params): object
+    private function resolve(string $className, ?string $tag = null, mixed ...$params): null|object
     {
         $class = new ClassReflector($className);
 

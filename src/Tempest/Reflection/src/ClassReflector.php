@@ -10,7 +10,7 @@ use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
 
 /**
- * @template TClassName
+ * @template TClassName of object
  */
 final readonly class ClassReflector implements Reflector
 {
@@ -19,14 +19,13 @@ final readonly class ClassReflector implements Reflector
     private PHPReflectionClass $reflectionClass;
 
     /**
-     * @param class-string<TClassName>|object<TClassName>|PHPReflectionClass<TClassName> $reflectionClass
-     * @phpstan-ignore-next-line
+     * @param class-string<TClassName>|TClassName|PHPReflectionClass<TClassName> $reflectionClass
      */
     public function __construct(string|object $reflectionClass)
     {
         if (is_string($reflectionClass)) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
-        } elseif (! $reflectionClass instanceof PHPReflectionClass && is_object($reflectionClass)) {
+        } elseif (! $reflectionClass instanceof PHPReflectionClass) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
         }
 
@@ -106,7 +105,7 @@ final readonly class ClassReflector implements Reflector
         return new MethodReflector($constructor);
     }
 
-    public function getMethod(string $name): ?MethodReflector
+    public function getMethod(string $name): MethodReflector
     {
         return new MethodReflector($this->reflectionClass->getMethod($name));
     }

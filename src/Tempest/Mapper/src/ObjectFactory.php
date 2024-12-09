@@ -19,9 +19,6 @@ final class ObjectFactory
 
     private bool $isCollection = false;
 
-    /** @var class-string[]|null */
-    private ?array $mappers = null;
-
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
@@ -146,7 +143,7 @@ final class ObjectFactory
             );
         }
 
-        $mappers = $this->mappers ?? $this->config->mappers;
+        $mappers = $this->config->mappers;
 
         foreach ($mappers as $mapperClass) {
             /** @var Mapper $mapper */
