@@ -99,9 +99,9 @@ final readonly class TestResponseHelper
     public function assertStatus(Status $expected): self
     {
         Assert::assertSame(
-            $expected,
-            $this->response->getStatus(),
-            sprintf(
+            expected: $expected,
+            actual: $this->response->getStatus(),
+            message: sprintf(
                 'Failed asserting status [%s] matched expected status of [%s].',
                 $expected->value,
                 $this->response->getStatus()->value,

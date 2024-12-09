@@ -118,7 +118,10 @@ final class PathHelperTest extends TestCase
     #[Test]
     public function toClassName(string $path, string $expected): void
     {
-        $this->assertSame($expected, NamespaceHelper::toClassName($path));
+        $this->assertSame(
+            expected: $expected,
+            actual: NamespaceHelper::toClassName($path),
+        );
     }
 
     public static function toClassNameProvider(): array

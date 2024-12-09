@@ -22,8 +22,8 @@ final class ReflectionTypeTest extends TestCase
     public function test_accepts(string $type, mixed $input, bool $expected): void
     {
         $this->assertSame(
-            $expected,
-            (new TypeReflector($type))->accepts($input),
+            expected: $expected,
+            actual: (new TypeReflector($type))->accepts($input),
         );
     }
 
@@ -43,13 +43,13 @@ final class ReflectionTypeTest extends TestCase
     public function test_as_class(): void
     {
         $this->assertSame(
-            A::class,
-            (new TypeReflector(A::class))->asClass()->getName(),
+            expected: A::class,
+            actual: (new TypeReflector(A::class))->asClass()->getName(),
         );
 
         $this->assertSame(
-            A::class,
-            (new TypeReflector('?Tempest\Reflection\Tests\Fixtures\A'))->asClass()->getName(),
+            expected: A::class,
+            actual: (new TypeReflector('?Tempest\Reflection\Tests\Fixtures\A'))->asClass()->getName(),
         );
     }
 }

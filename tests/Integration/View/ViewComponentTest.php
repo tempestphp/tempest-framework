@@ -31,16 +31,16 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_view_components(string $component, string $rendered): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
-            $rendered,
-            $this->render(view($component)),
+            expected: $rendered,
+            actual: $this->render(view($component)),
         );
     }
 
     public function test_view_component_with_php_code_in_attribute(): void
     {
         $this->assertSame(
-            '<div foo="hello" bar="barValue"></div>',
-            $this->render(view(
+            expected: '<div foo="hello" bar="barValue"></div>',
+            actual: $this->render(view(
                 <<<'HTML'
                     <x-my :foo="$this->input" bar="barValue"></x-my>
                     HTML,
@@ -51,15 +51,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_view_component_with_php_code_in_slot(): void
     {
         $this->assertSame(
-            '<div>bar</div>',
-            $this->render(view('<x-my>{{ $this->foo }}</x-my>')->data(foo: 'bar')),
+            expected: '<div>bar</div>',
+            actual: $this->render(view('<x-my>{{ $this->foo }}</x-my>')->data(foo: 'bar')),
         );
     }
 
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
-            <<<'HTML'
+            expected: <<<'HTML'
                 <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
 
 
@@ -70,7 +70,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
                 </form>
                 HTML,
-            $this->render(view(
+            actual: $this->render(view(
                 <<<'HTML'
                     <x-form action="#">
                         <div>
@@ -140,30 +140,30 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_component_with_injected_dependency(): void
     {
         $this->assertSame(
-            'hi',
-            $this->render('<x-with-injection />'),
+            expected: 'hi',
+            actual: $this->render('<x-with-injection />'),
         );
     }
 
     public function test_component_with_if(): void
     {
         $this->assertSame(
-            '<div>true</div>',
-            $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: true)),
+            expected: '<div>true</div>',
+            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: true)),
         );
 
         $this->assertSame(
-            '<div>false</div>',
-            $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: false)),
+            expected: '<div>false</div>',
+            actual: $this->render(view('<x-my :if="$this->show">true</x-my><x-my :else>false</x-my>')->data(show: false)),
         );
     }
 
     public function test_component_with_foreach(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
-            '<div>a</div>
+            expected: '<div>a</div>
 <div>b</div>',
-            $this->render(view('<x-my :foreach="$this->items as $foo">{{ $foo }}</x-my>')->data(items: ['a', 'b'])),
+            actual: $this->render(view('<x-my :foreach="$this->items as $foo">{{ $foo }}</x-my>')->data(items: ['a', 'b'])),
         );
     }
 

@@ -13,7 +13,8 @@ parameters:
 		- src
 		- tests
 	ignoreErrors:
-
+		-
+			identifier: argument.named
 		-
 			message: '#.*#'
 			path: src/Tempest/Router/src/Exceptions/exception.php
