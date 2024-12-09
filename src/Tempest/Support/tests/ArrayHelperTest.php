@@ -66,7 +66,7 @@ final class ArrayHelperTest extends TestCase
         $this->assertFalse(isset($array['a']));
     }
 
-    public function test_arr_get(): void
+    public function test_get_dot(): void
     {
         $array = [
             'a' => [
@@ -78,6 +78,17 @@ final class ArrayHelperTest extends TestCase
         $this->assertInstanceOf(ArrayHelper::class, arr($array)->get('a'));
         $this->assertNull(arr($array)->get('a.x'));
         $this->assertSame('default', arr($array)->get('a.x', 'default'));
+    }
+
+    public function test_get(): void
+    {
+        $array = [
+            'b.c' => 'd',
+            'a' => 'b',
+        ];
+
+        $this->assertSame('d', arr($array)->get('b.c'));
+        $this->assertSame('b', arr($array)->get('a'));
     }
 
     public function test_arr_has(): void
@@ -888,10 +899,10 @@ final class ArrayHelperTest extends TestCase
         );
 
         $this->assertSame(
-            $collection
+            actual: $collection
                 ->add('name')
                 ->toArray(),
-            [1, 2, '', null, false, [], 'name'],
+            expected: [1, 2, '', null, false, [], 'name'],
         );
     }
 

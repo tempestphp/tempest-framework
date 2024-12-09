@@ -675,6 +675,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         $value = $this->array;
 
+        if (isset($value[$key])) {
+            return is_array($value[$key])
+                ? new self($value[$key])
+                : $value[$key];
+        }
+
         $keys = is_int($key)
             ? [$key]
             : explode('.', $key);
@@ -700,6 +706,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function has(int|string $key): bool
     {
         $array = $this->array;
+
+        if (isset($array[$key])) {
+            return true;
+        }
 
         $keys = is_int($key)
             ? [$key]
