@@ -111,7 +111,7 @@ export default function tempest(): Plugin {
 					}))
 
 					setTimeout(() => {
-						server.config.logger.info(`\n  ${colors.green(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
+						server.config.logger.info(`\n  ${colors.magenta(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
 						server.config.logger.info('')
 						server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
 
@@ -178,7 +178,6 @@ function ensureCommandShouldRunInEnvironment(command: 'build' | 'serve', env: Re
 function tempestVersion(): string {
 	try {
 		const composer = JSON.parse(fs.readFileSync('composer.lock').toString())
-
 		return composer.packages?.find((composerPackage: { name: string }) => composerPackage.name === 'tempest/framework')?.version ?? ''
 	} catch {
 		return ''
