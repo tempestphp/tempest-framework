@@ -15,7 +15,7 @@ final readonly class ForceCommand
     }
 
     #[ConsoleCommand(
-        middleware: [ForceMiddleware::class]
+        middleware: [ForceMiddleware::class],
     )]
     public function __invoke(): void
     {

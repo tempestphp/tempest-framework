@@ -13,8 +13,8 @@ use Tempest\Core\Kernel;
 use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
-use function Tempest\path;
 use Throwable;
+use function Tempest\path;
 
 final readonly class ConsoleApplication implements Application
 {

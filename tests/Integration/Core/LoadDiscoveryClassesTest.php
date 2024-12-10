@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryLocation;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
-use function Tempest\get;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\get;
 
 /**
  * @internal
@@ -30,15 +28,9 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $this->kernel->discoveryLocations = [
             new DiscoveryLocation(
                 'Tests\Tempest\Fixtures',
-                __DIR__ . '../../Fixtures/Discovery'
+                __DIR__ . '../../Fixtures/Discovery',
             ),
         ];
-
-        (new LoadDiscoveryClasses(
-            kernel: $this->kernel,
-            container: $this->container,
-            discoveryCache: $this->container->get(DiscoveryCache::class),
-        ));
 
         $migrations = get(DatabaseConfig::class)->getMigrations();
 
@@ -56,15 +48,9 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
         $this->kernel->discoveryLocations = [
             new DiscoveryLocation(
                 'Tests\Tempest\Fixtures',
-                __DIR__ . '../../Fixtures/Discovery'
+                __DIR__ . '../../Fixtures/Discovery',
             ),
         ];
-
-        (new LoadDiscoveryClasses(
-            kernel: $this->kernel,
-            discoveryCache: $this->container->get(DiscoveryCache::class),
-            container: $this->container,
-        ));
 
         $migrations = get(DatabaseConfig::class)->getMigrations();
 

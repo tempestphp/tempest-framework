@@ -15,9 +15,9 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
-use function Tempest\event;
 use Throwable;
 use UnhandledMatchError;
+use function Tempest\event;
 
 final readonly class MigrationManager
 {
@@ -60,7 +60,7 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         } catch (PDOException $pdoException) {
             /** @throw UnhandledMatchError */
-            match ((string)$pdoException->getCode()) {
+            match ((string) $pdoException->getCode()) {
                 $this->databaseConfig->connection()->dialect()->tableNotFoundCode() => event(
                     event: new MigrationFailed(name: Migration::table()->tableName, exception: MigrationException::noTable()),
                 ),
@@ -173,7 +173,7 @@ final readonly class MigrationManager
         try {
             $this->database->execute(
                 new Query(
-                    "DELETE FROM Migration WHERE name = :name",
+                    'DELETE FROM Migration WHERE name = :name',
                     ['name' => $migration->getName()],
                 ),
             );

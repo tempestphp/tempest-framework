@@ -12,8 +12,9 @@ use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
+use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
-use Tempest\Http\Exceptions\HttpProductionErrorHandler;
+use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -39,13 +40,15 @@ final class Kernel
         array $discoveryLocations = [],
         ?Container $container = null,
     ): self {
-        define('TEMPEST_START', value: hrtime(true));
+        if (! defined('TEMPEST_START')) {
+            define('TEMPEST_START', value: hrtime(true));
+        }
 
-        return (new self(
+        return new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
             container: $container,
-        ))
+        )
             ->loadEnv()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
@@ -80,7 +83,12 @@ final class Kernel
 
     public function loadComposer(): self
     {
-        $this->container->singleton(Composer::class, new Composer($this->root));
+        $composer = new Composer(
+            root: $this->root,
+            executor: new GenericShellExecutor(),
+        )->load();
+
+        $this->container->singleton(Composer::class, $composer);
 
         return $this;
     }
@@ -111,7 +119,7 @@ final class Kernel
             $message = $error['message'] ?? '';
 
             if (str_contains($message, 'Cannot declare class')) {
-                echo "Does this class have the right namespace?" . PHP_EOL;
+                echo 'Does this class have the right namespace?' . PHP_EOL;
             }
         });
 

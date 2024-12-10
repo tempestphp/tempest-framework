@@ -8,7 +8,7 @@ use Exception;
 use Tempest\Container\Dependency;
 use Tempest\Container\DependencyChain;
 
-final class CircularDependencyException extends Exception
+final class CircularDependencyException extends Exception implements ContainerException
 {
     public function __construct(DependencyChain $chain, Dependency $circularDependency)
     {
@@ -36,7 +36,7 @@ final class CircularDependencyException extends Exception
         $selectionLine = preg_replace_callback(
             pattern: '/(?<prefix>(.*))(?<selection>'. $circularDependency->getTypeName() .'\s\$\w+)(.*)/',
             callback: function ($matches) {
-                return "└"
+                return '└'
                     . str_repeat('─', strlen($matches['prefix']) + 3)
                     . str_repeat('▒', strlen($matches['selection']));
             },

@@ -8,7 +8,7 @@ use Exception;
 use Tempest\Container\Dependency;
 use Tempest\Container\DependencyChain;
 
-final class CannotAutowireException extends Exception
+final class CannotAutowireException extends Exception implements ContainerException
 {
     public function __construct(DependencyChain $chain, Dependency $brokenDependency)
     {

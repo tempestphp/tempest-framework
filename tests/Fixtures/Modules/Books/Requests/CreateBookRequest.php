@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Books\Requests;
 
-use Tempest\Http\IsRequest;
-use Tempest\Http\Request;
-use Tempest\Http\Upload;
+use Tempest\Router\IsRequest;
+use Tempest\Router\Request;
+use Tempest\Router\Upload;
 
 final class CreateBookRequest implements Request
 {

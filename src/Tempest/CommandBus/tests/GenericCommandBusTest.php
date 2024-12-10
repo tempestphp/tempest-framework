@@ -41,7 +41,7 @@ final class GenericCommandBusTest extends TestCase
         $command = new DeleteUserCommand(12);
 
         $this->expectExceptionObject(
-            new CommandHandlerNotFound($command)
+            new CommandHandlerNotFound($command),
         );
 
         $this->commandBus->dispatch($command);

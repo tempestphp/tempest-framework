@@ -1,8 +1,8 @@
 <?php
 
-use function Tempest\uri;
 use Tempest\View\GenericView;
 use Tests\Tempest\Fixtures\Modules\Form\FormController;
+use function Tempest\uri;
 
 /** @var GenericView $this */
 

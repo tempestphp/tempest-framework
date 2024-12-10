@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use Dom\Comment;
 use Dom\Element as DomElement;
 use Dom\Node;
 use Dom\Text;
 use Tempest\Container\Container;
-use function Tempest\Support\str;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+use function Tempest\Support\str;
 
 final class ElementFactory
 {
@@ -51,7 +52,13 @@ final class ElementFactory
             );
         }
 
-        $tagName = $node->tagName ? strtolower($node->tagName) : null;
+        if ($node instanceof Comment) {
+            return new CommentElement(
+                content: $node->textContent,
+            );
+        }
+
+        $tagName = strtolower($node->tagName);
 
         $attributes = [];
 

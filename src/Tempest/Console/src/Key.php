@@ -18,7 +18,7 @@ enum Key: string
     case CTRL_BACKSPACE = "\x17";
     case DELETE = "\e[3~";
     case CTRL_DELETE = "\ed";
-    case SPACE = " ";
+    case SPACE = ' ';
     case CTRL_B = "\x02";
     case CTRL_C = "\x03";
     case CTRL_D = "\x04";

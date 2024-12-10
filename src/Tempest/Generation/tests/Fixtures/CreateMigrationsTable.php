@@ -17,7 +17,7 @@ final readonly class CreateMigrationsTable implements FakeMigration
         return '0000-00-00_create_migrations_table';
     }
 
-    public function up(): FakeQueryStatement|null
+    public function up(): FakeQueryStatement
     {
         return (new FakeCreateTableStatement(Model::table()))
             ->primary()

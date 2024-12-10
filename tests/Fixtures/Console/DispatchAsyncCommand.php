@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Console;
 
-use function Tempest\command;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyFailingAsyncCommand;
+use function Tempest\command;
 
 final readonly class DispatchAsyncCommand
 {

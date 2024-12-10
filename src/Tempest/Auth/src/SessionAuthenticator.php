@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Auth;
 
-use Tempest\Http\Session\Session;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Router\Session\Session;
 
 final readonly class SessionAuthenticator implements Authenticator
 {

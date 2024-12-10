@@ -8,7 +8,6 @@ use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use function Tempest\map;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
@@ -30,6 +29,7 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+use function Tempest\map;
 
 /**
  * @internal
@@ -352,7 +352,13 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         ))->save();
 
         $a = AWithLazy::query()->first();
-        $this->assertNotNull($a->b);
+
+        $this->assertFalse(isset($a->b));
+
+        /** @phpstan-ignore expr.resultUnused */
+        $a->b; // The side effect from accessing ->b will cause it to load
+
+        $this->assertTrue(isset($a->b));
     }
 
     public function test_eager_load(): void

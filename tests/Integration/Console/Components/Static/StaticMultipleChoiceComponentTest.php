@@ -20,7 +20,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,1')
-            ->assertContains("You picked a and b;");
+            ->assertContains('You picked a and b;');
     }
 
     public function test_with_invalid_options(): void
@@ -30,7 +30,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                 $console->ask('test', ['a', 'b', 'c'], multiple: true);
             })
             ->submit('0,4,c,2')
-            ->assertContains("You picked a and c;");
+            ->assertContains('You picked a and c;');
     }
 
     public function test_confirm(): void
@@ -42,7 +42,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                 $console->writeln(json_encode($answer));
             })
             ->submit('0')
-            ->assertContains("You picked a;")
+            ->assertContains('You picked a;')
             ->submit('no')
             ->assertContains('- [0] a')
             ->submit('0,1')
@@ -63,7 +63,7 @@ final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCa
                     question: 'test',
                     options: $options,
                     default: $default,
-                    multiple: true
+                    multiple: true,
                 );
 
                 $console->writeln(json_encode($answer));

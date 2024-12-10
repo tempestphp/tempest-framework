@@ -51,7 +51,7 @@ final class MakeInitializerCommand
 
                         return $stubClass;
                     },
-                ]
+                ],
             );
 
             $this->console->success(sprintf('Initializer successfully created at "%s".', $targetPath));

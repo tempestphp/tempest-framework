@@ -6,7 +6,6 @@ namespace Tempest\Filesystem\Tests;
 
 use bovigo\vfs\vfsStream;
 use bovigo\vfs\vfsStreamDirectory;
-use const PHP_EOL;
 use PHPUnit\Framework\TestCase;
 use Tempest\Filesystem\ErrorContext;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
@@ -17,6 +16,7 @@ use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
 use Tempest\Filesystem\Exceptions\UnableToReadFile;
 use Tempest\Filesystem\Exceptions\UnableToWriteFile;
 use Tempest\Filesystem\LocalFilesystem;
+use const PHP_EOL;
 
 /**
  * @internal
@@ -52,11 +52,11 @@ final class LocalFilesystemTest extends TestCase
         $filePath = vfsStream::url('root/test.txt');
 
         $this->expectExceptionObject(
-            UnableToReadFile::atPath($filePath, new ErrorContext())
+            UnableToReadFile::atPath($filePath, new ErrorContext()),
         );
 
         // Make the file unreadable.
-        $this->root->getChild('test.txt')->chmod(0000);
+        $this->root->getChild('test.txt')->chmod(0o000);
 
         (new LocalFilesystem())->read($filePath);
     }
@@ -86,12 +86,12 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_there_is_an_error_writing_a_file(): void
     {
-        vfsStream::setup('root', 0000);
+        vfsStream::setup('root', 0o000);
 
         $filePath = vfsStream::url('root/file.txt');
 
         $this->expectExceptionObject(
-            UnableToWriteFile::atPath($filePath, new ErrorContext())
+            UnableToWriteFile::atPath($filePath, new ErrorContext()),
         );
 
         (new LocalFilesystem())->write($filePath, 'Hello world!');
@@ -112,12 +112,12 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_there_is_an_error_appending_to_a_file(): void
     {
-        $this->root->getChild('test.txt')->chmod(0000);
+        $this->root->getChild('test.txt')->chmod(0o000);
 
         $filePath = vfsStream::url('root/test.txt');
 
         $this->expectExceptionObject(
-            UnableToWriteFile::atPath($filePath, new ErrorContext())
+            UnableToWriteFile::atPath($filePath, new ErrorContext()),
         );
 
         (new LocalFilesystem())->append($filePath, 'Line 2' . PHP_EOL);
@@ -134,14 +134,14 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_exception_is_thrown_when_there_is_an_error_deleting_a_file(): void
     {
-        vfsStream::setup('root', 0000, [
+        vfsStream::setup('root', 0o000, [
             'file.txt' => 'Hello world!',
         ]);
 
         $filePath = vfsStream::url('root/file.txt');
 
         $this->expectExceptionObject(
-            UnableToDeleteFile::atPath($filePath)
+            UnableToDeleteFile::atPath($filePath),
         );
 
         (new LocalFilesystem())->delete($filePath);
@@ -162,13 +162,13 @@ final class LocalFilesystemTest extends TestCase
         $filePath = vfsStream::url('root/some-file.txt');
 
         $this->assertFalse(
-            (new LocalFilesystem())->exists($filePath)
+            (new LocalFilesystem())->exists($filePath),
         );
 
         file_put_contents($filePath, 'Hello world!');
 
         $this->assertTrue(
-            (new LocalFilesystem())->exists($filePath)
+            (new LocalFilesystem())->exists($filePath),
         );
     }
 
@@ -188,7 +188,7 @@ final class LocalFilesystemTest extends TestCase
         $filePath2 = vfsStream::url('some-other-file.txt');
 
         $this->expectExceptionObject(
-            FileDoesNotExist::atPath($filePath1)
+            FileDoesNotExist::atPath($filePath1),
         );
 
         (new LocalFilesystem())->copy($filePath1, $filePath2);
@@ -200,7 +200,7 @@ final class LocalFilesystemTest extends TestCase
         $filePath2 = vfsStream::url('root/nested-dir/test2.txt');
 
         $this->expectExceptionObject(
-            UnableToCopyFile::fromSourceToDestination($filePath1, $filePath2, new ErrorContext())
+            UnableToCopyFile::fromSourceToDestination($filePath1, $filePath2, new ErrorContext()),
         );
 
         (new LocalFilesystem())->copy($filePath1, $filePath2);
@@ -244,7 +244,7 @@ final class LocalFilesystemTest extends TestCase
 
         (new LocalFilesystem())->createDirectory(
             directoryPath: $directoryPath,
-            recursive: false
+            recursive: false,
         );
     }
 
@@ -277,14 +277,14 @@ final class LocalFilesystemTest extends TestCase
 
     public function test_an_exception_is_thrown_when_there_is_an_error_deleting_a_directory(): void
     {
-        vfsStream::setup('root', 0000, [
+        vfsStream::setup('root', 0o000, [
             'test-directory' => [],
         ]);
 
         $directory = vfsStream::url('root/test-directory');
 
         $this->expectExceptionObject(
-            UnableToDeleteDirectory::atPath($directory, new ErrorContext())
+            UnableToDeleteDirectory::atPath($directory, new ErrorContext()),
         );
 
         (new LocalFilesystem())->deleteDirectory($directory);
@@ -304,7 +304,7 @@ final class LocalFilesystemTest extends TestCase
         $directory = vfsStream::url('root/test-directory-with-files');
 
         $this->expectExceptionObject(
-            UnableToDeleteDirectory::atPath($directory, new ErrorContext())
+            UnableToDeleteDirectory::atPath($directory, new ErrorContext()),
         );
 
         (new LocalFilesystem())->deleteDirectory($directory, false);

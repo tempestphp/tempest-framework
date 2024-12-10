@@ -19,7 +19,7 @@ final readonly class CreateAuthorTable implements Migration
         return '0000-00-00_create_authors_table';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'authors',
@@ -27,11 +27,11 @@ final readonly class CreateAuthorTable implements Migration
                 new PrimaryKeyStatement(),
                 new TextStatement('name'),
                 new TextStatement('type', nullable: true),
-            ]
+            ],
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return DropTableStatement::forModel(Author::class);
     }

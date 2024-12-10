@@ -155,7 +155,7 @@ final class CreateTableStatement implements QueryStatement
     public function boolean(
         string $name,
         bool $nullable = false,
-        ?bool $default = null
+        ?bool $default = null,
     ): self {
         $this->statements[] = new BooleanStatement(
             name: $name,
@@ -169,7 +169,7 @@ final class CreateTableStatement implements QueryStatement
     public function json(
         string $name,
         bool $nullable = false,
-        ?string $default = null
+        ?string $default = null,
     ): self {
         $this->statements[] = new JsonStatement(
             name: $name,
@@ -184,7 +184,7 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         array $values,
         bool $nullable = false,
-        ?string $default = null
+        ?string $default = null,
     ): self {
         $this->statements[] = new SetStatement(
             name: $name,

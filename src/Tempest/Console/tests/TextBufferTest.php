@@ -137,10 +137,10 @@ final class TextBufferTest extends TestCase
         $this->assertSame(0, $buffer->cursor);
 
         $buffer = new TextBuffer(<<<TXT
-        This is a line
-        This is a way longer line
-        Shorter
-        TXT);
+            This is a line
+            This is a way longer line
+            Shorter
+            TXT);
         $buffer->moveCursorX(100);
         $buffer->moveCursorToStart();
         $this->assertSame(0, $buffer->cursor);
@@ -155,10 +155,10 @@ final class TextBufferTest extends TestCase
         $this->assertSame(13, $buffer->cursor);
 
         $buffer = new TextBuffer(<<<TXT
-        This is a line
-        This is a way longer line
-        Shorter
-        TXT);
+            This is a line
+            This is a way longer line
+            Shorter
+            TXT);
         $buffer->setCursorIndex(0);
         $buffer->moveCursorToEnd();
         $this->assertSame(48, $buffer->cursor);
@@ -173,6 +173,7 @@ final class TextBufferTest extends TestCase
         $this->assertSame(0, $buffer->cursor);
     }
 
+    #[Test]
     #[TestWith([0, 0])]
     #[TestWith([10, 0])]
     #[TestWith([14, 0])]
@@ -181,14 +182,13 @@ final class TextBufferTest extends TestCase
     #[TestWith([40, 15])]
     #[TestWith([41, 41])]
     #[TestWith([48, 41])]
-    #[Test]
     public function test_move_cursor_to_start_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
-        This is a line
-        This is a way longer line
-        Shorter
-        TXT);
+            This is a line
+            This is a way longer line
+            Shorter
+            TXT);
 
         $buffer->setCursorIndex($initial);
         $buffer->moveCursorToStartOfLine();
@@ -204,6 +204,7 @@ final class TextBufferTest extends TestCase
         $this->assertSame(13, $buffer->cursor);
     }
 
+    #[Test]
     #[TestWith([0, 14])]
     #[TestWith([5, 14])]
     #[TestWith([14, 14])]
@@ -213,20 +214,20 @@ final class TextBufferTest extends TestCase
     #[TestWith([41, 48])]
     #[TestWith([45, 48])]
     #[TestWith([48, 48])]
-    #[Test]
     public function test_move_cursor_to_end_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
-        This is a line
-        This is a way longer line
-        Shorter
-        TXT);
+            This is a line
+            This is a way longer line
+            Shorter
+            TXT);
 
         $buffer->setCursorIndex($initial);
         $buffer->moveCursorToEndOfLine();
         $this->assertSame($expected, $buffer->cursor);
     }
 
+    #[Test]
     #[TestWith([0, 100, 13])]
     #[TestWith([13, 1, 13])]
     #[TestWith([0, -1, 0])]
@@ -234,7 +235,6 @@ final class TextBufferTest extends TestCase
     #[TestWith([0, 1, 1])]
     #[TestWith([0, 13, 13])]
     #[TestWith([4, -4, 0])]
-    #[Test]
     public function test_move_cursor_x(int $initialCursor, int $offsetX, int $expectedPosition): void
     {
         $buffer = new TextBuffer('Hello, world!');
@@ -244,6 +244,7 @@ final class TextBufferTest extends TestCase
         $this->assertSame($expectedPosition, $buffer->cursor);
     }
 
+    #[Test]
     #[TestWith([0, 1, 15])]
     #[TestWith([15, 1, 41])]
     #[TestWith([41, 1, 41])]
@@ -254,14 +255,13 @@ final class TextBufferTest extends TestCase
     #[TestWith([29, 1, 48])]
     #[TestWith([40, 1, 48])]
     #[TestWith([40, -1, 14])]
-    #[Test]
     public function move_cursor_y(int $initialCursor, int $offsetY, int $expectedPosition): void
     {
         $buffer = new TextBuffer(<<<TXT
-        This is a line
-        This is a way longer line
-        Shorter
-        TXT);
+            This is a line
+            This is a way longer line
+            Shorter
+            TXT);
 
         $buffer->setCursorIndex($initialCursor);
         $buffer->moveCursorY($offsetY);

@@ -28,7 +28,7 @@ final class ViewCache implements Cache
 
     public function getCachedViewPath(string $path, Closure $compiledView): string
     {
-        $cacheKey = (string)crc32($path);
+        $cacheKey = (string) crc32($path);
 
         $cacheItem = $this->cachePool->getItem($cacheKey);
 

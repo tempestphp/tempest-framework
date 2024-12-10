@@ -17,6 +17,6 @@ final readonly class Ulid implements Rule
 
     public function message(): string
     {
-        return "Value should be a valid ULID";
+        return 'Value should be a valid ULID';
     }
 }

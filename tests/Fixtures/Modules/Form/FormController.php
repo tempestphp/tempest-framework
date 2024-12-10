@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Form;
 
-use Tempest\Http\Get;
-use Tempest\Http\Post;
-use Tempest\Http\Response;
-use Tempest\Http\Responses\Ok;
-use function Tempest\view;
+use Tempest\Router\Get;
+use Tempest\Router\Post;
+use Tempest\Router\Response;
+use Tempest\Router\Responses\Ok;
 use Tempest\View\View;
+use function Tempest\view;
 
 final readonly class FormController
 {

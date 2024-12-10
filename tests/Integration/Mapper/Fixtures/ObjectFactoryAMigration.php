@@ -17,14 +17,14 @@ final class ObjectFactoryAMigration implements Migration
         return 'object-a';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'ObjectFactoryA',
             [
                 new PrimaryKeyStatement(),
                 new TextStatement('prop'),
-            ]
+            ],
         );
     }
 

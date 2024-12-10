@@ -131,7 +131,7 @@ enum Status: int
             415 => 'Unsupported Media Type',
             416 => 'Range Not Satisfiable',
             417 => 'Expectation Failed',
-            418 => 'I Am A Teapot',
+            418 => "I'm a teapot",
             421 => 'Misdirected Request',
             422 => 'Unprocessable Content',
             423 => 'Locked',

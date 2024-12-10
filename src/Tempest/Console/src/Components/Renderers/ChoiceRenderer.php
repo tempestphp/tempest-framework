@@ -37,7 +37,7 @@ final class ChoiceRenderer
             $this->line(
                 $this->multiple
                     ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'
-                    : $options->getActive()?->value
+                    : $options->getActive()?->value,
             )->newLine();
         } elseif ($state === ComponentState::CANCELLED) {
             if ($query->text ?: $this->default) {
@@ -48,7 +48,7 @@ final class ChoiceRenderer
                 $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
                 empty($query->text)
                     ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? (count($options->getSelectedOptions()) . ' selected') : ''))
-                    : $this->style($filtering ? 'bold fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2))
+                    : $this->style($filtering ? 'bold fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
             );
             $this->newLine();
 

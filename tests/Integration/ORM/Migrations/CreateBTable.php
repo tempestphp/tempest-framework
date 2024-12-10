@@ -18,18 +18,18 @@ final readonly class CreateBTable implements Migration
         return '100-create-b';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'b',
             [
                 new PrimaryKeyStatement(),
                 new RawStatement('c_id INTEGER'),
-            ]
+            ],
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement('b');
     }

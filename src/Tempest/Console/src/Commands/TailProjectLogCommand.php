@@ -23,7 +23,7 @@ final readonly class TailProjectLogCommand
     ) {
     }
 
-    #[ConsoleCommand('tail:project', description: 'Tails the project log', aliases: ['tp'])]
+    #[ConsoleCommand('tail:project', description: 'Tails the project log')]
     public function __invoke(): void
     {
         $appendLogChannel = null;
@@ -39,7 +39,7 @@ final readonly class TailProjectLogCommand
         $this->console->write('<h1>Project</h1> ');
 
         if ($appendLogChannel === null) {
-            $this->console->error("No AppendLogChannel registered");
+            $this->console->error('No AppendLogChannel registered');
 
             return;
         }

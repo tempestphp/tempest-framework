@@ -23,7 +23,7 @@ final readonly class MySqlConnection implements DatabaseConnection
         public string $password = '',
         #[SensitiveParameter]
         public string $database = 'app',
-        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }
 
@@ -32,12 +32,12 @@ final readonly class MySqlConnection implements DatabaseConnection
         return "mysql:host={$this->host}:{$this->port};dbname={$this->database}";
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }

@@ -18,14 +18,14 @@ final readonly class CacheClearCommand
     ) {
     }
 
-    #[ConsoleCommand(name: 'cache:clear', description: 'Clears all or specified caches', aliases: ['cc'])]
+    #[ConsoleCommand(name: 'cache:clear', description: 'Clears all or specified caches')]
     public function __invoke(bool $all = false): void
     {
         $caches = $this->cacheConfig->caches;
 
         if ($all === false) {
             $caches = $this->ask(
-                question: "Which caches do you want to clear?",
+                question: 'Which caches do you want to clear?',
                 options: $this->cacheConfig->caches,
                 multiple: true,
             );

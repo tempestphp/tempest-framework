@@ -13,8 +13,8 @@ use Iterator;
 use Random\Randomizer;
 use Serializable;
 use Stringable;
-use function Tempest\map;
 use Tempest\Support\Conditions\HasConditions;
+use function Tempest\map;
 
 /**
  * @template TKey of array-key
@@ -25,8 +25,8 @@ use Tempest\Support\Conditions\HasConditions;
  */
 final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countable
 {
-    use IsIterable;
     use HasConditions;
+    use IsIterable;
 
     /** @var array<TKey, TValue> */
     private array $array;
@@ -256,6 +256,38 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         }
 
         return new self($results);
+    }
+
+    /**
+     * Prepends the specified values to the instance.
+     *
+     * @param TValue $values
+     */
+    public function prepend(mixed ...$values): self
+    {
+        $array = $this->array;
+
+        foreach (array_reverse($values) as $value) {
+            $array = [$value, ...$array];
+        }
+
+        return new self($array);
+    }
+
+    /**
+     * Appends the specified values to the instance.
+     *
+     * @param TValue $values
+     */
+    public function append(mixed ...$values): self
+    {
+        $array = $this->array;
+
+        foreach ($values as $value) {
+            $array = [...$array, $value];
+        }
+
+        return new self($array);
     }
 
     /**
@@ -655,6 +687,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         foreach ($this->array as $key => $value) {
             $generator = $map($value, $key);
 
+            // @phpstan-ignore instanceof.alwaysTrue
             if (! $generator instanceof Generator) {
                 throw new InvalidMapWithKeysUsage();
             }
@@ -673,6 +706,12 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function get(int|string $key, mixed $default = null): mixed
     {
         $value = $this->array;
+
+        if (isset($value[$key])) {
+            return is_array($value[$key])
+                ? new self($value[$key])
+                : $value[$key];
+        }
 
         $keys = is_int($key)
             ? [$key]
@@ -700,6 +739,10 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         $array = $this->array;
 
+        if (isset($array[$key])) {
+            return true;
+        }
+
         $keys = is_int($key)
             ? [$key]
             : explode('.', $key);
@@ -721,6 +764,26 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     public function contains(mixed $search): bool
     {
         return $this->first(fn (mixed $value) => $value === $search) !== null;
+    }
+
+    /**
+     * Asserts whether all items in the instance pass the given `$callback`.
+     *
+     * @param Closure(TValue, TKey): bool $callback
+     *
+     * @return bool If the collection is empty, returns `true`.
+     */
+    public function every(?Closure $callback = null): bool
+    {
+        $callback ??= static fn (mixed $value) => ! is_null($value);
+
+        foreach ($this->array as $key => $value) {
+            if (! $callback($value, $key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

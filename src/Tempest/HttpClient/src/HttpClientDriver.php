@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient;
 
-use Tempest\Http\Request;
-use Tempest\Http\Response;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
 
 /**
  * The Tempest HttpClientDriver takes a Tempest request and

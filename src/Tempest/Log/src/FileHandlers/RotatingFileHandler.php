@@ -14,12 +14,12 @@ final class RotatingFileHandler extends MonoRotatingFileHandler
 
     protected function setDateFormat(string $dateFormat): void
     {
-        if (0 === preg_match('{^[Yy](([/_.-]?m([/_.-]?d)?)|([/_.-]?W))?$}', $dateFormat)) {
+        if (preg_match('{^[Yy](([/_.-]?m([/_.-]?d)?)|([/_.-]?W))?$}', $dateFormat) === 0) {
             throw new InvalidArgumentException(
                 'Invalid date format - format must be one of '.
                 'RotatingFileHandler::FILE_PER_DAY ("Y-m-d"), RotatingFileHandler::FILE_PER_WEEK ("Y-W"), '.
                 'RotatingFileHandler::FILE_PER_MONTH ("Y-m") or RotatingFileHandler::FILE_PER_YEAR ("Y"), '.
-                'or you can set one of the date formats using slashes, underscores and/or dots instead of dashes.'
+                'or you can set one of the date formats using slashes, underscores and/or dots instead of dashes.',
             );
         }
 

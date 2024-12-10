@@ -6,12 +6,12 @@ namespace Tempest\Container\Exceptions;
 
 use Exception;
 
-final class InvalidInitializerException extends Exception
+final class InvalidInitializerException extends Exception implements ContainerException
 {
     public static function dynamicInitializerNotAllowed(string $initializerClassName): self
     {
         return new self(
-            "Dynamic initializers are not allowed for native values, {$initializerClassName} is a dynamic initializer."
+            "Dynamic initializers are not allowed for native values, {$initializerClassName} is a dynamic initializer.",
         );
     }
 

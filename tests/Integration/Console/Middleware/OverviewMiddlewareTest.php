@@ -27,11 +27,11 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
     public function test_overview_with_hidden(): void
     {
         $this->console
-            ->call('-a')
+            ->call('', ['-a'])
             ->assertContains('hidden');
 
         $this->console
-            ->call('--all')
+           ->call('', ['--all'])
             ->assertContains('hidden');
     }
 }

@@ -74,7 +74,7 @@ final class GenericLogger implements Logger
                 LogLevel::NOTICE, PsrLogLevel::NOTICE => MonologLogLevel::Notice,
                 LogLevel::INFO, PsrLogLevel::INFO => MonologLogLevel::Info,
                 LogLevel::DEBUG, PsrLogLevel::DEBUG => MonologLogLevel::Debug,
-                default => MonologLogLevel::Info
+                default => MonologLogLevel::Info,
             };
         }
 

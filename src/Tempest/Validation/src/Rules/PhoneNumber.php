@@ -36,7 +36,7 @@ final readonly class PhoneNumber implements Rule
 
         return sprintf(
             'Value should be a valid %s phone number',
-            strtoupper($this->defaultRegion)
+            strtoupper($this->defaultRegion),
         );
     }
 }

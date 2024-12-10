@@ -33,6 +33,8 @@
     <env name="BASE_URI" value="" />
     <env name="CACHE" value="null" />
     <env name="DISCOVERY_CACHE" value="true" />
+    <env name="DEBUG_LOG_PATH" value="log/debug.test.log" />
+    <env name="SERVER_LOG_PATH" value="log/server.test.log" />
     <ini name="memory_limit" value="256M" />
   </php>
 </phpunit>

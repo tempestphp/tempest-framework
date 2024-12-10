@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
-use const Dom\HTML_NO_DEFAULT_NS;
 use Dom\HTMLDocument;
 use Dom\NodeList;
 use Exception;
 use Tempest\Core\Kernel;
-use function Tempest\path;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use function Tempest\path;
+use function Tempest\Support\str;
+use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler
 {
@@ -81,11 +82,27 @@ final readonly class TempestViewCompiler
 
     private function parseDom(string $template): NodeList
     {
-        $template = str_replace(
-            search: array_keys(self::TOKEN_MAPPING),
-            replace: array_values(self::TOKEN_MAPPING),
-            subject: $template,
-        );
+        $template = str($template)
+
+            // Escape PHP tags
+            ->replace(
+                search: array_keys(self::TOKEN_MAPPING),
+                replace: array_values(self::TOKEN_MAPPING),
+            )
+
+            // Convert self-closing tags
+            ->replaceRegex(
+                regex: '/<x-(?<element>.*?)\/>/',
+                replace: function (array $match) {
+                    $closingTag = str($match['element'])->before(' ')->toString();
+
+                    return sprintf(
+                        '<x-%s></x-%s>',
+                        $match['element'],
+                        $closingTag,
+                    );
+                },
+            );
 
         $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 

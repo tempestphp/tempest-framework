@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console;
 
+use BackedEnum;
 use Closure;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
@@ -22,6 +23,7 @@ use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
+use function Tempest\Support\arr;
 
 final class GenericConsole implements Console
 {
@@ -41,13 +43,13 @@ final class GenericConsole implements Console
         #[Tag('console')]
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
-        private readonly ConsoleArgumentBag $argumentBag
+        private readonly ConsoleArgumentBag $argumentBag,
     ) {
     }
 
-    public function call(string $command): ExitCode|int
+    public function call(string|array $command, string|array $arguments = []): ExitCode|int
     {
-        return ($this->executeConsoleCommand)($command);
+        return ($this->executeConsoleCommand)($command, $arguments);
     }
 
     public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self
@@ -155,7 +157,7 @@ final class GenericConsole implements Console
 
     public function success(string $line, ?string $symbol = null): self
     {
-        $symbol ??= '✔︎';
+        $symbol ??= '✓';
 
         $this->writeln("<style=\"bg-dark-green fg-white\"> {$symbol} </style> <style=\"fg-green\">{$line}</style>");
 
@@ -186,16 +188,30 @@ final class GenericConsole implements Console
 
     public function ask(
         string $question,
-        ?array $options = null,
+        null|array|ArrayHelper|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|string|array {
+    ): null|int|string|array {
         if ($this->isForced && $default) {
             return $default;
+        }
+
+        if ($options instanceof ArrayHelper) {
+            $options = $options->toArray();
+        }
+
+        if (is_a($options, BackedEnum::class, allow_string: true)) {
+            $options = arr($options::cases())->mapWithKeys(
+                fn (BackedEnum $enum) => yield $enum->value => $enum->name,
+            )->toArray();
+        }
+
+        if ($default instanceof BackedEnum) {
+            $default = $default->value;
         }
 
         $component = match (true) {
@@ -209,7 +225,7 @@ final class GenericConsole implements Console
                 label: $question,
                 options: $options,
                 default: $default,
-            )
+            ),
         };
 
         return $this->component($component, $validation);

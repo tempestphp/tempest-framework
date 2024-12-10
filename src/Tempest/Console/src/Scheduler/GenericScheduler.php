@@ -7,7 +7,7 @@ namespace Tempest\Console\Scheduler;
 use DateTime;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
-use Tempest\Console\ShellExecutor;
+use Tempest\Core\ShellExecutor;
 use function Tempest\event;
 
 final readonly class GenericScheduler implements Scheduler
@@ -17,7 +17,7 @@ final readonly class GenericScheduler implements Scheduler
     public function __construct(
         private SchedulerConfig $config,
         private ConsoleArgumentBag $argumentBag,
-        private ShellExecutor $executor
+        private ShellExecutor $executor,
     ) {
     }
 
@@ -64,7 +64,7 @@ final readonly class GenericScheduler implements Scheduler
             fn (ScheduledInvocation $invocation) => $invocation->canRunAt(
                 date: $date,
                 lastRunTimestamp: $previousRuns[$invocation->handler->getName()] ?? null,
-            )
+            ),
         );
 
         $this->markInvocationsAsRun($eligibleToRun, $date);

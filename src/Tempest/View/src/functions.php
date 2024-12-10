@@ -1,10 +1,8 @@
 <?php
 
-
 declare(strict_types=1);
 
 namespace Tempest {
-
     use Tempest\View\GenericView;
     use Tempest\View\View;
 

@@ -40,7 +40,7 @@ final class AlterTableStatement implements QueryStatement
     {
         $this->statements[] = new AlterStatement(
             Alter::DELETE,
-            new RawStatement($table)
+            new RawStatement($table),
         );
 
         return $this;

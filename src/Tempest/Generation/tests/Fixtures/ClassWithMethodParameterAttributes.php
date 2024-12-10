@@ -10,7 +10,7 @@ final class ClassWithMethodParameterAttributes
 {
     public function example(
         #[SampleParameterAttribute]
-        string $parameter
+        string $parameter,
     ): void {
     }
 }

@@ -13,7 +13,7 @@ final readonly class BelongsToStatement implements QueryStatement
         private string $local,
         private string $foreign,
         private OnDelete $onDelete = OnDelete::RESTRICT,
-        private OnUpdate $onUpdate = OnUpdate::NO_ACTION
+        private OnUpdate $onUpdate = OnUpdate::NO_ACTION,
     ) {
     }
 
@@ -29,7 +29,7 @@ final readonly class BelongsToStatement implements QueryStatement
                     'fk_%s_%s_%s',
                     strtolower($foreignTable),
                     strtolower($localTable),
-                    strtolower($localKey)
+                    strtolower($localKey),
                 ),
                 new RawStatement(
                     sprintf(
@@ -40,8 +40,8 @@ final readonly class BelongsToStatement implements QueryStatement
                         $foreignKey,
                         'ON DELETE ' . $this->onDelete->value,
                         'ON UPDATE ' . $this->onUpdate->value,
-                    )
-                )
+                    ),
+                ),
             ))->compile($dialect),
             DatabaseDialect::SQLITE => '',
         };

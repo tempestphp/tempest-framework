@@ -21,7 +21,7 @@ final class InvalidCommandException extends ConsoleException
 
     public function render(Console $console): void
     {
-        $console->error("Invalid command usage:");
+        $console->error('Invalid command usage:');
 
         (new RenderConsoleCommand($console))($this->consoleCommand);
 

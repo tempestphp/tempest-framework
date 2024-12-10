@@ -23,7 +23,7 @@ final class PostgresConnection implements DatabaseConnection
         public string $password = '',
         #[SensitiveParameter]
         public string $database = 'postgres',
-        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy()
+        public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }
 
@@ -41,12 +41,12 @@ final class PostgresConnection implements DatabaseConnection
         );
     }
 
-    public function getUsername(): ?string
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }

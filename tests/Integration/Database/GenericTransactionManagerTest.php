@@ -50,7 +50,6 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
     public function test_transaction_manager_commit_rollback(): void
     {
-
         $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
 
         $manager = $this->container->get(TransactionManager::class);

@@ -17,7 +17,7 @@ final readonly class FooMigration implements Migration
         return 'foos';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             tableName: 'foos',

@@ -12,7 +12,7 @@ final class DiscoveryCachingStrategyChangedException extends Exception
     {
         $current = var_export($current, true);
 
-        $message = sprintf("Discovery caching was changed from `%s` to `%s`. Make sure to run `./tempest discovery:generate` again", $previous, $current);
+        $message = sprintf('Discovery caching was changed from `%s` to `%s`. Make sure to run `./tempest discovery:generate` again', $previous, $current);
 
         parent::__construct($message);
     }

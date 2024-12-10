@@ -47,7 +47,7 @@ final readonly class FileCommandRepository implements CommandRepository
 
     public function getPendingCommands(): array
     {
-        return arr(glob(__DIR__ . "/../stored-commands/*.pending.txt"))
+        return arr(glob(__DIR__ . '/../stored-commands/*.pending.txt'))
             ->mapWithKeys(function (string $path) {
                 $uuid = str_replace('.pending.txt', '', pathinfo($path, PATHINFO_BASENAME));
 

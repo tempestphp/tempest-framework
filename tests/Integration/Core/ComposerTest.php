@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
 use Tempest\Core\KernelException;
+use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,8 +20,9 @@ final class ComposerTest extends FrameworkIntegrationTestCase
         file_put_contents(__DIR__ . '/../../Fixtures/Core/Composer/composer.json', json_encode($composer, JSON_PRETTY_PRINT));
 
         return new Composer(
-            root: realpath(__DIR__ . '/../../Fixtures/Core/Composer')
-        );
+            root: realpath(__DIR__ . '/../../Fixtures/Core/Composer'),
+            executor: new NullShellExecutor(),
+        )->load();
     }
 
     #[Test]
@@ -97,6 +99,6 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(KernelException::class);
 
-        new Composer(root: __DIR__);
+        new Composer(root: __DIR__, executor: new NullShellExecutor())->load();
     }
 }

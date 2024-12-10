@@ -35,9 +35,9 @@ final readonly class DynamicInjection implements Injection
 
                     return str($match)
                         ->replaceFirst("<style=\"{$styles}\">", $before)
-                        ->replaceLast("</style>", $after)
+                        ->replaceLast('</style>', $after)
                         ->toString();
-                }
+                },
             );
         } while (preg_match($pattern, $content));
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
-use function Tempest\command;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandHandlerNotFound;
@@ -12,6 +11,7 @@ use Tests\Tempest\Fixtures\Commands\MyBrokenCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandBusMiddleware;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\command;
 
 /**
  * @internal
