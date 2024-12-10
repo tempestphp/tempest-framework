@@ -33,10 +33,11 @@ final class ConsoleInstallerTest extends FrameworkIntegrationTestCase
 
     public function test_console_installer(): void
     {
-        $this->console
-            ->call('install console -f');
+        $this->console->call('install console -f');
 
         $this->installer
-            ->assertFileExists('tempest');
+            ->assertFileExists('tempest')
+            ->assertCommandExecuted('composer up')
+        ;
     }
 }

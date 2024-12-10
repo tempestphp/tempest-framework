@@ -19,8 +19,13 @@ final class Composer
     private array $composer;
 
     public function __construct(
-        private string $root,
+        private readonly string $root,
+        private ShellExecutor $executor,
     ) {
+    }
+
+    public function load(): self
+    {
         $this->composerPath = path($this->root, 'composer.json')->toString();
         $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
@@ -40,11 +45,20 @@ final class Composer
         if (! isset($this->mainNamespace) && count($this->namespaces)) {
             $this->mainNamespace = $this->namespaces[0];
         }
+
+        return $this;
     }
 
     public function setMainNamespace(ComposerNamespace $namespace): self
     {
         $this->mainNamespace = $namespace;
+
+        return $this;
+    }
+
+    public function setShellExecutor(ShellExecutor $executor): self
+    {
+        $this->executor = $executor;
 
         return $this;
     }
@@ -61,6 +75,13 @@ final class Composer
     public function save(): self
     {
         file_put_contents($this->composerPath, json_encode($this->composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        return $this;
+    }
+
+    public function executeUpdate(): self
+    {
+        $this->executor->execute('composer up');
 
         return $this;
     }

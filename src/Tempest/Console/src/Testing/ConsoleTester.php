@@ -132,6 +132,16 @@ final class ConsoleTester
         return $this;
     }
 
+    public function confirm(): self
+    {
+        return $this->submit('yes');
+    }
+
+    public function deny(): self
+    {
+        return $this->submit('no');
+    }
+
     public function print(): self
     {
         echo 'OUTPUT:' . PHP_EOL;
