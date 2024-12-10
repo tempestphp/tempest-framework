@@ -11,22 +11,30 @@ use Tempest\Container\Container;
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tempest\Core\Kernel;
+use Tempest\Core\ShellExecutors\NullShellExecutor;
 use function Tempest\path;
+use function Tempest\Support\arr;
 
 final class InstallerTester
 {
     private string $root;
 
+    private NullShellExecutor $executor;
+
     public function __construct(
         private readonly Container $container,
     ) {
+        $this->executor = new NullShellExecutor();
     }
 
     public function configure(string $root, ComposerNamespace $mainNamespace): self
     {
         $this->root = $root;
         $this->container->get(Kernel::class)->root = $root;
-        $this->container->get(Composer::class)->setMainNamespace($mainNamespace);
+        $this->container
+            ->get(Composer::class)
+            ->setMainNamespace($mainNamespace)
+            ->setShellExecutor($this->executor);
 
         if (! is_dir($this->root)) {
             mkdir($this->root, recursive: true);
@@ -102,6 +110,16 @@ final class InstallerTester
             needle: $search,
             haystack: $this->get($path),
             message: sprintf("File %s contains something it shouldn't:\n %s", $path, $search),
+        );
+
+        return $this;
+    }
+
+    public function assertCommandExecuted(string $command): self
+    {
+        Assert::assertTrue(
+            condition: arr($this->executor->executedCommands)->contains($command),
+            message: sprintf('The command `%s` was not executed', $command),
         );
 
         return $this;
