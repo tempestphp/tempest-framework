@@ -6,7 +6,7 @@ namespace Tempest\Container\Exceptions;
 
 use Exception;
 
-final class InvalidInitializerException extends Exception
+final class InvalidInitializerException extends Exception implements ContainerException
 {
     public static function dynamicInitializerNotAllowed(string $initializerClassName): self
     {
