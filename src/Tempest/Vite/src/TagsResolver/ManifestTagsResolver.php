@@ -40,9 +40,9 @@ final class ManifestTagsResolver implements TagsResolver
     private function resolveEntryPointTags(Chunk $entrypoint): array
     {
         return arr()
-            ->push(...$this->getPreloadTags($entrypoint))
-            ->push(...$this->getStyleTags($entrypoint))
-            ->push($this->resolveChunkTag($entrypoint))
+            ->append(...$this->getPreloadTags($entrypoint))
+            ->append(...$this->getStyleTags($entrypoint))
+            ->append($this->resolveChunkTag($entrypoint))
             ->unique()
             ->toArray();
     }
