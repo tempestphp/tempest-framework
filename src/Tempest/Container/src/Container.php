@@ -25,6 +25,8 @@ interface Container
      */
     public function get(string $className, ?string $tag = null, mixed ...$params): mixed;
 
+    public function has(string $className, ?string $tag = null): bool;
+
     public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 
     /**

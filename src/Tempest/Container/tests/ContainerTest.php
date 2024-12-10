@@ -424,4 +424,41 @@ final class ContainerTest extends TestCase
 
         $container->get(InterfaceA::class);
     }
+
+    public function test_has(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(InterfaceA::class));
+
+        $container->register(InterfaceA::class, fn () => new ImplementsInterfaceA());
+
+        $this->assertTrue($container->has(InterfaceA::class));
+    }
+
+    public function test_has_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(InterfaceA::class));
+
+        $container->singleton(InterfaceA::class, new ImplementsInterfaceA());
+
+        $this->assertTrue($container->has(InterfaceA::class));
+    }
+
+    public function test_has_tagged_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(TaggedDependency::class, 'web'));
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('web'),
+            tag: 'web',
+        );
+
+        $this->assertTrue($container->has(TaggedDependency::class, 'web'));
+    }
 }
