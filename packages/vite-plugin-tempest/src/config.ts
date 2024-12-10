@@ -4,7 +4,7 @@ import { exec, php } from './utils'
 const TEMPEST_BIN = 'tempest'
 const VITE_CONFIG_COMMAND = 'vite:config'
 
-export async function loadConfiguration(): Promise<TempestViteConfiguration> {
+export async function loadTempestConfiguration(): Promise<TempestViteConfiguration> {
 	try {
 		const { stdout } = await exec(`${php.value} ${TEMPEST_BIN} ${VITE_CONFIG_COMMAND}`)
 		const json = stdout.match(/\{.*\}/s)

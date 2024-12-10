@@ -1,8 +1,11 @@
 import { expect, test } from 'vitest'
-import { loadConfiguration } from './bridge'
+import { loadTempestConfiguration } from './config'
+import { mockTempestConfiguration } from './test-utils'
 
 test('the configuration can be loaded', async () => {
-	const config = await loadConfiguration()
+	mockTempestConfiguration()
+
+	const config = await loadTempestConfiguration()
 
 	expect(config).toHaveProperty('build_directory')
 	expect(config).toHaveProperty('bridge_file_name')
