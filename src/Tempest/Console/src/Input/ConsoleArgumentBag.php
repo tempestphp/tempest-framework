@@ -120,7 +120,7 @@ final class ConsoleArgumentBag
         );
     }
 
-    public function findArrayFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
+    public function findArrayFor(ConsoleArgumentDefinition $argumentDefinition): ConsoleInputArgument
     {
         $values = [];
 

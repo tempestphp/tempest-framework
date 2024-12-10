@@ -18,7 +18,7 @@ final readonly class CreateATable implements Migration
         return '100-create-a';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'a',
@@ -29,7 +29,7 @@ final readonly class CreateATable implements Migration
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement('a');
     }

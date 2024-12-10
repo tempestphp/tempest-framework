@@ -123,7 +123,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     ): mixed {
         $type = $property->getType();
 
-        if ($type === null || $type->isBuiltIn()) {
+        if ($type->isBuiltIn()) {
             return new UnknownValue();
         }
 

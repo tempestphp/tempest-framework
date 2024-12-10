@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryLocation;
-use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableMigration;
@@ -34,12 +32,6 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
             ),
         ];
 
-        (new LoadDiscoveryClasses(
-            kernel: $this->kernel,
-            container: $this->container,
-            discoveryCache: $this->container->get(DiscoveryCache::class),
-        ));
-
         $migrations = get(DatabaseConfig::class)->getMigrations();
 
         $this->assertNotContains(HiddenMigration::class, $migrations);
@@ -59,12 +51,6 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
                 __DIR__ . '../../Fixtures/Discovery',
             ),
         ];
-
-        (new LoadDiscoveryClasses(
-            kernel: $this->kernel,
-            discoveryCache: $this->container->get(DiscoveryCache::class),
-            container: $this->container,
-        ));
 
         $migrations = get(DatabaseConfig::class)->getMigrations();
 
