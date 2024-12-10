@@ -9,6 +9,7 @@
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/debug": "dev-main",
+        "tempest/generation": "dev-main",
         "tempest/highlight": "^2.11.2",
         "tempest/log": "dev-main",
         "tempest/reflection": "dev-main",
