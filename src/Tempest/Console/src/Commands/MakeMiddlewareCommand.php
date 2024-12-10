@@ -24,18 +24,18 @@ final class MakeMiddlewareCommand
     #[ConsoleCommand(
         name: 'make:middleware',
         description: 'Creates a new middleware class',
-        aliases: ['middleware:make', 'middleware:create', 'create:middleware']
+        aliases: ['middleware:make', 'middleware:create', 'create:middleware'],
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The name of the middleware class to create'
+            help: 'The name of the middleware class to create',
         )]
         string $className,
         #[ConsoleArgument(
             name: 'type',
             help: 'The type of the middleware to create',
         )]
-        MiddlewareType $middlewareType
+        MiddlewareType $middlewareType,
     ): void {
         try {
             $stubFile = $this->getStubFileFromMiddlewareType($middlewareType);

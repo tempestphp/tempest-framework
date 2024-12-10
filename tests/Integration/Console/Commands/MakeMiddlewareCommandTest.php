@@ -21,7 +21,7 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App')
+            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
@@ -32,12 +32,12 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
-    #[Test]
     #[DataProvider('command_input_provider')]
+    #[Test]
     public function make_command(
         string $commandArgs,
         string $expectedPath,
-        string $expectedNamespace
+        string $expectedNamespace,
     ): void {
         $this->console
             ->call("make:middleware {$commandArgs}")
@@ -69,11 +69,11 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
         ];
     }
 
-    #[Test]
     #[DataProvider('middleware_type_provider')]
+    #[Test]
     public function make_command_with_each_type(
         MiddlewareType $middlewareType,
-        string $middlewareInterface
+        string $middlewareInterface,
     ): void {
         $this->console
             ->call("make:middelware TestMiddleware {$middlewareType->value}")
@@ -94,7 +94,7 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
             values: array_map(fn (MiddlewareType $case) => [
                 'middlewareType' => $case,
                 'middlewareInterface' => $case->relatedInterface(),
-            ], $cases)
+            ], $cases),
         );
     }
 }
