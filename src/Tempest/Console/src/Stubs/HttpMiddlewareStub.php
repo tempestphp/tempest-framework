@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Stubs;
 
-use Tempest\Router\Response;
-use Tempest\Router\Request;
-use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\HttpMiddleware;
+use Tempest\Router\HttpMiddlewareCallable;
+use Tempest\Router\Request;
+use Tempest\Router\Response;
 
 final class HttpMiddlewareStub implements HttpMiddleware
 {

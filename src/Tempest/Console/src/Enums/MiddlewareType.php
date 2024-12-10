@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Enums;
 
-use Tempest\Router\HttpMiddleware;
-use Tempest\EventBus\EventBusMiddleware;
-use Tempest\Console\ConsoleMiddleware;
 use Tempest\CommandBus\CommandBusMiddleware;
+use Tempest\Console\ConsoleMiddleware;
+use Tempest\EventBus\EventBusMiddleware;
+use Tempest\Router\HttpMiddleware;
 
 /**
  * Represents available middleware types in Tempest.
