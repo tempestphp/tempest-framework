@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagsResolver;
 
-use InvalidArgumentException;
 use Tempest\Vite\Exceptions\EntrypointNotFoundException;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\Manifest\Manifest;
@@ -225,7 +224,6 @@ final class ManifestTagsResolver implements TagsResolver
                         setTimeout(() => loadNext({$assets}, {$this->viteConfig->prefetching->concurrent}))
                     })
                 JS,
-            default => throw new InvalidArgumentException('Invalid prefetching strategy.'),
         };
 
         return $this->tagCompiler->compilePrefetchTag($script, $chunk);
