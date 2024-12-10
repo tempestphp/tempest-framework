@@ -15,6 +15,8 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class ViteTest extends FrameworkIntegrationTestCase
 {
+    use HasFixtures;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -165,17 +167,5 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
             ],
         );
-    }
-
-    /**
-     * @return ($array is true ? array : string)
-     */
-    private function fixture(string $name, bool $array = true): array|string
-    {
-        $content = file_get_contents(__DIR__ . "/Fixtures/{$name}");
-
-        return $array
-            ? json_decode($content, associative: true)
-            : $content;
     }
 }
