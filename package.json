@@ -4,6 +4,7 @@
   "scripts": {
     "lint:fix": "eslint --fix packages",
     "build": "bun --filter '*' build",
+    "test": "vitest",
     "release": "bumpp package.json --push --tag --commit \"release: v\""
   },
   "devDependencies": {
@@ -13,6 +14,7 @@
     "eslint": "^9.16.0",
     "typescript": "^5.7.2",
     "unbuild": "^2.0.0",
-    "vite-plugin-tempest": "workspace:*"
+    "vite-plugin-tempest": "workspace:*",
+    "vitest": "^2.1.8"
   }
 }
