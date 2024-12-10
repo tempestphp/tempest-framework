@@ -104,6 +104,18 @@ final class GenericTagCompilerTest extends FrameworkIntegrationTestCase
         $this->assertSame('<link rel="stylesheet" href="/build/main.css" nonce="expected-nonce" />', $tag);
     }
 
+    public function test_generate_script_tag_with_content(): void
+    {
+        $this->container->config(new ViteConfig(
+            nonce: 'expected-nonce',
+        ));
+
+        $generator = $this->container->get(GenericTagCompiler::class);
+        $tag = $generator->compilePrefetchTag('console.log("Hello, world!")', $this->createChunk());
+
+        $this->assertSame('<script nonce="expected-nonce">console.log("Hello, world!")</script>', $tag);
+    }
+
     private function createChunk(?String $src = null, bool $entry = true, ?string $integrity = null, bool $legacy = false): Chunk
     {
         return new Chunk(

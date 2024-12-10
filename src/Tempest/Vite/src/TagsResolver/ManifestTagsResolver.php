@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagsResolver;
 
+use InvalidArgumentException;
 use Tempest\Vite\Exceptions\EntrypointNotFoundException;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\Manifest\Manifest;
+use Tempest\Vite\PrefetchStrategy;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteConfig;
 use function Tempest\root_path;
@@ -43,7 +45,9 @@ final class ManifestTagsResolver implements TagsResolver
             ->append(...$this->getPreloadTags($entrypoint))
             ->append(...$this->getStyleTags($entrypoint))
             ->append($this->resolveChunkTag($entrypoint))
+            ->append($this->resolvePrefetchingScript($entrypoint))
             ->unique()
+            ->filter()
             ->toArray();
     }
 
@@ -100,8 +104,7 @@ final class ManifestTagsResolver implements TagsResolver
     private function getPreloadTags(Chunk $chunk): array
     {
         $seenFiles = [];
-
-        $getPreloadChunks = function (Chunk $chunk) use (&$seenFiles, &$getPreloadChunks) {
+        $findPreloadableChunks = function (Chunk $chunk) use (&$seenFiles, &$findPreloadableChunks) {
             $preloadChunks = [];
 
             foreach ($chunk->imports as $importFile) {
@@ -110,27 +113,122 @@ final class ManifestTagsResolver implements TagsResolver
                 }
 
                 $seenFiles[$importFile] = true;
-                $importChunk = $this->manifest->chunks[$importFile] ?? null;
 
-                if ($importChunk) {
-                    $preloadChunks = array_merge(
-                        $preloadChunks,
-                        $getPreloadChunks($importChunk),
-                    );
-
-                    $preloadChunks[] = $importChunk;
+                if ($importChunk = $this->manifest->chunks[$importFile] ?? null) {
+                    $preloadChunks = [
+                        ...$preloadChunks,
+                        ...$findPreloadableChunks($importChunk),
+                        $importChunk,
+                    ];
                 }
             }
 
             return $preloadChunks;
         };
 
-        $preloadChunks = $getPreloadChunks($chunk);
+        $preloadChunks = $findPreloadableChunks($chunk);
 
         return arr($preloadChunks)
             ->map(fn (Chunk $preloadChunk) => $this->tagCompiler->compilePreloadTag($this->getChunkPath($preloadChunk), $preloadChunk))
             ->unique()
             ->toArray();
+    }
+
+    private function resolvePrefetchingScript(Chunk $chunk): ?string
+    {
+        if ($this->viteConfig->prefetching->strategy === PrefetchStrategy::NONE) {
+            return null;
+        }
+
+        $seenFiles = [];
+        $findPrefetchableAssets = function (Chunk $chunk) use (&$seenFiles, &$findPrefetchableAssets) {
+            $assets = [];
+            $importsToProcess = array_merge($chunk->imports, $chunk->dynamicImports);
+
+            foreach ($importsToProcess as $importFile) {
+                if (isset($seenFiles[$importFile])) {
+                    continue;
+                }
+
+                $seenFiles[$importFile] = true;
+
+                if ($importChunk = $this->manifest->chunks[$importFile] ?? null) {
+                    $assets = array_merge($assets, $findPrefetchableAssets($importChunk));
+
+                    foreach ($importChunk->css as $cssFile) {
+                        $assets[] = [
+                            'rel' => 'prefetch',
+                            'fetchpriority' => 'low',
+                            'href' => $this->getAssetPath($cssFile),
+                        ];
+                    }
+
+                    if (str_ends_with($importChunk->file, '.js')) {
+                        $assets[] = [
+                            'rel' => 'prefetch',
+                            'fetchpriority' => 'low',
+                            'href' => $this->getAssetPath($importChunk->file),
+                        ];
+                    }
+                }
+            }
+
+            return $assets;
+        };
+
+        $assets = json_encode(array_values(array_map(
+            callback: fn (array $asset) => array_map('strval', $asset),
+            array: array_unique($findPrefetchableAssets($chunk), flags: SORT_REGULAR),
+        )));
+
+        $script = match ($this->viteConfig->prefetching->strategy) {
+            PrefetchStrategy::AGGRESSIVE => <<<JS
+                    window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => window.setTimeout(() => {
+                        function makeLink(asset) {
+                            const link = document.createElement('link')
+                            Object.keys(asset).forEach((attribute) => link.setAttribute(attribute, asset[attribute]))
+                            return link
+                        }
+
+                        const fragment = new DocumentFragment()
+                        {$assets}.forEach((asset) => fragment.append(makeLink(asset)))
+                        document.head.append(fragment)
+                    }))
+                JS,
+            PrefetchStrategy::WATERFALL => <<<JS
+                    window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => {
+                        function makeLink(asset) {
+                            const link = document.createElement('link')
+                            Object.entries(asset).forEach(([key, value]) => link.setAttribute(key, value))
+                            return link
+                        }
+
+                        function loadNext(assets, count) {
+                            if (!assets.length) return
+
+                            const fragment = new DocumentFragment()
+                            const limit = Math.min(count, assets.length)
+
+                            for (let i = 0; i < limit; i++) {
+                                const link = makeLink(assets.shift())
+                                fragment.append(link)
+
+                                if (assets.length) {
+                                    link.onload = () => loadNext(assets, 1)
+                                    link.onerror = () => loadNext(assets, 1)
+                                }
+                            }
+
+                            document.head.append(fragment)
+                        }
+
+                        setTimeout(() => loadNext({$assets}, {$this->viteConfig->prefetching->concurrent}))
+                    })
+                JS,
+            default => throw new InvalidArgumentException('Invalid prefetching strategy.'),
+        };
+
+        return $this->tagCompiler->compilePrefetchTag($script, $chunk);
     }
 
     private function getChunkPath(Chunk $chunk): string
