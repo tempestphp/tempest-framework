@@ -27,6 +27,11 @@ final class GenericTagCompiler implements TagCompiler
         ]);
     }
 
+    public function compilePrefetchTag(string $script, ?Chunk $chunk = null): string
+    {
+        return $this->createTag($chunk, tag: 'script', content: $script);
+    }
+
     public function compileStyleTag(string $url, ?Chunk $chunk = null): string
     {
         return $this->createTag($chunk, tag: 'link', attributes: [
@@ -59,7 +64,7 @@ final class GenericTagCompiler implements TagCompiler
         ]);
     }
 
-    private function createTag(?Chunk $chunk, string $tag, array $attributes, ?string $content = null): string
+    private function createTag(?Chunk $chunk, string $tag, array $attributes = [], ?string $content = null): string
     {
         if ($chunk?->integrity) {
             $attributes['integrity'] = $chunk->integrity;

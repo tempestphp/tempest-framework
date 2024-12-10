@@ -13,4 +13,6 @@ interface TagCompiler
     public function compileStyleTag(string $url, ?Chunk $chunk = null): string;
 
     public function compilePreloadTag(string $url, ?Chunk $chunk = null): string;
+
+    public function compilePrefetchTag(string $script, ?Chunk $chunk = null): string;
 }
