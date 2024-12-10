@@ -126,6 +126,7 @@ final class ViteTester
 
         $filesystem = new LocalFilesystem();
         $filesystem->deleteDirectory($temporaryRootDirectory, recursive: true);
+
         $paths = [];
 
         foreach ($files as $path => $content) {
