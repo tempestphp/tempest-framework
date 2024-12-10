@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": ["packages/*"],
   "scripts": {
+    "qa": "bun lint:fix && bun run test run && bun run build",
     "lint": "eslint packages",
     "lint:fix": "eslint --fix packages",
     "build": "bun --filter '*' build",
