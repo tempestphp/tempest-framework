@@ -8,7 +8,7 @@ import type { Plugin, ResolvedConfig, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
 import type { InputOption } from 'rollup'
 import type { DevelopmentServerUrl, TempestViteConfiguration } from './types'
-import { loadConfiguration } from './bridge'
+import { loadTempestConfiguration } from './config'
 import { isIpv6 } from './utils'
 
 const TEMPEST_ORIGIN_PLACEHOLDER = '__tempest_placeholder__'
@@ -30,7 +30,7 @@ export default function tempest(): Plugin {
 		name: 'tempest',
 		enforce: 'post',
 		config: async (config, { command, mode }) => {
-			tempestConfig = await loadConfiguration()
+			tempestConfig = await loadTempestConfiguration()
 			userConfig = config
 
 			const ssr = !!userConfig.build?.ssr
@@ -110,11 +110,10 @@ export default function tempest(): Plugin {
 						url: `${viteDevServerUrl}${server.config.base.replace(/\/$/, '')}`,
 					}))
 
-					// TODO: proper prompt
 					setTimeout(() => {
-						server.config.logger.info(`\n  ${colors.red(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
+						server.config.logger.info(`\n  ${colors.green(`${colors.bold('TEMPEST')} ${tempestVersion()}`)}  ${colors.dim('plugin')} ${colors.bold(`v${pluginVersion()}`)}`)
 						server.config.logger.info('')
-						server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('BASE_URI')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
+						server.config.logger.info(`  ${colors.green('➜')}  ${colors.bold('URL')}: ${colors.cyan(appUrl.replace(/:(\d+)/, (_, port) => `:${colors.bold(port)}`))}`)
 
 						if (typeof resolvedConfig.server.https === 'object' && typeof resolvedConfig.server.https.key === 'string') {
 							if (resolvedConfig.server.https.key.startsWith(herdMacConfigPath()) || resolvedConfig.server.https.key.startsWith(herdWindowsConfigPath())) {

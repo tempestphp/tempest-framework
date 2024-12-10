@@ -1,14 +1,13 @@
 import { exec as sync } from 'node:child_process'
 import type { AddressInfo } from 'node:net'
 import { promisify } from 'node:util'
+import { memoize } from '@innocenzi/utils'
 import { loadEnv } from 'vite'
 
 export const exec = promisify(sync)
 
-export const php = lazy(() => {
-	const env = getEnv()
-
-	return (env.PHP_EXECUTABLE_PATH ?? 'php').split(' ')
+export const php = memoize(() => {
+	return getEnv().PHP_EXECUTABLE_PATH ?? 'php'
 })
 
 export function isIpv6(address: AddressInfo): boolean {
@@ -16,16 +15,6 @@ export function isIpv6(address: AddressInfo): boolean {
 	// See: https://github.com/laravel/vite-plugin/issues/103
 	// @ts-expect-error-next-line
 	return address.family === 'IPv6' || address.family === 6
-}
-
-function lazy<T>(getter: () => T): { value: T } {
-	return {
-		get value() {
-			const value = getter()
-			Object.defineProperty(this, 'value', { value })
-			return value
-		},
-	}
 }
 
 function getEnv() {
