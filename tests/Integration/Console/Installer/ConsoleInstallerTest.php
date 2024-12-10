@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\Console\Installer;
 
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class ConsoleInstallerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
