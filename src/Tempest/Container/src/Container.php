@@ -12,6 +12,8 @@ interface Container
 {
     public function register(string $className, callable $definition): self;
 
+    public function unregister(string $className): self;
+
     public function singleton(string $className, mixed $definition, ?string $tag = null): self;
 
     public function config(object $config): self;
