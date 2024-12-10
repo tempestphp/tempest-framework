@@ -35,13 +35,16 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_in_development_with_custom_entrypoints(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
                 $this->assertSame(
-                    expected: '<script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/main.ts"></script>',
+                    expected: [
+                        '<script type="module" src="http://localhost:5173/@vite/client"></script>',
+                        '<script type="module" src="http://localhost:5173/src/main.ts"></script>',
+                    ],
                     actual: $tags,
                 );
             },
@@ -53,7 +56,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_in_development_with_configured_entrypoints(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
                     build: new BuildConfig(
@@ -65,7 +68,11 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 $tags = $vite->getTags();
 
                 $this->assertSame(
-                    expected: '<script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" />',
+                    expected: [
+                        '<script type="module" src="http://localhost:5173/@vite/client"></script>',
+                        '<script type="module" src="http://localhost:5173/src/foo.ts"></script>',
+                        '<link rel="stylesheet" href="http://localhost:5173/src/bar.css" />',
+                    ],
                     actual: $tags,
                 );
             },
@@ -77,13 +84,15 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_with_manifest_with_specified_entrypoints(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
                 $this->assertSame(
-                    expected: '<script type="module" src="build/assets/main-YJD4Cw3J.js"></script>',
+                    expected: [
+                        '<script type="module" src="build/assets/main-YJD4Cw3J.js"></script>',
+                    ],
                     actual: $tags,
                 );
             },
@@ -97,7 +106,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(EntrypointNotFoundException::class);
 
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $vite->getTags(['src/file-that-does-not-exist.ts']);
@@ -110,13 +119,16 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_with_manifest_with_css(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['src/main.ts']);
 
                 $this->assertSame(
-                    expected: '<link rel="stylesheet" href="build/assets/main-DObprJ9K.css" /><script type="module" src="build/assets/main-CK61jJwL.js"></script>',
+                    expected: [
+                        '<link rel="stylesheet" href="build/assets/main-DObprJ9K.css" />',
+                        '<script type="module" src="build/assets/main-CK61jJwL.js"></script>',
+                    ],
                     actual: $tags,
                 );
             },
@@ -128,13 +140,17 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_with_manifest_and_preloading(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $vite = $this->container->get(Vite::class);
                 $tags = $vite->getTags(['resources/js/app.js']);
 
                 $this->assertSame(
-                    expected: '<link rel="modulepreload" href="build/assets/index-BSdK3M0e.js" /><link rel="stylesheet" href="build/assets/index-B3s1tYeC.css" /><script type="module" src="build/assets/app-lliD09ip.js"></script>',
+                    expected: [
+                        '<link rel="modulepreload" href="build/assets/index-BSdK3M0e.js" />',
+                        '<link rel="stylesheet" href="build/assets/index-B3s1tYeC.css" />',
+                        '<script type="module" src="build/assets/app-lliD09ip.js"></script>',
+                    ],
                     actual: $tags,
                 );
             },
@@ -146,10 +162,10 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
     public function test_get_tags_with_entrypoints_and_global_entrypoints(): void
     {
-        $this->vite->callWithFiles(
+        $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
-                    testing: true,
+                    useManifestDuringTesting: true,
                     build: new BuildConfig(
                         entrypoints: ['src/foo.ts'],
                     ),
@@ -159,7 +175,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 $tags = $vite->getTags(['src/bar.ts']);
 
                 $this->assertSame(
-                    expected: '<script type="module" src="build/assets/bar-WlXl03ld.js"></script>',
+                    expected: ['<script type="module" src="build/assets/bar-WlXl03ld.js"></script>'],
                     actual: $tags,
                 );
             },

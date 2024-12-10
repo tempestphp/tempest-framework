@@ -55,6 +55,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $config = $this->container->get(DatabaseConfig::class);
         $config->connection = $connection;
 
+        // Vite
+        $this->vite->preventTagResolution();
+        $this->vite->clearCaches();
+
         $this->rollbackDatabase();
     }
 

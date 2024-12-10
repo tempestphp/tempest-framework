@@ -7,6 +7,7 @@ namespace Tempest\Vite;
 use Tempest\Container\Container;
 use Tempest\Container\Exceptions\ContainerException;
 use Tempest\Core\AppConfig;
+use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\TagCompiler\TagCompiler;
@@ -42,11 +43,31 @@ final class Vite
     }
 
     /**
-     * Gets all tags.
+     * Gets the tags for the specified or configured `$entrypoints`.
      */
-    public function getTags(?array $entrypoints = null): string
+    public function getTags(?array $entrypoints = null): array
     {
-        return implode('', $this->getTagsResolver()->resolveTags($entrypoints ?? $this->viteConfig->build->entrypoints));
+        return $this->getTagsResolver()->resolveTags($entrypoints ?? $this->viteConfig->build->entrypoints);
+    }
+
+    /**
+     * Clears the manifest cache for this request.
+     */
+    public function clearManifestCache(): self
+    {
+        static::$manifest = null;
+
+        return $this;
+    }
+
+    /**
+     * Clears the bridge file cache for this request.
+     */
+    public function clearBridgeCache(): self
+    {
+        static::$bridgeFile = null;
+
+        return $this;
     }
 
     private function getTagsResolver(): TagsResolver
@@ -68,13 +89,6 @@ final class Vite
         }
     }
 
-    public function clearManifestCache(): self
-    {
-        static::$manifest = null;
-
-        return $this;
-    }
-
     private function getManifest(): Manifest
     {
         if (static::$manifest !== null) {
@@ -94,7 +108,7 @@ final class Vite
 
     private function shouldUseManifest(): bool
     {
-        if ($this->appConfig->environment->isTesting() && ! $this->viteConfig->testing) {
+        if ($this->appConfig->environment->isTesting() && ! $this->viteConfig->useManifestDuringTesting) {
             return false;
         }
 
@@ -110,14 +124,14 @@ final class Vite
         return is_file($this->getBridgeFilePath());
     }
 
-    private function getBridgeFile(): ?BridgeFile
+    private function getBridgeFile(): BridgeFile
     {
         if (static::$bridgeFile !== null) {
             return static::$bridgeFile;
         }
 
         if (! $this->isDevelopmentServerRunning()) {
-            return null;
+            throw new DevelopmentServerNotRunningException();
         }
 
         $file = file_get_contents($this->getBridgeFilePath());
