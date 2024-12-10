@@ -23,16 +23,6 @@ final class ConsoleInstaller implements Installer
         $this->installMainNamespace();
 
         $this->publish(
-            source: __DIR__ . '/.env.example',
-            destination: root_path('.env.example'),
-        );
-
-        $this->publish(
-            source: __DIR__ . '/.env.example',
-            destination: root_path('.env'),
-        );
-
-        $this->publish(
             source: __DIR__ . '/tempest',
             destination: root_path('tempest'),
             callback: function (string $source, string $destination): void {

@@ -32,8 +32,6 @@ final class ConsoleInstallerTest extends FrameworkIntegrationTestCase
             ->call('install console -f');
 
         $this->installer
-            ->assertFileExists('tempest')
-            ->assertFileExists('.env.example')
-            ->assertFileExists('.env');
+            ->assertFileExists('tempest');
     }
 }
