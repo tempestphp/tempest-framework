@@ -73,7 +73,8 @@
         "tempest/router": "self.version",
         "tempest/support": "self.version",
         "tempest/validation": "self.version",
-        "tempest/view": "self.version"
+        "tempest/view": "self.version",
+        "tempest/vite": "self.version"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -100,7 +101,8 @@
             "Tempest\\Router\\": "src/Tempest/Router/src",
             "Tempest\\Support\\": "src/Tempest/Support/src",
             "Tempest\\Validation\\": "src/Tempest/Validation/src",
-            "Tempest\\View\\": "src/Tempest/View/src"
+            "Tempest\\View\\": "src/Tempest/View/src",
+            "Tempest\\Vite\\": "src/Tempest/Vite/src"
         },
         "files": [
             "src/Tempest/CommandBus/src/functions.php",
@@ -112,7 +114,8 @@
             "src/Tempest/Reflection/src/functions.php",
             "src/Tempest/Router/src/functions.php",
             "src/Tempest/Support/src/functions.php",
-            "src/Tempest/View/src/functions.php"
+            "src/Tempest/View/src/functions.php",
+            "src/Tempest/Vite/src/functions.php"
         ]
     },
     "autoload-dev": {
@@ -137,8 +140,11 @@
             "Tempest\\Mapper\\Tests\\": "src/Tempest/Mapper/tests",
             "Tempest\\Reflection\\Tests\\": "src/Tempest/Reflection/tests",
             "Tempest\\Router\\Tests\\": "src/Tempest/Router/tests",
-            "Tempest\\Support\\Tests\\": "src/Tempest/Support/tests",
+            "Tempest\\Support\\Tests\\": [
+                "src/Tempest/Support/tests"
+            ],
             "Tempest\\Validation\\Tests\\": "src/Tempest/Validation/tests",
+            "Tempest\\Vite\\Tests\\": "src/Tempest/Vite/tests",
             "Tests\\Tempest\\": "tests/"
         }
     },

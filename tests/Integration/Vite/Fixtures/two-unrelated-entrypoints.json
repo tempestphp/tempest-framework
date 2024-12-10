@@ -1,0 +1,14 @@
+{
+  "src/foo.ts": {
+    "file": "assets/foo-YJD4Cw3J.js",
+    "name": "foo",
+    "src": "src/foo.ts",
+    "isEntry": true
+  },
+  "src/bar.ts": {
+    "file": "assets/bar-WlXl03ld.js",
+    "name": "bar",
+    "src": "src/bar.ts",
+    "isEntry": true
+  }
+}
