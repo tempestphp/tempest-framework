@@ -10,6 +10,8 @@ use Tempest\Console\Enums\MiddlewareType;
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\Support\str;
+
 /**
  * @internal
  */
@@ -76,10 +78,11 @@ final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
         string $middlewareInterface,
     ): void {
         $this->console
-            ->call("make:middelware TestMiddleware {$middlewareType->value}")
+            ->call("make:middleware TestMiddleware {$middlewareType->value}")
             ->submit();
 
         $filepath = 'App/TestMiddleware.php';
+        $middlewareInterface = str($middlewareInterface)->classBasename()->toString();
         $this->installer
             ->assertFileExists($filepath)
             ->assertFileContains($filepath, 'implements ' . $middlewareInterface);
