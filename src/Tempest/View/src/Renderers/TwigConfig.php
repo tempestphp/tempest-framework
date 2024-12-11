@@ -20,17 +20,4 @@ final readonly class TwigConfig
         public int $optimizations = -1,
     ) {
     }
-
-    public function toArray(): array
-    {
-        return [
-            'debug' => $this->debug,
-            'charset' => $this->charset,
-            'strict_variables' => $this->strictVariables,
-            'autoescape' => $this->autoescape,
-            'cache' => $this->cachePath ?: false,
-            'auto_reload' => $this->autoReload,
-            'optimizations' => $this->optimizations,
-        ];
-    }
 }

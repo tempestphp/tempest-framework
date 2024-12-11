@@ -28,6 +28,6 @@ final readonly class TwigInitializer implements DynamicInitializer
         $twigConfig = $container->get(TwigConfig::class);
         $twigLoader = new FilesystemLoader($twigConfig->viewPaths);
 
-        return new Environment($twigLoader, $twigConfig->toArray());
+        return new Environment($twigLoader, (array) $twigConfig);
     }
 }

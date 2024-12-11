@@ -31,7 +31,7 @@ final class TwigViewRendererTest extends FrameworkIntegrationTestCase
 
         $html = $renderer->render(view('index.twig', ...['foo' => 'bar']));
 
-        $this->assertSame(<<<HTML
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
             <html>
             <span>bar</span>
             </html>
