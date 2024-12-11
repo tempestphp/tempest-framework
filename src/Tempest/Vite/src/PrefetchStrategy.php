@@ -11,7 +11,13 @@ enum PrefetchStrategy
      */
     case NONE;
 
-    case WATERFALL; // TODO: comment
+    /**
+     * Eagerly prefetch JavaScript and CSS assets by injecting a script that loads them by batch.
+     */
+    case WATERFALL;
 
-    case AGGRESSIVE; // TODO: comment
+    /**
+     * Eagerly prefetch JavaScript and CSS assets by injecting a script that loads them all at once.
+     */
+    case AGGRESSIVE;
 }
