@@ -141,9 +141,7 @@
             "Tempest\\Mapper\\Tests\\": "src/Tempest/Mapper/tests",
             "Tempest\\Reflection\\Tests\\": "src/Tempest/Reflection/tests",
             "Tempest\\Router\\Tests\\": "src/Tempest/Router/tests",
-            "Tempest\\Support\\Tests\\": [
-                "src/Tempest/Support/tests"
-            ],
+            "Tempest\\Support\\Tests\\": "src/Tempest/Support/tests",
             "Tempest\\Validation\\Tests\\": "src/Tempest/Validation/tests",
             "Tempest\\Vite\\Tests\\": "src/Tempest/Vite/tests",
             "Tests\\Tempest\\": "tests/"
