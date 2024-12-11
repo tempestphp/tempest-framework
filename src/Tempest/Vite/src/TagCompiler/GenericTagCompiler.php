@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagCompiler;
 
-use Tempest\Support\HtmlHelper;
+use Tempest\Support\HtmlString;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\ViteConfig;
 
@@ -75,6 +75,6 @@ final class GenericTagCompiler implements TagCompiler
             $attributes['nonce'] = $this->viteConfig->nonce;
         }
 
-        return HtmlHelper::createTag($tag, $attributes, $content);
+        return HtmlString::createTag($tag, $attributes, $content)->toString();
     }
 }
