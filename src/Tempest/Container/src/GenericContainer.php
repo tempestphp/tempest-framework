@@ -81,6 +81,20 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    public function unregister(string $className): self
+    {
+        unset($this->definitions[$className]);
+        unset($this->singletons[$className]);
+
+        return $this;
+    }
+
+    public function has(string $className, ?string $tag = null): bool
+    {
+        return isset($this->definitions[$className])
+            || isset($this->singletons[$this->resolveTaggedName($className, $tag)]);
+    }
+
     public function singleton(string $className, mixed $definition, ?string $tag = null): self
     {
         $className = $this->resolveTaggedName($className, $tag);
