@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
-use Tempest\Vite\BridgeFile;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\DevelopmentTagsResolver;
+use Tempest\Vite\ViteBridgeFile;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -17,7 +17,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
     public function test_resolve_tags(): void
     {
         $resolver = new DevelopmentTagsResolver(
-            bridgeFile: new BridgeFile(url: 'http://localhost'),
+            bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
             tagCompiler: $this->container->get(TagCompiler::class),
         );
 

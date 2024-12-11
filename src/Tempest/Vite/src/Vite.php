@@ -21,7 +21,7 @@ final class Vite
 {
     public const string CLIENT_SCRIPT_PATH = '@vite/client';
 
-    private static ?BridgeFile $bridgeFile = null;
+    private static ?ViteBridgeFile $bridgeFile = null;
 
     private static ?Manifest $manifest = null;
 
@@ -124,7 +124,7 @@ final class Vite
         return is_file($this->getBridgeFilePath());
     }
 
-    private function getBridgeFile(): BridgeFile
+    private function getBridgeFile(): ViteBridgeFile
     {
         if (static::$bridgeFile !== null) {
             return static::$bridgeFile;
@@ -137,7 +137,7 @@ final class Vite
         $file = file_get_contents($this->getBridgeFilePath());
         $content = arr(json_decode($file, associative: true));
 
-        return static::$bridgeFile = new BridgeFile(
+        return static::$bridgeFile = new ViteBridgeFile(
             url: $content->get('url'),
         );
     }
