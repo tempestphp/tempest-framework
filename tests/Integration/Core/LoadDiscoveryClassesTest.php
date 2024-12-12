@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
-use Tests\Tempest\Fixtures\Discovery\HiddenMigratableMigration;
-use Tests\Tempest\Fixtures\Discovery\HiddenMigration;
+use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
+use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\get;
 
@@ -34,7 +34,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 
         $migrations = get(DatabaseConfig::class)->getMigrations();
 
-        $this->assertNotContains(HiddenMigration::class, $migrations);
+        $this->assertNotContains(HiddenDatabaseMigration::class, $migrations);
     }
 
     #[Test]
@@ -54,6 +54,6 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 
         $migrations = get(DatabaseConfig::class)->getMigrations();
 
-        $this->assertContains(HiddenMigratableMigration::class, $migrations);
+        $this->assertContains(HiddenMigratableDatabaseMigration::class, $migrations);
     }
 }

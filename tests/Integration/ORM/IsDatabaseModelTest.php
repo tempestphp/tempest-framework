@@ -40,7 +40,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $foo = Foo::create(
@@ -68,7 +68,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $a = Foo::create(
@@ -421,7 +421,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $foo = Foo::create(

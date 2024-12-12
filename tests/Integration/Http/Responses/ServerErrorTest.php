@@ -17,7 +17,7 @@ final class ServerErrorTest extends FrameworkIntegrationTestCase
     {
         $response = new ServerError('test');
 
-        $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
-        $this->assertSame('test', $response->getBody());
+        $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->status);
+        $this->assertSame('test', $response->body);
     }
 }

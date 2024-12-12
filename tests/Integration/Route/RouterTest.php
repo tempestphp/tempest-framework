@@ -33,8 +33,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/test'));
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('test', $response->getBody());
+        $this->assertEquals(Status::OK, $response->status);
+        $this->assertEquals('test', $response->body);
     }
 
     public function test_dispatch_with_parameter(): void
@@ -43,8 +43,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/test/1/a/extra'));
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('1a/extra', $response->getBody());
+        $this->assertEquals(Status::OK, $response->status);
+        $this->assertEquals('1a/extra', $response->body);
     }
 
     public function test_dispatch_with_parameter_with_custom_regex(): void
@@ -53,8 +53,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/test/1/a'));
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('1a', $response->getBody());
+        $this->assertEquals(Status::OK, $response->status);
+        $this->assertEquals('1a', $response->body);
     }
 
     public function test_dispatch_with_parameter_with_complex_custom_regex(): void
@@ -63,8 +63,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/test/1'));
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('1', $response->getBody());
+        $this->assertEquals(Status::OK, $response->status);
+        $this->assertEquals('1', $response->body);
     }
 
     public function test_generate_uri(): void
@@ -124,8 +124,8 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $response = $router->dispatch($this->http->makePsrRequest('/books/1'));
 
-        $this->assertSame(Status::OK, $response->getStatus());
-        $this->assertSame('Test', $response->getBody());
+        $this->assertSame(Status::OK, $response->status);
+        $this->assertSame('Test', $response->body);
     }
 
     public function test_middleware(): void

@@ -120,6 +120,13 @@ return (new PhpCsFixer\Config())
         ],
         'php_unit_mock_short_will_return' => true,
         'php_unit_set_up_tear_down_visibility' => true,
+        'visibility_required' => [
+            'elements' => [
+//            'property' // Disabled because of PHP 8.4 aviz
+                'method',
+                'const'
+            ],
+        ],
         'php_unit_size_class' => false,
         'php_unit_test_annotation' => [
             'style' => 'prefix',

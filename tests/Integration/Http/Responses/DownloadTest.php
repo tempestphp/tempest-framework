@@ -22,6 +22,6 @@ final class DownloadTest extends FrameworkIntegrationTestCase
         $this->assertSame('application/pdf', $response->getHeader('Content-Type')->values[0]);
         $this->assertNull($response->getHeader('Transfer-Encoding'));
         $this->assertSame((string) filesize($path), $response->getHeader('Content-Length')->values[0]);
-        $this->assertSame($path, $response->getBody());
+        $this->assertSame($path, $response->body);
     }
 }

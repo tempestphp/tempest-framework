@@ -55,6 +55,15 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         $this->updateQuery();
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticSearchComponent(
+            label: $this->label,
+            search: $this->search,
+            multiple: $this->multiple,
+            default: $this->default,
+        );
+    }
+
     public function render(Terminal $terminal): string
     {
         $this->updateQuery();
@@ -109,16 +118,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     public function cursorVisible(): bool
     {
         return $this->bufferEnabled;
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticSearchComponent(
-            label: $this->label,
-            search: $this->search,
-            multiple: $this->multiple,
-            default: $this->default,
-        );
     }
 
     #[HandlesKey]

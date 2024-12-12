@@ -40,6 +40,13 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
         $this->renderer = new TextInputRenderer($multiline);
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticTextBoxComponent(
+            label: $this->label,
+            default: $this->default,
+        );
+    }
+
     public function render(Terminal $terminal): string
     {
         return $this->renderer->render(
@@ -60,14 +67,6 @@ final class TextInputComponent implements InteractiveConsoleComponent, HasCursor
             ...($this->multiline ? ['alt+enter' => 'confirm'] : ['enter' => 'confirm']),
             'ctrl+c' => 'cancel',
         ];
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticTextBoxComponent(
-            label: $this->label,
-            default: $this->default,
-        );
     }
 
     public function getCursorPosition(Terminal $terminal): Point

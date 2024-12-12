@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-interface Migration
+interface DatabaseMigration
 {
-    public function getName(): string;
+    public string $name {
+        get;
+    }
 
     public function up(): QueryStatement|null;
 

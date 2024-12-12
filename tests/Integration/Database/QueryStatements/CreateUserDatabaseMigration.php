@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
-final class CreateUserMigration implements Migration
+final class CreateUserDatabaseMigration implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return '0000-01-01_create_users_table';
-    }
+    private(set) string $name = '0000-01-01_create_users_table';
 
     public function up(): QueryStatement
     {

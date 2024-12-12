@@ -93,6 +93,11 @@ final readonly class PropertyReflector implements Reflector
         return ! $this->reflectionProperty->isInitialized($object);
     }
 
+    public function isVirtual(): bool
+    {
+        return $this->reflectionProperty->isVirtual();
+    }
+
     public function unset(object $object): void
     {
         unset($object->{$this->getName()});
