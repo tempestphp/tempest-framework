@@ -19,7 +19,8 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {}
+    ) {
+    }
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -128,8 +129,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): mixed
-    {
+    ): mixed {
         $type = $property->getType();
 
         if ($type->isBuiltIn()) {
@@ -158,8 +158,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): UnknownValue|array
-    {
+    ): UnknownValue|array {
         $type = $property->getIterableType();
 
         if ($type === null) {
@@ -203,8 +202,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         ClassReflector $child,
         object $parent,
         array $data,
-    ): array
-    {
+    ): array {
         foreach ($child->getPublicProperties() as $property) {
             if ($property->getType()->getName() === $parent::class) {
                 $data[$property->getName()] = $parent;
