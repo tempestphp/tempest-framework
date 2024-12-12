@@ -11,8 +11,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Schedule;
 use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
-use Tempest\Console\Scheduler\NullShellExecutor;
 use Tempest\Console\Scheduler\SchedulerConfig;
+use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -48,7 +48,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommand,
+            $executor->executedCommands[0],
         );
     }
 
@@ -69,7 +69,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '(' . PHP_BINARY . ' tempest command) >> /dev/null &',
-            $executor->executedCommand,
+            $executor->executedCommands[0],
         );
     }
 
@@ -90,7 +90,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommand,
+            $executor->executedCommands[0],
         );
 
         // command won't run twice in a row
@@ -107,7 +107,7 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '(' . PHP_BINARY . ' tempest schedule:task Tests\\\Tempest\\\Integration\\\Console\\\Scheduler\\\GenericSchedulerTest::handler) >> /dev/null &',
-            $executor->executedCommand,
+            $executor->executedCommands[0],
         );
     }
 

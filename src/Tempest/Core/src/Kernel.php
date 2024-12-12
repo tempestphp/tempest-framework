@@ -12,6 +12,7 @@ use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
+use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
 use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -43,11 +44,11 @@ final class Kernel
             define('TEMPEST_START', value: hrtime(true));
         }
 
-        return (new self(
+        return new self(
             root: $root,
             discoveryLocations: $discoveryLocations,
             container: $container,
-        ))
+        )
             ->loadEnv()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
@@ -82,7 +83,12 @@ final class Kernel
 
     public function loadComposer(): self
     {
-        $this->container->singleton(Composer::class, new Composer($this->root));
+        $composer = new Composer(
+            root: $this->root,
+            executor: new GenericShellExecutor(),
+        )->load();
+
+        $this->container->singleton(Composer::class, $composer);
 
         return $this;
     }

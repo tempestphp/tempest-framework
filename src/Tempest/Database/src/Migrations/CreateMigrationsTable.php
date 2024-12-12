@@ -17,14 +17,14 @@ final readonly class CreateMigrationsTable implements DatabaseMigration
         return '0000-00-00_create_migrations_table';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return (new CreateTableStatement(Model::table()->tableName))
             ->primary()
             ->text('name');
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement(Model::table()->tableName);
     }

@@ -69,7 +69,7 @@ final class ValidatorTest extends TestCase
             return null;
         });
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_closure_passes_with_true_response(): void
@@ -79,7 +79,7 @@ final class ValidatorTest extends TestCase
             return true;
         });
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_closure_passes(): void
@@ -98,6 +98,6 @@ final class ValidatorTest extends TestCase
             return false;
         });
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 }

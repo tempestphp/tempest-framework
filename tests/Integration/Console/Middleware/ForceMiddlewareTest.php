@@ -14,14 +14,14 @@ final class ForceMiddlewareTest extends FrameworkIntegrationTestCase
     public function test_force(): void
     {
         $this->console
-            ->call('forcecommand --force')
+            ->call('force --force')
             ->assertContains('continued');
     }
 
     public function test_force_flag(): void
     {
         $this->console
-            ->call('forcecommand -f')
+            ->call('force -f')
             ->assertContains('continued');
     }
 }

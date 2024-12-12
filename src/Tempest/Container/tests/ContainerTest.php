@@ -7,6 +7,7 @@ namespace Tempest\Container\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Container\Exceptions\CannotAutowireException;
+use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
 use Tempest\Container\Exceptions\CircularDependencyException;
 use Tempest\Container\Exceptions\InvalidCallableException;
@@ -29,8 +30,10 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\ImplementsInterfaceA;
 use Tempest\Container\Tests\Fixtures\InjectA;
 use Tempest\Container\Tests\Fixtures\InjectB;
+use Tempest\Container\Tests\Fixtures\InterfaceA;
 use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\InvokableClass;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
@@ -138,7 +141,6 @@ final class ContainerTest extends TestCase
          */
         $class = $container->get(BuiltinArrayClass::class);
 
-        $this->assertIsArray($class->anArray);
         $this->assertEmpty($class->anArray);
     }
 
@@ -390,5 +392,73 @@ final class ContainerTest extends TestCase
         $a = $container->get(InjectA::class);
 
         $this->assertInstanceOf(InjectB::class, $a->getB());
+    }
+
+    public function test_unregister(): void
+    {
+        $container = new GenericContainer();
+
+        $container->register(InterfaceA::class, fn () => new ImplementsInterfaceA());
+
+        $this->assertInstanceOf(ImplementsInterfaceA::class, $container->get(InterfaceA::class));
+
+        $container->unregister(InterfaceA::class);
+
+        $this->expectException(CannotInstantiateDependencyException::class);
+
+        $container->get(InterfaceA::class);
+    }
+
+    public function test_unregister_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(InterfaceA::class, $instance = new ImplementsInterfaceA());
+
+        $this->assertInstanceOf(ImplementsInterfaceA::class, $container->get(InterfaceA::class));
+        $this->assertSame($instance, $container->get(InterfaceA::class));
+
+        $container->unregister(InterfaceA::class);
+
+        $this->expectException(CannotInstantiateDependencyException::class);
+
+        $container->get(InterfaceA::class);
+    }
+
+    public function test_has(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(InterfaceA::class));
+
+        $container->register(InterfaceA::class, fn () => new ImplementsInterfaceA());
+
+        $this->assertTrue($container->has(InterfaceA::class));
+    }
+
+    public function test_has_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(InterfaceA::class));
+
+        $container->singleton(InterfaceA::class, new ImplementsInterfaceA());
+
+        $this->assertTrue($container->has(InterfaceA::class));
+    }
+
+    public function test_has_tagged_singleton(): void
+    {
+        $container = new GenericContainer();
+
+        $this->assertFalse($container->has(TaggedDependency::class, 'web'));
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('web'),
+            tag: 'web',
+        );
+
+        $this->assertTrue($container->has(TaggedDependency::class, 'web'));
     }
 }

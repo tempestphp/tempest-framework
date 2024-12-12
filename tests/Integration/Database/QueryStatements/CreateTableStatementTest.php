@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use RuntimeException;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\InvalidDefaultValue;
@@ -27,7 +28,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return '0';
             }
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->text('text', default: 'default')
@@ -52,8 +53,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             $migration,
         );
 
-        // Make sure there are no errors
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_set_statement(): void
@@ -64,7 +64,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return '0';
             }
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->set('set', values: ['foo', 'bar'], default: 'foo');
@@ -80,6 +80,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             DatabaseDialect::MYSQL => '',
             DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
+            null => throw new RuntimeException('No database dialect available'),
         };
 
         $this->migrate(
@@ -87,7 +88,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             $migration,
         );
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_invalid_json_default(): void
@@ -98,7 +99,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return '0';
             }
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->json('json', default: '{default: "invalid json"}');
@@ -127,7 +128,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 return '0';
             }
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->set('set', values: []);

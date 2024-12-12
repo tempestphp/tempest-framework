@@ -14,7 +14,7 @@ use function Tempest\Support\str;
 final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
 {
     #[Test]
-    public function it_can_find_a_single_similar_command(): void
+    public function test_similar_commands(): void
     {
         $this->console
             ->call('discovery:sta')
@@ -27,6 +27,30 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('c:cl')
             ->assertSee('Did you mean cache:clear?');
+
+        $this->console
+            ->call('generate')
+            ->assertSee('discovery:generate')
+            ->assertSee('static:generate');
+
+        $this->console
+            ->call('gen')
+            ->assertSee('discovery:generate')
+            ->assertSee('static:generate');
+
+        $this->console
+            ->call('clear')
+            ->assertSee('cache:clear')
+            ->assertSee('discovery:clear')
+            ->assertSee('static:clean')
+            ->assertSee('session:clean');
+
+        $this->console
+            ->call('clean')
+            ->assertSee('static:clean')
+            ->assertSee('session:clean')
+            ->assertSee('cache:clear')
+            ->assertSee('discovery:clear');
     }
 
     #[Test]

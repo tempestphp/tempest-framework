@@ -15,7 +15,7 @@ final readonly class CreateHasManyParentTable implements DatabaseMigration
         return '100-create-has-many-parent';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return (new CreateTableStatement('parent'))
             ->primary()

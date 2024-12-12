@@ -18,7 +18,7 @@ final readonly class CreateBTable implements DatabaseMigration
         return '100-create-b';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'b',
@@ -29,7 +29,7 @@ final readonly class CreateBTable implements DatabaseMigration
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement('b');
     }

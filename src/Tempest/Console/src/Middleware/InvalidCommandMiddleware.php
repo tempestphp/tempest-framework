@@ -12,7 +12,6 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\Enum;
@@ -44,16 +43,16 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
             subheader: $invocation->consoleCommand->description,
         );
 
-        /** @var ConsoleArgumentDefinition $argument */
         foreach ($exception->invalidArguments as $argument) {
             $isEnum = is_a($argument->type, BackedEnum::class, allow_string: true);
+
             $value = $this->console->ask(
                 question: str($argument->name)->snake(' ')->upperFirst()->toString(),
-                default: (string) $argument->default,
-                hint: $argument->help ?? $argument->description,
                 options: $isEnum
                     ? $argument->type
                     : null,
+                default: (string) $argument->default,
+                hint: $argument->help ?? $argument->description,
                 validation: array_filter([
                     $isEnum
                         ? new Enum($argument->type)

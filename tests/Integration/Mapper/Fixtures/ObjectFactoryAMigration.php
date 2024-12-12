@@ -17,7 +17,7 @@ final class ObjectFactoryAMigration implements DatabaseMigration
         return 'object-a';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'ObjectFactoryA',

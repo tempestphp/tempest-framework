@@ -18,7 +18,7 @@ final readonly class ModelToQueryMapper implements Mapper
     }
 
     // TODO: refactor to ModelQueryBuilder
-    public function map(mixed $from, mixed $to): array|object
+    public function map(mixed $from, mixed $to): Query
     {
         /** @var DatabaseModel $model */
         $model = $from;

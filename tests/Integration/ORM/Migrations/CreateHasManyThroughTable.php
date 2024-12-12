@@ -15,7 +15,7 @@ final readonly class CreateHasManyThroughTable implements DatabaseMigration
         return '100-create-has-many-through';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return (new CreateTableStatement('through'))
             ->primary()

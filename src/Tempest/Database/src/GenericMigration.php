@@ -19,7 +19,7 @@ final readonly class GenericMigration implements DatabaseMigration
         return $this->fileName;
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new RawStatement($this->content);
     }

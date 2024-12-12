@@ -18,7 +18,7 @@ final readonly class CreateCTable implements DatabaseMigration
         return '100-create-c';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement('c', [
             new PrimaryKeyStatement(),
@@ -26,7 +26,7 @@ final readonly class CreateCTable implements DatabaseMigration
         ]);
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement('c');
     }

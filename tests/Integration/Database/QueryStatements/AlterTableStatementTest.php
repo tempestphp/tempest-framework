@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use http\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
@@ -47,6 +48,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
                 DatabaseDialect::POSTGRESQL => 'table users has no column named email',
+                null => throw new RuntimeException('No database dialect available'),
             };
 
             $this->assertStringContainsString($message, $queryException->getMessage());
@@ -77,7 +79,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 return '0000-01-02_add_email_to_user_table';
             }
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return AlterTableStatement::forModel(User::class)
                     ->add(new VarcharStatement('email'));

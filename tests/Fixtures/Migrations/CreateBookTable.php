@@ -17,7 +17,7 @@ final readonly class CreateBookTable implements DatabaseMigration
         return '0000-00-00_create_books_table';
     }
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return CreateTableStatement::forModel(Book::class)
             ->primary()
@@ -25,7 +25,7 @@ final readonly class CreateBookTable implements DatabaseMigration
             ->belongsTo('books.author_id', 'authors.id', nullable: true);
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return DropTableStatement::forModel(Book::class);
     }
