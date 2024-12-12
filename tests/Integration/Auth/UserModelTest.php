@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Auth\Install\Permission;
 use Tempest\Auth\Install\CreatePermissionsTable;
-use Tempest\Auth\Install\User;
-use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\CreateUserPermissionsTable;
+use Tempest\Auth\Install\CreateUsersTable;
+use Tempest\Auth\Install\Permission;
+use Tempest\Auth\Install\User;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;

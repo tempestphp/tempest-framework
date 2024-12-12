@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Authenticator;
 use Tempest\Auth\Install\CreatePermissionsTable;
-use Tempest\Auth\Install\User;
-use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\CreateUserPermissionsTable;
+use Tempest\Auth\Install\CreateUsersTable;
+use Tempest\Auth\Install\User;
 use Tempest\Clock\Clock;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Router\Session\Managers\FileSessionManager;
