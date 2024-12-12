@@ -17,6 +17,8 @@ final class DiscoveryDiscovery implements Discovery
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
+        return;
+
         if ($class->getName() === self::class) {
             return;
         }
