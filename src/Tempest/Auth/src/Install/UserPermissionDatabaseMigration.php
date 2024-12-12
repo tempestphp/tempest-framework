@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Auth\Install;
 
 use Tempest\Core\DoNotDiscover;
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
 #[DoNotDiscover]
-final readonly class UserPermissionMigration implements Migration
+final class UserPermissionDatabaseMigration implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return '0000-00-02_create_user_permissions_table';
-    }
+    private(set) string $name = '0000-00-02_create_user_permissions_table';
 
     public function up(): CreateTableStatement
     {

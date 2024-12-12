@@ -10,7 +10,7 @@ use Tempest\Database\Database;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\QueryException;
-use Tempest\Database\Migration as MigrationInterface;
+use Tempest\Database\DatabaseMigration as MigrationInterface;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
@@ -46,7 +46,7 @@ final readonly class MigrationManager
         $migrations = $this->getSortedMigrations();
 
         foreach ($migrations as $migration) {
-            if (in_array($migration->getName(), $existingMigrations, strict: true)) {
+            if (in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
             }
 
@@ -79,7 +79,7 @@ final readonly class MigrationManager
 
         foreach ($migrations as $migration) {
             /* If the migration is not in the existing migrations, it means it has not been executed */
-            if (! in_array($migration->getName(), $existingMigrations, strict: true)) {
+            if (! in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
             }
 
@@ -96,11 +96,11 @@ final readonly class MigrationManager
             $tables = $this->getTableDefinitions($dialect);
 
             // Disable foreign key checks
-            (new SetForeignKeyChecksStatement(enable: false))->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($dialect);
 
             // Drop each table
             foreach ($tables as $table) {
-                (new DropTableStatement($table->name))->execute($dialect);
+                new DropTableStatement($table->name)->execute($dialect);
 
                 event(new TableDropped($table->name));
             }
@@ -108,7 +108,7 @@ final readonly class MigrationManager
             event(new FreshMigrationFailed($throwable));
         } finally {
             // Enable foreign key checks
-            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
         }
     }
 
@@ -128,15 +128,15 @@ final readonly class MigrationManager
             $this->database->execute($query);
 
             Migration::create(
-                name: $migration->getName(),
+                name: $migration->name,
             );
         } catch (PDOException $pdoException) {
-            event(new MigrationFailed($migration->getName(), $pdoException));
+            event(new MigrationFailed($migration->name, $pdoException));
 
             throw $pdoException;
         }
 
-        event(new MigrationMigrated($migration->getName()));
+        event(new MigrationMigrated($migration->name));
     }
 
     public function executeDown(MigrationInterface $migration): void
@@ -155,17 +155,17 @@ final readonly class MigrationManager
             // TODO: don't just disable FK checking when executing down
 
             // Disable foreign key checks
-            (new SetForeignKeyChecksStatement(enable: false))->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: false)->execute($dialect);
 
             $this->database->execute($query);
 
             // Disable foreign key checks
-            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
         } catch (PDOException $pdoException) {
             // Disable foreign key checks
-            (new SetForeignKeyChecksStatement(enable: true))->execute($dialect);
+            new SetForeignKeyChecksStatement(enable: true)->execute($dialect);
 
-            event(new MigrationFailed($migration->getName(), $pdoException));
+            event(new MigrationFailed($migration->name, $pdoException));
 
             throw $pdoException;
         }
@@ -174,7 +174,7 @@ final readonly class MigrationManager
             $this->database->execute(
                 new Query(
                     'DELETE FROM Migration WHERE name = :name',
-                    ['name' => $migration->getName()],
+                    ['name' => $migration->name],
                 ),
             );
         } catch (QueryException) {
@@ -186,7 +186,7 @@ final readonly class MigrationManager
              */
         }
 
-        event(new MigrationRolledBack($migration->getName()));
+        event(new MigrationRolledBack($migration->name));
     }
 
     /**
@@ -200,7 +200,7 @@ final readonly class MigrationManager
             $this->databaseConfig->getMigrations(),
         );
 
-        usort($migrations, fn (MigrationInterface $a, MigrationInterface $b) => $a->getName() <=> $b->getName());
+        usort($migrations, fn (MigrationInterface $a, MigrationInterface $b) => $a->name <=> $b->name);
 
         return $migrations;
     }
@@ -215,7 +215,7 @@ final readonly class MigrationManager
                 DatabaseDialect::SQLITE => new TableDefinition($item['name']),
                 default => new TableDefinition(array_values($item)[0]),
             },
-            (new ShowTablesStatement())->fetch($dialect),
+            new ShowTablesStatement()->fetch($dialect),
         );
     }
 }

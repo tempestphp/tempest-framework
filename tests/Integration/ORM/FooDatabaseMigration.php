@@ -2,28 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Mapper\Fixtures;
+namespace Tests\Tempest\Integration\ORM;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
 
-final class ObjectFactoryAMigration implements Migration
+final class FooDatabaseMigration implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return 'object-a';
-    }
+    private(set) string $name = 'foos';
 
     public function up(): QueryStatement
     {
         return new CreateTableStatement(
-            'ObjectFactoryA',
-            [
+            tableName: 'foos',
+            statements: [
                 new PrimaryKeyStatement(),
-                new TextStatement('prop'),
+                new TextStatement('bar'),
             ],
         );
     }

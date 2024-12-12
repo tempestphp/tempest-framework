@@ -8,7 +8,7 @@ use RuntimeException;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\Exceptions\InvalidValue;
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -22,11 +22,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -58,11 +55,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_set_statement(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -93,11 +87,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_json_default(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -122,11 +113,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_set_values(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
