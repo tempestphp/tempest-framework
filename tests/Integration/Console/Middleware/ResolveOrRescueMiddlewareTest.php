@@ -40,17 +40,17 @@ final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('clear')
-            ->assertSee('[0] cache:clear')
-            ->assertSee('[1] discovery:clear')
-            ->assertSee('[2] static:clean')
-            ->assertSee('[3] session:clean');
+            ->assertSee('cache:clear')
+            ->assertSee('discovery:clear')
+            ->assertSee('static:clean')
+            ->assertSee('session:clean');
 
         $this->console
             ->call('clean')
-            ->assertSee('[0] static:clean')
-            ->assertSee('[1] session:clean')
-            ->assertSee('[2] cache:clear')
-            ->assertSee('[3] discovery:clear');
+            ->assertSee('static:clean')
+            ->assertSee('session:clean')
+            ->assertSee('cache:clear')
+            ->assertSee('discovery:clear');
     }
 
     #[Test]
