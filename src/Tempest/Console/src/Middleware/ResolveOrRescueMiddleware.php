@@ -26,7 +26,8 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         private Console $console,
         private ExecuteConsoleCommand $executeConsoleCommand,
         private ResolveConsoleCommand $resolveConsoleCommand,
-    ) {}
+    ) {
+    }
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
@@ -80,7 +81,6 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         foreach ($this->consoleConfig->commands as $consoleCommand) {
             $currentName = str($consoleCommand->getName());
 
-
             // Already added to suggestions
             if ($suggestions->contains($currentName->toString())) {
                 continue;
@@ -93,6 +93,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             if ($searchParts->count() === $currentParts->count()) {
                 if ($searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
                     $suggestions[] = $currentName;
+
                     continue;
                 }
             }
@@ -100,12 +101,14 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             // `generate` will match `discovery:generate`
             if ($currentName->startsWith($search) || $currentName->endsWith($search)) {
                 $suggestions[] = $currentName;
+
                 continue;
             }
 
             // Match with levenshtein on the whole command
             if ($currentName->levenshtein($search) <= 2) {
                 $suggestions[] = $currentName;
+
                 continue;
             }
 
@@ -116,12 +119,14 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
                 // `clean` will match `static:clean` but also `discovery:clear`
                 if ($part->levenshtein($search) <= 1) {
                     $suggestions[] = $currentName;
+
                     continue 2;
                 }
 
                 // `generate` will match `discovery:generate`
                 if ($part->startsWith($search)) {
                     $suggestions[] = $currentName;
+
                     continue 2;
                 }
             }
@@ -139,7 +144,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
                 // Always use the closest distance
                 $levenshtein = min($levenshtein, str($suggestionPart)->levenshtein($search));
             }
-            
+
             $sorted[] = ['levenshtein' => $levenshtein, 'suggestion' => $suggestion];
         }
 

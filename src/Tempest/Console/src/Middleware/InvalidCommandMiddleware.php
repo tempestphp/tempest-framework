@@ -12,7 +12,6 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\Enum;
