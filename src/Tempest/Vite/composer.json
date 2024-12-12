@@ -1,0 +1,22 @@
+{
+    "name": "tempest/vite",
+    "description": "A component for working with Vite.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Vite\\": "src"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Vite\\Tests\\": "tests"
+        }
+    }
+}

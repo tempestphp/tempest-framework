@@ -7,6 +7,42 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
+  vitest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - 8.4
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    name: "Run Tests: ${{ matrix.os }}"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql
+          coverage: pcov
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run build
+        run: bun run build
+
+      - name: Run tests
+        run: bun run test
+
   phpunit:
     runs-on: ${{ matrix.os }}
     strategy:
