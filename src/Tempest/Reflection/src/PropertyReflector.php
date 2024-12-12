@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Reflection;
 
 use Error;
+use PropertyHookType;
 use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class PropertyReflector implements Reflector
@@ -13,8 +14,7 @@ final readonly class PropertyReflector implements Reflector
 
     public function __construct(
         private PHPReflectionProperty $reflectionProperty,
-    ) {
-    }
+    ) {}
 
     public static function fromParts(string|object $class, string $name): self
     {
@@ -91,6 +91,11 @@ final readonly class PropertyReflector implements Reflector
     public function isUninitialized(object $object): bool
     {
         return ! $this->reflectionProperty->isInitialized($object);
+    }
+
+    public function isVirtual(): bool
+    {
+        return $this->reflectionProperty->isVirtual();
     }
 
     public function unset(object $object): void

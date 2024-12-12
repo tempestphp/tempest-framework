@@ -19,8 +19,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {
-    }
+    ) {}
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -44,6 +43,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $object = $this->resolveObject($to);
 
         $missingValues = [];
+        /** @var PropertyReflector $unsetProperties */
         $unsetProperties = [];
 
         $from = arr($from)->unwrap()->toArray();
@@ -51,6 +51,10 @@ final readonly class ArrayToObjectMapper implements Mapper
         $isStrictClass = $class->hasAttribute(Strict::class);
 
         foreach ($class->getPublicProperties() as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
             $propertyName = $property->getName();
 
             if (! array_key_exists($propertyName, $from)) {
@@ -63,7 +67,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 if ($isStrictProperty) {
                     $missingValues[] = $propertyName;
                 } else {
-                    $unsetProperties[] = $propertyName;
+                    $unsetProperties[] = $property;
                 }
 
                 continue;
@@ -98,8 +102,12 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         // Non-strict properties that weren't passed are unset,
         // which means that they can now be accessed via `__get`
-        foreach ($unsetProperties as $unsetProperty) {
-            unset($object->{$unsetProperty});
+        foreach ($unsetProperties as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            $property->unset($object);
         }
 
         $this->validate($object);
@@ -120,7 +128,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): mixed {
+    ): mixed
+    {
         $type = $property->getType();
 
         if ($type->isBuiltIn()) {
@@ -149,7 +158,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): UnknownValue|array {
+    ): UnknownValue|array
+    {
         $type = $property->getIterableType();
 
         if ($type === null) {
@@ -193,7 +203,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         ClassReflector $child,
         object $parent,
         array $data,
-    ): array {
+    ): array
+    {
         foreach ($child->getPublicProperties() as $property) {
             if ($property->getType()->getName() === $parent::class) {
                 $data[$property->getName()] = $parent;

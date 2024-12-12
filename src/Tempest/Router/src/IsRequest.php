@@ -20,6 +20,10 @@ trait IsRequest
     /** @var \Tempest\Router\Upload[] */
     public array $files;
 
+    public array $cookies {
+        get => get(CookieManager::class)->all();
+    }
+
     public function __construct(
         public Method $method,
         public string $uri,
@@ -44,42 +48,6 @@ trait IsRequest
         return $default;
     }
 
-    public function getMethod(): Method
-    {
-        return $this->method;
-    }
-
-    public function getUri(): string
-    {
-        return $this->uri;
-    }
-
-    public function getBody(): array
-    {
-        return $this->body;
-    }
-
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    public function getQuery(): array
-    {
-        return $this->query;
-    }
-
-    /** @return \Tempest\Router\Upload[] */
-    public function getFiles(): array
-    {
-        return $this->files;
-    }
-
     public function getSessionValue(string $name): mixed
     {
         /** @var Session $session */
@@ -94,14 +62,6 @@ trait IsRequest
         $cookies = get(CookieManager::class);
 
         return $cookies->get($name);
-    }
-
-    public function getCookies(): array
-    {
-        /** @var CookieManager $cookies */
-        $cookies = get(CookieManager::class);
-
-        return $cookies->all();
     }
 
     public function validate(): void
