@@ -68,8 +68,8 @@ final class TestResponseHelper
     public function assertRedirect(?string $to = null): self
     {
         Assert::assertTrue(
-            $this->response->status->isRedirect(),
-            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->status->value),
+            $this->status->isRedirect(),
+            sprintf('Failed asserting that status [%s] is a redirect.', $this->status->value),
         );
 
         return $to === null
@@ -96,11 +96,11 @@ final class TestResponseHelper
     {
         Assert::assertSame(
             expected: $expected,
-            actual: $this->response->status,
+            actual: $this->status,
             message: sprintf(
                 'Failed asserting status [%s] matched expected status of [%s].',
                 $expected->value,
-                $this->response->status->value,
+                $this->status->value,
             ),
         );
 
