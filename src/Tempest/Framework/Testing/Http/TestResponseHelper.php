@@ -28,24 +28,24 @@ final readonly class TestResponseHelper
 
     public function getStatus(): Status
     {
-        return $this->response->getStatus();
+        return $this->response->status;
     }
 
     public function getHeaders(): array
     {
-        return $this->response->getHeaders();
+        return $this->response->headers;
     }
 
     public function getBody(): string|array
     {
-        return $this->response->getBody();
+        return $this->response->body;
     }
 
     public function assertHasHeader(string $name): self
     {
         Assert::assertArrayHasKey(
             $name,
-            $this->response->getHeaders(),
+            $this->response->headers,
             sprintf('Failed to assert that response contains header [%s].', $name),
         );
 
@@ -72,8 +72,8 @@ final readonly class TestResponseHelper
     public function assertRedirect(?string $to = null): self
     {
         Assert::assertTrue(
-            $this->response->getStatus()->isRedirect(),
-            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->getStatus()->value),
+            $this->response->status->isRedirect(),
+            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->status->value),
         );
 
         return $to === null
@@ -100,11 +100,11 @@ final readonly class TestResponseHelper
     {
         Assert::assertSame(
             expected: $expected,
-            actual: $this->response->getStatus(),
+            actual: $this->response->status,
             message: sprintf(
                 'Failed asserting status [%s] matched expected status of [%s].',
                 $expected->value,
-                $this->response->getStatus()->value,
+                $this->response->status->value,
             ),
         );
 
@@ -193,7 +193,7 @@ final readonly class TestResponseHelper
 
     public function assertSee(string $search): self
     {
-        $body = $this->response->getBody();
+        $body = $this->response->body;
 
         if ($body instanceof View) {
             $body = get(ViewRenderer::class)->render($body);
@@ -206,7 +206,7 @@ final readonly class TestResponseHelper
 
     public function assertNotSee(string $search): self
     {
-        $body = $this->response->getBody();
+        $body = $this->response->body;
 
         if ($body instanceof View) {
             $body = get(ViewRenderer::class)->render($body);

@@ -15,24 +15,22 @@ use function Tempest\get;
 /** @phpstan-require-implements \Tempest\Router\Response */
 trait IsResponse
 {
-    private Status $status = Status::OK;
+    private(set) Status $status = Status::OK;
 
-    private View|string|array|Generator|null $body = null;
+    private(set) View|string|array|Generator|null $body = null;
 
     /** @var \Tempest\Router\Header[] */
-    private array $headers = [];
+    private(set) array $headers = [];
 
-    private ?View $view = null;
-
-    public function getStatus(): Status
-    {
-        return $this->status;
+    public Session $session {
+        get => get(Session::class);
     }
 
-    public function getHeaders(): array
-    {
-        return $this->headers;
+    public CookieManager $cookieManager {
+        get => get(CookieManager::class);
     }
+
+    private(set) ?View $view = null;
 
     public function getHeader(string $name): ?Header
     {
@@ -55,49 +53,44 @@ trait IsResponse
         return $this;
     }
 
-    public function getBody(): View|string|array|Generator|null
-    {
-        return $this->body;
-    }
-
     public function addSession(string $name, mixed $value): self
     {
-        $this->getSession()->set($name, $value);
+        $this->session->set($name, $value);
 
         return $this;
     }
 
     public function removeSession(string $name): self
     {
-        $this->getSession()->remove($name);
+        $this->session->remove($name);
 
         return $this;
     }
 
     public function destroySession(): self
     {
-        $this->getSession()->destroy();
+        $this->session->destroy();
 
         return $this;
     }
 
     public function addCookie(Cookie $cookie): self
     {
-        $this->getCookieManager()->add($cookie);
+        $this->cookieManager->add($cookie);
 
         return $this;
     }
 
     public function removeCookie(string $key): self
     {
-        $this->getCookieManager()->remove($key);
+        $this->cookieManager->remove($key);
 
         return $this;
     }
 
     public function flash(string $key, mixed $value): self
     {
-        $this->getSession()->flash($key, $value);
+        $this->session->flash($key, $value);
 
         return $this;
     }
@@ -116,15 +109,5 @@ trait IsResponse
         $this->status = $status;
 
         return $this;
-    }
-
-    private function getCookieManager(): CookieManager
-    {
-        return get(CookieManager::class);
-    }
-
-    private function getSession(): Session
-    {
-        return get(Session::class);
     }
 }

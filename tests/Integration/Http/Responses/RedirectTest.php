@@ -17,7 +17,7 @@ final class RedirectTest extends FrameworkIntegrationTestCase
     {
         $response = new Redirect('/to');
 
-        $this->assertSame(Status::FOUND, $response->getStatus());
+        $this->assertSame(Status::FOUND, $response->status);
         $this->assertSame('/to', $response->getHeader('Location')->values[0]);
     }
 
@@ -25,6 +25,6 @@ final class RedirectTest extends FrameworkIntegrationTestCase
     {
         $response = (new Redirect('/to'))->permanent();
 
-        $this->assertSame(Status::MOVED_PERMANENTLY, $response->getStatus());
+        $this->assertSame(Status::MOVED_PERMANENTLY, $response->status);
     }
 }

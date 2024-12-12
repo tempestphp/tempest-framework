@@ -52,6 +52,6 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
     {
         $response = (new Ok())->setStatus(Status::ACCEPTED);
 
-        $this->assertSame(Status::ACCEPTED, $response->getStatus());
+        $this->assertSame(Status::ACCEPTED, $response->status);
     }
 }

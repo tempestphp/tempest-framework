@@ -45,14 +45,14 @@ final readonly class GenericResponseSender implements ResponseSender
             header($header);
         }
 
-        http_response_code($response->getStatus()->value);
+        http_response_code($response->status->value);
     }
 
     private function resolveHeaders(Response $response): Generator
     {
-        $headers = $response->getHeaders();
+        $headers = $response->headers;
 
-        if (is_array($response->getBody())) {
+        if (is_array($response->body)) {
             $headers[ContentType::HEADER] ??= new Header(ContentType::HEADER);
             $headers[ContentType::HEADER]->add(ContentType::JSON->value);
         }
@@ -66,7 +66,7 @@ final readonly class GenericResponseSender implements ResponseSender
 
     private function sendContent(Response $response): void
     {
-        $body = $response->getBody();
+        $body = $response->body;
 
         if ($response instanceof File || $response instanceof Download) {
             readfile($body);
