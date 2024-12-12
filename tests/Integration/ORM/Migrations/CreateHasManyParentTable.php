@@ -10,7 +10,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 
 final class CreateHasManyParentTable implements DatabaseMigration
 {
-    private(set) public string $name = '100-create-has-many-parent';
+    private(set) string $name = '100-create-has-many-parent';
 
     public function up(): QueryStatement
     {

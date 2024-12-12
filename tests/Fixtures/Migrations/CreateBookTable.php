@@ -12,7 +12,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 
 final class CreateBookTable implements DatabaseMigration
 {
-    private(set) public string $name = '0000-00-00_create_books_table';
+    private(set) string $name = '0000-00-00_create_books_table';
 
     public function up(): QueryStatement
     {

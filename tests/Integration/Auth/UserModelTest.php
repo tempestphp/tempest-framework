@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Auth;
 
 use Tempest\Auth\Install\Permission;
-use Tempest\Auth\Install\PermissionDatabaseMigration;
+use Tempest\Auth\Install\CreatePermissionsTable;
 use Tempest\Auth\Install\User;
-use Tempest\Auth\Install\UserDatabaseMigration;
-use Tempest\Auth\Install\UserPermissionDatabaseMigration;
+use Tempest\Auth\Install\CreateUsersTable;
+use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
@@ -25,9 +25,9 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            UserDatabaseMigration::class,
-            PermissionDatabaseMigration::class,
-            UserPermissionDatabaseMigration::class,
+            CreateUsersTable::class,
+            CreatePermissionsTable::class,
+            CreateUserPermissionsTable::class,
         );
     }
 

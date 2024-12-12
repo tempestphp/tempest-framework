@@ -8,7 +8,7 @@ use Tempest\Database\QueryStatements\RawStatement;
 
 final class GenericDatabaseMigration implements DatabaseMigration
 {
-    private(set) public string $name;
+    public string $name;
 
     public function __construct(
         private string $fileName,

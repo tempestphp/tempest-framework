@@ -181,7 +181,7 @@ final class GenericConsole implements Console
         }
 
         if ($component instanceof HasStaticComponent) {
-            return $component->getStaticComponent()->render($this);
+            return $component->staticComponent->render($this);
         }
 
         throw new UnsupportedComponent($component);

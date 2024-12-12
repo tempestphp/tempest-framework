@@ -23,7 +23,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_defaults(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) public string $name = '0';
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -56,7 +56,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_set_statement(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) public string $name = '0';
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -88,7 +88,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_invalid_json_default(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) public string $name = '0';
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
@@ -114,7 +114,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_invalid_set_values(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) public string $name = '0';
+            private(set) string $name = '0';
 
             public function up(): QueryStatement
             {

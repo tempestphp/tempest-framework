@@ -14,7 +14,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 
 final class CreateAuthorTable implements DatabaseMigration
 {
-    private(set) public string $name = '0000-00-00_create_authors_table';
+    private(set) string $name = '0000-00-00_create_authors_table';
 
     public function up(): QueryStatement
     {

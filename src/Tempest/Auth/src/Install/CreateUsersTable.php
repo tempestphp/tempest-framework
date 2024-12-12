@@ -10,13 +10,13 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 
 #[DoNotDiscover]
-final class UserDatabaseMigration implements DatabaseMigration
+final class CreateUsersTable implements DatabaseMigration
 {
-    private(set) public string $name = '0000-00-00_create_users_table';
+    private(set) string $name = '0000-00-00_create_users_table';
 
     public function up(): CreateTableStatement
     {
-        return (new CreateTableStatement('users'))
+        return new CreateTableStatement('users')
             ->primary()
             ->varchar('name')
             ->varchar('email')

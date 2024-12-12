@@ -13,7 +13,7 @@ use Tempest\Database\QueryStatements\RawStatement;
 
 final class CreateATable implements DatabaseMigration
 {
-    private(set) public string $name = '100-create-a';
+    private(set) string $name = '100-create-a';
 
     public function up(): QueryStatement
     {

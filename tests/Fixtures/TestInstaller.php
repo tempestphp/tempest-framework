@@ -12,7 +12,7 @@ final class TestInstaller implements Installer
 {
     use PublishesFiles;
 
-    private(set) public string $name = 'test';
+    private(set) string $name = 'test';
 
     public function install(): void
     {

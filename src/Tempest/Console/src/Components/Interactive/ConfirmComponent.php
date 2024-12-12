@@ -36,6 +36,13 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
         $this->renderer = new ConfirmRenderer($yes ?? 'Yes', $no ?? 'No');
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticConfirmComponent(
+            $this->question,
+            $this->default,
+        );
+    }
+
     public function render(Terminal $terminal): string
     {
         return $this->renderer->render(
@@ -78,13 +85,5 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
             'h', 'j', 'k', 'l' => ! $this->answer,
             default => $this->answer,
         };
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticConfirmComponent(
-            $this->question,
-            $this->default,
-        );
     }
 }

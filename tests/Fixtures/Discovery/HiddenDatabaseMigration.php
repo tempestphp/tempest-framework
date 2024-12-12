@@ -11,7 +11,7 @@ use Tempest\Database\QueryStatement;
 #[DoNotDiscover]
 final class HiddenDatabaseMigration implements DatabaseMigration
 {
-    private(set) public string $name = 'hidden-migration';
+    private(set) string $name = 'hidden-migration';
 
     public function up(): ?QueryStatement
     {

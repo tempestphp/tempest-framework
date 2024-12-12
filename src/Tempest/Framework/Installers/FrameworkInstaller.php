@@ -12,7 +12,7 @@ final class FrameworkInstaller implements Installer
 {
     use IsComponentInstaller;
 
-    private(set) public string $name = 'framework';
+    private(set) string $name = 'framework';
 
     public function install(): void
     {

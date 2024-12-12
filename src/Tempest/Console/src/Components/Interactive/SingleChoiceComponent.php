@@ -45,6 +45,14 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         $this->updateQuery();
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticSingleChoiceComponent(
+            label: $this->label,
+            options: $this->options->getRawOptions(),
+            default: $this->default,
+        );
+    }
+
     public function render(Terminal $terminal): string
     {
         $this->updateQuery();
@@ -93,15 +101,6 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     public function cursorVisible(): bool
     {
         return $this->bufferEnabled;
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticSingleChoiceComponent(
-            label: $this->label,
-            options: $this->options->getRawOptions(),
-            default: $this->default,
-        );
     }
 
     #[HandlesKey]

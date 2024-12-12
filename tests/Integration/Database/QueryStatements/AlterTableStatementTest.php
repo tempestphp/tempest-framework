@@ -74,7 +74,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
     private function getAlterTableMigration(): mixed
     {
         return new class () implements DatabaseMigration {
-            private(set) public string $name = '0000-01-02_add_email_to_user_table';
+            private(set) string $name = '0000-01-02_add_email_to_user_table';
 
             public function up(): QueryStatement
             {

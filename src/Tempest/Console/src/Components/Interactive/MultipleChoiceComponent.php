@@ -44,6 +44,14 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
         $this->updateQuery();
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticMultipleChoiceComponent(
+            label: $this->label,
+            options: $this->options->getRawOptions(),
+            default: $this->default,
+        );
+    }
+
     public function render(Terminal $terminal): string
     {
         $this->updateQuery();
@@ -90,15 +98,6 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     public function cursorVisible(): bool
     {
         return $this->bufferEnabled;
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticMultipleChoiceComponent(
-            label: $this->label,
-            options: $this->options->getRawOptions(),
-            default: $this->default,
-        );
     }
 
     #[HandlesKey]
