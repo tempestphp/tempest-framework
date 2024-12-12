@@ -13,26 +13,41 @@ use function Tempest\get;
 /** @phpstan-require-implements \Tempest\Router\Request */
 trait IsRequest
 {
-    public string $path;
+    private(set) Method $method;
 
-    public array $query;
+    private(set) string $uri;
+
+    private(set) array $body = [];
+
+    private(set) array $headers = [];
+
+    private(set) string $path;
+
+    private(set) array $query;
 
     /** @var \Tempest\Router\Upload[] */
-    public array $files;
+    private(set) array $files;
 
     public array $cookies {
         get => get(CookieManager::class)->all();
     }
 
     public function __construct(
-        public Method $method,
-        public string $uri,
-        public array $body = [],
-        public array $headers = [],
-    ) {
+        Method $method,
+        string $uri,
+        array $body = [],
+        array $headers = [],
+        array $files = [],
+    )
+    {
+        $this->method = $method;
+        $this->uri = $uri;
+        $this->body = $body;
+        $this->headers = $headers;
+        $this->files = $files;
+
         $this->path ??= $this->resolvePath();
         $this->query ??= $this->resolveQuery();
-        $this->files ??= [];
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -94,7 +109,7 @@ trait IsRequest
             return true;
         }
 
-        return (bool) $this->hasQuery($key);
+        return (bool)$this->hasQuery($key);
     }
 
     public function hasBody(string $key): bool
