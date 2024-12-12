@@ -1,3 +1,6 @@
+# Make sure text files are normalized and use LF line endings
+* text=auto eol=lf
+
 # Exclude build/test files from the release
 /bin/                     export-ignore
 .github/                  export-ignore
