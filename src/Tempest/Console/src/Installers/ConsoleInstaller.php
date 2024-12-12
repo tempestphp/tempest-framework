@@ -12,10 +12,7 @@ final class ConsoleInstaller implements Installer
 {
     use IsComponentInstaller;
 
-    public function getName(): string
-    {
-        return 'console';
-    }
+    private(set) string $name = 'console';
 
     public function install(): void
     {
