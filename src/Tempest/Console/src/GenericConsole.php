@@ -118,13 +118,20 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function writeWithLanguage(string $contents, Language $language): Console
+    public function writeWithLanguage(string $contents, Language $language): self
     {
         if ($this->label) {
             $contents = "<h2>{$this->label}</h2> {$contents}";
         }
 
         $this->output->write($this->highlighter->parse($contents, $language));
+
+        return $this;
+    }
+
+    public function writeRaw(string $contents): self
+    {
+        $this->output->write($contents);
 
         return $this;
     }

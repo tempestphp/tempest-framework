@@ -22,6 +22,8 @@ interface Console
 
     public function writeln(string $line = ''): self;
 
+    public function writeRaw(string $contents): self;
+
     public function writeWithLanguage(string $contents, Language $language): self;
 
     /**

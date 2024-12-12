@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "qa": "bun lint:fix && bun run test run && bun run build",
+    "lint": "eslint packages",
+    "lint:fix": "eslint --fix packages",
+    "build": "bun --filter '*' build",
+    "dev": "bun --filter '*' build:stub",
+    "test": "vitest",
+    "release": "bumpp package.json --push --tag --commit \"release: v\""
+  },
+  "devDependencies": {
+    "@innocenzi/eslint-config": "^0.22.4",
+    "@types/bun": "latest",
+    "bumpp": "^9.9.0",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2",
+    "unbuild": "^2.0.0",
+    "vite-plugin-tempest": "workspace:*",
+    "vitest": "^2.1.8"
+  }
+}
