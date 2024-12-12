@@ -44,7 +44,11 @@ trait IsIterable
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->array[$offset] = $value;
+        if ($offset === null) {
+            $this->array[] = $value;
+        } else {
+            $this->array[$offset] = $value;
+        }
     }
 
     public function offsetUnset(mixed $offset): void

@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use BackedEnum;
 use Closure;
+use Stringable;
 use Tempest\Highlight\Language;
 use Tempest\Support\ArrayHelper;
 
@@ -42,7 +43,7 @@ interface Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|array;
+    ): null|int|string|Stringable|array;
 
     public function confirm(string $question, bool $default = false, ?string $yes = null, ?string $no = null): bool;
 

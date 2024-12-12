@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Stringable;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -128,7 +129,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string
+    public function enter(): null|int|string|Stringable
     {
         $active = $this->options->getActive();
 

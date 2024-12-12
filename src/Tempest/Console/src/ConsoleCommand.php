@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use Attribute;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Reflection\MethodReflector;
+use function Tempest\Support\str;
 
 #[Attribute]
 final class ConsoleCommand
@@ -43,9 +44,15 @@ final class ConsoleCommand
             return $this->name;
         }
 
+        $commandName = str($this->handler->getDeclaringClass()->getShortName())
+            ->replaceEnd('ConsoleCommand', '')
+            ->replaceEnd('Command', '')
+            ->snake(':')
+            ->lower();
+
         return $this->handler->getName() === '__invoke'
-            ? strtolower($this->handler->getDeclaringClass()->getShortName())
-            : strtolower($this->handler->getDeclaringClass()->getShortName() . ':' . $this->handler->getName());
+            ? $commandName->toString()
+            : strtolower($commandName . ':' . $this->handler->getName());
     }
 
     /**

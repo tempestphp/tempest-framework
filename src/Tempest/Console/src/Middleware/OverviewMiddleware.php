@@ -83,7 +83,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
                 ->writeln($title);
 
             foreach ($commandsForGroup as $consoleCommand) {
-                (new RenderConsoleCommand($this->console, $longestCommandName))($consoleCommand);
+                new RenderConsoleCommand($this->console, $longestCommandName)($consoleCommand);
             }
         }
 

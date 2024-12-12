@@ -16,7 +16,7 @@ final class CautionMiddlewareTest extends FrameworkIntegrationTestCase
     public function test_in_local(): void
     {
         $this->console
-            ->call('cautioncommand')
+            ->call('caution')
             ->assertContains('CAUTION confirmed');
     }
 
@@ -26,7 +26,7 @@ final class CautionMiddlewareTest extends FrameworkIntegrationTestCase
         $appConfig->environment = Environment::PRODUCTION;
 
         $this->console
-            ->call('cautioncommand')
+            ->call('caution')
             ->submit('yes')
             ->assertContains('CAUTION confirmed');
     }

@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use BackedEnum;
 use Closure;
+use Stringable;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
@@ -195,7 +196,7 @@ final class GenericConsole implements Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|array {
+    ): null|int|string|Stringable|array {
         if ($this->isForced && $default) {
             return $default;
         }

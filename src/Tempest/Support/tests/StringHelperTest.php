@@ -608,4 +608,16 @@ b'));
         $this->assertInstanceOf(HtmlString::class, str('foo')->toHtmlString());
         $this->assertSame('foo', (string) str('foo')->toHtmlString());
     }
+
+    public function test_contains(): void
+    {
+        $this->assertTrue(str('foo')->contains('fo'));
+        $this->assertFalse(str('foo')->contains('bar'));
+    }
+
+    public function test_levenshtein(): void
+    {
+        $this->assertSame(0, str('foo')->levenshtein('foo'));
+        $this->assertSame(3, str('foo')->levenshtein('bar'));
+    }
 }

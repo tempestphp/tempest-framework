@@ -716,6 +716,20 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Checks whether this string contains another string
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->contains('ipsum'); // true
+     * str('Lorem ipsum')->contains('something else'); // false
+     * ```
+     */
+    public function contains(string|Stringable $needle): bool
+    {
+        return str_contains($this->string, (string) $needle);
+    }
+
+    /**
      * Takes the specified amount of characters. If `$length` is negative, starts from the end.
      */
     public function take(int $length): self
@@ -854,6 +868,20 @@ final readonly class StringHelper implements Stringable
         return new self(
             mb_substr($this->string, 0, $position) . $string . mb_substr($this->string, $position),
         );
+    }
+
+    /**
+     * Calculates the levenshtein difference
+     *
+     *
+     *  ### Example
+     *  ```php
+     *  str('Foo')->levenshtein('Foobar');
+     *  ```
+     */
+    public function levenshtein(string|Stringable $other): int
+    {
+        return levenshtein($this->string, (string) $other);
     }
 
     public function when(mixed $condition, Closure $callback): static

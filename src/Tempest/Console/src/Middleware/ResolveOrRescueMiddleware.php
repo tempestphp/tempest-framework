@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Middleware;
 
+use Stringable;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Actions\ResolveConsoleCommand;
 use Tempest\Console\Console;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Support\ArrayHelper;
+use Tempest\Support\StringHelper;
 use Throwable;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 {
@@ -46,15 +49,17 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         $this->console->writeln('<style="bg-dark-red fg-white"> Error </style>');
         $this->console->writeln("<style=\"fg-red\">Command <em>{$commandName}</em> not found.</style>");
 
-        $similarCommands = $this->getSimilarCommands($commandName);
+        $similarCommands = $this->getSimilarCommands(str($commandName));
 
-        if ($similarCommands === []) {
+        if ($similarCommands->isEmpty()) {
             return ExitCode::ERROR;
         }
 
-        if (count($similarCommands) === 1) {
-            if ($this->console->confirm("Did you mean <em>{$similarCommands[0]}</em>?")) {
-                return $this->runIntendedCommand($similarCommands[0]);
+        if ($similarCommands->count() === 1) {
+            $matchedCommand = $similarCommands->first();
+
+            if ($this->console->confirm("Did you mean <em>{$matchedCommand}</em>?", default: true)) {
+                return $this->runIntendedCommand($matchedCommand);
             }
 
             return ExitCode::CANCELLED;
@@ -68,45 +73,88 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         return $this->runIntendedCommand($intendedCommand);
     }
 
-    private function getSimilarCommands(string $name): array
+    private function getSimilarCommands(StringHelper $search): ArrayHelper
     {
-        $similarCommands = [];
+        /** @var ArrayHelper<array-key, StringHelper> $suggestions */
+        $suggestions = arr();
 
-        /** @var ConsoleCommand $consoleCommand */
         foreach ($this->consoleConfig->commands as $consoleCommand) {
-            if (in_array($consoleCommand->getName(), $similarCommands, strict: true)) {
+            $currentName = str($consoleCommand->getName());
+
+            // Already added to suggestions
+            if ($suggestions->contains($currentName->toString())) {
                 continue;
             }
 
-            if (str_contains($name, ':')) {
-                $wantedParts = ArrayHelper::explode($name, separator: ':');
-                $currentParts = ArrayHelper::explode($consoleCommand->getName(), separator: ':');
+            $currentParts = $currentName->explode(':');
+            $searchParts = $search->explode(':');
 
-                if ($wantedParts->count() === $currentParts->count() && $wantedParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
-                    $similarCommands[] = $consoleCommand->getName();
+            // `dis:st` will match `discovery:status`
+            if ($searchParts->count() === $currentParts->count()) {
+                if ($searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
+                    $suggestions[] = $currentName;
 
                     continue;
                 }
             }
 
-            if (str_starts_with($consoleCommand->getName(), $name)) {
-                $similarCommands[] = $consoleCommand->getName();
+            // `generate` will match `discovery:generate`
+            if ($currentName->startsWith($search) || $currentName->endsWith($search)) {
+                $suggestions[] = $currentName;
 
                 continue;
             }
 
-            $levenshtein = levenshtein($name, $consoleCommand->getName());
+            // Match with levenshtein on the whole command
+            if ($currentName->levenshtein($search) <= 2) {
+                $suggestions[] = $currentName;
 
-            if ($levenshtein <= 2) {
-                $similarCommands[] = $consoleCommand->getName();
+                continue;
+            }
+
+            // Match with levenshtein on each command part
+            foreach ($currentParts as $part) {
+                $part = str($part);
+
+                // `clean` will match `static:clean` but also `discovery:clear`
+                if ($part->levenshtein($search) <= 1) {
+                    $suggestions[] = $currentName;
+
+                    continue 2;
+                }
+
+                // `generate` will match `discovery:generate`
+                if ($part->startsWith($search)) {
+                    $suggestions[] = $currentName;
+
+                    continue 2;
+                }
             }
         }
 
-        return $similarCommands;
+        // Sort with levenshtein
+        $sorted = arr();
+
+        foreach ($suggestions as $suggestion) {
+            // Calculate the levenshtein difference on the whole suggestion
+            $levenshtein = $suggestion->levenshtein($search);
+
+            // Calculate the levenshtein difference on each part of the suggestion
+            foreach ($suggestion->explode(':') as $suggestionPart) {
+                // Always use the closest distance
+                $levenshtein = min($levenshtein, str($suggestionPart)->levenshtein($search));
+            }
+
+            $sorted[] = ['levenshtein' => $levenshtein, 'suggestion' => $suggestion];
+        }
+
+        return $sorted
+            ->sortByCallback(fn (array $a, array $b) => $a['levenshtein'] <=> $b['levenshtein'])
+            ->map(fn (array $item) => $item['suggestion']);
     }
 
-    private function runIntendedCommand(string $commandName): ExitCode|int
+    private function runIntendedCommand(Stringable $commandName): ExitCode|int
     {
-        return ($this->executeConsoleCommand)($commandName);
+        return ($this->executeConsoleCommand)((string) $commandName);
     }
 }
