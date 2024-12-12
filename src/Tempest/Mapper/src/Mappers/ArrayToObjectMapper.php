@@ -43,7 +43,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $object = $this->resolveObject($to);
 
         $missingValues = [];
-        /** @var PropertyReflector $unsetProperties */
+        /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
 
         $from = arr($from)->unwrap()->toArray();
