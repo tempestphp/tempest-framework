@@ -726,7 +726,7 @@ final readonly class StringHelper implements Stringable
      */
     public function contains(string|Stringable $needle): bool
     {
-        return str_contains($this->toString(), (string) $needle);
+        return str_contains($this->string, (string) $needle);
     }
 
     /**
@@ -881,7 +881,7 @@ final readonly class StringHelper implements Stringable
      */
     public function levenshtein(string|Stringable $other): int
     {
-        return levenshtein($this->toString(), (string) $other);
+        return levenshtein($this->string, (string) $other);
     }
 
     public function when(mixed $condition, Closure $callback): static
