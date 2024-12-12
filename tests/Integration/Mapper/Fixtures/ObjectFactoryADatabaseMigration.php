@@ -12,7 +12,7 @@ use Tempest\Database\QueryStatements\TextStatement;
 
 final class ObjectFactoryADatabaseMigration implements DatabaseMigration
 {
-    private(set) string $name = 'object-a';
+    private(set) public string $name = 'object-a';
 
     public function up(): QueryStatement
     {

@@ -12,7 +12,7 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 
 final class CreateMigrationsTable implements DatabaseMigration
 {
-    private(set) string $name = '0000-00-00_create_migrations_table';
+    private(set) public string $name = '0000-00-00_create_migrations_table';
 
     public function up(): QueryStatement
     {

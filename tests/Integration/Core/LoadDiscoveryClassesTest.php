@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\DiscoveryLocation;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\MigrationDiscovery;
-use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
+use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\get;
 

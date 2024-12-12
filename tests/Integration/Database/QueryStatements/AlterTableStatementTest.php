@@ -7,9 +7,9 @@ namespace Tests\Tempest\Integration\Database\QueryStatements;
 use http\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\DatabaseDialect;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Id;
-use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Database\QueryStatement;
@@ -74,7 +74,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
     private function getAlterTableMigration(): mixed
     {
         return new class () implements DatabaseMigration {
-            private(set) string $name = '0000-01-02_add_email_to_user_table';
+            private(set) public string $name = '0000-01-02_add_email_to_user_table';
 
             public function up(): QueryStatement
             {

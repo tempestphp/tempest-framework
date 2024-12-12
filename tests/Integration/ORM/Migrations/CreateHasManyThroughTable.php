@@ -10,7 +10,7 @@ use Tempest\Database\QueryStatements\CreateTableStatement;
 
 final class CreateHasManyThroughTable implements DatabaseMigration
 {
-    private(set) string $name = '100-create-has-many-through';
+    private(set) public string $name = '100-create-has-many-through';
 
     public function up(): QueryStatement
     {

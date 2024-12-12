@@ -13,7 +13,7 @@ use Tempest\Database\QueryStatements\TextStatement;
 
 final class CreateCTable implements DatabaseMigration
 {
-    private(set) string $name = '100-create-c';
+    private(set) public string $name = '100-create-c';
 
     public function up(): QueryStatement
     {

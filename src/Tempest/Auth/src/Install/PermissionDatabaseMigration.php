@@ -12,7 +12,7 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 #[DoNotDiscover]
 final class PermissionDatabaseMigration implements DatabaseMigration
 {
-    private(set) string $name = '0000-00-01_create_permissions_table';
+    private(set) public string $name = '0000-00-01_create_permissions_table';
 
     public function up(): CreateTableStatement
     {

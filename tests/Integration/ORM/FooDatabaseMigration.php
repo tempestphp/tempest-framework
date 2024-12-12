@@ -12,7 +12,7 @@ use Tempest\Database\QueryStatements\TextStatement;
 
 final class FooDatabaseMigration implements DatabaseMigration
 {
-    private(set) string $name = 'foos';
+    private(set) public string $name = 'foos';
 
     public function up(): QueryStatement
     {

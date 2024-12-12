@@ -12,7 +12,7 @@ final class AuthInstaller implements Installer
 {
     use PublishesFiles;
 
-    private(set) string $name = 'auth';
+    private(set) public string $name = 'auth';
 
     public function install(): void
     {

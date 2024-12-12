@@ -11,7 +11,7 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 
 final class CreateUserDatabaseMigration implements DatabaseMigration
 {
-    private(set) string $name = '0000-01-01_create_users_table';
+    private(set) public string $name = '0000-01-01_create_users_table';
 
     public function up(): QueryStatement
     {
