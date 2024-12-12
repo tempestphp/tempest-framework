@@ -17,7 +17,7 @@ final class OkTest extends FrameworkIntegrationTestCase
     {
         $response = new Ok('test');
 
-        $this->assertEquals(Status::OK, $response->getStatus());
-        $this->assertEquals('test', $response->getBody());
+        $this->assertEquals(Status::OK, $response->status);
+        $this->assertEquals('test', $response->body);
     }
 }

@@ -18,6 +18,6 @@ final readonly class RequestToObjectMapper implements Mapper
     public function map(mixed $from, mixed $to): array|object
     {
         /** @var Request $from */
-        return map($from->getBody())->to($to);
+        return map($from->body)->to($to);
     }
 }

@@ -35,7 +35,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->confirm("Running the <em>{$installer->getName()}</em> installer, continue?")) {
+        if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?")) {
             $this->error('Aborted.');
 
             return;
@@ -55,10 +55,10 @@ final readonly class InstallCommand
         if (! $search) {
             $search = $this->ask(
                 question: 'Please choose an installer',
-                options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->getName())->toArray(),
+                options: $installers->mapWithKeys(fn (Installer $installer) => yield $installer::class => $installer->name)->toArray(),
             );
         }
 
-        return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->getName() === $search);
+        return $installers->first(fn (Installer $installer) => $installer::class === $search || $installer->name === $search);
     }
 }

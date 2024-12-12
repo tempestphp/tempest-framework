@@ -21,7 +21,7 @@ final class TestResponseHelperTest extends TestCase
         $response = new GenericResponse(status: Status::OK);
         $helper = new TestResponseHelper($response);
 
-        $this->assertSame($response, $helper->getResponse());
+        $this->assertSame($response, $helper->response);
     }
 
     public function test_assert_has_header(): void

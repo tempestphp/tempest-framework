@@ -21,13 +21,13 @@ final readonly class RequestToPsrRequestMapper implements Mapper
         /** @var Request $from */
 
         return new ServerRequest(
-            uri: $from->getUri(),
-            method: $from->getMethod()->value,
-            headers: $from->getHeaders(),
-            cookieParams: $from->getCookies(),
-            queryParams: $from->getQuery(),
-            parsedBody: $from->getBody(),
-            uploadedFiles: $from->getFiles(),
+            uploadedFiles: $from->files,
+            uri: $from->uri,
+            method: $from->method->value,
+            headers: $from->headers,
+            cookieParams: $from->cookies,
+            queryParams: $from->query,
+            parsedBody: $from->body,
         );
     }
 }

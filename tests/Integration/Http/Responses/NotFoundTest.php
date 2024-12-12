@@ -17,7 +17,7 @@ final class NotFoundTest extends FrameworkIntegrationTestCase
     {
         $response = new NotFound('test');
 
-        $this->assertEquals(Status::NOT_FOUND, $response->getStatus());
-        $this->assertEquals('test', $response->getBody());
+        $this->assertEquals(Status::NOT_FOUND, $response->status);
+        $this->assertEquals('test', $response->body);
     }
 }

@@ -18,7 +18,7 @@ final class DatabaseConfig
         return $this->connection;
     }
 
-    public function addMigration(Migration|string $migration): self
+    public function addMigration(DatabaseMigration|string $migration): self
     {
         $this->migrations[] = $migration;
 

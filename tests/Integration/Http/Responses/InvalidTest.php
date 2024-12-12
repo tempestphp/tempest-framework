@@ -35,7 +35,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $this->assertSame(Status::FOUND, $response->getStatus());
+        $this->assertSame(Status::FOUND, $response->status);
         $this->assertSame('/original', $response->getHeader('Location')->values[0]);
 
         $session = $this->container->get(Session::class);
@@ -62,7 +62,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
             ],
         );
 
-        $this->assertSame(Status::FOUND, $response->getStatus());
+        $this->assertSame(Status::FOUND, $response->status);
         $this->assertSame('/original', $response->getHeader('Location')->values[0]);
 
         $session = $this->container->get(Session::class);

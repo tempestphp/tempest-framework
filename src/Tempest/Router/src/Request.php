@@ -9,9 +9,39 @@ use Tempest\Router\Cookie\Cookie;
 
 interface Request
 {
-    public function getMethod(): Method;
+    public Method $method {
+        get;
+    }
 
-    public function getUri(): string;
+    public string $uri {
+        get;
+    }
+
+    public array $body {
+        get;
+    }
+
+    public array $headers {
+        get;
+    }
+
+    public string $path {
+        get;
+    }
+
+    public array $query {
+        get;
+    }
+
+    /** @var \Tempest\Router\Upload[] $files */
+    public array $files {
+        get;
+    }
+
+    /** @var Cookie[] $cookies */
+    public array $cookies {
+        get;
+    }
 
     public function has(string $key): bool;
 
@@ -21,23 +51,9 @@ interface Request
 
     public function get(string $key, mixed $default = null): mixed;
 
-    public function getBody(): array;
-
-    public function getHeaders(): array;
-
-    public function getPath(): string;
-
-    public function getQuery(): array;
-
     public function getSessionValue(string $name): mixed;
 
     public function getCookie(string $name): ?Cookie;
-
-    /** @return \Tempest\Router\Upload[] */
-    public function getFiles(): array;
-
-    /** @return Cookie[] */
-    public function getCookies(): array;
 
     public function validate(): void;
 }

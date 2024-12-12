@@ -17,7 +17,7 @@ final class CreatedTest extends FrameworkIntegrationTestCase
     {
         $response = new Created('test');
 
-        $this->assertEquals(Status::CREATED, $response->getStatus());
-        $this->assertEquals('test', $response->getBody());
+        $this->assertEquals(Status::CREATED, $response->status);
+        $this->assertEquals('test', $response->body);
     }
 }

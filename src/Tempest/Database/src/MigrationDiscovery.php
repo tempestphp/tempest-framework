@@ -20,11 +20,11 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if (! $class->implements(Migration::class)) {
+        if (! $class->implements(DatabaseMigration::class)) {
             return;
         }
 
-        if ($class->is(GenericMigration::class)) {
+        if ($class->is(GenericDatabaseMigration::class)) {
             return;
         }
 
@@ -46,7 +46,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
                 continue;
             }
 
-            $migration = new GenericMigration(
+            $migration = new GenericDatabaseMigration(
                 fileName: "{$fileName}_{$i}",
                 content: $content,
             );

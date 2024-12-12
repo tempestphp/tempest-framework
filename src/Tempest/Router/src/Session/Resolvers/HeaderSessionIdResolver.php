@@ -19,7 +19,7 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
 
     public function resolve(): SessionId
     {
-        $id = $this->request->getHeaders()[Session::ID] ?? null;
+        $id = $this->request->headers[Session::ID] ?? null;
 
         return new SessionId($id ?? (string) Uuid::v4());
     }

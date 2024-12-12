@@ -67,13 +67,13 @@ final readonly class StaticGenerateCommand
                         ),
                     );
 
-                    if ($response->getStatus() !== Status::OK) {
-                        $this->writeln("- <error>{$uri}</error> > {$response->getStatus()->value}");
+                    if ($response->status !== Status::OK) {
+                        $this->writeln("- <error>{$uri}</error> > {$response->status->value}");
 
                         continue;
                     }
 
-                    $body = $response->getBody();
+                    $body = $response->body;
 
                     $content = $body instanceof View
                         ? $this->viewRenderer->render($body)

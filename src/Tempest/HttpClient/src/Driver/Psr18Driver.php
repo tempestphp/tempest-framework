@@ -43,20 +43,20 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
     private function convertTempestRequestToPsrRequest(Request $tempestRequest): RequestInterface
     {
         $request = $this->requestFactory->createRequest(
-            method: $tempestRequest->getMethod()->value,
+            method: $tempestRequest->method->value,
             uri: $this->uriFactory->createUri(
-                $tempestRequest->getUri(),
+                $tempestRequest->uri,
             ),
         );
 
-        foreach ($tempestRequest->getHeaders() as $name => $value) {
+        foreach ($tempestRequest->headers as $name => $value) {
             $request = $request->withHeader($name, $value);
         }
 
         // TODO: This is crappy and doesn't support stuff we need to.
         // Eventually the array will be a string.
-        if ($tempestRequest->getBody() !== []) {
-            $body = json_encode($tempestRequest->getBody());
+        if ($tempestRequest->body !== []) {
+            $body = json_encode($tempestRequest->body);
             $request = $request->withBody(
                 $this->streamFactory->createStream($body),
             );
