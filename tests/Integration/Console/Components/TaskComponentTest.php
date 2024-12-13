@@ -24,7 +24,7 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             $frames = iterator_to_array($component->render($terminal));
 
             $this->assertStringContainsString('Task in progress', $frames[0]);
-            $this->assertStringContainsString('DONE', $frames[1]);
+            $this->assertStringContainsString('DONE', $frames[0]);
         });
     }
 

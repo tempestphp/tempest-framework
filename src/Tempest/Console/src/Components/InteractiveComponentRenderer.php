@@ -70,7 +70,7 @@ final class InteractiveComponentRenderer
             $this->closeTerminal($terminal);
         }
 
-        return null;
+        return $render;
     }
 
     private function applyKey(InteractiveConsoleComponent $component, Console $console, array $validation): mixed
@@ -148,10 +148,15 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule !== null) {
+                $component->setState(ComponentState::ERROR);
                 $this->validationErrors[] = $failingRule->message();
                 Fiber::suspend();
 
                 continue;
+            }
+
+            if ($this->shouldRerender === true) {
+                Fiber::suspend();
             }
 
             // If valid, we can return

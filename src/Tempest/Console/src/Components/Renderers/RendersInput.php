@@ -53,6 +53,10 @@ trait RendersInput
 
     private function finishRender(): string
     {
+        if ($this->state === ComponentState::DONE && $this->frame->endsWith("\n")) {
+            $this->frame = $this->frame->replaceEnd("\n", '');
+        }
+
         return $this->frame->toString();
     }
 
