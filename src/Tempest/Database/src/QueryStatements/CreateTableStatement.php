@@ -243,11 +243,15 @@ final class CreateTableStatement implements QueryStatement
                 ->toString(),
         );
 
-        $createIndices = arr($this->indexStatements)
-            ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-            ->implode(';' . PHP_EOL)
-            ->append(';');
-var_dump($createTable . PHP_EOL . $createIndices);
-        return $createTable . PHP_EOL . $createIndices;
+        if ($this->indexStatements !== []) {
+            $createIndices = PHP_EOL . arr($this->indexStatements)
+                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                ->implode(';' . PHP_EOL)
+                ->append(';');
+        } else {
+            $createIndices = '';
+        }
+
+        return $createTable . $createIndices;
     }
 }

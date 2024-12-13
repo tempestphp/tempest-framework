@@ -16,6 +16,7 @@ final class AlterTableStatement implements QueryStatement
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
+        private array $createIndexStatements = [],
     ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
@@ -61,7 +62,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function unique(string ...$columns): self
     {
-        $this->statements[] = new UniqueStatement(
+        $this->createIndexStatements[] = new UniqueStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -71,7 +72,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function index(string ...$columns): self
     {
-        $this->statements[] = new IndexStatement(
+        $this->createIndexStatements[] = new IndexStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -88,7 +89,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf(
+        $alterTable = sprintf(
             'ALTER TABLE %s %s;',
             new TableName($this->tableName),
             arr($this->statements)
@@ -98,5 +99,16 @@ final class AlterTableStatement implements QueryStatement
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),
         );
+
+        if ($this->createIndexStatements !== []) {
+            $createIndices = PHP_EOL . arr($this->createIndexStatements)
+                    ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                    ->implode(';' . PHP_EOL)
+                    ->append(';');
+        } else {
+            $createIndices = '';
+        }
+
+        return $alterTable . $createIndices;
     }
 }
