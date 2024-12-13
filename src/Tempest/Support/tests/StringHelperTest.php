@@ -620,4 +620,16 @@ b'));
         $this->assertSame(0, str('foo')->levenshtein('foo'));
         $this->assertSame(3, str('foo')->levenshtein('bar'));
     }
+
+    public function test_is_empty(): void
+    {
+        $this->assertTrue(str('')->isEmpty());
+        $this->assertFalse(str('a')->isEmpty());
+    }
+
+    public function test_is_not_empty(): void
+    {
+        $this->assertTrue(str('a')->isNotEmpty());
+        $this->assertFalse(str('')->isNotEmpty());
+    }
 }

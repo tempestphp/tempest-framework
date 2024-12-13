@@ -914,4 +914,20 @@ final readonly class StringHelper implements Stringable
     {
         return arr($parts)->join($glue, $finalGlue);
     }
+
+    /**
+     * Check whether a string is not empty
+     */
+    public function isNotEmpty(): bool
+    {
+        return $this->string !== '';
+    }
+
+    /**
+     * Check whether a string is empty
+     */
+    public function isEmpty(): bool
+    {
+        return $this->string === '';
+    }
 }

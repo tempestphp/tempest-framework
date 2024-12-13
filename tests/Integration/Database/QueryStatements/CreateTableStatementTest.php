@@ -23,11 +23,11 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_defaults(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) string $name = '0';
+            private(set) string $name = '0000_test_migration';
 
             public function up(): QueryStatement
             {
-                return (new CreateTableStatement('table'))
+                return new CreateTableStatement('table')
                     ->text('text', default: 'default')
                     ->char('char', default: 'd')
                     ->varchar('varchar', default: 'default')
@@ -36,7 +36,9 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->date('date', default: '2024-01-01')
                     ->datetime('datetime', default: '2024-01-01 00:00:00')
                     ->boolean('is_active', default: true)
-                    ->json('json', default: '{"default": "foo"}');
+                    ->json('json', default: '{"default": "foo"}')
+                    ->index('integer')
+                    ->unique('date', 'datetime');
             }
 
             public function down(): QueryStatement|null
