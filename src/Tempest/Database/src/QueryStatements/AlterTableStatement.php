@@ -89,16 +89,20 @@ final class AlterTableStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $alterTable = sprintf(
-            'ALTER TABLE %s %s;',
-            new TableName($this->tableName),
-            arr($this->statements)
-                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->filter(fn (StringHelper $line) => $line->isNotEmpty())
-                ->implode(', ' . PHP_EOL . '    ')
-                ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
-                ->toString(),
-        );
+        if ($this->statements !== []) {
+            $alterTable = sprintf(
+                'ALTER TABLE %s %s;',
+                new TableName($this->tableName),
+                arr($this->statements)
+                    ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                    ->filter(fn (StringHelper $line) => $line->isNotEmpty())
+                    ->implode(', ' . PHP_EOL . '    ')
+                    ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
+                    ->toString(),
+            );
+        } else {
+            $alterTable = '';
+        }
 
         if ($this->createIndexStatements !== []) {
             $createIndices = PHP_EOL . arr($this->createIndexStatements)

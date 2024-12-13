@@ -71,6 +71,16 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame('test@example.com', $user->email);
     }
 
+    public function test_alter_for_only_indexes(): void
+    {
+        $statement = new AlterTableStatement('table')
+            ->index('foo')
+            ->unique('bar')
+            ->compile(DatabaseDialect::SQLITE);
+
+        $this->assertStringNotContainsString('ALTER TABLE', $statement);
+    }
+
     private function getAlterTableMigration(): mixed
     {
         return new class () implements DatabaseMigration {
