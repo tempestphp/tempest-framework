@@ -70,7 +70,7 @@ final class InteractiveComponentRenderer
             $this->closeTerminal($terminal);
         }
 
-        return $render;
+        return null;
     }
 
     private function applyKey(InteractiveConsoleComponent $component, Console $console, array $validation): mixed
@@ -155,9 +155,7 @@ final class InteractiveComponentRenderer
                 continue;
             }
 
-            if ($this->shouldRerender === true) {
-                Fiber::suspend();
-            }
+            Fiber::suspend();
 
             // If valid, we can return
             return $return;

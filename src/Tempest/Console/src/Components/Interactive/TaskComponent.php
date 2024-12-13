@@ -40,7 +40,7 @@ final class TaskComponent implements InteractiveConsoleComponent
         private readonly ?string $success = null,
         private readonly ?string $failure = null,
     ) {
-        $this->spinner = new SpinnerRenderer($label);
+        $this->spinner = new SpinnerRenderer();
         $this->keyValue = new KeyValueRenderer();
         $this->startedAt = hrtime(as_number: true);
     }
