@@ -8,6 +8,7 @@ use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\DynamicInjection
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\EmphasizeInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\H1Injection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\H2Injection;
+use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\LinkInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\StrongInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\UnderlineInjection;
 use Tempest\Highlight\Language;
@@ -27,6 +28,7 @@ final readonly class TempestConsoleLanguage implements Language
     public function getInjections(): array
     {
         return [
+            new LinkInjection(),
             new EmphasizeInjection(),
             new StrongInjection(),
             new UnderlineInjection(),
