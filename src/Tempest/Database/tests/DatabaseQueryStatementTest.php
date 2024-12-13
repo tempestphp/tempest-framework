@@ -26,10 +26,10 @@ final class DatabaseQueryStatementTest extends TestCase
     #[Test]
     public function it_can_create_a_table(DatabaseConnection $driver, string $validSql): void
     {
-        $statement = (new CreateTableStatement('migrations', [
+        $statement = new CreateTableStatement('migrations', [
             new PrimaryKeyStatement(),
             new RawStatement('`name` VARCHAR(255) NOT NULL'),
-        ]))->compile($driver->dialect());
+        ])->compile($driver->dialect());
 
         $this->assertSame($validSql, $statement);
     }
@@ -38,17 +38,26 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MySqlConnection(),
-            'CREATE TABLE `migrations` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `migrations` (
+    `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
 
         yield 'postgresql' => [
             new PostgresConnection(),
-            'CREATE TABLE `migrations` (`id` SERIAL PRIMARY KEY, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `migrations` (
+    `id` SERIAL PRIMARY KEY, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
 
         yield 'sqlite' => [
             new SQLiteConnection(),
-            'CREATE TABLE `migrations` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `migrations` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
     }
 
@@ -56,7 +65,7 @@ final class DatabaseQueryStatementTest extends TestCase
     #[Test]
     public function it_can_create_a_foreign_key_constraint(DatabaseConnection $driver, string $validSql): void
     {
-        $statement = (new CreateTableStatement('books'))
+        $statement = new CreateTableStatement('books')
             ->primary()
             ->belongsTo('books.author_id', 'authors.id', OnDelete::CASCADE)
             ->varchar('name')
@@ -69,17 +78,31 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MySqlConnection(),
-            'CREATE TABLE `books` (`id` INTEGER PRIMARY KEY AUTO_INCREMENT, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `books` (
+    `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
+    `author_id` INTEGER  NOT NULL, 
+    CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
 
         yield 'postgresql' => [
             new PostgresConnection(),
-            'CREATE TABLE `books` (`id` SERIAL PRIMARY KEY, `author_id` INTEGER  NOT NULL, CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `books` (
+    `id` SERIAL PRIMARY KEY, 
+    `author_id` INTEGER  NOT NULL, 
+    CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
 
         yield 'sqlite' => [
             new SQLiteConnection(),
-            'CREATE TABLE `books` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `author_id` INTEGER  NOT NULL, `name` VARCHAR(255) NOT NULL);',
+'CREATE TABLE `books` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+    `author_id` INTEGER  NOT NULL, 
+    `name` VARCHAR(255) NOT NULL
+);',
         ];
     }
 

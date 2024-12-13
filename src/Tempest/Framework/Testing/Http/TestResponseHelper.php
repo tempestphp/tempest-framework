@@ -17,11 +17,8 @@ use function Tempest\get;
 
 final class TestResponseHelper
 {
-    private(set) Response $response;
-
-    public function __construct(Response $response)
+    public function __construct(private(set) Response $response)
     {
-        $this->response = $response;
     }
 
     public Status $status {

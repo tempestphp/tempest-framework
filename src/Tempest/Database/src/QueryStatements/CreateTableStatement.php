@@ -7,14 +7,16 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
+use Tempest\Support\StringHelper;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final class CreateTableStatement implements QueryStatement
 {
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
-    ) {
-    }
+    ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
     public static function forModel(string $modelClass): self
@@ -35,7 +37,8 @@ final class CreateTableStatement implements QueryStatement
         OnDelete $onDelete = OnDelete::RESTRICT,
         OnUpdate $onUpdate = OnUpdate::NO_ACTION,
         bool $nullable = false,
-    ): self {
+    ): self
+    {
         [$localTable, $localKey] = explode('.', $local);
 
         $this->integer($localKey, nullable: $nullable);
@@ -54,7 +57,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
@@ -69,7 +73,8 @@ final class CreateTableStatement implements QueryStatement
         int $length = 255,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new VarcharStatement(
             name: $name,
             size: $length,
@@ -84,7 +89,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new CharStatement(
             name: $name,
             nullable: $nullable,
@@ -99,7 +105,8 @@ final class CreateTableStatement implements QueryStatement
         bool $unsigned = false,
         bool $nullable = false,
         ?int $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new IntegerStatement(
             name: $name,
             unsigned: $unsigned,
@@ -114,7 +121,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?float $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new FloatStatement(
             name: $name,
             nullable: $nullable,
@@ -128,7 +136,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new DatetimeStatement(
             name: $name,
             nullable: $nullable,
@@ -142,7 +151,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new DateStatement(
             name: $name,
             nullable: $nullable,
@@ -156,7 +166,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?bool $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new BooleanStatement(
             name: $name,
             nullable: $nullable,
@@ -170,7 +181,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -185,7 +197,8 @@ final class CreateTableStatement implements QueryStatement
         array $values,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new SetStatement(
             name: $name,
             values: $values,
@@ -196,22 +209,37 @@ final class CreateTableStatement implements QueryStatement
         return $this;
     }
 
-    public function compile(DatabaseDialect $dialect): string
+    public function unique(string ...$columns): self
     {
-        $compiled = sprintf(
-            'CREATE TABLE %s (%s);',
-            new TableName($this->tableName),
-            implode(
-                ', ',
-                array_filter(
-                    array_map(
-                        fn (QueryStatement $queryStatement) => $queryStatement->compile($dialect),
-                        $this->statements,
-                    ),
-                ),
-            ),
+        $this->statements[] = new UniqueStatement(
+            tableName: $this->tableName,
+            columns: $columns,
         );
 
-        return str_replace('  ', ' ', $compiled);
+        return $this;
+    }
+
+    public function index(string ...$columns): self
+    {
+        $this->statements[] = new IndexStatement(
+            tableName: $this->tableName,
+            columns: $columns,
+        );
+
+        return $this;
+    }
+
+    public function compile(DatabaseDialect $dialect): string
+    {
+        return sprintf(
+            'CREATE TABLE %s (%s);',
+            new TableName($this->tableName),
+            arr($this->statements)
+                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                ->filter(fn (StringHelper $line) => $line->isNotEmpty())
+                ->implode(', ' . PHP_EOL . '    ')
+                ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
+                ->toString(),
+        );
     }
 }

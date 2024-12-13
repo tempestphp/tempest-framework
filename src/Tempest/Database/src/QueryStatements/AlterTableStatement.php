@@ -7,14 +7,16 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
+use Tempest\Support\StringHelper;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final class AlterTableStatement implements QueryStatement
 {
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
-    ) {
-    }
+    ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
     public static function forModel(string $modelClass): self
@@ -57,16 +59,22 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function unique(string $columnName): self
+    public function unique(string ...$columns): self
     {
-        $this->statements[] = new UniqueStatement($columnName);
+        $this->statements[] = new UniqueStatement(
+            tableName: $this->tableName,
+            columns: $columns,
+        );
 
         return $this;
     }
 
-    public function index(string $indexName): self
+    public function index(string ...$columns): self
     {
-        $this->statements[] = new IndexStatement($indexName);
+        $this->statements[] = new IndexStatement(
+            tableName: $this->tableName,
+            columns: $columns,
+        );
 
         return $this;
     }
@@ -80,20 +88,15 @@ final class AlterTableStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $compiled = sprintf(
+        return sprintf(
             'ALTER TABLE %s %s;',
             new TableName($this->tableName),
-            implode(
-                ' ',
-                array_filter(
-                    array_map(
-                        static fn (QueryStatement $statement) => $statement->compile($dialect),
-                        $this->statements,
-                    ),
-                ),
-            ),
+            arr($this->statements)
+                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                ->filter(fn (StringHelper $line) => $line->isNotEmpty())
+                ->implode(', ' . PHP_EOL . '    ')
+                ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
+                ->toString(),
         );
-
-        return str_replace('  ', ' ', $compiled);
     }
 }
