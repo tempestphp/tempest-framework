@@ -15,6 +15,15 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
  */
 final class TaskComponentTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('These tests require the pcntl extension, which is not available on Windows.');
+        }
+    }
+
     public function test_no_task(): void
     {
         $this->console->withoutPrompting()->call(function (Console $console): void {
