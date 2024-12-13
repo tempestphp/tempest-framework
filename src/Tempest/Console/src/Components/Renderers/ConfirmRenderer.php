@@ -30,7 +30,7 @@ final class ConfirmRenderer
         $this->newLine(border: true);
 
         match ($this->state) {
-            ComponentState::SUBMITTED => $this->line(
+            ComponentState::DONE => $this->line(
                 $this->style($answer === true ? 'bg-green bold' : 'bg-red bold', $this->centerText($answer ? $this->yes : $this->no, width: 9)),
                 "\n",
             ),

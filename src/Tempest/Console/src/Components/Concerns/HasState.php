@@ -30,6 +30,6 @@ trait HasState
     #[HandlesKey(Key::ENTER)]
     public function setSubmitted(): void
     {
-        $this->state = ComponentState::SUBMITTED;
+        $this->state = ComponentState::DONE;
     }
 }
