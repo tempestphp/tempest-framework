@@ -7,6 +7,7 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final readonly class UniqueStatement implements QueryStatement
 {
@@ -20,8 +21,10 @@ final readonly class UniqueStatement implements QueryStatement
     {
         $columns = arr($this->columns)->implode('`, `')->wrap('`', '`');
 
-        $on = sprintf('(%s)', $columns);
+        $indexName = str($this->tableName . ' ' . $columns->replace(',', '')->snake())->snake()->toString();
 
-        return sprintf('UNIQUE INDEX %s', $on);
+        $on = sprintf('`%s` (%s)', $this->tableName, $columns);
+
+        return sprintf('CREATE UNIQUE INDEX `%s` ON %s', $indexName, $on);
     }
 }

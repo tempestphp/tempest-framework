@@ -16,6 +16,7 @@ final class CreateTableStatement implements QueryStatement
     public function __construct(
         private readonly string $tableName,
         private array $statements = [],
+        private array $indexStatements = [],
     ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
@@ -211,7 +212,7 @@ final class CreateTableStatement implements QueryStatement
 
     public function unique(string ...$columns): self
     {
-        $this->statements[] = new UniqueStatement(
+        $this->indexStatements[] = new UniqueStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -221,7 +222,7 @@ final class CreateTableStatement implements QueryStatement
 
     public function index(string ...$columns): self
     {
-        $this->statements[] = new IndexStatement(
+        $this->indexStatements[] = new IndexStatement(
             tableName: $this->tableName,
             columns: $columns,
         );
@@ -231,7 +232,7 @@ final class CreateTableStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf(
+        $createTable = sprintf(
             'CREATE TABLE %s (%s);',
             new TableName($this->tableName),
             arr($this->statements)
@@ -241,5 +242,12 @@ final class CreateTableStatement implements QueryStatement
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),
         );
+
+        $createIndices = arr($this->indexStatements)
+            ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+            ->implode(';' . PHP_EOL)
+            ->append(';');
+var_dump($createTable . PHP_EOL . $createIndices);
+        return $createTable . PHP_EOL . $createIndices;
     }
 }

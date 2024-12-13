@@ -23,7 +23,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
     public function test_defaults(): void
     {
         $migration = new class () implements DatabaseMigration {
-            private(set) string $name = '0';
+            private(set) string $name = '0000_test_migration';
 
             public function up(): QueryStatement
             {
