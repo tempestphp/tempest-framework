@@ -16,6 +16,7 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
+use function Tempest\Support\arr;
 
 final class InteractiveComponentRenderer
 {
@@ -229,6 +230,19 @@ final class InteractiveComponentRenderer
         }
 
         return null;
+    }
+
+    public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool
+    {
+        if (! arr($component->extensions ?? [])->every(fn (string $ext) => extension_loaded($ext))) {
+            return false;
+        }
+
+        if (! new Terminal($console)->supportsTty()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function createTerminal(Console $console): Terminal

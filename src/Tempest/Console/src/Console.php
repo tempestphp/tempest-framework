@@ -58,6 +58,10 @@ interface Console
      */
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed;
 
+    public function task(string $label, Closure $handler): bool;
+
+    public function keyValue(string $key, ?string $value = null): void;
+
     public function header(string $header, ?string $subheader = null): self;
 
     public function info(string $line, ?string $symbol = null): self;

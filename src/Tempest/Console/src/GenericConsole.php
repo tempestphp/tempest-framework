@@ -14,8 +14,10 @@ use Tempest\Console\Components\Interactive\PasswordComponent;
 use Tempest\Console\Components\Interactive\ProgressBarComponent;
 use Tempest\Console\Components\Interactive\SearchComponent;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
+use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -183,7 +185,7 @@ final class GenericConsole implements Console
 
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed
     {
-        if ($this->componentRenderer !== null) {
+        if ($this->componentRenderer !== null && $this->componentRenderer->isComponentSupported($this, $component)) {
             return $this->componentRenderer->render($this, $component, $validation);
         }
 
@@ -272,6 +274,16 @@ final class GenericConsole implements Console
     public function progressBar(iterable $data, Closure $handler): array
     {
         return $this->component(new ProgressBarComponent($data, $handler));
+    }
+
+    public function task(string $label, ?Closure $handler = null): bool
+    {
+        return $this->component(new TaskComponent($label, $handler));
+    }
+
+    public function keyValue(string $key, ?string $value = null): void
+    {
+        $this->writeln((new KeyValueRenderer())->render($key, $value));
     }
 
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed
