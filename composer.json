@@ -77,6 +77,9 @@
         "tempest/view": "self.version",
         "tempest/vite": "self.version"
     },
+    "suggest": {
+        "ext-pcntl": "Required to use some interactive console components."
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "autoload": {
