@@ -23,7 +23,7 @@ final readonly class IntegerStatement implements QueryStatement
             '`%s` INTEGER %s %s %s',
             $this->name,
             $this->unsigned ? 'UNSIGNED' : '',
-            $this->default ? "DEFAULT {$this->default}" : '',
+            $this->default !== null ? "DEFAULT {$this->default}" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }

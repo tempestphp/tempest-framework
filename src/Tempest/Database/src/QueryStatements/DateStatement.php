@@ -21,7 +21,7 @@ final readonly class DateStatement implements QueryStatement
         return sprintf(
             '`%s` DATE %s %s',
             $this->name,
-            $this->default ? "DEFAULT \"{$this->default}\"" : '',
+            $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }
