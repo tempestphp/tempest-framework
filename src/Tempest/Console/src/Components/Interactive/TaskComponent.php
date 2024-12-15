@@ -7,6 +7,7 @@ namespace Tempest\Console\Components\Interactive;
 use Closure;
 use Generator;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
@@ -16,6 +17,7 @@ use Tempest\Console\Components\Renderers\TaskRenderer;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use Throwable;
+use function Tempest\Support\arr;
 
 final class TaskComponent implements InteractiveConsoleComponent
 {
@@ -32,14 +34,19 @@ final class TaskComponent implements InteractiveConsoleComponent
 
     private ?float $finishedAt = null;
 
+    private array $sockets;
+
+    private array $log = [];
+
     private(set) array $extensions = ['pcntl'];
 
     public function __construct(
         private readonly string $label,
-        private readonly ?Closure $handler = null,
+        private null|Process|Closure $handler = null,
         private readonly ?string $success = null,
         private readonly ?string $failure = null,
     ) {
+        $this->handler = $this->resolveHandler($handler);
         $this->keyValue = new KeyValueRenderer();
         $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
         $this->startedAt = hrtime(as_number: true);
@@ -57,6 +64,7 @@ final class TaskComponent implements InteractiveConsoleComponent
             return true;
         }
 
+        $this->sockets = stream_socket_pair(domain: STREAM_PF_UNIX, type: STREAM_SOCK_STREAM, protocol: STREAM_IPPROTO_IP);
         $this->processId = pcntl_fork();
 
         if ($this->processId === -1) {
@@ -68,17 +76,25 @@ final class TaskComponent implements InteractiveConsoleComponent
         }
 
         try {
+            fclose($this->sockets[0]);
+            stream_set_blocking($this->sockets[1], enable: false);
+
             while (true) {
                 // The process is still running, so we continue looping.
                 if (pcntl_waitpid($this->processId, $status, flags: WNOHANG) === 0) {
-                    yield $this->renderTask($terminal);
+                    yield $this->renderTask(
+                        terminal: $terminal,
+                        line: fread($this->sockets[1], length: 1024) ?: null,
+                    );
 
-                    usleep(80_000);
+                    usleep($this->renderer->delay());
 
                     continue;
                 }
 
-                // The process is done, we determine its state by its exit code.
+                // The process is done, we register the finishing timestamp,
+                // close the communication socket and determine the finished state.
+                fclose($this->sockets[1]);
                 $this->finishedAt = hrtime(as_number: true);
                 $this->state = match (pcntl_wifexited($status)) {
                     true => match (pcntl_wexitstatus($status)) {
@@ -99,29 +115,71 @@ final class TaskComponent implements InteractiveConsoleComponent
         }
     }
 
-    private function renderTask(Terminal $terminal): string
+    private function renderTask(Terminal $terminal, ?string $line = null): string
     {
+        if ($line) {
+            $this->log[] = $line;
+        }
+
         return $this->renderer->render(
             terminal: $terminal,
             state: $this->state,
             startedAt: $this->startedAt,
             finishedAt: $this->finishedAt,
-            hint: '...',
+            hint: end($this->log) ?: null,
         );
     }
 
     private function kill(): void
     {
-        posix_kill($this->processId, SIGTERM);
+        try {
+            posix_kill($this->processId, SIGTERM);
+            @fclose($this->sockets[0]);
+            @fclose($this->sockets[1]);
+        } catch (Throwable) {
+        }
     }
 
     private function executeHandler(): void
     {
+        $log = function (string ...$lines): void {
+            arr($lines)
+                ->flatMap(fn (string $line) => explode("\n", $line))
+                ->each(fn (string $line) => fwrite($this->sockets[0], $line));
+        };
+
         try {
-            exit((int) (($this->handler ?? static fn (): bool => true)() === false));
+            exit((int) (($this->handler ?? static fn (): bool => true)($log) === false));
         } catch (Throwable) {
             exit(1);
+        } finally {
+            socket_close($conn);
         }
+    }
+
+    private function resolveHandler(null|Process|Closure $handler): ?Closure
+    {
+        if ($handler === null) {
+            return null;
+        }
+
+        if ($handler instanceof Process) {
+            return static function (Closure $log) use ($handler): bool {
+                return $handler->run(function (string $output, string $buffer) use ($log): bool {
+                    if ($output === Process::ERR) {
+                        return true;
+                    }
+
+                    if ($line = trim($buffer)) {
+                        $log($buffer);
+                    }
+
+                    return true;
+                }) === 0;
+            };
+        }
+
+        return $handler;
     }
 
     public function renderFooter(Terminal $terminal): ?string
