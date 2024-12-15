@@ -27,11 +27,13 @@ final class TaskRenderer
             ? number_format(($finishedAt - $startedAt) / 1_000_000, decimals: 0)
             : null;
 
-        $hint = $content ?? match ($this->state) {
-            ComponentState::DONE => '<style="fg-gray">Done in <style="bold">'.$runtime($finishedAt).'ms</style>.</style>',
+        $hint = match ($this->state) {
             ComponentState::ERROR => '<style="fg-red">An error occurred.</style>',
             ComponentState::CANCELLED => '<style="fg-yellow">Cancelled.</style>',
-            default => $runtime(hrtime(as_number: true)) . 'ms',
+            ComponentState::DONE => $finishedAt
+                ? '<style="fg-gray">Done in <style="bold">'.$runtime($finishedAt).'ms</style>.</style>'
+                : '<style="fg-gray">Done.</style>',
+            default => $hint ?? $runtime(hrtime(as_number: true)) . 'ms',
         };
 
         $this->line(
@@ -46,10 +48,15 @@ final class TaskRenderer
         );
 
         // If a task has an error, it is no longer active.
-        if (! $state->isFinished() && $this->state !== ComponentState::ERROR) {
+        if (in_array($this->state, [ComponentState::ACTIVE, ComponentState::CANCELLED])) {
             $this->newLine();
         }
 
         return $this->finishRender();
+    }
+
+    public function delay(): int
+    {
+        return $this->spinner->speed;
     }
 }

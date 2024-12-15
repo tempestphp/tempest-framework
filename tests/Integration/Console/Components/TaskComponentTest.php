@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Components;
 
 use Exception;
+use Symfony\Component\Process\Process;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -33,7 +34,21 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             $frames = iterator_to_array($component->render($terminal));
 
             $this->assertStringContainsString('Task in progress', $frames[0]);
-            $this->assertStringContainsString('DONE', $frames[0]);
+            $this->assertStringContainsString('Done.', $frames[0]);
+        });
+    }
+
+    public function test_process_task(): void
+    {
+        $this->console->withoutPrompting()->call(function (Console $console): void {
+            $terminal = new Terminal($console);
+            $process = new Process(['echo', 'hello world']);
+            $component = new TaskComponent('Task in progress', $process);
+
+            $frames = iterator_to_array($component->render($terminal));
+
+            $this->assertStringContainsString('Task in progress', $frames[0]);
+            $this->assertStringContainsString('Done in', $frames[1]);
         });
     }
 
@@ -46,8 +61,7 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             $frames = iterator_to_array($component->render($terminal));
 
             $this->assertStringContainsString('Task in progress', $frames[0]);
-            $this->assertStringContainsString('ms', $frames[1]); // execution time
-            $this->assertStringContainsString('DONE', $frames[1]);
+            $this->assertStringContainsString('Done in', $frames[1]);
         });
     }
 
@@ -62,7 +76,7 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
             $frames = iterator_to_array($component->render($terminal));
 
             $this->assertStringContainsString('Task in progress', $frames[0]);
-            $this->assertStringContainsString('FAIL', $frames[1]);
+            $this->assertStringContainsString('An error occurred.', $frames[1]);
         });
     }
 }
