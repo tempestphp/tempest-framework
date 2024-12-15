@@ -1,5 +1,5 @@
 # Use LF line endings
-* eol=lf
+* text eol=lf
 
 # Exclude build/test files from the release
 /bin/                     export-ignore
