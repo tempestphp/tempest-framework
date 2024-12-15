@@ -148,7 +148,6 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule !== null) {
-                $component->setState(ComponentState::ERROR);
                 $this->validationErrors[] = $failingRule->message();
                 Fiber::suspend();
 

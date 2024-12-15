@@ -12,19 +12,19 @@ use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tempest\Console\Components\Renderers\SpinnerRenderer;
+use Tempest\Console\Components\Renderers\TaskRenderer;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use Throwable;
-use function Tempest\Support\str;
 
 final class TaskComponent implements InteractiveConsoleComponent
 {
     use HasErrors;
     use HasState;
 
-    private SpinnerRenderer $spinner;
-
     private KeyValueRenderer $keyValue;
+
+    private TaskRenderer $renderer;
 
     private int $processId;
 
@@ -40,17 +40,19 @@ final class TaskComponent implements InteractiveConsoleComponent
         private readonly ?string $success = null,
         private readonly ?string $failure = null,
     ) {
-        $this->spinner = new SpinnerRenderer();
         $this->keyValue = new KeyValueRenderer();
+        $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
         $this->startedAt = hrtime(as_number: true);
     }
 
     public function render(Terminal $terminal): Generator
     {
+        // If there is no task handler, we don't need to fork the process, as
+        // it is a time-consuming operation. We can simply consider it done.
         if ($this->handler === null) {
             $this->state = ComponentState::DONE;
 
-            yield $this->renderLine($terminal);
+            yield $this->renderTask($terminal);
 
             return true;
         }
@@ -67,14 +69,16 @@ final class TaskComponent implements InteractiveConsoleComponent
 
         try {
             while (true) {
+                // The process is still running, so we continue looping.
                 if (pcntl_waitpid($this->processId, $status, flags: WNOHANG) === 0) {
-                    yield $this->renderLine($terminal);
+                    yield $this->renderTask($terminal);
 
-                    usleep($this->spinner->speed);
+                    usleep(80_000);
 
                     continue;
                 }
 
+                // The process is done, we determine its state by its exit code.
                 $this->finishedAt = hrtime(as_number: true);
                 $this->state = match (pcntl_wifexited($status)) {
                     true => match (pcntl_wexitstatus($status)) {
@@ -84,49 +88,26 @@ final class TaskComponent implements InteractiveConsoleComponent
                     default => ComponentState::CANCELLED,
                 };
 
-                yield $this->renderLine($terminal);
+                yield $this->renderTask($terminal);
 
                 return $this->state === ComponentState::DONE;
             }
         } finally {
-            if ($this->state !== ComponentState::DONE && $this->processId) {
+            if ($this->state->isFinished() && $this->processId) {
                 $this->kill();
             }
         }
     }
 
-    private function renderLine(Terminal $terminal): string
+    private function renderTask(Terminal $terminal): string
     {
-        $runtime = $this->finishedAt
-            ? number_format(($this->finishedAt - $this->startedAt) / 1_000_000, decimals: 0)
-            : null;
-
-        $line = $this->keyValue->render(
-            key: str()
-                ->append(match ($this->state) {
-                    ComponentState::DONE => '<style="fg-green">✔</style>',
-                    ComponentState::ERROR => '<style="fg-red">✖</style>',
-                    ComponentState::CANCELLED => '<style="fg-yellow">⚠</style>',
-                    default => $this->spinner->render($terminal, $this->state),
-                })
-                ->append(' ', $this->label),
-            value: $this->state !== ComponentState::ACTIVE
-                ? sprintf(
-                    '<style="fg-gray">%s</style><style="bold %s">%s</style>',
-                    $runtime ? ($runtime . 'ms ') : '',
-                    match ($this->state) {
-                        ComponentState::DONE => 'fg-green',
-                        default => 'fg-red',
-                    },
-                    match ($this->state) {
-                        ComponentState::DONE => $this->success ?? 'DONE',
-                        default => $this->failure ?? 'FAIL',
-                    },
-                )
-                : null,
+        return $this->renderer->render(
+            terminal: $terminal,
+            state: $this->state,
+            startedAt: $this->startedAt,
+            finishedAt: $this->finishedAt,
+            hint: '...',
         );
-
-        return $line . ($this->finishedAt ? '' : "\n");
     }
 
     private function kill(): void
