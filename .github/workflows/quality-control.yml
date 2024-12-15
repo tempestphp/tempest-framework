@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate-composer:
-    name: Validate Composer File
+    name: Validate composer file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,7 +21,7 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
-      - name: Validate Composer
+      - name: Validate composer
         run: composer validate
 
 #  rector:
@@ -49,7 +49,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run PHP-CS-Fixer
+      - name: Run php-cs-fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --config=.php-cs-fixer.dist.php --allow-risky=yes -v
@@ -74,7 +74,7 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
+      - name: Run phpstan
         run: vendor/bin/phpstan --error-format=github
 
   phpunit:

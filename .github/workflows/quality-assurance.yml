@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate-composer:
-    name: Validate Composer File
+    name: Validate composer file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,11 +21,11 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
           coverage: none
 
-      - name: Validate Composer
+      - name: Validate composer
         run: composer validate
 
   check-style:
-    name: Check Styling
+    name: Check styling
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,16 +39,16 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
+      - name: Run phpstan
         run: vendor/bin/phpstan --error-format=github
 
-      - name: Run PHP-CS-Fixer
+      - name: Run php-cs-fixer
         run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
         env:
           PHP_CS_FIXER_IGNORE_ENV: true
 
   phpstan:
-    name: Perform Static Analysis
+    name: Perform static analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
+      - name: Run phpstan
         run: vendor/bin/phpstan --error-format=github
 
 #  rector:
@@ -101,7 +101,7 @@ jobs:
         stability:
           - prefer-stable
 
-    name: Run Tests - P${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}
+    name: Run tests - P${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -124,7 +124,7 @@ jobs:
           composer global require php-coveralls/php-coveralls
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-      - name: List Installed Dependencies
+      - name: List installed dependencies
         run: composer show -D
 
       - name: 'Setup MySQL'
@@ -141,7 +141,7 @@ jobs:
       - name: Set database config - ${{ matrix.database }}
         run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
 
-      - name: List Discovered Locations
+      - name: List discovered locations
         run: php ./tempest discovery:status
 
       - name: Execute tests

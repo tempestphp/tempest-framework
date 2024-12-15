@@ -6,25 +6,25 @@ on:
 
 # CSFixer and Rector are temporarily disabled until they have proper PHP 8.4 support
 jobs:
-#  check-style:
-#    name: Run Style Check
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: 8.4
-#          coverage: none
-#
-#      - name: Install composer dependencies
-#        uses: ramsey/composer-install@v3
-#
-#      - name: Run php-cs-fixer
-#        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
-#        env:
-#          PHP_CS_FIXER_IGNORE_ENV: true
+ check-style:
+    name: Run style check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+    #  - name: Setup PHP
+    #    uses: shivammathur/setup-php@v2
+    #    with:
+    #      php-version: 8.4
+    #      coverage: none
+
+    #  - name: Install composer dependencies
+    #    uses: ramsey/composer-install@v3
+
+    #  - name: Run php-cs-fixer
+    #    run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
+    #    env:
+    #      PHP_CS_FIXER_IGNORE_ENV: true
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -35,8 +35,8 @@ jobs:
       - name: Run eslint
         run: bun run lint
 
-  phpstan:
-    name: "Run Static Analysis: PHPStan"
+ phpstan:
+    name: "Run static analysis: phpstan"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,11 +50,11 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPStan
+      - name: Run phpstan
         run: vendor/bin/phpstan --error-format=github
 
 #  rector:
-#    name: "Run Static Analysis: Rector"
+#    name: "Run static analysis: Rector"
 #    runs-on: ubuntu-latest
 #
 #    steps:
