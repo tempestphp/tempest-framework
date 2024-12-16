@@ -76,8 +76,8 @@ final class MakeConfigCommand
                 ConfigType::DATABASE => StubFile::from( $stubPath . '/database.config.stub.php'), // @phpstan-ignore match.alwaysTrue (Because this is a guardrail for the future implementations)
                 default => throw new InvalidArgumentException(sprintf('The "%s" config type has no supported stub file.', $configType->value)),
             };
-        } catch ( InvalidArgumentException $e ) {
-            throw new FileGenerationFailedException( sprintf( 'Cannot retrieve stub file: %s', $e->getMessage() ) );
+        } catch ( InvalidArgumentException $invalidArgumentException ) {
+            throw new FileGenerationFailedException( sprintf( 'Cannot retrieve stub file: %s', $invalidArgumentException->getMessage() ) );
         }
     }
 }

@@ -105,13 +105,13 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         (Book::new(title: 'D'))->save();
 
         $results = [];
-        Book::query()->chunk(function (array $chunk) use (&$results) {
+        Book::query()->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::query()->where('title <> "A"')->chunk(function (array $chunk) use (&$results) {
+        Book::query()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);

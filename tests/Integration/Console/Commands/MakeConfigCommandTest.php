@@ -56,39 +56,39 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
         return [
             'database_config' => [
                 'configType' => ConfigType::DATABASE,
-                'expectedConfigClass' => 'Tempest\Database\DatabaseConfig',
+                'expectedConfigClass' => \Tempest\Database\DatabaseConfig::class,
             ],
             'twig_config' => [
                 'configType' => ConfigType::TWIG,
-                'expectedConfigClass' => 'Tempest\View\Renderers\TwigConfig',
+                'expectedConfigClass' => \Tempest\View\Renderers\TwigConfig::class,
             ],
             'blade_config' => [
                 'configType' => ConfigType::BLADE,
-                'expectedConfigClass' => 'Tempest\View\Renderers\BladeConfig',
+                'expectedConfigClass' => \Tempest\View\Renderers\BladeConfig::class,
             ],
             'view_config' => [
                 'configType' => ConfigType::VIEW,
-                'expectedConfigClass' => 'Tempest\View\ViewConfig',
+                'expectedConfigClass' => \Tempest\View\ViewConfig::class,
             ],
             'event_bus_config' => [
                 'configType' => ConfigType::EVENT_BUS,
-                'expectedConfigClass' => 'Tempest\EventBus\EventBusConfig',
+                'expectedConfigClass' => \Tempest\EventBus\EventBusConfig::class,
             ],
             'command_bus_config' => [
                 'configType' => ConfigType::COMMAND_BUS,
-                'expectedConfigClass' => 'Tempest\CommandBus\CommandBusConfig',
+                'expectedConfigClass' => \Tempest\CommandBus\CommandBusConfig::class,
             ],
             'log_config' => [
                 'configType' => ConfigType::LOG,
-                'expectedConfigClass' => 'Tempest\Log\LogConfig',
+                'expectedConfigClass' => \Tempest\Log\LogConfig::class,
             ],
             'cache_config' => [
                 'configType' => ConfigType::CACHE,
-                'expectedConfigClass' => 'Tempest\Cache\CacheConfig',
+                'expectedConfigClass' => \Tempest\Cache\CacheConfig::class,
             ],
             'console_config' => [
                 'configType' => ConfigType::CONSOLE,
-                'expectedConfigClass' => 'Tempest\Console\ConsoleConfig',
+                'expectedConfigClass' => \Tempest\Console\ConsoleConfig::class,
             ],
         ];
     }
