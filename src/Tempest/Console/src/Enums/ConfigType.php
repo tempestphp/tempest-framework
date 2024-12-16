@@ -14,4 +14,5 @@ enum ConfigType: string
     case BLADE = 'blade';
     case VIEW = 'view';
     case EVENT_BUS = 'event-bus';
+    case COMMAND_BUS = 'command-bus';
 }
