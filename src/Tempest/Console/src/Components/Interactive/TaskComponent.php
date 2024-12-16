@@ -57,7 +57,7 @@ final class TaskComponent implements InteractiveConsoleComponent
         // If there is no task handler, we don't need to fork the process, as
         // it is a time-consuming operation. We can simply consider it done.
         if ($this->handler === null) {
-            $this->state = ComponentState::DONE;
+            $this->state = ComponentState::SUBMITTED;
 
             yield $this->renderTask($terminal);
 
@@ -98,7 +98,7 @@ final class TaskComponent implements InteractiveConsoleComponent
                 $this->finishedAt = hrtime(as_number: true);
                 $this->state = match (pcntl_wifexited($status)) {
                     true => match (pcntl_wexitstatus($status)) {
-                        0 => ComponentState::DONE,
+                        0 => ComponentState::SUBMITTED,
                         default => ComponentState::ERROR,
                     },
                     default => ComponentState::CANCELLED,
@@ -106,7 +106,7 @@ final class TaskComponent implements InteractiveConsoleComponent
 
                 yield $this->renderTask($terminal);
 
-                return $this->state === ComponentState::DONE;
+                return $this->state === ComponentState::SUBMITTED;
             }
         } finally {
             if ($this->state->isFinished() && $this->processId) {

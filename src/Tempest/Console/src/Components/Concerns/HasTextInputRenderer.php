@@ -43,7 +43,7 @@ trait HasTextInputRenderer
             return null;
         }
 
-        $this->state = ComponentState::DONE;
+        $this->state = ComponentState::SUBMITTED;
 
         return $this->buffer->text ?? '';
     }
