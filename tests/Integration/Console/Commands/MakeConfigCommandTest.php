@@ -33,111 +33,63 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
         parent::tearDown();
     }
 
+    #[DataProvider('config_type_provider')]
     #[Test]
-    public function make_database_config(): void {
+    public function make_config(
+        ConfigType $configType,
+        string $expectedConfigClass,
+    ): void {
         $this->console
-            ->call('make:config ' . ConfigType::DATABASE->value)
+            ->call('make:config ' . $configType->value)
             ->submit();
 
+        $filepath = "App/{$configType->value}.config.php";
+        
         $this->installer
-            ->assertFileExists('App/database.config.php')
-            ->assertFileContains('App/database.config.php', 'use Tempest\Database\DatabaseConfig')
-            ->assertFileContains('App/database.config.php', 'return new DatabaseConfig');
+            ->assertFileExists($filepath)
+            ->assertFileContains($filepath, "use {$expectedConfigClass}")
+            ->assertFileContains($filepath, "return new " . str($expectedConfigClass)->classBasename()->toString());
     }
 
-    #[Test]
-    public function make_twig_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::TWIG->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/twig.config.php')
-            ->assertFileContains('App/twig.config.php', 'use Tempest\View\Renderers\TwigConfig')
-            ->assertFileContains('App/twig.config.php', 'return new TwigConfig');
-    }
-
-    #[Test]
-    public function make_blade_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::BLADE->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/blade.config.php')
-            ->assertFileContains('App/blade.config.php', 'use Tempest\View\Renderers\BladeConfig')
-            ->assertFileContains('App/blade.config.php', 'return new BladeConfig');
-    }
-
-    #[Test]
-    public function make_view_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::VIEW->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/view.config.php')
-            ->assertFileContains('App/view.config.php', 'use Tempest\View\ViewConfig')
-            ->assertFileContains('App/view.config.php', 'return new ViewConfig');
-    }
-
-    #[Test]
-    public function make_event_bus_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::EVENT_BUS->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/event-bus.config.php')
-            ->assertFileContains('App/event-bus.config.php', 'use Tempest\EventBus\EventBusConfig')
-            ->assertFileContains('App/event-bus.config.php', 'return new EventBusConfig');
-    }
-
-    #[Test]
-    public function make_command_bus_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::COMMAND_BUS->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/command-bus.config.php')
-            ->assertFileContains('App/command-bus.config.php', 'use Tempest\CommandBus\CommandBusConfig')
-            ->assertFileContains('App/command-bus.config.php', 'return new CommandBusConfig');
-    }
-
-    #[Test]
-    public function make_log_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::LOG->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/log.config.php')
-            ->assertFileContains('App/log.config.php', 'use Tempest\Log\LogConfig')
-            ->assertFileContains('App/log.config.php', 'return new LogConfig');
-    }
-
-    #[Test]
-    public function make_cache_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::CACHE->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/cache.config.php')
-            ->assertFileContains('App/cache.config.php', 'use Tempest\Cache\CacheConfig')
-            ->assertFileContains('App/cache.config.php', 'return new CacheConfig');
-    }
-
-    #[Test]
-    public function make_console_config(): void {
-        $this->console
-            ->call('make:config ' . ConfigType::CONSOLE->value)
-            ->submit();
-
-        $this->installer
-            ->assertFileExists('App/console.config.php')
-            ->assertFileContains('App/console.config.php', 'use Tempest\Console\ConsoleConfig')
-            ->assertFileContains('App/console.config.php', 'return new ConsoleConfig');
+    public static function config_type_provider(): array
+    {
+        return [
+            'database_config' => [
+                'configType' => ConfigType::DATABASE,
+                'expectedConfigClass' => 'Tempest\Database\DatabaseConfig',
+            ],
+            'twig_config' => [
+                'configType' => ConfigType::TWIG,
+                'expectedConfigClass' => 'Tempest\View\Renderers\TwigConfig',
+            ],
+            'blade_config' => [
+                'configType' => ConfigType::BLADE,
+                'expectedConfigClass' => 'Tempest\View\Renderers\BladeConfig',
+            ],
+            'view_config' => [
+                'configType' => ConfigType::VIEW,
+                'expectedConfigClass' => 'Tempest\View\ViewConfig',
+            ],
+            'event_bus_config' => [
+                'configType' => ConfigType::EVENT_BUS,
+                'expectedConfigClass' => 'Tempest\EventBus\EventBusConfig',
+            ],
+            'command_bus_config' => [
+                'configType' => ConfigType::COMMAND_BUS,
+                'expectedConfigClass' => 'Tempest\CommandBus\CommandBusConfig',
+            ],
+            'log_config' => [
+                'configType' => ConfigType::LOG,
+                'expectedConfigClass' => 'Tempest\Log\LogConfig',
+            ],
+            'cache_config' => [
+                'configType' => ConfigType::CACHE,
+                'expectedConfigClass' => 'Tempest\Cache\CacheConfig',
+            ],
+            'console_config' => [
+                'configType' => ConfigType::CONSOLE,
+                'expectedConfigClass' => 'Tempest\Console\ConsoleConfig',
+            ],
+        ];
     }
 }
