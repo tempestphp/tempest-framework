@@ -11,7 +11,6 @@ use Symfony\Component\Process\Process;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
-use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tempest\Console\Components\Renderers\SpinnerRenderer;
 use Tempest\Console\Components\Renderers\TaskRenderer;
 use Tempest\Console\InteractiveConsoleComponent;
@@ -23,8 +22,6 @@ final class TaskComponent implements InteractiveConsoleComponent
 {
     use HasErrors;
     use HasState;
-
-    private KeyValueRenderer $keyValue;
 
     private TaskRenderer $renderer;
 
@@ -41,13 +38,10 @@ final class TaskComponent implements InteractiveConsoleComponent
     private(set) array $extensions = ['pcntl'];
 
     public function __construct(
-        private readonly string $label,
+        readonly string $label,
         private null|Process|Closure $handler = null,
-        private readonly ?string $success = null,
-        private readonly ?string $failure = null,
     ) {
         $this->handler = $this->resolveHandler($handler);
-        $this->keyValue = new KeyValueRenderer();
         $this->renderer = new TaskRenderer(new SpinnerRenderer(), $label);
         $this->startedAt = hrtime(as_number: true);
     }
@@ -145,15 +139,15 @@ final class TaskComponent implements InteractiveConsoleComponent
         $log = function (string ...$lines): void {
             arr($lines)
                 ->flatMap(fn (string $line) => explode("\n", $line))
-                ->each(fn (string $line) => fwrite($this->sockets[0], $line));
+                ->each(function (string $line): void {
+                    fwrite($this->sockets[0], $line);
+                });
         };
 
         try {
             exit((int) (($this->handler ?? static fn (): bool => true)($log) === false));
         } catch (Throwable) {
             exit(1);
-        } finally {
-            socket_close($conn);
         }
     }
 
