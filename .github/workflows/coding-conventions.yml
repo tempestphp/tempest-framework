@@ -50,7 +50,7 @@ jobs:
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Run phpstan
+      - name: Run PHPStan
         run: vendor/bin/phpstan --error-format=github
 
 #  rector:
