@@ -65,6 +65,7 @@ final class MakeConfigCommand
             $stubPath = dirname( __DIR__ ) . '/Stubs';
             
             return match ($configType) {
+                ConfigType::EVENT_BUS => StubFile::from( $stubPath . '/event-bus.config.stub.php'),
                 ConfigType::VIEW => StubFile::from( $stubPath . '/view.config.stub.php'),
                 ConfigType::BLADE => StubFile::from( $stubPath . '/blade.config.stub.php'),
                 ConfigType::TWIG => StubFile::from( $stubPath . '/twig.config.stub.php'),

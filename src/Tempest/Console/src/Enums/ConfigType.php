@@ -13,4 +13,5 @@ enum ConfigType: string
     case TWIG = 'twig';
     case BLADE = 'blade';
     case VIEW = 'view';
+    case EVENT_BUS = 'event-bus';
 }
