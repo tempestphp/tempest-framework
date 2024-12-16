@@ -1,8 +1,8 @@
 <?php
 
-use Tempest\View\Renderers\TwigConfig;
-
 declare(strict_types=1);
+
+use Tempest\View\Renderers\TwigConfig;
 
 return new TwigConfig(
     viewPaths: [

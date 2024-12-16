@@ -11,4 +11,5 @@ enum ConfigType: string
 {
     case DATABASE = 'database';
     case TWIG = 'twig';
+    case VIEW = 'view';
 }

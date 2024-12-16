@@ -65,6 +65,7 @@ final class MakeConfigCommand
             $stubPath = dirname( __DIR__ ) . '/Stubs';
             
             return match ($configType) {
+                ConfigType::VIEW => StubFile::from( $stubPath . '/view.config.stub.php'),
                 ConfigType::TWIG => StubFile::from( $stubPath . '/twig.config.stub.php'),
                 ConfigType::DATABASE => StubFile::from( $stubPath . '/database.config.stub.php'), // @phpstan-ignore match.alwaysTrue (Because this is a guardrail for the future implementations)
                 default => throw new InvalidArgumentException(sprintf('The "%s" config type has no supported stub file.', $configType->value)),
