@@ -18,7 +18,7 @@ jobs:
           - ubuntu-latest
           - windows-latest
 
-    name: "Run Tests: ${{ matrix.os }}"
+    name: "Run tests: ${{ matrix.os }}"
 
     steps:
       - name: Checkout code
@@ -61,7 +61,7 @@ jobs:
           - prefer-stable
           - prefer-lowest
 
-    name: "Run Tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
+    name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
     steps:
       - name: Checkout code
@@ -96,7 +96,7 @@ jobs:
       - name: Set database config - ${{ matrix.database }}
         run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
 
-      - name: List Discovered Locations
+      - name: List discovered locations
         run: php ./tempest discovery:status
 
       - name: Execute tests
