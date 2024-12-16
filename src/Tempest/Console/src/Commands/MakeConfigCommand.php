@@ -65,6 +65,7 @@ final class MakeConfigCommand
             $stubPath = dirname( __DIR__ ) . '/Stubs';
             
             return match ($configType) {
+                ConfigType::CONSOLE => StubFile::from( $stubPath . '/console.config.stub.php'),
                 ConfigType::CACHE => StubFile::from( $stubPath . '/cache.config.stub.php'),
                 ConfigType::LOG => StubFile::from( $stubPath . '/log.config.stub.php'),
                 ConfigType::COMMAND_BUS => StubFile::from( $stubPath . '/command-bus.config.stub.php'),

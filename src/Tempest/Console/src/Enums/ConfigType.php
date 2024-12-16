@@ -17,4 +17,5 @@ enum ConfigType: string
     case COMMAND_BUS = 'command-bus';
     case LOG = 'log';
     case CACHE = 'cache';
+    case CONSOLE = 'console';
 }
