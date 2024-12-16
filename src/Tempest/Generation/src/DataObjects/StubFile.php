@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\DataObjects;
 
-use Exception;
-use Nette\InvalidStateException;
-use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\ClassManipulator;
+use ReflectionException;
+use Nette\InvalidStateException;
+use InvalidArgumentException;
+use Exception;
 
 /**
  * Represents a file that is to be generated.
@@ -32,9 +34,9 @@ final class StubFile
                 filePath: $pathOrClass,
                 type: StubFileType::CLASS_FILE,
             );
-        } catch (InvalidStateException) {
+        } catch (InvalidStateException|ReflectionException) {
             if (! file_exists($pathOrClass)) {
-                throw new Exception(sprintf('The file "%s" does not exist.', $pathOrClass));
+                throw new InvalidArgumentException(sprintf('The file "%s" does not exist.', $pathOrClass));
             }
 
             return new self(
