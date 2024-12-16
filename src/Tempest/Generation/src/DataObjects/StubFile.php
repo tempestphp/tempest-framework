@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\DataObjects;
 
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\ClassManipulator;
-use ReflectionException;
-use Nette\InvalidStateException;
 use InvalidArgumentException;
-use Exception;
+use Nette\InvalidStateException;
+use ReflectionException;
+use Tempest\Generation\ClassManipulator;
+use Tempest\Generation\Enums\StubFileType;
 
 /**
  * Represents a file that is to be generated.

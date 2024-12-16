@@ -6,8 +6,17 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Cache\CacheConfig;
+use Tempest\CommandBus\CommandBusConfig;
+use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Core\ComposerNamespace;
+use Tempest\Database\DatabaseConfig;
+use Tempest\EventBus\EventBusConfig;
+use Tempest\Log\LogConfig;
+use Tempest\View\Renderers\BladeConfig;
+use Tempest\View\Renderers\TwigConfig;
+use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\Support\str;
 
@@ -44,11 +53,11 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
             ->submit();
 
         $filepath = "App/{$configType->value}.config.php";
-        
+
         $this->installer
             ->assertFileExists($filepath)
             ->assertFileContains($filepath, "use {$expectedConfigClass}")
-            ->assertFileContains($filepath, "return new " . str($expectedConfigClass)->classBasename()->toString());
+            ->assertFileContains($filepath, 'return new ' . str($expectedConfigClass)->classBasename()->toString());
     }
 
     public static function config_type_provider(): array
@@ -56,39 +65,39 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
         return [
             'database_config' => [
                 'configType' => ConfigType::DATABASE,
-                'expectedConfigClass' => \Tempest\Database\DatabaseConfig::class,
+                'expectedConfigClass' => DatabaseConfig::class,
             ],
             'twig_config' => [
                 'configType' => ConfigType::TWIG,
-                'expectedConfigClass' => \Tempest\View\Renderers\TwigConfig::class,
+                'expectedConfigClass' => TwigConfig::class,
             ],
             'blade_config' => [
                 'configType' => ConfigType::BLADE,
-                'expectedConfigClass' => \Tempest\View\Renderers\BladeConfig::class,
+                'expectedConfigClass' => BladeConfig::class,
             ],
             'view_config' => [
                 'configType' => ConfigType::VIEW,
-                'expectedConfigClass' => \Tempest\View\ViewConfig::class,
+                'expectedConfigClass' => ViewConfig::class,
             ],
             'event_bus_config' => [
                 'configType' => ConfigType::EVENT_BUS,
-                'expectedConfigClass' => \Tempest\EventBus\EventBusConfig::class,
+                'expectedConfigClass' => EventBusConfig::class,
             ],
             'command_bus_config' => [
                 'configType' => ConfigType::COMMAND_BUS,
-                'expectedConfigClass' => \Tempest\CommandBus\CommandBusConfig::class,
+                'expectedConfigClass' => CommandBusConfig::class,
             ],
             'log_config' => [
                 'configType' => ConfigType::LOG,
-                'expectedConfigClass' => \Tempest\Log\LogConfig::class,
+                'expectedConfigClass' => LogConfig::class,
             ],
             'cache_config' => [
                 'configType' => ConfigType::CACHE,
-                'expectedConfigClass' => \Tempest\Cache\CacheConfig::class,
+                'expectedConfigClass' => CacheConfig::class,
             ],
             'console_config' => [
                 'configType' => ConfigType::CONSOLE,
-                'expectedConfigClass' => \Tempest\Console\ConsoleConfig::class,
+                'expectedConfigClass' => ConsoleConfig::class,
             ],
         ];
     }

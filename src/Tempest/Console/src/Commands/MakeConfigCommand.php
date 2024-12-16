@@ -5,22 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Console\Commands;
 
 use InvalidArgumentException;
-use ReflectionException;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Enums\ConfigType;
-use Tempest\Console\Enums\MiddlewareType;
-use Tempest\Console\Stubs\CommandBusMiddlewareStub;
-use Tempest\Console\Stubs\ConsoleMiddlewareStub;
-use Tempest\Console\Stubs\EventBusMiddlewareStub;
-use Tempest\Console\Stubs\HttpMiddlewareStub;
 use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-
-use function Tempest\root_path;
-use function Tempest\src_path;
 use function Tempest\Support\str;
 
 final class MakeConfigCommand
@@ -41,8 +32,8 @@ final class MakeConfigCommand
     ): void {
         try {
             $stubFile = $this->getStubFileFromConfigType($configType);
-            $suggestedPath = str( $this->getSuggestedPath( 'Dummy' ) )
-                ->replace( 'Dummy', $configType->value . '.config' )
+            $suggestedPath = str($this->getSuggestedPath('Dummy'))
+                ->replace('Dummy', $configType->value . '.config')
                 ->toString();
             $targetPath = $this->promptTargetPath($suggestedPath);
             $shouldOverride = $this->askForOverride($targetPath);
@@ -62,22 +53,22 @@ final class MakeConfigCommand
     private function getStubFileFromConfigType(ConfigType $configType): StubFile
     {
         try {
-            $stubPath = dirname( __DIR__ ) . '/Stubs';
-            
+            $stubPath = dirname(__DIR__) . '/Stubs';
+
             return match ($configType) {
-                ConfigType::CONSOLE => StubFile::from( $stubPath . '/console.config.stub.php'),
-                ConfigType::CACHE => StubFile::from( $stubPath . '/cache.config.stub.php'),
-                ConfigType::LOG => StubFile::from( $stubPath . '/log.config.stub.php'),
-                ConfigType::COMMAND_BUS => StubFile::from( $stubPath . '/command-bus.config.stub.php'),
-                ConfigType::EVENT_BUS => StubFile::from( $stubPath . '/event-bus.config.stub.php'),
-                ConfigType::VIEW => StubFile::from( $stubPath . '/view.config.stub.php'),
-                ConfigType::BLADE => StubFile::from( $stubPath . '/blade.config.stub.php'),
-                ConfigType::TWIG => StubFile::from( $stubPath . '/twig.config.stub.php'),
-                ConfigType::DATABASE => StubFile::from( $stubPath . '/database.config.stub.php'), // @phpstan-ignore match.alwaysTrue (Because this is a guardrail for the future implementations)
+                ConfigType::CONSOLE => StubFile::from($stubPath . '/console.config.stub.php'),
+                ConfigType::CACHE => StubFile::from($stubPath . '/cache.config.stub.php'),
+                ConfigType::LOG => StubFile::from($stubPath . '/log.config.stub.php'),
+                ConfigType::COMMAND_BUS => StubFile::from($stubPath . '/command-bus.config.stub.php'),
+                ConfigType::EVENT_BUS => StubFile::from($stubPath . '/event-bus.config.stub.php'),
+                ConfigType::VIEW => StubFile::from($stubPath . '/view.config.stub.php'),
+                ConfigType::BLADE => StubFile::from($stubPath . '/blade.config.stub.php'),
+                ConfigType::TWIG => StubFile::from($stubPath . '/twig.config.stub.php'),
+                ConfigType::DATABASE => StubFile::from($stubPath . '/database.config.stub.php'), // @phpstan-ignore match.alwaysTrue (Because this is a guardrail for the future implementations)
                 default => throw new InvalidArgumentException(sprintf('The "%s" config type has no supported stub file.', $configType->value)),
             };
-        } catch ( InvalidArgumentException $invalidArgumentException ) {
-            throw new FileGenerationFailedException( sprintf( 'Cannot retrieve stub file: %s', $invalidArgumentException->getMessage() ) );
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            throw new FileGenerationFailedException(sprintf('Cannot retrieve stub file: %s', $invalidArgumentException->getMessage()));
         }
     }
 }

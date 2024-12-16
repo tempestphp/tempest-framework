@@ -8,6 +8,5 @@ return new BladeConfig(
     viewPaths: [
         __DIR__ . '/../views/',
     ],
-
     cachePath: __DIR__ . '/../views/cache/',
 );

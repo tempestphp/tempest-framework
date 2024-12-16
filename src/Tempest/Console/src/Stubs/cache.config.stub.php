@@ -7,6 +7,6 @@ use Tempest\Cache\CacheConfig;
 
 return new CacheConfig(
     projectCachePool: new FilesystemAdapter(
-        directory: __DIR__ . '/../../../../.cache'
-    )
+        directory: __DIR__ . '/../../../../.cache',
+    ),
 );
