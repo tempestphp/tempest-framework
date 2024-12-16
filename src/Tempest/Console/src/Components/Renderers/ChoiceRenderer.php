@@ -33,7 +33,7 @@ final class ChoiceRenderer
         $this->prepareRender($terminal, $state);
         $this->label($label);
 
-        if ($state === ComponentState::DONE) {
+        if ($state === ComponentState::SUBMITTED) {
             $this->line(
                 $this->multiple
                     ? '<style="fg-gray italic">' . count($options->getSelectedOptions()) . ' selected</style>'

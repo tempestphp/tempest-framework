@@ -18,7 +18,6 @@ use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
-use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -280,11 +279,6 @@ final class GenericConsole implements Console
     public function task(string $label, null|Process|Closure $handler = null): bool
     {
         return $this->component(new TaskComponent($label, $handler));
-    }
-
-    public function keyValue(string $key, ?string $value = null): void
-    {
-        $this->writeln((new KeyValueRenderer())->render($key, $value));
     }
 
     public function search(string $label, Closure $search, bool $multiple = false, null|string|array $default = null): mixed

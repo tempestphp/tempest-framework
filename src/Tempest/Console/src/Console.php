@@ -61,8 +61,6 @@ interface Console
 
     public function task(string $label, null|Process|Closure $handler): bool;
 
-    public function keyValue(string $key, ?string $value = null): void;
-
     public function header(string $header, ?string $subheader = null): self;
 
     public function info(string $line, ?string $symbol = null): self;
