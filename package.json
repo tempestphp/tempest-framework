@@ -7,8 +7,7 @@
     "lint:fix": "eslint --fix packages",
     "build": "bun --filter '*' build",
     "dev": "bun --filter '*' build:stub",
-    "test": "vitest",
-    "release": "bumpp package.json --push --tag --commit \"release: v\""
+    "test": "vitest"
   },
   "devDependencies": {
     "@innocenzi/eslint-config": "^0.22.4",
