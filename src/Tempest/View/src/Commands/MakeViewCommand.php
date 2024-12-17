@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\View\Commands;
 
-use function Tempest\Support\str;
-use Tempest\View\Stubs\ViewStub;
-use Tempest\View\Enums\ViewType;
-use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Generation\Exceptions\FileGenerationAbortedException;
-use Tempest\Generation\Enums\StubFileType;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Core\PublishesFiles;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgument;
 use InvalidArgumentException;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Core\PublishesFiles;
+use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Generation\Enums\StubFileType;
+use Tempest\Generation\Exceptions\FileGenerationAbortedException;
+use Tempest\Generation\Exceptions\FileGenerationFailedException;
+use Tempest\View\Enums\ViewType;
+use Tempest\View\Stubs\ViewStub;
+use function Tempest\Support\str;
 
 final class MakeViewCommand
 {
@@ -38,7 +38,7 @@ final class MakeViewCommand
     ): void {
         try {
             $suggestedPath = str($this->getSuggestedPath('Dummy'));
-            $suggestedPath = ( $viewType === ViewType::RAW )
+            $suggestedPath = ($viewType === ViewType::RAW)
                 ? $suggestedPath->replace('Dummy', $fileName . '.view')
                 : $suggestedPath->replace('Dummy', $fileName);
 
@@ -48,7 +48,7 @@ final class MakeViewCommand
 
             $stubFile = $this->getStubFileFromViewType($viewType);
 
-            if ( $stubFile->type === StubFileType::RAW_FILE ) {
+            if ($stubFile->type === StubFileType::RAW_FILE) {
                 $this->stubFileGenerator->generateRawFile(
                     stubFile: $stubFile,
                     targetPath: $targetPath,
@@ -61,7 +61,7 @@ final class MakeViewCommand
                     shouldOverride: $shouldOverride,
                     replacements: [
                         'dummy.view.php' => str($fileName)->kebab()->toString() . '.view.php',
-                    ]
+                    ],
                 );
             }
 
@@ -70,7 +70,7 @@ final class MakeViewCommand
             $this->error($e->getMessage());
         }
     }
-    
+
     private function getStubFileFromViewType(ViewType $viewType): StubFile
     {
         try {

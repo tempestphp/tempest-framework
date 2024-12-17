@@ -11,7 +11,8 @@ final class ViewStub implements View
 {
     use IsView;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->path = __DIR__ . '/dummy.view.php';
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
@@ -31,23 +31,24 @@ final class MakeViewCommandTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function make_view(): void {
+    public function make_view(): void
+    {
         $this->console
             ->call('make:view home')
             ->submit();
-            
+
         $this->installer->assertFileExists('App/home.view.php');
-            
+
         $this->console
             ->call('make:view HomeView class')
             ->submit();
-            
+
         $filepath = 'App/HomeView.php';
         $this->installer
             ->assertFileExists($filepath)
-            ->assertFileContains($filepath, "implements View")
+            ->assertFileContains($filepath, 'implements View')
             ->assertFileContains($filepath, "use Tempest\View\View")
-            ->assertFileContains($filepath, "use IsView")
+            ->assertFileContains($filepath, 'use IsView')
             ->assertFileContains($filepath, "use Tempest\View\IsView");
     }
 }
