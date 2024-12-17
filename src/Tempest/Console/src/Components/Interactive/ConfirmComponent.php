@@ -28,12 +28,20 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
 
     public function __construct(
         private readonly string $question,
+        /** @phpstan-ignore-next-line https://github.com/phpstan/phpstan/issues/12255 */
         private readonly bool $default = false,
         readonly ?string $yes = null,
         readonly ?string $no = null,
     ) {
         $this->answer = $default;
         $this->renderer = new ConfirmRenderer($yes ?? 'Yes', $no ?? 'No');
+    }
+
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticConfirmComponent(
+            $this->question,
+            $this->default,
+        );
     }
 
     public function render(Terminal $terminal): string
@@ -78,13 +86,5 @@ final class ConfirmComponent implements InteractiveConsoleComponent, HasStaticCo
             'h', 'j', 'k', 'l' => ! $this->answer,
             default => $this->answer,
         };
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticConfirmComponent(
-            $this->question,
-            $this->default,
-        );
     }
 }

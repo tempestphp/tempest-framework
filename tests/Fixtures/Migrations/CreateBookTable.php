@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Migrations;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 
-final readonly class CreateBookTable implements Migration
+final class CreateBookTable implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return '0000-00-00_create_books_table';
-    }
+    private(set) string $name = '0000-00-00_create_books_table';
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return CreateTableStatement::forModel(Book::class)
             ->primary()
@@ -25,7 +22,7 @@ final readonly class CreateBookTable implements Migration
             ->belongsTo('books.author_id', 'authors.id', nullable: true);
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return DropTableStatement::forModel(Book::class);
     }

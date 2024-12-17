@@ -29,7 +29,7 @@ final readonly class ExecuteConsoleCommand
         [$commandName, $arguments] = $this->resolveCommandAndArguments($command, $arguments);
 
         $consoleCommand = $this->resolveConsoleCommand($command) ?? $this->resolveConsoleCommand($commandName);
-        $callable = $this->getCallable($consoleCommand?->middleware ?? []);
+        $callable = $this->getCallable($consoleCommand->middleware ?? []);
 
         $this->argumentBag->setCommandName($consoleCommand?->getName() ?? $commandName);
         $this->argumentBag->addMany($arguments);

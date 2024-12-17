@@ -21,7 +21,7 @@ final readonly class CharStatement implements QueryStatement
         return sprintf(
             '`%s` CHAR %s %s',
             $this->name,
-            $this->default ? "DEFAULT \"{$this->default}\"" : '',
+            $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }

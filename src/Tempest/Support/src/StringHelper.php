@@ -26,6 +26,14 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Converts the instance to a {@see \Tempest\Support\HtmlString}.
+     */
+    public function toHtmlString(): HtmlString
+    {
+        return new HtmlString($this->string);
+    }
+
+    /**
      * Converts the instance to a string.
      */
     public function toString(): string
@@ -708,6 +716,20 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
+     * Checks whether this string contains another string
+     *
+     * ### Example
+     * ```php
+     * str('Lorem ipsum')->contains('ipsum'); // true
+     * str('Lorem ipsum')->contains('something else'); // false
+     * ```
+     */
+    public function contains(string|Stringable $needle): bool
+    {
+        return str_contains($this->string, (string) $needle);
+    }
+
+    /**
      * Takes the specified amount of characters. If `$length` is negative, starts from the end.
      */
     public function take(int $length): self
@@ -848,6 +870,20 @@ final readonly class StringHelper implements Stringable
         );
     }
 
+    /**
+     * Calculates the levenshtein difference
+     *
+     *
+     *  ### Example
+     *  ```php
+     *  str('Foo')->levenshtein('Foobar');
+     *  ```
+     */
+    public function levenshtein(string|Stringable $other): int
+    {
+        return levenshtein($this->string, (string) $other);
+    }
+
     public function when(mixed $condition, Closure $callback): static
     {
         if ($condition instanceof Closure) {
@@ -877,5 +913,21 @@ final readonly class StringHelper implements Stringable
     public static function join(array|ArrayHelper $parts, string $glue = ', ', ?string $finalGlue = ' and '): self
     {
         return arr($parts)->join($glue, $finalGlue);
+    }
+
+    /**
+     * Check whether a string is not empty
+     */
+    public function isNotEmpty(): bool
+    {
+        return $this->string !== '';
+    }
+
+    /**
+     * Check whether a string is empty
+     */
+    public function isEmpty(): bool
+    {
+        return $this->string === '';
     }
 }

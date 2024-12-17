@@ -6,5 +6,7 @@ namespace Tempest\Console;
 
 interface HasStaticComponent
 {
-    public function getStaticComponent(): StaticConsoleComponent;
+    public StaticConsoleComponent $staticComponent {
+        get;
+    }
 }

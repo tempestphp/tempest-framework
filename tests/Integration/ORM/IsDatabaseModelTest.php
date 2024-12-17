@@ -40,7 +40,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $foo = Foo::create(
@@ -68,7 +68,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $a = Foo::create(
@@ -352,7 +352,13 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         ))->save();
 
         $a = AWithLazy::query()->first();
-        $this->assertNotNull($a->b);
+
+        $this->assertFalse(isset($a->b));
+
+        /** @phpstan-ignore expr.resultUnused */
+        $a->b; // The side effect from accessing ->b will cause it to load
+
+        $this->assertTrue(isset($a->b));
     }
 
     public function test_eager_load(): void
@@ -415,7 +421,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
-            FooMigration::class,
+            FooDatabaseMigration::class,
         );
 
         $foo = Foo::create(

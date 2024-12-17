@@ -6,16 +6,25 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\QueryStatement;
+use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 final readonly class UniqueStatement implements QueryStatement
 {
     public function __construct(
-        private string $columnName,
+        private string $tableName,
+        private array $columns,
     ) {
     }
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf('UNIQUE (%s)', $this->columnName);
+        $columns = arr($this->columns)->implode('`, `')->wrap('`', '`');
+
+        $indexName = str($this->tableName . ' ' . $columns->replace(',', '')->snake())->snake()->toString();
+
+        $on = sprintf('`%s` (%s)', $this->tableName, $columns);
+
+        return sprintf('CREATE UNIQUE INDEX `%s` ON %s', $indexName, $on);
     }
 }

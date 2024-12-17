@@ -23,7 +23,7 @@ final readonly class VarcharStatement implements QueryStatement
             '`%s` VARCHAR(%s) %s %s',
             $this->name,
             $this->size,
-            $this->default ? "DEFAULT \"{$this->default}\"" : '',
+            $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }

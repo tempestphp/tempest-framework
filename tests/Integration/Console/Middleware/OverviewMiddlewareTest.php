@@ -21,7 +21,8 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertDoesNotContain('hidden')
             ->assertContains('hello:world')
             ->assertContains('hello:test   description')
-            ->assertContains('testcommand:test');
+            ->assertContains('hello:world:test')
+            ->assertContains('test:test');
     }
 
     public function test_overview_with_hidden(): void

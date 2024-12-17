@@ -90,7 +90,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
             )
             ->assertOk();
 
-        $this->assertEquals('test-title test-text', $response->getBody());
+        $this->assertEquals('test-title test-text', $response->body);
     }
 
     public function test_generic_request_can_map_to_custom_request(): void
@@ -105,7 +105,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
             )
             ->assertOk();
 
-        $this->assertEquals('test-title test-text', $response->getBody());
+        $this->assertEquals('test-title test-text', $response->body);
     }
 
     public function test_custom_request_test_with_validation(): void

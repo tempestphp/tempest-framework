@@ -4,21 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Migrations;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 
-final readonly class CreateBTable implements Migration
+final class CreateBTable implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return '100-create-b';
-    }
+    private(set) string $name = '100-create-b';
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'b',
@@ -29,7 +26,7 @@ final readonly class CreateBTable implements Migration
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return new DropTableStatement('b');
     }

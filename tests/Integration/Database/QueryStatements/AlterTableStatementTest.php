@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use http\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\DatabaseDialect;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Id;
-use Tempest\Database\Migration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Database\QueryStatement;
@@ -28,7 +29,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->migrate(
             CreateMigrationsTable::class,
-            CreateUserMigration::class,
+            CreateUserDatabaseMigration::class,
         );
 
         $this->assertCount(2, MigrationModel::all());
@@ -47,6 +48,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
                 DatabaseDialect::POSTGRESQL => 'table users has no column named email',
+                null => throw new RuntimeException('No database dialect available'),
             };
 
             $this->assertStringContainsString($message, $queryException->getMessage());
@@ -69,15 +71,22 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame('test@example.com', $user->email);
     }
 
+    public function test_alter_for_only_indexes(): void
+    {
+        $statement = new AlterTableStatement('table')
+            ->index('foo')
+            ->unique('bar')
+            ->compile(DatabaseDialect::SQLITE);
+
+        $this->assertStringNotContainsString('ALTER TABLE', $statement);
+    }
+
     private function getAlterTableMigration(): mixed
     {
-        return new class () implements Migration {
-            public function getName(): string
-            {
-                return '0000-01-02_add_email_to_user_table';
-            }
+        return new class () implements DatabaseMigration {
+            private(set) string $name = '0000-01-02_add_email_to_user_table';
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return AlterTableStatement::forModel(User::class)
                     ->add(new VarcharStatement('email'));

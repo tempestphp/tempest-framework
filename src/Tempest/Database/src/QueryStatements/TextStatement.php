@@ -27,7 +27,7 @@ final readonly class TextStatement implements QueryStatement
             default => sprintf(
                 '`%s` TEXT %s %s',
                 $this->name,
-                $this->default ? "DEFAULT \"{$this->default}\"" : '',
+                $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
         };

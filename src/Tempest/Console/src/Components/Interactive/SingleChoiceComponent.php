@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Interactive;
 
+use Stringable;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -42,6 +43,14 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         $this->buffer = new TextBuffer();
         $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: false);
         $this->updateQuery();
+    }
+
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticSingleChoiceComponent(
+            label: $this->label,
+            options: $this->options->getRawOptions(),
+            default: $this->default,
+        );
     }
 
     public function render(Terminal $terminal): string
@@ -94,15 +103,6 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         return $this->bufferEnabled;
     }
 
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticSingleChoiceComponent(
-            label: $this->label,
-            options: $this->options->getRawOptions(),
-            default: $this->default,
-        );
-    }
-
     #[HandlesKey]
     public function input(string $key): void
     {
@@ -128,7 +128,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     }
 
     #[HandlesKey(Key::ENTER)]
-    public function enter(): null|int|string
+    public function enter(): null|int|string|Stringable
     {
         $active = $this->options->getActive();
 

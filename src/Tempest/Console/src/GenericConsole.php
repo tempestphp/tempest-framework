@@ -6,6 +6,7 @@ namespace Tempest\Console;
 
 use BackedEnum;
 use Closure;
+use Stringable;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\Interactive\ConfirmComponent;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
@@ -117,13 +118,20 @@ final class GenericConsole implements Console
         return $this;
     }
 
-    public function writeWithLanguage(string $contents, Language $language): Console
+    public function writeWithLanguage(string $contents, Language $language): self
     {
         if ($this->label) {
             $contents = "<h2>{$this->label}</h2> {$contents}";
         }
 
         $this->output->write($this->highlighter->parse($contents, $language));
+
+        return $this;
+    }
+
+    public function writeRaw(string $contents): self
+    {
+        $this->output->write($contents);
 
         return $this;
     }
@@ -180,7 +188,7 @@ final class GenericConsole implements Console
         }
 
         if ($component instanceof HasStaticComponent) {
-            return $component->getStaticComponent()->render($this);
+            return $component->staticComponent->render($this);
         }
 
         throw new UnsupportedComponent($component);
@@ -195,7 +203,7 @@ final class GenericConsole implements Console
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): null|int|string|array {
+    ): null|int|string|Stringable|array {
         if ($this->isForced && $default) {
             return $default;
         }

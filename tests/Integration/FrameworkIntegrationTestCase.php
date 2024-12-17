@@ -9,12 +9,12 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
-use Tempest\Console\Scheduler\NullShellExecutor;
-use Tempest\Console\ShellExecutor;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\DiscoveryLocation;
+use Tempest\Core\ShellExecutor;
+use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -54,6 +54,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $connection = (require $databaseConfigPath)->connection();
         $config = $this->container->get(DatabaseConfig::class);
         $config->connection = $connection;
+
+        // Vite
+        $this->vite->preventTagResolution();
+        $this->vite->clearCaches();
 
         $this->rollbackDatabase();
     }

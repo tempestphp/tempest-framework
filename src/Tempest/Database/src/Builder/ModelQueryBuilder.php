@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use Closure;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
@@ -21,6 +22,8 @@ final class ModelQueryBuilder
     private array $orderBy = [];
 
     private ?int $limit = null;
+
+    private ?int $offset = null;
 
     private array $raw = [];
 
@@ -67,6 +70,22 @@ final class ModelQueryBuilder
         return map($this->build($bindings))->collection()->to($this->modelClass);
     }
 
+    /**
+     * @param \Closure(TModelClass[] $models): void $closure
+     */
+    public function chunk(Closure $closure, int $amountPerChunk = 200): void
+    {
+        $offset = 0;
+
+        do {
+            $data = $this->clone()->limit($amountPerChunk)->offset($offset)->all();
+
+            $offset += count($data);
+
+            $closure($data);
+        } while ($data !== []);
+    }
+
     /** @return self<TModelClass> */
     public function where(string $where, mixed ...$bindings): self
     {
@@ -89,6 +108,14 @@ final class ModelQueryBuilder
     public function limit(int $limit): self
     {
         $this->limit = $limit;
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function offset(int $offset): self
+    {
+        $this->offset = $offset;
 
         return $this;
     }
@@ -177,6 +204,10 @@ final class ModelQueryBuilder
             $statements[] = sprintf('LIMIT %s', $this->limit);
         }
 
+        if ($this->offset) {
+            $statements[] = sprintf('OFFSET %s', $this->offset);
+        }
+
         if ($this->raw !== []) {
             $statements[] = implode(', ', $this->raw);
         }
@@ -196,5 +227,10 @@ final class ModelQueryBuilder
         }
 
         return $relations;
+    }
+
+    private function clone(): self
+    {
+        return clone $this;
     }
 }

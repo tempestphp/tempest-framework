@@ -60,7 +60,9 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
             ->assertFileExists(
                 path: '.env',
                 content: file_get_contents(__DIR__ . '/../../../.env.example'),
-            );
+            )
+            ->assertCommandExecuted('composer up')
+        ;
 
         if (PHP_OS_FAMILY !== 'Windows') {
             $this->assertTrue(is_executable($this->installer->path('tempest')));

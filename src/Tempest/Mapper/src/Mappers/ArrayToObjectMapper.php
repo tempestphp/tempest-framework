@@ -44,6 +44,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $object = $this->resolveObject($to);
 
         $missingValues = [];
+        /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
 
         $from = arr($from)->unwrap()->toArray();
@@ -51,6 +52,10 @@ final readonly class ArrayToObjectMapper implements Mapper
         $isStrictClass = $class->hasAttribute(Strict::class);
 
         foreach ($class->getPublicProperties() as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
             $propertyName = $property->getName();
 
             if (! array_key_exists($propertyName, $from)) {
@@ -63,7 +68,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 if ($isStrictProperty) {
                     $missingValues[] = $propertyName;
                 } else {
-                    $unsetProperties[] = $propertyName;
+                    $unsetProperties[] = $property;
                 }
 
                 continue;
@@ -98,8 +103,12 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         // Non-strict properties that weren't passed are unset,
         // which means that they can now be accessed via `__get`
-        foreach ($unsetProperties as $unsetProperty) {
-            unset($object->{$unsetProperty});
+        foreach ($unsetProperties as $property) {
+            if ($property->isVirtual()) {
+                continue;
+            }
+
+            $property->unset($object);
         }
 
         $this->validate($object);
@@ -123,7 +132,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     ): mixed {
         $type = $property->getType();
 
-        if ($type === null || $type->isBuiltIn()) {
+        if ($type->isBuiltIn()) {
             return new UnknownValue();
         }
 

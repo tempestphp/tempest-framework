@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use RuntimeException;
 use Tempest\Database\DatabaseDialect;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\Exceptions\InvalidValue;
-use Tempest\Database\Migration;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
@@ -21,15 +22,12 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0000_test_migration';
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
-                return (new CreateTableStatement('table'))
+                return new CreateTableStatement('table')
                     ->text('text', default: 'default')
                     ->char('char', default: 'd')
                     ->varchar('varchar', default: 'default')
@@ -38,7 +36,9 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->date('date', default: '2024-01-01')
                     ->datetime('datetime', default: '2024-01-01 00:00:00')
                     ->boolean('is_active', default: true)
-                    ->json('json', default: '{"default": "foo"}');
+                    ->json('json', default: '{"default": "foo"}')
+                    ->index('integer')
+                    ->unique('date', 'datetime');
             }
 
             public function down(): QueryStatement|null
@@ -52,19 +52,15 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             $migration,
         );
 
-        // Make sure there are no errors
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_set_statement(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->set('set', values: ['foo', 'bar'], default: 'foo');
@@ -80,6 +76,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             DatabaseDialect::MYSQL => '',
             DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
+            null => throw new RuntimeException('No database dialect available'),
         };
 
         $this->migrate(
@@ -87,18 +84,15 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             $migration,
         );
 
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_invalid_json_default(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->json('json', default: '{default: "invalid json"}');
@@ -121,13 +115,10 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_set_values(): void
     {
-        $migration = new class () implements Migration {
-            public function getName(): string
-            {
-                return '0';
-            }
+        $migration = new class () implements DatabaseMigration {
+            private(set) string $name = '0';
 
-            public function up(): QueryStatement|null
+            public function up(): QueryStatement
             {
                 return (new CreateTableStatement('table'))
                     ->set('set', values: []);

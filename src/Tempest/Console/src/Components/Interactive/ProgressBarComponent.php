@@ -29,6 +29,14 @@ final class ProgressBarComponent implements InteractiveConsoleComponent, HasStat
     ) {
     }
 
+    public StaticConsoleComponent $staticComponent {
+        get => new StaticProgressBarComponent(
+            data: $this->data,
+            handler: $this->handler,
+            format: $this->format,
+        );
+    }
+
     public function render(Terminal $terminal): Generator
     {
         $result = [];
@@ -71,15 +79,6 @@ final class ProgressBarComponent implements InteractiveConsoleComponent, HasStat
         }
 
         return $result;
-    }
-
-    public function getStaticComponent(): StaticConsoleComponent
-    {
-        return new StaticProgressBarComponent(
-            data: $this->data,
-            handler: $this->handler,
-            format: $this->format,
-        );
     }
 
     private function getControls(): array

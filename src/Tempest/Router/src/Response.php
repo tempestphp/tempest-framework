@@ -11,18 +11,24 @@ use Tempest\View\View;
 
 interface Response
 {
-    public function getStatus(): Status;
+    public Status $status {
+        get;
+    }
 
-    /** @return \Tempest\Router\Header[] */
-    public function getHeaders(): array;
+    /** @var \Tempest\Router\Header[] $headers */
+    public array $headers {
+        get;
+    }
+
+    public View|string|array|Generator|null $body {
+        get;
+    }
 
     public function getHeader(string $name): ?Header;
 
     public function addHeader(string $key, string $value): self;
 
     public function removeHeader(string $key): self;
-
-    public function getBody(): View|string|array|Generator|null;
 
     public function addSession(string $name, mixed $value): self;
 

@@ -12,6 +12,8 @@ interface Container
 {
     public function register(string $className, callable $definition): self;
 
+    public function unregister(string $className): self;
+
     public function singleton(string $className, mixed $definition, ?string $tag = null): self;
 
     public function config(object $config): self;
@@ -19,9 +21,11 @@ interface Container
     /**
      * @template TClassName of object
      * @param class-string<TClassName> $className
-     * @return TClassName
+     * @return null|TClassName
      */
-    public function get(string $className, ?string $tag = null, mixed ...$params): object;
+    public function get(string $className, ?string $tag = null, mixed ...$params): mixed;
+
+    public function has(string $className, ?string $tag = null): bool;
 
     public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 

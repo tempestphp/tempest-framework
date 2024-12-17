@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Support\HtmlString;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -285,6 +286,20 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             &lt;H1&gt;HI&lt;/H1&gt;
             <h1>hi</h1>
             HTML, $html);
+    }
+
+    public function test_html_string(): void
+    {
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/raw-escaped.view.php', var: HtmlString::createTag('h1', content: 'hi')));
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            expected: <<<'HTML'
+                <h1>hi</h1>
+                &lt;H1&gt;HI&lt;/H1&gt;
+                <h1>hi</h1>
+                HTML,
+            actual: $html,
+        );
     }
 
     public function test_no_double_else_attributes(): void

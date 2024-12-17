@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Renderers;
 
 use Stringable;
+use Tempest\Support\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\GenericView;
 use Tempest\View\View;
@@ -96,8 +97,12 @@ final class TempestViewRenderer implements ViewRenderer
         return trim(ob_get_clean());
     }
 
-    public function escape(null|string|Stringable $value): string
+    public function escape(null|string|HtmlString|Stringable $value): string
     {
+        if ($value instanceof HtmlString) {
+            return (string) $value;
+        }
+
         return htmlentities((string) $value);
     }
 }

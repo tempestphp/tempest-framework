@@ -29,6 +29,10 @@ final class TempestConsoleLanguageTest extends TestCase
     #[TestWith(['<style="dim"><style="bg-dark-red fg-white">foo</style></style>', "\e[2m\e[41m\e[97mfoo\e[49m\e[39m\e[22m"])]
     #[TestWith(['<style="fg-cyan">cyan</style>unstyled<style="bg-dark-red">dark red</style>', "\e[96mcyan\e[39munstyled\e[41mdark red\e[49m"])]
     #[TestWith(['<style="dim"><style="fg-gray">dim-gray</style> just-gray</style>', "\e[2m\e[90mdim-gray\e[39m just-gray\e[22m"])]
+    #[TestWith(['<em>Tempest</em>', "\e[1m\e[4mTempest\e[22m\e[24m"])]
+    #[TestWith(['<href="https://tempestphp.com">Tempest</href>', "\e]8;;https://tempestphp.com\e\Tempest\e]8;;\e\\"])]
+    #[TestWith(['<em><href="https://tempestphp.com">Tempest</href></em>', "\e[1m\e[4m\e]8;;https://tempestphp.com\e\Tempest\e]8;;\e\\\e[22m\e[24m"])]
+    #[TestWith(['<style="fg-cyan"><href="https://tempestphp.com">Tempest</href></style>', "\e[96m\e]8;;https://tempestphp.com\e\Tempest\e]8;;\e\\\e[39m"])]
     public function language(string $content, string $expected): void
     {
         $highlighter = new Highlighter(new TempestTerminalTheme());

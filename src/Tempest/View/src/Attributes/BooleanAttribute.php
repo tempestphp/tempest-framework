@@ -16,7 +16,7 @@ final readonly class BooleanAttribute implements Attribute
     ) {
     }
 
-    public function apply(Element $element): ?Element
+    public function apply(Element $element): Element
     {
         if (! $element instanceof GenericElement) {
             throw new Exception('This cannot happen');

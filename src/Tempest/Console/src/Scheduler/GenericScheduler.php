@@ -7,7 +7,7 @@ namespace Tempest\Console\Scheduler;
 use DateTime;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
-use Tempest\Console\ShellExecutor;
+use Tempest\Core\ShellExecutor;
 use function Tempest\event;
 
 final readonly class GenericScheduler implements Scheduler

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing\Http;
 
 use Closure;
+use Generator;
 use PHPUnit\Framework\Assert;
 use Tempest\Http\Status;
 use Tempest\Router\Cookie\CookieManager;
@@ -14,38 +15,30 @@ use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use function Tempest\get;
 
-final readonly class TestResponseHelper
+final class TestResponseHelper
 {
-    public function __construct(
-        private Response $response,
-    ) {
+    public function __construct(private(set) Response $response)
+    {
     }
 
-    public function getResponse(): Response
-    {
-        return $this->response;
+    public Status $status {
+        get => $this->response->status;
     }
 
-    public function getStatus(): Status
-    {
-        return $this->response->getStatus();
+    /** @var \Tempest\Router\Header[] $headers */
+    public array $headers {
+        get => $this->response->headers;
     }
 
-    public function getHeaders(): array
-    {
-        return $this->response->getHeaders();
-    }
-
-    public function getBody(): string|array
-    {
-        return $this->response->getBody();
+    public View|string|array|Generator|null $body {
+        get => $this->response->body;
     }
 
     public function assertHasHeader(string $name): self
     {
         Assert::assertArrayHasKey(
             $name,
-            $this->response->getHeaders(),
+            $this->response->headers,
             sprintf('Failed to assert that response contains header [%s].', $name),
         );
 
@@ -72,8 +65,8 @@ final readonly class TestResponseHelper
     public function assertRedirect(?string $to = null): self
     {
         Assert::assertTrue(
-            $this->response->getStatus()->isRedirect(),
-            sprintf('Failed asserting that status [%s] is a redirect.', $this->response->getStatus()->value),
+            $this->status->isRedirect(),
+            sprintf('Failed asserting that status [%s] is a redirect.', $this->status->value),
         );
 
         return $to === null
@@ -100,11 +93,11 @@ final readonly class TestResponseHelper
     {
         Assert::assertSame(
             expected: $expected,
-            actual: $this->response->getStatus(),
+            actual: $this->status,
             message: sprintf(
                 'Failed asserting status [%s] matched expected status of [%s].',
                 $expected->value,
-                $this->response->getStatus()->value,
+                $this->status->value,
             ),
         );
 
@@ -193,7 +186,7 @@ final readonly class TestResponseHelper
 
     public function assertSee(string $search): self
     {
-        $body = $this->response->getBody();
+        $body = $this->body;
 
         if ($body instanceof View) {
             $body = get(ViewRenderer::class)->render($body);
@@ -206,7 +199,7 @@ final readonly class TestResponseHelper
 
     public function assertNotSee(string $search): self
     {
-        $body = $this->response->getBody();
+        $body = $this->body;
 
         if ($body instanceof View) {
             $body = get(ViewRenderer::class)->render($body);

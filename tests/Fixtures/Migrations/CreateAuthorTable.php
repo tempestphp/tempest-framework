@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Migrations;
 
-use Tempest\Database\Migration;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
@@ -12,14 +12,11 @@ use Tempest\Database\QueryStatements\PrimaryKeyStatement;
 use Tempest\Database\QueryStatements\TextStatement;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 
-final readonly class CreateAuthorTable implements Migration
+final class CreateAuthorTable implements DatabaseMigration
 {
-    public function getName(): string
-    {
-        return '0000-00-00_create_authors_table';
-    }
+    private(set) string $name = '0000-00-00_create_authors_table';
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return new CreateTableStatement(
             'authors',
@@ -31,7 +28,7 @@ final readonly class CreateAuthorTable implements Migration
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return DropTableStatement::forModel(Author::class);
     }
