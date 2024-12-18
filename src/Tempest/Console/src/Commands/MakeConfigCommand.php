@@ -20,7 +20,7 @@ final class MakeConfigCommand
 
     #[ConsoleCommand(
         name: 'make:config',
-        description: 'Creates a new config class',
+        description: 'Creates a new config file',
         aliases: ['config:make', 'config:create', 'create:config'],
     )]
     public function __invoke(
@@ -44,7 +44,7 @@ final class MakeConfigCommand
                 shouldOverride: $shouldOverride,
             );
 
-            $this->success(sprintf('Middleware successfully created at "%s".', $targetPath));
+            $this->success(sprintf('Config file successfully created at "%s".', $targetPath));
         } catch (FileGenerationAbortedException|FileGenerationFailedException|InvalidArgumentException $e) {
             $this->error($e->getMessage());
         }
