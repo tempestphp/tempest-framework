@@ -1,9 +1,9 @@
-name: 'Sub-split Packages'
+name: 'Sub-split packages'
 
 on:
   push:
-    branches: [ main ]
-    tags: [ '*' ]
+    branches: [main]
+    tags: ['v*']
   workflow_dispatch:
 
 env:
@@ -11,7 +11,7 @@ env:
 
 jobs:
   get_packages:
-    name: Get Packages
+    name: Get packages
     runs-on: ubuntu-latest
     steps:
       - name: Set Up PHP
@@ -22,17 +22,17 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Get Packages
+      - name: Get packages
         id: get_json
         run: echo "::set-output name=json::$(bin/get-packages)"
 
-      - name: Output Packages
+      - name: Output packages
         run: echo "${{ steps.get_json.outputs.json }}"
     outputs:
       matrix: ${{ steps.get_json.outputs.json }}
 
   packages_split:
-    name: Split Package ${{ matrix.package.name }}
+    name: Split package ${{ matrix.package.name }}
     needs: get_packages
     runs-on: ubuntu-latest
     strategy:

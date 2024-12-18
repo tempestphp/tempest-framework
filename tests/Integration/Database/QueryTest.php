@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\Database;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -8,6 +10,9 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+/**
+ * @internal
+ */
 final class QueryTest extends FrameworkIntegrationTestCase
 {
     public function test_with_bindings(): void

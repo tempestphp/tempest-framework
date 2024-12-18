@@ -7,7 +7,7 @@ permissions:
   contents: write
   id-token: write
 
-name: Changelog and release
+name: Create a GitHub release
 
 jobs:
   release:
@@ -18,18 +18,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate changelog
-        uses: orhun/git-cliff-action@v4
-        env:
-          OUTPUT: CHANGELOG.md
-          GITHUB_REPO: ${{ github.repository }}
+      # - name: Generate changelog
+      #   uses: orhun/git-cliff-action@v4
+      #   env:
+      #     OUTPUT: CHANGELOG.md
+      #     GITHUB_REPO: ${{ github.repository }}
 
-      - name: Update changelog
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: 'CHANGELOG.md'
-          commit_message: "chore: update changelog"
-          branch: main
+      # - name: Update changelog
+      #   uses: stefanzweifel/git-auto-commit-action@v5
+      #   with:
+      #     file_pattern: 'CHANGELOG.md'
+      #     commit_message: "chore: update changelog"
+      #     branch: main
 
       - name: Generate release notes
         uses: orhun/git-cliff-action@v4

@@ -1,4 +1,4 @@
-name: Isolated Tests
+name: Isolated tests
 
 on:
   pull_request:
@@ -8,10 +8,10 @@ on:
 
 jobs:
   get_packages:
-    name: Get Packages
+    name: Get packages
     runs-on: ubuntu-latest
     steps:
-      - name: Set Up PHP
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.4
@@ -21,11 +21,11 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Get Packages
+      - name: Get packages
         id: get_json
         run: echo "json=$(bin/get-packages)" >> $GITHUB_OUTPUT
 
-      - name: Output Packages
+      - name: Output packages
         run: echo "${{ steps.get_json.outputs.json }}"
     outputs:
       matrix: ${{ steps.get_json.outputs.json }}
@@ -44,9 +44,7 @@ jobs:
         stability:
           - prefer-stable
           - prefer-lowest
-
-    name: "Run Tests: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
-
+    name: "Run tests: ${{ matrix.package.name }} - PHP ${{ matrix.php }} - ${{ matrix.stability }}"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

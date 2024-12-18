@@ -71,7 +71,7 @@ final class ModelQueryBuilder
     }
 
     /**
-     * @param \Closure(TModelClass[] $models): void $closure
+     * @param Closure(TModelClass[] $models): void $closure
      */
     public function chunk(Closure $closure, int $amountPerChunk = 200): void
     {
