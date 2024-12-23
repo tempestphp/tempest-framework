@@ -27,7 +27,7 @@ final class MakeViewCommand
     )]
     public function __invoke(
         #[ConsoleArgument(
-            help: 'The file name of the view',
+            description: 'The file name of the view',
         )]
         string $fileName,
         #[ConsoleArgument(
