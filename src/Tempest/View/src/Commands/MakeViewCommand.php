@@ -32,7 +32,7 @@ final class MakeViewCommand
         string $fileName,
         #[ConsoleArgument(
             name: 'type',
-            help: 'The type of the view to create',
+            description: 'The type of the view to create',
         )]
         ViewType $viewType = ViewType::RAW,
     ): void {
