@@ -104,8 +104,10 @@ final class TaskComponent implements InteractiveConsoleComponent
             }
         } finally {
             if ($this->state->isFinished() && $this->processId) {
-                $this->kill();
+                posix_kill($this->processId, SIGTERM);
             }
+
+            $this->cleanupSockets();
         }
     }
 
@@ -124,14 +126,15 @@ final class TaskComponent implements InteractiveConsoleComponent
         );
     }
 
-    private function kill(): void
+    private function cleanupSockets(): void
     {
-        try {
-            posix_kill($this->processId, SIGTERM);
-            @fclose($this->sockets[0]);
-            @fclose($this->sockets[1]);
-        } catch (Throwable) {
+        foreach ($this->sockets as $socket) {
+            if (is_resource($socket)) {
+                @fclose($socket);
+            }
         }
+
+        $this->sockets = [];
     }
 
     private function executeHandler(): void
