@@ -9,6 +9,8 @@ use Symfony\Component\Process\Process;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
+use Tempest\Database\Connections\SQLiteConnection;
+use Tempest\Database\DatabaseConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -22,6 +24,10 @@ final class TaskComponentTest extends FrameworkIntegrationTestCase
 
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('These tests require the pcntl extension, which is not available on Windows.');
+        }
+
+        if (! $this->container->get(DatabaseConfig::class)->connection instanceof SQLiteConnection) {
+            $this->markTestSkipped('These tests duplicate PDO connections due to `pnctl_fork`, so they are skipped until the framework supports closing connections.');
         }
     }
 
