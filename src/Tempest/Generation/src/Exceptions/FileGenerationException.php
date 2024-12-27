@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Exceptions;
 
-final class FileGenerationAbortedException extends FileGenerationException
+use Exception;
+
+abstract class FileGenerationException extends Exception
 {
 }
