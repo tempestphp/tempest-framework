@@ -51,7 +51,8 @@
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^4.0",
         "symplify/monorepo-builder": "^11.2",
-        "twig/twig": "^3.16"
+        "twig/twig": "^3.16",
+        "phpat/phpat": "^0.11.0"
     },
     "replace": {
         "tempest/auth": "self.version",
@@ -63,6 +64,7 @@
         "tempest/core": "self.version",
         "tempest/database": "self.version",
         "tempest/debug": "self.version",
+        "tempest/discovery": "self.version",
         "tempest/event-bus": "self.version",
         "tempest/filesystem": "self.version",
         "tempest/generation": "self.version",
@@ -93,6 +95,7 @@
             "Tempest\\Core\\": "src/Tempest/Core/src",
             "Tempest\\Database\\": "src/Tempest/Database/src",
             "Tempest\\Debug\\": "src/Tempest/Debug/src",
+            "Tempest\\Discovery\\": "src/Tempest/Discovery/src",
             "Tempest\\EventBus\\": "src/Tempest/EventBus/src",
             "Tempest\\Filesystem\\": "src/Tempest/Filesystem/src",
             "Tempest\\Framework\\": "src/Tempest/Framework",
@@ -132,6 +135,7 @@
             "Tempest\\Container\\Tests\\": "src/Tempest/Container/tests",
             "Tempest\\Core\\Tests\\": "src/Tempest/Core/tests",
             "Tempest\\Database\\Tests\\": "src/Tempest/Database/tests",
+            "Tempest\\Discovery\\Tests\\": "src/Tempest/Discovery/tests",
             "Tempest\\EventBus\\Tests\\": "src/Tempest/EventBus/tests",
             "Tempest\\Filesystem\\Tests\\": "src/Tempest/Filesystem/tests",
             "Tempest\\Generation\\Tests\\": "src/Tempest/Generation/tests",
