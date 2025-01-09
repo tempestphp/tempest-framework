@@ -250,6 +250,7 @@ final class InteractiveComponentRenderer
     private function createTerminal(Console $console): Terminal
     {
         $terminal = new Terminal($console);
+        $terminal->switchToInteractiveMode();
         $terminal->cursor->clearAfter();
         stream_set_blocking(STDIN, false);
 

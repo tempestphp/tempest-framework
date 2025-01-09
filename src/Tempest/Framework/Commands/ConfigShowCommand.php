@@ -119,6 +119,7 @@ final readonly class ConfigShowCommand
 
         // TODO: This is a workaround for SearchComponent not clearing the terminal properly
         $terminal = new Terminal($this->console);
+        $terminal->switchToInteractiveMode();
         $terminal->cursor->clearAfter();
 
         return $return;
