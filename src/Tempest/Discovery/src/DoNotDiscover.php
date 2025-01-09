@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Core;
+namespace Tempest\Discovery;
 
 use Attribute;
 
@@ -12,7 +12,7 @@ final class DoNotDiscover
     public function __construct(
         /**
          * Allows the specified `Discovery` classes to still discover this class.
-         * @var array<class-string<\Tempest\Core\Discovery>>
+         * @var array<class-string<\Tempest\Discovery\Discovery>>
          */
         public readonly array $except = [],
     ) {

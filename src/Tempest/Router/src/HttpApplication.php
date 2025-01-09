@@ -24,7 +24,7 @@ final readonly class HttpApplication implements Application
     {
     }
 
-    /** @param \Tempest\Core\DiscoveryLocation[] $discoveryLocations */
+    /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(
         string $root,
         array $discoveryLocations = [],
