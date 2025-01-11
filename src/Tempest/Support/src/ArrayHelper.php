@@ -132,7 +132,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      */
     public function shuffle(): self
     {
-        return new self((new Randomizer())->shuffleArray($this->array));
+        return new self(new Randomizer()->shuffleArray($this->array));
     }
 
     /**
@@ -199,7 +199,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             throw new InvalidArgumentException("Random value only accepts positive integers, {$number} requested.");
         }
 
-        $keys = (new Randomizer())->pickArrayKeys($this->array, $number);
+        $keys = new Randomizer()->pickArrayKeys($this->array, $number);
 
         $randomValues = [];
         foreach ($keys as $key) {
@@ -1049,6 +1049,6 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
 
     public static function wrap(mixed $input = []): array
     {
-        return (new self($input))->toArray();
+        return new self($input)->toArray();
     }
 }

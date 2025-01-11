@@ -41,10 +41,10 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
     {
         $permission = $this->resolvePermission($permission);
 
-        (new UserPermission(
+        new UserPermission(
             user: $this,
             permission: $permission,
-        ))->save();
+        )->save();
 
         return $this->load('userPermissions.permission');
     }
@@ -82,7 +82,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         $permission = Permission::query()->whereField('name', $name)->first();
 
         if ($permission === null) {
-            return (new Permission($name))->save();
+            return new Permission($name)->save();
         }
 
         return $permission;

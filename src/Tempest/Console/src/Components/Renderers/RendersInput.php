@@ -62,7 +62,7 @@ trait RendersInput
             return '';
         }
 
-        return (new StringHelper($string))
+        return new StringHelper($string)
             ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
     }

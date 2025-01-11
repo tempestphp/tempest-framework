@@ -117,7 +117,7 @@ final readonly class StringHelper implements Stringable
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
-        return (new self($string))->deduplicate($delimiter);
+        return new self($string)->deduplicate($delimiter);
     }
 
     /**
@@ -180,7 +180,7 @@ final readonly class StringHelper implements Stringable
 
         $lastWord = array_pop($parts);
 
-        $string = implode('', $parts) . (new self($lastWord))->pluralize($count);
+        $string = implode('', $parts) . new self($lastWord)->pluralize($count);
 
         return new self($string);
     }
@@ -568,11 +568,11 @@ final readonly class StringHelper implements Stringable
         }
 
         if (! $strict) {
-            return (new self($string))->after($before)->beforeLast($after);
+            return new self($string)->after($before)->beforeLast($after);
         }
 
         if ($this->startsWith($before) && $this->endsWith($after)) {
-            $string = (string) (new self($string))->after($before)->beforeLast($after);
+            $string = (string) new self($string)->after($before)->beforeLast($after);
         }
 
         return new self($string);

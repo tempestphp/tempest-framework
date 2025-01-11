@@ -12,6 +12,6 @@ trait CanExecuteStatement
 {
     public function execute(DatabaseDialect $dialect): Id
     {
-        return (new Query($this->compile($dialect)))->execute();
+        return new Query($this->compile($dialect))->execute();
     }
 }
