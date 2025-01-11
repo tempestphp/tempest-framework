@@ -64,7 +64,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
 
-        return array_find_key($this->array, fn($item, $key) => $value($item, $key) === true);
+        return array_find_key($this->array, static fn ($item, $key) => $value($item, $key) === true);
     }
 
     /**
@@ -497,7 +497,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_first($this->array)];
         }
 
-        return array_find($this->array, fn($value, $key) => $filter($value, $key));
+        return array_find($this->array, static fn ($value, $key) => $filter($value, $key));
     }
 
     /**
@@ -518,7 +518,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_last($this->array)];
         }
 
-        return array_find($this->reverse(), fn($value, $key) => $filter($value, $key));
+        return array_find($this->reverse()->toArray(), static fn ($value, $key) => $filter($value, $key));
     }
 
     /**
