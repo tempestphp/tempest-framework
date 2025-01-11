@@ -32,10 +32,6 @@ final readonly class ConfigCache implements Cache
     {
         $shouldCache = env('CACHE');
 
-        if ($shouldCache === null) {
-            return env('CONFIG_CACHE', false);
-        }
-
-        return $shouldCache;
+        return $shouldCache ?? env('CONFIG_CACHE', false);
     }
 }
