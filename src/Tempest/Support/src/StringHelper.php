@@ -135,8 +135,7 @@ final readonly class StringHelper implements Stringable
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $this->string));
 
-        // TODO: use `mb_ucfirst` when it has landed in PHP 8.4
-        $studlyWords = array_map(static fn (string $word) => ucfirst($word), $words);
+        $studlyWords = array_map(mb_ucfirst(...), $words);
 
         return new self(implode('', $studlyWords));
     }
