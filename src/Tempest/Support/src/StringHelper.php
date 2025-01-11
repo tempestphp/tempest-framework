@@ -438,7 +438,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Replaces the first occurence of `$search` with `$replace`.
+     * Replaces the first occurrence of `$search` with `$replace`.
      */
     public function replaceFirst(Stringable|string $search, Stringable|string $replace): self
     {
@@ -458,7 +458,7 @@ final readonly class StringHelper implements Stringable
     }
 
     /**
-     * Replaces the last occurence of `$search` with `$replace`.
+     * Replaces the last occurrence of `$search` with `$replace`.
      */
     public function replaceLast(Stringable|string $search, Stringable|string $replace): self
     {
