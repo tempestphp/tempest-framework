@@ -108,7 +108,7 @@ trait IsRequest
             return true;
         }
 
-        return (bool) $this->hasQuery($key);
+        return $this->hasQuery($key);
     }
 
     public function hasBody(string $key): bool
