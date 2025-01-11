@@ -177,13 +177,7 @@ final readonly class ConfigShowCommand
         }
 
         if (is_array($value)) {
-            $result = [];
-
-            foreach ($value as $key => $item) {
-                $result[$key] = $this->formatForJson($item, $depth + 1);
-            }
-
-            return $result;
+            return array_map(fn ($item) => $this->formatForJson($item, $depth + 1), $value);
         }
 
         return $value;
