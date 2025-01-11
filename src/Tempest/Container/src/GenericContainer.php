@@ -83,8 +83,7 @@ final class GenericContainer implements Container
 
     public function unregister(string $className): self
     {
-        unset($this->definitions[$className]);
-        unset($this->singletons[$className]);
+        unset($this->definitions[$className], $this->singletons[$className]);
 
         return $this;
     }
