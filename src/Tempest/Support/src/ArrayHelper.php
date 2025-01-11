@@ -64,13 +64,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
 
-        foreach ($this->array as $key => $item) {
-            if ($value($item, $key) === true) {
-                return $key;
-            }
-        }
-
-        return null;
+        return array_find_key($this->array, fn($item, $key) => $value($item, $key) === true);
     }
 
     /**
@@ -503,13 +497,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_first($this->array)];
         }
 
-        foreach ($this as $key => $value) {
-            if ($filter($value, $key)) {
-                return $value;
-            }
-        }
-
-        return null;
+        return array_find($this->array, fn($value, $key) => $filter($value, $key));
     }
 
     /**
@@ -530,13 +518,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $this->array[array_key_last($this->array)];
         }
 
-        foreach ($this->reverse() as $key => $value) {
-            if ($filter($value, $key)) {
-                return $value;
-            }
-        }
-
-        return null;
+        return array_find($this->reverse(), fn($value, $key) => $filter($value, $key));
     }
 
     /**
@@ -777,13 +759,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
     {
         $callback ??= static fn (mixed $value) => ! is_null($value);
 
-        foreach ($this->array as $key => $value) {
-            if (! $callback($value, $key)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->array, static fn (mixed $value, int|string $key) => $callback($value, $key));
     }
 
     /**

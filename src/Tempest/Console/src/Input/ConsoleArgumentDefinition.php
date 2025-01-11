@@ -52,13 +52,7 @@ final readonly class ConsoleArgumentDefinition
             return false;
         }
 
-        foreach ([$this->name, ...$this->aliases] as $match) {
-            if ($argument->matches(static::normalizeName($match, $this->type === 'bool'))) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any([$this->name, ...$this->aliases], fn($match) => $argument->matches(static::normalizeName($match, $this->type === 'bool')));
     }
 
     private static function normalizeName(string $name, bool $boolean): string
