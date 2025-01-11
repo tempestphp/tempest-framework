@@ -830,11 +830,13 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
             return $value;
         };
 
-        $array = [];
+        $unwrapped = [];
 
         foreach ($this->array as $key => $value) {
-            $array = array_merge_recursive($array, $unwrapValue($key, $value));
+            $unwrapped[] = $unwrapValue($key, $value);
         }
+
+        $array = array_merge_recursive(...$unwrapped);
 
         return new self($array);
     }
