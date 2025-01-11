@@ -198,7 +198,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
         $count = count($this->array);
 
         if ($number > $count) {
-            throw new InvalidArgumentException("Cannot retrive {$number} items from an array of {$count} items.");
+            throw new InvalidArgumentException("Cannot retrieve {$number} items from an array of {$count} items.");
         }
 
         if ($number < 1) {

@@ -102,7 +102,7 @@ final class InteractiveComponentRenderer
             $handlersForKey = $keyBindings[$key] ?? [];
 
             // If we have multiple handlers, we put the ones that return nothing
-            // first because the ones that return something will be overriden otherwise.
+            // first because the ones that return something will be overridden otherwise.
             usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
             // CTRL+C and CTRL+D means we exit the CLI, but only if there is no custom
