@@ -251,6 +251,7 @@ final class InteractiveComponentRenderer
     {
         $terminal = new Terminal($console);
         $terminal->switchToInteractiveMode();
+
         $terminal->cursor->clearAfter();
         stream_set_blocking(STDIN, false);
 

@@ -54,18 +54,12 @@ final class ConsoleArgumentBag
 
     public function has(string ...$names): bool
     {
-        foreach ($this->arguments as $argument) {
-            if (array_any($names, fn($name) => $argument->matches($name))) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->arguments, static fn ($argument) => array_any($names, static fn ($name) => $argument->matches($name)));
     }
 
     public function get(string $name): ?ConsoleInputArgument
     {
-        return array_find($this->arguments, fn($argument) => $argument->matches($name));
+        return array_find($this->arguments, static fn ($argument) => $argument->matches($name));
     }
 
     public function findFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument

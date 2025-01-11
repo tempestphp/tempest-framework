@@ -76,6 +76,6 @@ namespace Tempest {
      */
     function defer(Closure $closure): void
     {
-        get(DeferredTasks::class)->add($closure);
+    get(DeferredTasks::class)->add($closure);
     }
 }

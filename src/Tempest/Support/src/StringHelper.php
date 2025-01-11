@@ -410,7 +410,7 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        return array_any($needles, fn($needle) => str_starts_with($this->string, (string)$needle));
+        return array_any($needles, fn ($needle) => str_starts_with($this->string, (string) $needle));
     }
 
     /**
@@ -422,7 +422,7 @@ final readonly class StringHelper implements Stringable
             $needles = [$needles];
         }
 
-        return array_any($needles, fn($needle) => str_ends_with($this->string, (string)$needle));
+        return array_any($needles, fn ($needle) => str_ends_with($this->string, (string) $needle));
     }
 
     /**

@@ -67,11 +67,11 @@ final class ConsoleInputArgument
         $value = $matches['value'] ?? null;
 
         if (! $hasValue) {
-            return [$normalizedName, !$isNegative];
+            return [$normalizedName, ! $isNegative];
         }
 
         $value = match ($value) {
-            'true' => !$isNegative,
+            'true' => ! $isNegative,
             'false' => $isNegative,
             '' => null,
             default => $value,
