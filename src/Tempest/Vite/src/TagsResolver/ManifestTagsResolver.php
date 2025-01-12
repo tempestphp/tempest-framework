@@ -17,9 +17,9 @@ use function Tempest\Support\str;
 final readonly class ManifestTagsResolver implements TagsResolver
 {
     public function __construct(
-        private ViteConfig  $viteConfig,
+        private ViteConfig $viteConfig,
         private TagCompiler $tagCompiler,
-        private Manifest    $manifest,
+        private Manifest $manifest,
     ) {
     }
 

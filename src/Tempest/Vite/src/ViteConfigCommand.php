@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleCommand;
 final readonly class ViteConfigCommand
 {
     public function __construct(
-        private Console    $console,
+        private Console $console,
         private ViteConfig $viteConfig,
     ) {
     }

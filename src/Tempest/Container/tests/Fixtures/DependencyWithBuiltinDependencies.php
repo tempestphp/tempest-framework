@@ -10,11 +10,11 @@ final readonly class DependencyWithBuiltinDependencies
 {
     public function __construct(
         #[Tag('builtin-dependency-array')]
-        public array  $arrayValue,
+        public array $arrayValue,
         #[Tag('builtin-dependency-string')]
         public string $stringValue,
         #[Tag('builtin-dependency-bool')]
-        public bool   $boolValue,
+        public bool $boolValue,
     ) {
     }
 }

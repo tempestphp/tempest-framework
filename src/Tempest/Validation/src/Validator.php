@@ -72,7 +72,7 @@ final readonly class Validator
 
         return new readonly class ($isValid, $message) implements Rule {
             public function __construct(
-                private bool   $isValid,
+                private bool $isValid,
                 private string $message,
             ) {
             }

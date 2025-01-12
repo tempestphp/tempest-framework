@@ -16,7 +16,7 @@ use Tempest\Generation\Enums\StubFileType;
 final readonly class StubFile
 {
     public function __construct(
-        public string       $filePath,
+        public string $filePath,
         public StubFileType $type,
     ) {
     }
