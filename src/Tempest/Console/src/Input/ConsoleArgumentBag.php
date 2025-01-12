@@ -54,7 +54,13 @@ final class ConsoleArgumentBag
 
     public function has(string ...$names): bool
     {
-        return array_any($this->arguments, static fn ($argument) => array_any($names, static fn ($name) => $argument->matches($name)));
+        return array_any(
+            array: $this->arguments,
+            callback: static fn ($argument) => array_any(
+                array: $names,
+                callback: static fn ($name) => $argument->matches($name),
+            ),
+        );
     }
 
     public function get(string $name): ?ConsoleInputArgument
