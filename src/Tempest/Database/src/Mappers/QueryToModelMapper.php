@@ -125,7 +125,7 @@ final readonly class QueryToModelMapper implements Mapper
     {
         $caster = $this->casterFactory->forProperty($property);
 
-        if ($value && $caster !== null && ! $caster instanceof RelationCaster) {
+        if ($value && $caster !== null) {
             $value = $caster->cast($value);
         }
 
