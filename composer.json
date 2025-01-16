@@ -43,6 +43,7 @@
         "illuminate/view": "~11.7.0",
         "jenssegers/blade": "^2.0",
         "mikey179/vfsstream": "^2.0@dev",
+        "nesbot/carbon": "^3.8",
         "nyholm/psr7": "^1.8",
         "phpat/phpat": "^0.11.0",
         "phpbench/phpbench": "84.x-dev",
