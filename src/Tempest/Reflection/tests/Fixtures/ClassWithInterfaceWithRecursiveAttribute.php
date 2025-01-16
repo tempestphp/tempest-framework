@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection\Tests\Fixtures;
 
-class ClassWithInterfaceWithRecursiveAttribute implements InterfaceWithRecursiveAttribute
+final class ClassWithInterfaceWithRecursiveAttribute implements InterfaceWithRecursiveAttribute
 {
 }
