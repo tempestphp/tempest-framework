@@ -41,6 +41,7 @@ final class IPv6Test extends TestCase
     {
         if (PHP_OS_FAMILY === 'Windows') {
             $this->markTestSkipped('Some kind of problem with Windows. Needs further investigation.');
+            /** @phpstan-ignore-next-line */
             return;
         }
 
