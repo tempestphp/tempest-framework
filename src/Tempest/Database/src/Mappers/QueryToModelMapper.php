@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
+use Tempest\Database\Casters\RelationCaster;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Casters\CasterFactory;
@@ -122,7 +123,9 @@ final readonly class QueryToModelMapper implements Mapper
 
     private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
     {
-        if ($value && ($caster = $this->casterFactory->forProperty($property)) !== null) {
+        $caster = $this->casterFactory->forProperty($property);
+
+        if ($value && $caster !== null && ! $caster instanceof RelationCaster) {
             $value = $caster->cast($value);
         }
 
