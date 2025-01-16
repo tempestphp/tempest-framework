@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
-use Tempest\Database\Casters\RelationCaster;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Casters\CasterFactory;
