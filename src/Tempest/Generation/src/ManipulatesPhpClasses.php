@@ -184,6 +184,7 @@ trait ManipulatesPhpClasses
         $namespace = $file->addNamespace($this->namespace);
         $namespace->add($this->classType);
 
+        $file = $this->simplifyClassNames($file);
         $code = $printer->printFile($file);
 
         foreach ($this->manipulations as $manipulation) {
