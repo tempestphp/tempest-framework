@@ -1,10 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import tempest from './plugin'
 import { mockTempestConfiguration } from './test-utils'
 
 describe('tempest', () => {
+	beforeEach(() => {
+		process.env.TEMPEST_BYPASS_ENV_CHECK = 'true'
+	})
+
 	afterEach(() => {
 		vi.restoreAllMocks()
 	})
