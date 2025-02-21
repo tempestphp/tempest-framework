@@ -1,18 +1,17 @@
-name: Bug Report
+name: Bug report
 description: Report a bug or error, providing details about the issue, steps to reproduce, and your environment setup.
-title: "[Bug]: "
-labels: ['Triage', 'Bug']
+labels: ['Triage']
 body:
 - type: input
   attributes:
-    label: Tempest Version
+    label: Tempest version
     description: Provide the Tempest version that you are using.
-    value: 1.0-alpha1
+    value: 1.0-alpha.4
   validations:
     required: true
 - type: dropdown
   attributes:
-    label: PHP Version
+    label: PHP version
     description: Provide the PHP version that you are using.
     options: ['8.4']
     multiple: true
@@ -20,9 +19,9 @@ body:
     required: true
 - type: dropdown
   attributes:
-    label: Operating System
+    label: Operating system
     description: Provide the operating system that you are using.
-    options: ['Linux', 'MacOS', 'Windows', 'Other']
+    options: ['Linux', 'macOS', 'Windows', 'Other']
     multiple: true
   validations:
     required: true
@@ -34,7 +33,7 @@ body:
     required: true
 - type: textarea
   attributes:
-    label: Steps to Reproduce
-    description: Please provide detailed steps on how we can reproduce the issue you are reporting. For a shot at getting our "Perfect Storm" label, submit a PR with a failing test!
+    label: Steps to reproduce
+    description: Please provide detailed steps on how we can reproduce the issue you are reporting. For a shot at getting our "Perfect storm" label, submit a PR with a failing test!
   validations:
     required: true
