@@ -22,7 +22,7 @@ final readonly class FileInjection implements Injection
                 $href = $matches['file'];
                 $exists = realpath($href) !== false;
                 $file = $exists
-                    ? str(realpath($href))->replaceStart(root_path('/'), '')
+                    ? str(realpath($href))->replace('\\', '/')->replaceStart(root_path('/'), '')
                     : $href;
 
                 return TerminalStyle::UNDERLINE((string) $file);
