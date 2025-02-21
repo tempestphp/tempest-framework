@@ -170,7 +170,6 @@
             "./bin/validate-packages",
             "./tempest discovery:clear",
             "composer rector",
-            "composer csfixer",
             "composer phpunit",
             "composer phpstan"
         ]
