@@ -157,6 +157,15 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame('Baz', $options->getActive()->value);
     }
 
+    public function test_set_active_enum(): void
+    {
+        $options = new OptionCollection(OptionCollectionEnum::cases());
+
+        $options->setActive(OptionCollectionEnum::OPT_2);
+
+        $this->assertSame(OptionCollectionEnum::OPT_2, $options->getActive()->value);
+    }
+
     private function toValues(array $options): array
     {
         return array_map(fn (Option $option) => $option->value, array_values($options));

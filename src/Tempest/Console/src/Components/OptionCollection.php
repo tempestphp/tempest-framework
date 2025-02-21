@@ -182,7 +182,6 @@ final class OptionCollection implements Iterator, Countable
     {
         $value = match (true) {
             $value instanceof Stringable => $value->__toString(),
-            $value instanceof UnitEnum => $value->value,
             default => $value,
         };
 
