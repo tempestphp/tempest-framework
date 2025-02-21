@@ -41,7 +41,7 @@ final class ChoiceRenderer
                 '<style="fg-green">✓</style> ',
                 $this->multiple
                     ? $this->style('dim', count($options->getSelectedOptions()) . ' selected')
-                    : $this->style('dim', $options->getActive()?->displayValue ?? '1 selected'),
+                    : $this->style('dim', $options->getActive()->displayValue ?? '1 selected'),
             )->newLine();
 
             return $this->finishRender();
