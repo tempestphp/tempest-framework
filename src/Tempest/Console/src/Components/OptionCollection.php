@@ -6,7 +6,9 @@ namespace Tempest\Console\Components;
 
 use Countable;
 use Iterator;
+use Stringable;
 use Tempest\Support\ArrayHelper;
+use UnitEnum;
 use function Tempest\Support\arr;
 
 final class OptionCollection implements Iterator, Countable
@@ -174,6 +176,20 @@ final class OptionCollection implements Iterator, Countable
     public function getActive(): ?Option
     {
         return $this->filteredOptions[$this->activeOption] ?? null;
+    }
+
+    public function setActive(null|Stringable|UnitEnum|string $value): void
+    {
+        $value = match (true) {
+            $value instanceof Stringable => $value->__toString(),
+            default => $value,
+        };
+
+        $this->activeOption = array_search(
+            array_find($this->filteredOptions, fn (Option $option) => $option->key === $value || $option->value === $value),
+            $this->filteredOptions,
+            strict: true,
+        ) ?: 0;
     }
 
     public function current(): ?Option
