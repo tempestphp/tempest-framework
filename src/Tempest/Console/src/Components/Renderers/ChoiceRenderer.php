@@ -19,8 +19,6 @@ final class ChoiceRenderer
     public function __construct(
         private bool $multiple = true,
         private int $maximumOptions = 10,
-        // TODO: support defaults
-        /** @phpstan-ignore-next-line */
         private null|Stringable|UnitEnum|string $default = null,
     ) {
     }
@@ -42,8 +40,8 @@ final class ChoiceRenderer
             $this->line(
                 '<style="fg-green">✓</style> ',
                 $this->multiple
-                    ? '<style="dim">' . count($options->getSelectedOptions()) . ' selected</style>'
-                    : '<style="dim">' . $options->getActive()?->displayValue . '</style>',
+                    ? $this->style('dim', count($options->getSelectedOptions()) . ' selected')
+                    : $this->style('dim', $options->getActive()?->displayValue ?? '1 selected'),
             )->newLine();
 
             return $this->finishRender();
@@ -72,16 +70,20 @@ final class ChoiceRenderer
             );
 
             foreach ($displayOptions as $option) {
+                $display = in_array($this->default, [$option->key, $option->value])
+                    ? $option->displayValue . ' ' . $this->style('italic fg-gray', '(default)')
+                    : $option->displayValue;
+
                 if (! $this->multiple) {
                     $this->line(
                         $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
-                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $display),
                     );
                 } else {
                     $this->line(
                         $options->isActive($option) ? $this->style('fg-magenta', '→ ') : '  ',
                         $options->isSelected($option) ? $this->style('fg-green', '✓︎ ') : $this->style('fg-gray', '⋅ '),
-                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $option->displayValue),
+                        $this->style($options->isSelected($option) ? 'fg-green bold' : '', $display),
                     );
                 }
 

@@ -141,6 +141,8 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
     #[HandlesKey(Key::ALT_ENTER)]
     public function altEnter(): null|int|string|Stringable|UnitEnum
     {
+        $this->options->setActive($this->default);
+
         return $this->default;
     }
 
