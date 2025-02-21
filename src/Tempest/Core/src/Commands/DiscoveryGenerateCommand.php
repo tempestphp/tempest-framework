@@ -38,10 +38,14 @@ final readonly class DiscoveryGenerateCommand
 
         $this->clearDiscoveryCache();
 
-        $this->console->task(
-            label: "Generating discovery cache using the {$strategy->value} strategy",
-            handler: fn (Closure $log) => $this->generateDiscoveryCache($strategy, $log),
-        );
+        $this->generateDiscoveryCache($strategy, fn () => null);
+
+        $this->success('Done');
+
+//        $this->console->task(
+//            label: "Generating discovery cache using the {$strategy->value} strategy",
+//            handler: fn (Closure $log) => $this->generateDiscoveryCache($strategy, $log),
+//        );
 
         $this->discoveryCache->storeStrategy($strategy);
     }
