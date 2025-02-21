@@ -1,6 +1,7 @@
 name: Feature request
 description: Tempest is a work in progress! Let us know about a feature you would like to see in the framework.
 labels: ['Triage']
+type: 'Feature'
 body:
 - type: textarea
   attributes:

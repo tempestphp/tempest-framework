@@ -1,6 +1,7 @@
 name: Bug report
 description: Report a bug or error, providing details about the issue, steps to reproduce, and your environment setup.
 labels: ['Triage']
+type: 'Bug'
 body:
 - type: input
   attributes:
