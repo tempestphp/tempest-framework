@@ -40,7 +40,7 @@ final class StaticTaskComponent implements StaticConsoleComponent
     private function executeClosureHandler(Closure $handler): bool
     {
         try {
-            return (bool) ($handler)();
+            return (bool) ($handler)(fn () => null);
         } catch (Throwable) {
             return false;
         }
