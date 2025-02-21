@@ -22,8 +22,7 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -54,20 +53,21 @@ final class TempestViewRenderer implements ViewRenderer
 
         // Cleanup and bundle imports
         $imports = arr();
-        $compiled = $compiled
-            ->replaceRegex('/use .*;/', function (array $matches) use (&$imports) {
-                $imports[$matches[0]] = $matches[0];
 
-                return '';
-            })
-            ->prepend(
-                sprintf(
-                    '<?php
+        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
+            $imports[$matches[0]] = $matches[0];
+
+            return '';
+        });
+
+        $compiled = $compiled->prepend(
+            sprintf(
+                '<?php
 %s
 ?>',
-                    $imports->implode(PHP_EOL),
-                ),
-            );
+                $imports->implode(PHP_EOL),
+            ),
+        );
 
         // Remove empty PHP blocks
         $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
@@ -100,9 +100,9 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string) $value;
+            return (string)$value;
         }
 
-        return htmlentities((string) $value);
+        return htmlentities((string)$value);
     }
 }
