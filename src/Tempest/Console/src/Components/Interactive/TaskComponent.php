@@ -158,7 +158,9 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
 
         try {
             exit((int) (($this->resolveHandler($this->handler) ?? static fn (): bool => true)($log) === false));
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            lw($e);
+
             exit(1);
         }
     }
