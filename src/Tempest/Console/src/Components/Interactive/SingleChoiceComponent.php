@@ -42,7 +42,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         $this->bufferEnabled = false;
         $this->options = new OptionCollection($options);
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: $default, multiple: false);
+        $this->renderer = new ChoiceRenderer(multiple: false, default: $default);
         $this->updateQuery();
     }
 
@@ -64,8 +64,8 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
             label: $this->label,
             query: $this->buffer,
             options: $this->options,
-            filtering: $this->bufferEnabled,
             placeholder: 'Filter...',
+            filtering: $this->bufferEnabled,
         );
     }
 

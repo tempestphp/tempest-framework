@@ -19,17 +19,21 @@ final class Option
                 return $this->value;
             }
 
+            /** @phpstan-ignore-next-line */
             if (method_exists($this->value, 'toString')) {
+                /** @phpstan-ignore-next-line */
                 return $this->value->toString();
             }
 
             $reflection = new ReflectionEnum($this->value::class);
 
+            /** @phpstan-ignore-next-line */
             if (! $reflection->isBacked()) {
                 return $this->value->name;
             }
 
             return match ($reflection->getBackingType()->getName()) {
+                /** @phpstan-ignore-next-line */
                 'string' => $this->value->value,
                 default => $this->value->name,
             };

@@ -80,6 +80,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
+                /** @var TestStringEnum $answer */
                 $answer = $console->ask('test', options: TestStringEnum::cases());
 
                 $console->writeln("picked {$answer->value}");
@@ -92,6 +93,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
+                /** @var TestStringEnum $answer */
                 $answer = $console->ask('test', options: TestStringEnum::cases());
 
                 $console->writeln("picked {$answer->value}");
@@ -104,6 +106,7 @@ final class StaticSingleChoiceComponentTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call(function (Console $console): void {
+                /** @var TestStringEnum $answer */
                 $answer = $console->ask('test', options: TestStringEnum::cases(), default: TestStringEnum::B);
 
                 $console->writeln("picked {$answer->value}");

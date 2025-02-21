@@ -220,11 +220,21 @@ final class GenericConsole implements Console
         }
 
         if ($options === null || $options === []) {
-            return $this->component(new TextInputComponent($question, $default, $placeholder, $hint, $multiline, $validation));
+            return $this->component(new TextInputComponent(
+                label: $question,
+                default: $default,
+                placeholder: $placeholder,
+                hint: $hint,
+                multiline: $multiline,
+            ));
         }
 
         if ($multiple) {
-            return $this->component(new MultipleChoiceComponent($question, $options, ArrayHelper::wrap($default), $validation));
+            return $this->component(new MultipleChoiceComponent(
+                label: $question,
+                options: $options,
+                default: ArrayHelper::wrap($default),
+            ));
         }
 
         $component = new SingleChoiceComponent(

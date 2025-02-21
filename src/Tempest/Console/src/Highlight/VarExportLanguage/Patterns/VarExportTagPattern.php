@@ -20,6 +20,6 @@ final readonly class VarExportTagPattern implements Pattern
 
     public function getTokenType(): TokenType
     {
-        return ConsoleTokenType::H2;
+        return ConsoleTokenType::STRONG;
     }
 }

@@ -19,6 +19,8 @@ final class ChoiceRenderer
     public function __construct(
         private bool $multiple = true,
         private int $maximumOptions = 10,
+        // TODO: support defaults
+        /** @phpstan-ignore-next-line */
         private null|Stringable|UnitEnum|string $default = null,
     ) {
     }

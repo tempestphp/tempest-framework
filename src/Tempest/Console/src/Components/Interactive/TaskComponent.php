@@ -28,7 +28,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
 
     private TaskRenderer $renderer;
 
-    private int $processId;
+    private ?int $processId = null;
 
     private float $startedAt;
 
@@ -112,7 +112,7 @@ final class TaskComponent implements InteractiveConsoleComponent, HasStaticCompo
                 return $this->state === ComponentState::DONE;
             }
         } finally {
-            if ($this->state->isFinished() && $this->processId) {
+            if ($this->state->isFinished()) {
                 posix_kill($this->processId, SIGTERM);
             }
 

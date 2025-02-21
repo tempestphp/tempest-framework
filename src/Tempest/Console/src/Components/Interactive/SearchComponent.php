@@ -44,7 +44,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     ) {
         $this->bufferEnabled = ! $this->multiple;
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: $multiple);
+        $this->renderer = new ChoiceRenderer(multiple: $multiple, default: (string) $default);
         $this->options = new OptionCollection([]);
 
         if ($this->multiple) {
@@ -72,8 +72,8 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             state: $this->state,
             label: $this->label,
             query: $this->buffer,
-            filtering: $this->bufferEnabled,
             options: $this->options,
+            filtering: $this->bufferEnabled,
         );
     }
 

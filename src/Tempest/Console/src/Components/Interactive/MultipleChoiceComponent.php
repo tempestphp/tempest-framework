@@ -62,8 +62,8 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
             label: $this->label,
             query: $this->buffer,
             options: $this->options,
-            filtering: $this->bufferEnabled,
             placeholder: 'Filter...',
+            filtering: $this->bufferEnabled,
         );
     }
 
