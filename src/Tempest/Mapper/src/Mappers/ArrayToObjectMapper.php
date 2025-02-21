@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use Tempest\Mapper\Casters\CasterFactory;
+use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;

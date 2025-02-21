@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Casters;
+namespace Tempest\Mapper;
 
 use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use ReflectionException;
-use Tempest\Mapper\Caster;
-use Tempest\Mapper\CastWith;
+use Tempest\Mapper\Casters\BooleanCaster;
+use Tempest\Mapper\Casters\DateTimeCaster;
+use Tempest\Mapper\Casters\EnumCaster;
+use Tempest\Mapper\Casters\FloatCaster;
+use Tempest\Mapper\Casters\IntegerCaster;
+use Tempest\Mapper\Casters\ObjectCaster;
 use Tempest\Reflection\PropertyReflector;
 use function Tempest\get;
 
@@ -38,11 +42,9 @@ final readonly class CasterFactory
             return get($castWith->className);
         }
 
-        $typeName = $type->getName();
-
         // Check if backed enum
         if ($type->matches(BackedEnum::class)) {
-            return new EnumCaster($typeName);
+            return new EnumCaster($type->getName());
         }
 
         // Try a built-in caster

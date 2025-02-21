@@ -127,6 +127,16 @@ final class ObjectFactory
         return $result;
     }
 
+    public function toArray(): array
+    {
+        return $this->to(MapTo::ARRAY);
+    }
+
+    public function toJson(): string
+    {
+        return $this->to(MapTo::JSON);
+    }
+
     private function mapObject(
         mixed $from,
         mixed $to,
