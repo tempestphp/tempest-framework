@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Interactive;
 
 use Closure;
-use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\Concerns\HasErrors;
 use Tempest\Console\Components\Concerns\HasState;
 use Tempest\Console\Components\Concerns\HasTextBuffer;
@@ -45,7 +44,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
     ) {
         $this->bufferEnabled = ! $this->multiple;
         $this->buffer = new TextBuffer();
-        $this->renderer = new ChoiceRenderer(default: (string) $default, multiple: $multiple);
+        $this->renderer = new ChoiceRenderer(multiple: $multiple, default: (string) $default);
         $this->options = new OptionCollection([]);
 
         if ($this->multiple) {
@@ -73,8 +72,8 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             state: $this->state,
             label: $this->label,
             query: $this->buffer,
-            filtering: $this->bufferEnabled,
             options: $this->options,
+            filtering: $this->bufferEnabled,
         );
     }
 
@@ -159,8 +158,6 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         if (($active = $this->options->getActive()) !== null) {
             return $active->value;
         }
-
-        $this->state = ComponentState::ACTIVE;
 
         return null;
     }
