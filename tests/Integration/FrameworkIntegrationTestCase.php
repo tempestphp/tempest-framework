@@ -12,11 +12,12 @@ use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
-use Tempest\Core\DiscoveryLocation;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Database\CachedConnectionInitializer;
 use Tempest\Database\DatabaseConfig;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Router\HttpApplication;
 use Tempest\View\Components\AnonymousViewComponent;
@@ -45,6 +46,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
+        $this->container->addInitializer(CachedConnectionInitializer::class);
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {

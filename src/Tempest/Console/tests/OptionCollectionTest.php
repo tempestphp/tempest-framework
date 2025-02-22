@@ -123,6 +123,49 @@ final class OptionCollectionTest extends TestCase
         $this->assertSame(['bar', 'baz'], $this->toValues($options->getScrollableSection(1, 2)));
     }
 
+    public function test_enum_options(): void
+    {
+        $options = new OptionCollection(OptionCollectionEnum::cases());
+
+        $options->next();
+        $this->assertSame('OPT_2', $options->getActive()->displayValue);
+
+        $options->next();
+        $this->assertSame('OPT_3', $options->getActive()->displayValue);
+
+        $options->next();
+        $this->assertSame('OPT_1', $options->getActive()->displayValue);
+    }
+
+    public function test_set_active_list(): void
+    {
+        $options = new OptionCollection(['foo', 'bar', 'baz', 'qux', 'quux']);
+
+        $options->setActive('qux');
+
+        $this->assertSame('qux', $options->getActive()->value);
+    }
+
+    public function test_set_active_assoc(): void
+    {
+        $options = new OptionCollection(['foo' => 'Foo', 'bar' => 'Bar', 'baz' => 'Baz']);
+
+        $options->setActive('bar');
+        $this->assertSame('Bar', $options->getActive()->value);
+
+        $options->setActive('Baz');
+        $this->assertSame('Baz', $options->getActive()->value);
+    }
+
+    public function test_set_active_enum(): void
+    {
+        $options = new OptionCollection(OptionCollectionEnum::cases());
+
+        $options->setActive(OptionCollectionEnum::OPT_2);
+
+        $this->assertSame(OptionCollectionEnum::OPT_2, $options->getActive()->value);
+    }
+
     private function toValues(array $options): array
     {
         return array_map(fn (Option $option) => $option->value, array_values($options));

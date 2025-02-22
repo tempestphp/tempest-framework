@@ -62,8 +62,8 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
             label: $this->label,
             query: $this->buffer,
             options: $this->options,
-            filtering: $this->bufferEnabled,
             placeholder: 'Filter...',
+            filtering: $this->bufferEnabled,
         );
     }
 
@@ -135,7 +135,7 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     #[HandlesKey(Key::ENTER)]
     public function enter(): array
     {
-        return $this->options->getRawSelectedOptions() ?: $this->default;
+        return $this->options->getRawSelectedOptions($this->default);
     }
 
     #[HandlesKey(Key::UP)]

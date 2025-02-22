@@ -281,6 +281,7 @@ final class TextBufferTest extends TestCase
         $buffer = new TextBuffer($initialText);
 
         $buffer->cursor = $cursor;
+
         $point = $buffer->getRelativeCursorPosition();
 
         $this->assertSame($expectedPoint[0], $point->x);
@@ -296,6 +297,7 @@ final class TextBufferTest extends TestCase
         $buffer = new TextBuffer($initialText);
 
         $buffer->cursor = $cursor;
+
         $point = $buffer->getRelativeCursorPosition($maxLineWidth);
 
         $this->assertSame($expectedPoint[0], $point->x);

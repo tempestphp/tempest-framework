@@ -47,7 +47,9 @@ final class Vite
      */
     public function getTags(?array $entrypoints = null): array
     {
-        return $this->getTagsResolver()->resolveTags($entrypoints ?? $this->viteConfig->build->entrypoints);
+        return $this->getTagsResolver()->resolveTags(
+            array_filter($entrypoints ?: []) ?: array_filter($this->viteConfig->build->entrypoints ?: []),
+        );
     }
 
     /**

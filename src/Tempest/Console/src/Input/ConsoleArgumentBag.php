@@ -54,26 +54,18 @@ final class ConsoleArgumentBag
 
     public function has(string ...$names): bool
     {
-        foreach ($this->arguments as $argument) {
-            foreach ($names as $name) {
-                if ($argument->matches($name)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return array_any(
+            array: $this->arguments,
+            callback: static fn ($argument) => array_any(
+                array: $names,
+                callback: static fn ($name) => $argument->matches($name),
+            ),
+        );
     }
 
     public function get(string $name): ?ConsoleInputArgument
     {
-        foreach ($this->arguments as $argument) {
-            if ($argument->matches($name)) {
-                return $argument;
-            }
-        }
-
-        return null;
+        return array_find($this->arguments, static fn ($argument) => $argument->matches($name));
     }
 
     public function findFor(ConsoleArgumentDefinition $argumentDefinition): ?ConsoleInputArgument
@@ -103,7 +95,9 @@ final class ConsoleArgumentBag
             return $argument;
         }
 
-        $resolved = $argumentDefinition->type::tryFrom($argument->value);
+        $resolved = $argument->value instanceof $argumentDefinition->type
+            ? $argument->value
+            : $argumentDefinition->type::tryFrom($argument->value);
 
         if ($resolved === null) {
             throw new InvalidEnumArgument(

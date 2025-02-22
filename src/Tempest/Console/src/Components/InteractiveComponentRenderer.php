@@ -16,6 +16,7 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Validator;
+use function Tempest\Support\arr;
 
 final class InteractiveComponentRenderer
 {
@@ -84,16 +85,17 @@ final class InteractiveComponentRenderer
             usleep(50);
             $key = $console->read(16);
 
-            // If there's no keypress, continue
+            // If there's no keypress, continue.
             if ($key === '') {
                 Fiber::suspend();
 
                 continue;
             }
 
-            if ($component->getState() === ComponentState::BLOCKED) {
-                $this->shouldRerender = true;
+            // Otherwise, we will re-render after processing the key.
+            $this->shouldRerender = true;
 
+            if ($component->getState() === ComponentState::BLOCKED) {
                 continue;
             }
 
@@ -101,7 +103,7 @@ final class InteractiveComponentRenderer
             $handlersForKey = $keyBindings[$key] ?? [];
 
             // If we have multiple handlers, we put the ones that return nothing
-            // first because the ones that return something will be overriden otherwise.
+            // first because the ones that return something will be overridden otherwise.
             usort($handlersForKey, fn (MethodReflector $a, MethodReflector $b) => $b->getReturnType()->equals('void') <=> $a->getReturnType()->equals('void'));
 
             // CTRL+C and CTRL+D means we exit the CLI, but only if there is no custom
@@ -115,8 +117,6 @@ final class InteractiveComponentRenderer
 
                 continue;
             }
-
-            $this->shouldRerender = true;
 
             $return = null;
 
@@ -147,11 +147,16 @@ final class InteractiveComponentRenderer
 
             // If invalid, we'll remember the validation message and continue
             if ($failingRule !== null) {
+                $component->setState(ComponentState::ERROR);
                 $this->validationErrors[] = $failingRule->message();
                 Fiber::suspend();
 
                 continue;
             }
+
+            // The component is done, we can re-render and return.
+            $component->setState(ComponentState::DONE);
+            Fiber::suspend();
 
             // If valid, we can return
             return $return;
@@ -202,7 +207,7 @@ final class InteractiveComponentRenderer
 
         $inputHandlers = [];
 
-        foreach ((new ClassReflector($component))->getPublicMethods() as $method) {
+        foreach (new ClassReflector($component)->getPublicMethods() as $method) {
             foreach ($method->getAttributes(HandlesKey::class) as $handlesKey) {
                 if ($handlesKey->key === null) {
                     $inputHandlers[] = $method;
@@ -229,6 +234,19 @@ final class InteractiveComponentRenderer
         }
 
         return null;
+    }
+
+    public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool
+    {
+        if (! arr($component->extensions ?? [])->every(fn (string $ext) => extension_loaded($ext))) {
+            return false;
+        }
+
+        if (! Terminal::supportsTty()) {
+            return false;
+        }
+
+        return true;
     }
 
     private function createTerminal(Console $console): Terminal

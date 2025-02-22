@@ -11,11 +11,11 @@ use Tempest\Support\StringHelper;
 
 trait RendersInput
 {
-    public const MARGIN_X = 2;
+    public const int MARGIN_X = 2;
 
-    public const PADDING_X = 1;
+    public const int PADDING_X = 1;
 
-    public const MARGIN_TOP = 1;
+    public const int MARGIN_TOP = 1;
 
     private StringHelper $frame;
 
@@ -53,6 +53,10 @@ trait RendersInput
 
     private function finishRender(): string
     {
+        if ($this->state->isFinished() && $this->frame->endsWith("\n")) {
+            $this->frame = $this->frame->replaceEnd("\n", '');
+        }
+
         return $this->frame->toString();
     }
 
@@ -62,7 +66,7 @@ trait RendersInput
             return '';
         }
 
-        return (new StringHelper($string))
+        return new StringHelper($string)
             ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
     }
@@ -91,17 +95,6 @@ trait RendersInput
         };
     }
 
-    private function centerText(?string $text, int $width, int $padding = 2): string
-    {
-        $text ??= '';
-        $textLength = strlen($text);
-        $actualWidth = max($width, $textLength + (2 * $padding));
-        $leftPadding = (int) floor(($actualWidth - $textLength) / 2);
-        $rightPadding = $actualWidth - $leftPadding - $textLength;
-
-        return str_repeat(' ', $leftPadding) . $text . str_repeat(' ', $rightPadding);
-    }
-
     private function style(?string $style, string|Stringable ...$content): string
     {
         if (! $style) {
@@ -115,7 +108,7 @@ trait RendersInput
     {
         $this->offsetY += 1;
 
-        return $this->line($this->style($this->state === ComponentState::CANCELLED ? 'fg-gray' : 'bold fg-cyan', $this->truncate($label)), "\n");
+        return $this->line($this->style($this->state === ComponentState::CANCELLED ? 'fg-gray' : 'bold fg-blue', $this->truncate($label)), "\n");
     }
 
     private function line(string|Stringable ...$append): self

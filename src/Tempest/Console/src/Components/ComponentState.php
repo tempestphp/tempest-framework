@@ -24,10 +24,18 @@ enum ComponentState
     /**
      * Input was submitted.
      */
-    case SUBMITTED;
+    case DONE;
 
     /**
      * Input is blocked.
      */
     case BLOCKED;
+
+    public function isFinished(): bool
+    {
+        return match ($this) {
+            self::ACTIVE, self::ERROR, self::BLOCKED => false,
+            default => true,
+        };
+    }
 }

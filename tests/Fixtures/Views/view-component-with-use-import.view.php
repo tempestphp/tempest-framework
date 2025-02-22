@@ -6,5 +6,6 @@ use function Tempest\uri;
 ?>
 
 <x-component name="x-view-component-with-use-import">
+because this;
     <?= uri(HomeController::class) ?>
 </x-component>

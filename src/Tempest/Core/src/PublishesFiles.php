@@ -8,6 +8,7 @@ use Closure;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
+use Tempest\Discovery\DoNotDiscover;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
@@ -96,10 +97,7 @@ trait PublishesFiles
             if ($callback !== null) {
                 $callback($source, $destination);
             }
-
-            $this->console->success(sprintf('File successfully created at <em>%s</em>".', $destination));
-        } catch (FileGenerationAbortedException $exception) {
-            $this->console->info($exception->getMessage());
+        } catch (FileGenerationAbortedException) {
         } catch (Throwable $throwable) {
             if ($throwable instanceof ConsoleException) {
                 throw $throwable;
@@ -171,7 +169,7 @@ trait PublishesFiles
         $rules ??= [new NotEmpty(), new EndsWith('.php')];
 
         return $this->console->ask(
-            question: sprintf('Where do you want to save the file "%s"?', $className),
+            question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
             default: $suggestedPath,
             validation: $rules,
         );
@@ -190,6 +188,8 @@ trait PublishesFiles
 
         return $this->console->confirm(
             question: sprintf('The file <em>%s</em> already exists. Do you want to override it?', $targetPath),
+            yes: 'Override',
+            no: 'Cancel',
         );
     }
 }

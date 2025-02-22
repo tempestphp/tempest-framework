@@ -18,7 +18,7 @@ trait RendersControls
 {
     public function renderFooter(Terminal $terminal): ?string
     {
-        if (in_array($this->getState(), [ComponentState::CANCELLED, ComponentState::SUBMITTED, ComponentState::BLOCKED])) {
+        if (in_array($this->getState(), [ComponentState::CANCELLED, ComponentState::DONE, ComponentState::BLOCKED])) {
             return null;
         }
 
@@ -48,7 +48,7 @@ trait RendersControls
 
         if ($render->stripTags()->length() >= $maxWidth) {
             $prefix = $marginLeft . '<style="fg-gray">·</style>';
-            $render = (new StringHelper($prefix))
+            $render = new StringHelper($prefix)
                 ->append($render)
                 ->explode($separator)
                 ->implode("\n" . $prefix . $marginLeft);

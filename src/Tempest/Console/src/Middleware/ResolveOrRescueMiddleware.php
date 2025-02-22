@@ -47,7 +47,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
     {
         $this->console->writeln();
         $this->console->writeln('<style="bg-dark-red fg-white"> Error </style>');
-        $this->console->writeln("<style=\"fg-red\">Command <em>{$commandName}</em> not found.</style>");
+        $this->console->writeln("<style='fg-red'>Command <em>{$commandName}</em> not found.</style>");
 
         $similarCommands = $this->getSimilarCommands(str($commandName));
 
@@ -92,7 +92,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
             // `dis:st` will match `discovery:status`
             if ($searchParts->count() === $currentParts->count()) {
                 if ($searchParts->every(fn (string $part, int $index) => str_starts_with($currentParts[$index], $part))) {
-                    $suggestions[] = $currentName;
+                    $suggestions[$currentName->toString()] = $currentName;
 
                     continue;
                 }
@@ -100,14 +100,14 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
             // `generate` will match `discovery:generate`
             if ($currentName->startsWith($search) || $currentName->endsWith($search)) {
-                $suggestions[] = $currentName;
+                $suggestions[$currentName->toString()] = $currentName;
 
                 continue;
             }
 
             // Match with levenshtein on the whole command
             if ($currentName->levenshtein($search) <= 2) {
-                $suggestions[] = $currentName;
+                $suggestions[$currentName->toString()] = $currentName;
 
                 continue;
             }
@@ -118,14 +118,14 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 
                 // `clean` will match `static:clean` but also `discovery:clear`
                 if ($part->levenshtein($search) <= 1) {
-                    $suggestions[] = $currentName;
+                    $suggestions[$currentName->toString()] = $currentName;
 
                     continue 2;
                 }
 
                 // `generate` will match `discovery:generate`
                 if ($part->startsWith($search)) {
-                    $suggestions[] = $currentName;
+                    $suggestions[$currentName->toString()] = $currentName;
 
                     continue 2;
                 }
