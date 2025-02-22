@@ -49,7 +49,7 @@ final class OptionCollection implements Iterator, Countable
         $previouslySelectedOptions = $this->selectedOptions;
 
         $this->filteredOptions = arr($this->options)
-            ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower($option->value), mb_strtolower(trim($query))))
+            ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower((string) $option->value), mb_strtolower(trim($query))))
             ->values()
             ->toArray();
 
