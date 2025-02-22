@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
-use Jenssegers\Blade\Blade;
+use Tempest\Blade\Blade;
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
