@@ -41,7 +41,6 @@
         "friendsofphp/php-cs-fixer": "^3.21",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
-        "jenssegers/blade": "^2.0",
         "mikey179/vfsstream": "^2.0@dev",
         "nesbot/carbon": "^3.8",
         "nyholm/psr7": "^1.8",
@@ -53,6 +52,7 @@
         "spatie/phpunit-snapshot-assertions": "^5.1.6",
         "spaze/phpstan-disallowed-calls": "^4.0",
         "symplify/monorepo-builder": "^11.2",
+        "tempest/blade": "^0.1.0",
         "twig/twig": "^3.16"
     },
     "replace": {
