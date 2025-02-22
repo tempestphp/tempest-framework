@@ -21,7 +21,7 @@ final readonly class InteractiveCommand
     {
         $this->console->ask(
             question: 'Pick one',
-            options: MyEnum::cases(),
+            options: MyEnum::class,
             default: MyEnum::OTHER,
         );
 
