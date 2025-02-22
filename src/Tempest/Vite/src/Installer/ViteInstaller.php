@@ -59,7 +59,7 @@ final class ViteInstaller implements Installer
             }
 
             if (! $gitignore->contains('public/build')) {
-                $gitignore = $gitignore->append(PHP_EOL, 'public/build/');
+                return $gitignore->append(PHP_EOL, 'public/build/');
             }
 
             return $gitignore;

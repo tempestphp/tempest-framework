@@ -6,7 +6,6 @@ namespace Tempest\Core;
 
 use Closure;
 use Exception;
-use Stringable;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
@@ -99,7 +98,7 @@ trait PublishesFiles
             $this->publishedFiles[] = $destination;
 
             if ($callback !== null) {
-                $this->update($destination, $callback);
+                $callback($source, $destination);
             }
 
             return $destination;
@@ -199,7 +198,7 @@ trait PublishesFiles
      * Updates the contents of a file at the given path.
      *
      * @param string $path The absolute path to the file to update.
-     * @param Closure(string): string|Stringable $callback A callback that accepts the file contents and must return updated contents.
+     * @param Closure(string|StringHelper $contents): mixed $callback A callback that accepts the file contents and must return updated contents.
      * @param bool $ignoreNonExisting Whether to throw an exception if the file does not exist.
      */
     public function update(string $path, Closure $callback, bool $ignoreNonExisting = false): void
@@ -268,7 +267,7 @@ trait PublishesFiles
     private function detectIndent(string $raw): string
     {
         try {
-            return explode('"', explode("\n", $raw)[1])[0] ?? '';
+            return explode('"', explode("\n", $raw)[1])[0] ?: '';
         } catch (Throwable) {
             return '    ';
         }

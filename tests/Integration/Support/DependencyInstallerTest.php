@@ -28,7 +28,7 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
     #[TestWith(['package-lock.json'])]
     public function test_can_silently_install_deps(string $lockfile): void
     {
-        $this->callInTemporaryDirectory(function (string $directory) use ($lockfile) {
+        $this->callInTemporaryDirectory(function (string $directory) use ($lockfile): void {
             file_put_contents("{$directory}/package.json", data: '{}');
             file_put_contents("{$directory}/{$lockfile}", data: null);
 
@@ -42,10 +42,10 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
 
     public function test_asks_for_package_manager(): void
     {
-        $this->callInTemporaryDirectory(function (string $directory) {
+        $this->callInTemporaryDirectory(function (string $directory): void {
             file_put_contents("{$directory}/package.json", data: '{}');
 
-            $this->console->call(function () use ($directory) {
+            $this->console->call(function () use ($directory): void {
                 $installer = $this->container->get(DependencyInstaller::class);
                 $installer->installDependencies($directory, 'vite-plugin-tempest', dev: true);
             })->submit('npm');
