@@ -6,12 +6,15 @@ namespace Tests\Tempest\Integration\Console\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\HasConsole;
 use Tempest\Validation\Rules\Count;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Rules\Length;
 
 final readonly class InteractiveCommand
 {
+    use HasConsole;
+
     public function __construct(private Console $console)
     {
     }
@@ -19,7 +22,7 @@ final readonly class InteractiveCommand
     #[ConsoleCommand('interactive:enum')]
     public function enum(): void
     {
-        $this->console->ask(
+        $this->ask(
             question: 'Pick one',
             options: MyEnum::class,
             default: MyEnum::OTHER,
@@ -102,7 +105,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:ask')]
-    public function ask(): void
+    public function interactiveAsk(): void
     {
         $answer = $this->console->ask('Hello?');
 

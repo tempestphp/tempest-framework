@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Container\Inject;
+use Tempest\Support\ArrayHelper;
+use UnitEnum;
 
 trait HasConsole
 {
@@ -43,14 +46,14 @@ trait HasConsole
      */
     public function ask(
         string $question,
-        ?array $options = null,
+        null|array|ArrayHelper|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): string|array {
+    ): null|int|string|Stringable|UnitEnum|array {
         return $this->console->ask(
             question: $question,
             options: $options,
