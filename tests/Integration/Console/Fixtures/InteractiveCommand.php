@@ -16,6 +16,18 @@ final readonly class InteractiveCommand
     {
     }
 
+    #[ConsoleCommand('interactive:enum')]
+    public function enum(): void
+    {
+        $this->console->ask(
+            question: 'Pick one',
+            options: MyEnum::cases(),
+            default: MyEnum::OTHER,
+        );
+
+        $this->console->success('Done');
+    }
+
     #[ConsoleCommand('interactive:validation')]
     public function validation(): void
     {
