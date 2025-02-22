@@ -81,7 +81,8 @@
         "tempest/vite": "self.version"
     },
     "suggest": {
-        "ext-pcntl": "Required to use some interactive console components."
+        "ext-pcntl": "Required to use some interactive console components.",
+        "ext-posix": "Required to use some interactive console components."
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -170,7 +171,6 @@
             "./bin/validate-packages",
             "./tempest discovery:clear",
             "composer rector",
-            "composer csfixer",
             "composer phpunit",
             "composer phpstan"
         ]

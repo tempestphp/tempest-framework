@@ -1,6 +1,26 @@
-# The PHP framework that gets out of your way.
+<p align="center">
+  <a href="https://tempestphp.com">
+    <img src=".github/tempest-logo.svg" width="100" />
+  </a>
+</p>
 
-Tempest is a PHP framework that gets out of your way. Its design philosophy is that developers should write as little framework-related code as possible, so that they can focus on application code instead. Zero config, zero overhead. This is Tempest:
+<h1 align="center">Tempest</h1>
+<div align="center">
+  The PHP framework that lets you focus on your application code instead of framework quirks.
+  <br />
+  Read the <a href="https://tempestphp.com">documentation</a> to get started.
+</div>
+
+<br />
+<br />
+
+## Introduction
+
+Tempest is a PHP framework that _gets out of your way_.
+
+Its design philosophy is that developers should write as little framework-related code as possible, so that they can focus on application code instead.
+
+Zero config, zero overhead. This is Tempest:
 
 ```php
 final class BookController
@@ -18,7 +38,7 @@ final class BookController
 
         return new Redirect([self::class, 'show'], book: $book->id);
     }
-    
+
     // …
 }
 ```
@@ -53,24 +73,40 @@ final class MigrateUpCommand
 
 Read how to get started with Tempest [here](https://tempestphp.com).
 
+&nbsp;
+
 ## Installation
 
-Install Tempest in any project, including existing projects:
-
-```
-composer require tempest/framework:1.0-alpha.4
-```
-
-Or create a Tempest project from scratch:
+Create a Tempest project from scratch:
 
 ```
 composer create-project tempest/app:1.0-alpha.4 <name>
 ```
 
+Or install Tempest in any existing project:
+
+```
+composer require tempest/framework:1.0-alpha.4
+```
+
 Continue to read how Tempest works in [the docs](https://tempestphp.com).
+
+&nbsp;
 
 ## Contributing
 
-We welcome contributing to the Tempest framework! We only ask that you take a quick look at our [guidelines](https://tempestphp.com/docs/internals/contributing/) and then head on over to the issues page to see some ways you might help out!
+We welcome contributing to Tempest! We only ask that you take a quick look at our [guidelines](https://tempestphp.com/docs/internals/contributing/).
 
-For more information, [join the Tempest Discord](https://tempestphp.com/discord)
+An easy way to get started is to head on over to the issues page to see some ways you might help out.
+
+<p align="center">
+	<br />
+	<br />
+	<sub>
+		Check out the <a href="https://tempestphp.com">documentation</a>
+		&nbsp;
+		·
+		&nbsp;
+		Join the <a href="https://tempestphp.com/discord">Discord</a> server
+  </sub>
+</p>

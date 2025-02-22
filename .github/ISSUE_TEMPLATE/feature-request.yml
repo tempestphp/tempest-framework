@@ -1,7 +1,7 @@
-name: Feature Request
+name: Feature request
 description: Tempest is a work in progress! Let us know about a feature you would like to see in the framework.
-title: "[Feature Request]: "
-labels: ['Triage', 'Feature Request']
+labels: ['Triage']
+type: 'Feature'
 body:
 - type: textarea
   attributes:

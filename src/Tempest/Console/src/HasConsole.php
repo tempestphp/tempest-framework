@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Stringable;
+use Symfony\Component\Process\Process;
 use Tempest\Container\Inject;
+use Tempest\Support\ArrayHelper;
+use UnitEnum;
 
 trait HasConsole
 {
@@ -42,14 +46,14 @@ trait HasConsole
      */
     public function ask(
         string $question,
-        ?array $options = null,
+        null|array|ArrayHelper|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
         ?string $placeholder = null,
         ?string $hint = null,
         array $validation = [],
-    ): string|array {
+    ): null|int|string|Stringable|UnitEnum|array {
         return $this->console->ask(
             question: $question,
             options: $options,
@@ -62,19 +66,26 @@ trait HasConsole
         );
     }
 
-    public function confirm(string $question, bool $default = false): bool
-    {
+    public function confirm(
+        string $question,
+        bool $default = false,
+        ?string $yes = null,
+        ?string $no = null
+    ): bool {
         return $this->console->confirm(
             question: $question,
             default: $default,
+            yes: $yes,
+            no: $no,
         );
     }
 
-    public function password(string $label = 'Password', bool $confirm = false): string
+    public function password(string $label = 'Password', bool $confirm = false, array $validation = []): string
     {
         return $this->console->password(
             label: $label,
             confirm: $confirm,
+            validation: $validation,
         );
     }
 
@@ -99,31 +110,43 @@ trait HasConsole
         );
     }
 
-    public function info(string $line, ?string $symbol = null): self
+    public function info(string $contents, ?string $title = null): self
     {
-        $this->console->info($line, $symbol);
+        $this->console->info($contents, $title);
 
         return $this;
     }
 
-    public function error(string $line, ?string $symbol = null): self
+    public function error(string $contents, ?string $title = null): self
     {
-        $this->console->error($line, $symbol);
+        $this->console->error($contents, $title);
 
         return $this;
     }
 
-    public function warning(string $line, ?string $symbol = null): self
+    public function warning(string $contents, ?string $title = null): self
     {
-        $this->console->warning($line, $symbol);
+        $this->console->warning($contents, $title);
 
         return $this;
     }
 
-    public function success(string $line, ?string $symbol = null): self
+    public function success(string $contents, ?string $title = null): self
     {
-        $this->console->success($line, $symbol);
+        $this->console->success($contents, $title);
 
         return $this;
+    }
+
+    public function keyValue(string $key, ?string $value = null): self
+    {
+        $this->console->keyValue($key, $value);
+
+        return $this;
+    }
+
+    public function task(string $label, null|Process|Closure $handler): bool
+    {
+        return $this->console->task($label, $handler);
     }
 }
