@@ -66,19 +66,26 @@ trait HasConsole
         );
     }
 
-    public function confirm(string $question, bool $default = false): bool
-    {
+    public function confirm(
+        string $question,
+        bool $default = false,
+        ?string $yes = null,
+        ?string $no = null
+    ): bool {
         return $this->console->confirm(
             question: $question,
             default: $default,
+            yes: $yes,
+            no: $no,
         );
     }
 
-    public function password(string $label = 'Password', bool $confirm = false): string
+    public function password(string $label = 'Password', bool $confirm = false, array $validation = []): string
     {
         return $this->console->password(
             label: $label,
             confirm: $confirm,
+            validation: $validation,
         );
     }
 
