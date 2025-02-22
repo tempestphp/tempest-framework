@@ -42,8 +42,6 @@ final readonly class InstallCommand
         }
 
         $installer->install();
-
-        $this->success('Done.');
     }
 
     private function resolveInstaller(?string $search): ?Installer
