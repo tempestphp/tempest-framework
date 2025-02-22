@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console;
 
 use Closure;
+use Symfony\Component\Process\Process;
 use Tempest\Container\Inject;
 
 trait HasConsole
@@ -125,5 +126,17 @@ trait HasConsole
         $this->console->success($contents, $title);
 
         return $this;
+    }
+
+    public function keyValue(string $key, ?string $value = null): self
+    {
+        $this->console->keyValue($key, $value);
+
+        return $this;
+    }
+
+    public function task(string $label, null|Process|Closure $handler): bool
+    {
+        return $this->console->task($label, $handler);
     }
 }
