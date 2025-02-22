@@ -9,6 +9,8 @@ use Tempest\Core\PublishesFiles;
 use Tempest\Support\JavaScript\DependencyInstaller;
 use Tempest\Support\JavaScript\PackageManager;
 use Tempest\Support\StringHelper;
+use Tempest\Vite\ViteConfig;
+
 use function Tempest\root_path;
 use function Tempest\src_path;
 
@@ -20,6 +22,7 @@ final class ViteInstaller implements Installer
 
     public function __construct(
         private readonly DependencyInstaller $javascript,
+        private readonly ViteConfig $viteConfig,
     ) {
     }
 
@@ -54,6 +57,10 @@ final class ViteInstaller implements Installer
 
         // Updates the .gitignore
         $this->update(root_path('.gitignore'), function (StringHelper $gitignore) {
+            if (! $gitignore->contains($this->viteConfig->build->bridgeFileName)) {
+                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->build->bridgeFileName);
+            }
+
             if (! $gitignore->contains('node_modules')) {
                 $gitignore = $gitignore->append(PHP_EOL, 'node_modules/');
             }
