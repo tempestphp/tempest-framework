@@ -19,6 +19,7 @@ use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Components\InteractiveComponentRenderer;
+use Tempest\Console\Components\Renderers\InstructionsRenderer;
 use Tempest\Console\Components\Renderers\KeyValueRenderer;
 use Tempest\Console\Components\Renderers\MessageRenderer;
 use Tempest\Console\Exceptions\UnsupportedComponent;
@@ -112,6 +113,13 @@ final class GenericConsole implements Console
         if ($subheader) {
             $this->writeln($subheader);
         }
+
+        return $this;
+    }
+
+    public function instructions(array|string $lines): static
+    {
+        $this->writeln((new InstructionsRenderer())->render(ArrayHelper::wrap($lines)));
 
         return $this;
     }

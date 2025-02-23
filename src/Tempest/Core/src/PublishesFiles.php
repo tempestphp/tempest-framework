@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Closure;
+use Exception;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
@@ -15,12 +16,18 @@ use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
+use Tempest\Reflection\FunctionReflector;
 use Tempest\Support\NamespaceHelper;
+use Tempest\Support\StringHelper;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
+use function strlen;
 use function Tempest\path;
+use function Tempest\root_path;
 use function Tempest\Support\str;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
 
 /**
  * Provides a bunch of methods to publish and generate files and work with common user input.
@@ -45,14 +52,11 @@ trait PublishesFiles
      * @param string $destination The path to the destination file.
      * @param Closure(string $source, string $destination): void|null $callback A callback to run after the file is published.
      */
-    public function publish(
-        string $source,
-        string $destination,
-        ?Closure $callback = null,
-    ): void {
+    public function publish(string $source, string $destination, ?Closure $callback = null): string|false
+    {
         try {
             if (! $this->console->confirm(
-                question: sprintf('Do you want to create <em>%s</em>?', $destination),
+                question: sprintf('Do you want to create <file="%s" />?', $this->friendlyFileName($destination)),
                 default: true,
             )) {
                 throw new FileGenerationAbortedException('Skipped.');
@@ -96,7 +100,10 @@ trait PublishesFiles
             if ($callback !== null) {
                 $callback($source, $destination);
             }
+
+            return $destination;
         } catch (FileGenerationAbortedException) {
+            return false;
         } catch (Throwable $throwable) {
             if ($throwable instanceof ConsoleException) {
                 throw $throwable;
@@ -183,9 +190,86 @@ trait PublishesFiles
         }
 
         return $this->console->confirm(
-            question: sprintf('The file <em>%s</em> already exists. Do you want to override it?', $targetPath),
-            yes: 'Override',
-            no: 'Cancel',
+            question: sprintf('The file <file="%s" /> already exists. Do you want to override it?', $this->friendlyFileName($targetPath)),
         );
+    }
+
+    /**
+     * Updates the contents of a file at the given path.
+     *
+     * @param string $path The absolute path to the file to update.
+     * @param Closure(string|StringHelper $contents): mixed $callback A callback that accepts the file contents and must return updated contents.
+     * @param bool $ignoreNonExisting Whether to throw an exception if the file does not exist.
+     */
+    public function update(string $path, Closure $callback, bool $ignoreNonExisting = false): void
+    {
+        if (! is_file($path)) {
+            if ($ignoreNonExisting) {
+                return;
+            }
+
+            throw new Exception("The file at path [{$path}] does not exist.");
+        }
+
+        $contents = file_get_contents($path);
+
+        $reflector = new FunctionReflector($callback);
+        $type = $reflector->getParameters()->current()->getType();
+
+        $contents = match (true) {
+            is_null($type),
+            $type->equals(StringHelper::class) => (string) $callback(new StringHelper($contents)),
+            $type->accepts('string') => (string) $callback($contents),
+            default => throw new Exception('The callback must accept a string or StringHelper.'),
+        };
+
+        file_put_contents($path, $contents);
+    }
+
+    /**
+     * Updates a JSON file, preserving indentation.
+     *
+     * @param string $path The absolute path to the file to update.
+     * @param Closure(array): array $callback
+     * @param bool $ignoreNonExisting Whether to throw an exception if the file does not exist.
+     */
+    public function updateJson(string $path, Closure $callback, bool $ignoreNonExisting = false): void
+    {
+        $this->update($path, function (string $content) use ($callback) {
+            $indent = $this->detectIndent($content);
+
+            $json = json_decode($content, associative: true);
+            $json = $callback($json);
+
+            // PHP will output empty arrays for empty dependencies,
+            // which is invalid and will make package managers crash.
+            foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
+                if (isset($json[$key]) && empty($json[$key])) {
+                    unset($json[$key]);
+                }
+            }
+
+            $content = preg_replace_callback(
+                '/^ +/m',
+                fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
+                json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            );
+
+            return "{$content}\n";
+        }, $ignoreNonExisting);
+    }
+
+    private function friendlyFileName(string $path): string
+    {
+        return str_replace(str(root_path())->finish('/')->toString(), '', $path);
+    }
+
+    private function detectIndent(string $raw): string
+    {
+        try {
+            return explode('"', explode("\n", $raw)[1])[0] ?: '';
+        } catch (Throwable) {
+            return '    ';
+        }
     }
 }

@@ -74,6 +74,8 @@ interface Console
 
     public function keyValue(string $key, ?string $value = null): self;
 
+    public function instructions(array|string $lines): self;
+
     /**
      * @param mixed|Closure(self): bool $condition
      * @param Closure(self): self $callback
