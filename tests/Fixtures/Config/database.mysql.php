@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Database\Connections\MySqlConnection;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Config\MysqlConfig;
 
-return new DatabaseConfig(
-    connection: new MySqlConnection(),
-);
+return new MysqlConfig();

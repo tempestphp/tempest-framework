@@ -7,6 +7,7 @@ namespace Tempest\Database;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
+use Tempest\Database\Connection\Connection;
 use Tempest\Database\Transactions\TransactionManager;
 
 final readonly class DatabaseInitializer implements Initializer
