@@ -5,12 +5,12 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/reflection": "dev-main"
+        "tempest/reflection": "dev-main",
+        "tempest/highlight": "^2.11.2"
     },
     "autoload": {
         "psr-4": {
             "Tempest\\Discovery\\": "src"
-        },
-        "files": []
+        }
     }
 }

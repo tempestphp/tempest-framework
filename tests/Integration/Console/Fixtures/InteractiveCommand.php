@@ -41,7 +41,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:confirm')]
-    public function confirm(): void
+    public function confirmCommand(): void
     {
         $confirm = $this->console->confirm('abc', true);
 
@@ -49,7 +49,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:password')]
-    public function password(): void
+    public function passwordCommand(): void
     {
         $password = $this->console->password(confirm: true);
 
@@ -128,7 +128,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:search')]
-    public function search(): void
+    public function searchCommand(): void
     {
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
 
