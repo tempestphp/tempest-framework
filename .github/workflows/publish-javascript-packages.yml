@@ -31,7 +31,7 @@ jobs:
 
       - name: Publish packages
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           for package in packages/*; do
             if [ -d "$package" ] && [ -f "$package/package.json" ]; then
