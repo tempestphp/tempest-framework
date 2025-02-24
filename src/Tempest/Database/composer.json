@@ -6,10 +6,11 @@
     "require": {
         "php": "^8.4",
         "ext-pdo": "*",
-        "tempest/container": "dev-main",
-        "tempest/event-bus": "dev-main",
-        "tempest/mapper": "dev-main",
-        "tempest/support": "dev-main"
+        "tempest/container": "1.0.0-alpha.5",
+        "tempest/event-bus": "1.0.0-alpha.5",
+        "tempest/mapper": "1.0.0-alpha.5",
+        "tempest/support": "1.0.0-alpha.5",
+        "tempest/highlight": "^2.11.2"
     },
     "autoload": {
         "psr-4": {
