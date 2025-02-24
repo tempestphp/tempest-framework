@@ -6,9 +6,13 @@ namespace Tempest\View;
 
 interface View
 {
-    public function getPath(): string;
+    public string $path {
+        get;
+    }
 
-    public function getData(): array;
+    public array $data {
+        get;
+    }
 
     public function get(string $key): mixed;
 

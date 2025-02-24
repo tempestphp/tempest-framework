@@ -39,8 +39,8 @@ final class TempestViewRenderer implements ViewRenderer
         $view = is_string($view) ? new GenericView($view) : $view;
 
         $path = $this->viewCache->getCachedViewPath(
-            path: $view->getPath(),
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath())),
+            path: $view->path,
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->path)),
         );
 
         return $this->renderCompiled($view, $path);
@@ -82,7 +82,7 @@ final class TempestViewRenderer implements ViewRenderer
         ob_start();
 
         // Extract data from view into local variables so that they can be accessed directly
-        $_data = $_view->getData();
+        $_data = $_view->data;
 
         extract($_data, flags: EXTR_SKIP);
 
