@@ -375,12 +375,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, items: ['a', 'b', 'c']);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <div>item a</div>
-        <div>boo</div>
-        <div>item b</div>
-        <div>boo</div>
-        <div>item c</div>
-        <div>boo</div>
+        <div>item a</div><div>boo</div>
+        <div>item b</div><div>boo</div>
+        <div>item c</div><div>boo</div>
         HTML, $html);
     }
 
