@@ -365,6 +365,22 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('/docs/', $html);
     }
 
+    public function test_template_component(): void
+    {
+        $html = $this->render(<<<'HTML'
+            <x-template :foreach="$items as $item">
+                <div>item {{ $item }}</div>
+                <div>boo</div>
+            </x-template>
+        HTML, items: ['a', 'b', 'c']);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div>item a</div><div>boo</div>
+        <div>item b</div><div>boo</div>
+        <div>item c</div><div>boo</div>
+        HTML, $html);
+    }
+
     public static function view_components(): Generator
     {
         yield [
