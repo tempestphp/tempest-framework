@@ -101,9 +101,14 @@ final class ElementFactory
                 $viewComponentClass,
                 $attributes,
             );
+        } elseif ($tagName === 'x-template') {
+            $element = new TemplateElement(
+                attributes: $attributes,
+            );
         } elseif ($tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
+                attributes: $attributes,
             );
         } else {
             $element = new GenericElement(

@@ -11,8 +11,10 @@ final class SlotElement implements Element
     use IsElement;
 
     public function __construct(
-        private readonly string $name,
+        public readonly string $name,
+        array $attributes = [],
     ) {
+        $this->attributes = $attributes;
     }
 
     public function matches(string $name): bool
