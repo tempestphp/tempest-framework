@@ -19,7 +19,8 @@ final class ViewComponentElement implements Element
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
-    ) {
+    )
+    {
         $this->attributes = $attributes;
     }
 
@@ -81,11 +82,18 @@ final class ViewComponentElement implements Element
             ->toArray();
 
         $compiled = str($this->viewComponent->compile($this))
-            // Add slots list
-            ->prepend(sprintf('<?php $slots = %s; ?>', var_export($slots, true)))
+            // Add dynamic slots to the current scope
+            ->prepend(
+                '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
+                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // Set the new value of $slots for this view component
+            )
 
-            // Cleanup slots after the view component
-            ->append('<?php unset($slots); ?>')
+            // Cleanup slots after the view component and restore slots from previous scope
+            ->append(
+                '<?php unset($slots); ?>', // Unset current $slots
+                '<?php $slots = $_previousSlots ?? null; ?>', // Restore previous $slots
+                '<?php unset($_previousSlots); ?>', // Cleanup temporary $_previousSlots
+            )
 
             // Compile slots
             ->replaceRegex(

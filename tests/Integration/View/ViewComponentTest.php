@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
+use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
@@ -107,6 +108,49 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<div>slots are cleared</div>', $html);
     }
 
+    public function test_slots_with_nested_view_components(): void
+    {
+        $this->registerViewComponent('x-a', <<<'HTML'
+            <x-slot />
+            <div :foreach="$slots as $slot">
+                <div>A{{ $slot->name }}</div>
+            </div>
+            HTML,
+        );
+
+        $this->registerViewComponent('x-b', <<<'HTML'
+            <div :foreach="$slots as $slot">
+                <div>B{{ $slot->name }}</div>
+            </div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-a>
+            <x-b>
+                <x-slot name="1"></x-slot>
+                <x-slot name="2"></x-slot>
+            </x-b>
+
+            <x-slot name="3"></x-slot>
+            <x-slot name="4"></x-slot>
+        </x-a>
+        HTML);
+
+        $this->assertStringContainsString('<div>B1</div>', $html);
+        $this->assertStringContainsString('<div>B2</div>', $html);
+        $this->assertStringContainsString('<div>A3</div>', $html);
+        $this->assertStringContainsString('<div>A4</div>', $html);
+    }
+
+    public function test_slots_is_a_reserved_variable(): void
+    {
+        $this->expectException(ViewVariableIsReserved::class);
+        $this->expectExceptionMessage('Cannot use reserved variable name `slots`');
+
+        $this->render('', slots: []);
+    }
+    
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
