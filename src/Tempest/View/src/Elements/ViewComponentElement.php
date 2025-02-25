@@ -84,6 +84,9 @@ final class ViewComponentElement implements Element
             // Add slots list
             ->prepend(sprintf('<?php $slots = %s; ?>', var_export($slots, true)))
 
+            // Cleanup slots after the view component
+            ->append('<?php unset($slots); ?>')
+
             // Compile slots
             ->replaceRegex(
                 regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
