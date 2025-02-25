@@ -104,6 +104,7 @@ final class ElementFactory
         } elseif ($tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
+                attributes: $attributes,
             );
         } else {
             $element = new GenericElement(

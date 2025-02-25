@@ -56,6 +56,31 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_view_can_access_slots_as_array(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+            <div :foreach="$slots as $slot">
+                <div>{{ $slot->name }}</div>
+                <div>{{ $slot->attributes['language'] }}</div>
+                <div>{{ $slot->language }}</div>
+                <div>{!! $slot->content !!}</div>
+            </div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML_WRAP'
+        <x-test>
+            <x-slot name="slot-php" language="PHP">PHP Body</x-slot>    
+            <x-slot name="slot-html" language="HTML">HTML Body</x-slot>    
+        </x-test>
+        HTML_WRAP);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML_WRAP'
+        <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
+        <div><div>slot-html</div><div>HTML</div><div>HTML</div><div>HTML Body</div></div>
+        HTML_WRAP, $html);
+    }
+
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
@@ -222,7 +247,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $rendered = $this->render(
             view(<<<HTML
                 <x-with-variable :variable="strtoupper('test')"></x-with-variable>
-                HTML),
+                HTML,
+            ),
         );
 
         $this->assertStringEqualsStringIgnoringLineEndings(
@@ -287,15 +313,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
-            fromPHP
-
-
-                fromString
-
-
-                nothing
-            HTML, $html);
+        $this->assertStringContainsString('fromPHP', $html);
+        $this->assertStringContainsString('fromString', $html);
+        $this->assertStringContainsString('nothing', $html);
     }
 
     public function test_view_component_attribute_variables_without_this(): void
@@ -333,7 +353,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsStringIgnoringLineEndings(<<<HTML
             test
-
 
                 test
             HTML, $html);

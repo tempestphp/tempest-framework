@@ -6,7 +6,9 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class ViewComponentElement implements Element
@@ -24,6 +26,22 @@ final class ViewComponentElement implements Element
     public function getViewComponent(): ViewComponent
     {
         return $this->viewComponent;
+    }
+
+    /** @return Element[] */
+    public function getSlots(): array
+    {
+        $slots = [];
+
+        foreach ($this->getChildren() as $child) {
+            if (! $child instanceof SlotElement) {
+                continue;
+            }
+
+            $slots[] = $child;
+        }
+
+        return $slots;
     }
 
     public function getSlot(string $name = 'slot'): ?Element
@@ -57,7 +75,15 @@ final class ViewComponentElement implements Element
 
     public function compile(): string
     {
+        /** @var Slot[] $slots */
+        $slots = arr($this->getSlots())
+            ->mapWithKeys(fn (SlotElement $element) => yield $element->name => Slot::fromElement($element))
+            ->toArray();
+
         $compiled = str($this->viewComponent->compile($this))
+            // Add slots list
+            ->prepend(sprintf('<?php $slots = %s; ?>', var_export($slots, true)))
+
             // Compile slots
             ->replaceRegex(
                 regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
