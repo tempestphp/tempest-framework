@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
+use Stringable;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Reflection\TypeReflector;
@@ -29,6 +30,10 @@ final readonly class ObjectCaster implements Caster
     {
         if (! is_object($input)) {
             throw new CannotSerializeValue('object');
+        }
+
+        if ($input instanceof Stringable) {
+            return (string) $input;
         }
 
         return serialize($input);
