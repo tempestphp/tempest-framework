@@ -6,6 +6,7 @@ use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
+use Tests\Tempest\Integration\ORM\Models\CasterEnum;
 use Tests\Tempest\Integration\ORM\Models\CasterModel;
 
 final class CreateCasterModelTable implements DatabaseMigration
@@ -17,8 +18,8 @@ final class CreateCasterModelTable implements DatabaseMigration
         return CreateTableStatement::forModel(CasterModel::class)
             ->primary()
             ->datetime('date')
-            ->json('array')
-            ->varchar('enum');
+            ->array('array')
+            ->enum('enum', CasterEnum::class);
     }
 
     public function down(): QueryStatement
