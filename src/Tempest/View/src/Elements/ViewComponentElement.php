@@ -6,7 +6,9 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class ViewComponentElement implements Element
@@ -17,13 +19,30 @@ final class ViewComponentElement implements Element
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
-    ) {
+    )
+    {
         $this->attributes = $attributes;
     }
 
     public function getViewComponent(): ViewComponent
     {
         return $this->viewComponent;
+    }
+
+    /** @return Element[] */
+    public function getSlots(): array
+    {
+        $slots = [];
+
+        foreach ($this->getChildren() as $child) {
+            if (! $child instanceof SlotElement) {
+                continue;
+            }
+
+            $slots[] = $child;
+        }
+
+        return $slots;
     }
 
     public function getSlot(string $name = 'slot'): ?Element
@@ -57,7 +76,25 @@ final class ViewComponentElement implements Element
 
     public function compile(): string
     {
+        /** @var Slot[] $slots */
+        $slots = arr($this->getSlots())
+            ->mapWithKeys(fn (SlotElement $element) => yield $element->name => Slot::fromElement($element))
+            ->toArray();
+
         $compiled = str($this->viewComponent->compile($this))
+            // Add dynamic slots to the current scope
+            ->prepend(
+                '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
+                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // Set the new value of $slots for this view component
+            )
+
+            // Cleanup slots after the view component and restore slots from previous scope
+            ->append(
+                '<?php unset($slots); ?>', // Unset current $slots
+                '<?php $slots = $_previousSlots ?? null; ?>', // Restore previous $slots
+                '<?php unset($_previousSlots); ?>', // Cleanup temporary $_previousSlots
+            )
+
             // Compile slots
             ->replaceRegex(
                 regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',

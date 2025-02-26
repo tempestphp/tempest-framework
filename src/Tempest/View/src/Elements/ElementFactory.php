@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Dom\Comment;
+use Dom\DocumentType;
 use Dom\Element as DomElement;
 use Dom\Node;
 use Dom\Text;
@@ -22,8 +23,7 @@ final class ElementFactory
     public function __construct(
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function setViewCompiler(TempestViewCompiler $compiler): self
     {
@@ -42,6 +42,12 @@ final class ElementFactory
 
     private function makeElement(Node $node, ?Element $parent): ?Element
     {
+        if ($node instanceof DocumentType) {
+            $content = $node->ownerDocument->saveHTML($node);
+
+            return new RawElement(tag: null, content: $content);
+        }
+
         if ($node instanceof Text) {
             if (trim($node->textContent) === '') {
                 return null;
@@ -95,9 +101,14 @@ final class ElementFactory
                 $viewComponentClass,
                 $attributes,
             );
+        } elseif ($tagName === 'x-template') {
+            $element = new TemplateElement(
+                attributes: $attributes,
+            );
         } elseif ($tagName === 'x-slot') {
             $element = new SlotElement(
                 name: $node->getAttribute('name') ?: 'slot',
+                attributes: $attributes,
             );
         } else {
             $element = new GenericElement(

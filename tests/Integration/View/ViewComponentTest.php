@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
+use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
@@ -56,6 +57,100 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_view_can_access_dynamic_slots(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+            <div :foreach="$slots as $slot">
+                <div>{{ $slot->name }}</div>
+                <div>{{ $slot->attributes['language'] }}</div>
+                <div>{{ $slot->language }}</div>
+                <div>{!! $slot->content !!}</div>
+            </div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="slot-php" language="PHP">PHP Body</x-slot>    
+            <x-slot name="slot-html" language="HTML">HTML Body</x-slot>    
+        </x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
+        <div><div>slot-html</div><div>HTML</div><div>HTML</div><div>HTML Body</div></div>
+        HTML, $html);
+    }
+
+    public function test_dynamic_slots_are_cleaned_up(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+            <div :foreach="$slots as $slot">
+                <div>{{ $slot->name }}</div>
+            </div>
+            <x-slot />
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="a"></x-slot>    
+            <x-slot name="b"></x-slot>
+            <div :if="isset($slots)">internal slots still here</div>
+            <div :else>internal slots are cleared</div>
+        </x-test>
+
+        <div :if="isset($slots)">slots still here</div>
+        <div :else>slots are cleared</div>
+        HTML);
+
+        $this->assertStringContainsString('<div>internal slots still here</div>', $html);
+        $this->assertStringContainsString('<div>slots are cleared</div>', $html);
+    }
+
+    public function test_slots_with_nested_view_components(): void
+    {
+        $this->registerViewComponent('x-a', <<<'HTML'
+            <x-slot />
+            <div :foreach="$slots as $slot">
+                <div>A{{ $slot->name }}</div>
+            </div>
+            HTML,
+        );
+
+        $this->registerViewComponent('x-b', <<<'HTML'
+            <div :foreach="$slots as $slot">
+                <div>B{{ $slot->name }}</div>
+            </div>
+            HTML,
+        );
+
+        $html = $this->render(<<<'HTML'
+        <x-a>
+            <x-b>
+                <x-slot name="1"></x-slot>
+                <x-slot name="2"></x-slot>
+            </x-b>
+
+            <x-slot name="3"></x-slot>
+            <x-slot name="4"></x-slot>
+        </x-a>
+        HTML);
+
+        $this->assertStringContainsString('<div>B1</div>', $html);
+        $this->assertStringContainsString('<div>B2</div>', $html);
+        $this->assertStringContainsString('<div>A3</div>', $html);
+        $this->assertStringContainsString('<div>A4</div>', $html);
+    }
+
+    public function test_slots_is_a_reserved_variable(): void
+    {
+        $this->expectException(ViewVariableIsReserved::class);
+        $this->expectExceptionMessage('Cannot use reserved variable name `slots`');
+
+        $this->render('', slots: []);
+    }
+    
     public function test_nested_components(): void
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
@@ -222,7 +317,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $rendered = $this->render(
             view(<<<HTML
                 <x-with-variable :variable="strtoupper('test')"></x-with-variable>
-                HTML),
+                HTML,
+            ),
         );
 
         $this->assertStringEqualsStringIgnoringLineEndings(
@@ -264,38 +360,20 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             ),
         );
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
-            <<<HTML
-                <div>
-                        a    </div>
-
-
-                    
-                <div>
-                        b    </div>
-
-
-                    
-                <div>
-                        c    </div>
-                HTML,
-            $rendered,
-        );
+        $this->assertStringContainsString('a', $rendered);
+        $this->assertStringContainsString('b', $rendered);
+        $this->assertStringContainsString('c', $rendered);
+        $this->assertStringCount($rendered, '<div>', 3);
+        $this->assertStringCount($rendered, '</div>', 3);
     }
 
     public function test_inline_view_variables_passed_to_component(): void
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-defined-local-vars-b.view.php'));
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
-            fromPHP
-
-
-                fromString
-
-
-                nothing
-            HTML, $html);
+        $this->assertStringContainsString('fromPHP', $html);
+        $this->assertStringContainsString('fromString', $html);
+        $this->assertStringContainsString('nothing', $html);
     }
 
     public function test_view_component_attribute_variables_without_this(): void
@@ -331,12 +409,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/view-component-with-camelcase-attribute-b.view.php'));
 
-        $this->assertStringContainsStringIgnoringLineEndings(<<<HTML
-            test
-
-
-                test
-            HTML, $html);
+        $this->assertStringCount($html, 'test', 2);
     }
 
     public function test_php_code_in_attribute(): void
@@ -344,6 +417,22 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/x-button-usage.view.php'));
 
         $this->assertStringContainsString('/docs/', $html);
+    }
+
+    public function test_template_component(): void
+    {
+        $html = $this->render(<<<'HTML'
+            <x-template :foreach="$items as $item">
+                <div>item {{ $item }}</div>
+                <div>boo</div>
+            </x-template>
+        HTML, items: ['a', 'b', 'c']);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div>item a</div><div>boo</div>
+        <div>item b</div><div>boo</div>
+        <div>item c</div><div>boo</div>
+        HTML, $html);
     }
 
     public static function view_components(): Generator

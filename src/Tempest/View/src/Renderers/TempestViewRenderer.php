@@ -7,6 +7,7 @@ namespace Tempest\View\Renderers;
 use Stringable;
 use Tempest\Support\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
+use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
@@ -38,9 +39,11 @@ final class TempestViewRenderer implements ViewRenderer
     {
         $view = is_string($view) ? new GenericView($view) : $view;
 
+        $this->validateView($view);
+
         $path = $this->viewCache->getCachedViewPath(
-            path: $view->getPath(),
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath())),
+            path: $view->path,
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->path)),
         );
 
         return $this->renderCompiled($view, $path);
@@ -82,7 +85,7 @@ final class TempestViewRenderer implements ViewRenderer
         ob_start();
 
         // Extract data from view into local variables so that they can be accessed directly
-        $_data = $_view->getData();
+        $_data = $_view->data;
 
         extract($_data, flags: EXTR_SKIP);
 
@@ -104,5 +107,14 @@ final class TempestViewRenderer implements ViewRenderer
         }
 
         return htmlentities((string)$value);
+    }
+
+    private function validateView(View $view): void
+    {
+        $data = $view->data;
+
+        if (array_key_exists('slots', $data)) {
+            throw new ViewVariableIsReserved('slots');
+        }
     }
 }
