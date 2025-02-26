@@ -7,7 +7,6 @@ namespace Tempest\Mapper\Casters;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use InvalidArgumentException;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Reflection\PropertyReflector;
