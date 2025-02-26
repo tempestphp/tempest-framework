@@ -16,7 +16,7 @@ final class CreateCasterModelTable implements DatabaseMigration
     {
         return CreateTableStatement::forModel(CasterModel::class)
             ->primary()
-            ->date('date')
+            ->datetime('date')
             ->json('array')
             ->varchar('enum');
     }
