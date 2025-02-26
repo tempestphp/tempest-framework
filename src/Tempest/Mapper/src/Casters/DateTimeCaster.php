@@ -16,14 +16,14 @@ use Tempest\Validation\Rules\DateTimeFormat;
 final readonly class DateTimeCaster implements Caster
 {
     public function __construct(
-        private string $format = 'Y-m-d H:i:s',
+        private string $format = 'c',
         private bool $immutable = true,
     ) {
     }
 
     public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'c';
 
         return match ($property->getType()->getName()) {
             DateTime::class => new DateTimeCaster($format, immutable: false),
