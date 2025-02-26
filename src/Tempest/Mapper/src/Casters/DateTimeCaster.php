@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use InvalidArgumentException;
 use Tempest\Mapper\Caster;
+use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
@@ -47,5 +48,14 @@ final readonly class DateTimeCaster implements Caster
         }
 
         return $date;
+    }
+
+    public function serialize(mixed $input): string
+    {
+        if (! $input instanceof DateTimeInterface) {
+            throw new CannotSerializeValue(DateTimeInterface::class);
+        }
+
+        return $input->format($this->format);
     }
 }
