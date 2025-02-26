@@ -44,7 +44,7 @@ final readonly class DateTimeCaster implements Caster
         }
 
         if (! $date) {
-            throw new InvalidArgumentException("Must be a valid date in the format {$this->format}");
+            throw new InvalidArgumentException("Must be a valid date in the format {$this->format}, instead got: {$input}");
         }
 
         return $date;
