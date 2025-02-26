@@ -37,14 +37,12 @@ final readonly class DateTimeCaster implements Caster
             return $input;
         }
 
-        if ($this->immutable) {
-            $date = DateTimeImmutable::createFromFormat($this->format, $input);
-        } else {
-            $date = DateTime::createFromFormat($this->format, $input);
-        }
+        $class = $this->immutable ? DateTimeImmutable::class : DateTime::class;
+
+        $date = $class::createFromFormat($this->format, $input);
 
         if (! $date) {
-            throw new InvalidArgumentException("Must be a valid date in the format {$this->format}, instead got: {$input}");
+            $date = new $class($input);
         }
 
         return $date;
