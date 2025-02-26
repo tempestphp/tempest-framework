@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Tests\Enums;
+namespace Tempest\Support\Tests;
 
 use ValueError;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusPureEnum;

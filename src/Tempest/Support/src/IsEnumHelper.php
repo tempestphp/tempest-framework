@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Enums;
+namespace Tempest\Support;
 
 use ArrayIterator;
 use BackedEnum;
