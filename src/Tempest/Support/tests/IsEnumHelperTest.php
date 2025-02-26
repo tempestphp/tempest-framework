@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests;
 
-use ValueError;
-use Tempest\Support\Tests\Fixtures\Enums\SampleStatusPureEnum;
-use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
-use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
-use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
-use Tempest\Support\ArrayHelper;
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\Test;
 use ArrayIterator;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Tempest\Support\ArrayHelper;
+use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
+use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
+use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
+use Tempest\Support\Tests\Fixtures\Enums\SampleStatusPureEnum;
+use ValueError;
 
+/**
+ * @internal
+ */
 final class IsEnumHelperTest extends TestCase
 {
     #[Test]

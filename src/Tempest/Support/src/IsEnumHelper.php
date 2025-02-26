@@ -12,12 +12,10 @@ use IteratorAggregate;
 use Traversable;
 use UnitEnum;
 use ValueError;
-use Tempest\Support\ArrayHelper;
-use function Tempest\Support\arr;
 
 /**
  * This trait provides a bunch of helper methods to work with enums
- * 
+ *
  * @template TEnum of \UnitEnum
  */
 trait IsEnumHelper
@@ -162,7 +160,7 @@ trait IsEnumHelper
     {
         /** @var class-string<TEnum> */
         $class = static::class;
-        
+
         $caseValues = is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
@@ -204,7 +202,7 @@ trait IsEnumHelper
     {
         /** @var class-string<TEnum> */
         $class = static::class;
-        
+
         return is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
@@ -230,7 +228,7 @@ trait IsEnumHelper
     {
         /** @var class-string<TEnum> */
         $class = static::class;
-        
+
         return is_subclass_of($class, BackedEnum::class)
             ? array_column(static::cases(), 'value', 'name')
             : self::values();

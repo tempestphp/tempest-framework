@@ -22,7 +22,8 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
@@ -100,9 +101,9 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string)$value;
+            return (string) $value;
         }
 
-        return htmlentities((string)$value);
+        return htmlentities((string) $value);
     }
 }
