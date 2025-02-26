@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-use ArrayIterator;
-use BackedEnum;
-use InvalidArgumentException;
-use Iterator;
-use IteratorAggregate;
-use Traversable;
-use UnitEnum;
 use ValueError;
+use UnitEnum;
+use Traversable;
+use Tempest\Support\ArrayHelper;
+use IteratorAggregate;
+use Iterator;
+use InvalidArgumentException;
+use BackedEnum;
+use ArrayIterator;
 
 /**
  * This trait provides a bunch of helper methods to work with enums
