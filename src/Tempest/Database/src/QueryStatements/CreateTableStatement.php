@@ -214,8 +214,9 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         string $enumClass,
         bool $nullable = false,
-        null|UnitEnum|BackedEnum $default = null
-    ): self {
+        null|UnitEnum|BackedEnum $default = null,
+    ): self
+    {
         $this->statements[] = new CreateEnumTypeStatement($enumClass);
 
         $this->statements[] = new EnumStatement(
