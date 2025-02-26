@@ -2,20 +2,122 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Tests;
+namespace Tempest\Support\Tests\Enums;
 
-use ArrayIterator;
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
-use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
-use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
+use ValueError;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusPureEnum;
+use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
+use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
+use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
+use Tempest\Support\ArrayHelper;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use ArrayIterator;
 
-/**
- * @internal
- */
-final class ComparableTest extends TestCase
+final class IsEnumHelperTest extends TestCase
 {
+    #[Test]
+    public function from_name_method_with_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::PUBLISH,
+            actual  : SampleStatusBackedEnum::fromName('PUBLISH'),
+        );
+
+        // It's case sensitive
+        $this->expectException(ValueError::class);
+
+        SampleStatusBackedEnum::fromName('publish');
+    }
+
+    #[Test]
+    public function from_name_method_with_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::PUBLISH,
+            actual  : SampleStatusPureEnum::fromName('PUBLISH'),
+        );
+
+        // It's case sensitive
+        $this->expectException(ValueError::class);
+
+        SampleStatusPureEnum::fromName('publish');
+    }
+
+    #[Test]
+    public function try_from_name_method_with_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::PUBLISH,
+            actual  : SampleStatusBackedEnum::tryFromName('PUBLISH'),
+        );
+
+        $this->assertNull(
+            SampleStatusBackedEnum::tryFromName('publish'),
+        );
+    }
+
+    #[Test]
+    public function try_from_name_method_with_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::PUBLISH,
+            actual  : SampleStatusPureEnum::tryFromName('PUBLISH'),
+        );
+
+        // It's case sensitive
+        $this->assertNull(
+            SampleStatusPureEnum::tryFromName('publish'),
+        );
+    }
+
+    #[Test]
+    public function from_method_with_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::PUBLISH,
+            actual  : SampleStatusBackedEnum::from('publish'),
+        );
+
+        // It's case sensitive
+        $this->expectException(ValueError::class);
+
+        SampleStatusBackedEnum::from('PUBLISH');
+    }
+
+    #[Test]
+    public function from_method_with_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::PUBLISH,
+            actual  : SampleStatusPureEnum::from('PUBLISH'),
+        );
+    }
+
+    #[Test]
+    public function try_from_method_with_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::PUBLISH,
+            actual  : SampleStatusBackedEnum::tryFrom('publish'),
+        );
+
+        // It's case sensitive
+        // @phpstan-ignore method.alreadyNarrowedType ( Because it's a regression test )
+        $this->assertNull(
+            SampleStatusBackedEnum::tryFrom('PUBLISH'),
+        );
+    }
+
+    #[Test]
+    public function try_from_method_with_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::PUBLISH,
+            actual  : SampleStatusPureEnum::tryFrom('PUBLISH'),
+        );
+    }
+
     #[Test]
     public function is_method_with_backed_enum(): void
     {
@@ -343,6 +445,125 @@ final class ComparableTest extends TestCase
         // Case sensitive
         $this->assertTrue(
             SampleStatusPureEnum::hasNotValue('Publish'),
+        );
+    }
+
+    #[Test]
+    public function names_method_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::names(),
+            actual: [
+                'PUBLISH',
+                'DRAFT',
+                'TRASH',
+            ],
+        );
+    }
+
+    #[Test]
+    public function names_method_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::names(),
+            actual: [
+                'PUBLISH',
+                'DRAFT',
+                'TRASH',
+            ],
+        );
+    }
+
+    #[Test]
+    public function names_returns_empty_array_with_empty_enum(): void
+    {
+        $this->assertSame(
+            expected: EmptyEnum::names(),
+            actual: [],
+        );
+    }
+
+    #[Test]
+    public function values_method_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::values(),
+            actual: [
+                'publish',
+                'draft',
+                'trash',
+            ],
+        );
+    }
+
+    #[Test]
+    public function values_method_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::values(),
+            actual: [
+                'PUBLISH',
+                'DRAFT',
+                'TRASH',
+            ],
+        );
+    }
+
+    #[Test]
+    public function values_returns_empty_array_with_empty_enum(): void
+    {
+        $this->assertSame(
+            expected: EmptyEnum::values(),
+            actual: [],
+        );
+    }
+
+    #[Test]
+    public function collect(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::cases(),
+            actual: SampleStatusBackedEnum::collect()->toArray(),
+        );
+
+        $this->assertInstanceOf(
+            expected: ArrayHelper::class,
+            actual: SampleStatusBackedEnum::collect(),
+        );
+    }
+
+    #[Test]
+    public function options_method_backed_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusBackedEnum::options(),
+            actual: [
+                'PUBLISH' => 'publish',
+                'DRAFT' => 'draft',
+                'TRASH' => 'trash',
+            ],
+        );
+    }
+
+    #[Test]
+    public function options_method_pure_enum(): void
+    {
+        $this->assertSame(
+            expected: SampleStatusPureEnum::options(),
+            actual: [
+                'PUBLISH',
+                'DRAFT',
+                'TRASH',
+            ],
+        );
+    }
+
+    #[Test]
+    public function options_returns_empty_array_with_empty_enum(): void
+    {
+        $this->assertSame(
+            expected: EmptyEnum::options(),
+            actual: [],
         );
     }
 }
