@@ -135,7 +135,7 @@ trait IsEnumHelper
     {
         $caseNames = array_column(static::cases(), 'name');
 
-        return in_array($name, $caseNames, strict: true);
+        return in_array($name, $caseNames, strict: true); /** @phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable ) */
     }
 
     /**
@@ -167,7 +167,7 @@ trait IsEnumHelper
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
 
-        return in_array($value, $caseValues, strict: true);
+        return in_array($value, $caseValues, strict: true);  /** @phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable ) */
     }
 
     /**
