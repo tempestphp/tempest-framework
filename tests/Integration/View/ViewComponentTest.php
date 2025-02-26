@@ -69,17 +69,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             HTML,
         );
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->render(<<<'HTML_WRAP'
         <x-test>
             <x-slot name="slot-php" language="PHP">PHP Body</x-slot>    
             <x-slot name="slot-html" language="HTML">HTML Body</x-slot>    
         </x-test>
-        HTML);
+        HTML_WRAP);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML_WRAP'
         <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
         <div><div>slot-html</div><div>HTML</div><div>HTML</div><div>HTML Body</div></div>
-        HTML, $html);
+        HTML_WRAP, $html);
     }
 
     public function test_dynamic_slots_are_cleaned_up(): void

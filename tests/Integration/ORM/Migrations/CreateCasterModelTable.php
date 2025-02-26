@@ -12,7 +12,7 @@ final class CreateCasterModelTable implements DatabaseMigration
 {
     public string $name = '0000_create_caster_model_table';
 
-    public function up(): QueryStatement|null
+    public function up(): QueryStatement
     {
         return CreateTableStatement::forModel(CasterModel::class)
             ->primary()
@@ -21,7 +21,7 @@ final class CreateCasterModelTable implements DatabaseMigration
             ->varchar('enum');
     }
 
-    public function down(): QueryStatement|null
+    public function down(): QueryStatement
     {
         return DropTableStatement::forModel(CasterModel::class);
     }

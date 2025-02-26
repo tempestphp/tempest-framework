@@ -9,6 +9,10 @@ final class ArrayCaster implements Caster
 {
     public function cast(mixed $input): array
     {
+        if (is_array($input)) {
+            return $input;
+        }
+
         return json_decode($input, associative: true);
     }
 

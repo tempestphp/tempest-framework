@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
+use Tempest\Mapper\Casters\ArrayCaster;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
@@ -168,6 +169,11 @@ final readonly class ArrayToObjectMapper implements Mapper
         $values = [];
 
         $caster = $this->casterFactory->forProperty($property);
+
+        // We'll manually cast array values instead of using the array caster
+        if ($caster instanceof ArrayCaster) {
+            $caster = null;
+        }
 
         foreach ($data as $key => $item) {
             if (! is_array($item)) {
