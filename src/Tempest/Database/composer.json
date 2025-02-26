@@ -9,7 +9,8 @@
         "tempest/container": "dev-main",
         "tempest/event-bus": "dev-main",
         "tempest/mapper": "dev-main",
-        "tempest/support": "dev-main"
+        "tempest/support": "dev-main",
+        "tempest/highlight": "^2.11.2"
     },
     "autoload": {
         "psr-4": {

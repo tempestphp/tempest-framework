@@ -6,7 +6,9 @@ namespace Tempest\Console\Components;
 
 use Countable;
 use Iterator;
+use Stringable;
 use Tempest\Support\ArrayHelper;
+use UnitEnum;
 use function Tempest\Support\arr;
 
 final class OptionCollection implements Iterator, Countable
@@ -47,7 +49,7 @@ final class OptionCollection implements Iterator, Countable
         $previouslySelectedOptions = $this->selectedOptions;
 
         $this->filteredOptions = arr($this->options)
-            ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower($option->value), mb_strtolower(trim($query))))
+            ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower((string) $option->value), mb_strtolower(trim($query))))
             ->values()
             ->toArray();
 
@@ -91,6 +93,7 @@ final class OptionCollection implements Iterator, Countable
         }
     }
 
+    /** @return ArrayHelper<Option> */
     public function getOptions(): ArrayHelper
     {
         return arr($this->filteredOptions)->values();
@@ -108,11 +111,15 @@ final class OptionCollection implements Iterator, Countable
     }
 
     /** @return array<mixed> */
-    public function getRawSelectedOptions(): array
+    public function getRawSelectedOptions(array $default = []): array
     {
         $selected = arr($this->selectedOptions)
             ->mapWithKeys(static fn (Option $option) => yield $option->key => $option->value)
             ->toArray();
+
+        if ($selected === []) {
+            return $default;
+        }
 
         // TODO: PR `tap` to `ArrayHelper`
         if (! $this->preserveKeys) {
@@ -120,6 +127,19 @@ final class OptionCollection implements Iterator, Countable
         }
 
         return $selected;
+    }
+
+    public function getRawActiveOption(mixed $default = null): mixed
+    {
+        $option = $this->getActive();
+
+        if ($option === null) {
+            return $default;
+        }
+
+        return $this->isList()
+             ? $option->value
+             : $option->key;
     }
 
     /** @return array<Option> */
@@ -156,6 +176,20 @@ final class OptionCollection implements Iterator, Countable
     public function getActive(): ?Option
     {
         return $this->filteredOptions[$this->activeOption] ?? null;
+    }
+
+    public function setActive(null|Stringable|UnitEnum|string $value): void
+    {
+        $value = match (true) {
+            $value instanceof Stringable => $value->__toString(),
+            default => $value,
+        };
+
+        $this->activeOption = array_search(
+            array_find($this->filteredOptions, fn (Option $option) => $option->key === $value || $option->value === $value),
+            $this->filteredOptions,
+            strict: true,
+        ) ?: 0;
     }
 
     public function current(): ?Option

@@ -19,16 +19,6 @@ trait IsView
         $this->data = $data;
     }
 
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
     public function get(string $key): mixed
     {
         return $this->{$key} ?? $this->data[$key] ?? null;

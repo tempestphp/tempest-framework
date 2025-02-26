@@ -1,3 +1,5 @@
 import defineEslintConfig from '@innocenzi/eslint-config'
 
-export default defineEslintConfig()
+export default defineEslintConfig({
+	ignores: ['.github', 'public', '*.json', '**/composer.json'],
+})

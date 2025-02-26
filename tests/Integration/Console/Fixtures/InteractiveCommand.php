@@ -6,14 +6,29 @@ namespace Tests\Tempest\Integration\Console\Fixtures;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\HasConsole;
 use Tempest\Validation\Rules\Count;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Rules\Length;
 
 final readonly class InteractiveCommand
 {
+    use HasConsole;
+
     public function __construct(private Console $console)
     {
+    }
+
+    #[ConsoleCommand('interactive:enum')]
+    public function enum(): void
+    {
+        $this->ask(
+            question: 'Pick one',
+            options: MyEnum::class,
+            default: MyEnum::OTHER,
+        );
+
+        $this->console->success('Done');
     }
 
     #[ConsoleCommand('interactive:validation')]
@@ -26,7 +41,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:confirm')]
-    public function confirm(): void
+    public function confirmCommand(): void
     {
         $confirm = $this->console->confirm('abc', true);
 
@@ -34,7 +49,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:password')]
-    public function password(): void
+    public function passwordCommand(): void
     {
         $password = $this->console->password(confirm: true);
 
@@ -90,7 +105,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:ask')]
-    public function ask(): void
+    public function interactiveAsk(): void
     {
         $answer = $this->console->ask('Hello?');
 
@@ -113,7 +128,7 @@ final readonly class InteractiveCommand
     }
 
     #[ConsoleCommand('interactive:search')]
-    public function search(): void
+    public function searchCommand(): void
     {
         $data = ['Brent', 'Paul', 'Aidan', 'Roman'];
 

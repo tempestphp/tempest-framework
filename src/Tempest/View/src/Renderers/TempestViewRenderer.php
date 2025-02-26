@@ -7,6 +7,7 @@ namespace Tempest\View\Renderers;
 use Stringable;
 use Tempest\Support\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
+use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
@@ -22,8 +23,7 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -39,9 +39,11 @@ final class TempestViewRenderer implements ViewRenderer
     {
         $view = is_string($view) ? new GenericView($view) : $view;
 
+        $this->validateView($view);
+
         $path = $this->viewCache->getCachedViewPath(
-            path: $view->getPath(),
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->getPath())),
+            path: $view->path,
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->path)),
         );
 
         return $this->renderCompiled($view, $path);
@@ -54,20 +56,21 @@ final class TempestViewRenderer implements ViewRenderer
 
         // Cleanup and bundle imports
         $imports = arr();
-        $compiled = $compiled
-            ->replaceRegex('/use .*;/', function (array $matches) use (&$imports) {
-                $imports[$matches[0]] = $matches[0];
 
-                return '';
-            })
-            ->prepend(
-                sprintf(
-                    '<?php
+        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
+            $imports[$matches[0]] = $matches[0];
+
+            return '';
+        });
+
+        $compiled = $compiled->prepend(
+            sprintf(
+                '<?php
 %s
 ?>',
-                    $imports->implode(PHP_EOL),
-                ),
-            );
+                $imports->implode(PHP_EOL),
+            ),
+        );
 
         // Remove empty PHP blocks
         $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
@@ -82,7 +85,7 @@ final class TempestViewRenderer implements ViewRenderer
         ob_start();
 
         // Extract data from view into local variables so that they can be accessed directly
-        $_data = $_view->getData();
+        $_data = $_view->data;
 
         extract($_data, flags: EXTR_SKIP);
 
@@ -100,9 +103,18 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string) $value;
+            return (string)$value;
         }
 
-        return htmlentities((string) $value);
+        return htmlentities((string)$value);
+    }
+
+    private function validateView(View $view): void
+    {
+        $data = $view->data;
+
+        if (array_key_exists('slots', $data)) {
+            throw new ViewVariableIsReserved('slots');
+        }
     }
 }

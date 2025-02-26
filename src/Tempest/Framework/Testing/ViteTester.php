@@ -72,6 +72,7 @@ final class ViteTester
     {
         $config = $this->container->get(ViteConfig::class);
         $config->useManifestDuringTesting = true;
+
         $this->container->config($config);
 
         return $this;
@@ -84,6 +85,7 @@ final class ViteTester
     {
         $config = $this->container->get(ViteConfig::class);
         $config->useManifestDuringTesting = false;
+
         $this->container->config($config);
 
         return $this;

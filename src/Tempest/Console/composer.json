@@ -17,6 +17,10 @@
         "tempest/validation": "dev-main",
         "ext-readline": "*"
     },
+    "suggest": {
+        "ext-pcntl": "Required to use some interactive console components.",
+        "ext-posix": "Required to use some interactive console components."
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Console\\": "src"

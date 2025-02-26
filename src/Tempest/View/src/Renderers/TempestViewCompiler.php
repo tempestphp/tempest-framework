@@ -80,7 +80,7 @@ final readonly class TempestViewCompiler
         return file_get_contents($searchPath);
     }
 
-    private function parseDom(string $template): NodeList
+    private function parseDom(string $template): HTMLDocument|NodeList
     {
         $template = str($template)
 
@@ -104,6 +104,12 @@ final readonly class TempestViewCompiler
                 },
             );
 
+        if ($template->startsWith(['<html', '<!DOCTYPE', '<!doctype'])) {
+            // If we're rendering a full HTML document, we'll parse it as is
+            return HTMLDocument::createFromString($template->toString(), LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
+        }
+
+        // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
         $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 
         return $dom->getElementById('tempest_render')->childNodes;
@@ -112,11 +118,15 @@ final readonly class TempestViewCompiler
     /**
      * @return Element[]
      */
-    private function mapToElements(NodeList $nodeList): array
+    private function mapToElements(HTMLDocument|NodeList $nodes): array
     {
         $elements = [];
 
-        foreach ($nodeList as $node) {
+        if ($nodes instanceof HTMLDocument) {
+            $nodes = $nodes->childNodes;
+        }
+
+        foreach ($nodes as $node) {
             $element = $this->elementFactory->make($node);
 
             if ($element === null) {

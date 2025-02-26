@@ -17,10 +17,10 @@ jobs:
           exempt-all-milestones: true
           days-before-stale: 30
           days-before-close: 1
-          stale-issue-label: "stale"
+          stale-issue-label: "Stale"
           stale-issue-message: "This issue is stale because it has been open for 30 days with no activity."
           close-issue-message: "This issue was closed because it has been inactive for 1 day since being marked as stale."
-          stale-pr-label: "stale"
+          stale-pr-label: "Stale"
           stale-pr-message: "This pull request is stale because it has been open for 30 days with no activity."
           close-pr-message:  "This pull request was closed because it has been inactive for 1 day since being marked as stale."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
