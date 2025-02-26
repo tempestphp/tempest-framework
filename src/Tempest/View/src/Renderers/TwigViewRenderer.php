@@ -20,6 +20,6 @@ final readonly class TwigViewRenderer implements ViewRenderer
             return '';
         }
 
-        return trim($this->twig->render($view->getPath(), $view->getData()));
+        return trim($this->twig->render($view->path, $view->data));
     }
 }
