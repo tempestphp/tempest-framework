@@ -196,8 +196,6 @@ final class ClassManipulatorTest extends TestCase
     public function support_property_hooks_get(): void {
         $class = new ClassManipulator(ClassWithGetPropertyHook::class);
 
-        dd(
-            $class->print()
-        );
+        $this->assertMatchesSnapshot($class->print());
     }
 }
