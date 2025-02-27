@@ -69,17 +69,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             HTML,
         );
 
-        $html = $this->render(<<<'HTML'
+        $html = $this->render(<<<'HTML_WRAP'
         <x-test>
             <x-slot name="slot-php" language="PHP">PHP Body</x-slot>    
             <x-slot name="slot-html" language="HTML">HTML Body</x-slot>    
         </x-test>
-        HTML);
+        HTML_WRAP);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML_WRAP'
         <div><div>slot-php</div><div>PHP</div><div>PHP</div><div>PHP Body</div></div>
         <div><div>slot-html</div><div>HTML</div><div>HTML</div><div>HTML Body</div></div>
-        HTML, $html);
+        HTML_WRAP, $html);
     }
 
     public function test_dynamic_slots_are_cleaned_up(): void
@@ -155,15 +155,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-                <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div>
-
-
-                </div>
-                <div><label for="b">b</label><input type="text" name="b" id="b" value></input></div>
-
-
-
-                </form>
+                <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></input></div></form>
                 HTML,
             actual: $this->render(view(
                 <<<'HTML'
@@ -290,8 +282,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        test    </div>
+                <div>test</div>
                 HTML,
             $rendered,
         );
@@ -305,8 +296,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        test    </div>
+                <div>test</div>
                 HTML,
             $rendered,
         );
@@ -323,8 +313,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<HTML
-                <div>
-                        TEST    </div>
+                <div>TEST</div>
                 HTML,
             $rendered,
         );
@@ -463,5 +452,34 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             '<x-my foo="fooValue" bar="barValue">body</x-my>',
             '<div foo="fooValue" bar="barValue">body</div>',
         ];
+    }
+    
+    public function test_full_html_document_as_component(): void
+    {
+        $this->registerViewComponent('x-layout', <<<'HTML'
+            <html lang="en">
+            <head>
+                <title>Tempest View</title>
+            </head>
+            <body>
+                <x-slot />
+            </body>
+            </html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout>
+            Hello World
+        </x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><head><title>Tempest View</title></head><body>
+                
+            Hello World
+        
+            
+            </body></html>
+        HTML, $html);
     }
 }
