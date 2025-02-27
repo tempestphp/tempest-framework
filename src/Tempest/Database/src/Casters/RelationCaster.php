@@ -12,4 +12,9 @@ final class RelationCaster implements Caster
     {
         return $input;
     }
+
+    public function serialize(mixed $input): string
+    {
+        return $input;
+    }
 }

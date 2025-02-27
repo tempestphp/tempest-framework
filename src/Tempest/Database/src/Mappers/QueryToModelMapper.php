@@ -24,6 +24,8 @@ final readonly class QueryToModelMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array
     {
+        /** @var \Tempest\Database\Query $from */
+        /** @var class-string<DatabaseModel> $to */
         $class = new ClassReflector($to);
         $table = $class->callStatic('table');
 
@@ -55,7 +57,7 @@ final readonly class QueryToModelMapper implements Mapper
             if ($count > 3) {
                 $property = $class->getProperty(rtrim($propertyName, '[]'));
 
-                if ($property->isIterable()) {
+                if ($property->getIterableType()?->matches(DatabaseModel::class)) {
                     $collection = $property->get($model, []);
                     $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
 
@@ -217,7 +219,7 @@ final readonly class QueryToModelMapper implements Mapper
                 continue;
             }
 
-            if ($property->isIterable()) {
+            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
                 foreach ($property->get($model) as $childModel) {
                     $this->makeLazyModel($childModel);
                 }

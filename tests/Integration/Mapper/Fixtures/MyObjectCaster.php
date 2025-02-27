@@ -12,4 +12,9 @@ final class MyObjectCaster implements Caster
     {
         return new MyObject($input);
     }
+
+    public function serialize(mixed $input): string
+    {
+        return serialize($input);
+    }
 }
