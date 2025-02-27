@@ -11,6 +11,7 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use function Tempest\env;
@@ -91,7 +92,7 @@ final readonly class DiscoveryGenerateCommand
         $container = new GenericContainer();
         $container->singleton(Container::class, $container);
 
-        return new Kernel(
+        return new FrameworkKernel(
             root: $this->kernel->root,
             discoveryLocations: $this->kernel->discoveryLocations,
             container: $container,
