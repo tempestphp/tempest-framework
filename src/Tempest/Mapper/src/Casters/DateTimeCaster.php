@@ -41,7 +41,7 @@ final readonly class DateTimeCaster implements Caster
         $date = $class::createFromFormat($this->format, $input);
 
         if (! $date) {
-            $date = new $class($input);
+            return new $class($input);
         }
 
         return $date;

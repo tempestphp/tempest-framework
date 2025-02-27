@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 
@@ -22,7 +23,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->kernel = Kernel::boot(
+        $this->kernel = FrameworkKernel::boot(
             root: getcwd(),
             discoveryLocations: [
                 new DiscoveryLocation(
@@ -32,6 +33,6 @@ abstract class IntegrationTestCase extends TestCase
             ],
         );
 
-        $this->container = ($this->kernel)->container;
+        $this->container = $this->kernel->container;
     }
 }
