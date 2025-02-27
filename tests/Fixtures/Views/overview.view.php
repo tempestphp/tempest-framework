@@ -1,3 +1,3 @@
 <x-index>
-    Hello <?= $name ?? 'World' ?>!
+    Hello {{ $name ?? 'World' }}!
 </x-index>

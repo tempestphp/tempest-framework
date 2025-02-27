@@ -17,11 +17,11 @@ use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler
 {
-    public const string TOKEN_PHP_OPEN = '__TOKEN_PHP_OPEN__';
+    public const string TOKEN_PHP_OPEN = '<!--TOKEN_PHP_OPEN__';
 
-    public const string TOKEN_PHP_SHORT_ECHO = '__TOKEN_PHP_SHORT_ECHO__';
+    public const string TOKEN_PHP_SHORT_ECHO = '<!--TOKEN_PHP_SHORT_ECHO__';
 
-    public const string TOKEN_PHP_CLOSE = '__TOKEN_PHP_CLOSE__';
+    public const string TOKEN_PHP_CLOSE = '__TOKEN_PHP_CLOSE-->';
 
     public const array TOKEN_MAPPING = [
         '<?php' => self::TOKEN_PHP_OPEN,
@@ -33,8 +33,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string $path): string
     {
@@ -104,7 +103,12 @@ final readonly class TempestViewCompiler
                 },
             );
 
-        if ($template->startsWith(['<html', '<!DOCTYPE', '<!doctype'])) {
+        $isFullHtmlDocument = $template
+            ->replaceRegex('/('.self::TOKEN_PHP_OPEN.'|'.self::TOKEN_PHP_SHORT_ECHO.')(.|\n)*?'.self::TOKEN_PHP_CLOSE.'/', '')
+            ->trim()
+            ->startsWith(['<html', '<!DOCTYPE', '<!doctype']);
+
+        if ($isFullHtmlDocument) {
             // If we're rendering a full HTML document, we'll parse it as is
             return HTMLDocument::createFromString($template->toString(), LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
         }
