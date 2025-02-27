@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Installer;
 
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Support\JavaScript\DependencyInstaller;
@@ -23,24 +24,47 @@ final class ViteInstaller implements Installer
     public function __construct(
         private readonly DependencyInstaller $javascript,
         private readonly ViteConfig $viteConfig,
+        private readonly ConsoleArgumentBag $consoleArgumentBag,
     ) {
+    }
+
+    private function shouldInstallTailwind(): bool
+    {
+        $argument = $this->consoleArgumentBag->get('tailwind');
+
+        if ($argument === null || !is_bool($argument->value)) {
+            return $this->console->confirm('Install Tailwind CSS as well?', default: true);
+        }
+
+        return (bool) $argument->value;
     }
 
     public function install(): void
     {
+        $shouldInstallTailwind = $this->shouldInstallTailwind();
+        $templateDirectory = $shouldInstallTailwind
+            ? 'Tailwind'
+            : 'Vanilla';
+
         // Installs the dependencies
         $this->javascript->installDependencies(
             cwd: root_path(),
             dependencies: [
                 'vite',
                 'vite-plugin-tempest',
+                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : [])
             ],
             dev: true,
         );
 
         // Publishes the Vite config
-        $viteConfig = $this->publish(__DIR__ . '/Vanilla/vite.config.ts', destination: root_path('vite.config.ts'));
-        $main = $this->publish(__DIR__ . '/Vanilla/main.ts', destination: src_path('main.ts'));
+        $viteConfig = $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
+        $main = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.ts'));
+
+        // Publishes Tailwind's `main.css` file if requested
+        if ($shouldInstallTailwind) {
+            $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.css'));
+        }
 
         // Install package.json scripts
         $this->updateJson(root_path('package.json'), function (array $json) {
@@ -75,7 +99,9 @@ final class ViteInstaller implements Installer
         $packageManager = PackageManager::detect(root_path());
 
         $this->console->instructions([
-            '<strong>Vite is now installed in your project</strong>!',
+            $shouldInstallTailwind
+                ? '<strong>Vite and Tailwind CSS are now installed in your project</strong>!'
+                : '<strong>Vite is now installed in your project</strong>!',
             PHP_EOL,
             $main
                 ? "Add <code>\\Tempest\\vite_tags('{$main}')</code> to your template"
