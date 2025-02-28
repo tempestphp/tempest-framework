@@ -9,7 +9,7 @@ use Tempest\Mapper\Attributes\MapTo;
 final class ObjectWithMappedVariousPropertyScope
 {
     public function __construct(
-        #[MapTo('private')]
+        #[MapTo('private')] // @phpstan-ignore-line property.onlyWritten
         private string $privateProp,
         #[MapTo('protected')]
         protected string $protectedProp,
