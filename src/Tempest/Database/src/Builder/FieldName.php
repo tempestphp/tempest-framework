@@ -26,8 +26,13 @@ final class FieldName implements Stringable
         $tableName ??= $class->callStatic('table');
 
         foreach ($class->getPublicProperties() as $property) {
-            // Don't include the field if it's a relation
+            // Don't include the field if it's a 1:1 or n:1 relation
             if ($property->getType()->matches(DatabaseModel::class)) {
+                continue;
+            }
+
+            // Don't include the field if it's a 1:n relation
+            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
                 continue;
             }
 
@@ -39,13 +44,7 @@ final class FieldName implements Stringable
                 continue;
             }
 
-            $type = $property->getType();
-
-            if ($type->isIterable()) {
-                continue;
-            }
-
-            if (! $type->isBuiltIn()) {
+            if (! $property->getType()->isBuiltIn()) {
                 continue;
             }
 

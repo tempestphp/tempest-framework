@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
+use DateTimeImmutable;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
@@ -24,11 +25,14 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateCasterModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
 use Tests\Tempest\Integration\ORM\Models\CarbonModel;
+use Tests\Tempest\Integration\ORM\Models\CasterEnum;
+use Tests\Tempest\Integration\ORM\Models\CasterModel;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
@@ -453,5 +457,25 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $model = CarbonModel::query()->first();
 
         $this->assertTrue($model->createdAt->equalTo(new Carbon('2024-01-01')));
+    }
+
+    public function test_two_way_casters_on_models(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateCasterModelTable::class,
+        );
+
+        new CasterModel(
+            date: new DateTimeImmutable('2025-01-01 00:00:00'),
+            array: ['a', 'b', 'c'],
+            enum: CasterEnum::BAR,
+        )->save();
+
+        $model = CasterModel::query()->first();
+
+        $this->assertSame(new DateTimeImmutable('2025-01-01 00:00:00')->format('c'), $model->date->format('c'));
+        $this->assertSame(['a', 'b', 'c'], $model->array);
+        $this->assertSame(CasterEnum::BAR, $model->enum);
     }
 }

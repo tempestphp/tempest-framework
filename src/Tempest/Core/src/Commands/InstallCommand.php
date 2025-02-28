@@ -35,7 +35,7 @@ final readonly class InstallCommand
             return;
         }
 
-        if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?")) {
+        if (! $this->confirm("Running the <em>{$installer->name}</em> installer, continue?", default: true)) {
             $this->error('Aborted.');
 
             return;

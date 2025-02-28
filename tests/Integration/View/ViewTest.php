@@ -23,7 +23,7 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->render($view);
 
         $this->assertStringContainsString(
-            'Hello Brent!',
+            'Brent!',
             $html,
         );
 

@@ -16,7 +16,7 @@ final readonly class Tempest
         $root ??= getcwd();
 
         // Kernel
-        return Kernel::boot(
+        return FrameworkKernel::boot(
             root: $root,
             discoveryLocations: $discoveryLocations,
         )->container;

@@ -13,6 +13,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\UnsupportedDialect;
+use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -77,6 +78,60 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
             null => throw new RuntimeException('No database dialect available'),
+        };
+
+        $this->migrate(
+            CreateMigrationsTable::class,
+            $migration,
+        );
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_array_statement(): void
+    {
+        $migration = new class () implements DatabaseMigration {
+            public string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('table')
+                    ->array('array', default: ['foo', 'bar']);
+            }
+
+            public function down(): QueryStatement|null
+            {
+                return null;
+            }
+        };
+
+        $this->migrate(
+            CreateMigrationsTable::class,
+            $migration,
+        );
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_enum_statement(): void
+    {
+        $migration = new class () implements DatabaseMigration {
+            public string $name = '0';
+
+            public function up(): QueryStatement
+            {
+                return new CreateTableStatement('table')
+                    ->enum(
+                        name: 'enum',
+                        enumClass: EnumForCreateTable::class,
+                        default: EnumForCreateTable::BAR,
+                    );
+            }
+
+            public function down(): QueryStatement|null
+            {
+                return null;
+            }
         };
 
         $this->migrate(
