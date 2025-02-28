@@ -121,7 +121,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $mapFrom = $property->getAttribute(MapFrom::class);
         
         if ( ! is_null( $mapFrom ) ) {
-            return $mapFrom->from;
+            return $mapFrom->key;
         }
 
         return $property->getName();

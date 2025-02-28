@@ -7,6 +7,6 @@ namespace Tempest\Mapper\Attributes;
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class MapFrom {
     public function __construct(
-        public readonly string $from
+        public readonly string $key
     ) {}
 }
