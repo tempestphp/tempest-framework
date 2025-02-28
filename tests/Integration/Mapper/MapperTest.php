@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Mapper;
 
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -171,5 +172,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $object = map(['prop' => ''])->to(ObjectWithBoolProp::class);
 
         $this->assertFalse($object->prop);
+    }
+
+    public function test_map_from_attribute(): void {
+        $object = map([
+            'name' => 'Guillaume'
+        ])->to(ObjectWithMapFromAttribute::class);
+
+        $this->assertSame('Guillaume', $object->fullName);
     }
 }
