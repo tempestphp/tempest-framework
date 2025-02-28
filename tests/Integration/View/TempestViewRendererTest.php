@@ -136,13 +136,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsStringIgnoringLineEndings(
             <<<'HTML'
-                <title>Home</title>
-
-                    
-                    
-                    
-
-                <table><tbody><tr><td>b</td></tr></tbody></table>
+                <html lang="en"><head><title>Home</title></head><body><table><tbody><tr><td>a</td></tr><tr><td>b</td></tr></tbody></table></body></html>
                 HTML,
             $html,
         );
@@ -473,5 +467,33 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             '<div>foo</div><div>foo</div>',
             str_replace(PHP_EOL, '', $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>')),
         );
+    }
+
+    public function test_html_tags(): void
+    {
+        $view = <<<'HTML'
+            <!doctype html> 
+            <html lang="en"> 
+            <!-- test comment -->
+            <head> 
+                <title>Tempest</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="/main.css" rel="stylesheet">
+            </head> 
+            <body class="flex justify-center items-center">
+            
+            <h1 class="text-5xl font-bold text-[#4f95d1]">Tempest</h1>
+            </body> 
+            </html> 
+            HTML;
+
+        $html = $this->render($view);
+
+        $this->assertStringContainsString('<!DOCTYPE html>', $html);
+        $this->assertStringContainsString('<html lang="en">', $html);
+        $this->assertStringContainsString('<head>', $html);
+        $this->assertStringContainsString('<body', $html);
+        $this->assertStringContainsString('<!-- test comment -->', $html);
     }
 }

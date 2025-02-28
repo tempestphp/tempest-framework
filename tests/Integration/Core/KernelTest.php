@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\TestDependency;
@@ -18,7 +19,7 @@ final class KernelTest extends TestCase
     public function test_discovery_boot(): void
     {
         // TODO: Move this
-        $kernel = Kernel::boot(
+        $kernel = FrameworkKernel::boot(
             root: getcwd(),
             discoveryLocations: [
                 new DiscoveryLocation('Tests\\Tempest\\Fixtures\\', getcwd() . '/tests/Fixtures/'),
@@ -37,9 +38,8 @@ final class KernelTest extends TestCase
 
     public function test_kernel_start(): void
     {
-        Kernel::boot(
+        FrameworkKernel::boot(
             root: getcwd(),
-            discoveryLocations: [],
         );
 
         $this->assertTrue(defined('TEMPEST_START'));

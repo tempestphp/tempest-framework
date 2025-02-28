@@ -35,14 +35,12 @@ final class DependencyInstaller
             ],
         );
 
-        $process = new Process([
-            $packageManager->getBinaryName(),
-            $packageManager->getInstallCommand(),
-            $dev ? '-D' : '',
-            ...ArrayHelper::wrap($dependencies),
-        ], $cwd);
-
-        $this->console->task('Installing dependencies', $process);
+        $this->console->task('Installing dependencies', $this->getInstallProcess(
+            packageManager: $packageManager,
+            cwd: $cwd,
+            dependencies: $dependencies,
+            dev: $dev,
+        ));
     }
 
     /**

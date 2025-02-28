@@ -12,4 +12,9 @@ final class ObjectFactoryACaster implements Caster
     {
         return 'casted';
     }
+
+    public function serialize(mixed $input): string
+    {
+        return $input;
+    }
 }

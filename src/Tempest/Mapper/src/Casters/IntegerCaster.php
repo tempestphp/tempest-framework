@@ -12,4 +12,9 @@ final readonly class IntegerCaster implements Caster
     {
         return intval($input);
     }
+
+    public function serialize(mixed $input): string
+    {
+        return (string) $input;
+    }
 }

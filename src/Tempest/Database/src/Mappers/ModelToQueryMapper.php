@@ -6,12 +6,15 @@ namespace Tempest\Database\Mappers;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
+use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
 use function Tempest\map;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
+    public function __construct(private CasterFactory $casterFactory) {}
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return $to === Query::class && $from instanceof DatabaseModel;
@@ -120,18 +123,23 @@ final readonly class ModelToQueryMapper implements Mapper
             }
 
             // 1:1 or n:1 relations
-            $type = $property->getType();
-
-            if ($type->matches(DatabaseModel::class)) {
+            if ($property->getType()->matches(DatabaseModel::class)) {
                 continue;
             }
 
             // 1:n relations
-            if ($type->isIterable()) {
+            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
                 continue;
             }
 
-            $fields[$property->getName()] = $property->getValue($model);
+            $value = $property->getValue($model);
+
+            // Check if caster is available for value serialization
+            if ($value !== null && $caster = $this->casterFactory->forProperty($property)) {
+                $value = $caster->serialize($value);
+            }
+
+            $fields[$property->getName()] = $value;
         }
 
         return $fields;

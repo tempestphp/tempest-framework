@@ -12,4 +12,9 @@ final class DoubleStringCaster implements Caster
     {
         return $input . $input;
     }
+
+    public function serialize(mixed $input): string
+    {
+        return $input;
+    }
 }

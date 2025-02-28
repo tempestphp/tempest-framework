@@ -4,5 +4,5 @@ import tempest from 'vite-plugin-tempest'
 export default defineConfig({
 	plugins: [
 		tempest(),
-	]
+	],
 })

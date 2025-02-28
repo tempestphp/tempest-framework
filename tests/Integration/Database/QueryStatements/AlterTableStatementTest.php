@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
-use http\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;

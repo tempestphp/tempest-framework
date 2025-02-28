@@ -14,7 +14,7 @@ final class RawElement implements Element
     public function __construct(
         private readonly ?string $tag,
         private readonly string $content,
-        array $attributes,
+        array $attributes = [],
     ) {
         $this->attributes = $attributes;
     }

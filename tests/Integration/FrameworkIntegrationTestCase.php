@@ -112,4 +112,9 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $migrationManager->dropAll();
     }
+
+    protected function assertStringCount(string $subject, string $search, int $count): void
+    {
+        $this->assertSame($count, substr_count($subject, $search));
+    }
 }

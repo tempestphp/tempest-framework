@@ -10,10 +10,9 @@ use Tempest\View\ViewComponent;
 final readonly class AnonymousViewComponent implements ViewComponent
 {
     public function __construct(
-        private string $contents,
-        private string $file,
-    ) {
-    }
+        public string $contents,
+        public string $file,
+    ) {}
 
     public static function getName(): string
     {
@@ -23,10 +22,5 @@ final readonly class AnonymousViewComponent implements ViewComponent
     public function compile(ViewComponentElement $element): string
     {
         return $this->contents;
-    }
-
-    public function getPath(): string
-    {
-        return $this->file;
     }
 }
