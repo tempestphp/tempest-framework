@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Mapper\MapTo;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -15,8 +16,13 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMappedVariousPropertyScope;
+
 use function Tempest\make;
 use function Tempest\map;
 
@@ -180,5 +186,52 @@ final class MapperTest extends FrameworkIntegrationTestCase
         ])->to(ObjectWithMapFromAttribute::class);
 
         $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_map_to_attribute(): void {
+        $array = map(new ObjectWithMapToAttribute(
+            fullName: 'Guillaume'
+        ))->to(MapTo::ARRAY);
+
+        $this->assertSame(['name' => 'Guillaume'], $array);
+    }
+
+    public function test_map_to_handle_name_collisions(): void {
+        $array = map(new ObjectWithMapToCollisions(
+            first_name: 'my first name',
+            name: 'my name',
+            last_name: 'my last name'
+        ))->to(MapTo::ARRAY);
+
+        $this->assertSame([
+            'name' => 'my first name',
+            'full_name' => 'my name',
+            'last_name' => 'my last name'
+        ], $array);
+    }
+
+    public function test_map_to_handle_name_collisions_with_json_serializable(): void {
+        $array = map(new ObjectWithMapToCollisionsJsonSerializable(
+            first_name: 'my first name',
+            name: 'my name',
+            last_name: 'my last name'
+        ))->to(MapTo::ARRAY);
+
+        $this->assertSame([
+            'name' => 'my first name',
+            'full_name' => 'my name',
+        ], $array);
+    }
+
+    public function test_map_to_handle_various_property_visibility(): void {
+        $array = map(new ObjectWithMappedVariousPropertyScope(
+            publicProp: 'public',
+            protectedProp: 'protected',
+            privateProp: 'private',
+        ))->to(MapTo::ARRAY);
+
+        $this->assertSame([
+            'public' => 'public',
+        ], $array);
     }
 }
