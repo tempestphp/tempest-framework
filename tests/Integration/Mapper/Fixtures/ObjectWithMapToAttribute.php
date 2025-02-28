@@ -11,5 +11,6 @@ final class ObjectWithMapToAttribute
     public function __construct(
         #[MapTo('name')]
         public readonly string $fullName,
-    ) {}
+    ) {
+    }
 }

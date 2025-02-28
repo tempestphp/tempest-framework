@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use Tempest\Mapper\Casters\ArrayCaster;
 use Tempest\Mapper\Attributes\MapFrom;
+use Tempest\Mapper\Casters\ArrayCaster;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mapper;
@@ -118,10 +118,11 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    private function resolvePropertyName( PropertyReflector $property ): string {
+    private function resolvePropertyName(PropertyReflector $property): string
+    {
         $mapFrom = $property->getAttribute(MapFrom::class);
-        
-        if ( ! is_null( $mapFrom ) ) {
+
+        if (! is_null($mapFrom)) {
             return $mapFrom->key;
         }
 

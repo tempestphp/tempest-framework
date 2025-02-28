@@ -11,10 +11,9 @@ final class ObjectWithMapToCollisions
     public function __construct(
         #[MapTo('name')]
         public readonly string $first_name,
-
         #[MapTo('full_name')]
         public readonly string $name,
-
-        public readonly string $last_name
-    ) {}
+        public readonly string $last_name,
+    ) {
+    }
 }

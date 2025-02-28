@@ -15,5 +15,6 @@ final class ObjectWithMappedVariousPropertyScope
         protected string $protectedProp,
         #[MapTo('public')]
         public string $publicProp,
-    ) {}
+    ) {
+    }
 }

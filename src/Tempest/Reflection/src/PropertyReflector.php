@@ -71,15 +71,18 @@ final readonly class PropertyReflector implements Reflector
         return $this->getType()->isNullable();
     }
 
-    public function isPrivate(): bool {
+    public function isPrivate(): bool
+    {
         return $this->reflectionProperty->isPrivate();
     }
 
-    public function isProtected(): bool {
+    public function isProtected(): bool
+    {
         return $this->reflectionProperty->isProtected();
     }
 
-    public function isPublic(): bool {
+    public function isPublic(): bool
+    {
         return $this->reflectionProperty->isPublic();
     }
 

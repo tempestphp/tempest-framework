@@ -10,6 +10,7 @@ final class ObjectWithMapFromAttribute
 {
     public function __construct(
         #[MapFrom('name')]
-        public readonly string $fullName
-    ) {}
+        public readonly string $fullName,
+    ) {
+    }
 }
