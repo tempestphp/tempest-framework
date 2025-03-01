@@ -12,14 +12,11 @@ final readonly class ObjectToJsonMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === MapTo::JSON && is_object($from);
+        return false;
     }
 
     public function map(mixed $from, mixed $to): string
     {
-        return
-            map(
-                map($from)->to(MapTo::ARRAY),
-            )->to(MapTo::JSON);
+        return map(map($from)->toArray())->toJson();
     }
 }

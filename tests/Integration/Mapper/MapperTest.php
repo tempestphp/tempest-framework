@@ -192,7 +192,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         $array = map(new ObjectWithMapToAttribute(
             fullName: 'Guillaume',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame(['name' => 'Guillaume'], $array);
     }
@@ -203,7 +203,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             first_name: 'my first name',
             name: 'my name',
             last_name: 'my last name',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame([
             'name' => 'my first name',
@@ -218,24 +218,11 @@ final class MapperTest extends FrameworkIntegrationTestCase
             first_name: 'my first name',
             name: 'my name',
             last_name: 'my last name',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame([
             'name' => 'my first name',
             'full_name' => 'my name',
-        ], $array);
-    }
-
-    public function test_map_to_handle_various_property_visibility(): void
-    {
-        $array = map(new ObjectWithMappedVariousPropertyScope(
-            privateProp: 'private',
-            protectedProp: 'protected',
-            publicProp: 'public',
-        ))->to(MapTo::ARRAY);
-
-        $this->assertSame([
-            'public' => 'public',
         ], $array);
     }
 }

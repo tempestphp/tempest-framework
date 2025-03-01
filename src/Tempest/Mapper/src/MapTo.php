@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-enum MapTo
+use Attribute;
+
+#[Attribute(Attribute::TARGET_PROPERTY)]
+final readonly class MapTo
 {
-    case JSON;
-    case ARRAY;
+    public function __construct(
+        public string $name,
+    ) {
+    }
 }

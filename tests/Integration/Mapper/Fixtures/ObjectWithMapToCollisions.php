@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\Mapper\Attributes\MapTo;
+use Tempest\Mapper\MapTo;
 
 final class ObjectWithMapToCollisions
 {

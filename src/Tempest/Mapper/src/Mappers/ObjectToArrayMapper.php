@@ -6,9 +6,9 @@ namespace Tempest\Mapper\Mappers;
 
 use JsonSerializable;
 use ReflectionException;
-use Tempest\Mapper\Attributes\MapTo as MapToAttribute;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
+use Tempest\Mapper\MapTo as MapToAttribute;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use function Tempest\Support\arr;
@@ -17,7 +17,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === MapTo::ARRAY && is_object($from);
+        return false;
     }
 
     public function map(mixed $from, mixed $to): array

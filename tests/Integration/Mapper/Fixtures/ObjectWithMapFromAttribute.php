@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tempest\Mapper\Attributes\MapFrom;
+use Tempest\Mapper\MapFrom;
 
 final class ObjectWithMapFromAttribute
 {

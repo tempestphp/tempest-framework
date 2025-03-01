@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use JsonSerializable;
-use Tempest\Mapper\Attributes\MapTo;
+use Tempest\Mapper\MapTo;
 
 final class ObjectWithMapToCollisionsJsonSerializable implements JsonSerializable
 {

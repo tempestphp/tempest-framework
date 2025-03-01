@@ -17,14 +17,14 @@ final class ObjectToArrayMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_object_to_array(): void
     {
-        $array = map(new ObjectA('a', 'b'))->to(MapTo::ARRAY);
+        $array = map(new ObjectA('a', 'b'))->toArray();
 
         $this->assertSame(['a' => 'a', 'b' => 'b'], $array);
     }
 
     public function test_custom_to_array(): void
     {
-        $array = map(new ObjectWithJsonSerialize('a', 'b'))->to(MapTo::ARRAY);
+        $array = map(new ObjectWithJsonSerialize('a', 'b'))->toArray();
 
         $this->assertSame(['c' => 'a', 'd' => 'b'], $array);
     }

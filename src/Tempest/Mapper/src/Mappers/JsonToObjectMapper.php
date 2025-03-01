@@ -33,8 +33,6 @@ final readonly class JsonToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
-        return map(
-            map($from)->to(MapTo::ARRAY),
-        )->to($to);
+        return map(map($from)->toArray())->to($to);
     }
 }
