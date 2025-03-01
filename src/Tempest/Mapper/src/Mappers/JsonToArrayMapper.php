@@ -11,7 +11,7 @@ final readonly class JsonToArrayMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === MapTo::ARRAY && is_string($from) && json_validate($from);
+        return is_string($from) && json_validate($from);
     }
 
     public function map(mixed $from, mixed $to): array

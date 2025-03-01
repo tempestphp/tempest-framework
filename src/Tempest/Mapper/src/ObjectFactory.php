@@ -8,6 +8,10 @@ use Closure;
 use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
+use Tempest\Mapper\Mappers\ArrayToJsonMapper;
+use Tempest\Mapper\Mappers\JsonToArrayMapper;
+use Tempest\Mapper\Mappers\ObjectToArrayMapper;
+use Tempest\Mapper\Mappers\ObjectToJsonMapper;
 use Tempest\Reflection\FunctionReflector;
 
 /** @template ClassType */
@@ -22,8 +26,7 @@ final class ObjectFactory
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     /**
      * @template T of object
@@ -80,6 +83,30 @@ final class ObjectFactory
         );
     }
 
+    public function toArray(): array
+    {
+        if (is_object($this->from)) {
+            return $this->with(ObjectToArrayMapper::class);
+        } elseif (is_array($this->from)) {
+            return $this->from;
+        } elseif (is_string($this->from) && json_validate($this->from)) {
+            return $this->with(JsonToArrayMapper::class);
+        } else {
+            throw new CannotMapDataException($this->from, 'array');
+        }
+    }
+
+    public function toJson(): string
+    {
+        if (is_object($this->from)) {
+            return $this->with(ObjectToJsonMapper::class);
+        } elseif (is_array($this->from)) {
+            return $this->with(ArrayToJsonMapper::class);
+        } else {
+            throw new CannotMapDataException($this->from, 'json');
+        }
+    }
+
     /**
      * @template T of object
      * @param T|class-string<T>|string $to
@@ -131,7 +158,8 @@ final class ObjectFactory
         mixed $from,
         mixed $to,
         bool $isCollection,
-    ): mixed {
+    ): mixed
+    {
         if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->mapObject(

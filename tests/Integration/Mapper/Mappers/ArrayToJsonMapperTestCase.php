@@ -15,7 +15,7 @@ final class ArrayToJsonMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_mapper(): void
     {
-        $json = map(['a'])->to(MapTo::JSON);
+        $json = map(['a'])->toJson();
 
         $this->assertSame('["a"]', $json);
     }

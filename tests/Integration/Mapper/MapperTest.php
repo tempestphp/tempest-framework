@@ -192,7 +192,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         $array = map(new ObjectWithMapToAttribute(
             fullName: 'Guillaume',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame(['name' => 'Guillaume'], $array);
     }
@@ -203,7 +203,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             first_name: 'my first name',
             name: 'my name',
             last_name: 'my last name',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame([
             'name' => 'my first name',
@@ -218,7 +218,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             first_name: 'my first name',
             name: 'my name',
             last_name: 'my last name',
-        ))->to(MapTo::ARRAY);
+        ))->toArray();
 
         $this->assertSame([
             'name' => 'my first name',
