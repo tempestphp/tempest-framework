@@ -280,8 +280,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertStringEqualsStringIgnoringLineEndings(
             <<<'HTML'
-                <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre>
-                </div>
+                <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre></div>
                 HTML,
             $html,
         );

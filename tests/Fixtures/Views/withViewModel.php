@@ -5,4 +5,4 @@ use Tests\Tempest\Fixtures\Views\ViewModel;
 /** @var ViewModel $this */
 ?>
 
-ViewModel <?= $this->name ?>, <?= $this->currentDate() ?>
+ViewModel {{ $this->name }}, {{ $this->currentDate() }}

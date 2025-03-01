@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Log;
 
+use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Log\LogConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -17,7 +18,7 @@ final class LogConfigTest extends FrameworkIntegrationTestCase
         $expectedDebugLogPath = 'log/debug.test.log';
         $expectedServerLogPath = 'log/server.test.log';
 
-        $this->kernel->loadConfig();
+        $this->container->invoke(LoadConfig::class);
 
         $logConfig = $this->container->get(LogConfig::class);
 

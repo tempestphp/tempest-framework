@@ -38,11 +38,9 @@ final readonly class CasterFactory
             return get($castWith->className);
         }
 
-        $typeName = $type->getName();
-
         // Check if backed enum
         if ($type->matches(BackedEnum::class)) {
-            return new EnumCaster($typeName);
+            return new EnumCaster($type->getName());
         }
 
         // Try a built-in caster
@@ -51,6 +49,7 @@ final readonly class CasterFactory
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
+            'array' => new ArrayCaster(),
             default => null,
         };
 

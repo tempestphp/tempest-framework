@@ -70,7 +70,7 @@ trait HasConsole
         string $question,
         bool $default = false,
         ?string $yes = null,
-        ?string $no = null
+        ?string $no = null,
     ): bool {
         return $this->console->confirm(
             question: $question,

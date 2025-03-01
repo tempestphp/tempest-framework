@@ -11,6 +11,7 @@ use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
@@ -45,7 +46,7 @@ abstract class IntegrationTest extends TestCase
 
         $this->root ??= __DIR__ . '/../../';
 
-        $this->kernel ??= Kernel::boot(
+        $this->kernel ??= FrameworkKernel::boot(
             root: $this->root,
             discoveryLocations: $this->discoveryLocations,
         );
