@@ -25,18 +25,12 @@ final readonly class ObjectToArrayMapper implements Mapper
         $properties = $this->resolveProperties($from);
         $mappedProperties = [];
 
-        foreach ($properties as $property_name => $property_value) {
+        foreach ($properties as $propertyName => $propertyValue) {
             try {
-                $property = PropertyReflector::fromParts(class: $from, name: $property_name);
-                $property_name = $this->resolvePropertyName($property);
-                $property_value = $property_value;
+                $property = PropertyReflector::fromParts(class: $from, name: $propertyName);
+                $propertyName = $this->resolvePropertyName($property);
 
-                // @TODO May be removed if we want to handle private/protected properties
-                if (! $property->isPublic()) {
-                    continue;
-                }
-
-                $mappedProperties[ $property_name ] = $property_value;
+                $mappedProperties[ $propertyName ] = $propertyValue;
             } catch (ReflectionException) {
                 continue;
             }
@@ -56,10 +50,9 @@ final readonly class ObjectToArrayMapper implements Mapper
 
         try {
             $class = new ClassReflector($from);
-            $properties = $class->getProperties();
-            $properties = iterator_to_array($properties);
+            $properties = $class->getPublicProperties();
 
-            return arr($properties)
+            return arr(iterator_to_array($properties))
                 ->mapWithKeys(fn (PropertyReflector $property) => yield $property->getName() => $property->getValue($from))
                 ->toArray();
         } catch (ReflectionException) {
@@ -69,13 +62,12 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     private function resolvePropertyName(PropertyReflector $property): string
     {
-        $property_name = $property->getName();
-        $property_mapto_attribute = $property->getAttribute(MapToAttribute::class);
+        $mapTo = $property->getAttribute(MapToAttribute::class);
 
-        if (! is_null($property_mapto_attribute)) {
-            $property_name = $property_mapto_attribute->name;
+        if ($mapTo !== null) {
+            return $mapTo->name;
         }
 
-        return $property_name;
+        return $property->getName();
     }
 }
