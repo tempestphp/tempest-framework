@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use Tempest\Mapper\Exceptions\MissingValuesException;
-use Tempest\Mapper\MapTo;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -16,12 +15,12 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMappedVariousPropertyScope;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 use function Tempest\make;
 use function Tempest\map;
 
@@ -224,5 +223,19 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'name' => 'my first name',
             'full_name' => 'my name',
         ], $array);
+    }
+    public function test_nested_value_object_mapping(): void
+    {
+        $data = [
+            'name' => [
+                'first' => 'Brent',
+                'last' => 'Roose',
+            ]
+        ];
+
+        $person = map($data)->to(Person::class);
+
+        $this->assertSame('Brent', $person->name->first);
+        $this->assertSame('Roose', $person->name->last);
     }
 }
