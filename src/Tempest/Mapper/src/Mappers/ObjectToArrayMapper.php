@@ -28,9 +28,10 @@ final readonly class ObjectToArrayMapper implements Mapper
         foreach ($properties as $propertyName => $propertyValue) {
             try {
                 $property = PropertyReflector::fromParts(class: $from, name: $propertyName);
+
                 $propertyName = $this->resolvePropertyName($property);
 
-                $mappedProperties[ $propertyName ] = $propertyValue;
+                $mappedProperties[$propertyName] = $propertyValue;
             } catch (ReflectionException) {
                 continue;
             }
