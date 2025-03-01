@@ -10,7 +10,7 @@ final readonly class ArrayToJsonMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return is_array($from);
+        return false;
     }
 
     public function map(mixed $from, mixed $to): string

@@ -17,7 +17,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 {
     public function canMap(mixed $from, mixed $to): bool
     {
-        return is_object($from);
+        return false;
     }
 
     public function map(mixed $from, mixed $to): array
