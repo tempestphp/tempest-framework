@@ -104,7 +104,9 @@ final class ViewComponentElement implements Element
                     $slot = $this->getSlot($name);
 
                     if ($slot === null) {
-                        return $matches[0];
+                        // A slot doesn't have any content, so we'll comment it out.
+                        // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
+                        return '<!--' . $matches[0] . '-->';
                     }
 
                     return $slot->compile();

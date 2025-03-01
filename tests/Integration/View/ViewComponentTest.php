@@ -482,4 +482,25 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             </body></html>
         HTML, $html);
     }
+    
+    public function test_empty_slots_are_commented_out(): void
+    {
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <html lang="en">
+        <head>
+            <x-slot name="styles" />
+            <link rel="stylesheet" href="#" />
+        </head>
+        </html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout>
+        </x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head><body></body></html>
+        HTML, $html);
+    }
 }
