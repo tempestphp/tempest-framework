@@ -7,10 +7,10 @@ namespace Tempest\Mapper\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class MapFrom
+final readonly class MapFrom
 {
     public function __construct(
-        public readonly string $key,
+        public string $name,
     ) {
     }
 }

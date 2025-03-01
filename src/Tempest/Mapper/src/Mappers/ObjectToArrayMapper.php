@@ -73,7 +73,7 @@ final readonly class ObjectToArrayMapper implements Mapper
         $property_mapto_attribute = $property->getAttribute(MapToAttribute::class);
 
         if (! is_null($property_mapto_attribute)) {
-            $property_name = $property_mapto_attribute->key;
+            $property_name = $property_mapto_attribute->name;
         }
 
         return $property_name;
