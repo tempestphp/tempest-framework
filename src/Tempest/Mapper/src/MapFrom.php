@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Mapper\Attributes;
+namespace Tempest\Mapper;
 
 use Attribute;
 

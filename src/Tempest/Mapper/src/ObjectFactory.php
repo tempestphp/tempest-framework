@@ -68,7 +68,7 @@ final class ObjectFactory
 
     /**
      * @template T of object
-     * @param T|class-string<T> $to
+     * @param T|class-string<T>|string $to
      * @return T|T[]|mixed
      */
     public function to(mixed $to): mixed
@@ -82,7 +82,7 @@ final class ObjectFactory
 
     /**
      * @template T of object
-     * @param T|class-string<T> $to
+     * @param T|class-string<T>|string $to
      * @return T|mixed
      */
     public function map(mixed $from, mixed $to): mixed

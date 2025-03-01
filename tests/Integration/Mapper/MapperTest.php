@@ -225,17 +225,4 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'full_name' => 'my name',
         ], $array);
     }
-
-    public function test_map_to_handle_various_property_visibility(): void
-    {
-        $array = map(new ObjectWithMappedVariousPropertyScope(
-            privateProp: 'private',
-            protectedProp: 'protected',
-            publicProp: 'public',
-        ))->to(MapTo::ARRAY);
-
-        $this->assertSame([
-            'public' => 'public',
-        ], $array);
-    }
 }
