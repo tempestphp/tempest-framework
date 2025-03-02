@@ -503,4 +503,23 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head></html>
         HTML, $html);
     }
+    
+    public function test_custom_components_in_head(): void
+    {
+        $this->registerViewComponent('x-custom-link', <<<'HTML'
+        <link rel="stylesheet" href="#" />
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <html lang="en">
+        <head>
+            <x-custom-link />
+        </head>
+        </html>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><head><link rel="stylesheet" href="#"></link></head>
+        HTML, $html);
+    }
 }

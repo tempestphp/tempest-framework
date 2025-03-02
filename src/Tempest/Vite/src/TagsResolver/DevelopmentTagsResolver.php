@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagsResolver;
 
+use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteBridgeFile;
 use function Tempest\root_path;
@@ -23,7 +24,13 @@ final class DevelopmentTagsResolver implements TagsResolver
     public function resolveTags(array $entrypoints): array
     {
         return arr($entrypoints)
-            ->map(fn (string $file) => $this->createDevelopmentTag($this->fileToAssetPath($file)))
+            ->map(function (string $entrypoint) {
+                if (! file_exists(root_path($entrypoint))) {
+                    throw new FileSystemEntrypointNotFoundException($entrypoint);
+                }
+
+                return $this->createDevelopmentTag($this->fileToAssetPath($entrypoint));
+            })
             ->prepend($this->createDevelopmentTag(self::CLIENT_SCRIPT_PATH))
             ->toArray();
     }

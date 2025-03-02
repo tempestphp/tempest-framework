@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Vite;
 
 use Tempest\Vite\BuildConfig;
-use Tempest\Vite\Exceptions\EntrypointNotFoundException;
+use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -50,6 +50,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
+                'src/main.ts' => '',
             ],
         );
     }
@@ -78,6 +79,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
+                'src/foo.ts' => '',
+                'src/bar.css' => '',
             ],
         );
     }
@@ -98,13 +101,14 @@ final class ViteTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/build/manifest.json' => $this->fixture('simple-manifest.json'),
+                'src/main.ts' => '',
             ],
         );
     }
 
     public function test_throws_when_getting_tags_with_manifest_with_unknown_entrypoint(): void
     {
-        $this->expectException(EntrypointNotFoundException::class);
+        $this->expectException(ManifestEntrypointNotFoundException::class);
 
         $this->vite->call(
             callback: function (): void {
