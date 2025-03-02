@@ -18,6 +18,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
@@ -224,18 +225,48 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'full_name' => 'my name',
         ], $array);
     }
+
     public function test_nested_value_object_mapping(): void
     {
         $data = [
             'name' => [
                 'first' => 'Brent',
                 'last' => 'Roose',
-            ]
+            ],
         ];
 
         $person = map($data)->to(Person::class);
 
         $this->assertSame('Brent', $person->name->first);
         $this->assertSame('Roose', $person->name->last);
+    }
+
+    public function test_multiple_map_from_source(): void
+    {
+        $object = map(['name' => 'Guillaume'])->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+
+        $object = map(['first_name' => 'Guillaume'])->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_multiple_map_from_take_first_occurence(): void
+    {
+        $data = [
+            'name' => 'Guillaume',
+            'first_name' => 'John',
+        ];
+
+        $object = map($data)->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_multiple_map_from_fallback_to_property_name(): void
+    {
+        $object = map([
+            'fullName' => 'Guillaume',
+        ])->to(ObjectWithMapFromAttribute::class);
+
+        $this->assertSame('Guillaume', $object->fullName);
     }
 }

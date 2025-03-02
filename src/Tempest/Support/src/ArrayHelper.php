@@ -489,7 +489,7 @@ final class ArrayHelper implements Iterator, ArrayAccess, Serializable, Countabl
      *
      * @param null|Closure(TValue $value, TKey $key): bool $filter
      *
-     * @return TValue
+     * @return TValue|null
      */
     public function first(?Closure $filter = null): mixed
     {

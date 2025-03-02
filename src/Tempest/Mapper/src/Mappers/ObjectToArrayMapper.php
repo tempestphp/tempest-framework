@@ -7,7 +7,6 @@ namespace Tempest\Mapper\Mappers;
 use JsonSerializable;
 use ReflectionException;
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo;
 use Tempest\Mapper\MapTo as MapToAttribute;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
