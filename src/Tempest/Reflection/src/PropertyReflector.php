@@ -86,6 +86,10 @@ final readonly class PropertyReflector implements Reflector
         return $this->reflectionProperty->isPublic();
     }
 
+    public function isReadonly(): bool {
+        return $this->reflectionProperty->isReadOnly();
+    }
+
     public function getIterableType(): ?TypeReflector
     {
         $doc = $this->reflectionProperty->getDocComment();
