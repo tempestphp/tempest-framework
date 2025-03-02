@@ -152,6 +152,7 @@
             "Tempest\\Router\\Tests\\": "src/Tempest/Router/tests",
             "Tempest\\Support\\Tests\\": "src/Tempest/Support/tests",
             "Tempest\\Validation\\Tests\\": "src/Tempest/Validation/tests",
+            "Tempest\\View\\Tests\\": "src/Tempest/View/tests",
             "Tempest\\Vite\\Tests\\": "src/Tempest/Vite/tests",
             "Tests\\Tempest\\": "tests/"
         }

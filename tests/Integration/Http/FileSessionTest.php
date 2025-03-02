@@ -5,28 +5,36 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\Clock;
+use Tempest\Core\Kernel;
+use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Router\Session\Managers\FileSessionManager;
 use Tempest\Router\Session\Session;
 use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /**
  * @internal
  */
 final class FileSessionTest extends FrameworkIntegrationTestCase
 {
-    private string $path;
+    private string $path = __DIR__ . '/Fixtures/tmp';
+    private LocalFilesystem $filesystem;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->path = __DIR__ . '/sessions';
+        $this->path = __DIR__ . '/Fixtures/tmp';
+        $this->filesystem = new LocalFilesystem();
+        $this->filesystem->deleteDirectory($this->path, recursive: true);
+        $this->filesystem->ensureDirectoryExists($this->path);
 
-        $this->container->config(new SessionConfig(path: $this->path));
+        $this->container->get(Kernel::class)->internalStorage = realpath($this->path);
+
+        $this->container->config(new SessionConfig(path: 'sessions'));
         $this->container->singleton(
             SessionManager::class,
             fn () => new FileSessionManager(
@@ -38,8 +46,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
     protected function tearDown(): void
     {
-        array_map(unlink(...), glob("{$this->path}/*"));
-        rmdir($this->path);
+        $this->filesystem->deleteDirectory($this->path, recursive: true);
     }
 
     public function test_create_session_from_container(): void
@@ -73,10 +80,12 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
     public function test_destroy(): void
     {
         $session = $this->container->get(Session::class);
+        $path = path($this->path, 'sessions', (string) $session->id)->toString();
 
-        $path = path($this->path, (string) $session->id)->toString();
         $this->assertFileExists($path);
+
         $session->destroy();
+
         $this->assertFileDoesNotExist($path);
     }
 
