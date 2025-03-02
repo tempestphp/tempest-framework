@@ -14,7 +14,7 @@ use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
 use Tempest\Generation\Tests\Fixtures\SampleNamespace\DummyFqcn;
 use Tempest\Generation\Tests\Fixtures\TestAttribute;
 use Tempest\Generation\Tests\Fixtures\WelcomeController;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 
 /**
  * @internal
@@ -161,7 +161,7 @@ final class ClassManipulatorTest extends TestCase
         $class = new ClassManipulator(WelcomeController::class);
         $class->setNamespace('App\\Controllers');
         $class->setClassName('WelcomeController');
-        $class->manipulate(fn (StringHelper $string) => $string->replace('welcome', 'home'));
+        $class->manipulate(fn (ImmutableString $string) => $string->replace('welcome', 'home'));
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -186,7 +186,7 @@ final class ClassManipulatorTest extends TestCase
     public function make_replacements_before_converting_fqcn(): void
     {
         $class = new ClassManipulator(ClassWithDummyStringToBeReplacedByFqcn::class);
-        $class->manipulate(fn (StringHelper $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
+        $class->manipulate(fn (ImmutableString $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
 
         $this->assertMatchesSnapshot($class->print());
     }

@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Support;
 
 use Stringable;
+use Tempest\Support\Arr\ImmutableArray;
 
-final readonly class PathHelper implements Stringable
+/**
+ * Represents a file system path and provides access to convenience methods.
+ */
+final readonly class Path implements Stringable
 {
     private string $path;
 
@@ -80,7 +84,7 @@ final readonly class PathHelper implements Stringable
         return $this->info(PATHINFO_EXTENSION);
     }
 
-    public function glob(string $pattern): ArrayHelper
+    public function glob(string $pattern): ImmutableArray
     {
         return arr(
             glob(new self($this->path, $pattern)->toString()),

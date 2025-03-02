@@ -9,7 +9,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Cache\Cache;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\IsCache;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 final class ViewCache implements Cache
 {

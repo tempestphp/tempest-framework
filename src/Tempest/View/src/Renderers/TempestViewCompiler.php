@@ -11,7 +11,7 @@ use Tempest\Core\Kernel;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
-use function Tempest\path;
+use function Tempest\Support\path;
 use function Tempest\Support\str;
 use const Dom\HTML_NO_DEFAULT_NS;
 

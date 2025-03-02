@@ -21,7 +21,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Support\ArrayHelper;
+use function Tempest\Support\Arr\wrap;
 
 final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent
 {
@@ -48,7 +48,7 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
         $this->options = new OptionCollection([]);
 
         if ($this->multiple) {
-            $this->default = ArrayHelper::wrap($this->default);
+            $this->default = wrap($this->default);
         }
 
         $this->updateQuery();

@@ -7,7 +7,7 @@ namespace Tempest\Console\Components\Static;
 use Closure;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
-use Tempest\Support\ArrayHelper;
+use function Tempest\Support\Arr\wrap;
 
 final class StaticSearchComponent implements StaticConsoleComponent
 {
@@ -22,7 +22,7 @@ final class StaticSearchComponent implements StaticConsoleComponent
         public null|array|string $default = null,
     ) {
         if ($this->multiple) {
-            $this->default = ArrayHelper::wrap($this->default);
+            $this->default = wrap($this->default);
         }
     }
 

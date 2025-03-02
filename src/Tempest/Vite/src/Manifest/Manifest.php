@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Manifest;
 
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\Support\arr;
 
 final readonly class Manifest
@@ -12,14 +12,14 @@ final readonly class Manifest
     private function __construct(
         /**
          * All chunks in the manifest.
-         * @var ArrayHelper<int,Chunk>
+         * @var ImmutableArray<int,Chunk>
          */
-        public ArrayHelper $chunks,
+        public ImmutableArray $chunks,
         /**
          * Chunks that are entrypoints.
-         * @var ArrayHelper<int,Chunk>
+         * @var ImmutableArray<int,Chunk>
          */
-        public ArrayHelper $entrypoints,
+        public ImmutableArray $entrypoints,
     ) {
     }
 

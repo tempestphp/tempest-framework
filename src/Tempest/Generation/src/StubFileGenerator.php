@@ -9,10 +9,11 @@ use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Support\NamespaceHelper;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 use Throwable;
-use function Tempest\path;
+use function Tempest\Support\Namespace\to_base_class_name;
+use function Tempest\Support\Namespace\to_main_namespace;
+use function Tempest\Support\path;
 use function Tempest\Support\str;
 
 /**
@@ -52,8 +53,8 @@ final class StubFileGenerator
             $this->prepareFilesystem($targetPath);
 
             // Transform stub to class
-            $namespace = NamespaceHelper::toMainNamespace($targetPath);
-            $classname = NamespaceHelper::toClassName($targetPath);
+            $namespace = to_main_namespace($targetPath);
+            $classname = to_base_class_name($targetPath);
             $classManipulator = new ClassManipulator($stubFile->filePath)
                 ->setNamespace($namespace)
                 ->setClassName($classname);
@@ -64,7 +65,7 @@ final class StubFileGenerator
                     continue;
                 }
 
-                $classManipulator->manipulate(fn (StringHelper $code) => $code->replace($placeholder, $replacement));
+                $classManipulator->manipulate(fn (ImmutableString $code) => $code->replace($placeholder, $replacement));
             }
 
             // Run all manipulations
@@ -92,7 +93,7 @@ final class StubFileGenerator
      *     The keys are the placeholders in the stub file (e.g. 'dummy-content')
      *     The values are the replacements for the placeholders (e.g. 'real content')
      *
-     * @param array<Closure(StringHelper): StringHelper> $manipulations An array of manipulations to apply to the generated file raw content.
+     * @param array<Closure(ImmutableString): ImmutableString> $manipulations An array of manipulations to apply to the generated file raw content.
      *
      * @throws FileGenerationFailedException
      */
@@ -128,7 +129,7 @@ final class StubFileGenerator
             $fileContent = array_reduce(
                 array: $manipulations,
                 initial: $fileContent,
-                callback: fn (StringHelper $content, Closure $manipulation) => $manipulation($content),
+                callback: fn (ImmutableString $content, Closure $manipulation) => $manipulation($content),
             );
 
             if (file_exists($targetPath) && $shouldOverride) {

@@ -10,7 +10,7 @@ use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /**
  * @internal

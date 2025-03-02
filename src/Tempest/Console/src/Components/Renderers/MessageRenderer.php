@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Components\Renderers;
 
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\Support\str;
 
 final readonly class MessageRenderer
@@ -18,7 +18,7 @@ final readonly class MessageRenderer
     public function render(string $contents, ?string $title = null): string
     {
         $title = str($title ?? $this->label)->toString();
-        $lines = ArrayHelper::explode($contents, "\n")
+        $lines = ImmutableArray::explode($contents, "\n")
             ->map(fn ($s, $i) => str_repeat(' ', ($i === 0 ? 1 : strlen($title) + 4)) . $s)
             ->implode("\n");
 

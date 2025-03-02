@@ -7,7 +7,7 @@ namespace Tempest\Console\Components;
 use Countable;
 use Iterator;
 use Stringable;
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 use function Tempest\Support\arr;
 
@@ -35,7 +35,7 @@ final class OptionCollection implements Iterator, Countable
     {
         $options = arr($options);
 
-        $this->preserveKeys = $options->isAssoc();
+        $this->preserveKeys = $options->isAssociative();
         $this->options = $options
             ->map(fn (mixed $value, string|int $key) => new Option($key, $value))
             ->toArray();
@@ -93,8 +93,8 @@ final class OptionCollection implements Iterator, Countable
         }
     }
 
-    /** @return ArrayHelper<Option> */
-    public function getOptions(): ArrayHelper
+    /** @return ImmutableArray<Option> */
+    public function getOptions(): ImmutableArray
     {
         return arr($this->filteredOptions)->values();
     }
@@ -121,7 +121,6 @@ final class OptionCollection implements Iterator, Countable
             return $default;
         }
 
-        // TODO: PR `tap` to `ArrayHelper`
         if (! $this->preserveKeys) {
             return array_values($selected);
         }

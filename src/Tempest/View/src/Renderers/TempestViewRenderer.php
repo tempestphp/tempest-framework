@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Renderers;
 
 use Stringable;
-use Tempest\Support\HtmlString;
+use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\GenericView;

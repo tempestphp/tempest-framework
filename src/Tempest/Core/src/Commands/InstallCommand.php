@@ -46,7 +46,7 @@ final readonly class InstallCommand
 
     private function resolveInstaller(?string $search): ?Installer
     {
-        /** @var Installer[]|\Tempest\Support\ArrayHelper $installers */
+        /** @var Installer[]|\Tempest\Support\Arr\ImmutableArray $installers */
         $installers = arr($this->installerConfig->installers)
             ->map(fn (string $installerClass) => $this->container->get($installerClass));
 

@@ -122,6 +122,13 @@
             "src/Tempest/Mapper/src/functions.php",
             "src/Tempest/Reflection/src/functions.php",
             "src/Tempest/Router/src/functions.php",
+            "src/Tempest/Support/src/Arr/functions.php",
+            "src/Tempest/Support/src/Html/functions.php",
+            "src/Tempest/Support/src/Language/functions.php",
+            "src/Tempest/Support/src/Namespace/functions.php",
+            "src/Tempest/Support/src/Random/functions.php",
+            "src/Tempest/Support/src/Regex/functions.php",
+            "src/Tempest/Support/src/Str/functions.php",
             "src/Tempest/Support/src/functions.php",
             "src/Tempest/View/src/functions.php",
             "src/Tempest/Vite/src/functions.php"

@@ -11,7 +11,7 @@ use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /**
  * @internal

@@ -9,8 +9,8 @@ use Exception;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\CacheItem;
-use Tempest\Support\ArrayHelper;
-use function Tempest\path;
+use Tempest\Support\Arr\ImmutableArray;
+use function Tempest\Support\path;
 use function Tempest\Support\arr;
 
 final readonly class ViewCachePool implements CacheItemPoolInterface
@@ -40,12 +40,11 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
     }
 
     /**
-     * @return ArrayHelper<array-key, \Psr\Cache\CacheItemInterface>
+     * @return ImmutableArray<array-key, \Psr\Cache\CacheItemInterface>
      */
-    public function getItems(array $keys = []): ArrayHelper
+    public function getItems(array $keys = []): ImmutableArray
     {
-        return arr($keys)
-            ->map(fn (string $key) => $this->getItem($key));
+        return arr($keys)->map(fn (string $key) => $this->getItem($key));
     }
 
     public function hasItem(string $key): bool

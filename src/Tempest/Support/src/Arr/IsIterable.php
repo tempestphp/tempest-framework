@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support;
+namespace Tempest\Support\Arr;
 
 /** @internal */
 trait IsIterable
 {
     public function current(): mixed
     {
-        return current($this->array);
+        return current($this->value);
     }
 
     public function next(): void
     {
-        next($this->array);
+        next($this->value);
     }
 
     public function key(): string|int|null
     {
-        return key($this->array);
+        return key($this->value);
     }
 
     public function valid(): bool
@@ -29,57 +29,57 @@ trait IsIterable
 
     public function rewind(): void
     {
-        reset($this->array);
+        reset($this->value);
     }
 
     public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists($offset, $this->array);
+        return array_key_exists($offset, $this->value);
     }
 
     public function offsetGet(mixed $offset): mixed
     {
-        return $this->array[$offset] ?? throw new OffsetDoesNotExist();
+        return $this->value[$offset] ?? throw new OffsetDoesNotExist();
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if ($offset === null) {
-            $this->array[] = $value;
+            $this->value[] = $value;
         } else {
-            $this->array[$offset] = $value;
+            $this->value[$offset] = $value;
         }
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        unset($this->array[$offset]);
+        unset($this->value[$offset]);
     }
 
     public function serialize(): string
     {
-        return serialize($this->array);
+        return serialize($this->value);
     }
 
     public function unserialize(string $data): void
     {
-        $this->array = unserialize($data);
+        $this->value = unserialize($data);
     }
 
     public function __serialize(): array
     {
         return [
-            'array' => $this->array,
+            'array' => $this->value,
         ];
     }
 
     public function __unserialize(array $data): void
     {
-        $this->array = $data['array'];
+        $this->value = $data['array'];
     }
 
     public function count(): int
     {
-        return count($this->array);
+        return count($this->value);
     }
 }

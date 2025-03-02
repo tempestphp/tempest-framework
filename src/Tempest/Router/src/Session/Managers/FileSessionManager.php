@@ -12,7 +12,7 @@ use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Throwable;
 use function Tempest\event;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 final readonly class FileSessionManager implements SessionManager
 {

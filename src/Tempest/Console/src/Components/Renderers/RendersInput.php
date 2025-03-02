@@ -7,7 +7,7 @@ namespace Tempest\Console\Components\Renderers;
 use Stringable;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 
 trait RendersInput
 {
@@ -17,7 +17,7 @@ trait RendersInput
 
     public const int MARGIN_TOP = 1;
 
-    private StringHelper $frame;
+    private ImmutableString $frame;
 
     private Terminal $terminal;
 
@@ -46,7 +46,7 @@ trait RendersInput
         $this->leftBorder = "<style=\"dim {$this->getStyle()}\">│</style>";
         $this->maxLineCharacters = $this->terminal->width - mb_strlen($this->marginX . ' ' . $this->paddingX) - self::MARGIN_X;
 
-        $this->frame = new StringHelper(str_repeat("\n", self::MARGIN_TOP));
+        $this->frame = new ImmutableString(str_repeat("\n", self::MARGIN_TOP));
 
         return $this;
     }
@@ -66,7 +66,7 @@ trait RendersInput
             return '';
         }
 
-        return new StringHelper($string)
+        return new ImmutableString($string)
             ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
     }

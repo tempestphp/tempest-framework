@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Tests;
+namespace Tempest\Support\Tests\Arr;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\ArrayHelper;
-use Tempest\Support\InvalidMapWithKeysUsage;
+use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Arr\InvalidMapWithKeysUsage;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 /**
  * @internal
  */
-final class ArrayHelperTest extends TestCase
+final class ManipulatesArrayTest extends TestCase
 {
     public function test_wrap(): void
     {
@@ -75,7 +75,7 @@ final class ArrayHelperTest extends TestCase
         ];
 
         $this->assertSame('c', arr($array)->get('a.b'));
-        $this->assertInstanceOf(ArrayHelper::class, arr($array)->get('a'));
+        $this->assertInstanceOf(ImmutableArray::class, arr($array)->get('a'));
         $this->assertNull(arr($array)->get('a.x'));
         $this->assertSame('default', arr($array)->get('a.x', 'default'));
     }
@@ -325,11 +325,11 @@ final class ArrayHelperTest extends TestCase
 
     public function test_explode(): void
     {
-        $this->assertEquals(['john', 'doe'], ArrayHelper::explode('john doe')->toArray());
-        $this->assertEquals(['john', 'doe'], ArrayHelper::explode(str('john doe'))->toArray());
-        $this->assertEquals(['john doe'], ArrayHelper::explode('john doe', ',')->toArray());
-        $this->assertEquals(['john', 'doe'], ArrayHelper::explode('john, doe', ', ')->toArray());
-        $this->assertEquals(['john, doe'], ArrayHelper::explode('john, doe', '')->toArray());
+        $this->assertEquals(['john', 'doe'], ImmutableArray::explode('john doe')->toArray());
+        $this->assertEquals(['john', 'doe'], ImmutableArray::explode(str('john doe'))->toArray());
+        $this->assertEquals(['john doe'], ImmutableArray::explode('john doe', ',')->toArray());
+        $this->assertEquals(['john', 'doe'], ImmutableArray::explode('john, doe', ', ')->toArray());
+        $this->assertEquals(['john, doe'], ImmutableArray::explode('john, doe', '')->toArray());
     }
 
     public function test_combine_with_integers(): void
@@ -393,16 +393,15 @@ final class ArrayHelperTest extends TestCase
     public function test_combine_with_collection(): void
     {
         $collection = arr(['first_name', 'last_name']);
-        $another_collection = arr(['John', 'Doe']);
-        $current = $collection
-            ->combine($another_collection)
-            ->toArray();
+        $other = arr(['John', 'Doe']);
+        $combined = $collection->combine($other)->toArray();
+
         $expected = [
             'first_name' => 'John',
             'last_name' => 'Doe',
         ];
 
-        $this->assertSame($expected, $current);
+        $this->assertSame($expected, $combined);
     }
 
     public function test_keys(): void
@@ -430,11 +429,11 @@ final class ArrayHelperTest extends TestCase
             'first_name' => 'John',
             'last_name' => 'Doe',
         ]);
-        $current = $collection
-            ->merge([
-                'framework' => 'Tempest',
-            ])
-            ->toArray();
+
+        $current = $collection->merge([
+            'framework' => 'Tempest',
+        ])->toArray();
+
         $expected = [
             'first_name' => 'John',
             'last_name' => 'Doe',
@@ -450,11 +449,11 @@ final class ArrayHelperTest extends TestCase
             'first_name' => 'John',
             'last_name' => 'Doe',
         ]);
-        $current = $collection
-            ->merge(arr([
-                'framework' => 'Tempest',
-            ]))
-            ->toArray();
+
+        $current = $collection->merge(arr([
+            'framework' => 'Tempest',
+        ]))->toArray();
+
         $expected = [
             'first_name' => 'John',
             'last_name' => 'Doe',
@@ -879,54 +878,51 @@ final class ArrayHelperTest extends TestCase
 
     public function test_add(): void
     {
-        $collection = arr();
+        $collection = new ImmutableArray('a');
+
         $this->assertSame(
-            $collection
-                ->add(1)
-                ->toArray(),
+            $collection->add('b')->toArray(),
+            ['a', 'b'],
+        );
+    }
+
+    public function test_add_diverse_values(): void
+    {
+        $collection = new ImmutableArray();
+
+        $this->assertSame(
+            $collection->add(1)->toArray(),
             [1],
         );
 
         $this->assertSame(
-            $collection
-                ->add(2)
-                ->toArray(),
-            [1, 2],
+            $collection->add(2)->toArray(),
+            [2],
         );
 
         $this->assertSame(
-            $collection
-                ->add('')
-                ->toArray(),
-            [1, 2, ''],
+            $collection->add('')->toArray(),
+            [''],
         );
 
         $this->assertSame(
-            $collection
-                ->add(null)
-                ->toArray(),
-            [1, 2, '', null],
+            $collection->add(null)->toArray(),
+            [null],
         );
 
         $this->assertSame(
-            $collection
-                ->add(false)
-                ->toArray(),
-            [1, 2, '', null, false],
+            $collection->add(false)->toArray(),
+            [false],
         );
 
         $this->assertSame(
-            $collection
-                ->add([])
-                ->toArray(),
-            [1, 2, '', null, false, []],
+            $collection->add([])->toArray(),
+            [[]],
         );
 
         $this->assertSame(
-            actual: $collection
-                ->add('name')
-                ->toArray(),
-            expected: [1, 2, '', null, false, [], 'name'],
+            actual: $collection->add('name')->toArray(),
+            expected: ['name'],
         );
     }
 
@@ -1160,19 +1156,19 @@ final class ArrayHelperTest extends TestCase
 
     public function test_is_assoc(): void
     {
-        $this->assertTrue(arr([1 => 'a', 'b'])->isAssoc());
-        $this->assertTrue(arr([1 => 'a', 0 => 'b'])->isAssoc());
-        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssoc());
-        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
+        $this->assertTrue(arr([1 => 'a', 'b'])->isAssociative());
+        $this->assertTrue(arr([1 => 'a', 0 => 'b'])->isAssociative());
+        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssociative());
+        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssociative());
 
-        $this->assertFalse(arr()->isAssoc());
-        $this->assertFalse(arr([1, 2, 3])->isAssoc());
-        $this->assertFalse(arr(['a', 2, 3])->isAssoc());
-        $this->assertFalse(arr([0 => 'a', 'b'])->isAssoc());
+        $this->assertFalse(arr()->isAssociative());
+        $this->assertFalse(arr([1, 2, 3])->isAssociative());
+        $this->assertFalse(arr(['a', 2, 3])->isAssociative());
+        $this->assertFalse(arr([0 => 'a', 'b'])->isAssociative());
 
-        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssoc());
-        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssoc());
-        $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssoc());
+        $this->assertTrue(arr([0 => 'a', 'foo' => 'b'])->isAssociative());
+        $this->assertTrue(arr([0 => 'a', 2 => 'b'])->isAssociative());
+        $this->assertTrue(arr(['foo' => 'a', 'baz' => 'b'])->isAssociative());
     }
 
     public function test_remove_with_basic_keys(): void
@@ -1180,46 +1176,32 @@ final class ArrayHelperTest extends TestCase
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
-            $collection
-                ->remove(1)
-                ->toArray(),
-            [
-                0 => 1,
-                2 => 3,
-            ],
+            $collection->remove(1)->toArray(),
+            [0 => 1, 2 => 3],
         );
 
         $this->assertEquals(
-            $collection
-                ->remove([0, 2])
-                ->toArray(),
-            [],
+            $collection->remove([0, 2])->toArray(),
+            [1 => 2],
         );
     }
 
     public function test_remove_with_associative_keys(): void
     {
-        $collection = arr([
+        $collection = new ImmutableArray([
             'first_name' => 'John',
             'last_name' => 'Doe',
             'age' => 42,
         ]);
 
         $this->assertEquals(
-            $collection
-                ->remove('first_name')
-                ->toArray(),
-            [
-                'last_name' => 'Doe',
-                'age' => 42,
-            ],
+            $collection->remove('first_name')->toArray(),
+            ['last_name' => 'Doe', 'age' => 42],
         );
 
         $this->assertEquals(
-            $collection
-                ->remove(['last_name', 'age'])
-                ->toArray(),
-            [],
+            $collection->remove(['last_name', 'age'])->toArray(),
+            ['first_name' => 'John'],
         );
     }
 
@@ -1300,28 +1282,6 @@ final class ArrayHelperTest extends TestCase
         sort($shuffled);
 
         $this->assertSame($shuffled, $array);
-    }
-
-    public function test_pull(): void
-    {
-        $collection = arr([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'age' => 42,
-        ]);
-
-        $this->assertSame(
-            $collection->pull('first_name'),
-            'John',
-        );
-
-        $this->assertSame(
-            $collection->toArray(),
-            [
-                'last_name' => 'Doe',
-                'age' => 42,
-            ],
-        );
     }
 
     public function test_sort(): void
@@ -1729,5 +1689,18 @@ final class ArrayHelperTest extends TestCase
             actual: $collection->prepend(['a' => 'b'])->toArray(),
             expected: [['a' => 'b'], 'foo', 'bar'],
         );
+    }
+
+    public function test_tap(): void
+    {
+        $collection = arr(['foo']);
+
+        $log = [];
+        $result = $collection->tap(function (ImmutableArray $array) use (&$log): void {
+            $log[] = $array->first();
+        });
+
+        $this->assertSame($collection, $result);
+        $this->assertEquals(['foo'], $log);
     }
 }

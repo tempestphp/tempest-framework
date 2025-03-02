@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Support\HtmlString;
+use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

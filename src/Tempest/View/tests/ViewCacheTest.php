@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /**
  * @internal

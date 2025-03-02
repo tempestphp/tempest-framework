@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
-use function Tempest\path;
+use function Tempest\Support\path;
 use function Tempest\Support\arr;
 
 final class Composer

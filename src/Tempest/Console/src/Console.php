@@ -9,7 +9,6 @@ use Closure;
 use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Highlight\Language;
-use Tempest\Support\ArrayHelper;
 use UnitEnum;
 
 interface Console
@@ -34,13 +33,13 @@ interface Console
     public function component(InteractiveConsoleComponent $component, array $validation = []): mixed;
 
     /**
-     * @param null|array|ArrayHelper|class-string<BackedEnum> $options
+     * @param null|array|iterable|class-string<BackedEnum> $options
      * @param mixed|null $default
      * @param \Tempest\Validation\Rule[] $validation
      */
     public function ask(
         string $question,
-        null|array|ArrayHelper|string $options = null,
+        null|iterable|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
