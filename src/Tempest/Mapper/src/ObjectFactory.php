@@ -26,7 +26,8 @@ final class ObjectFactory
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     /**
      * @template T of object
@@ -158,8 +159,7 @@ final class ObjectFactory
         mixed $from,
         mixed $to,
         bool $isCollection,
-    ): mixed
-    {
+    ): mixed {
         if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->mapObject(

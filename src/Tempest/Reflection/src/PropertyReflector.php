@@ -86,7 +86,8 @@ final readonly class PropertyReflector implements Reflector
         return $this->reflectionProperty->isPublic();
     }
 
-    public function isReadonly(): bool {
+    public function isReadonly(): bool
+    {
         return $this->reflectionProperty->isReadOnly();
     }
 
