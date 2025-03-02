@@ -13,6 +13,7 @@ use Tempest\Support\Regex;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\Random\secure_string;
+use function Tempest\Support\tap;
 
 /**
  * @internal

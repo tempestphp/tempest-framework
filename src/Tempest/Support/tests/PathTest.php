@@ -14,7 +14,7 @@ use function Tempest\Support\path;
 /**
  * @internal
  */
-final class PathHelperTest extends TestCase
+final class PathTest extends TestCase
 {
     #[DataProvider('paths')]
     public function test_make(array $paths, string $expected): void

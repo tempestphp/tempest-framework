@@ -224,6 +224,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'full_name' => 'my name',
         ], $array);
     }
+
     public function test_nested_value_object_mapping(): void
     {
         $data = [

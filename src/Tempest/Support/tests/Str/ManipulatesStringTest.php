@@ -464,8 +464,7 @@ b'));
 
         $this->assertTrue($content->excerpt(7, 100)->equals('g'));
 
-        // TODO: array return type
-        $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true));
+        $this->assertSame([2 => 'b', 3 => 'c', 4 => 'd'], $content->excerpt(2, 4, asArray: true)->toArray());
     }
 
     public function test_wrap(): void

@@ -7,7 +7,7 @@ namespace Tempest\Support\Tests;
 use ArrayIterator;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
@@ -530,7 +530,7 @@ final class IsEnumHelperTest extends TestCase
         );
 
         $this->assertInstanceOf(
-            expected: ArrayHelper::class,
+            expected: ImmutableArray::class,
             actual: SampleStatusBackedEnum::collect(),
         );
     }
