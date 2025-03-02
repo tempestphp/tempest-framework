@@ -260,4 +260,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $object = map($data)->to(ObjectWithMultipleMapFrom::class);
         $this->assertSame('Guillaume', $object->fullName);
     }
+
+    public function test_multiple_map_from_fallback_to_property_name(): void
+    {
+        $object = map([
+            'fullName' => 'Guillaume',
+        ])->to(ObjectWithMapFromAttribute::class);
+
+        $this->assertSame('Guillaume', $object->fullName);
+    }
 }
