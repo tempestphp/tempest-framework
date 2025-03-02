@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
-use Tempest\Validation\Rules\DateTimeFormat;
 use DateTimeImmutable;
+use Tempest\Validation\Rules\DateTimeFormat;
 
 final readonly class ObjectThatShouldUseCasters
 {
@@ -14,7 +13,7 @@ final readonly class ObjectThatShouldUseCasters
         public string $name,
         #[DateTimeFormat('Y-m-d')]
         public DateTimeImmutable $date,
-        public EnumToCast $enum
+        public EnumToCast $enum,
     ) {
     }
 }

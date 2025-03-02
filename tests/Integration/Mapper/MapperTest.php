@@ -4,29 +4,28 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
-use function Tempest\map;
-use function Tempest\make;
-use Tests\Tempest\Integration\Mapper\Fixtures\Person;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Mapper\Exceptions\MissingValuesException;
 use DateTimeImmutable;
-use DateTime;
+use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use Tests\Tempest\Integration\Mapper\Fixtures\Person;
+use function Tempest\make;
+use function Tempest\map;
 
 /**
  * @internal
@@ -228,14 +227,14 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'full_name' => 'my name',
         ], $array);
     }
-    
+
     public function test_nested_value_object_mapping(): void
     {
         $data = [
             'name' => [
                 'first' => 'Brent',
                 'last' => 'Roose',
-            ]
+            ],
         ];
 
         $person = map($data)->to(Person::class);
@@ -244,12 +243,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('Roose', $person->name->last);
     }
 
-    public function test_object_to_array_mapper_use_casters(): void {
+    public function test_object_to_array_mapper_use_casters(): void
+    {
         $this->assertSame(
             actual: map(new ObjectThatShouldUseCasters(
                 name: 'Guillaume',
                 date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
-                enum: EnumToCast::FOO
+                enum: EnumToCast::FOO,
             ))->toArray(),
             expected: [
                 'name' => 'Guillaume',
