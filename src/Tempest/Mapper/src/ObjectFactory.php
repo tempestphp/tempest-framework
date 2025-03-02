@@ -88,11 +88,14 @@ final class ObjectFactory
     {
         if (is_object($this->from)) {
             return $this->with(ObjectToArrayMapper::class);
-        } elseif (is_array($this->from)) {
+        }
+        if (is_array($this->from)) {
             return $this->from;
-        } elseif (is_string($this->from) && json_validate($this->from)) {
+        }
+        if (is_string($this->from) && json_validate($this->from)) {
             return $this->with(JsonToArrayMapper::class);
-        } else {
+        }
+        else {
             throw new CannotMapDataException($this->from, 'array');
         }
     }
@@ -101,9 +104,11 @@ final class ObjectFactory
     {
         if (is_object($this->from)) {
             return $this->with(ObjectToJsonMapper::class);
-        } elseif (is_array($this->from)) {
+        }
+        if (is_array($this->from)) {
             return $this->with(ArrayToJsonMapper::class);
-        } else {
+        }
+        else {
             throw new CannotMapDataException($this->from, 'json');
         }
     }
