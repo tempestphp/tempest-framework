@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\TagCompiler;
 
-use Tempest\Support\HtmlString;
+use Tempest\Support\Html\HtmlString;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\ViteConfig;
 

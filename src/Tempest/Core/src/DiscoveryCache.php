@@ -12,7 +12,7 @@ use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Cache\IsCache;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 final class DiscoveryCache implements Cache
 {

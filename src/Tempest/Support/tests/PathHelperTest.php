@@ -8,7 +8,7 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Tempest\Support\NamespaceHelper;
+use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
 
 /**
@@ -120,7 +120,7 @@ final class PathHelperTest extends TestCase
     {
         $this->assertSame(
             expected: $expected,
-            actual: NamespaceHelper::toClassName($path),
+            actual: to_base_class_name($path),
         );
     }
 

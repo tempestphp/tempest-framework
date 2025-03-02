@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Renderers;
 
 use Stringable;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\MutableString;
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
@@ -32,18 +32,18 @@ final readonly class KeyValueRenderer
             ->toString();
     }
 
-    private function cleanText(null|Stringable|string $text): StringHelper
+    private function cleanText(null|Stringable|string $text): MutableString
     {
-        $text = str($text)->trim();
+        $text = new MutableString($text)->trim();
 
         if ($text->length() === 0) {
-            return str();
+            return new MutableString();
         }
 
         return $text
             ->replaceRegex('/\[([^]]+)]/', '<em>[$1]</em>')
             ->when(fn ($s) => $s->endsWith(['.', '?', '!', ':']), fn ($s) => $s->replaceAt(-1, 1, ''))
-            ->replace(root_path(), '')
+            ->erase(root_path())
             ->trim();
     }
 }

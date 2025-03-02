@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Vite;
 
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 
 final class BuildConfig
 {
@@ -24,8 +24,8 @@ final class BuildConfig
     ) {
     }
 
-    public function getEntryPoints(): ArrayHelper
+    public function getEntryPoints(): ImmutableArray
     {
-        return new ArrayHelper($this->entrypoints);
+        return new ImmutableArray($this->entrypoints);
     }
 }

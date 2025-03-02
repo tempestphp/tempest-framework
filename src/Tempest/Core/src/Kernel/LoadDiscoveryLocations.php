@@ -8,7 +8,7 @@ use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryException;
 use Tempest\Discovery\DiscoveryLocation;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /** @internal */
 final readonly class LoadDiscoveryLocations
