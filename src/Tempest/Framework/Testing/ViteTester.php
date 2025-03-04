@@ -128,6 +128,7 @@ final class ViteTester
 
         $filesystem = new LocalFilesystem();
         $filesystem->deleteDirectory($temporaryRootDirectory, recursive: true);
+        $filesystem->ensureDirectoryExists($temporaryRootDirectory);
 
         $paths = [];
 
@@ -135,7 +136,7 @@ final class ViteTester
             $path = "{$temporaryRootDirectory}/{$path}";
             $paths[] = $path;
             $filesystem->ensureDirectoryExists(dirname($path));
-            $filesystem->write($path, json_encode($content, flags: JSON_UNESCAPED_SLASHES));
+            $filesystem->write($path, is_array($content) ? json_encode($content, flags: JSON_UNESCAPED_SLASHES) : $content);
         }
 
         $this->container->get(Kernel::class)->root = $temporaryRootDirectory;

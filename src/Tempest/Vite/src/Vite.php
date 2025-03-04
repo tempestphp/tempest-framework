@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Vite;
 
 use Tempest\Container\Container;
-use Tempest\Container\Exceptions\ContainerException;
 use Tempest\Core\AppConfig;
 use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
@@ -74,21 +73,21 @@ final class Vite
 
     private function getTagsResolver(): TagsResolver
     {
-        try {
+        if ($this->container->has(TagsResolver::class)) {
             return $this->container->get(TagsResolver::class);
-        } catch (ContainerException) {
-            return match ($this->shouldUseManifest()) {
-                true => new ManifestTagsResolver(
-                    viteConfig: $this->viteConfig,
-                    tagCompiler: $this->tagCompiler,
-                    manifest: $this->getManifest(),
-                ),
-                false => new DevelopmentTagsResolver(
-                    bridgeFile: $this->getBridgeFile(),
-                    tagCompiler: $this->tagCompiler,
-                ),
-            };
         }
+
+        return match ($this->shouldUseManifest()) {
+            true => new ManifestTagsResolver(
+                viteConfig: $this->viteConfig,
+                tagCompiler: $this->tagCompiler,
+                manifest: $this->getManifest(),
+            ),
+            false => new DevelopmentTagsResolver(
+                bridgeFile: $this->getBridgeFile(),
+                tagCompiler: $this->tagCompiler,
+            ),
+        };
     }
 
     private function getManifest(): Manifest

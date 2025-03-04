@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Vite;
 
-use Tempest\Support\ArrayHelper;
-
 final class BuildConfig
 {
     /**
@@ -22,10 +20,5 @@ final class BuildConfig
         public string $manifest = 'manifest.json',
         public array $entrypoints = [],
     ) {
-    }
-
-    public function getEntryPoints(): ArrayHelper
-    {
-        return new ArrayHelper($this->entrypoints);
     }
 }

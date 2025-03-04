@@ -59,12 +59,10 @@ final class ViteInstaller implements Installer
 
         // Publishes the Vite config
         $viteConfig = $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
-        $main = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.ts'));
-
-        // Publishes Tailwind's `main.css` file if requested
-        if ($shouldInstallTailwind) {
-            $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.css'));
-        }
+        $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.ts'));
+        $mainCss = $shouldInstallTailwind
+            ? $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.css'))
+            : null;
 
         // Install package.json scripts
         $this->updateJson(root_path('package.json'), function (array $json) {
@@ -103,12 +101,12 @@ final class ViteInstaller implements Installer
                 ? '<strong>Vite and Tailwind CSS are now installed in your project</strong>!'
                 : '<strong>Vite is now installed in your project</strong>!',
             PHP_EOL,
-            $main
-                ? "Add <code>\\Tempest\\vite_tags('{$main}')</code> to your template"
-                : 'Create a file and include it in your template with <code>\\Tempest\\vite_tags()</code>',
             $viteConfig
                 ? sprintf('Configure <href="file://%s">vite.config.ts</href> as you see fit', $viteConfig)
                 : null,
+            $mainTs
+                ? sprintf("Add <code><x-vite-tags :entrypoints='%s' /></code> to your template", json_encode(array_filter([$mainCss, $mainTs]), JSON_UNESCAPED_SLASHES))
+                : 'Create a file and include it in your template with <code><x-vite-tags entrypoint="./path/to/file.ts" /></code>',
             "Run <code>{$packageManager->getBinaryName()} dev</code> to start the <strong>development server</strong>",
             PHP_EOL,
             '<style="fg-green">→</style> Read the <href="https://tempestphp.com/docs/vite">documentation</href>',

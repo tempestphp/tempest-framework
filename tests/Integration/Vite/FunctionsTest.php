@@ -37,6 +37,7 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
+                'src/main.ts' => '',
             ],
         );
     }
