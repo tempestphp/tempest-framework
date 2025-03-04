@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use Tempest\Database\Connections\SQLiteConnection;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Config\SQLiteConfig;
 
-return new DatabaseConfig(
-    connection: new SQLiteConnection(
-        path: __DIR__ . '/../database.sqlite',
-    ),
+return new SQLiteConfig(
+    path: __DIR__ . '/../database.sqlite',
 );

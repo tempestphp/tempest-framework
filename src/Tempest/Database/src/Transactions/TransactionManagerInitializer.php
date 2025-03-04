@@ -7,7 +7,7 @@ namespace Tempest\Database\Transactions;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Database\Connection;
+use Tempest\Database\Connection\Connection;
 
 final readonly class TransactionManagerInitializer implements Initializer
 {

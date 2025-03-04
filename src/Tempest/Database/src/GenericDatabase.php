@@ -8,6 +8,7 @@ use BackedEnum;
 use DateTimeInterface;
 use PDO;
 use PDOException;
+use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;

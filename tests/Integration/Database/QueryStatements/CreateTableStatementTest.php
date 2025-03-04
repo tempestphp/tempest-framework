@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use RuntimeException;
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\Exceptions\InvalidValue;
@@ -73,8 +74,9 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        match ($this->container->get(DatabaseDialect::class)) {
-            DatabaseDialect::MYSQL => '',
+        $dialect = $this->container->get(DatabaseConfig::class)?->dialect;
+        match ($dialect) {
+            DatabaseDialect::MYSQL => $this->expectNotToPerformAssertions(),
             DatabaseDialect::SQLITE => $this->expectException(UnsupportedDialect::class),
             DatabaseDialect::POSTGRESQL => $this->expectException(UnsupportedDialect::class),
             null => throw new RuntimeException('No database dialect available'),
@@ -84,8 +86,6 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             CreateMigrationsTable::class,
             $migration,
         );
-
-        $this->expectNotToPerformAssertions();
     }
 
     public function test_array_statement(): void

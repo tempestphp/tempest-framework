@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
 use UnitEnum;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Transactions;
 
-use Tempest\Database\Connection;
+use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\CouldNotBeginTransaction;
 use Tempest\Database\Exceptions\CouldNotCommitTransaction;
 use Tempest\Database\Exceptions\CouldNotRollbackTransaction;

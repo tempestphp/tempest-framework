@@ -6,7 +6,9 @@ namespace Tests\Tempest\Integration\Database\QueryStatements;
 
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Id;
@@ -44,7 +46,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                 email: 'test@example.com',
             );
         } catch (QueryException $queryException) {
-            $message = match ($this->container->get(DatabaseDialect::class)) {
+            $message = match ($this->container->get(DatabaseConfig::class)?->dialect) {
                 DatabaseDialect::MYSQL => "Unknown column 'email'",
                 DatabaseDialect::SQLITE => 'table users has no column named email',
                 DatabaseDialect::POSTGRESQL => 'table users has no column named email',
@@ -73,10 +75,12 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_alter_for_only_indexes(): void
     {
+        $dialect = $this->container->get(DatabaseConfig::class)->dialect;
+
         $statement = new AlterTableStatement('table')
             ->index('foo')
             ->unique('bar')
-            ->compile(DatabaseDialect::SQLITE);
+            ->compile($dialect);
 
         $this->assertStringNotContainsString('ALTER TABLE', $statement);
     }

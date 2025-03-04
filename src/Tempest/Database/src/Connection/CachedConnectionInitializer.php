@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tempest\Database\Connection;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;

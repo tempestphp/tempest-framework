@@ -6,9 +6,9 @@ namespace Tempest\Database\Migrations;
 
 use PDOException;
 use Tempest\Container\Container;
+use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
-use Tempest\Database\DatabaseConfig;
-use Tempest\Database\DatabaseDialect;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Query;
@@ -22,9 +22,9 @@ use function Tempest\event;
 final readonly class MigrationManager
 {
     public function __construct(
-        private Container $container,
         private DatabaseConfig $databaseConfig,
         private Database $database,
+        private RunnableMigrations $migrations,
     ) {
     }
 
@@ -43,9 +43,7 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        $migrations = $this->getSortedMigrations();
-
-        foreach ($migrations as $migration) {
+        foreach ($this->migrations as $migration) {
             if (in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
             }
@@ -61,7 +59,7 @@ final readonly class MigrationManager
         } catch (PDOException $pdoException) {
             /** @throw UnhandledMatchError */
             match ((string) $pdoException->getCode()) {
-                $this->databaseConfig->connection()->dialect()->tableNotFoundCode() => event(
+                $this->databaseConfig->dialect->tableNotFoundCode() => event(
                     event: new MigrationFailed(name: Migration::table()->tableName, exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
@@ -75,9 +73,7 @@ final readonly class MigrationManager
             $existingMigrations,
         );
 
-        $migrations = $this->getSortedMigrations();
-
-        foreach ($migrations as $migration) {
+        foreach ($this->migrations as $migration) {
             /* If the migration is not in the existing migrations, it means it has not been executed */
             if (! in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
@@ -89,7 +85,7 @@ final readonly class MigrationManager
 
     public function dropAll(): void
     {
-        $dialect = $this->databaseConfig->connection()->dialect();
+        $dialect = $this->databaseConfig->dialect;
 
         try {
             // Get all tables
@@ -120,7 +116,7 @@ final readonly class MigrationManager
             return;
         }
 
-        $dialect = $this->databaseConfig->connection()->dialect();
+        $dialect = $this->databaseConfig->dialect;
 
         $query = new Query($statement->compile($dialect));
 
@@ -147,7 +143,7 @@ final readonly class MigrationManager
             return;
         }
 
-        $dialect = $this->databaseConfig->connection()->dialect();
+        $dialect = $this->databaseConfig->dialect;
 
         $query = new Query($statement->compile($dialect));
 
@@ -187,22 +183,6 @@ final readonly class MigrationManager
         }
 
         event(new MigrationRolledBack($migration->name));
-    }
-
-    /**
-     * @return MigrationInterface[]
-     */
-    private function getSortedMigrations(): array
-    {
-        /** @var MigrationInterface[] $migrations */
-        $migrations = array_map(
-            fn (string|MigrationInterface $migration) => is_string($migration) ? $this->container->get($migration) : $migration,
-            $this->databaseConfig->getMigrations(),
-        );
-
-        usort($migrations, fn (MigrationInterface $a, MigrationInterface $b) => $a->name <=> $b->name);
-
-        return $migrations;
     }
 
     /**
