@@ -17,7 +17,7 @@
         "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3",
         "monolog/monolog": "^3.7.0",
-        "nette/php-generator": "^4.1.6",
+        "nette/php-generator": "dev-master",
         "nikic/php-parser": "^5.3",
         "php": "^8.4",
         "psr-discovery/http-client-implementations": "1.x-dev",

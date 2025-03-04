@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests;
 
-use PHPUnit\Framework\Attributes\Test;
-use Tempest\Generation\ClassManipulator;
-use Tempest\Generation\Tests\Fixtures\ClassWithDummyStringToBeReplacedByFqcn;
-use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes;
-use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
-use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
-use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
-use Tempest\Generation\Tests\Fixtures\SampleNamespace\DummyFqcn;
-use Tempest\Generation\Tests\Fixtures\TestAttribute;
-use Tempest\Generation\Tests\Fixtures\WelcomeController;
 use Tempest\Support\StringHelper;
+use Tempest\Generation\Tests\Fixtures\WelcomeController;
+use Tempest\Generation\Tests\Fixtures\TestAttribute;
+use Tempest\Generation\Tests\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Fixtures\CreateMigrationsTable;
+use Tempest\Generation\Tests\Fixtures\ClassWithTraitInAnotherNamespace;
+use Tempest\Generation\Tests\Fixtures\ClassWithMethodParameterAttributes;
+use Tempest\Generation\Tests\Fixtures\ClassWithGetPropertyHook;
+use Tempest\Generation\ClassManipulator;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Generation\Tests\Fixtures\ClassWithDummyStringToBeReplacedByFqcn;
+use Tempest\Generation\Tests\Fixtures\SampleNamespace\DummyFqcn;
 
 /**
  * @internal
@@ -187,6 +188,13 @@ final class ClassManipulatorTest extends TestCase
     {
         $class = new ClassManipulator(ClassWithDummyStringToBeReplacedByFqcn::class);
         $class->manipulate(fn (StringHelper $string) => $string->replace("'fqcn-to-be-replaced'", sprintf('%s::class', DummyFqcn::class)));
+
+        $this->assertMatchesSnapshot($class->print());
+    }
+
+    #[Test]
+    public function support_property_hooks_get(): void {
+        $class = new ClassManipulator(ClassWithGetPropertyHook::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
