@@ -6,7 +6,6 @@ namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use function Tempest\path;
 
 final class ProjectCache implements Cache
 {
@@ -18,7 +17,7 @@ final class ProjectCache implements Cache
         private readonly CacheConfig $cacheConfig,
     ) {
         $this->pool = $this->cacheConfig->projectCachePool ?? new FilesystemAdapter(
-            directory: path($this->cacheConfig->directory, 'project')->toString(),
+            directory: $this->cacheConfig->directory . '/project',
         );
     }
 

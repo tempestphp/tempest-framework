@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\tests;
+namespace Tempest\View\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;

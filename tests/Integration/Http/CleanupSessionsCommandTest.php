@@ -8,6 +8,7 @@ use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\internal_storage_path;
 
 /**
  * @internal
@@ -16,13 +17,13 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_destroy_sessions(): void
     {
-        @unlink(__DIR__ . '/sessions/session_a');
-        @unlink(__DIR__ . '/sessions/session_b');
+        @unlink(internal_storage_path('/tests/sessions/session_a'));
+        @unlink(internal_storage_path('/tests/sessions/session_b'));
 
         $clock = $this->clock('2024-01-01 00:00:00');
 
         $this->container->config(new SessionConfig(
-            path: __DIR__ . '/sessions',
+            path: 'tests/sessions',
             expirationInSeconds: 10,
         ));
 
@@ -41,7 +42,7 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
             ->assertContains('session_a')
             ->assertDoesNotContain('session_b');
 
-        $this->assertFileDoesNotExist(__DIR__ . '/sessions/session_a');
-        $this->assertFileExists(__DIR__ . '/sessions/session_b');
+        $this->assertFileDoesNotExist(internal_storage_path('/tests/sessions/session_a'));
+        $this->assertFileExists(internal_storage_path('/tests/sessions/session_b'));
     }
 }

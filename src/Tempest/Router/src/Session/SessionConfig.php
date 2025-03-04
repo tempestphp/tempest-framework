@@ -10,7 +10,14 @@ use Tempest\Router\Session\Resolvers\CookieSessionIdResolver;
 final class SessionConfig
 {
     public function __construct(
-        public string $path = __DIR__ . '/sessions',
+        /**
+         * Path to the sessions storage directory, relative to the internal storage.
+         */
+        public string $path = 'sessions',
+
+        /**
+         * Time required for a session to expire. Defaults to one month.
+         */
         public int $expirationInSeconds = 60 * 60 * 24 * 30,
 
         /**

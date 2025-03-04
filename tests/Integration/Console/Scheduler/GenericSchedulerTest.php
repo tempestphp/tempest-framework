@@ -26,8 +26,8 @@ final class GenericSchedulerTest extends FrameworkIntegrationTestCase
         parent::setUp();
 
         // @todo: clean this up once file system is mockable
-        if (file_exists(GenericScheduler::CACHE_PATH)) {
-            unlink(GenericScheduler::CACHE_PATH);
+        if (file_exists(GenericScheduler::getCachePath())) {
+            unlink(GenericScheduler::getCachePath());
         }
     }
 

@@ -9,16 +9,20 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
 use Tempest\Core\ShellExecutor;
 use function Tempest\event;
+use function Tempest\internal_storage_path;
 
 final readonly class GenericScheduler implements Scheduler
 {
-    public const string CACHE_PATH = __DIR__ . '/../../../../.cache/tempest/last-schedule-run.cache.php';
-
     public function __construct(
         private SchedulerConfig $config,
         private ConsoleArgumentBag $argumentBag,
         private ShellExecutor $executor,
     ) {
+    }
+
+    public static function getCachePath(): string
+    {
+        return internal_storage_path('scheduler', 'last-schedule-run.cache.php');
     }
 
     public function run(?DateTime $date = null): void
@@ -80,11 +84,11 @@ final readonly class GenericScheduler implements Scheduler
      */
     private function getPreviousRuns(): array
     {
-        if (! file_exists(self::CACHE_PATH)) {
+        if (! file_exists(self::getCachePath())) {
             return [];
         }
 
-        return unserialize(file_get_contents(self::CACHE_PATH), ['allowed_classes' => false]);
+        return unserialize(file_get_contents(self::getCachePath()), ['allowed_classes' => false]);
     }
 
     /** @param ScheduledInvocation[] $ranInvocations */
@@ -96,12 +100,12 @@ final readonly class GenericScheduler implements Scheduler
             $lastRuns[$invocation->handler->getName()] = $ranAt->getTimestamp();
         }
 
-        $directory = dirname(self::CACHE_PATH);
+        $directory = dirname(self::getCachePath());
 
         if (! is_dir($directory)) {
             mkdir(directory: $directory, recursive: true);
         }
 
-        file_put_contents(self::CACHE_PATH, serialize($lastRuns));
+        file_put_contents(self::getCachePath(), serialize($lastRuns));
     }
 }

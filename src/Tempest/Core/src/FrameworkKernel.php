@@ -24,6 +24,8 @@ final class FrameworkKernel implements Kernel
 
     public array $discoveryClasses = [];
 
+    public string $internalStorage;
+
     public function __construct(
         public string $root,
         /** @var \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
@@ -50,6 +52,7 @@ final class FrameworkKernel implements Kernel
             ->loadEnv()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
+            ->registerInternalStorage()
             ->registerKernel()
             ->loadComposer()
             ->loadDiscoveryLocations()
@@ -162,6 +165,19 @@ final class FrameworkKernel implements Kernel
             set_exception_handler($handler->handleException(...));
             set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
         }
+
+        return $this;
+    }
+
+    public function registerInternalStorage(): self
+    {
+        $path = $this->root . '/vendor/.tempest';
+
+        if (! is_dir($path)) {
+            mkdir($path, recursive: true);
+        }
+
+        $this->internalStorage = realpath($path);
 
         return $this;
     }
