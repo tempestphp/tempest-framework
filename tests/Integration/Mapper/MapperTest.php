@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use DateTimeImmutable;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 use function Tempest\make;
 use function Tempest\map;
 
@@ -171,5 +179,83 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $object = map(['prop' => ''])->to(ObjectWithBoolProp::class);
 
         $this->assertFalse($object->prop);
+    }
+
+    public function test_map_from_attribute(): void
+    {
+        $object = map([
+            'name' => 'Guillaume',
+        ])->to(ObjectWithMapFromAttribute::class);
+
+        $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_map_to_attribute(): void
+    {
+        $array = map(new ObjectWithMapToAttribute(
+            fullName: 'Guillaume',
+        ))->toArray();
+
+        $this->assertSame(['name' => 'Guillaume'], $array);
+    }
+
+    public function test_map_to_handle_name_collisions(): void
+    {
+        $array = map(new ObjectWithMapToCollisions(
+            first_name: 'my first name',
+            name: 'my name',
+            last_name: 'my last name',
+        ))->toArray();
+
+        $this->assertSame([
+            'name' => 'my first name',
+            'full_name' => 'my name',
+            'last_name' => 'my last name',
+        ], $array);
+    }
+
+    public function test_map_to_handle_name_collisions_with_json_serializable(): void
+    {
+        $array = map(new ObjectWithMapToCollisionsJsonSerializable(
+            first_name: 'my first name',
+            name: 'my name',
+            last_name: 'my last name',
+        ))->toArray();
+
+        $this->assertSame([
+            'name' => 'my first name',
+            'full_name' => 'my name',
+        ], $array);
+    }
+
+    public function test_nested_value_object_mapping(): void
+    {
+        $data = [
+            'name' => [
+                'first' => 'Brent',
+                'last' => 'Roose',
+            ],
+        ];
+
+        $person = map($data)->to(Person::class);
+
+        $this->assertSame('Brent', $person->name->first);
+        $this->assertSame('Roose', $person->name->last);
+    }
+
+    public function test_object_to_array_mapper_use_casters(): void
+    {
+        $this->assertSame(
+            actual: map(new ObjectThatShouldUseCasters(
+                name: 'Guillaume',
+                date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+                enum: EnumToCast::FOO,
+            ))->toArray(),
+            expected: [
+                'name' => 'Guillaume',
+                'date' => '2025-03-02',
+                'enum' => 'foo',
+            ],
+        );
     }
 }

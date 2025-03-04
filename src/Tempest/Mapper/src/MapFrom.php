@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final readonly class MapTo
+final readonly class MapFrom
 {
     public function __construct(
         public string $name,

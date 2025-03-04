@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo;
 use Tempest\Reflection\ClassReflector;
 use Throwable;
 use function Tempest\map;
@@ -33,8 +32,6 @@ final readonly class JsonToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
-        return map(
-            map($from)->to(MapTo::ARRAY),
-        )->to($to);
+        return map(map($from)->toArray())->to($to);
     }
 }

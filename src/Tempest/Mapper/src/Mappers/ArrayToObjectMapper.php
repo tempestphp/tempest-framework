@@ -7,6 +7,7 @@ namespace Tempest\Mapper\Mappers;
 use Tempest\Mapper\Casters\ArrayCaster;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
@@ -57,7 +58,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $propertyName = $property->getName();
+            $propertyName = $this->resolvePropertyName($property);
 
             if (! array_key_exists($propertyName, $from)) {
                 $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
@@ -115,6 +116,17 @@ final readonly class ArrayToObjectMapper implements Mapper
         $this->validate($object);
 
         return $object;
+    }
+
+    private function resolvePropertyName(PropertyReflector $property): string
+    {
+        $mapFrom = $property->getAttribute(MapFrom::class);
+
+        if ($mapFrom !== null) {
+            return $mapFrom->name;
+        }
+
+        return $property->getName();
     }
 
     private function resolveObject(mixed $objectOrClass): object

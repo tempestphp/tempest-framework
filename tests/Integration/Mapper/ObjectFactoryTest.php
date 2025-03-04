@@ -70,7 +70,6 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(CannotMapDataException::class);
 
-        /** @phpstan-ignore-next-line  */
         map(['a' => 'a', 'b' => 'b'])->to('unknown');
     }
 

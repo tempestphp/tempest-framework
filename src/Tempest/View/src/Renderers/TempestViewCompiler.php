@@ -108,13 +108,15 @@ final readonly class TempestViewCompiler
             ->trim()
             ->startsWith(['<html', '<!DOCTYPE', '<!doctype']);
 
+        $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
+
         if ($isFullHtmlDocument) {
             // If we're rendering a full HTML document, we'll parse it as is
-            return HTMLDocument::createFromString($template->toString(), LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
+            return HTMLDocument::createFromString($template->toString(), $parserFlags);
         }
 
         // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
-        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
+        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", $parserFlags);
 
         return $dom->getElementById('tempest_render')->childNodes;
     }
