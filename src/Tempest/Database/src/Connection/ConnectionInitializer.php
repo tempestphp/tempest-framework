@@ -8,7 +8,6 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
-use Tempest\Database\Exceptions\MissingDatabaseConfig;
 
 final class ConnectionInitializer implements Initializer
 {
@@ -16,10 +15,6 @@ final class ConnectionInitializer implements Initializer
     public function initialize(Container $container): Connection
     {
         $databaseConfig = $container->get(DatabaseConfig::class);
-
-        if ($databaseConfig === null) {
-            throw new MissingDatabaseConfig();
-        }
 
         $connection = new PDOConnection($databaseConfig);
         $connection->connect();
