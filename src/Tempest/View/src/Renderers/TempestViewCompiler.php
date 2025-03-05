@@ -34,7 +34,8 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public function compile(string $path): string
     {
@@ -87,7 +88,7 @@ final readonly class TempestViewCompiler
         $template = str($template);
 
         // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
-        $headNodes = null;
+        $headNodes = [];
 
         if ($head = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null) {
             $headNodes = HTMLDocument::createFromString($head, $parserFlags)->childNodes;
@@ -119,11 +120,8 @@ final readonly class TempestViewCompiler
 
         $dom = HTMLDocument::createFromString($template->toString(), $parserFlags);
 
-        // If we have parsed head nodes, we'll insert them back into the DOM
-        if (
-            $headNodes && $headNodes->count()
-            && $headElement = $dom->getElementsByTagName('head')->item(0)
-        ) {
+        // If we have head nodes and a head tag, we inject them back
+        if ($headElement = $dom->getElementsByTagName('head')->item(0)) {
             foreach ($headNodes as $headNode) {
                 $headElement->appendChild($dom->importNode($headNode, deep: true));
             }
