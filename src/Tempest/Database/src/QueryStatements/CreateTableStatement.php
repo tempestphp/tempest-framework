@@ -6,7 +6,7 @@ namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\StringHelper;
 use UnitEnum;

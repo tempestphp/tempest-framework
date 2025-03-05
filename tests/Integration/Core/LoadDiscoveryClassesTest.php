@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\MigrationDiscovery;
+use Tempest\Database\Migrations\RunnableMigrations;
 use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
@@ -32,7 +33,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
             ),
         ];
 
-        $migrations = get(DatabaseConfig::class)->getMigrations();
+        $migrations = get(RunnableMigrations::class);
 
         $this->assertNotContains(HiddenDatabaseMigration::class, $migrations);
     }
@@ -52,8 +53,12 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
             ),
         ];
 
-        $migrations = get(DatabaseConfig::class)->getMigrations();
+        $migrations = get(RunnableMigrations::class);
 
-        $this->assertContains(HiddenMigratableDatabaseMigration::class, $migrations);
+        $foundMigrations = array_filter(
+            iterator_to_array($migrations),
+            static fn (DatabaseMigration $migration) => $migration instanceof HiddenMigratableDatabaseMigration,
+        );
+        $this->assertCount(1, $foundMigrations, 'Expected one hidden migration to be found');
     }
 }

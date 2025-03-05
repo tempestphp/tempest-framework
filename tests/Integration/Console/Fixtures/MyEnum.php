@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Tests\Tempest\Integration\Console\Fixtures;
 
 enum MyEnum: string
