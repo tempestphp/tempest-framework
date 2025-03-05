@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use Tempest\Database\Connections\PostgresConnection;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Config\PostgresConfig;
 
-return new DatabaseConfig(
-    connection: new PostgresConnection(),
-);
+return new PostgresConfig();

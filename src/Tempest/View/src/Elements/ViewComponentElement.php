@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use Tempest\Core\Environment;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\Slot;
@@ -16,6 +17,7 @@ final class ViewComponentElement implements Element
     use IsElement;
 
     public function __construct(
+        private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
@@ -106,7 +108,7 @@ final class ViewComponentElement implements Element
                     if ($slot === null) {
                         // A slot doesn't have any content, so we'll comment it out.
                         // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return '<!--' . $matches[0] . '-->';
+                        return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
                     }
 
                     return $slot->compile();

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tempest\Database\Connection;
 
 use PDO;
 use PDOStatement;
-use Tempest\Database\Connections\DatabaseConnection;
+use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\ConnectionClosed;
 
 final class PDOConnection implements Connection
 {
     private PDO|null $pdo = null;
 
-    public function __construct(private readonly DatabaseConnection $connection)
+    public function __construct(private readonly DatabaseConfig $config)
     {
     }
 
@@ -74,9 +74,9 @@ final class PDOConnection implements Connection
         }
 
         $this->pdo = new PDO(
-            $this->connection->getDsn(),
-            $this->connection->getUsername(),
-            $this->connection->getPassword(),
+            $this->config->dsn,
+            $this->config->username,
+            $this->config->password,
         );
     }
 }

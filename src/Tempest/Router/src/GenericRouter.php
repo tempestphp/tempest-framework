@@ -42,7 +42,7 @@ final class GenericRouter implements Router
     public function dispatch(Request|PsrRequest $request): Response
     {
         if (! $request instanceof PsrRequest) {
-            $request = map($request)->with(RequestToPsrRequestMapper::class);
+            $request = map($request)->with(RequestToPsrRequestMapper::class)->do();
         }
 
         $matchedRoute = $this->routeMatcher->match($request);
@@ -166,7 +166,7 @@ final class GenericRouter implements Router
         return $input;
     }
 
-    private function resolveRequest(PsrRequest $psrRequest, MatchedRoute $matchedRoute): Request
+    private function resolveRequest(\Psr\Http\Message\ServerRequestInterface|\Tempest\Mapper\ObjectFactory $psrRequest, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
         $requestClass = GenericRequest::class;
