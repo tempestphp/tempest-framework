@@ -537,13 +537,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <head>
             <x-custom-link />
         </head>
-        <body></body>
+        <body class="a"></body>
         </html>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <html lang="en"><head><link rel="stylesheet" href="#"></link>
-        </head><body></body></html>
+        </head><body class="a"></body></html>
         HTML, $html);
     }
 }
