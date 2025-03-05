@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          # - ubuntu-latest
+          - ubuntu-latest
           - windows-latest
         php:
           - 8.4
@@ -100,7 +100,7 @@ jobs:
         run: php ./tempest discovery:status
 
       - name: Execute tests
-        run: vendor/bin/phpunit --filter DevelopmentTagsResolverTest --coverage-clover build/reports/clover.xml
+        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
       # Only upload coverage once.
       - if: matrix.php == '8.3' && matrix.database == 'sqlite' && matrix.os == 'ubuntu-latest' && matrix.stability == 'prefer-stable'

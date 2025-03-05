@@ -51,10 +51,6 @@ final class DevelopmentTagsResolver implements TagsResolver
 
     private function fileToAssetPath(string $file): string
     {
-        dump([
-            $file, root_path(), root_path($file), realpath(root_path($file)),
-        ]);
-
         return str($file)
             ->when(
                 condition: fn ($file) => $file->startsWith('./'),
