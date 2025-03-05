@@ -134,7 +134,7 @@ final class HttpRouterTester
         $router = $this->container->get(Router::class);
 
         return new TestResponseHelper(
-            $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)),
+            $router->dispatch(map($request)->with(RequestToPsrRequestMapper::class)->do()),
         );
     }
 
