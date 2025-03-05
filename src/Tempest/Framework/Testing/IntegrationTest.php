@@ -87,12 +87,19 @@ abstract class IntegrationTest extends TestCase
     {
         parent::tearDown();
 
+        /** @phpstan-ignore-next-line */
         unset($this->root);
+        /** @phpstan-ignore-next-line */
         unset($this->discoveryLocations);
+        /** @phpstan-ignore-next-line */
         unset($this->appConfig);
+        /** @phpstan-ignore-next-line */
         unset($this->kernel);
+        /** @phpstan-ignore-next-line */
         unset($this->container);
+        /** @phpstan-ignore-next-line */
         unset($this->console);
+        /** @phpstan-ignore-next-line */
         unset($this->http);
     }
 }
