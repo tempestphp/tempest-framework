@@ -492,6 +492,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('<!DOCTYPE html>', $html);
         $this->assertStringContainsString('<html lang="en">', $html);
+        $this->assertStringContainsString('<meta charset="UTF-8">', $html);
         $this->assertStringContainsString('<head>', $html);
         $this->assertStringContainsString('<body', $html);
         $this->assertStringContainsString('<!-- test comment -->', $html);

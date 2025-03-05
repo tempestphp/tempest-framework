@@ -546,4 +546,32 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </head><body class="a"></body></html>
         HTML, $html);
     }
+
+
+    public function test_head_injection(): void
+    {
+        $this->registerViewComponent('x-custom-link', <<<'HTML'
+        <link rel="stylesheet" href="#" />
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <!doctype html>
+        <html lang="en">
+        <head>
+            <title>Foo</title>
+            <meta charset="utf-8" />
+            <x-custom-link />
+            <meta name="description" content="bar" />
+        </head>
+        <body class="a">b</body>
+        </html>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <!DOCTYPE html>
+        <html lang="en"><head><title>Foo</title><link rel="stylesheet" href="#"></link><meta charset="utf-8" /><meta name="description" content="bar" />
+        </head><body class="a">b
+        </body></html>
+        HTML, $html);
+    }
 }
