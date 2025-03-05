@@ -92,7 +92,11 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
-            throw new ViewCompilationError(content: file_get_contents($_path), previous: $throwable);
+            throw new ViewCompilationError(
+                path: $_path,
+                content: file_get_contents($_path),
+                previous: $throwable
+            );
         }
 
         $this->currentView = null;

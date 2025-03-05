@@ -261,6 +261,11 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                 <option value="<?= $value ?>" :selected="$selected"><?= $name ?></option>
                 HTML, value: 'value', selected: false, name: 'name'),
         );
+
+        $this->assertSame(
+            '<textarea autofocus></textarea>',
+            $this->render('<textarea autofocus></textarea>')
+        );
     }
 
     public function test_expression_attribute_in_raw_element(): void

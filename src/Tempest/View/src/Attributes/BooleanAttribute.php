@@ -39,6 +39,10 @@ final readonly class BooleanAttribute implements Attribute
             return false;
         }
 
+        if (! str_starts_with($attributeName, ':')) {
+            return false;
+        }
+
         $attributeName = ltrim($attributeName, ':');
 
         $allowedElements = match ($attributeName) {
