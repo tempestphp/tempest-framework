@@ -43,7 +43,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $path = $this->viewCache->getCachedViewPath(
             path: $view->path,
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->path)),
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view)),
         );
 
         return $this->renderCompiled($view, $path);
