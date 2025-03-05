@@ -47,7 +47,7 @@ final readonly class PathHelper implements Stringable
 
     public function toString(): string
     {
-        return $this->path;
+        return str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $this->path);
     }
 
     public function info(int $flags = PATHINFO_ALL): string|array
