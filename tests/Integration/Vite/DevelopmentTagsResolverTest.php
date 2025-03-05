@@ -34,7 +34,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
                 'src/foo.ts' => '',
                 'src/tailwind.css' => '',
             ],
-            callback: function () {
+            callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
                     tagCompiler: $this->container->get(TagCompiler::class),
@@ -61,7 +61,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
             files: [
                 'src/main.ts' => '',
             ],
-            callback: function () {
+            callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
                     tagCompiler: $this->container->get(TagCompiler::class),
@@ -85,7 +85,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
                 'src/foo.ts' => '',
                 'src/bar/baz.ts' => '',
             ],
-            callback: function () {
+            callback: function (): void {
                 $resolver = new DevelopmentTagsResolver(
                     bridgeFile: new ViteBridgeFile(url: 'http://localhost'),
                     tagCompiler: $this->container->get(TagCompiler::class),

@@ -34,8 +34,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string $path): string
     {
@@ -83,23 +82,26 @@ final readonly class TempestViewCompiler
 
     private function parseDom(string $template): NodeList
     {
-        $template = str($template)
+        $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
+        $template = str($template);
+
+        // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
+        $headNodes = null;
+
+        if ($head = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null) {
+            $headNodes = HTMLDocument::createFromString($head, $parserFlags)->childNodes;
+        }
+
+        $template = $template
             // Escape PHP tags
             ->replace(
                 search: array_keys(self::TOKEN_MAPPING),
                 replace: array_values(self::TOKEN_MAPPING),
             )
 
-            // HEAD shenanigans: HTML5 parsing doesn't allow certain elements in <head>, but tempest/view does
-            // So instead of parsing `<head>` as `<head>`, we temporarily move everything within `<body>`
-            // At the end of compilation, everything related to head is moved back to its appropriate place
-            // Just in case I or anyone else in the future stumbles upon this code, please be gentle… 🥹
-            ->replaceRegex('/<body(.*?)>/', '<!--<tempest-body$1>-->')
-            ->replace(
-                ['<head>', '</head>', ],
-                ['<!--<tempest-head>--><body><div id="tempest_head">', '</div><!--</tempest-head>-->'],
-            )
+            // Cleanup head, we'll insert it after having parsed the DOM
+            ->replaceRegex('/<head>((.|\n)*?)<\/head>/', '<head></head>')
 
             // Convert self-closing tags
             ->replaceRegex(
@@ -115,24 +117,19 @@ final readonly class TempestViewCompiler
                 },
             );
 
-        $isFullHtmlDocument = $template
-            ->replaceRegex('/('.self::TOKEN_PHP_OPEN.'|'.self::TOKEN_PHP_SHORT_ECHO.')(.|\n)*?'.self::TOKEN_PHP_CLOSE.'/', '')
-            ->trim()
-            ->startsWith(['<html', '<!DOCTYPE', '<!doctype']);
+        $dom = HTMLDocument::createFromString($template->toString(), $parserFlags);
 
-        $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
-
-        if ($isFullHtmlDocument) {
-            // If we're rendering a full HTML document, we'll parse it as is
-            $nodes = HTMLDocument::createFromString($template->toString(), $parserFlags)->childNodes;
-        } else {
-            // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
-            $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", $parserFlags);
-
-            $nodes = $dom->getElementById('tempest_render')->childNodes;
+        // If we have parsed head nodes, we'll insert them back into the DOM
+        if (
+            $headNodes && $headNodes->count()
+            && $headElement = $dom->getElementsByTagName('head')->item(0)
+        ) {
+            foreach ($headNodes as $headNode) {
+                $headElement->appendChild($dom->importNode($headNode, deep: true));
+            }
         }
 
-        return $nodes;
+        return $dom->childNodes;
     }
 
     /**
@@ -211,14 +208,6 @@ final readonly class TempestViewCompiler
                 array_values(self::TOKEN_MAPPING),
                 array_keys(self::TOKEN_MAPPING),
             )
-
-            // Unescape HEAD shenanigans
-            ->replaceRegex('/<!--<tempest-body(.*?)>-->/', '<body$1>')
-            ->replace(
-                ['<!--<tempest-head>--><body><div id="tempest_head">', '</div><!--</tempest-head>-->'],
-                ['<head>', '</head>'],
-            )
-
             ->toString();
     }
 }

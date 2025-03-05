@@ -498,7 +498,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head><body></body></html>
+        <html lang="en"><head><!--<x-slot name="styles" />--><link rel="stylesheet" href="#"></link></head><body></body></html>
         HTML, $html);
     }
 
