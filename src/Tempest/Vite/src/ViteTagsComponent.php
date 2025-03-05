@@ -20,9 +20,11 @@ final class ViteTagsComponent implements ViewComponent
 
     public function compile(ViewComponentElement $element): string
     {
-        $entrypoints = $element->hasAttribute('entrypoints') || $element->hasAttribute('entrypoint')
-            ? '$entrypoint ?? $entrypoint'
-            : var_export($this->viteConfig->build->entrypoints, return: true);
+        $entrypoints = match (true) {
+            $element->hasAttribute('entrypoints') => '$entrypoints',
+            $element->hasAttribute('entrypoint') => '$entrypoint',
+            default => var_export($this->viteConfig->build->entrypoints, return: true),
+        };
 
         return <<<HTML
                 <?= \Tempest\\vite_tags({$entrypoints}) ?>
