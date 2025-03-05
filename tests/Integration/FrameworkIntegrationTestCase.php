@@ -14,8 +14,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tempest\Database\CachedConnectionInitializer;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Connection\CachedConnectionInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -53,9 +52,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
         }
 
-        $connection = (require $databaseConfigPath)->connection();
-        $config = $this->container->get(DatabaseConfig::class);
-        $config->connection = $connection;
+        $this->container->config(require $databaseConfigPath);
 
         // Vite
         $this->vite->preventTagResolution();

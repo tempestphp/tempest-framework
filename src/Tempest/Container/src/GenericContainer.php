@@ -107,6 +107,10 @@ final class GenericContainer implements Container
     {
         $this->singleton($config::class, $config);
 
+        foreach (new ClassReflector($config)->getInterfaces() as $interface) {
+            $this->singleton($interface->getName(), $config);
+        }
+
         return $this;
     }
 

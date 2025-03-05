@@ -6,6 +6,8 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
@@ -503,7 +505,30 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head></html>
         HTML, $html);
     }
-    
+
+    public function test_empty_slots_are_removed_in_production(): void
+    {
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <html lang="en">
+        <head>
+            <x-slot name="styles" />
+            <link rel="stylesheet" href="#" />
+        </head>
+        </html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout>
+        </x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><head><link rel="stylesheet" href="#"></link></head></html>
+        HTML, $html);
+    }
+
     public function test_custom_components_in_head(): void
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'

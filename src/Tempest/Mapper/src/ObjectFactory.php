@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Mapper;
 
 use Closure;
-use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
+use Tempest\Mapper\Exceptions\MissingMapperException;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\JsonToArrayMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
@@ -20,6 +20,8 @@ final class ObjectFactory
     private mixed $from;
 
     private mixed $to;
+
+    private array $with = [];
 
     private bool $isCollection = false;
 
@@ -70,6 +72,18 @@ final class ObjectFactory
     }
 
     /**
+     * @template MapperType of \Tempest\Mapper\Mapper
+     * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
+     * @return self<ClassType>
+     */
+    public function with(Closure|string ...$mappers): self
+    {
+        $this->with = [...$this->with, ...$mappers];
+
+        return $this;
+    }
+
+    /**
      * @template T of object
      * @param T|class-string<T>|string $to
      * @return T|T[]|mixed
@@ -83,28 +97,53 @@ final class ObjectFactory
         );
     }
 
+    public function do(): mixed
+    {
+        if ($this->with === []) {
+            throw new MissingMapperException();
+        }
+
+        $result = $this->from;
+
+        foreach ($this->with as $mapper) {
+            $result = $this->mapWith(
+                mapper: $mapper,
+                from: $result,
+                to: null,
+            );
+        }
+
+        return $result;
+    }
+
     public function toArray(): array
     {
         if (is_object($this->from)) {
-            return $this->with(ObjectToArrayMapper::class);
-        } elseif (is_array($this->from)) {
-            return $this->from;
-        } elseif (is_string($this->from) && json_validate($this->from)) {
-            return $this->with(JsonToArrayMapper::class);
-        } else {
-            throw new CannotMapDataException($this->from, 'array');
+            return $this->with(ObjectToArrayMapper::class)->do();
         }
+
+        if (is_array($this->from)) {
+            return $this->from;
+        }
+
+        if (is_string($this->from) && json_validate($this->from)) {
+            return $this->with(JsonToArrayMapper::class)->do();
+        }
+
+        throw new CannotMapDataException($this->from, 'array');
     }
 
     public function toJson(): string
     {
         if (is_object($this->from)) {
-            return $this->with(ObjectToJsonMapper::class);
-        } elseif (is_array($this->from)) {
-            return $this->with(ArrayToJsonMapper::class);
-        } else {
-            throw new CannotMapDataException($this->from, 'json');
+            return $this->with(ObjectToJsonMapper::class)->do();
         }
+
+        if (is_array($this->from)) {
+            return $this->with(ArrayToJsonMapper::class)->do();
+        }
+
+        throw new CannotMapDataException($this->from, 'json');
     }
 
     /**
@@ -121,45 +160,13 @@ final class ObjectFactory
         );
     }
 
-    /**
-     * @template MapperType of \Tempest\Mapper\Mapper
-     * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> ...$mappers
-     * @throws ReflectionException
-     */
-    public function with(Closure|string ...$mappers): mixed
-    {
-        $result = $this->from;
-
-        foreach ($mappers as $mapper) {
-            if ($mapper instanceof Closure) {
-                $function = new FunctionReflector($mapper);
-
-                $data = [
-                    'from' => $result,
-                ];
-
-                foreach ($function->getParameters() as $parameter) {
-                    $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName());
-                }
-
-                $result = $mapper(...$data);
-            } else {
-                $mapper = $this->container->get($mapper);
-
-                /** @var Mapper $mapper */
-                $result = $mapper->map($result, null);
-            }
-        }
-
-        return $result;
-    }
-
     private function mapObject(
         mixed $from,
         mixed $to,
         bool $isCollection,
     ): mixed
     {
+        // Map collections
         if ($isCollection && is_array($from)) {
             return array_map(
                 fn (mixed $item) => $this->mapObject(
@@ -171,6 +178,22 @@ final class ObjectFactory
             );
         }
 
+        // Map using explicitly defined mappers
+        if ($this->with) {
+            $result = $from;
+
+            foreach ($this->with as $mapper) {
+                $result = $this->mapWith(
+                    mapper: $mapper,
+                    from: $result,
+                    to: $to,
+                );
+            }
+
+            return $result;
+        }
+
+        // Map using an inferred mapper
         $mappers = $this->config->mappers;
 
         foreach ($mappers as $mapperClass) {
@@ -183,5 +206,35 @@ final class ObjectFactory
         }
 
         throw new CannotMapDataException($from, $to);
+    }
+
+    /**
+     * @template MapperType of \Tempest\Mapper\Mapper
+     * @param Closure(MapperType $mapper, mixed $from): mixed|class-string<\Tempest\Mapper\Mapper> $mapper
+     */
+    private function mapWith(
+        mixed $mapper,
+        mixed $from,
+        mixed $to,
+    ): mixed
+    {
+        if ($mapper instanceof Closure) {
+            $function = new FunctionReflector($mapper);
+
+            $data = [
+                'from' => $from,
+            ];
+
+            foreach ($function->getParameters() as $parameter) {
+                $data[$parameter->getName()] ??= $this->container->get($parameter->getType()->getName());
+            }
+
+            return $mapper(...$data);
+        }
+
+        $mapper = $this->container->get($mapper);
+
+        /** @var Mapper $mapper */
+        return $mapper->map($from, $to);
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo;
 
 final readonly class JsonToArrayMapper implements Mapper
 {

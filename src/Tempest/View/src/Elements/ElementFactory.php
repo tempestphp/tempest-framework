@@ -10,6 +10,7 @@ use Dom\Element as DomElement;
 use Dom\Node;
 use Dom\Text;
 use Tempest\Container\Container;
+use Tempest\Core\AppConfig;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
@@ -21,6 +22,7 @@ final class ElementFactory
     private TempestViewCompiler $compiler;
 
     public function __construct(
+        private readonly AppConfig $appConfig,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
     ) {}
@@ -97,9 +99,10 @@ final class ElementFactory
             }
 
             $element = new ViewComponentElement(
-                $this->compiler,
-                $viewComponentClass,
-                $attributes,
+                environment: $this->appConfig->environment,
+                compiler: $this->compiler,
+                viewComponent: $viewComponentClass,
+                attributes: $attributes,
             );
         } elseif ($tagName === 'x-template') {
             $element = new TemplateElement(
