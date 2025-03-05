@@ -41,7 +41,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     </html>
                     HTML);
 
-                $this->assertSame(
+                $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
                         <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script></head><body>Foo
                         </body></html>
@@ -76,7 +76,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     </html>
                     HTML);
 
-                $this->assertSame(
+                $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
                         <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
                         </body></html>
@@ -111,7 +111,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                     </html>
                     HTML);
 
-                $this->assertSame(
+                $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
                         <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
                         </body></html>
