@@ -110,10 +110,6 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            if ($property->isReadOnly()) {
-                continue;
-            }
-
             $property->unset($object);
         }
 
