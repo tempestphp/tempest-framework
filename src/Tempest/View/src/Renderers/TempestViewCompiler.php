@@ -12,6 +12,7 @@ use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use function Tempest\path;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 use const Dom\HTML_NO_DEFAULT_NS;
 
@@ -79,7 +80,7 @@ final readonly class TempestViewCompiler
         return file_get_contents($searchPath);
     }
 
-    private function parseDom(string $template): HTMLDocument|NodeList
+    private function parseDom(string $template): NodeList
     {
         $template = str($template)
 
@@ -87,6 +88,15 @@ final readonly class TempestViewCompiler
             ->replace(
                 search: array_keys(self::TOKEN_MAPPING),
                 replace: array_values(self::TOKEN_MAPPING),
+            )
+
+            // HEAD shenanigans: HTML5 parsing doesn't allow certain elements in <head>, but tempest/view does
+            // So instead of parsing `<head>` as `<head>`, we temporarily move everything within `<body>`
+            // At the end of compilation, everything related to head is moved back to its appropriate place
+            // Just in case I or anyone else in the future stumbles upon this code, please be gentle… 🥹
+            ->replace(
+                ['<body>', '<head>', '</head>', ],
+                ['<!--<body>-->', '<!--<head>--><body><div id="tempest_head">', '</div><!--</head>-->'],
             )
 
             // Convert self-closing tags
@@ -112,25 +122,23 @@ final readonly class TempestViewCompiler
 
         if ($isFullHtmlDocument) {
             // If we're rendering a full HTML document, we'll parse it as is
-            return HTMLDocument::createFromString($template->toString(), $parserFlags);
+            $nodes = HTMLDocument::createFromString($template->toString(), $parserFlags)->childNodes;
+        } else {
+            // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
+            $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", $parserFlags);
+
+            $nodes = $dom->getElementById('tempest_render')->childNodes;
         }
 
-        // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
-        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", $parserFlags);
-
-        return $dom->getElementById('tempest_render')->childNodes;
+        return $nodes;
     }
 
     /**
      * @return Element[]
      */
-    private function mapToElements(HTMLDocument|NodeList $nodes): array
+    private function mapToElements(NodeList $nodes): array
     {
         $elements = [];
-
-        if ($nodes instanceof HTMLDocument) {
-            $nodes = $nodes->childNodes;
-        }
 
         foreach ($nodes as $node) {
             $element = $this->elementFactory->make($node);
@@ -187,18 +195,27 @@ final readonly class TempestViewCompiler
     /** @param \Tempest\View\Element[] $elements */
     private function compileElements(array $elements): string
     {
-        $compiled = [];
+        $compiled = arr();
 
         foreach ($elements as $element) {
             $compiled[] = $element->compile();
         }
 
-        $compiled = implode(PHP_EOL, $compiled);
+        return $compiled
+            ->implode(PHP_EOL)
 
-        return str_replace(
-            search: array_values(self::TOKEN_MAPPING),
-            replace: array_keys(self::TOKEN_MAPPING),
-            subject: $compiled,
-        );
+            // Unescape PHP tags
+            ->replace(
+                array_values(self::TOKEN_MAPPING),
+                array_keys(self::TOKEN_MAPPING)
+            )
+
+            // Unescape HEAD shenanigans
+            ->replace(
+                ['<!--<body>-->', '<!--<head>--><body><div id="tempest_head">', '</div><!--</head>-->'],
+                ['<body>', '<head>', '</head>'],
+            )
+
+            ->toString();
     }
 }

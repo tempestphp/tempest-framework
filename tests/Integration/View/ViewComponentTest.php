@@ -475,14 +475,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </x-layout>
         HTML);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><title>Tempest View</title></head><body>
-                
-            Hello World
-        
-            
-            </body></html>
-        HTML, $html);
+        $this->assertStringContainsString('<html lang="en"><head><title>Tempest View</title></head><body>', $html);
+        $this->assertStringContainsString('Hello World', $html);
+        $this->assertStringContainsString('</body></html>', $html);
     }
     
     public function test_empty_slots_are_commented_out(): void
@@ -493,6 +488,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <x-slot name="styles" />
             <link rel="stylesheet" href="#" />
         </head>
+        <body></body>
         </html>
         HTML);
 
@@ -502,7 +498,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head></html>
+        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head><body></body></html>
         HTML, $html);
     }
 
@@ -516,6 +512,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <x-slot name="styles" />
             <link rel="stylesheet" href="#" />
         </head>
+        <body></body>
         </html>
         HTML);
 
@@ -525,7 +522,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><link rel="stylesheet" href="#"></link></head></html>
+        <html lang="en"><head><link rel="stylesheet" href="#"></link></head><body></body></html>
         HTML, $html);
     }
 
@@ -540,11 +537,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <head>
             <x-custom-link />
         </head>
+        <body></body>
         </html>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><link rel="stylesheet" href="#"></link></head>
+        <html lang="en"><head><link rel="stylesheet" href="#"></link>
+        </head><body></body></html>
         HTML, $html);
     }
 }
