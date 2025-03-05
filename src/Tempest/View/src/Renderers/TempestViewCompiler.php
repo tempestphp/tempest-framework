@@ -34,7 +34,8 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public function compile(string $path): string
     {
@@ -94,9 +95,10 @@ final readonly class TempestViewCompiler
             // So instead of parsing `<head>` as `<head>`, we temporarily move everything within `<body>`
             // At the end of compilation, everything related to head is moved back to its appropriate place
             // Just in case I or anyone else in the future stumbles upon this code, please be gentle… 🥹
+            ->replaceRegex('/<body(.*?)>/', '<!--<tempest-body$1>-->')
             ->replace(
-                ['<body>', '<head>', '</head>', ],
-                ['<!--<body>-->', '<!--<head>--><body><div id="tempest_head">', '</div><!--</head>-->'],
+                ['<head>', '</head>', ],
+                ['<!--<tempest-head>--><body><div id="tempest_head">', '</div><!--</tempest-head>-->'],
             )
 
             // Convert self-closing tags
@@ -207,13 +209,14 @@ final readonly class TempestViewCompiler
             // Unescape PHP tags
             ->replace(
                 array_values(self::TOKEN_MAPPING),
-                array_keys(self::TOKEN_MAPPING)
+                array_keys(self::TOKEN_MAPPING),
             )
 
             // Unescape HEAD shenanigans
+            ->replaceRegex('/<!--<tempest-body(.*?)>-->/', '<body$1>')
             ->replace(
-                ['<!--<body>-->', '<!--<head>--><body><div id="tempest_head">', '</div><!--</head>-->'],
-                ['<body>', '<head>', '</head>'],
+                ['<!--<tempest-head>--><body><div id="tempest_head">', '</div><!--</tempest-head>-->'],
+                ['<head>', '</head>'],
             )
 
             ->toString();
