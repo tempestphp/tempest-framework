@@ -28,10 +28,10 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->path = __DIR__ . '/Fixtures/tmp';
         $this->filesystem = new LocalFilesystem();
         $this->filesystem->deleteDirectory($this->path, recursive: true);
         $this->filesystem->ensureDirectoryExists($this->path);
+        $this->path = realpath($this->path);
 
         $this->container->get(Kernel::class)->internalStorage = realpath($this->path);
 
@@ -95,7 +95,7 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new SessionConfig(
-            path: __DIR__ . '/sessions',
+            path: 'test_sessions',
             expirationInSeconds: 1,
         ));
 
