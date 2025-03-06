@@ -126,8 +126,8 @@ final class ToArrayTest extends TestCase
     {
         $object = new class () {
             public $foo = 'bar';
+
             public $baz = 42;
-            private $hidden = 'secret'; // @phpstan-ignore-line not used on purpose
         };
 
         $this->assertEquals([$object], to_array($object));

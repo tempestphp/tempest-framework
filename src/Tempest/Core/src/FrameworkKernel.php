@@ -105,6 +105,7 @@ final class FrameworkKernel implements Kernel
     public function registerKernel(): self
     {
         $this->container->singleton(Kernel::class, $this);
+        $this->container->singleton(self::class, $this);
 
         return $this;
     }

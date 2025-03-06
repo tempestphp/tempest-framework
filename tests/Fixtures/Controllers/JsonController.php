@@ -9,7 +9,7 @@ use Tempest\Router\Responses\Ok;
 final class JsonController
 {
     #[Post('/json-endpoint')]
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): \Tempest\Router\Responses\Ok
     {
         return new Ok($request->get('title'));
     }
