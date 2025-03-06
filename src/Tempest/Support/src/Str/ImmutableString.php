@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Str;
 
 use Closure;
+use Stringable;
 use Tempest\Support\Html\HtmlString;
 
 /**
@@ -47,5 +48,14 @@ final class ImmutableString implements StringInterface
         }
 
         return $callback($this);
+    }
+
+    /**
+     * Returns a new instance with the specified string,
+     * or mutates the instance if this is a `MutableString`.
+     */
+    protected function createOrModify(Stringable|string $string): static
+    {
+        return new static($string);
     }
 }

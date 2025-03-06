@@ -14,8 +14,8 @@ use function Tempest\Support\tap;
  * @template TKey of array-key
  * @template TValue
  *
- * @implements ArrayAccess<TKey, TValue>
- * @implements Iterator<TKey, TValue>
+ * @implements \ArrayAccess<TKey, TValue>
+ * @implements \Iterator<TKey, TValue>
  */
 trait ManipulatesArray
 {
@@ -30,6 +30,8 @@ trait ManipulatesArray
     ) {
         $this->value = namespace\wrap($input);
     }
+
+    abstract protected function createOrModify(iterable $array): mixed;
 
     /**
      * Creates an array from the specified `$string`, split by the given `$separator`.
@@ -61,21 +63,6 @@ trait ManipulatesArray
     public static function createFrom(mixed $input): static
     {
         return new static(namespace\to_array($input));
-    }
-
-    /**
-     * Returns a new instance with the specified iterable,
-     * or mutates the instance if this is a `MutableCollection`.
-     */
-    protected function createOrModify(iterable $array): self
-    {
-        if ($this instanceof MutableArray) {
-            $this->value = $array;
-    
-            return $this;
-        }
-
-        return new self($array);
     }
 
     /**

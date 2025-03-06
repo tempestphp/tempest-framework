@@ -32,4 +32,15 @@ final class MutableArray implements ArrayInterface
     {
         return namespace\pull($this->value, $key, $default);
     }
+
+    /**
+     * Returns a new instance with the specified iterable,
+     * or mutates the instance if this is a `MutableCollection`.
+     */
+    protected function createOrModify(iterable $array): self
+    {
+        $this->value = iterator_to_array($array);
+
+        return $this;
+    }
 }

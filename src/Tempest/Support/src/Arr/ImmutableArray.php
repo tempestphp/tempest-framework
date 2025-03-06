@@ -22,4 +22,13 @@ final class ImmutableArray implements ArrayInterface
     {
         return new MutableArray($this->value);
     }
+
+    /**
+     * Returns a new instance with the specified iterable,
+     * or mutates the instance if this is a `MutableCollection`.
+     */
+    protected function createOrModify(iterable $array): self
+    {
+        return new self($array);
+    }
 }

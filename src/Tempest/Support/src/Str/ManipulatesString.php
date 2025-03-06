@@ -28,19 +28,10 @@ trait ManipulatesString
     }
 
     /**
-     * Returns a new instnace with the specified string,
+     * Returns a new instance with the specified string,
      * or mutates the instance if this is a `MutableString`.
      */
-    protected function createOrModify(Stringable|string $string): static
-    {
-        if ($this instanceof MutableString) {
-            $this->value = $string;
-    
-            return $this;
-        }
-
-        return new static($string);
-    }
+    abstract protected function createOrModify(Stringable|string $string): static;
 
     /**
      * Prefixes the instance with the given string.
