@@ -569,8 +569,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <!DOCTYPE html>
-        <html lang="en"><head><title>Foo</title><link rel="stylesheet" href="#"></link><meta charset="utf-8" /><meta name="description" content="bar" />
-        </head><body class="a">b
+        <html lang="en"><head><title>Foo</title><meta charset="utf-8"></meta><link rel="stylesheet" href="#"></link>
+        <meta name="description" content="bar"></meta></head><body class="a">b
         </body></html>
         HTML, $html);
     }

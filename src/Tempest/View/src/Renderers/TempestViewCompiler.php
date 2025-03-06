@@ -7,7 +7,9 @@ namespace Tempest\View\Renderers;
 use Dom\HTMLDocument;
 use Dom\NodeList;
 use Exception;
+use Stringable;
 use Tempest\Core\Kernel;
+use Tempest\Support\StringHelper;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
@@ -34,8 +36,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string $path): string
     {
@@ -90,35 +91,23 @@ final readonly class TempestViewCompiler
         // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
         $headNodes = [];
 
-        if ($head = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null) {
-            $headNodes = HTMLDocument::createFromString($head, $parserFlags)->childNodes;
+        $headTemplate = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null;
+
+        if ($headTemplate) {
+            $headNodes = HTMLDocument::createFromString(
+                source: $this->cleanupTemplate($headTemplate)->toString(),
+                options: $parserFlags,
+            )->childNodes;
         }
 
-        $template = $template
-            // Escape PHP tags
-            ->replace(
-                search: array_keys(self::TOKEN_MAPPING),
-                replace: array_values(self::TOKEN_MAPPING),
-            )
-
+        $mainTemplate = $this->cleanupTemplate($template)
             // Cleanup head, we'll insert it after having parsed the DOM
-            ->replaceRegex('/<head>((.|\n)*?)<\/head>/', '<head></head>')
+            ->replaceRegex('/<head>((.|\n)*?)<\/head>/', '<head></head>');
 
-            // Convert self-closing tags
-            ->replaceRegex(
-                regex: '/<x-(?<element>.*?)\/>/',
-                replace: function (array $match) {
-                    $closingTag = str($match['element'])->before(' ')->toString();
-
-                    return sprintf(
-                        '<x-%s></x-%s>',
-                        $match['element'],
-                        $closingTag,
-                    );
-                },
-            );
-
-        $dom = HTMLDocument::createFromString($template->toString(), $parserFlags);
+        $dom = HTMLDocument::createFromString(
+            source: $mainTemplate->toString(),
+            options: $parserFlags,
+        );
 
         // If we have head nodes and a head tag, we inject them back
         if ($headElement = $dom->getElementsByTagName('head')->item(0)) {
@@ -207,5 +196,29 @@ final readonly class TempestViewCompiler
                 array_keys(self::TOKEN_MAPPING),
             )
             ->toString();
+    }
+
+    private function cleanupTemplate(string|Stringable $template): StringHelper
+    {
+        return str($template)
+            // Escape PHP tags
+            ->replace(
+                search: array_keys(self::TOKEN_MAPPING),
+                replace: array_values(self::TOKEN_MAPPING),
+            )
+
+            // Convert self-closing tags
+            ->replaceRegex(
+                regex: '/<x-(?<element>.*?)\/>/',
+                replace: function (array $match) {
+                    $closingTag = str($match['element'])->before(' ')->toString();
+
+                    return sprintf(
+                        '<x-%s></x-%s>',
+                        $match['element'],
+                        $closingTag,
+                    );
+                },
+            );
     }
 }
