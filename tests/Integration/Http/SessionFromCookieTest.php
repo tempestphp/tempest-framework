@@ -18,7 +18,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
     public function test_resolving_session_from_cookie(): void
     {
         $this->container->config(new SessionConfig(
-            path: __DIR__ . '/sessions',
+            path: 'test_sessions',
             idResolverClass: CookieSessionIdResolver::class,
         ));
 
@@ -38,7 +38,7 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $clock = $this->clock('2023-01-01 00:00:00');
 
         $this->container->config(new SessionConfig(
-            path: __DIR__ . '/sessions',
+            path: 'test_sessions',
             expirationInSeconds: 1,
         ));
 

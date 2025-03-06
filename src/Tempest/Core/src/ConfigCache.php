@@ -9,6 +9,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\IsCache;
 use function Tempest\env;
+use function Tempest\internal_storage_path;
 
 final readonly class ConfigCache implements Cache
 {
@@ -19,7 +20,7 @@ final readonly class ConfigCache implements Cache
     public function __construct()
     {
         $this->pool = new FilesystemAdapter(
-            directory: __DIR__ . '/.cache',
+            directory: internal_storage_path('config'),
         );
     }
 
@@ -30,6 +31,6 @@ final readonly class ConfigCache implements Cache
 
     public function isEnabled(): bool
     {
-        return env('CACHE') ?? env('CONFIG_CACHE', false);
+        return (bool) (env('CACHE') ?? env('CONFIG_CACHE', false));
     }
 }

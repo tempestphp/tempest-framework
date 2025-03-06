@@ -12,15 +12,14 @@ use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Cache\IsCache;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
-use function Tempest\Support\path;
+use Throwable;
+use function Tempest\internal_storage_path;
 
 final class DiscoveryCache implements Cache
 {
     use IsCache {
         clear as parentClear;
     }
-
-    public const string CURRENT_DISCOVERY_STRATEGY = __DIR__ . '/.cache/current_discovery_strategy';
 
     private CacheItemPoolInterface $pool;
 
@@ -29,7 +28,7 @@ final class DiscoveryCache implements Cache
         ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
-            directory: path($this->cacheConfig->directory, 'discovery')->toString(),
+            directory: $this->cacheConfig->directory . '/discovery',
         );
     }
 
@@ -88,12 +87,21 @@ final class DiscoveryCache implements Cache
 
     public function storeStrategy(DiscoveryCacheStrategy $strategy): void
     {
-        $dir = dirname(self::CURRENT_DISCOVERY_STRATEGY);
+        $dir = dirname(self::getCurrentDiscoverStrategyCachePath());
 
         if (! is_dir($dir)) {
             mkdir($dir, recursive: true);
         }
 
-        file_put_contents(self::CURRENT_DISCOVERY_STRATEGY, $strategy->value);
+        file_put_contents(self::getCurrentDiscoverStrategyCachePath(), $strategy->value);
+    }
+
+    public static function getCurrentDiscoverStrategyCachePath(): string
+    {
+        try {
+            return internal_storage_path('current_discovery_strategy');
+        } catch (Throwable) {
+            return __DIR__ . '/current_discovery_strategy';
+        }
     }
 }

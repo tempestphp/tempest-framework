@@ -14,7 +14,7 @@ final class ScheduleRunCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_invoke(): void
     {
-        @unlink(GenericScheduler::CACHE_PATH);
+        @unlink(GenericScheduler::getCachePath());
 
         $this->console
             ->call('schedule:run')

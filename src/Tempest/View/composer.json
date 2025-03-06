@@ -18,5 +18,10 @@
         "psr-4": {
             "Tempest\\View\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\View\\Tests\\": "tests"
+        }
     }
 }

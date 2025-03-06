@@ -12,7 +12,7 @@ use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Throwable;
 use function Tempest\event;
-use function Tempest\Support\path;
+use function Tempest\internal_storage_path;
 
 final readonly class FileSessionManager implements SessionManager
 {
@@ -68,7 +68,7 @@ final readonly class FileSessionManager implements SessionManager
 
     private function getPath(SessionId $id): string
     {
-        return path($this->sessionConfig->path, (string) $id)->toString();
+        return internal_storage_path($this->sessionConfig->path, (string) $id);
     }
 
     private function resolve(SessionId $id): ?Session
@@ -129,7 +129,7 @@ final readonly class FileSessionManager implements SessionManager
 
     public function cleanup(): void
     {
-        $sessionFiles = glob(path($this->sessionConfig->path, '/*')->toString());
+        $sessionFiles = glob(internal_storage_path($this->sessionConfig->path, '/*'));
 
         foreach ($sessionFiles as $sessionFile) {
             $id = new SessionId(pathinfo($sessionFile, PATHINFO_FILENAME));

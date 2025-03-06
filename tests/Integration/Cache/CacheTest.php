@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Cache\Tests;
+namespace Tests\Tempest\Integration\Cache;
 
 use DateInterval;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\ProjectCache;
 use Tempest\Clock\MockClock;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class CacheTest extends TestCase
+final class CacheTest extends FrameworkIntegrationTestCase
 {
     public function test_put(): void
     {

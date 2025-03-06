@@ -7,6 +7,7 @@ namespace Tempest\Cache;
 use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Core\DiscoveryCache;
 use function Tempest\env;
+use function Tempest\internal_storage_path;
 
 final class CacheConfig
 {
@@ -22,16 +23,20 @@ final class CacheConfig
     public DiscoveryCacheStrategy $discoveryCache;
 
     public function __construct(
-        public string $directory = __DIR__ . '/../../../../.cache',
+        /**
+         * Path to the storage directory, relative to the internal storage.
+         */
+        public string $directory = 'cache',
         public ?CacheItemPoolInterface $projectCachePool = null,
 
         /** Used as a global override, should be true in production, null in local */
         ?bool $enable = null,
     ) {
-        $this->enable = $enable ?? env('CACHE') ?? null;
+        $this->enable = $enable ?? env('CACHE');
         $this->projectCache = (bool) env('PROJECT_CACHE', false);
         $this->viewCache = (bool) env('VIEW_CACHE', false);
         $this->discoveryCache = $this->resolveDiscoveryCacheStrategy();
+        $this->directory = internal_storage_path($directory);
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */
@@ -62,7 +67,7 @@ final class CacheConfig
             return $current;
         }
 
-        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryCache::CURRENT_DISCOVERY_STRATEGY));
+        $original = DiscoveryCacheStrategy::make(@file_get_contents(DiscoveryCache::getCurrentDiscoverStrategyCachePath()));
 
         if ($current !== $original) {
             return DiscoveryCacheStrategy::INVALID;

@@ -26,6 +26,11 @@ interface Kernel
         get;
     }
 
+    public string $internalStorage {
+        get;
+        set;
+    }
+
     public array $discoveryLocations {
         get;
         set;

@@ -22,7 +22,7 @@ final class ViewCache implements Cache
         ?ViewCachePool $pool = null,
     ) {
         $this->cachePool = $pool ?? new ViewCachePool(
-            directory: path($this->cacheConfig->directory, 'views')->toString(),
+            directory: $this->cacheConfig->directory . '/views',
         );
     }
 

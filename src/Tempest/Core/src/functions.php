@@ -19,6 +19,14 @@ namespace Tempest {
     }
 
     /**
+     * Creates an absolute path scoped within the framework's internal storage directory.
+     */
+    function internal_storage_path(string ...$parts): string
+    {
+        return path(realpath(get(Kernel::class)->internalStorage), ...$parts)->toString();
+    }
+
+    /**
      * Creates a relative path scoped within the main directory of the project.
      */
     function src_path(string ...$parts): string
