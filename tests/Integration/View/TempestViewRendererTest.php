@@ -49,6 +49,10 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_relative_view_path_rendering(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Relative paths not supported on Windows');
+        }
+
         $this->http->get(uri([RelativeViewController::class, 'asFunction']))
             ->assertOk()
             ->assertSee('Yes!');
