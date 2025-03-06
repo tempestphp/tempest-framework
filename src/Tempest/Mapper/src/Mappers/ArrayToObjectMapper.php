@@ -58,7 +58,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $propertyName = $this->resolvePropertyName($property);
+            $propertyName = $this->resolvePropertyName($property, $from);
 
             if (! array_key_exists($propertyName, $from)) {
                 $isStrictProperty = $isStrictClass || $property->hasAttribute(Strict::class);
@@ -118,12 +118,15 @@ final readonly class ArrayToObjectMapper implements Mapper
         return $object;
     }
 
-    private function resolvePropertyName(PropertyReflector $property): string
+    /**
+     * @param array<mixed> $from
+     */
+    private function resolvePropertyName(PropertyReflector $property, array $from): string
     {
         $mapFrom = $property->getAttribute(MapFrom::class);
 
         if ($mapFrom !== null) {
-            return $mapFrom->name;
+            return arr($from)->keys()->intersect($mapFrom->names)->first() ?? $property->getName();
         }
 
         return $property->getName();

@@ -6,13 +6,15 @@ namespace Tempest\View\Renderers;
 
 use Dom\HTMLDocument;
 use Dom\NodeList;
-use Exception;
 use Stringable;
 use Tempest\Core\Kernel;
 use Tempest\Support\StringHelper;
+use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\View;
 use function Tempest\path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -38,12 +40,12 @@ final readonly class TempestViewCompiler
         private Kernel $kernel,
     ) {}
 
-    public function compile(string $path): string
+    public function compile(string|View $view): string
     {
         $this->elementFactory->setViewCompiler($this);
 
         // 1. Retrieve template
-        $template = $this->retrieveTemplate($path);
+        $template = $this->retrieveTemplate($view);
 
         // 2. Parse as DOM
         $dom = $this->parseDom($template);
@@ -60,23 +62,38 @@ final readonly class TempestViewCompiler
         return $compiled;
     }
 
-    private function retrieveTemplate(string $path): string
+    private function retrieveTemplate(string|View $view): string
     {
+        $path = $view instanceof View ? $view->path : $view;
+
         if (! str_ends_with($path, '.php')) {
             return $path;
         }
 
-        $discoveryLocations = $this->kernel->discoveryLocations;
+        $searchPathOptions = [
+            $path
+        ];
 
-        $searchPath = $path;
+        if ($view instanceof View && $view->relativeRootPath !== null) {
+            $searchPathOptions[] = path($view->relativeRootPath, $path)->toString();
+        }
 
-        while (! file_exists($searchPath) && $location = current($discoveryLocations)) {
-            $searchPath = path($location->path, $path)->toString();
-            next($discoveryLocations);
+        $searchPathOptions = [
+            ...$searchPathOptions,
+            ...arr($this->kernel->discoveryLocations)
+                ->map(fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
+                ->toArray()
+        ];
+
+        foreach ($searchPathOptions as $searchPath)
+        {
+            if (file_exists($searchPath)) {
+                break;
+            }
         }
 
         if (! file_exists($searchPath)) {
-            throw new Exception("View {$searchPath} not found");
+            throw new ViewNotFound($path);
         }
 
         return file_get_contents($searchPath);
@@ -84,6 +101,7 @@ final readonly class TempestViewCompiler
 
     private function parseDom(string $template): NodeList
     {
+
         $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
         $template = str($template);

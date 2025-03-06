@@ -10,6 +10,10 @@ interface View
         get;
     }
 
+    public ?string $relativeRootPath {
+        get;
+    }
+
     public array $data {
         get;
     }
