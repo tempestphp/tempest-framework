@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use Tempest\Mapper\Exceptions\CannotMapDataException;
+use Tempest\Mapper\Exceptions\MissingMapperException;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
 use Tempest\Mapper\Mappers\ArrayToObjectMapper;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
@@ -79,8 +80,39 @@ final class ObjectFactoryTest extends FrameworkIntegrationTestCase
             fn (ArrayToObjectMapper $mapper, mixed $from) => $mapper->map($from, ObjectA::class),
             ObjectToArrayMapper::class,
             ArrayToJsonMapper::class,
-        );
+        )->do();
 
         $this->assertSame('{"a":"a","b":"b"}', $result);
+    }
+
+    public function test_map_do_without_with_throws(): void
+    {
+        $this->expectException(MissingMapperException::class);
+
+        map([])->do();
+    }
+
+    public function test_map_with_to(): void
+    {
+        $result = map(['a' => 'a', 'b' => 'b'])->with(ArrayToObjectMapper::class)->to(ObjectA::class);
+
+        $this->assertSame('a', $result->a);
+        $this->assertSame('b', $result->b);
+    }
+
+    public function test_map_with_collection_to(): void
+    {
+        $result = map([
+            ['a' => 'a', 'b' => 'b'],
+            ['a' => 'c', 'b' => 'd'],
+        ])
+            ->with(ArrayToObjectMapper::class)
+            ->collection()
+            ->to(ObjectA::class);
+
+        $this->assertSame('a', $result[0]->a);
+        $this->assertSame('b', $result[0]->b);
+        $this->assertSame('c', $result[1]->a);
+        $this->assertSame('d', $result[1]->b);
     }
 }

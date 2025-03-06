@@ -7,7 +7,9 @@ namespace Tests\Tempest\Integration\View;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
+use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\uri;
 use function Tempest\view;
 
 /**
@@ -43,6 +45,21 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             '<h1><span>Hello</span></h1>',
             $this->render(view('<h1>{!! $this->foo !!}</h1>')->data(foo: '<span>Hello</span>')),
         );
+    }
+
+    public function test_relative_view_path_rendering(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Relative paths not supported on Windows');
+        }
+
+        $this->http->get(uri([RelativeViewController::class, 'asFunction']))
+            ->assertOk()
+            ->assertSee('Yes!');
+
+        $this->http->get(uri([RelativeViewController::class, 'asObject']))
+            ->assertOk()
+            ->assertSee('Yes!');
     }
 
     public function test_if_attribute(): void
@@ -492,6 +509,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsString('<!DOCTYPE html>', $html);
         $this->assertStringContainsString('<html lang="en">', $html);
+        $this->assertStringContainsString('<meta charset="UTF-8">', $html);
         $this->assertStringContainsString('<head>', $html);
         $this->assertStringContainsString('<body', $html);
         $this->assertStringContainsString('<!-- test comment -->', $html);

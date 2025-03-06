@@ -11,7 +11,7 @@ use Tempest\CommandBus\CommandBusConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Core\ComposerNamespace;
-use Tempest\Database\DatabaseConfig;
+use Tempest\Database\Config\MysqlConfig;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\Log\LogConfig;
 use Tempest\View\Renderers\BladeConfig;
@@ -65,7 +65,7 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
         return [
             'database_config' => [
                 'configType' => ConfigType::DATABASE,
-                'expectedConfigClass' => DatabaseConfig::class,
+                'expectedConfigClass' => MysqlConfig::class,
             ],
             'twig_config' => [
                 'configType' => ConfigType::TWIG,

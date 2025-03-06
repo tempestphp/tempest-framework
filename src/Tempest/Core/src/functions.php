@@ -19,7 +19,7 @@ namespace Tempest {
     }
 
     /**
-     * Creates a path scoped within the src folder of the project
+     * Creates a relative path scoped within the main directory of the project.
      */
     function src_path(string ...$parts): string
     {
@@ -29,7 +29,7 @@ namespace Tempest {
     }
 
     /**
-     * Creates a namespace scoped within the main namespace of the project
+     * Creates a namespace scoped within the main namespace of the project.
      */
     function src_namespace(?string $append = null): string
     {
@@ -66,6 +66,6 @@ namespace Tempest {
      */
     function defer(Closure $closure): void
     {
-        get(DeferredTasks::class)->add($closure);
+    get(DeferredTasks::class)->add($closure);
     }
 }

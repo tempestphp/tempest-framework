@@ -17,7 +17,7 @@ final class ConfigShowCommandTest extends FrameworkIntegrationTestCase
             ->call('config:show --format=pretty --filter=database.config.php')
             ->assertJson()
             ->assertContains('database.config.php')
-            ->assertContains('DatabaseConfig')
+            ->assertContains('SQLiteConfig')
             ->assertDoesNotContain('views.config.php')
             ->assertContains('@type');
     }
@@ -27,7 +27,7 @@ final class ConfigShowCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call('config:show --format=file --filter=database.config.php')
             ->assertContains('database.config.php')
-            ->assertContains('DatabaseConfig')
+            ->assertContains('SQLiteConfig')
             ->assertDoesNotContain('views.config.php')
             ->assertContains('<?php');
     }

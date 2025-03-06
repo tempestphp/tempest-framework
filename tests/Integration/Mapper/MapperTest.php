@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use DateTimeImmutable;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
@@ -18,6 +21,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
@@ -231,12 +235,57 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'name' => [
                 'first' => 'Brent',
                 'last' => 'Roose',
-            ]
+            ],
         ];
 
         $person = map($data)->to(Person::class);
 
         $this->assertSame('Brent', $person->name->first);
         $this->assertSame('Roose', $person->name->last);
+    }
+
+    public function test_object_to_array_mapper_use_casters(): void
+    {
+        $this->assertSame(
+            actual: map(new ObjectThatShouldUseCasters(
+                name: 'Guillaume',
+                date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+                enum: EnumToCast::FOO,
+            ))->toArray(),
+            expected: [
+                'name' => 'Guillaume',
+                'date' => '2025-03-02',
+                'enum' => 'foo',
+            ],
+        );
+    }
+
+    public function test_multiple_map_from_source(): void
+    {
+        $object = map(['name' => 'Guillaume'])->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+
+        $object = map(['first_name' => 'Guillaume'])->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_multiple_map_from_take_first_occurence(): void
+    {
+        $data = [
+            'name' => 'Guillaume',
+            'first_name' => 'John',
+        ];
+
+        $object = map($data)->to(ObjectWithMultipleMapFrom::class);
+        $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_multiple_map_from_fallback_to_property_name(): void
+    {
+        $object = map([
+            'fullName' => 'Guillaume',
+        ])->to(ObjectWithMapFromAttribute::class);
+
+        $this->assertSame('Guillaume', $object->fullName);
     }
 }

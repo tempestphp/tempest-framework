@@ -23,8 +23,7 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {
@@ -44,7 +43,7 @@ final class TempestViewRenderer implements ViewRenderer
 
         $path = $this->viewCache->getCachedViewPath(
             path: $view->path,
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view->path)),
+            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view)),
         );
 
         return $this->renderCompiled($view, $path);
@@ -93,7 +92,11 @@ final class TempestViewRenderer implements ViewRenderer
         try {
             include $_path;
         } catch (Throwable $throwable) {
-            throw new ViewCompilationError(content: file_get_contents($_path), previous: $throwable);
+            throw new ViewCompilationError(
+                path: $_path,
+                content: file_get_contents($_path),
+                previous: $throwable
+            );
         }
 
         $this->currentView = null;
@@ -104,10 +107,10 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string) $value;
+            return (string)$value;
         }
 
-        return htmlentities((string) $value);
+        return htmlentities((string)$value);
     }
 
     private function validateView(View $view): void

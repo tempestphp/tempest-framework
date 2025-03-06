@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
 final readonly class PrimaryKeyStatement implements QueryStatement
