@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tempest\View\Tests;
+namespace Tests\Tempest\Integration\View;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Cache\CacheConfig;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\Support\path;
 
 /**
  * @internal
  */
-final class ViewCacheTest extends TestCase
+final class ViewCacheTest extends FrameworkIntegrationTestCase
 {
     private const string DIRECTORY = __DIR__ . '/.cache';
 
