@@ -31,8 +31,8 @@ function bumpKernelVersion(string $version): void
 {
     $kernel = __DIR__ . '/../src/Tempest/Core/src/Kernel.php';
     $content = preg_replace(
-        pattern: '/public const VERSION = \'.*\';/',
-        replacement: "public const VERSION = '{$version}';",
+        pattern: '/public const string VERSION = \'.*\';/',
+        replacement: "public const string VERSION = '{$version}';",
         subject: file_get_contents($kernel),
     );
 
