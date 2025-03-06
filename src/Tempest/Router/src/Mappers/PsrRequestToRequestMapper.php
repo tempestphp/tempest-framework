@@ -13,6 +13,7 @@ use Tempest\Router\Request;
 use Tempest\Router\Upload;
 use Tempest\Validation\Validator;
 use function Tempest\map;
+use function Tempest\Support\arr;
 
 final readonly class PsrRequestToRequestMapper implements Mapper
 {
@@ -32,6 +33,14 @@ final readonly class PsrRequestToRequestMapper implements Mapper
         }
 
         $data = (array) $from->getParsedBody();
+
+        if (arr($from->getHeader('content-type'))->contains('application/json')) {
+            $bodyContents = $from->getBody()->getContents();
+
+            if (json_validate($bodyContents)) {
+                $data = [...$data, ...json_decode($bodyContents, true)];
+            }
+        }
 
         $headersAsString = array_map(
             fn (array $items) => implode(',', $items),

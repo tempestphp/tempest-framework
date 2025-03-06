@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\Uri;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Status;
@@ -187,5 +190,22 @@ final class RouterTest extends FrameworkIntegrationTestCase
             '/test-with-collision/hi?id=1',
             uri([UriGeneratorController::class, 'withCollidingNames'], id: '1', idea: 'hi'),
         );
+    }
+
+    public function test_json_request(): void
+    {
+        $router = $this->container->get(Router::class);
+
+        $response = $router->dispatch(new ServerRequest(
+            uri: new Uri('/json-endpoint'),
+            method: 'POST',
+            body: new Stream(fopen(__DIR__ . '/request.json', 'r')),
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+        ));
+
+        $this->assertSame(Status::OK, $response->status);
+        $this->assertSame('foo', $response->body);
     }
 }
