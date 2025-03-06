@@ -12,6 +12,7 @@ use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\User;
 use Tempest\Auth\SessionAuthenticator;
 use Tempest\Clock\Clock;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Filesystem\LocalFilesystem;
@@ -27,6 +28,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
+
     private LocalFilesystem $filesystem;
 
     protected function setUp(): void
@@ -38,7 +40,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
         $this->filesystem->deleteDirectory($this->path, recursive: true);
         $this->filesystem->ensureDirectoryExists($this->path);
 
-        $this->container->get(Kernel::class)->internalStorage = realpath($this->path);
+        $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
         $this->container->config(new SessionConfig(path: 'sessions'));
         $this->container->singleton(

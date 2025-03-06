@@ -10,6 +10,7 @@ use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\User;
 use Tempest\Clock\Clock;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Filesystem\LocalFilesystem;
@@ -27,6 +28,7 @@ use function Tempest\uri;
 final class AuthorizerTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
+
     private LocalFilesystem $filesystem;
 
     protected function setUp(): void
@@ -45,7 +47,7 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
         $this->filesystem->deleteDirectory($this->path, recursive: true);
         $this->filesystem->ensureDirectoryExists($this->path);
 
-        $this->container->get(Kernel::class)->internalStorage = realpath($this->path);
+        $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
         $this->container->config(new SessionConfig(path: 'sessions'));
         $this->container->singleton(

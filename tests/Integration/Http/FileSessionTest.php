@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\Clock;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Router\Session\Managers\FileSessionManager;
@@ -22,6 +23,7 @@ use function Tempest\Support\path;
 final class FileSessionTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
+
     private LocalFilesystem $filesystem;
 
     protected function setUp(): void
@@ -31,9 +33,10 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->filesystem = new LocalFilesystem();
         $this->filesystem->deleteDirectory($this->path, recursive: true);
         $this->filesystem->ensureDirectoryExists($this->path);
+
         $this->path = realpath($this->path);
 
-        $this->container->get(Kernel::class)->internalStorage = realpath($this->path);
+        $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
         $this->container->config(new SessionConfig(path: 'sessions'));
         $this->container->singleton(

@@ -127,7 +127,7 @@ final readonly class TempestViewCompiler
         );
 
         // If we have head nodes and a head tag, we inject them back
-        if ($headElement = $dom->getElementsByTagName('head')->item(0)) {
+        if (($headElement = $dom->getElementsByTagName('head')->item(0)) !== null) {
             foreach ($headNodes as $headNode) {
                 $headElement->appendChild($dom->importNode($headNode, deep: true));
             }
