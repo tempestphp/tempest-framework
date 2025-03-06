@@ -8,7 +8,7 @@ use Tempest\Console\Components\Option;
 use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
-use Tempest\Support\ArrayHelper;
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -76,7 +76,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
 
         $console->write(PHP_EOL . $prompt . PHP_EOL);
 
-        return ArrayHelper::explode($console->readln(), separator: ',')
+        return ImmutableArray::explode($console->readln(), separator: ',')
             ->map(function (string $answer) {
                 $answer = trim($answer);
 

@@ -6,8 +6,8 @@ namespace Tempest\Mapper\Mappers;
 
 use JsonSerializable;
 use ReflectionException;
+use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo;
 use Tempest\Mapper\MapTo as MapToAttribute;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
@@ -15,6 +15,11 @@ use function Tempest\Support\arr;
 
 final readonly class ObjectToArrayMapper implements Mapper
 {
+    public function __construct(
+        private CasterFactory $casterFactory,
+    ) {
+    }
+
     public function canMap(mixed $from, mixed $to): bool
     {
         return false;
@@ -28,8 +33,8 @@ final readonly class ObjectToArrayMapper implements Mapper
         foreach ($properties as $propertyName => $propertyValue) {
             try {
                 $property = PropertyReflector::fromParts(class: $from, name: $propertyName);
-
                 $propertyName = $this->resolvePropertyName($property);
+                $propertyValue = $this->resolvePropertyValue($property, $propertyValue);
 
                 $mappedProperties[$propertyName] = $propertyValue;
             } catch (ReflectionException) {
@@ -38,6 +43,13 @@ final readonly class ObjectToArrayMapper implements Mapper
         }
 
         return $mappedProperties;
+    }
+
+    private function resolvePropertyValue(PropertyReflector $property, mixed $currentPropertyValue): mixed
+    {
+        $caster = $this->casterFactory->forProperty($property);
+
+        return $caster?->serialize($currentPropertyValue) ?? $currentPropertyValue;
     }
 
     /**

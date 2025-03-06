@@ -15,7 +15,7 @@ use Tempest\Log\LogConfig;
 use Tempest\Router\Session\Session;
 use Throwable;
 use function Tempest\env;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 #[Singleton]
 final readonly class HttpApplication implements Application

@@ -7,7 +7,7 @@ namespace Tempest\tests;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\ViewCachePool;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 /**
  * @internal

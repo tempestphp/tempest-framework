@@ -14,7 +14,7 @@ use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Throwable;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 final readonly class ConsoleApplication implements Application
 {

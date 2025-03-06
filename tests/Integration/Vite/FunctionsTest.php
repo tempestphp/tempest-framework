@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
-use Tempest\Support\HtmlString;
+use Tempest\Support\Html\HtmlString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\vite_tags;
 
@@ -37,6 +37,7 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/vite-tempest' => ['url' => 'http://localhost:5173'],
+                'src/main.ts' => '',
             ],
         );
     }

@@ -13,8 +13,8 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Support\ArrayHelper;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Str\ImmutableString;
 use Throwable;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -73,9 +73,9 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         return $this->runIntendedCommand($intendedCommand);
     }
 
-    private function getSimilarCommands(StringHelper $search): ArrayHelper
+    private function getSimilarCommands(ImmutableString $search): ImmutableArray
     {
-        /** @var ArrayHelper<array-key, StringHelper> $suggestions */
+        /** @var ImmutableArray<array-key, ImmutableString> $suggestions */
         $suggestions = arr();
 
         foreach ($this->consoleConfig->commands as $consoleCommand) {

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Support;
 
-use ValueError;
-use UnitEnum;
-use Traversable;
-use Tempest\Support\ArrayHelper;
-use IteratorAggregate;
-use Iterator;
-use InvalidArgumentException;
-use BackedEnum;
 use ArrayIterator;
+use BackedEnum;
+use InvalidArgumentException;
+use Iterator;
+use IteratorAggregate;
+use Tempest\Support\Arr\ImmutableArray;
+use Traversable;
+use UnitEnum;
+use ValueError;
 
 /**
  * This trait provides a bunch of helper methods to work with enums
@@ -212,9 +212,9 @@ trait IsEnumHelper
     /**
      * Wrap all enum cases in an array
      *
-     * @return ArrayHelper<static>
+     * @return ImmutableArray<static>
      */
-    public static function collect(): ArrayHelper
+    public static function collect(): ImmutableArray
     {
         return arr(static::cases());
     }

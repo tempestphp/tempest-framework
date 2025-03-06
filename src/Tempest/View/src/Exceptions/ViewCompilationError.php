@@ -10,7 +10,7 @@ use function Tempest\Support\str;
 
 final class ViewCompilationError extends Exception
 {
-    public function __construct(string $content, Throwable $previous)
+    public function __construct(string $path, string $content, Throwable $previous)
     {
         $excerpt = str($content)
             ->excerpt(
@@ -32,14 +32,16 @@ final class ViewCompilationError extends Exception
             '%s
 %s
 %s 
+
 %s
 
-Could not compile %s',
+In %s
+',
             str_repeat('-', strlen($previous->getMessage())),
             $previous->getMessage(),
             str_repeat('-', strlen($previous->getMessage())),
             $excerpt,
-            $content,
+            $path,
         );
 
         parent::__construct(

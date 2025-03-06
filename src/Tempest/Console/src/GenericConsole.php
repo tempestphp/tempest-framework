@@ -28,9 +28,9 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Tag;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
-use Tempest\Support\ArrayHelper;
 use Tempest\Support\Conditions\HasConditions;
 use UnitEnum;
+use function Tempest\Support\Arr\wrap;
 
 final class GenericConsole implements Console
 {
@@ -119,7 +119,7 @@ final class GenericConsole implements Console
 
     public function instructions(array|string $lines): static
     {
-        $this->writeln((new InstructionsRenderer())->render(ArrayHelper::wrap($lines)));
+        $this->writeln((new InstructionsRenderer())->render(wrap($lines)));
 
         return $this;
     }
@@ -208,7 +208,7 @@ final class GenericConsole implements Console
 
     public function ask(
         string $question,
-        null|array|ArrayHelper|string $options = null,
+        null|iterable|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,
@@ -220,8 +220,8 @@ final class GenericConsole implements Console
             return $default;
         }
 
-        if ($options instanceof ArrayHelper) {
-            $options = $options->toArray();
+        if (is_iterable($options)) {
+            $options = wrap($options);
         }
 
         if (is_string($options) && is_a($options, BackedEnum::class, allow_string: true)) {
@@ -246,7 +246,7 @@ final class GenericConsole implements Console
             return $this->component(new MultipleChoiceComponent(
                 label: $question,
                 options: $options,
-                default: ArrayHelper::wrap($default),
+                default: wrap($default),
             ));
         }
 

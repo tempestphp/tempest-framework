@@ -6,8 +6,8 @@ namespace Tempest\Support\JavaScript;
 
 use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
-use Tempest\Support\ArrayHelper;
 use Tempest\Validation\Rules\Enum;
+use function Tempest\Support\Arr\wrap;
 
 /**
  * Helps with installing JavaScript dependencies in a directory.
@@ -35,12 +35,7 @@ final class DependencyInstaller
             ],
         );
 
-        $this->console->task('Installing dependencies', $this->getInstallProcess(
-            packageManager: $packageManager,
-            cwd: $cwd,
-            dependencies: $dependencies,
-            dev: $dev,
-        ));
+        $this->console->task('Installing dependencies', $this->getInstallProcess($packageManager, $cwd, $dependencies, $dev));
     }
 
     /**
@@ -67,7 +62,7 @@ final class DependencyInstaller
             $packageManager->getBinaryName(),
             $packageManager->getInstallCommand(),
             $dev ? '-D' : '',
-            ...ArrayHelper::wrap($dependencies),
+            ...wrap($dependencies),
         ], $cwd);
     }
 }

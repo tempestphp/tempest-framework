@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\DatabaseDialect;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -96,7 +96,7 @@ final class AlterTableStatement implements QueryStatement
                 new TableName($this->tableName),
                 arr($this->statements)
                     ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                    ->filter(fn (StringHelper $line) => $line->isNotEmpty())
+                    ->filter(fn (ImmutableString $line) => $line->isNotEmpty())
                     ->implode(', ' . PHP_EOL . '    ')
                     ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                     ->toString(),

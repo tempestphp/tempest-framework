@@ -141,6 +141,6 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(Upload::class, $request->cover);
 
         $this->assertEquals('cover', array_key_first($request->files));
-        $this->assertTrue(arr($request->files)->isAssoc());
+        $this->assertTrue(arr($request->files)->isAssociative());
     }
 }
