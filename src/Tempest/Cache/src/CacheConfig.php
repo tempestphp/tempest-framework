@@ -6,7 +6,6 @@ namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Tempest\Core\DiscoveryCache;
-use Throwable;
 use function Tempest\env;
 use function Tempest\internal_storage_path;
 
@@ -37,22 +36,13 @@ final class CacheConfig
         $this->projectCache = (bool) env('PROJECT_CACHE', false);
         $this->viewCache = (bool) env('VIEW_CACHE', false);
         $this->discoveryCache = $this->resolveDiscoveryCacheStrategy();
-        $this->directory = $this->resolveCacheDirectory($directory);
+        $this->directory = internal_storage_path($directory);
     }
 
     /** @param class-string<\Tempest\Cache\Cache> $className */
     public function addCache(string $className): void
     {
         $this->caches[] = $className;
-    }
-
-    private function resolveCacheDirectory(string $directory): string
-    {
-        try {
-            return internal_storage_path($directory);
-        } catch (Throwable) {
-            return $directory;
-        }
     }
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
