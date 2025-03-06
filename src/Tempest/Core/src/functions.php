@@ -23,7 +23,7 @@ namespace Tempest {
      */
     function internal_storage_path(string ...$parts): string
     {
-        return path(realpath(get(Kernel::class)->internalStorage), ...$parts)->toString();
+        return path(get(Kernel::class)->internalStorage, ...$parts)->toString();
     }
 
     /**
