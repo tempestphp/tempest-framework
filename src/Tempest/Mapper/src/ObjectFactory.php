@@ -165,8 +165,7 @@ final class ObjectFactory
         mixed $from,
         mixed $to,
         bool $isCollection,
-    ): mixed
-    {
+    ): mixed {
         // Map collections
         if ($isCollection && is_array($from)) {
             return array_map(
@@ -217,8 +216,7 @@ final class ObjectFactory
         mixed $mapper,
         mixed $from,
         mixed $to,
-    ): mixed
-    {
+    ): mixed {
         if ($mapper instanceof Closure) {
             $function = new FunctionReflector($mapper);
 

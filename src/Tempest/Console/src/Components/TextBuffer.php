@@ -230,7 +230,7 @@ final class TextBuffer
         $charIndex = 0;
 
         foreach ($lines as $line) {
-            $splitLines = str($line)->split($maxLineCharacters ?? mb_strlen($line))->toArray();
+            $splitLines = str($line)->chunk($maxLineCharacters ?? mb_strlen($line))->toArray();
 
             foreach ($splitLines as $splitLineIndex => $splitLine) {
                 $lineLength = mb_strlen($splitLine);

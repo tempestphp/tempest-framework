@@ -7,8 +7,8 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
-use Tempest\Support\StringHelper;
 use function Tempest\Support\arr;
+use function Tempest\Support\str;
 
 /**
  * @mixin InteractiveConsoleComponent
@@ -48,7 +48,7 @@ trait RendersControls
 
         if ($render->stripTags()->length() >= $maxWidth) {
             $prefix = $marginLeft . '<style="fg-gray">·</style>';
-            $render = new StringHelper($prefix)
+            $render = str($prefix)
                 ->append($render)
                 ->explode($separator)
                 ->implode("\n" . $prefix . $marginLeft);

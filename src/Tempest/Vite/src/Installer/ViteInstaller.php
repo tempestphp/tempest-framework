@@ -9,7 +9,7 @@ use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
 use Tempest\Support\JavaScript\DependencyInstaller;
 use Tempest\Support\JavaScript\PackageManager;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 use Tempest\Vite\ViteConfig;
 
 use function Tempest\root_path;
@@ -78,7 +78,7 @@ final class ViteInstaller implements Installer
         });
 
         // Updates the .gitignore
-        $this->update(root_path('.gitignore'), function (StringHelper $gitignore) {
+        $this->update(root_path('.gitignore'), function (ImmutableString $gitignore) {
             if (! $gitignore->contains($this->viteConfig->build->bridgeFileName)) {
                 $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->build->bridgeFileName);
             }

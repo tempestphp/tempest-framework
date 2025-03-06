@@ -12,7 +12,7 @@ use function Tempest\Support\arr;
 /**
  * @internal
  */
-final class ArrayHelperTest extends FrameworkIntegrationTestCase
+final class ArrayTest extends FrameworkIntegrationTestCase
 {
     public function test_map_to(): void
     {

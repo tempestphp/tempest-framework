@@ -6,7 +6,7 @@ namespace Tempest\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use function Tempest\path;
+use function Tempest\Support\path;
 
 final class ProjectCache implements Cache
 {

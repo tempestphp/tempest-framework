@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support;
+namespace Tempest\Support\Arr;
 
 use Exception;
 

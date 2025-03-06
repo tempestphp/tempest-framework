@@ -8,15 +8,15 @@ use Dom\HTMLDocument;
 use Dom\NodeList;
 use Stringable;
 use Tempest\Core\Kernel;
-use Tempest\Support\StringHelper;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
+use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\View;
-use function Tempest\path;
 use function Tempest\Support\arr;
+use function Tempest\Support\path;
 use function Tempest\Support\str;
 use const Dom\HTML_NO_DEFAULT_NS;
 
@@ -38,7 +38,8 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {}
+    ) {
+    }
 
     public function compile(string|View $view): string
     {
@@ -71,7 +72,7 @@ final readonly class TempestViewCompiler
         }
 
         $searchPathOptions = [
-            $path
+            $path,
         ];
 
         if ($view instanceof View && $view->relativeRootPath !== null) {
@@ -82,11 +83,10 @@ final readonly class TempestViewCompiler
             ...$searchPathOptions,
             ...arr($this->kernel->discoveryLocations)
                 ->map(fn (DiscoveryLocation $discoveryLocation) => path($discoveryLocation->path, $path)->toString())
-                ->toArray()
+                ->toArray(),
         ];
 
-        foreach ($searchPathOptions as $searchPath)
-        {
+        foreach ($searchPathOptions as $searchPath) {
             if (file_exists($searchPath)) {
                 break;
             }
@@ -101,7 +101,6 @@ final readonly class TempestViewCompiler
 
     private function parseDom(string $template): NodeList
     {
-
         $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
         $template = str($template);
@@ -216,7 +215,7 @@ final readonly class TempestViewCompiler
             ->toString();
     }
 
-    private function cleanupTemplate(string|Stringable $template): StringHelper
+    private function cleanupTemplate(string|Stringable $template): ImmutableString
     {
         return str($template)
             // Escape PHP tags

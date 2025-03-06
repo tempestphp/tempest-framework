@@ -17,7 +17,7 @@ use Tempest\Router\Router;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use Throwable;
-use function Tempest\path;
+use function Tempest\Support\path;
 use function Tempest\uri;
 
 final readonly class StaticGenerateCommand

@@ -13,6 +13,6 @@ final class PluralizedSnakeCaseStrategy implements NamingStrategy
         return (string) str($model)
             ->classBasename()
             ->snake()
-            ->pluralizeLast();
+            ->pluralizeLastWord();
     }
 }

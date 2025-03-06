@@ -8,7 +8,6 @@ use Closure;
 use Stringable;
 use Symfony\Component\Process\Process;
 use Tempest\Container\Inject;
-use Tempest\Support\ArrayHelper;
 use UnitEnum;
 
 trait HasConsole
@@ -46,7 +45,7 @@ trait HasConsole
      */
     public function ask(
         string $question,
-        null|array|ArrayHelper|string $options = null,
+        null|iterable|string $options = null,
         mixed $default = null,
         bool $multiple = false,
         bool $multiline = false,

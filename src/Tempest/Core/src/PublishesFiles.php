@@ -17,14 +17,14 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Reflection\FunctionReflector;
-use Tempest\Support\NamespaceHelper;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
 use function strlen;
-use function Tempest\path;
 use function Tempest\root_path;
+use function Tempest\Support\Namespace\to_base_class_name;
+use function Tempest\Support\path;
 use function Tempest\Support\str;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
@@ -144,7 +144,7 @@ trait PublishesFiles
     public function getSuggestedPath(string $className, ?string $pathPrefix = null, ?string $classSuffix = null): string
     {
         // Separate input path and classname
-        $inputClassName = NamespaceHelper::toClassName($className);
+        $inputClassName = to_base_class_name($className);
         $inputPath = str(path($className))->replaceLast($inputClassName, '')->toString();
         $className = str($inputClassName)
             ->pascal()
@@ -169,7 +169,7 @@ trait PublishesFiles
      */
     public function promptTargetPath(string $suggestedPath): string
     {
-        $className = NamespaceHelper::toClassName($suggestedPath);
+        $className = to_base_class_name($suggestedPath);
 
         return $this->console->ask(
             question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
@@ -198,7 +198,7 @@ trait PublishesFiles
      * Updates the contents of a file at the given path.
      *
      * @param string $path The absolute path to the file to update.
-     * @param Closure(string|StringHelper $contents): mixed $callback A callback that accepts the file contents and must return updated contents.
+     * @param Closure(string|ImmutableString $contents): mixed $callback A callback that accepts the file contents and must return updated contents.
      * @param bool $ignoreNonExisting Whether to throw an exception if the file does not exist.
      */
     public function update(string $path, Closure $callback, bool $ignoreNonExisting = false): void
@@ -218,9 +218,9 @@ trait PublishesFiles
 
         $contents = match (true) {
             is_null($type),
-            $type->equals(StringHelper::class) => (string) $callback(new StringHelper($contents)),
+            $type->equals(ImmutableString::class) => (string) $callback(new ImmutableString($contents)),
             $type->accepts('string') => (string) $callback($contents),
-            default => throw new Exception('The callback must accept a string or StringHelper.'),
+            default => throw new Exception('The callback must accept a string or ImmutableString.'),
         };
 
         file_put_contents($path, $contents);
