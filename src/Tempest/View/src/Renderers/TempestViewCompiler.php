@@ -6,8 +6,9 @@ namespace Tempest\View\Renderers;
 
 use Dom\HTMLDocument;
 use Dom\NodeList;
-use Exception;
+use Stringable;
 use Tempest\Core\Kernel;
+use Tempest\Support\StringHelper;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\View\Attributes\AttributeFactory;
@@ -98,58 +99,50 @@ final readonly class TempestViewCompiler
         return file_get_contents($searchPath);
     }
 
-    private function parseDom(string $template): HTMLDocument|NodeList
+    private function parseDom(string $template): NodeList
     {
-        $template = str($template)
-
-            // Escape PHP tags
-            ->replace(
-                search: array_keys(self::TOKEN_MAPPING),
-                replace: array_values(self::TOKEN_MAPPING),
-            )
-
-            // Convert self-closing tags
-            ->replaceRegex(
-                regex: '/<x-(?<element>.*?)\/>/',
-                replace: function (array $match) {
-                    $closingTag = str($match['element'])->before(' ')->toString();
-
-                    return sprintf(
-                        '<x-%s></x-%s>',
-                        $match['element'],
-                        $closingTag,
-                    );
-                },
-            );
-
-        $isFullHtmlDocument = $template
-            ->replaceRegex('/('.self::TOKEN_PHP_OPEN.'|'.self::TOKEN_PHP_SHORT_ECHO.')(.|\n)*?'.self::TOKEN_PHP_CLOSE.'/', '')
-            ->trim()
-            ->startsWith(['<html', '<!DOCTYPE', '<!doctype']);
 
         $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
-        if ($isFullHtmlDocument) {
-            // If we're rendering a full HTML document, we'll parse it as is
-            return HTMLDocument::createFromString($template->toString(), $parserFlags);
+        $template = str($template);
+
+        // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
+        $headNodes = [];
+
+        $headTemplate = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null;
+
+        if ($headTemplate) {
+            $headNodes = HTMLDocument::createFromString(
+                source: $this->cleanupTemplate($headTemplate)->toString(),
+                options: $parserFlags,
+            )->childNodes;
         }
 
-        // If we're rendering an HTML snippet, we'll wrap it in a div, and return the resulting nodelist
-        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$template}</div>", $parserFlags);
+        $mainTemplate = $this->cleanupTemplate($template)
+            // Cleanup head, we'll insert it after having parsed the DOM
+            ->replaceRegex('/<head>((.|\n)*?)<\/head>/', '<head></head>');
 
-        return $dom->getElementById('tempest_render')->childNodes;
+        $dom = HTMLDocument::createFromString(
+            source: $mainTemplate->toString(),
+            options: $parserFlags,
+        );
+
+        // If we have head nodes and a head tag, we inject them back
+        if ($headElement = $dom->getElementsByTagName('head')->item(0)) {
+            foreach ($headNodes as $headNode) {
+                $headElement->appendChild($dom->importNode($headNode, deep: true));
+            }
+        }
+
+        return $dom->childNodes;
     }
 
     /**
      * @return Element[]
      */
-    private function mapToElements(HTMLDocument|NodeList $nodes): array
+    private function mapToElements(NodeList $nodes): array
     {
         $elements = [];
-
-        if ($nodes instanceof HTMLDocument) {
-            $nodes = $nodes->childNodes;
-        }
 
         foreach ($nodes as $node) {
             $element = $this->elementFactory->make($node);
@@ -206,18 +199,44 @@ final readonly class TempestViewCompiler
     /** @param \Tempest\View\Element[] $elements */
     private function compileElements(array $elements): string
     {
-        $compiled = [];
+        $compiled = arr();
 
         foreach ($elements as $element) {
             $compiled[] = $element->compile();
         }
 
-        $compiled = implode(PHP_EOL, $compiled);
+        return $compiled
+            ->implode(PHP_EOL)
 
-        return str_replace(
-            search: array_values(self::TOKEN_MAPPING),
-            replace: array_keys(self::TOKEN_MAPPING),
-            subject: $compiled,
-        );
+            // Unescape PHP tags
+            ->replace(
+                array_values(self::TOKEN_MAPPING),
+                array_keys(self::TOKEN_MAPPING),
+            )
+            ->toString();
+    }
+
+    private function cleanupTemplate(string|Stringable $template): StringHelper
+    {
+        return str($template)
+            // Escape PHP tags
+            ->replace(
+                search: array_keys(self::TOKEN_MAPPING),
+                replace: array_values(self::TOKEN_MAPPING),
+            )
+
+            // Convert self-closing tags
+            ->replaceRegex(
+                regex: '/<x-(?<element>.*?)\/>/',
+                replace: function (array $match) {
+                    $closingTag = str($match['element'])->before(' ')->toString();
+
+                    return sprintf(
+                        '<x-%s></x-%s>',
+                        $match['element'],
+                        $closingTag,
+                    );
+                },
+            );
     }
 }
