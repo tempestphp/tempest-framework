@@ -105,8 +105,6 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
 
         $session = $sessionManager->create(new SessionId('new'));
 
-        dump([$this->path, $this->container->get(Kernel::class)->internalStorage, $this->container->get(SessionConfig::class)->path, internal_storage_path($this->container->get(SessionConfig::class)->path, (string) $session->id)]);
-
         $this->assertTrue($session->isValid());
 
         $clock->changeTime(seconds: 1);
