@@ -15,13 +15,13 @@
         },
         "files": [
             "src/functions.php",
-						"src/Str/functions.php",
-						"src/Arr/functions.php",
-						"src/Html/functions.php",
-						"src/Random/functions.php",
-						"src/Regex/functions.php",
-						"src/Namespace/functions.php",
-						"src/Language/functions.php"
+            "src/Str/functions.php",
+            "src/Arr/functions.php",
+            "src/Html/functions.php",
+            "src/Random/functions.php",
+            "src/Regex/functions.php",
+            "src/Namespace/functions.php",
+            "src/Language/functions.php"
         ]
     },
     "autoload-dev": {
