@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Html;
 
+use Stringable;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\ManipulatesString;
 use Tempest\Support\Str\MutableString;
@@ -38,5 +39,14 @@ final class HtmlString implements StringInterface
     public function toMutableString(): MutableString
     {
         return new MutableString($this->value);
+    }
+
+    /**
+     * Returns a new instance with the specified string,
+     * or mutates the instance if this is a `MutableString`.
+     */
+    protected function createOrModify(Stringable|string $string): static
+    {
+        return new static($string);
     }
 }

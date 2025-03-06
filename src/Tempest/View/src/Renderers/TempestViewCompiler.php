@@ -10,7 +10,7 @@ use Stringable;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
-use Tempest\Support\StringHelper;
+use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
@@ -215,7 +215,7 @@ final readonly class TempestViewCompiler
             ->toString();
     }
 
-    private function cleanupTemplate(string|Stringable $template): StringHelper
+    private function cleanupTemplate(string|Stringable $template): ImmutableString
     {
         return str($template)
             // Escape PHP tags
