@@ -13,6 +13,7 @@ use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\internal_storage_path;
 use function Tempest\Support\path;
 
 /**
@@ -103,6 +104,8 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->assertFalse($sessionManager->isValid(new SessionId('unknown')));
 
         $session = $sessionManager->create(new SessionId('new'));
+
+        dump([$this->path, $this->container->get(Kernel::class)->internalStorage, $this->container->get(SessionConfig::class)->path, internal_storage_path($this->container->get(SessionConfig::class)->path, (string) $session->id)]);
 
         $this->assertTrue($session->isValid());
 
