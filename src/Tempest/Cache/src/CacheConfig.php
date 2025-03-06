@@ -25,7 +25,7 @@ final class CacheConfig
 
     public function __construct(
         /**
-         * Path to the sessions storage directory, relative to the internal storage.
+         * Path to the storage directory, relative to the internal storage.
          */
         public string $directory = 'cache',
         public ?CacheItemPoolInterface $projectCachePool = null,
