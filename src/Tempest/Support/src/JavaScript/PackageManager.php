@@ -47,9 +47,9 @@ enum PackageManager: string
 
     public static function detect(string $cwd): ?self
     {
-		return array_find(
-			array: PackageManager::cases(),
-			callback: fn($packageManager) => array_any($packageManager->getLockFiles(), fn($lockFile) => file_exists($cwd . '/' . $lockFile))
-		);
-	}
+        return array_find(
+            array: PackageManager::cases(),
+            callback: fn($packageManager) => array_any($packageManager->getLockFiles(), fn($lockFile) => file_exists($cwd . '/' . $lockFile))
+        );
+    }
 }
