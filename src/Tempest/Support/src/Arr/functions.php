@@ -456,7 +456,7 @@ namespace Tempest\Support\Arr {
      * @template TValue
      *
      * @param iterable<TKey,TValue> $array
-     * @param array<array-key, TCombineValue> $values
+     * @param iterable<array-key, TCombineValue> $values
      *
      * @return array<array-key, TCombineValue>
      */
