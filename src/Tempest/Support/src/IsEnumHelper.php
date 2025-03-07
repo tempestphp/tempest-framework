@@ -10,9 +10,9 @@ use InvalidArgumentException;
 use Iterator;
 use IteratorAggregate;
 use Tempest\Support\Arr\ImmutableArray;
-use Traversable;
 use UnitEnum;
 use ValueError;
+use function Tempest\Support\Arr\to_array;
 
 /**
  * This trait provides a bunch of helper methods to work with enums
@@ -102,7 +102,7 @@ trait IsEnumHelper
             default => throw new InvalidArgumentException(sprintf('The given value must be an iterable value, "%s" given', get_debug_type($enums))),
         };
 
-		return array_any($iterator, fn($enum) => $this->is($enum));
+		return array_any(to_array($iterator), fn($enum) => $this->is($enum));
 	}
 
     /**
