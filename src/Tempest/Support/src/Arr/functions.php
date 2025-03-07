@@ -580,7 +580,7 @@ namespace Tempest\Support\Arr {
      */
     function implode(iterable $array, string $glue): ImmutableString
     {
-        return new ImmutableString(\implode($glue, $array));
+        return new ImmutableString(\implode($glue, to_array($array)));
     }
 
     /**
