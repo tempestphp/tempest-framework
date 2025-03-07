@@ -102,14 +102,8 @@ trait IsEnumHelper
             default => throw new InvalidArgumentException(sprintf('The given value must be an iterable value, "%s" given', get_debug_type($enums))),
         };
 
-        foreach ($iterator as $enum) {
-            if ($this->is($enum)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+		return array_any($iterator, fn($enum) => $this->is($enum));
+	}
 
     /**
      * Check if the current enum case is not in the given list of enums
