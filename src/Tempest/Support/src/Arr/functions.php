@@ -445,7 +445,7 @@ namespace Tempest\Support\Arr {
      */
     function merge(iterable $array, iterable ...$arrays): array
     {
-        return array_merge(to_array($array), ...array_map(fn (iterable $value) => to_array($value), $arrays));
+        return array_merge(to_array($array), ...array_map(to_array(...), $arrays));
     }
 
     /**
