@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Closure;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
-use Tempest\Database\Query;
 use function Tempest\map;
+use Tempest\Database\Query;
+use function Tempest\reflect;
+use Tempest\Database\Virtual;
+use Tempest\Database\DatabaseModel;
 
 /**
  * @template TModelClass of DatabaseModel
@@ -164,6 +166,8 @@ final class ModelQueryBuilder
         $relations = $this->getRelations($modelDefinition);
 
         $fields = $modelDefinition->getFieldNames();
+
+        $fields = array_filter($fields, fn(FieldName $field) => !(reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class)));
 
         foreach ($relations as $relation) {
             $fields = [...$fields, ...$relation->getFieldNames()];
