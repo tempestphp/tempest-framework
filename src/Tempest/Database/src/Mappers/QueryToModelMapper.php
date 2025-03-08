@@ -30,11 +30,6 @@ final readonly class QueryToModelMapper implements Mapper
         $class = new ClassReflector($to);
         $table = $class->callStatic('table');
 
-        $getModelInstanceClass = (is_a($to, AbstractDatabaseModel::class, true)
-            ? [ $to, 'getModelInstanceClass' ]
-            : fn(mixed ...$params) => $to
-        );
-
         $models = [];
 
         foreach ($from->fetch() as $row) {
@@ -42,7 +37,7 @@ final readonly class QueryToModelMapper implements Mapper
 
             $id = $row[$idField];
 
-            $instanceClass = new ClassReflector($getModelInstanceClass(...$row));
+            $instanceClass = new ClassReflector($to::getModelInstanceClass(...$row));
 
             $model = $models[$id] ?? $instanceClass->newInstanceWithoutConstructor();
 
