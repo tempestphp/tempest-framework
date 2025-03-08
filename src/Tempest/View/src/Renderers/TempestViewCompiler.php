@@ -235,7 +235,7 @@ final readonly class TempestViewCompiler
     {
         // split $html by <html>, <head> and <body>
         $tagRegexOptions = implode('|', self::SPECIAL_TAGS);
-        $regex = "%(</?(?:$tagRegexOptions)(?:\s[^>]*>|>))%i";
+        $regex = "%(</?(?:{$tagRegexOptions})(?:\s[^>]*>|>))%i";
         return preg_split($regex, $template, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     }
 
@@ -247,11 +247,11 @@ final readonly class TempestViewCompiler
     {
         $parserFlags = LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
-        $originalDom = HTMLDocument::createFromString(implode( $htmlBlocks), $parserFlags);
+        $originalDom = HTMLDocument::createFromString(implode( '', $htmlBlocks), $parserFlags);
         $originalDomCount = $this->countDomNodes($originalDom);
 
         $tagRegexOptions = implode('|', self::SPECIAL_TAGS);
-        $regex = "%(</?)($tagRegexOptions)(?:\s|>)%i";
+        $regex = "%(</?)({$tagRegexOptions})(?:\s|>)%i";
 
         $placeholderTags = [];
         foreach ($htmlBlocks as $index => $part) {
@@ -268,7 +268,7 @@ final readonly class TempestViewCompiler
             $opening = $matches[1]; // "<" or "</"
             $tag = $matches[2];     // "html" / "head" / "body"
             $prefix = $opening . self::SPECIAL_TAG_PREFIX . "{$tag}"; // e.g. "</zzz_html" or "<zzz_html"
-            $rest = mb_substr($part, mb_strlen("$opening$tag")); // e.g. ">", or " class='xxx'>"
+            $rest = mb_substr($part, mb_strlen("{$opening}$tag")); // e.g. ">", or " class='xxx'>"
 
             $newTag = $prefix . $rest;
 
