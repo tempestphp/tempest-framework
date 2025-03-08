@@ -34,6 +34,10 @@ final readonly class TempestViewCompiler
         '?>' => self::TOKEN_PHP_CLOSE,
     ];
 
+    public const array SPECIAL_TAGS = ['html', 'head', 'body'];
+
+    public const string SPECIAL_TAG_PREFIX = 'zzzz_';
+
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
@@ -101,37 +105,13 @@ final readonly class TempestViewCompiler
 
     private function parseDom(string $template): NodeList
     {
+        $template = $this->addSpecialTagPrefixes($template);
+
+        $template = $this->cleanupTemplate($template)->toString();
+
         $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
-        $template = str($template);
-
-        // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
-        $headNodes = [];
-
-        $headTemplate = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null;
-
-        if ($headTemplate) {
-            $headNodes = HTMLDocument::createFromString(
-                source: $this->cleanupTemplate($headTemplate)->toString(),
-                options: $parserFlags,
-            )->childNodes;
-        }
-
-        $mainTemplate = $this->cleanupTemplate($template)
-            // Cleanup head, we'll insert it after having parsed the DOM
-            ->replaceRegex('/<head>((.|\n)*?)<\/head>/', '<head></head>');
-
-        $dom = HTMLDocument::createFromString(
-            source: $mainTemplate->toString(),
-            options: $parserFlags,
-        );
-
-        // If we have head nodes and a head tag, we inject them back
-        if (($headElement = $dom->getElementsByTagName('head')->item(0)) !== null) {
-            foreach ($headNodes as $headNode) {
-                $headElement->appendChild($dom->importNode($headNode, deep: true));
-            }
-        }
+        $dom = HTMLDocument::createFromString($template, $parserFlags);
 
         return $dom->childNodes;
     }
@@ -237,5 +217,82 @@ final readonly class TempestViewCompiler
                     );
                 },
             );
+    }
+
+    private function addSpecialTagPrefixes(string $template): string
+    {
+        $htmlBlocks = $this->splitHtmlBySpecialTags($template);
+
+        $placeholderTags = $this->resolvePlaceholderTags($htmlBlocks);
+
+        return arr($htmlBlocks)
+            ->map(fn (string $part, int $index) => $placeholderTags[$index] ?? $part)
+            ->implode('')
+            ->toString();
+    }
+
+    private function splitHtmlBySpecialTags(string $template): array
+    {
+        // split $html by <html>, <head> and <body>
+        $tagRegexOptions = implode('|', self::SPECIAL_TAGS);
+        $regex = "%(</?(?:$tagRegexOptions)(?:\s[^>]*>|>))%i";
+        return preg_split($regex, $template, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+    }
+
+    /**
+     * @param string[] $htmlBlocks
+     * @return array<int,string>
+     */
+    private function resolvePlaceholderTags(array $htmlBlocks): array
+    {
+        $parserFlags = LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
+
+        $originalDom = HTMLDocument::createFromString(implode( $htmlBlocks), $parserFlags);
+        $originalDomCount = $this->countDomNodes($originalDom);
+
+        $tagRegexOptions = implode('|', self::SPECIAL_TAGS);
+        $regex = "%(</?)($tagRegexOptions)(?:\s|>)%i";
+
+        $placeholderTags = [];
+        foreach ($htmlBlocks as $index => $part) {
+
+            // only consider relevant tags
+            if (!preg_match($regex, $part, $matches)) {
+                continue;
+            }
+
+            if (!$this->isASpecialTag($htmlBlocks, $index, $originalDomCount, $parserFlags)) {
+                continue;
+            }
+
+            $opening = $matches[1]; // "<" or "</"
+            $tag = $matches[2];     // "html" / "head" / "body"
+            $prefix = $opening . self::SPECIAL_TAG_PREFIX . "{$tag}"; // e.g. "</zzz_html" or "<zzz_html"
+            $rest = mb_substr($part, mb_strlen("$opening$tag")); // e.g. ">", or " class='xxx'>"
+
+            $newTag = $prefix . $rest;
+
+            $placeholderTags[$index] = $newTag;
+        }
+
+        return $placeholderTags;
+    }
+
+    /**
+     * @param string[] $htmlBlocks
+     */
+    private function isASpecialTag(array $htmlBlocks, int $index, int $originalDomCount, int $parserFlags): bool
+    {
+        $htmlBlocks[$index] = '<br />'; // some legitimate tag
+        $alteredHtml = implode('', $htmlBlocks);
+        $alteredDom = HTMLDocument::createFromString($alteredHtml, $parserFlags);
+
+        // remember tags where a new node was added
+        return $this->countDomNodes($alteredDom) > $originalDomCount;
+    }
+
+    private function countDomNodes(HTMLDocument $dom): int
+    {
+        return $dom->getElementsByTagName('*')->length;
     }
 }
