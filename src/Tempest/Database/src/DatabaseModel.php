@@ -17,6 +17,8 @@ interface DatabaseModel
     /** @return \Tempest\Database\Builder\ModelQueryBuilder<self> */
     public static function query(): ModelQueryBuilder;
 
+    public static function getModelInstanceClass(array $row): string;
+
     /** @return self[] */
     public static function all(): array;
 

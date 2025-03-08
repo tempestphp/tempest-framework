@@ -76,6 +76,11 @@ trait IsDatabaseModel
         return new ModelQueryBuilder(self::class);
     }
 
+    public static function getModelInstanceClass(array $row): string
+    {
+        return self::class;
+    }
+
     /** @return self[] */
     public static function all(array $relations = []): array
     {
