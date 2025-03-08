@@ -7,14 +7,15 @@ namespace Tempest\Database\QueryStatements;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
-enum Alter: string implements QueryStatement
+final readonly class IdentityStatement implements QueryStatement
 {
-    case ADD = 'ADD';
-    case DROP = 'DROP';
-    case RENAME = 'RENAME';
+    public function __construct(
+        public string $name,
+    ) {
+    }
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return $this->value;
+        return sprintf('`%s`', $this->name);
     }
 }

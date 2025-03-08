@@ -34,34 +34,6 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function update(QueryStatement $statement): self
-    {
-        $this->statements[] = new AlterStatement(Alter::UPDATE, $statement);
-
-        return $this;
-    }
-
-    public function delete(string $table): self
-    {
-        $this->statements[] = new AlterStatement(
-            Alter::DELETE,
-            new RawStatement($table),
-        );
-
-        return $this;
-    }
-
-    public function constraint(string $constraintName, ?QueryStatement $statement = null): self
-    {
-        $this->statements[] = new ConstraintStatement($constraintName, $statement);
-
-        if ($statement !== null) {
-            $this->statements[] = $statement;
-        }
-
-        return $this;
-    }
-
     public function unique(string ...$columns): self
     {
         $this->createIndexStatements[] = new UniqueStatement(
@@ -82,9 +54,16 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function drop(QueryStatement $statement): self
+    public function drop(ColumnNameStatement|ConstraintNameStatement $statement): self
     {
         $this->statements[] = new AlterStatement(Alter::DROP, $statement);
+
+        return $this;
+    }
+
+    public function rename(RenameColumnStatement $rename): self
+    {
+        $this->statements[] = new AlterStatement(Alter::RENAME, $rename);
 
         return $this;
     }
