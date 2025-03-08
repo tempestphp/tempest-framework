@@ -528,8 +528,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_body_tag_is_not_removed_from_child_view(): void
     {
-        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
-
         $this->registerViewComponent('x-layout', <<<'HTML'
         <html lang="en"><x-slot /></html>
         HTML);
