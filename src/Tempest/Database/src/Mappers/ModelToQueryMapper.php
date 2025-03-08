@@ -6,6 +6,7 @@ namespace Tempest\Database\Mappers;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
+use Tempest\Database\Virtual;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
@@ -119,6 +120,11 @@ final readonly class ModelToQueryMapper implements Mapper
 
         foreach ($class->getPublicProperties() as $property) {
             if (! $property->isInitialized($model)) {
+                continue;
+            }
+            
+            // not a real DB column
+            if ($property->hasAttribute(Virtual::class)) {
                 continue;
             }
 
