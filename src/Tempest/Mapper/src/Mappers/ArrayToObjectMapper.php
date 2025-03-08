@@ -21,8 +21,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {
-    }
+    ) {}
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -93,7 +92,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             if ($value instanceof UnknownValue) {
                 $caster = $this->casterFactory->forProperty($property);
 
-                $value = $caster?->cast($from[$propertyName]) ?? $from[$propertyName];
+                $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
             }
 
             $property->setValue($object, $value);
@@ -145,7 +144,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): mixed {
+    ): mixed
+    {
         $type = $property->getType();
 
         if ($type->isBuiltIn()) {
@@ -155,7 +155,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $caster = $this->casterFactory->forProperty($property);
 
         if (! is_array($data)) {
-            return $caster?->cast($data) ?? $data;
+            return $caster ? $caster->cast($data) : $data;
         }
 
         $data = $this->withParentRelations(
@@ -165,7 +165,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         );
 
         return $this->map(
-            from: $caster?->cast($data) ?? $data,
+            from: $caster ? $caster->cast($data) : $data,
             to: $type->getName(),
         );
     }
@@ -174,7 +174,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         mixed $data,
         PropertyReflector $property,
         object $parent,
-    ): UnknownValue|array {
+    ): UnknownValue|array
+    {
         $type = $property->getIterableType();
 
         if ($type === null) {
@@ -192,7 +193,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         foreach ($data as $key => $item) {
             if (! is_array($item)) {
-                $values[$key] = $caster?->cast($item) ?? $item;
+                $values[$key] = $caster ? $caster->cast($item) : $item;
 
                 continue;
             }
@@ -204,7 +205,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             );
 
             $values[] = $this->map(
-                from: $caster?->cast($item) ?? $item,
+                from: $caster ? $caster->cast($item) : $item,
                 to: $type->getName(),
             );
         }
@@ -223,7 +224,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         ClassReflector $child,
         object $parent,
         array $data,
-    ): array {
+    ): array
+    {
         foreach ($child->getPublicProperties() as $property) {
             if ($property->getType()->getName() === $parent::class) {
                 $data[$property->getName()] = $parent;
