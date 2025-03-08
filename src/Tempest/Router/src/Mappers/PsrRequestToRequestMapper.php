@@ -71,7 +71,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
         ])->to($requestClass);
 
         $validator = new Validator();
-        $validator->validate($newRequest);
+        $validator->validateObject($newRequest);
 
         return $newRequest;
     }

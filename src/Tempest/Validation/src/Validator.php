@@ -6,21 +6,23 @@ namespace Tempest\Validation;
 
 use Closure;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
+use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\NotNull;
 use function Tempest\Support\arr;
 
 final readonly class Validator
 {
-    public function validate(object $object): void
+    public function validateObject(object $object): void
     {
         $class = new ClassReflector($object);
 
         $failingRules = [];
 
         foreach ($class->getPublicProperties() as $property) {
-            $rules = $property->getAttributes(Rule::class);
-
             if (! $property->isInitialized($object)) {
                 continue;
             }
@@ -28,14 +30,35 @@ final readonly class Validator
             $value = $property->getValue($object);
 
             try {
-                $this->validateValue($value, $rules);
-            } catch (InvalidValueException $invalidValueException) {
+                $this->validateProperty($property, $value);
+            } catch (PropertyValidationException $invalidValueException) {
                 $failingRules[$property->getName()] = $invalidValueException->failingRules;
             }
         }
 
         if ($failingRules !== []) {
             throw new ValidationException($object, $failingRules);
+        }
+    }
+
+    public function validateProperty(PropertyReflector $property, mixed $value): void
+    {
+        $failingRules = [];
+
+        try {
+            $rules = $property->getAttributes(Rule::class);
+
+            if (! $property->isNullable()) {
+                $rules[] = new NotNull();
+            }
+
+            $this->validateValue($value, $rules);
+        } catch (InvalidValueException $invalidValueException) {
+            $failingRules = $invalidValueException->failingRules;
+        }
+
+        if ($failingRules !== []) {
+            throw new PropertyValidationException($property, $failingRules);
         }
     }
 

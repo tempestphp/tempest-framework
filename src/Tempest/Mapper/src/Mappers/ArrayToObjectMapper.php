@@ -13,6 +13,8 @@ use Tempest\Mapper\Strict;
 use Tempest\Mapper\UnknownValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Validation\Exceptions\PropertyValidationException;
+use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Throwable;
 use function Tempest\Support\arr;
@@ -40,13 +42,19 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
+        $validator = new Validator();
+
         $class = new ClassReflector($to);
 
         $object = $this->resolveObject($to);
 
         $missingValues = [];
+
         /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
+
+        /** @var \Tempest\Validation\Rule[] $failingRules */
+        $failingRules = [];
 
         $from = arr($from)->unwrap()->toArray();
 
@@ -95,7 +103,17 @@ final readonly class ArrayToObjectMapper implements Mapper
                 $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
             }
 
-            $property->setValue($object, $value);
+            try {
+                $validator->validateProperty($property, $value);
+
+                $property->setValue($object, $value);
+            } catch (PropertyValidationException $propertyValidationException) {
+                $failingRules[$property->getName()] = $propertyValidationException->failingRules;
+            }
+        }
+
+        if ($failingRules !== []) {
+            throw new ValidationException($object, $failingRules);
         }
 
         if ($missingValues !== []) {
@@ -111,8 +129,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             $property->unset($object);
         }
-
-        $this->validate($object);
 
         return $object;
     }
@@ -211,13 +227,6 @@ final readonly class ArrayToObjectMapper implements Mapper
         }
 
         return $values;
-    }
-
-    private function validate(mixed $object): void
-    {
-        $validator = new Validator();
-
-        $validator->validate($object);
     }
 
     private function withParentRelations(

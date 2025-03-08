@@ -24,6 +24,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSeria
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
+use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 use function Tempest\make;
 use function Tempest\map;
@@ -159,6 +160,20 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->expectException(ValidationException::class);
 
         map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
+    }
+
+    public function test_validation_happens_before_mapping(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        map(['prop' => null])->to(ObjectFactoryWithValidation::class);
+    }
+
+    public function test_validation_infers_not_null_from_property_type(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        map(['prop' => null])->to(ObjectWithStringProperty::class);
     }
 
     public function test_empty_string_can_cast_to_int(): void
