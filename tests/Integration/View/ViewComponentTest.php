@@ -526,6 +526,23 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_body_tag_is_not_removed_from_child_view(): void
+    {
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <html lang="en"><x-slot /></html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout><body>Content</body></x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><body>Content</body></html>
+        HTML, $html);
+    }
+
     public function test_custom_components_in_head(): void
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'
