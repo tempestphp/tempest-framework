@@ -59,7 +59,7 @@ final class ModelQueryBuilder
     /**
      * @return TModelClass|null
      */
-    public function find(Id $id)
+    public function get(Id $id)
     {
         return $this
             ->whereField('id', $id)

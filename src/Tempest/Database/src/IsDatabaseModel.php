@@ -84,16 +84,25 @@ trait IsDatabaseModel
             ->all();
     }
 
-    public static function find(Id $id, array $relations = []): ?self
+    public static function get(Id $id, array $relations = []): ?self
     {
         return self::query()
             ->with(...$relations)
-            ->find($id);
+            ->get($id);
+    }
+
+    public static function find(mixed ...$conditions): ModelQueryBuilder
+    {
+        $query = self::query();
+        
+        array_walk($conditions, fn($value, $column) => $query->whereField($column, $value));
+
+        return $query;
     }
 
     public function load(string ...$relations): self
     {
-        $new = self::find($this->getId(), $relations);
+        $new = self::get($this->getId(), $relations);
 
         foreach (new ClassReflector($new)->getPublicProperties() as $property) {
             $property->setValue($this, $property->getValue($new));

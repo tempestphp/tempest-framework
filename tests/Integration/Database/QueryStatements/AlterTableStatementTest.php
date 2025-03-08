@@ -37,7 +37,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertCount(2, MigrationModel::all());
         $this->assertSame(
             '0000-01-01_create_users_table',
-            MigrationModel::find(new Id(2))->name,
+            MigrationModel::get(new Id(2))->name,
         );
 
         try {
@@ -61,7 +61,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             '0000-01-02_add_email_to_user_table',
-            MigrationModel::find(new Id(3))->name,
+            MigrationModel::get(new Id(3))->name,
         );
 
         /** @var User $user */

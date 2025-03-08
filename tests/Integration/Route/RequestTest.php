@@ -125,7 +125,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
             )
             ->assertStatus(Status::FOUND);
 
-        $book = Book::find(new Id(1));
+        $book = Book::get(new Id(1));
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
     }
@@ -148,7 +148,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
             )
             ->assertStatus(Status::FOUND);
 
-        $book = Book::find(new Id(1), relations: ['author']);
+        $book = Book::get(new Id(1), relations: ['author']);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
         $this->assertSame('b', $book->author->name);
