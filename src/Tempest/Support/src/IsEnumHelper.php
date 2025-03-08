@@ -10,9 +10,9 @@ use InvalidArgumentException;
 use Iterator;
 use IteratorAggregate;
 use Tempest\Support\Arr\ImmutableArray;
-use Traversable;
 use UnitEnum;
 use ValueError;
+use function Tempest\Support\Arr\to_array;
 
 /**
  * This trait provides a bunch of helper methods to work with enums
@@ -89,11 +89,11 @@ trait IsEnumHelper
     /**
      * Check if the current enum case is in the given list of enums
      *
-     * @param Traversable<UnitEnum>|array<UnitEnum> $enums The list of enums to check
+     * @param iterable<UnitEnum> $enums The list of enums to check
      *
      * @return bool True if the current enum is in the list, false otherwise
      */
-    public function in(Traversable|array $enums): bool
+    public function in(iterable $enums): bool
     {
         $iterator = match (true) {
             is_array($enums) => new ArrayIterator($enums),
@@ -102,23 +102,17 @@ trait IsEnumHelper
             default => throw new InvalidArgumentException(sprintf('The given value must be an iterable value, "%s" given', get_debug_type($enums))),
         };
 
-        foreach ($iterator as $enum) {
-            if ($this->is($enum)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+		return array_any(to_array($iterator), fn($enum) => $this->is($enum));
+	}
 
     /**
      * Check if the current enum case is not in the given list of enums
      *
-     * @param Traversable<UnitEnum>|array<UnitEnum> $enums The list of enums to check
+     * @param iterable<UnitEnum> $enums The list of enums to check
      *
      * @return bool True if the current enum is not in the list, false otherwise
      */
-    public function notIn(Traversable|array $enums): bool
+    public function notIn(iterable $enums): bool
     {
         return ! $this->in($enums);
     }
