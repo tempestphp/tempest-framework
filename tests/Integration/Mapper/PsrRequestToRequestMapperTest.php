@@ -51,6 +51,7 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
     {
         $mapper = new PsrRequestToRequestMapper();
 
+        /** @var PostRequest $request */
         $request = $mapper->map(
             from: $this->http->makePsrRequest(
                 uri: '/',
