@@ -17,8 +17,7 @@ final readonly class DateTimeCaster implements Caster
     public function __construct(
         private string $format = DATE_ATOM,
         private bool $immutable = true,
-    ) {
-    }
+    ) {}
 
     public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {
@@ -30,8 +29,12 @@ final readonly class DateTimeCaster implements Caster
         };
     }
 
-    public function cast(mixed $input): DateTimeInterface
+    public function cast(mixed $input): ?DateTimeInterface
     {
+        if (! $input) {
+            return null;
+        }
+
         if ($input instanceof DateTimeInterface) {
             return $input;
         }
