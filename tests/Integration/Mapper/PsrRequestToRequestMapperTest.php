@@ -46,6 +46,22 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         $this->assertEquals('b', $request->text);
         $this->assertEquals(['x-test' => 'test'], $request->headers);
     }
+    
+    public function test_empty_strings_are_converted_to_null(): void
+    {
+        $mapper = new PsrRequestToRequestMapper();
+
+        /** @var PostRequest $request */
+        $request = $mapper->map(
+            from: $this->http->makePsrRequest(
+                uri: '/',
+                body: ['title' => 'a', 'text' => ''],
+            ),
+            to: PostRequest::class,
+        );
+
+        $this->assertNull($request->text);
+    }
 
     public function test_map_with_with_missing_data(): void
     {
