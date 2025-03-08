@@ -10,6 +10,10 @@ use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsFloat;
+use Tempest\Validation\Rules\IsInteger;
+use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\NotNull;
 use function Tempest\Support\arr;
@@ -50,6 +54,15 @@ final readonly class Validator
 
             if (! $property->isNullable()) {
                 $rules[] = new NotNull();
+            }
+
+            if ($property->getType()?->isScalar()) {
+                $rules[] = match ($property->getType()->getName()) {
+                    'string' => new IsString(),
+                    'int' => new IsInteger(),
+                    'float' => new IsFloat(),
+                    'bool' => new IsBoolean(),
+                };
             }
 
             $this->validateValue($value, $rules);

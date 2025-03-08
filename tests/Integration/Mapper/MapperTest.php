@@ -176,6 +176,42 @@ final class MapperTest extends FrameworkIntegrationTestCase
         map(['prop' => null])->to(ObjectWithStringProperty::class);
     }
 
+    public function test_validation_infers_int_rule_from_property_type(): void
+    {
+        try {
+            map(['prop' => 'a'])->to(ObjectWithIntProp::class);
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('Value should be an integer', $exception->getMessage());
+        }
+    }
+
+    public function test_validation_infers_float_rule_from_property_type(): void
+    {
+        try {
+            map(['prop' => 'a'])->to(ObjectWithFloatProp::class);
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('Value should be a float', $exception->getMessage());
+        }
+    }
+
+    public function test_validation_infers_string_rule_from_property_type(): void
+    {
+        try {
+            map(['prop' => 1])->to(ObjectWithStringProperty::class);
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('Value should be a string', $exception->getMessage());
+        }
+    }
+
+    public function test_validation_infers_bool_rule_from_property_type(): void
+    {
+        try {
+            map(['prop' => 'invalid'])->to(ObjectWithBoolProp::class);
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('Value should represent a boolean value', $exception->getMessage());
+        }
+    }
+
     public function test_empty_string_can_cast_to_int(): void
     {
         $object = map(['prop' => ''])->to(ObjectWithIntProp::class);

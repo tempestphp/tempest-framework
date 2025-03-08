@@ -8,7 +8,7 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Boolean implements Rule
+final readonly class IsBoolean implements Rule
 {
     public function isValid(mixed $value): bool
     {

@@ -83,8 +83,20 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
+            $caster = $this->casterFactory->forProperty($property);
+
+            $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
+
+            try {
+                $validator->validateProperty($property, $value);
+            } catch (PropertyValidationException $propertyValidationException) {
+                $failingRules[$property->getName()] = $propertyValidationException->failingRules;
+                continue;
+            }
+
+            // TODO: must refactor
             $value = $this->resolveValueFromType(
-                data: $from[$propertyName],
+                data: $value,
                 property: $property,
                 parent: $object,
             );
@@ -97,19 +109,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 );
             }
 
-            if ($value instanceof UnknownValue) {
-                $caster = $this->casterFactory->forProperty($property);
-
-                $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
-            }
-
-            try {
-                $validator->validateProperty($property, $value);
-
-                $property->setValue($object, $value);
-            } catch (PropertyValidationException $propertyValidationException) {
-                $failingRules[$property->getName()] = $propertyValidationException->failingRules;
-            }
+            $property->setValue($object, $value);
         }
 
         if ($failingRules !== []) {
