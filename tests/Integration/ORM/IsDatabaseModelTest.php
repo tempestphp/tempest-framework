@@ -57,7 +57,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame('baz', $foo->bar);
         $this->assertInstanceOf(Id::class, $foo->id);
 
-        $foo = Foo::find($foo->id);
+        $foo = Foo::get($foo->id);
 
         $this->assertSame('baz', $foo->bar);
         $this->assertInstanceOf(Id::class, $foo->id);
@@ -66,7 +66,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             bar: 'boo',
         );
 
-        $foo = Foo::find($foo->id);
+        $foo = Foo::get($foo->id);
 
         $this->assertSame('boo', $foo->bar);
     }
@@ -108,7 +108,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $book = $book->save();
 
-        $book = Book::find($book->id, relations: ['author']);
+        $book = Book::get($book->id, relations: ['author']);
 
         $this->assertEquals(1, $book->id->id);
         $this->assertSame('Book Title', $book->title);
@@ -272,7 +272,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         (new ThroughModel(parent: $parent, child: $childA))->save();
         (new ThroughModel(parent: $parent, child: $childB))->save();
 
-        $parent = ParentModel::find($parent->id, ['through.child']);
+        $parent = ParentModel::get($parent->id, ['through.child']);
 
         $this->assertSame('A', $parent->through[1]->child->name);
         $this->assertSame('B', $parent->through[2]->child->name);
@@ -289,7 +289,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $parent = (new ParentModel(name: 'parent'))->save();
 
-        $parent = ParentModel::find($parent->id, ['through.child']);
+        $parent = ParentModel::get($parent->id, ['through.child']);
 
         $this->assertInstanceOf(ParentModel::class, $parent);
         $this->assertEmpty($parent->through);
@@ -312,8 +312,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
 
-        $child = ChildModel::find($childA->id, ['through.parent']);
-        $child2 = ChildModel::find($childB->id, ['through2.parent']);
+        $child = ChildModel::get($childA->id, ['through.parent']);
+        $child2 = ChildModel::get($childB->id, ['through2.parent']);
 
         $this->assertSame('parent', $child->through->parent->name);
         $this->assertSame('parent', $child2->through2->parent->name);
@@ -336,8 +336,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
 
-        $child = ChildModel::find($childA->id, ['through.parent']);
-        $child2 = ChildModel::find($childB->id, ['through2.parent']);
+        $child = ChildModel::get($childA->id, ['through.parent']);
+        $child2 = ChildModel::get($childB->id, ['through2.parent']);
 
         $this->assertSame('parent', $child->through->parent->name);
         $this->assertSame('parent', $child2->through2->parent->name);
@@ -441,8 +441,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $foo->delete();
 
-        $this->assertNull(Foo::find($foo->getId()));
-        $this->assertNotNull(Foo::find($bar->getId()));
+        $this->assertNull(Foo::get($foo->getId()));
+        $this->assertNotNull(Foo::get($bar->getId()));
     }
 
     public function test_property_with_carbon_type(): void
