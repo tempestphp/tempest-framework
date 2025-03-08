@@ -6,11 +6,12 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\UnsupportedDialect;
 
 final readonly class ConstraintStatement implements QueryStatement
 {
     public function __construct(
-        private string $constraintName,
+        private ConstraintNameStatement $constraintName,
         private QueryStatement $statement,
     ) {
     }
@@ -18,8 +19,8 @@ final readonly class ConstraintStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         return sprintf(
-            'CONSTRAINT %s %s',
-            $this->constraintName,
+            '%s %s',
+            $this->constraintName->compile($dialect),
             $this->statement->compile($dialect),
         );
     }
