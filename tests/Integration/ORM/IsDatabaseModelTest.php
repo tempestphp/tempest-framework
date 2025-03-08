@@ -478,4 +478,27 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertSame(['a', 'b', 'c'], $model->array);
         $this->assertSame(CasterEnum::BAR, $model->enum);
     }
+
+    public function test_find(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new C(name: 'one'))->save();
+        (new C(name: 'two'))->save();
+
+        /** @var C[] */
+        $valid = C::find(name: 'one')->all();
+
+        $this->assertCount(1, $valid);
+        $this->assertSame($valid[0]->name, 'one');
+
+        $invalid = C::find(name: 'three')->all();
+
+        $this->assertCount(0, $invalid);
+    }
 }
