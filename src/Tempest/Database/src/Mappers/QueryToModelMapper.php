@@ -37,7 +37,7 @@ final readonly class QueryToModelMapper implements Mapper
 
             $id = $row[$idField];
 
-            $instanceClass = new ClassReflector($to::getModelInstanceClass(...$row));
+            $instanceClass = new ClassReflector($to::getModelInstanceClass($row));
 
             $model = $models[$id] ?? $instanceClass->newInstanceWithoutConstructor();
 

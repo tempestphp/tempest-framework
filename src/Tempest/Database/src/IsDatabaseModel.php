@@ -76,7 +76,7 @@ trait IsDatabaseModel
         return new ModelQueryBuilder(self::class);
     }
 
-    public static function getModelInstanceClass(mixed ...$params): string
+    public static function getModelInstanceClass(array $row): string
     {
         return self::class;
     }
