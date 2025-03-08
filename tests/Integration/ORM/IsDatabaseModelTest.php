@@ -6,37 +6,38 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
-use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
-use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use function Tempest\map;
 use Tests\Tempest\Fixtures\Models\A;
-use Tests\Tempest\Fixtures\Models\AWithEager;
-use Tests\Tempest\Fixtures\Models\AWithLazy;
-use Tests\Tempest\Fixtures\Models\AWithValue;
 use Tests\Tempest\Fixtures\Models\B;
 use Tests\Tempest\Fixtures\Models\C;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
+use Tests\Tempest\Fixtures\Models\AWithLazy;
+use Tempest\Database\Exceptions\MissingValue;
+use Tests\Tempest\Fixtures\Models\AWithEager;
+use Tests\Tempest\Fixtures\Models\AWithValue;
+use Tests\Tempest\Fixtures\Models\AWithVirtual;
+use Tempest\Database\Exceptions\MissingRelation;
+use Tests\Tempest\Integration\ORM\Models\CasterEnum;
+use Tests\Tempest\Integration\ORM\Models\ChildModel;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\ORM\Models\CarbonModel;
+use Tests\Tempest\Integration\ORM\Models\CasterModel;
+use Tests\Tempest\Integration\ORM\Models\ParentModel;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCasterModelTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
-use Tests\Tempest\Integration\ORM\Models\CarbonModel;
-use Tests\Tempest\Integration\ORM\Models\CasterEnum;
-use Tests\Tempest\Integration\ORM\Models\CasterModel;
-use Tests\Tempest\Integration\ORM\Models\ChildModel;
-use Tests\Tempest\Integration\ORM\Models\ParentModel;
-use Tests\Tempest\Integration\ORM\Models\ThroughModel;
-use function Tempest\map;
 
 /**
  * @internal
@@ -397,6 +398,26 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertNull(A::query()->first());
+    }
+
+    public function test_virtual_property(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateATable::class,
+            CreateBTable::class,
+            CreateCTable::class,
+        );
+
+        (new A(
+            b: new B(
+                c: new C(name: 'test'),
+            ),
+        ))->save();
+
+        $a = AWithVirtual::query()->first();
+
+        $this->assertSame($a->id->id * -1, $a->fake);
     }
 
     public function test_update_or_create(): void
