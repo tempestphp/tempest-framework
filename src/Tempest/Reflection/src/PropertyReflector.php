@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Reflection;
 
 use Error;
+use PropertyHookType;
 use ReflectionProperty as PHPReflectionProperty;
 
 final readonly class PropertyReflector implements Reflector
@@ -88,7 +89,7 @@ final readonly class PropertyReflector implements Reflector
 
     public function isReadonly(): bool
     {
-        return $this->reflectionProperty->isReadOnly();
+        return $this->reflectionProperty->isReadOnly() || ($this->reflectionProperty->hasHooks() && !$this->reflectionProperty->hasHook(PropertyHookType::Set));
     }
 
     public function getIterableType(): ?TypeReflector
