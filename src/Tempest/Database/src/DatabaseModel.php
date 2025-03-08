@@ -28,6 +28,8 @@ interface DatabaseModel
 
     public static function find(Id $id, array $relations = []): ?self;
 
+    public static function findBy(mixed ...$conditions): ModelQueryBuilder;
+
     public function save(): self;
 
     public function getId(): Id;

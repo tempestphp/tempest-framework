@@ -91,6 +91,15 @@ trait IsDatabaseModel
             ->find($id);
     }
 
+    public static function findBy(mixed ...$conditions): ModelQueryBuilder
+    {
+        $query = self::query();
+        
+        array_walk($conditions, fn($value, $column) => $query->whereField($column, $value));
+
+        return $query;
+    }
+
     public function load(string ...$relations): self
     {
         $new = self::find($this->getId(), $relations);
