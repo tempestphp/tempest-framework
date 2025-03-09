@@ -155,7 +155,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             $type = $property->getIterableType() ?? $property->getType();
 
-            if (! $type?->isClass()) {
+            if (! $type->isClass()) {
                 continue;
             }
 

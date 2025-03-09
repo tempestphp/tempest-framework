@@ -56,16 +56,17 @@ final readonly class Validator
                 $rules[] = new NotNull();
             }
 
-            if ($property->getType()?->isScalar()) {
+            if ($property->getType()->isScalar()) {
                 $rules[] = match ($property->getType()->getName()) {
                     'string' => new IsString(orNull: $property->isNullable()),
                     'int' => new IsInteger(orNull: $property->isNullable()),
                     'float' => new IsFloat(orNull: $property->isNullable()),
                     'bool' => new IsBoolean(orNull: $property->isNullable()),
+                    default => null,
                 };
             }
 
-            $this->validateValue($value, $rules);
+            $this->validateValue($value, array_filter($rules));
         } catch (InvalidValueException $invalidValueException) {
             $failingRules = $invalidValueException->failingRules;
         }
