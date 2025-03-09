@@ -58,10 +58,10 @@ final readonly class Validator
 
             if ($property->getType()?->isScalar()) {
                 $rules[] = match ($property->getType()->getName()) {
-                    'string' => new IsString(),
-                    'int' => new IsInteger(),
-                    'float' => new IsFloat(),
-                    'bool' => new IsBoolean(),
+                    'string' => new IsString(orNull: $property->isNullable()),
+                    'int' => new IsInteger(orNull: $property->isNullable()),
+                    'float' => new IsFloat(orNull: $property->isNullable()),
+                    'bool' => new IsBoolean(orNull: $property->isNullable()),
                 };
             }
 

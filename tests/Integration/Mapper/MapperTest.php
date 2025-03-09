@@ -215,27 +215,6 @@ final class MapperTest extends FrameworkIntegrationTestCase
         }
     }
 
-    public function test_empty_string_can_cast_to_int(): void
-    {
-        $object = map(['prop' => ''])->to(ObjectWithIntProp::class);
-
-        $this->assertEquals(0, $object->prop);
-    }
-
-    public function test_empty_string_can_cast_to_float(): void
-    {
-        $object = map(['prop' => ''])->to(ObjectWithFloatProp::class);
-
-        $this->assertEquals(0.0, $object->prop);
-    }
-
-    public function test_empty_string_can_cast_to_bool(): void
-    {
-        $object = map(['prop' => ''])->to(ObjectWithBoolProp::class);
-
-        $this->assertFalse($object->prop);
-    }
-
     public function test_map_from_attribute(): void
     {
         $object = map([

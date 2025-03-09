@@ -46,9 +46,6 @@ final readonly class CasterFactory
 
         // Try a built-in caster
         $builtInCaster = match ($type->getName()) {
-            'int' => new IntegerCaster(),
-            'float' => new FloatCaster(),
-            'bool' => new BooleanCaster(),
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
             'array' => new ArrayJsonCaster(),
             default => null,
