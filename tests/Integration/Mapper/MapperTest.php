@@ -298,16 +298,16 @@ final class MapperTest extends FrameworkIntegrationTestCase
     public function test_object_to_array_mapper_use_casters(): void
     {
         $this->assertSame(
-            actual: map(new ObjectThatShouldUseCasters(
-                name: 'Guillaume',
-                date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
-                enum: EnumToCast::FOO,
-            ))->toArray(),
             expected: [
                 'name' => 'Guillaume',
                 'date' => '2025-03-02',
                 'enum' => 'foo',
             ],
+            actual: map(new ObjectThatShouldUseCasters(
+                name: 'Guillaume',
+                date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+                enum: EnumToCast::FOO,
+            ))->toArray(),
         );
     }
 

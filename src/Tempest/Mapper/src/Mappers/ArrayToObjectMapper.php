@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use Tempest\Mapper\Casters\ArrayCaster;
+use Tempest\Mapper\Casters\ArrayJsonCaster;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\MapFrom;
@@ -93,21 +93,21 @@ final readonly class ArrayToObjectMapper implements Mapper
                 $failingRules[$property->getName()] = $propertyValidationException->failingRules;
                 continue;
             }
-
-            // TODO: must refactor
-            $value = $this->resolveValueFromType(
-                data: $value,
-                property: $property,
-                parent: $object,
-            );
-
-            if ($value instanceof UnknownValue) {
-                $value = $this->resolveValueFromArray(
-                    data: $from[$propertyName],
-                    property: $property,
-                    parent: $object,
-                );
-            }
+//
+//            // TODO: must refactor
+//            $value = $this->resolveValueFromType(
+//                data: $value,
+//                property: $property,
+//                parent: $object,
+//            );
+//
+//            if ($value instanceof UnknownValue) {
+//                $value = $this->resolveValueFromArray(
+//                    data: $from[$propertyName],
+//                    property: $property,
+//                    parent: $object,
+//                );
+//            }
 
             $property->setValue($object, $value);
         }
@@ -119,6 +119,8 @@ final readonly class ArrayToObjectMapper implements Mapper
         if ($missingValues !== []) {
             throw new MissingValuesException($to, $missingValues);
         }
+
+        // TODO: set parent relations
 
         // Non-strict properties that weren't passed are unset,
         // which means that they can now be accessed via `__get`
@@ -203,7 +205,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         $caster = $this->casterFactory->forProperty($property);
 
         // We'll manually cast array values instead of using the array caster
-        if ($caster instanceof ArrayCaster) {
+        if ($caster instanceof ArrayJsonCaster) {
             $caster = null;
         }
 

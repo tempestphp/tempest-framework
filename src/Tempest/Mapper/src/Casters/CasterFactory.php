@@ -38,9 +38,14 @@ final readonly class CasterFactory
             return get($castWith->className);
         }
 
-        // Check if backed enum
+        // If the type is an enum, we'll use the enum caster
         if ($type->matches(BackedEnum::class)) {
             return new EnumCaster($type->getName());
+        }
+
+        // If the property has an iterable type, we'll cast it with the array object caster
+        if ($property->getIterableType() !== null) {
+            return new ArrayObjectCaster($property);
         }
 
         // Try a built-in caster
@@ -49,7 +54,7 @@ final readonly class CasterFactory
             'float' => new FloatCaster(),
             'bool' => new BooleanCaster(),
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
-            'array' => new ArrayCaster(),
+            'array' => new ArrayJsonCaster(),
             default => null,
         };
 
