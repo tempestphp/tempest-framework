@@ -93,21 +93,6 @@ final readonly class ArrayToObjectMapper implements Mapper
                 $failingRules[$property->getName()] = $propertyValidationException->failingRules;
                 continue;
             }
-//
-//            // TODO: must refactor
-//            $value = $this->resolveValueFromType(
-//                data: $value,
-//                property: $property,
-//                parent: $object,
-//            );
-//
-//            if ($value instanceof UnknownValue) {
-//                $value = $this->resolveValueFromArray(
-//                    data: $from[$propertyName],
-//                    property: $property,
-//                    parent: $object,
-//                );
-//            }
 
             $property->setValue($object, $value);
         }
@@ -157,79 +142,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         return new ClassReflector($objectOrClass)->newInstanceWithoutConstructor();
     }
-//
-//    private function resolveValueFromType(
-//        mixed $data,
-//        PropertyReflector $property,
-//        object $parent,
-//    ): mixed
-//    {
-//        $type = $property->getType();
-//
-//        if ($type->isBuiltIn()) {
-//            return new UnknownValue();
-//        }
-//
-//        $caster = $this->casterFactory->forProperty($property);
-//
-//        if (! is_array($data)) {
-//            return $caster ? $caster->cast($data) : $data;
-//        }
-//
-//        $data = $this->withParentRelations(
-//            $type->asClass(),
-//            $parent,
-//            $data,
-//        );
-//
-//        return $this->map(
-//            from: $caster ? $caster->cast($data) : $data,
-//            to: $type->getName(),
-//        );
-//    }
-//
-//    private function resolveValueFromArray(
-//        mixed $data,
-//        PropertyReflector $property,
-//        object $parent,
-//    ): UnknownValue|array
-//    {
-//        $type = $property->getIterableType();
-//
-//        if ($type === null) {
-//            return new UnknownValue();
-//        }
-//
-//        $values = [];
-//
-//        $caster = $this->casterFactory->forProperty($property);
-//
-//        // We'll manually cast array values instead of using the array caster
-//        if ($caster instanceof ArrayJsonCaster) {
-//            $caster = null;
-//        }
-//
-//        foreach ($data as $key => $item) {
-//            if (! is_array($item)) {
-//                $values[$key] = $caster ? $caster->cast($item) : $item;
-//
-//                continue;
-//            }
-//
-//            $item = $this->withParentRelations(
-//                $type->asClass(),
-//                $parent,
-//                $item,
-//            );
-//
-//            $values[] = $this->map(
-//                from: $caster ? $caster->cast($item) : $item,
-//                to: $type->getName(),
-//            );
-//        }
-//
-//        return $values;
-//    }
 
     private function setParentRelations(
         object $parent,
