@@ -574,4 +574,15 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </body></html>
         HTML, $html);
     }
+
+    public function test_self_closing_tag(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <html lang="en"><body>Hello<br/>there</body></html>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><body>Hello<br/>there</body></html>
+        HTML, $html);
+    }
 }
