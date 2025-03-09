@@ -81,9 +81,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $caster = $this->casterFactory->forProperty($property);
-
-            $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
+            $value = $this->resolveValue($property, $from[$propertyName]);
 
             try {
                 $validator->validateProperty($property, $value);
@@ -171,9 +169,9 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             foreach ($childClass->getPublicProperties() as $childProperty) {
                 // Determine the value to set in the child property
-                if ($childProperty->getType()->getName() === $parent::class) {
+                if ($childProperty->getType()->equals($parent::class)) {
                     $valueToSet = $parent;
-                } elseif ($childProperty->getIterableType()?->getName() === $parent::class) {
+                } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
                     $valueToSet = [$parent];
                 } else {
                     continue;
@@ -182,6 +180,7 @@ final readonly class ArrayToObjectMapper implements Mapper
                 if (is_array($child)) {
                     // Set the value for each child element if the child is an array
                     foreach ($child as $childItem) {
+                        lw($childItem);
                         $childProperty->setValue($childItem, $valueToSet);
                     }
                 } else {
@@ -190,5 +189,29 @@ final readonly class ArrayToObjectMapper implements Mapper
                 }
             }
         }
+    }
+
+    public function resolveValue(PropertyReflector $property, mixed $value): mixed
+    {
+        // If this isn't a property with iterable type defined, and the type accepts the value, we don't have to cast it
+        // We need to check the iterable type, because otherwise raw array input might incorrectly be seen as "accepted by the property's array type",
+        // which isn't sufficient a check.
+        // Oh how we long for the day that PHP gets generics…
+        if ($property->getIterableType() === null && $property->getType()->accepts($value)) {
+            return $value;
+        }
+
+        // If there is an iterable type, and it accepts the value, we don't have to cast it either
+        if ($property->getIterableType()?->accepts($value)) {
+            return $value;
+        }
+
+        // If there's a caster, we'll cast the value
+        if ($caster = $this->casterFactory->forProperty($property)) {
+            return $caster->cast($value);
+        }
+
+        // Otherwise we'll return the value as-is
+        return $value;
     }
 }

@@ -11,6 +11,7 @@ use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
@@ -121,6 +122,21 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('test', $book->title);
         $this->assertSame('author', $book->author->name);
         $this->assertSame('test', $book->author->books[0]->title);
+    }
+
+    public function test_make_object_from_array_with_object_relation(): void
+    {
+        $book = map([
+            'title' => 'Book Title',
+            'author' => new Author(
+                name: 'Author name',
+                type: AuthorType::B,
+            )
+        ])->to(Book::class);
+
+        $this->assertSame('Book Title', $book->title);
+        $this->assertSame('Author name', $book->author->name);
+        $this->assertSame(AuthorType::B, $book->author->type);
     }
 
     public function test_can_make_non_strict_object_with_uninitialized_values(): void

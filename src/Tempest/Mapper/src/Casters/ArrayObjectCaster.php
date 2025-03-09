@@ -26,6 +26,6 @@ final readonly class ArrayObjectCaster implements Caster
 
     public function serialize(mixed $input): string
     {
-        // TODO: Implement serialize() method.
+        // TODO
     }
 }
