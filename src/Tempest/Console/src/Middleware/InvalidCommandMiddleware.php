@@ -13,7 +13,7 @@ use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleInputArgument;
-use Tempest\Validation\Rules\Boolean;
+use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\Numeric;
@@ -56,7 +56,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
                         ? new Enum($argument->type)
                         : new NotEmpty(),
                     match ($argument->type) {
-                        'bool' => new Boolean(),
+                        'bool' => new IsBoolean(),
                         'int' => new Numeric(),
                         default => null,
                     },

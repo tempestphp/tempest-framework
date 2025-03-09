@@ -30,7 +30,7 @@ trait HasAttributes
 
         $attributeInstance = $attribute?->newInstance();
 
-        if (! $recursive) {
+        if ($attributeInstance || ! $recursive) {
             return $attributeInstance;
         }
 

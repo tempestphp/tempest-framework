@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Mappers;
 
-use Tempest\Mapper\Casters\ArrayCaster;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\MapFrom;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
-use Tempest\Mapper\UnknownValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Validation\Exceptions\PropertyValidationException;
+use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Throwable;
 use function Tempest\Support\arr;
@@ -40,13 +40,19 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
+        $validator = new Validator();
+
         $class = new ClassReflector($to);
 
         $object = $this->resolveObject($to);
 
         $missingValues = [];
+
         /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
+
+        /** @var \Tempest\Validation\Rule[] $failingRules */
+        $failingRules = [];
 
         $from = arr($from)->unwrap()->toArray();
 
@@ -75,32 +81,27 @@ final readonly class ArrayToObjectMapper implements Mapper
                 continue;
             }
 
-            $value = $this->resolveValueFromType(
-                data: $from[$propertyName],
-                property: $property,
-                parent: $object,
-            );
+            $value = $this->resolveValue($property, $from[$propertyName]);
 
-            if ($value instanceof UnknownValue) {
-                $value = $this->resolveValueFromArray(
-                    data: $from[$propertyName],
-                    property: $property,
-                    parent: $object,
-                );
-            }
-
-            if ($value instanceof UnknownValue) {
-                $caster = $this->casterFactory->forProperty($property);
-
-                $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
+            try {
+                $validator->validateProperty($property, $value);
+            } catch (PropertyValidationException $propertyValidationException) {
+                $failingRules[$property->getName()] = $propertyValidationException->failingRules;
+                continue;
             }
 
             $property->setValue($object, $value);
         }
 
+        if ($failingRules !== []) {
+            throw new ValidationException($object, $failingRules);
+        }
+
         if ($missingValues !== []) {
             throw new MissingValuesException($to, $missingValues);
         }
+
+        $this->setParentRelations($object, $class);
 
         // Non-strict properties that weren't passed are unset,
         // which means that they can now be accessed via `__get`
@@ -111,8 +112,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             $property->unset($object);
         }
-
-        $this->validate($object);
 
         return $object;
     }
@@ -140,102 +139,78 @@ final readonly class ArrayToObjectMapper implements Mapper
         return new ClassReflector($objectOrClass)->newInstanceWithoutConstructor();
     }
 
-    private function resolveValueFromType(
-        mixed $data,
-        PropertyReflector $property,
+    private function setParentRelations(
         object $parent,
-    ): mixed
+        ClassReflector $parentClass,
+    ): void
     {
-        $type = $property->getType();
-
-        if ($type->isBuiltIn()) {
-            return new UnknownValue();
-        }
-
-        $caster = $this->casterFactory->forProperty($property);
-
-        if (! is_array($data)) {
-            return $caster ? $caster->cast($data) : $data;
-        }
-
-        $data = $this->withParentRelations(
-            $type->asClass(),
-            $parent,
-            $data,
-        );
-
-        return $this->map(
-            from: $caster ? $caster->cast($data) : $data,
-            to: $type->getName(),
-        );
-    }
-
-    private function resolveValueFromArray(
-        mixed $data,
-        PropertyReflector $property,
-        object $parent,
-    ): UnknownValue|array
-    {
-        $type = $property->getIterableType();
-
-        if ($type === null) {
-            return new UnknownValue();
-        }
-
-        $values = [];
-
-        $caster = $this->casterFactory->forProperty($property);
-
-        // We'll manually cast array values instead of using the array caster
-        if ($caster instanceof ArrayCaster) {
-            $caster = null;
-        }
-
-        foreach ($data as $key => $item) {
-            if (! is_array($item)) {
-                $values[$key] = $caster ? $caster->cast($item) : $item;
-
+        foreach ($parentClass->getPublicProperties() as $property) {
+            if (! $property->isInitialized($parent)) {
                 continue;
             }
 
-            $item = $this->withParentRelations(
-                $type->asClass(),
-                $parent,
-                $item,
-            );
-
-            $values[] = $this->map(
-                from: $caster ? $caster->cast($item) : $item,
-                to: $type->getName(),
-            );
-        }
-
-        return $values;
-    }
-
-    private function validate(mixed $object): void
-    {
-        $validator = new Validator();
-
-        $validator->validate($object);
-    }
-
-    private function withParentRelations(
-        ClassReflector $child,
-        object $parent,
-        array $data,
-    ): array
-    {
-        foreach ($child->getPublicProperties() as $property) {
-            if ($property->getType()->getName() === $parent::class) {
-                $data[$property->getName()] = $parent;
+            if ($property->isVirtual()) {
+                continue;
             }
 
-            if ($property->getIterableType()?->getName() === $parent::class) {
-                $data[$property->getName()] = [$parent];
+            $type = $property->getIterableType() ?? $property->getType();
+
+            if (! $type->isClass()) {
+                continue;
+            }
+
+            $child = $property->getValue($parent);
+
+            if ($child === null) {
+                continue;
+            }
+
+            $childClass = $type->asClass();
+
+            foreach ($childClass->getPublicProperties() as $childProperty) {
+                // Determine the value to set in the child property
+                if ($childProperty->getType()->equals($parent::class)) {
+                    $valueToSet = $parent;
+                } elseif ($childProperty->getIterableType()?->equals($parent::class)) {
+                    $valueToSet = [$parent];
+                } else {
+                    continue;
+                }
+
+                if (is_array($child)) {
+                    // Set the value for each child element if the child is an array
+                    foreach ($child as $childItem) {
+                        $childProperty->setValue($childItem, $valueToSet);
+                    }
+                } else {
+                    // Set the value directly on the child element if it's an object
+                    $childProperty->setValue($child, $valueToSet);
+                }
             }
         }
+    }
 
-        return $data;
+    public function resolveValue(PropertyReflector $property, mixed $value): mixed
+    {
+        // If this isn't a property with iterable type defined, and the type accepts the value, we don't have to cast it
+        // We need to check the iterable type, because otherwise raw array input might incorrectly be seen as "accepted by the property's array type",
+        // which isn't sufficient a check.
+        // Oh how we long for the day that PHP gets generics…
+        if ($property->getIterableType() === null && $property->getType()->accepts($value)) {
+            return $value;
+        }
+
+        // If there is an iterable type, and it accepts the value within the array given, we don't have to cast it either
+        if ($property->getIterableType()?->accepts(arr($value)->first())) {
+            return $value;
+        }
+
+        // If there's a caster, we'll cast the value
+        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
+            return $caster->cast($value);
+        }
+
+        // Otherwise we'll return the value as-is
+        return $value;
     }
 }

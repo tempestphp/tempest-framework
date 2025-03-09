@@ -52,4 +52,15 @@ final class ReflectionTypeTest extends TestCase
             actual: new TypeReflector('?Tempest\Reflection\Tests\Fixtures\A')->asClass()->getName(),
         );
     }
+
+    public function test_is_scalar(): void
+    {
+        $this->assertTrue(new TypeReflector('bool')->isScalar());
+        $this->assertTrue(new TypeReflector('string')->isScalar());
+        $this->assertTrue(new TypeReflector('int')->isScalar());
+        $this->assertTrue(new TypeReflector('float')->isScalar());
+        $this->assertFalse(new TypeReflector('array')->isScalar());
+        $this->assertFalse(new TypeReflector('object')->isScalar());
+        $this->assertFalse(new TypeReflector(A::class)->isScalar());
+    }
 }

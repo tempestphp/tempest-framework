@@ -7,7 +7,7 @@ namespace Tempest\Mapper\Casters;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 
-final class ArrayCaster implements Caster
+final class ArrayJsonCaster implements Caster
 {
     public function cast(mixed $input): array
     {
