@@ -20,24 +20,10 @@ final readonly class ObjectCaster implements Caster
     public function cast(mixed $input): mixed
     {
         return map($input)->with(ArrayToObjectMapper::class)->to($this->type->getName());
-//        try {
-//            return $this->type->asClass()->newInstanceArgs([$input]);
-//        } catch (Throwable) {
-//            return $input;
-//        }
     }
 
     public function serialize(mixed $input): string
     {
         return map($input)->with(ObjectToJsonMapper::class)->do();
-//        if (! is_object($input)) {
-//            throw new CannotSerializeValue('object');
-//        }
-//
-//        if ($input instanceof Stringable) {
-//            return (string) $input;
-//        }
-//
-//        return serialize($input);
     }
 }
