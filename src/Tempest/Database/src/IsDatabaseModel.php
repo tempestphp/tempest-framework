@@ -96,7 +96,7 @@ trait IsDatabaseModel
         $new = self::find($this->getId(), $relations);
 
         foreach (new ClassReflector($new)->getPublicProperties() as $property) {
-            if (!$property->isReadonly()) {
+            if ($property->isWritable()) {
                 $property->setValue($this, $property->getValue($new));
             }
         }

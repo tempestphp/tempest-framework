@@ -89,7 +89,12 @@ final readonly class PropertyReflector implements Reflector
 
     public function isReadonly(): bool
     {
-        return $this->reflectionProperty->isReadOnly() || ($this->reflectionProperty->hasHooks() && !$this->reflectionProperty->hasHook(PropertyHookType::Set));
+        return $this->reflectionProperty->isReadOnly();
+    }
+
+    public function isWritable(): bool
+    {
+        return !$this->reflectionProperty->hasHooks() || $this->reflectionProperty->hasHook(PropertyHookType::Set);
     }
 
     public function getIterableType(): ?TypeReflector
