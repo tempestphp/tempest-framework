@@ -180,7 +180,6 @@ final readonly class ArrayToObjectMapper implements Mapper
                 if (is_array($child)) {
                     // Set the value for each child element if the child is an array
                     foreach ($child as $childItem) {
-                        lw($childItem);
                         $childProperty->setValue($childItem, $valueToSet);
                     }
                 } else {
