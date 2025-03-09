@@ -85,6 +85,8 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             $caster = $this->casterFactory->forProperty($property);
 
+            lw(...[$propertyName => $caster]);
+
             $value = $caster ? $caster->cast($from[$propertyName]) : $from[$propertyName];
 
             try {

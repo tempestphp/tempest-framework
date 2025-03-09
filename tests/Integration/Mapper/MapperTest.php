@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
+use Tempest\Database\Id;
+use Tempest\Mapper\CastWith;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;

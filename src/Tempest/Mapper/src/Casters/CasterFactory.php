@@ -24,12 +24,8 @@ final readonly class CasterFactory
         $castWith = $property->getAttribute(CastWith::class);
 
         // Get CastWith from the property's type if there's no property-defined CastWith
-        if ($castWith === null) {
-            try {
-                $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-            } catch (ReflectionException) {
-                // Could not resolve CastWith from the type
-            }
+        if ($castWith === null && $type->isClass()) {
+            $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
         }
 
         // Return the caster if defined with CastWith
