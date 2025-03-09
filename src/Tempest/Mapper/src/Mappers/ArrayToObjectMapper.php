@@ -201,13 +201,13 @@ final readonly class ArrayToObjectMapper implements Mapper
             return $value;
         }
 
-        // If there is an iterable type, and it accepts the value, we don't have to cast it either
-        if ($property->getIterableType()?->accepts($value)) {
+        // If there is an iterable type, and it accepts the value within the array given, we don't have to cast it either
+        if ($property->getIterableType()?->accepts(arr($value)->first())) {
             return $value;
         }
 
         // If there's a caster, we'll cast the value
-        if ($caster = $this->casterFactory->forProperty($property)) {
+        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
             return $caster->cast($value);
         }
 

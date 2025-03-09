@@ -199,8 +199,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             map(['prop' => 'a'])->to(ObjectWithIntProp::class);
-        } catch (ValidationException $exception) {
-            $this->assertStringContainsString('Value should be an integer', $exception->getMessage());
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('Value should be an integer', $validationException->getMessage());
         }
     }
 
@@ -208,8 +208,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             map(['prop' => 'a'])->to(ObjectWithFloatProp::class);
-        } catch (ValidationException $exception) {
-            $this->assertStringContainsString('Value should be a float', $exception->getMessage());
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('Value should be a float', $validationException->getMessage());
         }
     }
 
@@ -217,8 +217,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             map(['prop' => 1])->to(ObjectWithStringProperty::class);
-        } catch (ValidationException $exception) {
-            $this->assertStringContainsString('Value should be a string', $exception->getMessage());
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('Value should be a string', $validationException->getMessage());
         }
     }
 
@@ -226,8 +226,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         try {
             map(['prop' => 'invalid'])->to(ObjectWithBoolProp::class);
-        } catch (ValidationException $exception) {
-            $this->assertStringContainsString('Value should represent a boolean value', $exception->getMessage());
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('Value should represent a boolean value', $validationException->getMessage());
         }
     }
 
@@ -264,7 +264,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
         ], $array);
     }
 
-    public function test_map_to_handle_name_collisions_with_json_serializable(): void
+    public function test_map_to_array_with_json_serializable(): void
     {
         $array = map(new ObjectWithMapToCollisionsJsonSerializable(
             first_name: 'my first name',
@@ -273,8 +273,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         ))->toArray();
 
         $this->assertSame([
-            'name' => 'my first name',
-            'full_name' => 'my name',
+            'first_name' => 'my first name',
+            'name' => 'my name',
         ], $array);
     }
 
