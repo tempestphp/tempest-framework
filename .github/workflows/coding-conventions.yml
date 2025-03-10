@@ -21,13 +21,10 @@ jobs:
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction
 
-      - name: Setup Mago 
-        uses: nhedger/setup-mago@v1
-
       - name: Run Mago 
         run: |
-          mago fmt --dry-run
-          mago lint --reporting-format=github
+          ./vendor/bin/mago fmt --dry-run
+          ./vendor/bin/mago lint --reporting-format=github
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
