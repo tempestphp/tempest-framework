@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Tempest\Database\Id;
 use Tempest\Mapper\CastWith;
 use Tempest\Mapper\Exceptions\MissingValuesException;
+use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -15,6 +16,8 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
+use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectA;
+use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
@@ -336,5 +339,24 @@ final class MapperTest extends FrameworkIntegrationTestCase
         ])->to(ObjectWithMapFromAttribute::class);
 
         $this->assertSame('Guillaume', $object->fullName);
+    }
+
+    public function test_nested_object_to_array_casting(): void
+    {
+        $object = new NestedObjectA(
+            items: [
+                new NestedObjectB('a'),
+                new NestedObjectB('b'),
+            ]
+        );
+
+        $array = map($object)->with(ObjectToArrayMapper::class)->do();
+
+        $this->assertSame([
+            'items' => [
+                ['name' => 'a'],
+                ['name' => 'b'],
+            ]
+        ], $array);
     }
 }

@@ -3,7 +3,7 @@
 namespace Tempest\Mapper\Casters;
 
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Mappers\ArrayToJsonMapper;
+use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Reflection\PropertyReflector;
 use function Tempest\map;
 
@@ -26,8 +26,14 @@ final readonly class ArrayObjectCaster implements Caster
         return $values;
     }
 
-    public function serialize(mixed $input): string
+    public function serialize(mixed $input): array
     {
-        return map($input)->with(ArrayToJsonMapper::class)->do();
+        $values = [];
+
+        foreach ($input as $key => $item) {
+            $values[$key] = map($item)->with(ObjectToArrayMapper::class)->do();
+        }
+
+        return $values;
     }
 }
