@@ -13,6 +13,7 @@ use Tempest\Cache\IsCache;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
 use Throwable;
+
 use function Tempest\internal_storage_path;
 
 final class DiscoveryCache implements Cache

@@ -12,9 +12,8 @@ final class Redirect implements Response
 {
     use IsResponse;
 
-    public function __construct(
-        string $to,
-    ) {
+    public function __construct(string $to)
+    {
         $this->status = Status::FOUND;
         $this->addHeader('Location', $to);
     }

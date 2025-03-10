@@ -16,7 +16,7 @@ final class Cookie implements Stringable
         public string $key,
         public string $value = '',
         public DateTimeImmutable|int|null $expiresAt = null,
-        public int|null $maxAge = null,
+        public ?int $maxAge = null,
         public ?string $domain = null,
         public ?string $path = null,
         public ?bool $secure = null,

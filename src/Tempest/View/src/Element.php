@@ -12,11 +12,11 @@ interface Element
 
     public function hasAttribute(string $name): bool;
 
-    public function getAttribute(string $name): string|null;
+    public function getAttribute(string $name): ?string;
 
     public function setAttribute(string $name, string $value): self;
 
-    public function consumeAttribute(string $name): string|null;
+    public function consumeAttribute(string $name): ?string;
 
     public function setPrevious(?Element $previous): self;
 

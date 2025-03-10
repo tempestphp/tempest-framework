@@ -8,14 +8,14 @@ use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 
-// TODO: Add lots of helper methods (addDay, addWeek, addYear, etc.)
+// TODO(#985): Add lots of helper methods (addDay, addWeek, addYear, etc.)
 final class MockClock implements Clock
 {
     private DateTimeImmutable $now;
 
     public function __construct(DateTimeInterface|string $now = 'now')
     {
-        $this->now = $now instanceof DateTimeInterface
+        $this->now = ($now instanceof DateTimeInterface)
             ? DateTimeImmutable::createFromInterface($now)
             : new DateTimeImmutable($now);
     }

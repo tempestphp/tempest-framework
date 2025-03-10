@@ -7,6 +7,7 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\CanOpenInEditor;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
+
 use function Tempest\env;
 
 /**
@@ -18,7 +19,7 @@ trait OpensInEditor
     private function supportsOpeningInEditor(): bool
     {
         // @phpstan-ignore function.alreadyNarrowedType
-        return is_subclass_of(static::class, CanOpenInEditor::class) && (bool) $this->getEditorCommand();
+        return is_subclass_of(static::class, CanOpenInEditor::class) && ((bool) $this->getEditorCommand());
     }
 
     private function getEditorCommand(): string

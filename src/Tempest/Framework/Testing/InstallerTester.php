@@ -12,8 +12,9 @@ use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tempest\Core\Kernel;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use function Tempest\Support\path;
+
 use function Tempest\Support\arr;
+use function Tempest\Support\path;
 
 final class InstallerTester
 {

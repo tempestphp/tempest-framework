@@ -7,6 +7,7 @@ namespace Tempest\Support\Tests\Random;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Random;
+
 use function Tempest\Support\Str\contains;
 
 /**

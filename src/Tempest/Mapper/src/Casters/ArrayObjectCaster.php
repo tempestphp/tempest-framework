@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper\Casters;
 
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Reflection\PropertyReflector;
+
 use function Tempest\map;
 
 final readonly class ArrayObjectCaster implements Caster
 {
     public function __construct(
-        private PropertyReflector $property
-    ) {}
+        private PropertyReflector $property,
+    ) {
+    }
 
     public function cast(mixed $input): mixed
     {

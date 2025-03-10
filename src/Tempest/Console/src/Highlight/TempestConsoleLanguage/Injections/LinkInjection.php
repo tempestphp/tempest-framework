@@ -7,6 +7,7 @@ namespace Tempest\Console\Highlight\TempestConsoleLanguage\Injections;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
 use Tempest\Highlight\ParsedInjection;
+
 use function Tempest\Support\str;
 
 final readonly class LinkInjection implements Injection

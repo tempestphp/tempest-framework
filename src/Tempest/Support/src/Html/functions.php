@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Html {
     use Stringable;
+
     use function Tempest\Support\arr;
 
     /**
@@ -11,22 +12,26 @@ namespace Tempest\Support\Html {
      */
     function is_self_closing_tag(Stringable|string $tag): bool
     {
-        return in_array((string) $tag, [
-            'area',
-            'base',
-            'br',
-            'col',
-            'embed',
-            'hr',
-            'img',
-            'input',
-            'link',
-            'meta',
-            'param',
-            'source',
-            'track',
-            'wbr',
-        ], strict: true);
+        return in_array(
+            (string) $tag,
+            [
+                'area',
+                'base',
+                'br',
+                'col',
+                'embed',
+                'hr',
+                'img',
+                'input',
+                'link',
+                'meta',
+                'param',
+                'source',
+                'track',
+                'wbr',
+            ],
+            strict: true,
+        );
     }
 
     /**
@@ -36,7 +41,7 @@ namespace Tempest\Support\Html {
     {
         $attributes = arr($attributes)
             ->filter(fn (mixed $value) => ! in_array($value, [false, null], strict: true))
-            ->map(fn (mixed $value, int|string $key) => $value === true ? $key : $key . '="' . $value . '"')
+            ->map(fn (mixed $value, int|string $key) => $value === true ? $key : ($key . '="' . $value . '"'))
             ->values()
             ->implode(' ')
             ->when(

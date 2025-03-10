@@ -6,6 +6,7 @@ namespace Tempest\Auth;
 
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
+
 use function Tempest\src_path;
 
 final class AuthInstaller implements Installer

@@ -12,7 +12,8 @@ final readonly class AnonymousViewComponent implements ViewComponent
     public function __construct(
         public string $contents,
         public string $file,
-    ) {}
+    ) {
+    }
 
     public static function getName(): string
     {

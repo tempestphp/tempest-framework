@@ -15,7 +15,7 @@ final class Option
     /** @var T */
     public mixed $displayValue {
         get {
-            if (! $this->value instanceof UnitEnum) {
+            if (! ($this->value instanceof UnitEnum)) {
                 return $this->value;
             }
 
@@ -41,8 +41,10 @@ final class Option
     }
 
     /** @param T $value */
-    public function __construct(public int|string $key, public mixed $value)
-    {
+    public function __construct(
+        public int|string $key,
+        public mixed $value,
+    ) {
     }
 
     public function equals(Option $other): bool

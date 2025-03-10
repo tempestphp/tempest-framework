@@ -8,6 +8,7 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Traversable;
+
 use function Tempest\Support\arr;
 
 final class DiscoveryItems implements IteratorAggregate, Countable
@@ -39,7 +40,7 @@ final class DiscoveryItems implements IteratorAggregate, Countable
     {
         return new self(
             arr($this->items)
-                ->filter(fn (array $items, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
+                ->filter(fn (array $_, string $path) => str_contains($path, '/vendor/') || str_contains($path, '\\vendor\\'))
                 ->toArray(),
         );
     }

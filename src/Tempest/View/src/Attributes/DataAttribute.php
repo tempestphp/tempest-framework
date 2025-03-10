@@ -9,6 +9,7 @@ use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
 use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\ViewComponentElement;
+
 use function Tempest\Support\str;
 
 final readonly class DataAttribute implements Attribute

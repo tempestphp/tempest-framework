@@ -25,7 +25,7 @@ final readonly class ClassReflector implements Reflector
     {
         if (is_string($reflectionClass)) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
-        } elseif (! $reflectionClass instanceof PHPReflectionClass) {
+        } elseif (! ($reflectionClass instanceof PHPReflectionClass)) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
         }
 

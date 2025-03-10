@@ -18,11 +18,13 @@ final class GenericDatabaseTest extends TestCase
     public function test_it_executes_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(true);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('commit')
             ->withAnyParameters()
             ->willReturn(true);
@@ -42,11 +44,13 @@ final class GenericDatabaseTest extends TestCase
     public function test_it_rolls_back_transactions_on_failure(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(true);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('rollback')
             ->withAnyParameters()
             ->willReturn(true);

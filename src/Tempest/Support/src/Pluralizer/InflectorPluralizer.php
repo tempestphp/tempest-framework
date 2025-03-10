@@ -24,6 +24,7 @@ final class InflectorPluralizer implements Pluralizer
             $count = count($count);
         }
 
+        // @mago-expect strictness/require-identity-comparison
         if (abs($count) === 1 || preg_match('/^(.*)[A-Za-z0-9\x{0080}-\x{FFFF}]$/u', (string) $value) == 0) {
             return $value;
         }

@@ -11,8 +11,10 @@ use Tempest\Validation\Rule;
 #[Attribute]
 final readonly class Timezone implements Rule
 {
-    public function __construct(private int $timezoneGroup = DateTimeZone::ALL, private ?string $countryCode = null)
-    {
+    public function __construct(
+        private int $timezoneGroup = DateTimeZone::ALL,
+        private ?string $countryCode = null,
+    ) {
     }
 
     public function isValid(mixed $value): bool

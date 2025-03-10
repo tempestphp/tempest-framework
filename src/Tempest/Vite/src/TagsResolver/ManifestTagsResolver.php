@@ -10,6 +10,7 @@ use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\PrefetchStrategy;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteConfig;
+
 use function Tempest\root_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -29,7 +30,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
             ->flatMap(function (string $entrypoint) {
                 $path = $this->fileToAssetPath($entrypoint);
 
-                if (! $chunk = $this->manifest->chunks->get($path)) {
+                if (! ($chunk = $this->manifest->chunks->get($path))) {
                     throw new ManifestEntrypointNotFoundException($entrypoint);
                 }
 
@@ -182,48 +183,48 @@ final readonly class ManifestTagsResolver implements TagsResolver
 
         $script = match ($this->viteConfig->prefetching->strategy) {
             PrefetchStrategy::AGGRESSIVE => <<<JS
-                    window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => window.setTimeout(() => {
-                        function makeLink(asset) {
-                            const link = document.createElement('link')
-                            Object.keys(asset).forEach((attribute) => link.setAttribute(attribute, asset[attribute]))
-                            return link
-                        }
+                window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => window.setTimeout(() => {
+                    function makeLink(asset) {
+                        const link = document.createElement('link')
+                        Object.keys(asset).forEach((attribute) => link.setAttribute(attribute, asset[attribute]))
+                        return link
+                    }
+
+                    const fragment = new DocumentFragment()
+                    {$assets}.forEach((asset) => fragment.append(makeLink(asset)))
+                    document.head.append(fragment)
+                }))
+            JS,
+            PrefetchStrategy::WATERFALL => <<<JS
+                window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => {
+                    function makeLink(asset) {
+                        const link = document.createElement('link')
+                        Object.entries(asset).forEach(([key, value]) => link.setAttribute(key, value))
+                        return link
+                    }
+
+                    function loadNext(assets, count) {
+                        if (!assets.length) return
 
                         const fragment = new DocumentFragment()
-                        {$assets}.forEach((asset) => fragment.append(makeLink(asset)))
-                        document.head.append(fragment)
-                    }))
-                JS,
-            PrefetchStrategy::WATERFALL => <<<JS
-                    window.addEventListener('{$this->viteConfig->prefetching->prefetchEvent}', () => {
-                        function makeLink(asset) {
-                            const link = document.createElement('link')
-                            Object.entries(asset).forEach(([key, value]) => link.setAttribute(key, value))
-                            return link
-                        }
+                        const limit = Math.min(count, assets.length)
 
-                        function loadNext(assets, count) {
-                            if (!assets.length) return
+                        for (let i = 0; i < limit; i++) {
+                            const link = makeLink(assets.shift())
+                            fragment.append(link)
 
-                            const fragment = new DocumentFragment()
-                            const limit = Math.min(count, assets.length)
-
-                            for (let i = 0; i < limit; i++) {
-                                const link = makeLink(assets.shift())
-                                fragment.append(link)
-
-                                if (assets.length) {
-                                    link.onload = () => loadNext(assets, 1)
-                                    link.onerror = () => loadNext(assets, 1)
-                                }
+                            if (assets.length) {
+                                link.onload = () => loadNext(assets, 1)
+                                link.onerror = () => loadNext(assets, 1)
                             }
-
-                            document.head.append(fragment)
                         }
 
-                        setTimeout(() => loadNext({$assets}, {$this->viteConfig->prefetching->concurrent}))
-                    })
-                JS,
+                        document.head.append(fragment)
+                    }
+
+                    setTimeout(() => loadNext({$assets}, {$this->viteConfig->prefetching->concurrent}))
+                })
+            JS,
         };
 
         return $this->tagCompiler->compilePrefetchTag($script, $chunk);

@@ -30,7 +30,7 @@ final readonly class StaticCleanCommand
     )]
     public function __invoke(): void
     {
-        $directoryIterator = new RecursiveDirectoryIterator($this->kernel->root.'/public');
+        $directoryIterator = new RecursiveDirectoryIterator($this->kernel->root . '/public');
         $directoryIterator->setFlags(FilesystemIterator::SKIP_DOTS);
 
         $this->removeFiles($directoryIterator);
@@ -68,7 +68,7 @@ final readonly class StaticCleanCommand
                 continue;
             }
 
-            if (count(glob($file->getPathname().'/*')) > 0) {
+            if (count(glob($file->getPathname() . '/*')) > 0) {
                 continue;
             }
 

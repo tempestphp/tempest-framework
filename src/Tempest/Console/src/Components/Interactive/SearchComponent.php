@@ -21,6 +21,7 @@ use Tempest\Console\Key;
 use Tempest\Console\Point;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
+
 use function Tempest\Support\Arr\wrap;
 
 final class SearchComponent implements InteractiveConsoleComponent, HasCursor, HasStaticComponent

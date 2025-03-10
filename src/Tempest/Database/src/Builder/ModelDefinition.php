@@ -12,6 +12,7 @@ use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Reflection\ClassReflector;
+
 use function Tempest\reflect;
 
 final readonly class ModelDefinition
@@ -98,7 +99,7 @@ final readonly class ModelDefinition
 
     public function getTableName(): TableName
     {
-        return ($this->modelClass)::table();
+        return $this->modelClass::table();
     }
 
     public function getFieldName(string $fieldName): FieldName

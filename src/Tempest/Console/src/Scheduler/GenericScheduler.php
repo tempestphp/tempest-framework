@@ -8,6 +8,7 @@ use DateTime;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Scheduler;
 use Tempest\Core\ShellExecutor;
+
 use function Tempest\event;
 use function Tempest\internal_storage_path;
 
@@ -54,7 +55,7 @@ final readonly class GenericScheduler implements Scheduler
             $invocation->getCommandName() . ')',
             $invocation->schedule->outputMode->value,
             $invocation->schedule->output,
-            ($invocation->schedule->runInBackground ? '&' : ''),
+            $invocation->schedule->runInBackground ? '&' : '',
         ]);
     }
 

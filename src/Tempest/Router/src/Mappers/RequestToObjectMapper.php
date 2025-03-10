@@ -6,6 +6,7 @@ namespace Tempest\Router\Mappers;
 
 use Tempest\Mapper\Mapper;
 use Tempest\Router\Request;
+
 use function Tempest\map;
 
 final readonly class RequestToObjectMapper implements Mapper

@@ -11,7 +11,7 @@ final readonly class FakeCreateTableStatement implements FakeQueryStatement
     ) {
     }
 
-    public function text(string $text): self
+    public function text(string $_text): self
     {
         return $this;
     }

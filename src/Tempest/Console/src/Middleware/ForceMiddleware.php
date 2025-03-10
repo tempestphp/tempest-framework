@@ -13,8 +13,9 @@ use Tempest\Console\Initializers\Invocation;
 
 final readonly class ForceMiddleware implements ConsoleMiddleware
 {
-    public function __construct(private Console $console)
-    {
+    public function __construct(
+        private Console $console,
+    ) {
     }
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int

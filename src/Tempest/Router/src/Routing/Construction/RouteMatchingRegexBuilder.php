@@ -15,8 +15,9 @@ final readonly class RouteMatchingRegexBuilder
 
     private const int REGEX_SIZE_LIMIT = self::PREG_REGEX_SIZE_LIMIT - self::REGEX_SIZE_MARGIN;
 
-    public function __construct(private RouteTreeNode $rootNode)
-    {
+    public function __construct(
+        private RouteTreeNode $rootNode,
+    ) {
     }
 
     public function toRegex(): MatchingRegex

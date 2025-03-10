@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+
 use function Tempest\Support\str;
 
 final class TextElement implements Element
@@ -26,7 +27,6 @@ final class TextElement implements Element
                     return sprintf('<?= $this->escape(%s); ?>', $matches['match']);
                 },
             )
-
             // Render {!!
             ->replaceRegex(
                 regex: '/{!!(?<match>.*?)!!}/',

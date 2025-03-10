@@ -95,7 +95,7 @@ final readonly class Debug
                 fwrite(STDOUT, $callPath . PHP_EOL);
             } else {
                 echo sprintf(
-                    '<span style="
+                        '<span style="
                     display:inline-block; 
                     color: #fff; 
                     font-family: %s;
@@ -104,10 +104,10 @@ final readonly class Debug
                     margin-bottom: -12px;
                     background: #0071BC;"
                 >%s (%s)</span>',
-                    'Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
-                    $key,
-                    $callPath,
-                );
+                        'Source Code Pro, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
+                        $key,
+                        $callPath,
+                    );
 
                 VarDumper::dump($item);
             }

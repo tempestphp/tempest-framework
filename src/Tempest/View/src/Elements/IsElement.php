@@ -31,12 +31,10 @@ trait IsElement
     {
         $name = ltrim($name, ':');
 
-        return
-            array_key_exists(":{$name}", $this->attributes) ||
-            array_key_exists($name, $this->attributes);
+        return array_key_exists(":{$name}", $this->attributes) || array_key_exists($name, $this->attributes);
     }
 
-    public function getAttribute(string $name): string|null
+    public function getAttribute(string $name): ?string
     {
         $name = ltrim($name, ':');
 
@@ -44,11 +42,7 @@ trait IsElement
             $value = $this->getWrappingElement()->getAttribute($name);
         }
 
-        return
-            $value
-            ?? $this->attributes[":{$name}"]
-            ?? $this->attributes[$name]
-            ?? null;
+        return $value ?? $this->attributes[":{$name}"] ?? $this->attributes[$name] ?? null;
     }
 
     public function setAttribute(string $name, string $value): self
@@ -64,7 +58,7 @@ trait IsElement
         return $this;
     }
 
-    public function consumeAttribute(string $name): string|null
+    public function consumeAttribute(string $name): ?string
     {
         $value = $this->getAttribute($name);
 

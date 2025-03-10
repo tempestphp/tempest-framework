@@ -55,7 +55,7 @@ final readonly class TempestTerminalTheme implements TerminalTheme
         return implode(
             '',
             array_map(
-                fn (TerminalStyle $style) => TerminalStyle::ESC->value .  $style->value,
+                fn (TerminalStyle $style) => TerminalStyle::ESC->value . $style->value,
                 $styles,
             ),
         );

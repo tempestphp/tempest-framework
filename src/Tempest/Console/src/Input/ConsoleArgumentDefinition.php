@@ -7,6 +7,7 @@ namespace Tempest\Console\Input;
 use BackedEnum;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Reflection\ParameterReflector;
+
 use function Tempest\Support\str;
 
 final readonly class ConsoleArgumentDefinition

@@ -19,7 +19,7 @@ final readonly class AfterDate implements Rule
         DateTimeInterface|string $date = 'now',
         private bool $inclusive = false,
     ) {
-        $this->date = $date instanceof DateTimeInterface
+        $this->date = ($date instanceof DateTimeInterface)
             ? DateTimeImmutable::createFromInterface($date)
             : new DateTimeImmutable($date);
     }

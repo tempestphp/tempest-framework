@@ -11,6 +11,7 @@ use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Container;
 use Tempest\Core\Installer;
 use Tempest\Core\InstallerConfig;
+
 use function Tempest\Support\arr;
 
 final readonly class InstallCommand

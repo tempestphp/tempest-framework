@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Arr\InvalidMapWithKeysUsage;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -236,13 +237,13 @@ final class ManipulatesArrayTest extends TestCase
     {
         $this->assertTrue(
             arr(['a', 'b'])
-                ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value => $value)
+                ->mapWithKeys(fn (mixed $value, mixed $_) => yield $value => $value)
                 ->equals(['a' => 'a', 'b' => 'b']),
         );
 
         $this->assertTrue(
             arr(['a' => 'a', 'b' => 'b'])
-                ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value)
+                ->mapWithKeys(fn (mixed $value, mixed $_) => yield $value)
                 ->equals(['b']),
         );
     }
@@ -252,7 +253,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->expectException(InvalidMapWithKeysUsage::class);
 
         arr(['a', 'b'])
-            ->mapWithKeys(fn (mixed $value, mixed $key) => $value);
+            ->mapWithKeys(fn (mixed $value, mixed $_) => $value);
     }
 
     public function test_values(): void
@@ -283,7 +284,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertTrue(
             arr(['a', 'b', 'c'])
-                ->filter(fn (mixed $value, mixed $key) => $key === 1)
+                ->filter(fn (mixed $_, mixed $key) => $key === 1)
                 ->values()
                 ->equals(['b']),
         );
@@ -302,17 +303,19 @@ final class ManipulatesArrayTest extends TestCase
     {
         $string = '';
 
-        arr(['a', 'b', 'c'])->each(function (mixed $value) use (&$string): void {
-            $string .= $value;
-        });
+        arr(['a', 'b', 'c'])
+            ->each(function (mixed $value) use (&$string): void {
+                $string .= $value;
+            });
 
         $this->assertSame('abc', $string);
 
         $string = '';
 
-        arr(['a', 'b', 'c'])->each(function (mixed $value, mixed $key) use (&$string): void {
-            $string .= $key;
-        });
+        arr(['a', 'b', 'c'])
+            ->each(function (mixed $_, mixed $key) use (&$string): void {
+                $string .= $key;
+            });
 
         $this->assertSame('012', $string);
     }
@@ -430,9 +433,11 @@ final class ManipulatesArrayTest extends TestCase
             'last_name' => 'Doe',
         ]);
 
-        $current = $collection->merge([
-            'framework' => 'Tempest',
-        ])->toArray();
+        $current = $collection
+            ->merge([
+                'framework' => 'Tempest',
+            ])
+            ->toArray();
 
         $expected = [
             'first_name' => 'John',
@@ -450,9 +455,11 @@ final class ManipulatesArrayTest extends TestCase
             'last_name' => 'Doe',
         ]);
 
-        $current = $collection->merge(arr([
-            'framework' => 'Tempest',
-        ]))->toArray();
+        $current = $collection
+            ->merge(arr([
+                'framework' => 'Tempest',
+            ]))
+            ->toArray();
 
         $expected = [
             'first_name' => 'John',
@@ -780,7 +787,7 @@ final class ManipulatesArrayTest extends TestCase
             [
                 'id' => 3,
                 'title' => 'Third Post',
-                'author' => ['id' => 1, 'name' => 'John Doe'],  // Duplicate author
+                'author' => ['id' => 1, 'name' => 'John Doe'], // Duplicate author
             ],
             [
                 'id' => 4,
@@ -790,7 +797,7 @@ final class ManipulatesArrayTest extends TestCase
             [
                 'id' => 5,
                 'title' => 'Fifth Post',
-                'author' => ['id' => 2, 'name' => 'Jane Smith'],  // Duplicate author
+                'author' => ['id' => 2, 'name' => 'Jane Smith'], // Duplicate author
             ],
             [
                 'id' => 6,
@@ -1391,24 +1398,32 @@ final class ManipulatesArrayTest extends TestCase
             arr([
                 ['name' => 'Makise', 'hobbies' => ['Science', 'Programming']],
                 ['name' => 'Okabe', 'hobbies' => ['Science', 'Anime']],
-            ])->flatMap(fn (array $person) => $person['hobbies'])
+            ])
+                ->flatMap(fn (array $person) => $person['hobbies'])
                 ->equals(['Science', 'Programming', 'Science', 'Anime']),
         );
 
         // deeply nested
         $likes = arr([
-            ['name' => 'Enzo', 'likes' => [
-                'manga' => ['Tower of God', 'The Beginning After The End'],
-                'languages' => ['PHP', 'TypeScript'],
-            ]],
-            ['name' => 'Jon', 'likes' => [
-                'manga' => ['One Piece', 'Naruto'],
-                'languages' => ['Python'],
-            ]],
+            [
+                'name' => 'Enzo',
+                'likes' => [
+                    'manga' => ['Tower of God', 'The Beginning After The End'],
+                    'languages' => ['PHP', 'TypeScript'],
+                ],
+            ],
+            [
+                'name' => 'Jon',
+                'likes' => [
+                    'manga' => ['One Piece', 'Naruto'],
+                    'languages' => ['Python'],
+                ],
+            ],
         ]);
 
         $this->assertTrue(
-            $likes->flatMap(fn (array $person) => $person['likes'], depth: 1)
+            $likes
+                ->flatMap(fn (array $person) => $person['likes'], depth: 1)
                 ->equals([
                     ['Tower of God', 'The Beginning After The End'],
                     ['PHP', 'TypeScript'],
@@ -1418,7 +1433,8 @@ final class ManipulatesArrayTest extends TestCase
         );
 
         $this->assertTrue(
-            $likes->flatMap(fn (array $person) => $person['likes'], depth: INF)
+            $likes
+                ->flatMap(fn (array $person) => $person['likes'], depth: INF)
                 ->equals([
                     'Tower of God',
                     'The Beginning After The End',
@@ -1562,7 +1578,7 @@ final class ManipulatesArrayTest extends TestCase
         $result = $collection->findKey(fn ($item) => $item['name'] === 'Jane');
         $this->assertSame(1, $result);
 
-        $result = $collection->findKey(fn ($item, $key) => $key === 2);
+        $result = $collection->findKey(fn ($_, $key) => $key === 2);
         $this->assertSame(2, $result);
 
         $result = $collection->findKey(fn ($item) => $item['name'] === 'Alice');

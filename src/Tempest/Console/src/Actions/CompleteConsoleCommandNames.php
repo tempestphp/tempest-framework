@@ -14,7 +14,7 @@ final readonly class CompleteConsoleCommandNames
     ) {
     }
 
-    public function complete(ConsoleArgumentBag $argumentBag, int $current): array
+    public function complete(ConsoleArgumentBag $argumentBag, int $_): array
     {
         $currentCommandName = $argumentBag->getCommandName();
 

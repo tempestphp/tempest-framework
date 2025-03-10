@@ -9,6 +9,7 @@ use ArrayIterator;
 use Countable;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
+
 use function Tempest\Support\Arr\to_array;
 
 /**
@@ -47,7 +48,7 @@ final class ToArrayTest extends TestCase
 
     public function test_array_access_and_countable_objects_are_converted_to_arrays(): void
     {
-        $object = new class () implements ArrayAccess, Countable {
+        $object = new class() implements ArrayAccess, Countable {
             private $data = [
                 0 => 'zero',
                 1 => 'one',
@@ -89,7 +90,7 @@ final class ToArrayTest extends TestCase
 
     public function test_array_access_without_traversable_or_countable(): void
     {
-        $object = new class () implements ArrayAccess {
+        $object = new class() implements ArrayAccess {
             private $data = [
                 'key' => 'value',
             ];
@@ -124,7 +125,7 @@ final class ToArrayTest extends TestCase
 
     public function test_regular_object_is_wrapped(): void
     {
-        $object = new class () {
+        $object = new class() {
             public $foo = 'bar';
 
             public $baz = 42;

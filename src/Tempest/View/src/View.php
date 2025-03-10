@@ -22,5 +22,5 @@ interface View
 
     public function has(string $key): bool;
 
-    public function data(...$params): self;
+    public function data(mixed ...$params): self;
 }

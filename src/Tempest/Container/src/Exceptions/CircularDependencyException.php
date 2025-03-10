@@ -34,11 +34,9 @@ final class CircularDependencyException extends Exception implements ContainerEx
         }
 
         $selectionLine = preg_replace_callback(
-            pattern: '/(?<prefix>(.*))(?<selection>'. $circularDependency->getTypeName() .'\s\$\w+)(.*)/',
+            pattern: '/(?<prefix>(.*))(?<selection>' . $circularDependency->getTypeName() . '\s\$\w+)(.*)/',
             callback: function ($matches) {
-                return '└'
-                    . str_repeat('─', strlen($matches['prefix']) + 3)
-                    . str_repeat('▒', strlen($matches['selection']));
+                return '└' . str_repeat('─', strlen($matches['prefix']) + 3) . str_repeat('▒', strlen($matches['selection']));
             },
             subject: $chain->last()->getShortName(),
         );

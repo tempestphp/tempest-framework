@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components;
 
 use Tempest\Console\Point;
+
 use function Tempest\Support\str;
 
 /**
@@ -83,9 +84,7 @@ final class TextBuffer
             }
 
             $pos++; // Move back to include the first character of the word
-        }
-        // If we started on a non-word character, we delete symbols
-        elseif ($pos >= 0) {
+        } elseif ($pos >= 0) { // If we started on a non-word character, we delete symbols
             while ($pos >= 0 && $this->isSymbol($this->text[$pos])) {
                 $pos--;
             }
@@ -124,9 +123,7 @@ final class TextBuffer
             while ($pos < mb_strlen($this->text) && $this->isAlphaNumeric($this->text[$pos])) {
                 $pos++;
             }
-        }
-        // If we started on a non-word character, just delete that
-        elseif ($pos < mb_strlen($this->text)) {
+        } elseif ($pos < mb_strlen($this->text)) { // If we started on a non-word character, just delete that
             while ($pos < mb_strlen($this->text) && $this->isSymbol($this->text[$pos])) {
                 $pos++;
             }
@@ -157,7 +154,7 @@ final class TextBuffer
 
     public function moveCursorY(int $offset): void
     {
-        if ($offset === 0 || empty($this->text)) {
+        if ($offset === 0 || ! $this->text) {
             return;
         }
 
@@ -179,7 +176,7 @@ final class TextBuffer
 
     public function moveCursorToStartOfLine(): void
     {
-        if (empty($this->text)) {
+        if (! $this->text) {
             return;
         }
 
@@ -191,7 +188,7 @@ final class TextBuffer
 
     public function moveCursorToEndOfLine(): void
     {
-        if (empty($this->text)) {
+        if (! $this->text) {
             return;
         }
 
@@ -236,7 +233,7 @@ final class TextBuffer
                 $lineLength = mb_strlen($splitLine);
 
                 // If the cursor is within this line, update the x position and return.
-                if ($charIndex + $lineLength >= $cursorPosition) {
+                if (($charIndex + $lineLength) >= $cursorPosition) {
                     $xPosition = $cursorPosition - $charIndex;
 
                     return new Point($xPosition, $yPosition);
@@ -246,13 +243,13 @@ final class TextBuffer
                 $charIndex += $lineLength;
 
                 // If this is not the last split line, increment the y position.
-                if ($splitLineIndex < count($splitLines) - 1) {
+                if ($splitLineIndex < (count($splitLines) - 1)) {
                     $yPosition++;
                 }
             }
 
             // If this is not the last line, increment the y position and reset the character index.
-            if ($lineIndex < count($lines) - 1) {
+            if ($lineIndex < (count($lines) - 1)) {
                 $yPosition++;
                 $charIndex += 1; // Account for the newline character
             }
@@ -290,9 +287,9 @@ final class TextBuffer
         $linePositions = $this->getLinePositions();
 
         foreach ($linePositions as $index => $startPosition) {
-            $nextPosition = $index + 1 < count($linePositions)
+            $nextPosition = ($index + 1) < count($linePositions)
                 ? $linePositions[$index + 1]
-                : mb_strlen($this->text) + 1;
+                : (mb_strlen($this->text) + 1);
 
             if ($this->cursor >= $startPosition && $this->cursor < $nextPosition) {
                 return $index;

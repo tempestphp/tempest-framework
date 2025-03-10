@@ -36,6 +36,8 @@ final readonly class IP implements Rule
 
     public function message(): string
     {
+        $additions = [];
+
         if ($this->options & FILTER_FLAG_NO_PRIV_RANGE) {
             $additions[] = 'not in a private range';
         }
@@ -44,8 +46,6 @@ final readonly class IP implements Rule
             $additions[] = 'not in a reserved range';
         }
 
-        return 'Value should be a valid IP address' . (
-            empty($additions) ? '' : ' that is ' . implode(' and ', $additions)
-        );
+        return 'Value should be a valid IP address' . ($additions === [] ? '' : (' that is ' . implode(' and ', $additions)));
     }
 }

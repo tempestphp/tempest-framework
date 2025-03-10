@@ -15,13 +15,15 @@ use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Validator;
 use Throwable;
+
 use function Tempest\Support\arr;
 
 final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {}
+    ) {
+    }
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -142,8 +144,7 @@ final readonly class ArrayToObjectMapper implements Mapper
     private function setParentRelations(
         object $parent,
         ClassReflector $parentClass,
-    ): void
-    {
+    ): void {
         foreach ($parentClass->getPublicProperties() as $property) {
             if (! $property->isInitialized($parent)) {
                 continue;

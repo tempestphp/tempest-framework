@@ -7,6 +7,7 @@ namespace Tempest\View\Elements;
 use Tempest\View\Element;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\WrapsElement;
+
 use function Tempest\Support\str;
 
 final class PhpForeachElement implements Element, WrapsElement

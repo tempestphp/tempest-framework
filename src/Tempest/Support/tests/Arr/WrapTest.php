@@ -9,6 +9,7 @@ use ArrayIterator;
 use Countable;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
+
 use function Tempest\Support\Arr\wrap;
 
 /**
@@ -48,7 +49,7 @@ final class WrapTest extends TestCase
 
     public function test_array_access_and_countable_objects_are_not_converted_to_arrays(): void
     {
-        $object = new class () implements ArrayAccess, Countable {
+        $object = new class() implements ArrayAccess, Countable {
             private $data = [
                 0 => 'zero',
                 1 => 'one',

@@ -6,6 +6,7 @@ namespace Tempest\View\Exceptions;
 
 use Exception;
 use Throwable;
+
 use function Tempest\Support\str;
 
 final class ViewCompilationError extends Exception

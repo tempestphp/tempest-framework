@@ -8,6 +8,7 @@ use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
 use Tempest\Highlight\ParsedInjection;
 use Tempest\Highlight\Themes\TerminalStyle;
+
 use function Tempest\root_path;
 use function Tempest\Support\str;
 

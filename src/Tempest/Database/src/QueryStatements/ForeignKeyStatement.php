@@ -24,8 +24,7 @@ final readonly class ForeignKeyStatement implements QueryStatement
         [$foreignTable, $foreignKey] = explode('.', $this->foreign);
 
         return match ($dialect) {
-            DatabaseDialect::MYSQL,
-            DatabaseDialect::POSTGRESQL => sprintf(
+            DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => sprintf(
                 'FOREIGN KEY %sfk_%s_%s_%s',
                 $this->ifExists ? 'IF EXISTS ' : ' ',
                 strtolower($foreignTable),

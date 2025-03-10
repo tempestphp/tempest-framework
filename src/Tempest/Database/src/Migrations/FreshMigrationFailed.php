@@ -8,7 +8,8 @@ use Throwable;
 
 final readonly class FreshMigrationFailed
 {
-    public function __construct(public Throwable $throwable)
-    {
+    public function __construct(
+        public Throwable $throwable,
+    ) {
     }
 }

@@ -70,8 +70,7 @@ final class LoadDiscoveryClasses
 
         if ($this->discoveryCache->isEnabled()) {
             $discovery->setItems(
-                $this->discoveryCache->restore($discoveryClass)
-                ?? new DiscoveryItems(),
+                $this->discoveryCache->restore($discoveryClass) ?? new DiscoveryItems(),
             );
         } else {
             $discovery->setItems(new DiscoveryItems());
@@ -87,10 +86,7 @@ final class LoadDiscoveryClasses
     {
         $discovery = $this->resolveDiscovery($discoveryClass);
 
-        if (
-            $this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::FULL
-            && $discovery->getItems()->isLoaded()
-        ) {
+        if ($this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::FULL && $discovery->getItems()->isLoaded()) {
             return $discovery;
         }
 
@@ -129,7 +125,7 @@ final class LoadDiscoveryClasses
                     if ($location->isVendor()) {
                         try {
                             $input = new ClassReflector($className);
-                        } catch (Throwable) {
+                        } catch (Throwable) { // @mago-expect best-practices/no-empty-catch-clause
                         }
                     } elseif (class_exists($className)) {
                         $input = new ClassReflector($className);
@@ -191,10 +187,8 @@ final class LoadDiscoveryClasses
         return match ($this->discoveryCache->getStrategy()) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
             DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
-
             // If discover cache is enabled, all locations cache should be skipped
             DiscoveryCacheStrategy::FULL => true,
-
             // If partial discovery cache is enabled, vendor locations cache should be skipped
             DiscoveryCacheStrategy::PARTIAL => $location->isVendor(),
         };

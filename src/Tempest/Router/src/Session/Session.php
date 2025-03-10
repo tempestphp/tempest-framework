@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router\Session;
 
 use DateTimeImmutable;
+
 use function Tempest\get;
 
 final class Session

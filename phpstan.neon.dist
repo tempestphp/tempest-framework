@@ -36,6 +36,9 @@ parameters:
 		    message: '#.*undefined property Dom*#'
 		-
 		    message: '#.*undefined method Dom*#'
+		-
+		    message: '#File ends with a trailing whitespace*#'
+		    path: src/Tempest/View/src/Stubs/view.stub.php
 
 	disallowedFunctionCalls:
 		-

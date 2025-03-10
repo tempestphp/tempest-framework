@@ -25,14 +25,14 @@ final class ClassGeneratorTest extends TestCase
         $class->setReadOnly();
 
         $class->addMethod('up', body: <<<PHP
-                return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
-                    ->primary()
-                    ->text('name');
-            PHP, returnType: FakeQueryStatement::class);
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
 
         $class->addMethod('getName', body: <<<PHP
-                return '0000-00-00_create_users_table';
-            PHP, returnType: 'string');
+            return '0000-00-00_create_users_table';
+        PHP, returnType: 'string');
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -47,8 +47,8 @@ final class ClassGeneratorTest extends TestCase
         $class->setReadOnly();
 
         $class->addMethod('findById', body: <<<PHP
-                //
-            PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
+            //
+        PHP, parameters: ['id' => 'int'], returnType: '?App\\Models\\User');
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -70,10 +70,10 @@ final class ClassGeneratorTest extends TestCase
         $class = new ClassGenerator('CreateUsersTable', namespace: 'App');
 
         $class->addMethod('up', body: <<<PHP
-                return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
-                    ->primary()
-                    ->text('name');
-            PHP, returnType: FakeQueryStatement::class);
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
 
         $this->assertMatchesSnapshot($class->print());
     }
@@ -85,10 +85,10 @@ final class ClassGeneratorTest extends TestCase
 
         $class->simplifyClassNamesInMethodBodies(false);
         $class->addMethod('up', body: <<<PHP
-                return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
-                    ->primary()
-                    ->text('name');
-            PHP, returnType: FakeQueryStatement::class);
+            return (new \Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement(\Tempest\Generation\Tests\Fixtures\Database\MigrationModel::table()))
+                ->primary()
+                ->text('name');
+        PHP, returnType: FakeQueryStatement::class);
 
         $this->assertMatchesSnapshot($class->print());
     }

@@ -7,6 +7,7 @@ namespace Tempest\Support\Str\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -208,7 +209,7 @@ final class ManipulatesStringTest extends TestCase
     public function test_starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
-        $this->assertTrue(str('abc')->startsWith((str('a'))));
+        $this->assertTrue(str('abc')->startsWith(str('a')));
         $this->assertFalse(str('abc')->startsWith('c'));
     }
 

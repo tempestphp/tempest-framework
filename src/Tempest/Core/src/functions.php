@@ -7,6 +7,7 @@ namespace Tempest {
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
+
     use function Tempest\Support\path;
     use function Tempest\Support\str;
 
@@ -74,6 +75,6 @@ namespace Tempest {
      */
     function defer(Closure $closure): void
     {
-    get(DeferredTasks::class)->add($closure);
+        get(DeferredTasks::class)->add($closure);
     }
 }

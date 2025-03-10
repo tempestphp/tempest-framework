@@ -14,6 +14,7 @@ use Tempest\Core\DiscoveryCache;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
+
 use function Tempest\env;
 
 final readonly class DiscoveryGenerateCommand

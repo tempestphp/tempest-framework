@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
@@ -64,8 +66,7 @@ final class FrameworkKernel implements Kernel
 
     public function shutdown(int|string $status = ''): never
     {
-        $this
-            ->finishDeferredTasks()
+        $this->finishDeferredTasks()
             ->event(KernelEvent::SHUTDOWN);
 
         exit($status);
@@ -219,5 +220,4 @@ final class FrameworkKernel implements Kernel
 
         return $this;
     }
-
 }

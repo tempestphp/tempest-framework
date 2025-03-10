@@ -8,6 +8,7 @@ use Closure;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\PsrPrinter;
+
 use function Tempest\Support\str;
 
 /**

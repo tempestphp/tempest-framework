@@ -25,9 +25,8 @@ trait ManipulatesArray
     /**
      * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
      */
-    public function __construct(
-        mixed $input = [],
-    ) {
+    public function __construct(mixed $input = [])
+    {
         $this->value = namespace\wrap($input);
     }
 
@@ -42,7 +41,7 @@ trait ManipulatesArray
             return new static([(string) $string]);
         }
 
-        if ((string) $string === '') {
+        if (((string) $string) === '') {
             return new static();
         }
 
@@ -660,8 +659,8 @@ trait ManipulatesArray
 
     /**
      * Executes callback with the given `$value` and returns the same `$value`.
-     * 
-     * @param (Closure(static): void) $callback 
+     *
+     * @param (Closure(static): void) $callback
      */
     public function tap(Closure $callback): static
     {

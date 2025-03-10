@@ -12,7 +12,8 @@ final readonly class IsBoolean implements Rule
 {
     public function __construct(
         private bool $orNull = false,
-    ) {}
+    ) {
+    }
 
     public function isValid(mixed $value): bool
     {
@@ -20,10 +21,7 @@ final readonly class IsBoolean implements Rule
             return true;
         }
 
-        return (
-            $value === false || $value === 'false' || $value === 0 || $value === '0' ||
-            $value === true || $value === 'true' || $value === 1 || $value === '1'
-        );
+        return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === true || $value === 'true' || $value === 1 || $value === '1';
     }
 
     public function message(): string

@@ -13,12 +13,14 @@ use Tempest\Router\Response;
 use Tempest\Router\Session\Session;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+
 use function Tempest\get;
 
 final class TestResponseHelper
 {
-    public function __construct(private(set) Response $response)
-    {
+    public function __construct(
+        private(set) Response $response,
+    ) {
     }
 
     public Status $status {
@@ -51,7 +53,7 @@ final class TestResponseHelper
 
         $header = $this->response->getHeader($name);
 
-        $headerString = var_export($header, true);
+        $headerString = var_export($header, true); // @mago-expect best-practices/no-debug-symbols
 
         Assert::assertContains(
             $value,

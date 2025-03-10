@@ -24,11 +24,7 @@ final class ConsoleArgumentBag
 
         $commandName = $arguments[1] ?? null;
 
-        if (
-            $commandName !== null
-            && ! str_starts_with($commandName, '--')
-            && ! str_starts_with($commandName, '-')
-        ) {
+        if ($commandName !== null && ! str_starts_with($commandName, '--') && ! str_starts_with($commandName, '-')) {
             unset($arguments[1]);
         } else {
             $commandName = null;
@@ -95,7 +91,7 @@ final class ConsoleArgumentBag
             return $argument;
         }
 
-        $resolved = $argument->value instanceof $argumentDefinition->type
+        $resolved = ($argument->value instanceof $argumentDefinition->type)
             ? $argument->value
             : $argumentDefinition->type::tryFrom($argument->value);
 

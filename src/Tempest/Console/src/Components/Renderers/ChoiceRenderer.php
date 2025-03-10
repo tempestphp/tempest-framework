@@ -57,7 +57,7 @@ final class ChoiceRenderer
         // Otherwise, display the filter line
         $this->line(
             $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
-            empty($query->text)
+            ! $query->text
                 ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? (count($options->getSelectedOptions()) . ' selected') : ''))
                 : $this->style($filtering ? 'fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
         )->newLine();
@@ -70,8 +70,8 @@ final class ChoiceRenderer
             );
 
             foreach ($displayOptions as $option) {
-                $display = in_array($this->default, [$option->key, $option->value])
-                    ? $option->displayValue . ' ' . $this->style('italic fg-gray', '(default)')
+                $display = in_array($this->default, [$option->key, $option->value], strict: true)
+                    ? ($option->displayValue . ' ' . $this->style('italic fg-gray', '(default)'))
                     : $option->displayValue;
 
                 if (! $this->multiple) {
@@ -96,13 +96,13 @@ final class ChoiceRenderer
 
     public function getCursorPosition(Terminal $terminal, TextBuffer $buffer): Point
     {
-        $position = $buffer->getRelativeCursorPosition($terminal->width - self::MARGIN_X - 1 - self::PADDING_X - self::MARGIN_X);
+        $position = $buffer->getRelativeCursorPosition(((($terminal->width - self::MARGIN_X) - 1) - self::PADDING_X) - self::MARGIN_X);
         $actual = $position->y > 0
             ? mb_strlen($this->truncateLeft($buffer->text, maxLineOffset: 2))
             : $position->x;
 
         return new Point(
-            x: $actual + (self::MARGIN_X + 1 + self::PADDING_X) + 2, // +1 is the border width, +2 is for decoration
+            x: $actual + self::MARGIN_X + 1 + self::PADDING_X + 2, // +1 is the border width, +2 is for decoration
             y: self::MARGIN_TOP + $this->offsetY,
         );
     }

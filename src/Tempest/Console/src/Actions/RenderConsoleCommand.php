@@ -8,6 +8,7 @@ use BackedEnum;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
+
 use function Tempest\Support\str;
 
 final readonly class RenderConsoleCommand

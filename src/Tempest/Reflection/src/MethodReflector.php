@@ -34,7 +34,7 @@ final readonly class MethodReflector implements Reflector
         }
     }
 
-    public function invokeArgs(object|null $object, array $args = []): mixed
+    public function invokeArgs(?object $object, array $args = []): mixed
     {
         return $this->reflectionMethod->invokeArgs($object, $args);
     }

@@ -12,7 +12,7 @@ final readonly class Odd implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return is_int($value) && ($value % 2 !== 0);
+        return is_int($value) && ($value % 2) !== 0;
     }
 
     public function message(): string

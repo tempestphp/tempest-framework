@@ -20,7 +20,7 @@ final readonly class InvocationExecutorInitializer implements Initializer
     {
         $app = $container->get(Application::class);
 
-        if (! $app instanceof ConsoleApplication) {
+        if (! ($app instanceof ConsoleApplication)) {
             return new NullShellExecutor();
         }
 

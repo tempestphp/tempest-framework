@@ -22,7 +22,7 @@ final class BelongsToRelationTest extends TestCase
         $this->assertSame('belongs_to_parent_model.relatedModel', $inferredRelation[0]->getRelationName());
         $this->assertEquals(
             'LEFT JOIN `belongs_to_related` AS `belongs_to_parent_model.relatedModel`' .
-            ' ON `belongs_to_parent_model`.`relatedModel_id` = `belongs_to_parent_model.relatedModel`.`id`',
+                ' ON `belongs_to_parent_model`.`relatedModel_id` = `belongs_to_parent_model.relatedModel`.`id`',
             $inferredRelation[0]->getStatement(),
         );
     }
@@ -37,7 +37,7 @@ final class BelongsToRelationTest extends TestCase
         $this->assertSame('belongs_to_parent_model.otherRelatedModel', $namedRelation[0]->getRelationName());
         $this->assertEquals(
             'LEFT JOIN `belongs_to_related` AS `belongs_to_parent_model.otherRelatedModel`' .
-            ' ON `belongs_to_parent_model`.`other_id` = `belongs_to_parent_model.otherRelatedModel`.`id`',
+                ' ON `belongs_to_parent_model`.`other_id` = `belongs_to_parent_model.otherRelatedModel`.`id`',
             $namedRelation[0]->getStatement(),
         );
     }
@@ -52,7 +52,7 @@ final class BelongsToRelationTest extends TestCase
         $this->assertSame('belongs_to_parent_model.stillOtherRelatedModel', $doublyNamedRelation[0]->getRelationName());
         $this->assertEquals(
             'LEFT JOIN `belongs_to_related` AS `belongs_to_parent_model.stillOtherRelatedModel`' .
-            ' ON `belongs_to_parent_model`.`other_id` = `belongs_to_parent_model.stillOtherRelatedModel`.`other_id`',
+                ' ON `belongs_to_parent_model`.`other_id` = `belongs_to_parent_model.stillOtherRelatedModel`.`other_id`',
             $doublyNamedRelation[0]->getStatement(),
         );
     }

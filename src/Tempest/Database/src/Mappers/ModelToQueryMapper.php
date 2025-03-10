@@ -9,11 +9,15 @@ use Tempest\Database\Query;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
+
 use function Tempest\map;
 
 final readonly class ModelToQueryMapper implements Mapper
 {
-    public function __construct(private CasterFactory $casterFactory) {}
+    public function __construct(
+        private CasterFactory $casterFactory,
+    ) {
+    }
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -100,7 +104,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
             $value = $property->getValue($model);
 
-            if (! $value instanceof DatabaseModel) {
+            if (! ($value instanceof DatabaseModel)) {
                 continue;
             }
 
@@ -135,7 +139,7 @@ final readonly class ModelToQueryMapper implements Mapper
             $value = $property->getValue($model);
 
             // Check if caster is available for value serialization
-            if ($value !== null && $caster = $this->casterFactory->forProperty($property)) {
+            if ($value !== null && ($caster = $this->casterFactory->forProperty($property))) {
                 $value = $caster->serialize($value);
             }
 

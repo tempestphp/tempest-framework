@@ -8,8 +8,9 @@ use Stringable;
 
 final readonly class SessionId implements Stringable
 {
-    public function __construct(private string $id)
-    {
+    public function __construct(
+        private string $id,
+    ) {
     }
 
     public function __toString(): string

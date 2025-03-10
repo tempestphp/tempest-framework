@@ -44,7 +44,7 @@ trait RendersInput
         $this->marginX = str_repeat(' ', self::MARGIN_X);
         $this->paddingX = str_repeat(' ', self::PADDING_X);
         $this->leftBorder = "<style=\"dim {$this->getStyle()}\">│</style>";
-        $this->maxLineCharacters = $this->terminal->width - mb_strlen($this->marginX . ' ' . $this->paddingX) - self::MARGIN_X;
+        $this->maxLineCharacters = ($this->terminal->width - mb_strlen($this->marginX . ' ' . $this->paddingX)) - self::MARGIN_X;
 
         $this->frame = new ImmutableString(str_repeat("\n", self::MARGIN_TOP));
 
@@ -67,7 +67,7 @@ trait RendersInput
         }
 
         return new ImmutableString($string)
-            ->truncate($this->maxLineCharacters - 1 - $maxLineOffset, end: '…') // -1 is for the ellipsis
+            ->truncate(($this->maxLineCharacters - 1) - $maxLineOffset, end: '…') // -1 is for the ellipsis
             ->toString();
     }
 
@@ -77,7 +77,7 @@ trait RendersInput
             return '';
         }
 
-        $length = max(0, $this->maxLineCharacters - 1 - $maxLineOffset);
+        $length = max(0, ($this->maxLineCharacters - 1) - $maxLineOffset);
 
         if (mb_strwidth($string, 'UTF-8') <= $length) {
             return $string;
@@ -113,7 +113,7 @@ trait RendersInput
 
     private function line(string|Stringable ...$append): self
     {
-        if (empty($append)) {
+        if ($append === []) {
             return $this;
         }
 
@@ -143,8 +143,8 @@ trait RendersInput
             return $this->scrollOffset = 0;
         }
 
-        if ($cursorPosition >= $currentOffset + $maximumLines) {
-            return $this->scrollOffset = $cursorPosition - $maximumLines + 1;
+        if ($cursorPosition >= ($currentOffset + $maximumLines)) {
+            return $this->scrollOffset = ($cursorPosition - $maximumLines) + 1;
         }
 
         if ($cursorPosition < $currentOffset) {

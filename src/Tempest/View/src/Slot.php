@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View;
 
 use Tempest\View\Elements\SlotElement;
@@ -10,7 +12,8 @@ final class Slot
         public string $name,
         public array $attributes,
         public string $content,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {

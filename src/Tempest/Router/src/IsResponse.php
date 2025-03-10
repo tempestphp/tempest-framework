@@ -10,6 +10,7 @@ use Tempest\Router\Cookie\Cookie;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Session\Session;
 use Tempest\View\View;
+
 use function Tempest\get;
 
 /** @phpstan-require-implements \Tempest\Router\Response */
@@ -97,8 +98,7 @@ trait IsResponse
 
     public function setContentType(ContentType $contentType): self
     {
-        $this
-            ->removeHeader(ContentType::HEADER)
+        $this->removeHeader(ContentType::HEADER)
             ->addHeader(ContentType::HEADER, $contentType->value);
 
         return $this;

@@ -22,7 +22,7 @@ final class GenericDatabaseMigration implements DatabaseMigration
         return new RawStatement($this->content);
     }
 
-    public function down(): QueryStatement|null
+    public function down(): ?QueryStatement
     {
         return null;
     }

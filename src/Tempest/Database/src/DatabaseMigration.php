@@ -10,7 +10,7 @@ interface DatabaseMigration
         get;
     }
 
-    public function up(): QueryStatement|null;
+    public function up(): ?QueryStatement;
 
-    public function down(): QueryStatement|null;
+    public function down(): ?QueryStatement;
 }

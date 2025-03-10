@@ -8,13 +8,23 @@ use Tempest\Database\Tables\NamingStrategy;
 
 interface DatabaseConfig
 {
-    public string $dsn { get; }
+    public string $dsn {
+        get;
+    }
 
-    public NamingStrategy $namingStrategy { get; }
+    public NamingStrategy $namingStrategy {
+        get;
+    }
 
-    public DatabaseDialect $dialect { get; }
+    public DatabaseDialect $dialect {
+        get;
+    }
 
-    public ?string $username { get; }
+    public ?string $username {
+        get;
+    }
 
-    public ?string $password { get; }
+    public ?string $password {
+        get;
+    }
 }

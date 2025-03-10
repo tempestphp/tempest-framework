@@ -15,7 +15,7 @@ final class CannotResolveTaggedDependency extends Exception implements Container
         $stack = $chain->all();
         $stack[] = $brokenDependency;
 
-        $message = PHP_EOL . PHP_EOL. "Could not resolve tagged dependency {$brokenDependency->getName()}#{$tag}, did you forget to define an initializer for it?" . PHP_EOL;
+        $message = PHP_EOL . PHP_EOL . "Could not resolve tagged dependency {$brokenDependency->getName()}#{$tag}, did you forget to define an initializer for it?" . PHP_EOL;
 
         if (count($stack) < 2) {
             parent::__construct($message);
@@ -38,10 +38,9 @@ final class CannotResolveTaggedDependency extends Exception implements Container
         }
 
         $selectionLine = preg_replace_callback(
-            pattern: '/(?<prefix>(.*))(?<selection>'. $brokenDependency->getTypeName() .'\s\$\w+)(.*)/',
+            pattern: '/(?<prefix>(.*))(?<selection>' . $brokenDependency->getTypeName() . '\s\$\w+)(.*)/',
             callback: function ($matches) {
-                return str_repeat(' ', strlen($matches['prefix']) + 4)
-                    . str_repeat('▒', strlen($matches['selection']));
+                return str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection']));
             },
             subject: $chain->last()->getShortName(),
         );

@@ -9,7 +9,9 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final readonly class BelongsTo
 {
-    public function __construct(public string $localPropertyName, public string $inversePropertyName = 'id')
-    {
+    public function __construct(
+        public string $localPropertyName,
+        public string $inversePropertyName = 'id',
+    ) {
     }
 }

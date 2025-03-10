@@ -11,8 +11,9 @@ use Tempest\Router\Response;
 
 final class GenericHttpClient implements HttpClient
 {
-    public function __construct(private HttpClientDriver $driver)
-    {
+    public function __construct(
+        private HttpClientDriver $driver,
+    ) {
     }
 
     public function sendRequest(Request $request): Response

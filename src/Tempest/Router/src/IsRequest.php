@@ -8,6 +8,7 @@ use Tempest\Http\Method;
 use Tempest\Router\Cookie\Cookie;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Session\Session;
+
 use function Tempest\get;
 
 /** @phpstan-require-implements \Tempest\Router\Request */

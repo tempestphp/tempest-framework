@@ -23,7 +23,7 @@ final readonly class SchedulerInitializer implements Initializer
     {
         $application = $container->get(Application::class);
 
-        if (! $application instanceof ConsoleApplication) {
+        if (! ($application instanceof ConsoleApplication)) {
             return new NullScheduler();
         }
 

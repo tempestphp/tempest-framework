@@ -75,7 +75,6 @@ final class PermissionTest extends TestCase
             [0o500, Permission::OWNER_READ_EXECUTE],
             [0o600, Permission::OWNER_READ_WRITE],
             [0o700, Permission::OWNER_ALL],
-
             [0o010, Permission::GROUP_EXECUTE],
             [0o020, Permission::GROUP_WRITE],
             [0o030, Permission::GROUP_WRITE_EXECUTE],
@@ -83,7 +82,6 @@ final class PermissionTest extends TestCase
             [0o050, Permission::GROUP_READ_EXECUTE],
             [0o060, Permission::GROUP_READ_WRITE],
             [0o070, Permission::GROUP_ALL],
-
             [0o001, Permission::OTHERS_EXECUTE],
             [0o002, Permission::OTHERS_WRITE],
             [0o003, Permission::OTHERS_WRITE_EXECUTE],
@@ -91,12 +89,10 @@ final class PermissionTest extends TestCase
             [0o005, Permission::OTHERS_READ_EXECUTE],
             [0o006, Permission::OTHERS_READ_WRITE],
             [0o007, Permission::OTHERS_ALL],
-
             [0o777, Permission::OWNER_ALL->with(Permission::GROUP_ALL, Permission::OTHERS_ALL)],
             [0o700, Permission::OWNER_ALL],
             [0o744, Permission::OWNER_ALL->with(Permission::GROUP_READ, Permission::OTHERS_READ)],
             [0o444, Permission::OWNER_READ->with(Permission::GROUP_READ, Permission::OTHERS_READ)],
-
             [0o744, Permission::FULL->without(Permission::GROUP_WRITE_EXECUTE, Permission::OTHERS_WRITE_EXECUTE)],
         ];
     }

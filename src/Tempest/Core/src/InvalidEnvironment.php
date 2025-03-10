@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Exception;
+
 use function Tempest\Support\arr;
 
 final class InvalidEnvironment extends Exception

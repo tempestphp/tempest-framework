@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Vite\Manifest;
 
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\arr;
 
 final readonly class Manifest

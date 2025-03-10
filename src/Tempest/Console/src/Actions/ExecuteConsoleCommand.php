@@ -87,7 +87,7 @@ final readonly class ExecuteConsoleCommand
         } elseif (str_contains($command, ' ')) {
             $commandName = explode(' ', $command)[0];
             $arguments = [
-                ...(array_slice(explode(' ', trim($command)), offset: 1)),
+                ...array_slice(explode(' ', trim($command)), offset: 1),
                 ...$arguments,
             ];
         }

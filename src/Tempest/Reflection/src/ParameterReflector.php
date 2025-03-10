@@ -67,7 +67,6 @@ final readonly class ParameterReflector implements Reflector
 
     public function isRequired(): bool
     {
-        return ! $this->reflectionParameter->allowsNull()
-            && ! $this->reflectionParameter->isOptional();
+        return ! $this->reflectionParameter->allowsNull() && ! $this->reflectionParameter->isOptional();
     }
 }

@@ -6,7 +6,7 @@ namespace Tempest\Router\Routing\Construction;
 
 final readonly class MarkedRoute
 {
-    public const string REGEX_MARK_TOKEN = 'MARK';
+    public const string REGEX_MARK_TOKEN = 'MARK'; // @mago-expect security/no-literal-password
 
     public function __construct(
         public string $mark,

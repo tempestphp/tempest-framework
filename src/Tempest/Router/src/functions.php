@@ -9,7 +9,7 @@ namespace Tempest {
     /**
      * Creates a valid URI to the given controller `$action`.
      */
-    function uri(array|string|MethodReflector $action, ...$params): string
+    function uri(array|string|MethodReflector $action, mixed ...$params): string
     {
         if ($action instanceof MethodReflector) {
             $action = [

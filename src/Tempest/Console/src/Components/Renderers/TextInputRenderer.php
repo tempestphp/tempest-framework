@@ -8,6 +8,7 @@ use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
+
 use function Tempest\Support\str;
 
 final class TextInputRenderer
@@ -39,7 +40,7 @@ final class TextInputRenderer
         }
 
         // splits the text to an array so we can work with individual lines
-        $lines = str(($buffer->text ?: $placeholder) ?: '')
+        $lines = str($buffer->text ?: ($placeholder ?: ''))
             ->explode("\n")
             ->flatMap(fn (string $line) => str($line)->chunk($this->maxLineCharacters)->toArray())
             ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '));
@@ -93,11 +94,11 @@ final class TextInputRenderer
 
     public function getCursorPosition(Terminal $terminal, TextBuffer $buffer): Point
     {
-        $position = $buffer->getRelativeCursorPosition($terminal->width - self::MARGIN_X - 1 - self::PADDING_X - self::MARGIN_X);
+        $position = $buffer->getRelativeCursorPosition(((($terminal->width - self::MARGIN_X) - 1) - self::PADDING_X) - self::MARGIN_X);
 
         return new Point(
-            x: $position->x + (self::MARGIN_X + 1 + self::PADDING_X), // +1 is the border width
-            y: $position->y - $this->scrollOffset + (self::MARGIN_TOP + $this->offsetY), // subtract scroll offset
+            x: $position->x + self::MARGIN_X + 1 + self::PADDING_X, // +1 is the border width
+            y: ($position->y - $this->scrollOffset) + self::MARGIN_TOP + $this->offsetY, // subtract scroll offset
         );
     }
 }

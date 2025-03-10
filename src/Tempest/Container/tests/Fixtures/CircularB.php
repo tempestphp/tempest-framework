@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final readonly class CircularB
 {
-    public function __construct(public CircularC $c)
-    {
+    public function __construct(
+        public CircularC $c,
+    ) {
     }
 }
