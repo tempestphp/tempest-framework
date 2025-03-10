@@ -8,7 +8,7 @@ use JsonSerializable;
 use ReflectionException;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\MapTo as MapToAttribute;
+use Tempest\Mapper\MapTo;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -18,8 +18,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {
-    }
+    ) {}
 
     public function canMap(mixed $from, mixed $to): bool
     {
@@ -28,55 +27,37 @@ final readonly class ObjectToArrayMapper implements Mapper
 
     public function map(mixed $from, mixed $to): array
     {
-        $properties = $this->resolveProperties($from);
+        if ($from instanceof JsonSerializable) {
+            return $from->jsonSerialize();
+        }
+
+        $class = new ClassReflector($from);
+
         $mappedProperties = [];
 
-        foreach ($properties as $propertyName => $propertyValue) {
-            try {
-                $property = PropertyReflector::fromParts(class: $from, name: $propertyName);
-                $propertyName = $this->resolvePropertyName($property);
-                $propertyValue = $this->resolvePropertyValue($property, $propertyValue);
-
-                $mappedProperties[$propertyName] = $propertyValue;
-            } catch (ReflectionException) {
-                continue;
-            }
+        foreach ($class->getPublicProperties() as $property) {
+            $propertyName = $this->resolvePropertyName($property);
+            $propertyValue = $this->resolvePropertyValue($property, $from);
+            $mappedProperties[$propertyName] = $propertyValue;
         }
 
         return $mappedProperties;
     }
 
-    private function resolvePropertyValue(PropertyReflector $property, mixed $currentPropertyValue): mixed
+    private function resolvePropertyValue(PropertyReflector $property, object $object): mixed
     {
-        $caster = $this->casterFactory->forProperty($property);
+        $propertyValue = $property->getValue($object);
 
-        return $caster?->serialize($currentPropertyValue) ?? $currentPropertyValue;
-    }
-
-    /**
-     * @return array<string, mixed> The properties name and value
-     */
-    private function resolveProperties(object $from): array
-    {
-        if ($from instanceof JsonSerializable) {
-            return $from->jsonSerialize();
+        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
+            return $caster->serialize($propertyValue);
         }
 
-        try {
-            $class = new ClassReflector($from);
-            $properties = $class->getPublicProperties();
-
-            return arr(iterator_to_array($properties))
-                ->mapWithKeys(fn (PropertyReflector $property) => yield $property->getName() => $property->getValue($from))
-                ->toArray();
-        } catch (ReflectionException) {
-            return [];
-        }
+        return $propertyValue;
     }
 
     private function resolvePropertyName(PropertyReflector $property): string
     {
-        $mapTo = $property->getAttribute(MapToAttribute::class);
+        $mapTo = $property->getAttribute(MapTo::class);
 
         if ($mapTo !== null) {
             return $mapTo->name;

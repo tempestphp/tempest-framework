@@ -32,7 +32,7 @@ final class RouteModelBindingInitializer implements DynamicInitializer
             }
         }
 
-        $model = $class->callStatic('find', new Id($matchedRoute->params[$parameter->getName()]));
+        $model = $class->callStatic('get', new Id($matchedRoute->params[$parameter->getName()]));
 
         if ($model === null) {
             throw new NotFoundException();

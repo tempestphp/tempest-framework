@@ -25,7 +25,7 @@ final class ValidatorTest extends TestCase
 
         $validator = new Validator();
 
-        $validator->validate(new ObjectToBeValidated(name: 'a'));
+        $validator->validateObject(new ObjectToBeValidated(name: 'a'));
     }
 
     public function test_validate_value(): void

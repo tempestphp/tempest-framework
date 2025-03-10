@@ -25,6 +25,6 @@ final readonly class IdCaster implements Caster
             throw new CannotSerializeValue(Id::class);
         }
 
-        return $input->id;
+        return (string) $input->id;
     }
 }

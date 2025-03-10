@@ -60,7 +60,7 @@ final class ModelQueryBuilder
     /**
      * @return TModelClass|null
      */
-    public function find(Id $id): mixed
+    public function get(Id $id): mixed
     {
         return $this->whereField('id', $id)
             ->first();

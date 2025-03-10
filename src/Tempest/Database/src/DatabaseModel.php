@@ -6,10 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\ModelQueryBuilder;
 use Tempest\Database\Builder\TableName;
-use Tempest\Database\Casters\RelationCaster;
-use Tempest\Mapper\CastWith;
 
-#[CastWith(RelationCaster::class)]
 interface DatabaseModel
 {
     public static function table(): TableName;
@@ -26,7 +23,9 @@ interface DatabaseModel
 
     public static function updateOrCreate(array $find, array $update): self;
 
-    public static function find(Id $id, array $relations = []): ?self;
+    public static function get(Id $id, array $relations = []): ?self;
+
+    public static function find(mixed ...$conditions): ModelQueryBuilder;
 
     public function save(): self;
 

@@ -8,7 +8,6 @@ use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use ReflectionException;
 use Tempest\Mapper\Caster;
 use Tempest\Mapper\CastWith;
 use Tempest\Reflection\PropertyReflector;
@@ -25,12 +24,8 @@ final readonly class CasterFactory
         $castWith = $property->getAttribute(CastWith::class);
 
         // Get CastWith from the property's type if there's no property-defined CastWith
-        if ($castWith === null) {
-            try {
-                $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-            } catch (ReflectionException) { // @mago-expect best-practices/no-empty-catch-clause
-                // Could not resolve CastWith from the type
-            }
+        if ($castWith === null && $type->isClass()) {
+            $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
         }
 
         // Return the caster if defined with CastWith
@@ -39,18 +34,20 @@ final readonly class CasterFactory
             return get($castWith->className);
         }
 
-        // Check if backed enum
+        // If the type is an enum, we'll use the enum caster
         if ($type->matches(BackedEnum::class)) {
             return new EnumCaster($type->getName());
         }
 
+        // If the property has an iterable type, we'll cast it with the array object caster
+        if ($property->getIterableType() !== null) {
+            return new ArrayObjectCaster($property);
+        }
+
         // Try a built-in caster
         $builtInCaster = match ($type->getName()) {
-            'int' => new IntegerCaster(),
-            'float' => new FloatCaster(),
-            'bool' => new BooleanCaster(),
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
-            'array' => new ArrayCaster(),
+            'array' => new ArrayJsonCaster(),
             default => null,
         };
 

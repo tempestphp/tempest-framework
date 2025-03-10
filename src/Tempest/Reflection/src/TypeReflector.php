@@ -35,6 +35,13 @@ final readonly class TypeReflector implements Reflector
         'void' => null,
     ];
 
+    private const array SCALAR_TYPES = [
+        'bool',
+        'string',
+        'int',
+        'float'
+    ];
+
     private string $definition;
 
     private string $cleanDefinition;
@@ -125,6 +132,11 @@ final readonly class TypeReflector implements Reflector
     public function isBuiltIn(): bool
     {
         return isset(self::BUILTIN_VALIDATION[$this->cleanDefinition]);
+    }
+
+    public function isScalar(): bool
+    {
+        return in_array($this->cleanDefinition, self::SCALAR_TYPES);
     }
 
     public function isClass(): bool

@@ -8,10 +8,19 @@ use Attribute;
 use Tempest\Validation\Rule;
 
 #[Attribute]
-final readonly class Boolean implements Rule
+final readonly class IsBoolean implements Rule
 {
+    public function __construct(
+        private bool $orNull = false,
+    ) {
+    }
+
     public function isValid(mixed $value): bool
     {
+        if ($this->orNull && $value === null) {
+            return true;
+        }
+
         return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === true || $value === 'true' || $value === 1 || $value === '1';
     }
 
