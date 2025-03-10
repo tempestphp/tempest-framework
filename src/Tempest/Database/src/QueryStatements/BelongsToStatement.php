@@ -6,6 +6,7 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\UnsupportedDialect;
 
 final readonly class BelongsToStatement implements QueryStatement
 {
@@ -25,11 +26,13 @@ final readonly class BelongsToStatement implements QueryStatement
         return match ($dialect) {
             DatabaseDialect::MYSQL,
             DatabaseDialect::POSTGRESQL => new ConstraintStatement(
-                sprintf(
-                    'fk_%s_%s_%s',
-                    strtolower($foreignTable),
-                    strtolower($localTable),
-                    strtolower($localKey),
+                new ConstraintNameStatement(
+                    sprintf(
+                        'fk_%s_%s_%s',
+                        strtolower($foreignTable),
+                        strtolower($localTable),
+                        strtolower($localKey),
+                    )
                 ),
                 new RawStatement(
                     sprintf(
@@ -43,7 +46,7 @@ final readonly class BelongsToStatement implements QueryStatement
                     ),
                 ),
             )->compile($dialect),
-            DatabaseDialect::SQLITE => '',
+            DatabaseDialect::SQLITE => throw new UnsupportedDialect(),
         };
     }
 }

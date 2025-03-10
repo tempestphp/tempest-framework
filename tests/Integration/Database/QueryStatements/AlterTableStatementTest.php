@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
-use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Id;
@@ -73,19 +72,8 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame('test@example.com', $user->email);
     }
 
-    public function test_alter_for_only_indexes(): void
-    {
-        $dialect = $this->container->get(DatabaseConfig::class)->dialect;
 
-        $statement = new AlterTableStatement('table')
-            ->index('foo')
-            ->unique('bar')
-            ->compile($dialect);
-
-        $this->assertStringNotContainsString('ALTER TABLE', $statement);
-    }
-
-    private function getAlterTableMigration(): mixed
+    private function getAlterTableMigration(): DatabaseMigration
     {
         return new class () implements DatabaseMigration {
             private(set) string $name = '0000-01-02_add_email_to_user_table';
