@@ -39,7 +39,7 @@ final readonly class TypeReflector implements Reflector
         'bool',
         'string',
         'int',
-        'float'
+        'float',
     ];
 
     private string $definition;

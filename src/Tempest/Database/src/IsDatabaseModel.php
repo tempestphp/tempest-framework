@@ -94,8 +94,8 @@ trait IsDatabaseModel
     public static function find(mixed ...$conditions): ModelQueryBuilder
     {
         $query = self::query();
-        
-        array_walk($conditions, fn($value, $column) => $query->whereField($column, $value));
+
+        array_walk($conditions, fn ($value, $column) => $query->whereField($column, $value));
 
         return $query;
     }
