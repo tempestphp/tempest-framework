@@ -33,6 +33,10 @@ name = "maintainability/too-many-enum-cases"
 level = "off"
 
 [[linter.rules]]
+name = "maintainability/excessive-parameter-list"
+level = "off"
+
+[[linter.rules]]
 name = "maintainability/halstead"
 level = "off"
 
@@ -53,6 +57,11 @@ level = "off"
 name = "strictness/require-return-type"
 ignore_arrow_function = true
 ignore_closure = true
+
+# https://github.com/carthage-software/mago/issues/146
+[[linter.rules]]
+name = "strictness/require-strict-types"
+level = "off"
 
 [[linter.rules]]
 name = "strictness/require-parameter-type"
@@ -118,13 +127,5 @@ name = "analysis/override-attribute"
 level = "off"
 
 [[linter.rules]]
-name = "strictness/require-strict-types"
-level = "off"
-
-[[linter.rules]]
 name = "comment/no-untagged-todo"
-level = "off"
-
-[[linter.rules]]
-name = "maintainability/excessive-parameter-list"
 level = "off"
