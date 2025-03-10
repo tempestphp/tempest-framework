@@ -41,7 +41,6 @@ return RectorConfig::configure()
         ExplicitNullableParamTypeRector::class,
     ])
     ->withSkip([
-        NewlineAfterStatementRector::class, // TODO(https://github.com/carthage-software/mago/issues/143)
         AddOverrideAttributeToOverriddenMethodsRector::class,
         ArgumentAdderRector::class,
         ClosureToArrowFunctionRector::class,
