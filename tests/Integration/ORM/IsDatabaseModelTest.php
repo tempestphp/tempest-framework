@@ -7,7 +7,6 @@ namespace Tests\Tempest\Integration\ORM;
 use Carbon\Carbon;
 use DateTimeImmutable;
 use Tempest\Database\Id;
-use Tempest\Database\Query;
 use function Tempest\map;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\B;
