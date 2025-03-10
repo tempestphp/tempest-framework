@@ -25,6 +25,7 @@ final readonly class EnumStatement implements QueryStatement
     {
         $cases = arr($this->enumClass::cases())
             ->map(fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
+            ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
             ->map(fn (string $value) => "'{$value}'");
 
         if ($this->default !== null) {
