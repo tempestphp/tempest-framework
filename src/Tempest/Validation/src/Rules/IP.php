@@ -36,6 +36,8 @@ final readonly class IP implements Rule
 
     public function message(): string
     {
+        $additions = [];
+
         if ($this->options & FILTER_FLAG_NO_PRIV_RANGE) {
             $additions[] = 'not in a private range';
         }
