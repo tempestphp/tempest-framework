@@ -42,7 +42,7 @@ final class ConfirmRenderer
                 ),
                 '   ',
                 $this->style(
-                $answer === false ? 'fg-red bold' : 'fg-gray dim',
+                    $answer === false ? 'fg-red bold' : 'fg-gray dim',
                     '<style="dim">→</style> ' . $this->no,
                 ),
                 "\n",
@@ -54,11 +54,11 @@ final class ConfirmRenderer
 
     public function getCursorPosition(Terminal $terminal, TextBuffer $buffer): Point
     {
-        $position = $buffer->getRelativeCursorPosition($terminal->width - self::MARGIN_X - 1 - self::PADDING_X - self::MARGIN_X);
+        $position = $buffer->getRelativeCursorPosition(((($terminal->width - self::MARGIN_X) - 1) - self::PADDING_X) - self::MARGIN_X);
 
         return new Point(
-            x: $position->x + (self::MARGIN_X + 1 + self::PADDING_X), // +1 is the border width
-            y: $position->y + (self::MARGIN_TOP + $this->offsetY),
+            x: $position->x + self::MARGIN_X + 1 + self::PADDING_X, // +1 is the border width
+            y: $position->y + self::MARGIN_TOP + $this->offsetY,
         );
     }
 }

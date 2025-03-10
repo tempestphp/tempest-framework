@@ -7,6 +7,7 @@ namespace Tempest\Support\JavaScript;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
 use Tempest\Validation\Rules\Enum;
+
 use function Tempest\Support\Arr\wrap;
 
 /**

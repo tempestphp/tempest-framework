@@ -32,7 +32,7 @@ final class ViteInstaller implements Installer
     {
         $argument = $this->consoleArgumentBag->get('tailwind');
 
-        if ($argument === null || !is_bool($argument->value)) {
+        if ($argument === null || ! is_bool($argument->value)) {
             return $this->console->confirm('Install Tailwind CSS as well?', default: true);
         }
 
@@ -52,7 +52,7 @@ final class ViteInstaller implements Installer
             dependencies: [
                 'vite',
                 'vite-plugin-tempest',
-                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : [])
+                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : []),
             ],
             dev: true,
         );

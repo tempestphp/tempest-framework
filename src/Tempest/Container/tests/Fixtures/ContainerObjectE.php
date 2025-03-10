@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final class ContainerObjectE
 {
-    public function __construct(public string $id = 'default')
-    {
+    public function __construct(
+        public string $id = 'default',
+    ) {
     }
 }

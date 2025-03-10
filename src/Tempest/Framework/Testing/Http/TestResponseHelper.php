@@ -13,12 +13,14 @@ use Tempest\Router\Response;
 use Tempest\Router\Session\Session;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+
 use function Tempest\get;
 
 final class TestResponseHelper
 {
-    public function __construct(private(set) Response $response)
-    {
+    public function __construct(
+        private(set) Response $response,
+    ) {
     }
 
     public Status $status {

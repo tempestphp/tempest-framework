@@ -24,7 +24,7 @@ trait HasAttributes
      * @param class-string<TAttributeClass> $attributeClass
      * @return TAttributeClass|null
      */
-    public function getAttribute(string $attributeClass, bool $recursive = false): object|null
+    public function getAttribute(string $attributeClass, bool $recursive = false): ?object
     {
         $attribute = $this->getReflection()->getAttributes($attributeClass, PHPReflectionAttribute::IS_INSTANCEOF)[0] ?? null;
 
@@ -43,7 +43,7 @@ trait HasAttributes
                 }
             }
 
-            if ($attributeInstance === null && $parent = $this->getParent()) {
+            if ($attributeInstance === null && ($parent = $this->getParent())) {
                 $attributeInstance = $parent->getAttribute($attributeClass, true);
             }
         }

@@ -25,7 +25,12 @@ final class CallableEventHandler
 
         return function (string|object $event) use ($container): void {
             $this->handler->handler->invokeArgs(
-                $container->get($this->handler->handler->getDeclaringClass()->getName()),
+                $container->get(
+                    $this->handler
+                        ->handler
+                        ->getDeclaringClass()
+                        ->getName(),
+                ),
                 [$event],
             );
         };

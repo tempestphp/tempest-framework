@@ -9,8 +9,9 @@ use Tempest\View\ViewComponent;
 
 final readonly class ViteTagsComponent implements ViewComponent
 {
-    public function __construct(private ViteConfig $viteConfig)
-    {
+    public function __construct(
+        private ViteConfig $viteConfig,
+    ) {
     }
 
     public static function getName(): string
@@ -27,7 +28,7 @@ final readonly class ViteTagsComponent implements ViewComponent
         };
 
         return <<<HTML
-                <?= \Tempest\\vite_tags({$entrypoints}) ?>
-            HTML;
+            <?= \Tempest\\vite_tags({$entrypoints}) ?>
+        HTML;
     }
 }

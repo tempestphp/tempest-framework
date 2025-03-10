@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Closure;
-use Tempest\Database\Id;
-use function Tempest\map;
-use Tempest\Database\Query;
-use function Tempest\reflect;
-use Tempest\Database\Virtual;
 use Tempest\Database\DatabaseModel;
+use Tempest\Database\Id;
+use Tempest\Database\Query;
+use Tempest\Database\Virtual;
+
+use function Tempest\map;
+use function Tempest\reflect;
 
 /**
  * @template TModelClass of DatabaseModel
@@ -61,8 +62,7 @@ final class ModelQueryBuilder
      */
     public function find(Id $id): mixed
     {
-        return $this
-            ->whereField('id', $id)
+        return $this->whereField('id', $id)
             ->first();
     }
 
@@ -80,7 +80,10 @@ final class ModelQueryBuilder
         $offset = 0;
 
         do {
-            $data = $this->clone()->limit($amountPerChunk)->offset($offset)->all();
+            $data = $this->clone()
+                ->limit($amountPerChunk)
+                ->offset($offset)
+                ->all();
 
             $offset += count($data);
 
@@ -167,7 +170,7 @@ final class ModelQueryBuilder
 
         $fields = $modelDefinition->getFieldNames();
 
-        $fields = array_filter($fields, fn(FieldName $field) => !(reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class)));
+        $fields = array_filter($fields, fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class));
 
         foreach ($relations as $relation) {
             $fields = [...$fields, ...$relation->getFieldNames()];

@@ -9,6 +9,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
+
 use function Tempest\Support\str;
 
 final readonly class RoutesCommand

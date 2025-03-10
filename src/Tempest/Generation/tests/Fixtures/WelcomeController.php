@@ -6,6 +6,7 @@ namespace Tempest\Generation\Tests\Fixtures;
 
 use Tempest\Router\Get;
 use Tempest\View\View;
+
 use function Tempest\view;
 
 final class WelcomeController

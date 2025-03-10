@@ -8,9 +8,7 @@ final class TemplateElement implements Element
 {
     use IsElement;
 
-    public function __construct(
-        array $attributes = [],
-    )
+    public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
     }

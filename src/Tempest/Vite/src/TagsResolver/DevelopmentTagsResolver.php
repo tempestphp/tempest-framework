@@ -7,6 +7,7 @@ namespace Tempest\Vite\TagsResolver;
 use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteBridgeFile;
+
 use function Tempest\root_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;

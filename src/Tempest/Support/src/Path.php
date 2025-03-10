@@ -108,7 +108,7 @@ final readonly class Path implements Stringable
 
     public function equals(Stringable $other): bool
     {
-        return $this->path === (string) $other;
+        return $this->path === ((string) $other);
     }
 
     public function __toString(): string

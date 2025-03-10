@@ -146,14 +146,13 @@ final readonly class PropertyReflector implements Reflector
     {
         $constructorParameters = [];
 
-        foreach (($this->getClass()->getConstructor()?->getParameters() ?? []) as $parameter) {
+        foreach ($this->getClass()->getConstructor()?->getParameters() ?? [] as $parameter) {
             $constructorParameters[$parameter->getName()] = $parameter;
         }
 
         $hasDefaultValue = $this->reflectionProperty->hasDefaultValue();
 
-        $hasPromotedDefaultValue = $this->isPromoted()
-            && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
+        $hasPromotedDefaultValue = $this->isPromoted() && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }

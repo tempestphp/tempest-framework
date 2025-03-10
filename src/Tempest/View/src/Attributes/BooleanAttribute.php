@@ -18,7 +18,7 @@ final readonly class BooleanAttribute implements Attribute
 
     public function apply(Element $element): Element
     {
-        if (! $element instanceof GenericElement) {
+        if (! ($element instanceof GenericElement)) {
             throw new Exception('This cannot happen');
         }
 
@@ -35,7 +35,7 @@ final readonly class BooleanAttribute implements Attribute
 
     public static function matches(Element $element, string $attributeName): bool
     {
-        if (! $element instanceof GenericElement) {
+        if (! ($element instanceof GenericElement)) {
             return false;
         }
 

@@ -11,6 +11,7 @@ use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
 use Tempest\Validation\Validator;
+
 use function Tempest\Support\arr;
 
 /**

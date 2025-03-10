@@ -20,6 +20,7 @@ use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\EventBus\Tests\Fixtures\MyService;
 use Tempest\Reflection\MethodReflector;
+
 use function Tempest\get;
 use function Tempest\listen;
 

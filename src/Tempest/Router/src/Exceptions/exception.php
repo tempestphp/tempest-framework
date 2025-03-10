@@ -126,13 +126,15 @@ use Tempest\Router\Exceptions\HttpProductionErrorHandler;
     <div class="trace-item">
         <?php
         $item = $this->throwable->getTrace()[0];
-echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
-?>
+        echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
+        ?>
     </div>
     <pre><?= $this->getCodeSample() ?></pre>
     <div class="trace-item">
         In
-<!--        <a href="idea://--><?php //= $this->throwable->getFile()?><!--:--><?php //= $this->throwable->getLine()?><!--">-->
+<!--        <a href="idea://--><?php //= $this->throwable->getFile()
+?><!--:--><?php //= $this->throwable->getLine()
+?><!--">-->
             <?= $this->throwable->getFile() ?>:<?= $this->throwable->getLine() ?>
 <!--        </a>-->
     </div>
@@ -147,10 +149,10 @@ echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()',
         <div class="trace-item">
             <div>
                 <?php
-                    if (isset($item['class'])) {
-                        echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
-                    }
-        ?>
+                if (isset($item['class'])) {
+                    echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()', 'php');
+                }
+                ?>
             </div>
 
             <?php
@@ -159,11 +161,14 @@ echo $this->highlighter->parse($item['class'] . '::' . $item['function'] . '()',
                 ?>
                 <div>
                     in
-<!--                    <a href="idea://--><?php //= $item['file']?><!--:--><?php //=$item['line']?><!--">-->
-                        <?= $item['file']?>:<?= $item['line'] ?>
+<!--                    <a href="idea://--><?php //= $item['file']
+                ?><!--:--><?php //=$item['line']
+                ?><!--">-->
+                        <?= $item['file'] ?>:<?= $item['line'] ?>
 <!--                    </a>-->
                 </div>
-            <?php } ?>
+            <?php
+            } ?>
         </div>
     <?php } ?>
 </div>

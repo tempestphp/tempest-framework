@@ -16,6 +16,7 @@ use Tempest\Console\Initializers\Invocation;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

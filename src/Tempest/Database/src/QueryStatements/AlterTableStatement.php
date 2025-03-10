@@ -8,6 +8,7 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -107,9 +108,9 @@ final class AlterTableStatement implements QueryStatement
 
         if ($this->createIndexStatements !== []) {
             $createIndices = PHP_EOL . arr($this->createIndexStatements)
-                    ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                    ->implode(';' . PHP_EOL)
-                    ->append(';');
+                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                ->implode(';' . PHP_EOL)
+                ->append(';');
         } else {
             $createIndices = '';
         }

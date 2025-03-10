@@ -44,8 +44,6 @@ final readonly class IP implements Rule
             $additions[] = 'not in a reserved range';
         }
 
-        return 'Value should be a valid IP address' . (
-            $additions === [] ? '' : ' that is ' . implode(' and ', $additions)
-        );
+        return 'Value should be a valid IP address' . ($additions === [] ? '' : (' that is ' . implode(' and ', $additions)));
     }
 }

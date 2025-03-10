@@ -6,6 +6,7 @@ namespace Tempest\Console\Installers;
 
 use Tempest\Core\Installer;
 use Tempest\Core\IsComponentInstaller;
+
 use function Tempest\root_path;
 
 final class ConsoleInstaller implements Installer

@@ -8,6 +8,7 @@ use Closure;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\ValidationException;
+
 use function Tempest\Support\arr;
 
 final readonly class Validator
@@ -70,7 +71,7 @@ final readonly class Validator
             default => [true, ''],
         };
 
-        return new readonly class ($isValid, $message) implements Rule {
+        return new readonly class($isValid, $message) implements Rule {
             public function __construct(
                 private bool $isValid,
                 private string $message,

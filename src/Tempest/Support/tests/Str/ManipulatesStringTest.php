@@ -7,6 +7,7 @@ namespace Tempest\Support\Str\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

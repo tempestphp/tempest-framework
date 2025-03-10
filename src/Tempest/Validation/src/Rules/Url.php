@@ -13,8 +13,9 @@ final readonly class Url implements Rule
     /**
      * @param string[] $protocols
      */
-    public function __construct(private array $protocols = [])
-    {
+    public function __construct(
+        private array $protocols = [],
+    ) {
     }
 
     public function isValid(mixed $value): bool

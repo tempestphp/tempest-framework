@@ -17,6 +17,7 @@ use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Throwable;
 use UnhandledMatchError;
+
 use function Tempest\event;
 
 final readonly class MigrationManager

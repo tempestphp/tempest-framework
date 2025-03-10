@@ -8,8 +8,9 @@ use Tempest\Console\OutputBuffer;
 
 final readonly class LogOutputBuffer implements OutputBuffer
 {
-    public function __construct(private string $path)
-    {
+    public function __construct(
+        private string $path,
+    ) {
     }
 
     public function clear(): self

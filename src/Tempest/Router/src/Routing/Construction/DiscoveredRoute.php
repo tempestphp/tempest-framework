@@ -44,7 +44,7 @@ final readonly class DiscoveredRoute implements Route
     /** @return string[] */
     private static function getRouteParams(string $uriPart): array
     {
-        $regex = '#\{'. self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+        $regex = '#\{' . self::ROUTE_PARAM_NAME_REGEX . self::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         preg_match_all($regex, $uriPart, $matches);
 

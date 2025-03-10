@@ -12,10 +12,7 @@ final readonly class Boolean implements Rule
 {
     public function isValid(mixed $value): bool
     {
-        return (
-            $value === false || $value === 'false' || $value === 0 || $value === '0' ||
-            $value === true || $value === 'true' || $value === 1 || $value === '1'
-        );
+        return $value === false || $value === 'false' || $value === 0 || $value === '0' || $value === true || $value === 'true' || $value === 1 || $value === '1';
     }
 
     public function message(): string

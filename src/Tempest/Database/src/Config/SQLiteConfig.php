@@ -30,8 +30,7 @@ final class SQLiteConfig implements DatabaseConfig
     }
 
     public function __construct(
-        #[SensitiveParameter]
-        public string $path = 'localhost',
+        #[SensitiveParameter] public string $path = 'localhost',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
     ) {
     }

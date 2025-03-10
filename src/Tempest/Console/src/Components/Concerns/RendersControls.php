@@ -7,6 +7,7 @@ namespace Tempest\Console\Components\Concerns;
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

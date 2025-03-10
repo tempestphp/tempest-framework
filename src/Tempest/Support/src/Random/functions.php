@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Random {
     use InvalidArgumentException;
+
     use function log;
 
     /**
@@ -17,7 +18,7 @@ namespace Tempest\Support\Random {
      *
      * @throws InvalidArgumentException If $alphabet length is outside the [2^1, 2^56] range.
      */
-    function secure_string(int $length, null|string $alphabet = null): string
+    function secure_string(int $length, ?string $alphabet = null): string
     {
         if ($length === 0) {
             return '';

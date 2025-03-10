@@ -23,8 +23,7 @@ final readonly class BelongsToStatement implements QueryStatement
         [$foreignTable, $foreignKey] = explode('.', $this->foreign);
 
         return match ($dialect) {
-            DatabaseDialect::MYSQL,
-            DatabaseDialect::POSTGRESQL => new ConstraintStatement(
+            DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => new ConstraintStatement(
                 sprintf(
                     'fk_%s_%s_%s',
                     strtolower($foreignTable),

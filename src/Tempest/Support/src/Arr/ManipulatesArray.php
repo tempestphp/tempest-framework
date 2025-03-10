@@ -25,9 +25,8 @@ trait ManipulatesArray
     /**
      * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
      */
-    public function __construct(
-        mixed $input = [],
-    ) {
+    public function __construct(mixed $input = [])
+    {
         $this->value = namespace\wrap($input);
     }
 
@@ -42,7 +41,7 @@ trait ManipulatesArray
             return new static([(string) $string]);
         }
 
-        if ((string) $string === '') {
+        if (((string) $string) === '') {
             return new static();
         }
 

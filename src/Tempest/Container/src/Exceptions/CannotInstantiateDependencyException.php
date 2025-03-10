@@ -27,7 +27,7 @@ final class CannotInstantiateDependencyException extends Exception implements Co
         foreach ($stack as $currentDependency) {
             $pipe = match (true) {
                 count($stack) > 1 && $i === 0 => '┌──',
-                count($stack) > 1 && $i === count($stack) - 1 => '└──',
+                count($stack) > 1 && $i === (count($stack) - 1) => '└──',
                 count($stack) === 1 => '   ',
                 default => '├──',
             };

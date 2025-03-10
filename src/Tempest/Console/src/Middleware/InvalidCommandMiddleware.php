@@ -17,6 +17,7 @@ use Tempest\Validation\Rules\Boolean;
 use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\Numeric;
+
 use function Tempest\Support\str;
 
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware

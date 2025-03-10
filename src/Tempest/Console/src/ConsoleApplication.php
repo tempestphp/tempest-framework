@@ -14,6 +14,7 @@ use Tempest\Core\Tempest;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Throwable;
+
 use function Tempest\Support\path;
 
 final readonly class ConsoleApplication implements Application
@@ -41,10 +42,7 @@ final readonly class ConsoleApplication implements Application
 
         $logConfig = $container->get(LogConfig::class);
 
-        if (
-            $logConfig->debugLogPath === null
-            && $logConfig->channels === []
-        ) {
+        if ($logConfig->debugLogPath === null && $logConfig->channels === []) {
             $logConfig->debugLogPath = path($container->get(Kernel::class)->root, '/log/debug.log')->toString();
             $logConfig->channels[] = new AppendLogChannel(path($container->get(Kernel::class)->root, '/log/tempest.log')->toString());
         }
@@ -55,7 +53,7 @@ final readonly class ConsoleApplication implements Application
     public function run(): void
     {
         try {
-            $exitCode = ($this->container->get(ExecuteConsoleCommand::class))($this->argumentBag->getCommandName());
+            $exitCode = $this->container->get(ExecuteConsoleCommand::class)($this->argumentBag->getCommandName());
 
             $exitCode = is_int($exitCode) ? $exitCode : $exitCode->value;
 

@@ -84,7 +84,7 @@ interface Console
     /**
      * @param mixed|Closure(self): bool $condition
      * @param Closure(self): self $callback
-    */
+     */
     public function unless(mixed $condition, Closure $callback): self;
 
     public function withLabel(string $label): self;

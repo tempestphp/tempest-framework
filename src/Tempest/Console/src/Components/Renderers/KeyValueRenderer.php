@@ -6,6 +6,7 @@ namespace Tempest\Console\Components\Renderers;
 
 use Stringable;
 use Tempest\Support\Str\MutableString;
+
 use function Tempest\root_path;
 use function Tempest\Support\str;
 
@@ -23,7 +24,7 @@ final readonly class KeyValueRenderer
             callback: fn ($s) => $s->prepend(' '),
         );
 
-        $dotsWidth = $maximumWidth - $key->stripTags()->length() - $value->stripTags()->length();
+        $dotsWidth = ($maximumWidth - $key->stripTags()->length()) - $value->stripTags()->length();
 
         return str()
             ->append($key)

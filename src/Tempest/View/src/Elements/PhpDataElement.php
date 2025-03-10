@@ -7,6 +7,7 @@ namespace Tempest\View\Elements;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\WrapsElement;
+
 use function Tempest\Support\str;
 
 final class PhpDataElement implements Element, WrapsElement
@@ -45,7 +46,7 @@ final class PhpDataElement implements Element, WrapsElement
             '$%s ??= %s ?? null;',
             $name,
             $isExpression
-                ? $value ?: 'null'
+                ? ($value ?: 'null')
                 : var_export($value, true), // @mago-expect best-practices/no-debug-symbols
         );
 

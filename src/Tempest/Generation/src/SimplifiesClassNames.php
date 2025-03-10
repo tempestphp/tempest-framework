@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Generation;
 
 use Nette\PhpGenerator\PhpFile;
+
 use function Tempest\Support\str;
 
 /**
@@ -104,7 +105,7 @@ trait SimplifiesClassNames
                             }
 
                             $methodBody = str_replace(
-                                search: '\\'.$fqcn,
+                                search: '\\' . $fqcn,
                                 replace: (string) str($fqcn)->afterLast('\\'),
                                 subject: $methodBody,
                             );
@@ -116,9 +117,12 @@ trait SimplifiesClassNames
                     }
                 }
 
-                array_map(function ($param) use (&$types): void {
-                    $types[] = $param->getType(true);
-                }, $class->getProperties());
+                array_map(
+                    function ($param) use (&$types): void {
+                        $types[] = $param->getType(true);
+                    },
+                    $class->getProperties(),
+                );
 
                 foreach ($this->aliases as $class => $alias) {
                     $namespace->addUse($class, $alias);

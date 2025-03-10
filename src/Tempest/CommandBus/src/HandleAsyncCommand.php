@@ -10,6 +10,7 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Throwable;
+
 use function Tempest\Support\arr;
 
 final readonly class HandleAsyncCommand

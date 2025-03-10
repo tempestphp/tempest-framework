@@ -629,7 +629,7 @@ trait ManipulatesString
      */
     public function equals(string|Stringable $other): bool
     {
-        return $this->value === (string) $other;
+        return $this->value === ((string) $other);
     }
 
     /**

@@ -8,6 +8,7 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
 

@@ -139,11 +139,15 @@ final readonly class TypeReflector implements Reflector
 
     public function isIterable(): bool
     {
-        return in_array($this->cleanDefinition, [
-            'array',
-            'iterable',
-            Generator::class,
-        ], strict: true);
+        return in_array(
+            $this->cleanDefinition,
+            [
+                'array',
+                'iterable',
+                Generator::class,
+            ],
+            strict: true,
+        );
     }
 
     public function isNullable(): bool
@@ -166,10 +170,7 @@ final readonly class TypeReflector implements Reflector
             return $reflector;
         }
 
-        if (
-            $reflector instanceof PHPReflectionParameter
-            || $reflector instanceof PHPReflectionProperty
-        ) {
+        if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
             return $this->resolveDefinition($reflector->getType());
         }
 
@@ -204,10 +205,7 @@ final readonly class TypeReflector implements Reflector
             return str_contains($this->definition, '?') || str_contains($this->definition, 'null');
         }
 
-        if (
-            $reflector instanceof PHPReflectionParameter
-            || $reflector instanceof PHPReflectionProperty
-        ) {
+        if ($reflector instanceof PHPReflectionParameter || $reflector instanceof PHPReflectionProperty) {
             return $reflector->getType()->allowsNull();
         }
 

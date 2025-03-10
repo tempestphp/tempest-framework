@@ -17,6 +17,7 @@ use Tempest\Router\Router;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use Throwable;
+
 use function Tempest\Support\path;
 use function Tempest\uri;
 
@@ -55,7 +56,7 @@ final readonly class StaticGenerateCommand
 
                 $fileName = $uri === '/'
                     ? 'index.html'
-                    : $uri . '/index.html';
+                    : ($uri . '/index.html');
 
                 $file = path($publicPath, $fileName);
 
@@ -75,7 +76,7 @@ final readonly class StaticGenerateCommand
 
                     $body = $response->body;
 
-                    $content = $body instanceof View
+                    $content = ($body instanceof View)
                         ? $this->viewRenderer->render($body)
                         : $body;
 

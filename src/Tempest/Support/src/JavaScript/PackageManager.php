@@ -49,7 +49,7 @@ enum PackageManager: string
     {
         return array_find(
             array: PackageManager::cases(),
-            callback: fn($packageManager) => array_any($packageManager->getLockFiles(), fn($lockFile) => file_exists($cwd . '/' . $lockFile))
+            callback: fn ($packageManager) => array_any($packageManager->getLockFiles(), fn ($lockFile) => file_exists($cwd . '/' . $lockFile)),
         );
     }
 }

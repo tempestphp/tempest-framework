@@ -14,6 +14,7 @@ use Tempest\Filesystem\Exceptions\UnableToDeleteDirectory;
 use Tempest\Filesystem\Exceptions\UnableToDeleteFile;
 use Tempest\Filesystem\Exceptions\UnableToReadFile;
 use Tempest\Filesystem\Exceptions\UnableToWriteFile;
+
 use const FILE_APPEND;
 use const LOCK_EX;
 
@@ -69,7 +70,7 @@ final class LocalFilesystem implements Filesystem
 
     public function deleteFile(string $filePath): void
     {
-        if (@unlink($filePath) === false) {
+        if ((@unlink($filePath)) === false) {
             throw UnableToDeleteFile::atPath($filePath);
         }
     }
@@ -83,7 +84,7 @@ final class LocalFilesystem implements Filesystem
     {
         $error = ErrorContext::reset();
 
-        if (@mkdir($directoryPath, $permissions, $recursive) === false) {
+        if ((@mkdir($directoryPath, $permissions, $recursive)) === false) {
             throw UnableToCreateDirectory::atPath($directoryPath, $error->commit());
         }
     }
@@ -93,7 +94,6 @@ final class LocalFilesystem implements Filesystem
         if (! $this->isDirectory($directoryPath)) {
             $this->createDirectory($directoryPath, $permissions, true);
         }
-
         // TODO: We are not checking for the existence post-creation. Do we care or do we trust PHP's return?
     }
 
@@ -152,7 +152,7 @@ final class LocalFilesystem implements Filesystem
             throw FileDoesNotExist::atPath($sourcePath);
         }
 
-        if (@copy($sourcePath, $destinationPath) === false) {
+        if ((@copy($sourcePath, $destinationPath)) === false) {
             throw UnableToCopyFile::fromSourceToDestination($sourcePath, $destinationPath, $error);
         }
     }

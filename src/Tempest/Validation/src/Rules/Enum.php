@@ -12,8 +12,11 @@ use UnitEnum;
 #[Attribute]
 final readonly class Enum implements Rule
 {
-    public function __construct(private string $enum, private array $only = [], private array $except = [])
-    {
+    public function __construct(
+        private string $enum,
+        private array $only = [],
+        private array $except = [],
+    ) {
         if (! enum_exists($this->enum)) {
             throw new UnexpectedValueException(sprintf(
                 'The enum parameter must be a valid enum. Was given [%s].',
