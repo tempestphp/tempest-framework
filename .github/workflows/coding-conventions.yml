@@ -18,6 +18,9 @@ jobs:
           php-version: 8.4
           coverage: none
 
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction
+
       - name: Setup Mago 
         uses: nhedger/setup-mago@v1
 
