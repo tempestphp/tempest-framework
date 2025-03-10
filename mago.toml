@@ -1,0 +1,127 @@
+php_version = "8.4.0"
+
+[source]
+paths = ["src"]
+includes = ["vendor"]
+excludes = []
+
+[format]
+print_width = 180
+tab_width = 4
+use_tabs = false
+space_after_not_operator = true
+null_type_hint = "question"
+space_before_arrow_function_params = true
+always_break_named_arguments_list = false
+preserve_breaking_member_access_chain = true
+preserve_breaking_argument_list = true
+preserve_breaking_array_like = true
+preserve_breaking_parameter_list = true
+preserve_breaking_attribute_list = true
+preserve_breaking_conditional_expression = true
+
+[linter]
+default_plugins = true
+plugins = ["symfony", "php-unit"]
+
+# MAINTENABILITY
+[[linter.rules]]
+name = "maintainability/too-many-enum-cases"
+level = "off"
+
+[[linter.rules]]
+name = "maintainability/halstead"
+level = "off"
+
+[[linter.rules]]
+name = "maintainability/too-many-methods"
+level = "off"
+
+[[linter.rules]]
+name = "maintainability/kan-defect"
+level = "off"
+
+[[linter.rules]]
+name = "maintainability/cyclomatic-complexity"
+level = "off"
+
+# STRICTNESS
+[[linter.rules]]
+name = "strictness/require-return-type"
+ignore_arrow_function = true
+ignore_closure = true
+
+[[linter.rules]]
+name = "strictness/require-parameter-type"
+ignore_arrow_function = true
+ignore_closure = true
+
+[[linter.rules]]
+name = "strictness/no-shorthand-ternary"
+level = "off"
+
+[[linter.rules]]
+name = "strictness/no-assignment-in-condition"
+level = "off"
+
+# BEST PRACTICES
+[[linter.rules]]
+name = "best-practices/no-else-clause"
+level = "off"
+
+[[linter.rules]]
+name = "best-practices/no-boolean-literal-comparison"
+level = "off"
+
+[[linter.rules]]
+name = "best-practices/no-boolean-flag-parameter"
+level = "off"
+
+# SAFETY
+[[linter.rules]]
+name = "safety/no-error-control-operator"
+level = "off"
+
+# PHPUNIT
+[[linter.rules]]
+name = "php-unit/assertions-style"
+style = "this"
+
+[[linter.rules]]
+name = "php-unit/strict-assertions"
+level = "off"
+
+# NAMING
+[[linter.rules]]
+name = "naming/interface"
+psr = false
+
+[[linter.rules]]
+name = "naming/trait"
+psr = false
+
+[[linter.rules]]
+name = "naming/class"
+psr = false
+
+# HELP
+[[linter.rules]]
+name = "redundancy/redundant-file"
+level = "off"
+
+# CONSIDER ENABLING
+[[linter.rules]]
+name = "analysis/override-attribute"
+level = "off"
+
+[[linter.rules]]
+name = "strictness/require-strict-types"
+level = "off"
+
+[[linter.rules]]
+name = "comment/no-untagged-todo"
+level = "off"
+
+[[linter.rules]]
+name = "maintainability/excessive-parameter-list"
+level = "off"

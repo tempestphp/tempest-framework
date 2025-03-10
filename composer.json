@@ -53,7 +53,8 @@
         "spaze/phpstan-disallowed-calls": "^4.0",
         "symplify/monorepo-builder": "^11.2",
         "tempest/blade": "^0.1.0",
-        "twig/twig": "^3.16"
+        "twig/twig": "^3.16",
+        "carthage-software/mago": "^0.19.1"
     },
     "replace": {
         "tempest/auth": "self.version",
@@ -186,5 +187,10 @@
             "composer phpunit",
             "composer phpstan"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "carthage-software/mago": true
+        }
     }
 }
