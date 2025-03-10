@@ -10,6 +10,8 @@ use Tempest\Validation\Rules\DateTimeFormat;
 
 final class ObjectWithBuiltInCasters
 {
+    public ?DateTimeImmutable $nullableDateTimeImmutable = null;
+
     public DateTimeImmutable $dateTimeObject;
 
     public DateTimeImmutable $dateTimeImmutable;
