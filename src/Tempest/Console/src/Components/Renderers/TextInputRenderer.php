@@ -40,7 +40,7 @@ final class TextInputRenderer
         }
 
         // splits the text to an array so we can work with individual lines
-        $lines = str($buffer->text ?: $placeholder ?: '')
+        $lines = str($buffer->text ?: ($placeholder ?: ''))
             ->explode("\n")
             ->flatMap(fn (string $line) => str($line)->chunk($this->maxLineCharacters)->toArray())
             ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '));

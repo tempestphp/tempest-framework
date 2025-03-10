@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
+use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\PropertyProperty\RemoveNullPropertyInitializationRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
@@ -40,6 +41,7 @@ return RectorConfig::configure()
         ExplicitNullableParamTypeRector::class,
     ])
     ->withSkip([
+        NewlineAfterStatementRector::class, // TODO(https://github.com/carthage-software/mago/issues/143)
         AddOverrideAttributeToOverriddenMethodsRector::class,
         ArgumentAdderRector::class,
         ClosureToArrowFunctionRector::class,
@@ -57,7 +59,7 @@ return RectorConfig::configure()
         EncapsedStringsToSprintfRector::class,
         AddArrowFunctionReturnTypeRector::class,
     ])
-    ->withSkipPath(__DIR__  .'/src/Tempest/Router/src/Exceptions/HttpProductionErrorHandler.php')
+    ->withSkipPath(__DIR__ . '/src/Tempest/Router/src/Exceptions/HttpProductionErrorHandler.php')
     ->withSkipPath(__DIR__ . '/src/Tempest/Router/src/Exceptions/exception.php')
     ->withParallel(300, 10, 10)
     ->withPreparedSets(

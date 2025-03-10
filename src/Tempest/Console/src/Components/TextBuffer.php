@@ -84,8 +84,7 @@ final class TextBuffer
             }
 
             $pos++; // Move back to include the first character of the word
-        } // If we started on a non-word character, we delete symbols
-        elseif ($pos >= 0) {
+        } elseif ($pos >= 0) { // If we started on a non-word character, we delete symbols
             while ($pos >= 0 && $this->isSymbol($this->text[$pos])) {
                 $pos--;
             }
@@ -124,8 +123,7 @@ final class TextBuffer
             while ($pos < mb_strlen($this->text) && $this->isAlphaNumeric($this->text[$pos])) {
                 $pos++;
             }
-        } // If we started on a non-word character, just delete that
-        elseif ($pos < mb_strlen($this->text)) {
+        } elseif ($pos < mb_strlen($this->text)) { // If we started on a non-word character, just delete that
             while ($pos < mb_strlen($this->text) && $this->isSymbol($this->text[$pos])) {
                 $pos++;
             }

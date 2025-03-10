@@ -96,7 +96,8 @@ final class EventBusTest extends TestCase
         $config = new EventBusConfig(
             handlers: [
                 ItHappened::class => [
-                    new CallableEventHandler(ItHappened::class, function (ItHappened $_, MyService $service) use (&$called): void {
+                    // @mago-expect best-practices/no-unused-parameter
+                    new CallableEventHandler(ItHappened::class, function (ItHappened $event, MyService $service) use (&$called): void {
                         $called = $service->value;
                     }),
                 ],
@@ -123,7 +124,8 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
-        $eventBus->listen('my-event', function (string $_) use (&$hasHappened): void {
+        // @mago-expect best-practices/no-unused-parameter
+        $eventBus->listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
@@ -141,7 +143,8 @@ final class EventBusTest extends TestCase
 
         $hasHappened = false;
 
-        listen('my-event', function (string $_) use (&$hasHappened): void {
+        // @mago-expect best-practices/no-unused-parameter
+        listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
 
