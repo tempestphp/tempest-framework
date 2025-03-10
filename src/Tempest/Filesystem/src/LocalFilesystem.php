@@ -94,6 +94,7 @@ final class LocalFilesystem implements Filesystem
         if (! $this->isDirectory($directoryPath)) {
             $this->createDirectory($directoryPath, $permissions, true);
         }
+
         // TODO: We are not checking for the existence post-creation. Do we care or do we trust PHP's return?
     }
 
