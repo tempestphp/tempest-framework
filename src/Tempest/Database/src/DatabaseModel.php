@@ -23,7 +23,9 @@ interface DatabaseModel
 
     public static function updateOrCreate(array $find, array $update): self;
 
-    public static function find(Id $id, array $relations = []): ?self;
+    public static function get(Id $id, array $relations = []): ?self;
+
+    public static function find(mixed ...$conditions): ModelQueryBuilder;
 
     public function save(): self;
 
