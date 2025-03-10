@@ -65,6 +65,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
     public function test_built_in_casters(): void
     {
         $object = map([
+            'nullableDateTimeImmutable' => '',
             'dateTimeObject' => new DateTimeImmutable('2024-01-01 10:10:10'),
             'dateTimeImmutable' => '2024-01-01 10:10:10',
             'dateTime' => '2024-01-01 10:10:10',
@@ -78,6 +79,7 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01 10:10:10', $object->dateTimeImmutable->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 10:10:10', $object->dateTime->format('Y-m-d H:i:s'));
         $this->assertSame('2024-12-01 10:10:10', $object->dateTimeWithFormat->format('Y-m-d H:i:s'));
+        $this->assertNull($object->nullableDateTimeImmutable);
         $this->assertSame(true, $object->bool);
         $this->assertSame(0.1, $object->float);
         $this->assertSame(1, $object->int);

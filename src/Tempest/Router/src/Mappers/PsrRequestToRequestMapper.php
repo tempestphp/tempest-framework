@@ -42,6 +42,10 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             }
         }
 
+        $data = arr($data)
+            ->map(fn (mixed $value) => $value === '' ? null : $value)
+            ->toArray();
+
         $headersAsString = array_map(
             fn (array $items) => implode(',', $items),
             $from->getHeaders(),
@@ -67,7 +71,7 @@ final readonly class PsrRequestToRequestMapper implements Mapper
         ])->to($requestClass);
 
         $validator = new Validator();
-        $validator->validate($newRequest);
+        $validator->validateObject($newRequest);
 
         return $newRequest;
     }

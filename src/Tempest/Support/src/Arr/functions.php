@@ -445,7 +445,7 @@ namespace Tempest\Support\Arr {
      */
     function merge(iterable $array, iterable ...$arrays): array
     {
-        return array_merge(to_array($array), ...array_map(fn (iterable $value) => to_array($value), $arrays));
+        return array_merge(to_array($array), ...array_map(to_array(...), $arrays));
     }
 
     /**
@@ -456,7 +456,7 @@ namespace Tempest\Support\Arr {
      * @template TValue
      *
      * @param iterable<TKey,TValue> $array
-     * @param array<array-key, TCombineValue>|array<array-key, TCombineValue> $values
+     * @param iterable<array-key, TCombineValue> $values
      *
      * @return array<array-key, TCombineValue>
      */
@@ -580,7 +580,7 @@ namespace Tempest\Support\Arr {
      */
     function implode(iterable $array, string $glue): ImmutableString
     {
-        return new ImmutableString(\implode($glue, $array));
+        return new ImmutableString(\implode($glue, to_array($array)));
     }
 
     /**

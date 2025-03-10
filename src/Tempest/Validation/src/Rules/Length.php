@@ -14,7 +14,8 @@ final readonly class Length implements Rule
     public function __construct(
         private ?int $min = null,
         private ?int $max = null,
-    ) {
+    )
+    {
         if ($min === null && $max === null) {
             throw new InvalidArgumentException('At least one of min or max must be provided');
         }
@@ -22,6 +23,10 @@ final readonly class Length implements Rule
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         $length = strlen($value);
 
         $min = $this->min ?? $length;
