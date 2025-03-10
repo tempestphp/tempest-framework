@@ -526,6 +526,73 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_head_tag_can_appear_in_child_view(): void
+    {
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <html lang="en"><x-slot /></html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout><head><title>Title</title></head></x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><head><title>Title</title></head></html>
+        HTML, $html);
+    }
+
+    public function test_body_tag_can_appear_in_child_view(): void
+    {
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <html lang="en"><x-slot /></html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout><body class="xxx">Content</body></x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><body class="xxx">Content</body></html>
+        HTML, $html);
+    }
+
+    public function test_that_special_tag_detection_isnt_tricked_by_html_comment(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <html lang="en"><body>Content<!-- <body> --><!-- </body> --></body></html>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><body>Content<!-- <body> --><!-- </body> --></body></html>
+        HTML, $html);
+    }
+
+    public function test_that_special_tag_detection_isnt_tricked_by_attribute(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <html lang="en"><body><p class="<body> </body>">Content</p></body></html>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <html lang="en"><body><p class="<body> </body>">Content</p></body></html>
+        HTML, $html);
+    }
+
+    public function test_invalid_html_can_be_produced(): void
+    {
+        $this->registerViewComponent('x-layout', <<<'HTML'
+        <p><html lang="en"><x-slot /></html></p>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-layout><body class="xxx">Content</body></x-layout>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <p><html lang="en"><body class="xxx">Content</body></html></p>
+        HTML, $html);
+    }
+
     public function test_custom_components_in_head(): void
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'
@@ -570,8 +637,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <!DOCTYPE html>
         <html lang="en"><head><title>Foo</title><meta charset="utf-8"></meta><link rel="stylesheet" href="#"></link>
-        <meta name="description" content="bar"></meta></head><body class="a">b
-        </body></html>
+        <meta name="description" content="bar"></meta></head><body class="a">b</body></html>
         HTML, $html);
     }
 }

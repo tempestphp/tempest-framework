@@ -115,7 +115,7 @@ final class ElementFactory
             );
         } else {
             $element = new GenericElement(
-                tag: $tagName,
+                tag: $this->removeSpecialTagPrefix($tagName),
                 attributes: $attributes,
             );
         }
@@ -138,6 +138,19 @@ final class ElementFactory
         $element->setChildren($children);
 
         return $element;
+    }
+
+    private function removeSpecialTagPrefix(string $tagName): string
+    {
+        if (!str_starts_with($tagName, TempestViewCompiler::SPECIAL_TAG_PREFIX)) {
+            return $tagName;
+        }
+
+        $origTagName = mb_substr($tagName, mb_strlen(TempestViewCompiler::SPECIAL_TAG_PREFIX));
+
+        return in_array($origTagName, TempestViewCompiler::SPECIAL_TAGS)
+            ? $origTagName
+            : $tagName;
     }
 
     private function clone(): self
