@@ -136,7 +136,7 @@ final readonly class TypeReflector implements Reflector
 
     public function isScalar(): bool
     {
-        return in_array($this->cleanDefinition, self::SCALAR_TYPES);
+        return in_array($this->cleanDefinition, self::SCALAR_TYPES, strict: true);
     }
 
     public function isClass(): bool
