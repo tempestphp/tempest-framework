@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
-        "carthage-software/mago": "^0.19.1",
+        "carthage-software/mago": "0.19.1",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "mikey179/vfsstream": "^2.0@dev",

@@ -59,9 +59,9 @@ ignore_arrow_function = true
 ignore_closure = true
 
 # https://github.com/carthage-software/mago/issues/146
-[[linter.rules]]
-name = "strictness/require-strict-types"
-level = "off"
+# [[linter.rules]]
+# name = "strictness/require-strict-types"
+# level = "off"
 
 [[linter.rules]]
 name = "strictness/require-parameter-type"
