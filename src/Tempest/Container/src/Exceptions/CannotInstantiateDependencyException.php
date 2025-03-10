@@ -43,7 +43,6 @@ final class CannotInstantiateDependencyException extends Exception implements Co
         //        $fillerSpaces = str_repeat(' ', strlen($firstPart) + 3);
         //        $fillerArrows = str_repeat('▒', strlen($currentDependencyName));
         //        $message .= PHP_EOL . "\t {$fillerSpaces}{$fillerArrows}";
-        //
         //        $message .= PHP_EOL . PHP_EOL;
 
         $message .= "Originally called in {$chain->getOrigin()}";

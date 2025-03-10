@@ -46,7 +46,7 @@ final class PhpDataElement implements Element, WrapsElement
             $name,
             $isExpression
                 ? $value ?: 'null'
-                : var_export($value, true),
+                : var_export($value, true), // @mago-expect best-practices/no-debug-symbols
         );
 
         // And we'll remove it right after the element, this way we've created a "local scope"

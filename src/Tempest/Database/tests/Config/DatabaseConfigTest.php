@@ -41,7 +41,7 @@ final class DatabaseConfigTest extends TestCase
                 host: 'localhost',
                 port: '3307',
                 username: 'user',
-                password: 'secret',
+                password: 'secret', // @mago-expect security/no-literal-password
                 database: 'tempest',
             ),
             'mysql:host=localhost:3307;dbname=tempest',
@@ -54,7 +54,7 @@ final class DatabaseConfigTest extends TestCase
                 host: 'localhost',
                 port: '5432',
                 username: 'postgres',
-                password: 'secret',
+                password: 'secret', // @mago-expect security/no-literal-password
                 database: 'tempest',
             ),
             'pgsql:host=localhost;port=5432;dbname=tempest;user=postgres;password=secret',

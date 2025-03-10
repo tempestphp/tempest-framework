@@ -29,7 +29,7 @@ namespace Tempest\Support\Arr {
         $array = to_array($array);
 
         if (! $value instanceof Closure) {
-            $search = array_search($value, $array, $strict);
+            $search = array_search($value, $array, $strict); // @mago-expect strictness/require-strict-behavior
 
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
@@ -367,7 +367,7 @@ namespace Tempest\Support\Arr {
                 continue;
             }
 
-            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) { // @mago-expect strictness/require-strict-behavior
                 continue;
             }
 
@@ -572,7 +572,7 @@ namespace Tempest\Support\Arr {
      */
     function is_empty(iterable $array): bool
     {
-        return empty(to_array($array));
+        return to_array($array) === [];
     }
 
     /**

@@ -173,7 +173,7 @@ final readonly class MigrationManager
                     ['name' => $migration->name],
                 ),
             );
-        } catch (QueryException) {
+        } catch (QueryException) { // @mago-expect best-practices/no-empty-catch-clause
             /**
              * If the migration was executed successfully but the entry in the migrations table could not be deleted,
              * we should not throw an exception as the migration was successfully rolled back.

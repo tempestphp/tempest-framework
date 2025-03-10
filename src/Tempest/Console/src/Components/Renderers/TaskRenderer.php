@@ -48,7 +48,7 @@ final class TaskRenderer
         );
 
         // If a task has an error, it is no longer active.
-        if (in_array($this->state, [ComponentState::ACTIVE, ComponentState::CANCELLED])) {
+        if (in_array($this->state, [ComponentState::ACTIVE, ComponentState::CANCELLED], strict: true)) {
             $this->newLine();
         }
 

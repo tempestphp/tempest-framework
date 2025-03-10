@@ -325,7 +325,7 @@ final class ContainerTest extends TestCase
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
 
         $result = $container->invoke(
-            callable: fn (SingletonClass $class, string $prefix) => $prefix.$class::class,
+            method: fn (SingletonClass $class, string $prefix) => $prefix.$class::class,
             prefix: 'My resolved class is ',
         );
 

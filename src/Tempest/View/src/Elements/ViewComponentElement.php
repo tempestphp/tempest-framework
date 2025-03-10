@@ -87,7 +87,7 @@ final class ViewComponentElement implements Element
             // Add dynamic slots to the current scope
             ->prepend(
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // Set the new value of $slots for this view component
+                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
 
             // Cleanup slots after the view component and restore slots from previous scope

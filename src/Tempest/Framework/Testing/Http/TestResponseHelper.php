@@ -51,7 +51,7 @@ final class TestResponseHelper
 
         $header = $this->response->getHeader($name);
 
-        $headerString = var_export($header, true);
+        $headerString = var_export($header, true); // @mago-expect best-practices/no-debug-symbols
 
         Assert::assertContains(
             $value,

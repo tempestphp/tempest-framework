@@ -20,7 +20,7 @@ final class CreateUserCommandHandler
     }
 
     #[CommandHandler]
-    public function double(CreateUserCommand $command): void
+    public function double(CreateUserCommand $_): void
     {
         // throws a CommandHandlerAlreadyExists exception since the command is already being handled by the __invoke method
     }

@@ -19,7 +19,7 @@ trait IsDatabaseModel
 {
     public ?Id $id = null;
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         $property = PropertyReflector::fromParts($this, $name);
 

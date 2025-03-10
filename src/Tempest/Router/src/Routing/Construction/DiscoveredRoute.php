@@ -9,7 +9,7 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\Route;
 
-final class DiscoveredRoute implements Route
+final readonly class DiscoveredRoute implements Route
 {
     public const string DEFAULT_MATCHING_GROUP = '[^/]++';
 
@@ -28,15 +28,15 @@ final class DiscoveredRoute implements Route
         );
     }
 
-    public readonly bool $isDynamic;
+    public bool $isDynamic;
 
     private function __construct(
-        public readonly string $uri,
-        public readonly Method $method,
-        public readonly array $parameters,
+        public string $uri,
+        public Method $method,
+        public array $parameters,
         /** @var class-string<HttpMiddleware>[] */
-        public readonly array $middleware,
-        public readonly MethodReflector $handler,
+        public array $middleware,
+        public MethodReflector $handler,
     ) {
         $this->isDynamic = $parameters !== [];
     }

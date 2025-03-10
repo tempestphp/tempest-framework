@@ -132,7 +132,7 @@ final readonly class PropertyReflector implements Reflector
     {
         try {
             return $this->reflectionProperty->getValue($object) ?? $default;
-        } catch (Error $error) {
+        } catch (Error $error) { // @mago-expect best-practices/dont-catch-error
             return $default ?? throw $error;
         }
     }

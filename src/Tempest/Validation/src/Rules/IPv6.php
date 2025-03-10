@@ -45,7 +45,7 @@ final readonly class IPv6 implements Rule
         }
 
         return 'Value should be a valid IPv6 address' . (
-            empty($additions) ? '' : ' that is ' . implode(' and ', $additions)
+            ! $additions ? '' : ' that is ' . implode(' and ', $additions)
         );
     }
 }

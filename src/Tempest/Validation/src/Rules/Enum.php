@@ -71,13 +71,13 @@ final readonly class Enum implements Rule
     private function isDesirable($value): bool
     {
         return match (true) {
-            ! empty($this->only) => in_array(needle: $value, haystack: $this->only, strict: true),
-            ! empty($this->except) => ! in_array(needle: $value, haystack: $this->except, strict: true),
+            $this->only !== [] => in_array(needle: $value, haystack: $this->only, strict: true),
+            $this->except !== [] => ! in_array(needle: $value, haystack: $this->except, strict: true),
             default => true,
         };
     }
 
-    private function retrieveEnumValue(mixed $value)
+    private function retrieveEnumValue(mixed $value): mixed
     {
         if (method_exists($this->enum, 'tryFrom')) {
             return $this->enum::tryFrom($value);

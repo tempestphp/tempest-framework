@@ -660,8 +660,8 @@ trait ManipulatesArray
 
     /**
      * Executes callback with the given `$value` and returns the same `$value`.
-     * 
-     * @param (Closure(static): void) $callback 
+     *
+     * @param (Closure(static): void) $callback
      */
     public function tap(Closure $callback): static
     {

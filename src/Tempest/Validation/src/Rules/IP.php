@@ -45,7 +45,7 @@ final readonly class IP implements Rule
         }
 
         return 'Value should be a valid IP address' . (
-            empty($additions) ? '' : ' that is ' . implode(' and ', $additions)
+            $additions === [] ? '' : ' that is ' . implode(' and ', $additions)
         );
     }
 }

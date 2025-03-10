@@ -70,7 +70,7 @@ final readonly class BooleanAttribute implements Attribute
         return match (true) {
             $allowedElements === null => false,
             $allowedElements === true => true,
-            default => in_array($element->getTag(), $allowedElements),
+            default => in_array($element->getTag(), $allowedElements, strict: true),
         };
     }
 }

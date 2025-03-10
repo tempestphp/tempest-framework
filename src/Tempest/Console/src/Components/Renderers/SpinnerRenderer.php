@@ -15,7 +15,7 @@ final class SpinnerRenderer
 
     private(set) int $speed = 80_000;
 
-    public function render(Terminal $terminal, ComponentState $state): string
+    public function render(Terminal $_, ComponentState $state): string
     {
         if ($state !== ComponentState::ACTIVE) {
             return '';

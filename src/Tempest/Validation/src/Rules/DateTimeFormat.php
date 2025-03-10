@@ -23,7 +23,7 @@ final readonly class DateTimeFormat implements Rule
             default => $value,
         };
 
-        if (! is_string($value) || empty($value)) {
+        if (! is_string($value) || ! $value) {
             return false;
         }
 

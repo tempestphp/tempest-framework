@@ -42,7 +42,7 @@ final class ValidatorTest extends TestCase
 
         $validator = new Validator();
 
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return false;
         });
     }
@@ -51,7 +51,7 @@ final class ValidatorTest extends TestCase
     {
         try {
             $validator = new Validator();
-            $validator->validateValue('a', function (mixed $value) {
+            $validator->validateValue('a', function (mixed $_) {
                 return 'I expected b';
             });
         } catch (InvalidValueException $invalidValueException) {
@@ -65,7 +65,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_null_response(): void
     {
         $validator = new Validator();
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return null;
         });
 
@@ -75,7 +75,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_true_response(): void
     {
         $validator = new Validator();
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return true;
         });
 

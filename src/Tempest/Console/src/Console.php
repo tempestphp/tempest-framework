@@ -69,7 +69,7 @@ interface Console
 
     public function warning(string $contents, ?string $title = null): self;
 
-    public function success(string $lcontentsine, ?string $title = null): self;
+    public function success(string $contents, ?string $title = null): self;
 
     public function keyValue(string $key, ?string $value = null): self;
 

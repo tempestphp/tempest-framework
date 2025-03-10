@@ -143,7 +143,7 @@ final readonly class TypeReflector implements Reflector
             'array',
             'iterable',
             Generator::class,
-        ]);
+        ], strict: true);
     }
 
     public function isNullable(): bool

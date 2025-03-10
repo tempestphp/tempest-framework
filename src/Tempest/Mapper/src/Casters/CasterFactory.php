@@ -27,7 +27,7 @@ final readonly class CasterFactory
         if ($castWith === null) {
             try {
                 $castWith = $type->asClass()->getAttribute(CastWith::class, recursive: true);
-            } catch (ReflectionException) {
+            } catch (ReflectionException) { // @mago-expect best-practices/no-empty-catch-clause
                 // Could not resolve CastWith from the type
             }
         }

@@ -208,7 +208,7 @@ final class ManipulatesStringTest extends TestCase
     public function test_starts_with(): void
     {
         $this->assertTrue(str('abc')->startsWith('a'));
-        $this->assertTrue(str('abc')->startsWith((str('a'))));
+        $this->assertTrue(str('abc')->startsWith(str('a')));
         $this->assertFalse(str('abc')->startsWith('c'));
     }
 

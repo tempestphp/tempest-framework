@@ -57,7 +57,7 @@ final class ChoiceRenderer
         // Otherwise, display the filter line
         $this->line(
             $this->style($filtering ? 'fg-magenta' : 'fg-gray', '/ '),
-            empty($query->text)
+            ! $query->text
                 ? $this->style('fg-gray dim', $placeholder ?? ($this->multiple && ! $filtering ? (count($options->getSelectedOptions()) . ' selected') : ''))
                 : $this->style($filtering ? 'fg-cyan' : 'fg-gray', $this->truncateLeft($query->text, maxLineOffset: 2)),
         )->newLine();
@@ -70,7 +70,7 @@ final class ChoiceRenderer
             );
 
             foreach ($displayOptions as $option) {
-                $display = in_array($this->default, [$option->key, $option->value])
+                $display = in_array($this->default, [$option->key, $option->value], strict: true)
                     ? $option->displayValue . ' ' . $this->style('italic fg-gray', '(default)')
                     : $option->displayValue;
 

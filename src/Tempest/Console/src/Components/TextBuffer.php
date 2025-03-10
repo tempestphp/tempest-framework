@@ -157,7 +157,7 @@ final class TextBuffer
 
     public function moveCursorY(int $offset): void
     {
-        if ($offset === 0 || empty($this->text)) {
+        if ($offset === 0 || ! $this->text) {
             return;
         }
 
@@ -179,7 +179,7 @@ final class TextBuffer
 
     public function moveCursorToStartOfLine(): void
     {
-        if (empty($this->text)) {
+        if (! $this->text) {
             return;
         }
 
@@ -191,7 +191,7 @@ final class TextBuffer
 
     public function moveCursorToEndOfLine(): void
     {
-        if (empty($this->text)) {
+        if (! $this->text) {
             return;
         }
 

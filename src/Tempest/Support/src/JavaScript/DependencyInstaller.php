@@ -12,10 +12,10 @@ use function Tempest\Support\Arr\wrap;
 /**
  * Helps with installing JavaScript dependencies in a directory.
  */
-final class DependencyInstaller
+final readonly class DependencyInstaller
 {
     public function __construct(
-        private readonly Console $console,
+        private Console $console,
     ) {
     }
 

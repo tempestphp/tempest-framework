@@ -244,7 +244,7 @@ trait PublishesFiles
             // PHP will output empty arrays for empty dependencies,
             // which is invalid and will make package managers crash.
             foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
-                if (isset($json[$key]) && empty($json[$key])) {
+                if (isset($json[$key]) && ! $json[$key]) {
                     unset($json[$key]);
                 }
             }

@@ -236,13 +236,13 @@ final class ManipulatesArrayTest extends TestCase
     {
         $this->assertTrue(
             arr(['a', 'b'])
-                ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value => $value)
+                ->mapWithKeys(fn (mixed $value, mixed $_) => yield $value => $value)
                 ->equals(['a' => 'a', 'b' => 'b']),
         );
 
         $this->assertTrue(
             arr(['a' => 'a', 'b' => 'b'])
-                ->mapWithKeys(fn (mixed $value, mixed $key) => yield $value)
+                ->mapWithKeys(fn (mixed $value, mixed $_) => yield $value)
                 ->equals(['b']),
         );
     }
@@ -252,7 +252,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->expectException(InvalidMapWithKeysUsage::class);
 
         arr(['a', 'b'])
-            ->mapWithKeys(fn (mixed $value, mixed $key) => $value);
+            ->mapWithKeys(fn (mixed $value, mixed $_) => $value);
     }
 
     public function test_values(): void
@@ -283,7 +283,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertTrue(
             arr(['a', 'b', 'c'])
-                ->filter(fn (mixed $value, mixed $key) => $key === 1)
+                ->filter(fn (mixed $_, mixed $key) => $key === 1)
                 ->values()
                 ->equals(['b']),
         );
@@ -310,7 +310,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $string = '';
 
-        arr(['a', 'b', 'c'])->each(function (mixed $value, mixed $key) use (&$string): void {
+        arr(['a', 'b', 'c'])->each(function (mixed $_, mixed $key) use (&$string): void {
             $string .= $key;
         });
 
@@ -1562,7 +1562,7 @@ final class ManipulatesArrayTest extends TestCase
         $result = $collection->findKey(fn ($item) => $item['name'] === 'Jane');
         $this->assertSame(1, $result);
 
-        $result = $collection->findKey(fn ($item, $key) => $key === 2);
+        $result = $collection->findKey(fn ($_, $key) => $key === 2);
         $this->assertSame(2, $result);
 
         $result = $collection->findKey(fn ($item) => $item['name'] === 'Alice');

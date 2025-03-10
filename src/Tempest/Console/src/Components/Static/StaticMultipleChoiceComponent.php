@@ -63,7 +63,7 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
             ->map(
                 fn (Option $option, int $index) => str($index)
                         ->when(
-                            condition: in_array($option->value, $this->default),
+                            condition: in_array($option->value, $this->default, strict: true),
                             callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
                         )
                         ->wrap('[', ']')

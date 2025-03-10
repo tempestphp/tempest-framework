@@ -48,6 +48,7 @@ final class OptionCollection implements Iterator, Countable
         $previouslyActiveOption = $this->getActive();
         $previouslySelectedOptions = $this->selectedOptions;
 
+        // @mago-expect strictness/no-empty-construct
         $this->filteredOptions = arr($this->options)
             ->filter(fn (Option $option) => empty($query) || str_contains(mb_strtolower((string) $option->value), mb_strtolower(trim($query))))
             ->values()

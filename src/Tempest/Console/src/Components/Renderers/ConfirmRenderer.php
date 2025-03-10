@@ -42,7 +42,7 @@ final class ConfirmRenderer
                 ),
                 '   ',
                 $this->style(
-                    $answer === false ? 'fg-red bold' : 'fg-gray dim',
+                $answer === false ? 'fg-red bold' : 'fg-gray dim',
                     '<style="dim">→</style> ' . $this->no,
                 ),
                 "\n",

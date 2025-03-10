@@ -43,7 +43,7 @@ final class ModelQueryBuilder
     /**
      * @return TModelClass|null
      */
-    public function first(mixed ...$bindings)
+    public function first(mixed ...$bindings): mixed
     {
         $query = $this->build($bindings);
 
@@ -59,7 +59,7 @@ final class ModelQueryBuilder
     /**
      * @return TModelClass|null
      */
-    public function find(Id $id)
+    public function find(Id $id): mixed
     {
         return $this
             ->whereField('id', $id)

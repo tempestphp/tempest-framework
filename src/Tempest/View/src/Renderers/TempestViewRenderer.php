@@ -30,7 +30,7 @@ final class TempestViewRenderer implements ViewRenderer
         return $this->currentView?->get($name);
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->currentView?->{$name}(...$arguments);
     }

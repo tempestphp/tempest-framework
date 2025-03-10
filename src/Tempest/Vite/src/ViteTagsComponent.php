@@ -7,9 +7,9 @@ namespace Tempest\Vite;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\ViewComponent;
 
-final class ViteTagsComponent implements ViewComponent
+final readonly class ViteTagsComponent implements ViewComponent
 {
-    public function __construct(private readonly ViteConfig $viteConfig)
+    public function __construct(private ViteConfig $viteConfig)
     {
     }
 
@@ -23,7 +23,7 @@ final class ViteTagsComponent implements ViewComponent
         $entrypoints = match (true) {
             $element->hasAttribute('entrypoints') => '$entrypoints',
             $element->hasAttribute('entrypoint') => '$entrypoint',
-            default => var_export($this->viteConfig->build->entrypoints, return: true),
+            default => var_export($this->viteConfig->build->entrypoints, return: true), // @mago-expect best-practices/no-debug-symbols
         };
 
         return <<<HTML

@@ -113,7 +113,7 @@ trait RendersInput
 
     private function line(string|Stringable ...$append): self
     {
-        if (empty($append)) {
+        if ($append === []) {
             return $this;
         }
 
