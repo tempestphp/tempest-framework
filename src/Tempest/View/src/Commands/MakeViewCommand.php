@@ -14,6 +14,7 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\View\Enums\ViewType;
 use Tempest\View\Stubs\ViewStub;
+
 use function Tempest\Support\str;
 
 final class MakeViewCommand
@@ -38,7 +39,7 @@ final class MakeViewCommand
     ): void {
         try {
             $suggestedPath = str($this->getSuggestedPath('Dummy'));
-            $suggestedPath = ($viewType === ViewType::RAW)
+            $suggestedPath = $viewType === ViewType::RAW
                 ? $suggestedPath->replace('Dummy', $fileName . '.view')
                 : $suggestedPath->replace('Dummy', $fileName);
 

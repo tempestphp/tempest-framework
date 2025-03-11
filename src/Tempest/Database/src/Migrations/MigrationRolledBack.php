@@ -6,7 +6,8 @@ namespace Tempest\Database\Migrations;
 
 final readonly class MigrationRolledBack
 {
-    public function __construct(public string $name)
-    {
+    public function __construct(
+        public string $name,
+    ) {
     }
 }

@@ -11,10 +11,11 @@ use Tempest\Database\Exceptions\ConnectionClosed;
 
 final class PDOConnection implements Connection
 {
-    private PDO|null $pdo = null;
+    private ?PDO $pdo = null;
 
-    public function __construct(private readonly DatabaseConfig $config)
-    {
+    public function __construct(
+        private readonly DatabaseConfig $config,
+    ) {
     }
 
     public function beginTransaction(): bool

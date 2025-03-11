@@ -10,6 +10,7 @@ namespace Tempest\Support\Arr {
     use Random\Randomizer;
     use Tempest\Support\Str\ImmutableString;
     use Traversable;
+
     use function sort as php_sort;
 
     /**
@@ -28,8 +29,8 @@ namespace Tempest\Support\Arr {
     {
         $array = to_array($array);
 
-        if (! $value instanceof Closure) {
-            $search = array_search($value, $array, $strict);
+        if (! ($value instanceof Closure)) {
+            $search = array_search($value, $array, $strict); // @mago-expect strictness/require-strict-behavior
 
             return $search === false ? null : $search; // Keep empty values but convert false to null
         }
@@ -202,8 +203,8 @@ namespace Tempest\Support\Arr {
         $randomValues = [];
         foreach ($keys as $key) {
             $preserveKey
-                ? $randomValues[$key] = $array[$key]
-                : $randomValues[] = $array[$key];
+                ? ($randomValues[$key] = $array[$key])
+                : ($randomValues[] = $array[$key]);
         }
 
         if ($preserveKey === false) {
@@ -352,7 +353,7 @@ namespace Tempest\Support\Arr {
 
         foreach ($array as $item) {
             // Ensure we don't check raw values with key filter
-            if (! is_null($key) && ! is_array($item) && ! $key instanceof Closure) {
+            if (! is_null($key) && ! is_array($item) && ! ($key instanceof Closure)) {
                 continue;
             }
 
@@ -367,7 +368,7 @@ namespace Tempest\Support\Arr {
                 continue;
             }
 
-            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) {
+            if (in_array($filterValue, $uniqueFilteredValues, strict: $shouldBeStrict)) { // @mago-expect strictness/require-strict-behavior
                 continue;
             }
 
@@ -572,7 +573,7 @@ namespace Tempest\Support\Arr {
      */
     function is_empty(iterable $array): bool
     {
-        return empty(to_array($array));
+        return to_array($array) === [];
     }
 
     /**
@@ -690,7 +691,7 @@ namespace Tempest\Support\Arr {
             $generator = $map($value, $key);
 
             // @phpstan-ignore instanceof.alwaysTrue
-            if (! $generator instanceof Generator) {
+            if (! ($generator instanceof Generator)) {
                 throw new InvalidMapWithKeysUsage();
             }
 

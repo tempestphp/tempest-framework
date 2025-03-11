@@ -20,6 +20,7 @@ use Tempest\EventBus\Tests\Fixtures\MyEventBusMiddleware;
 use Tempest\EventBus\Tests\Fixtures\MyEventHandler;
 use Tempest\EventBus\Tests\Fixtures\MyService;
 use Tempest\Reflection\MethodReflector;
+
 use function Tempest\get;
 use function Tempest\listen;
 
@@ -95,6 +96,7 @@ final class EventBusTest extends TestCase
         $config = new EventBusConfig(
             handlers: [
                 ItHappened::class => [
+                    // @mago-expect best-practices/no-unused-parameter
                     new CallableEventHandler(ItHappened::class, function (ItHappened $event, MyService $service) use (&$called): void {
                         $called = $service->value;
                     }),
@@ -122,6 +124,7 @@ final class EventBusTest extends TestCase
         $eventBus = new GenericEventBus($container, $config);
         $hasHappened = false;
 
+        // @mago-expect best-practices/no-unused-parameter
         $eventBus->listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });
@@ -140,6 +143,7 @@ final class EventBusTest extends TestCase
 
         $hasHappened = false;
 
+        // @mago-expect best-practices/no-unused-parameter
         listen('my-event', function (string $event) use (&$hasHappened): void {
             $hasHappened = true;
         });

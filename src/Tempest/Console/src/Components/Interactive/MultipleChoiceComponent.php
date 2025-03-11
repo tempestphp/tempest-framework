@@ -70,12 +70,15 @@ final class MultipleChoiceComponent implements InteractiveConsoleComponent, HasC
     private function getControls(): array
     {
         return [
-            ...($this->bufferEnabled ? [
-                'esc' => 'select',
-            ] : [
-                '/' => 'filter',
-                'space' => 'select',
-            ]),
+            ...(
+                $this->bufferEnabled
+                    ? [
+                        'esc' => 'select',
+                    ] : [
+                        '/' => 'filter',
+                        'space' => 'select',
+                    ]
+            ),
             '↑' => 'up',
             '↓' => 'down',
             'enter' => $this->options->getSelectedOptions() === []

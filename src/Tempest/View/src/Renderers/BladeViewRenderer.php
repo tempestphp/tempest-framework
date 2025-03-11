@@ -10,8 +10,9 @@ use Tempest\View\ViewRenderer;
 
 final readonly class BladeViewRenderer implements ViewRenderer
 {
-    public function __construct(private Blade $blade)
-    {
+    public function __construct(
+        private Blade $blade,
+    ) {
     }
 
     public function render(View|string|null $view): string

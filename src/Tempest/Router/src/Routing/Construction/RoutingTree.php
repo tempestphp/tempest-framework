@@ -24,6 +24,7 @@ final class RoutingTree
         $method = $markedRoute->route->method;
 
         // Find the root tree node based on HTTP method
+        // @mago-expect best-practices/no-multi-assignments
         $node = $this->roots[$method->value] ??= RouteTreeNode::createRootRoute();
 
         // Traverse the tree and find the node for each route segment

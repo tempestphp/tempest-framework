@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final readonly class TaggedDependency
 {
-    public function __construct(public string $name)
-    {
+    public function __construct(
+        public string $name,
+    ) {
     }
 }

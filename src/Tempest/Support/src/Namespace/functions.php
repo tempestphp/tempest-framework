@@ -6,6 +6,7 @@ namespace Tempest\Support\Namespace {
     use Tempest\Core\Composer;
     use Tempest\Core\Kernel;
     use Tempest\Support\Str\ImmutableString;
+
     use function Tempest\get;
     use function Tempest\src_namespace;
     use function Tempest\src_path;

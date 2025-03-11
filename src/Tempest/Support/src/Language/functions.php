@@ -6,6 +6,7 @@ namespace Tempest\Support\Language {
     use Countable;
     use Stringable;
     use Tempest\Support\Pluralizer\Pluralizer;
+
     use function Tempest\get;
 
     /**

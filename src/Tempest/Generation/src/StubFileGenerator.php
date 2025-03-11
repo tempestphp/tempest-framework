@@ -11,6 +11,7 @@ use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
+
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\Namespace\to_main_namespace;
 use function Tempest\Support\path;

@@ -7,6 +7,7 @@ namespace Tempest\Console\Components\Static;
 use Closure;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
+
 use function Tempest\Support\Arr\wrap;
 
 final class StaticSearchComponent implements StaticConsoleComponent

@@ -19,6 +19,7 @@ use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Console\Terminal\Terminal;
 use Throwable;
+
 use function Tempest\Support\arr;
 
 final class TaskComponent implements InteractiveConsoleComponent, HasStaticComponent

@@ -10,8 +10,9 @@ use Tempest\EventBus\EventHandler;
 
 final readonly class MigrationEventHandlers
 {
-    public function __construct(private Console $console)
-    {
+    public function __construct(
+        private Console $console,
+    ) {
     }
 
     #[EventHandler]

@@ -6,6 +6,7 @@ namespace Tempest\Console\Installers;
 
 use Tempest\Core\Installer;
 use Tempest\Core\IsComponentInstaller;
+
 use function Tempest\root_path;
 
 final class ConsoleInstaller implements Installer
@@ -21,7 +22,7 @@ final class ConsoleInstaller implements Installer
         $this->publish(
             source: __DIR__ . '/tempest',
             destination: root_path('tempest'),
-            callback: function (string $source, string $destination): void {
+            callback: function (string $_, string $destination): void {
                 if (PHP_OS_FAMILY !== 'Windows') {
                     /** @phpstan-ignore-next-line */
                     exec("chmod +x {$destination}");

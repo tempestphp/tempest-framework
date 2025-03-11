@@ -8,7 +8,7 @@ final readonly class Chunk
 {
     public function __construct(
         public string $file,
-        public string|null $src,
+        public ?string $src,
         public bool $isEntry,
         public bool $isDynamicEntry,
         public bool $isLegacyEntry,
@@ -16,7 +16,7 @@ final readonly class Chunk
         public array $imports,
         public array $dynamicImports,
         public array $assets,
-        public string|null $integrity = null,
+        public ?string $integrity = null,
     ) {
     }
 

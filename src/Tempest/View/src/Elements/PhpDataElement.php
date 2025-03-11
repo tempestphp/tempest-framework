@@ -7,6 +7,7 @@ namespace Tempest\View\Elements;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\WrapsElement;
+
 use function Tempest\Support\str;
 
 final class PhpDataElement implements Element, WrapsElement
@@ -45,8 +46,8 @@ final class PhpDataElement implements Element, WrapsElement
             '$%s ??= %s ?? null;',
             $name,
             $isExpression
-                ? $value ?: 'null'
-                : var_export($value, true),
+                ? ($value ?: 'null')
+                : var_export($value, true), // @mago-expect best-practices/no-debug-symbols
         );
 
         // And we'll remove it right after the element, this way we've created a "local scope"

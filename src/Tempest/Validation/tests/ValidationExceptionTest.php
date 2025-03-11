@@ -22,7 +22,7 @@ final class ValidationExceptionTest extends TestCase
 
         throw new ValidationException(new stdClass(), [
             'email' => [
-                new class () implements Rule {
+                new class() implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -46,7 +46,7 @@ final class ValidationExceptionTest extends TestCase
 
         throw new ValidationException(new stdClass(), [
             'email' => [
-                new class () implements Rule {
+                new class() implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -57,7 +57,7 @@ final class ValidationExceptionTest extends TestCase
                         return 'Value should be a valid email address';
                     }
                 },
-                new class () implements Rule {
+                new class() implements Rule {
                     public function isValid(mixed $value): bool
                     {
                         return false;
@@ -72,7 +72,8 @@ final class ValidationExceptionTest extends TestCase
                             'the new gods from the future',
                         ];
                     }
-                }],
+                },
+            ],
         ]);
     }
 }

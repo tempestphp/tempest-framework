@@ -12,8 +12,9 @@ use Throwable;
 #[Attribute]
 final readonly class PhoneNumber implements Rule
 {
-    public function __construct(private ?string $defaultRegion = null)
-    {
+    public function __construct(
+        private ?string $defaultRegion = null,
+    ) {
     }
 
     public function isValid(mixed $value): bool

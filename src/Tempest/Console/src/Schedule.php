@@ -20,6 +20,6 @@ final readonly class Schedule
         public OutputMode $outputMode = OutputMode::Append,
         public bool $runInBackground = true,
     ) {
-        $this->interval = $interval instanceof Interval ? $interval : $interval->toInterval();
+        $this->interval = ($interval instanceof Interval) ? $interval : $interval->toInterval();
     }
 }

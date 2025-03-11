@@ -17,8 +17,8 @@ final class DuplicateViewComponent extends Exception
     ) {
         $message = sprintf(
             "Could not register view component `{$name}` from `%s`, because a component with the same name already exists in `%s`",
-            $pending instanceof AnonymousViewComponent ? $pending->file : $pending->getName(),
-            $existing instanceof AnonymousViewComponent ? $existing->file : $existing,
+            ($pending instanceof AnonymousViewComponent) ? $pending->file : $pending->getName(),
+            ($existing instanceof AnonymousViewComponent) ? $existing->file : $existing,
         );
 
         parent::__construct($message);

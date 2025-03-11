@@ -6,6 +6,7 @@ namespace Tempest\Console\Components\Renderers;
 
 use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Terminal\Terminal;
+
 use function Tempest\Support\str;
 
 final class TaskRenderer
@@ -31,9 +32,9 @@ final class TaskRenderer
             ComponentState::ERROR => '<style="fg-red">An error occurred.</style>',
             ComponentState::CANCELLED => '<style="fg-yellow">Cancelled.</style>',
             ComponentState::DONE => $finishedAt
-                ? '<style="fg-gray">Done in <style="bold">'.$runtime($finishedAt).'ms</style>.</style>'
+                ? ('<style="fg-gray">Done in <style="bold">' . $runtime($finishedAt) . 'ms</style>.</style>')
                 : '<style="fg-gray">Done.</style>',
-            default => $hint ?? $runtime(hrtime(as_number: true)) . 'ms',
+            default => $hint ?? ($runtime(hrtime(as_number: true)) . 'ms'),
         };
 
         $this->line(
@@ -42,13 +43,13 @@ final class TaskRenderer
                     ComponentState::DONE => '<style="fg-green">✔</style>',
                     ComponentState::ERROR => '<style="fg-red">✖</style>',
                     ComponentState::CANCELLED => '<style="fg-yellow">⚠</style>',
-                    default => '<style="fg-gray">'.$this->spinner->render($terminal, $this->state).'</style>',
+                    default => '<style="fg-gray">' . $this->spinner->render($terminal, $this->state) . '</style>',
                 })
                 ->append('<style="fg-gray"> ', $hint, '</style>'),
         );
 
         // If a task has an error, it is no longer active.
-        if (in_array($this->state, [ComponentState::ACTIVE, ComponentState::CANCELLED])) {
+        if (in_array($this->state, [ComponentState::ACTIVE, ComponentState::CANCELLED], strict: true)) {
             $this->newLine();
         }
 

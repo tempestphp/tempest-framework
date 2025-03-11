@@ -9,6 +9,7 @@ use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -21,8 +22,7 @@ final class ViewComponentElement implements Element
         private readonly TempestViewCompiler $compiler,
         private readonly ViewComponent $viewComponent,
         array $attributes,
-    )
-    {
+    ) {
         $this->attributes = $attributes;
     }
 
@@ -37,7 +37,7 @@ final class ViewComponentElement implements Element
         $slots = [];
 
         foreach ($this->getChildren() as $child) {
-            if (! $child instanceof SlotElement) {
+            if (! ($child instanceof SlotElement)) {
                 continue;
             }
 
@@ -50,7 +50,7 @@ final class ViewComponentElement implements Element
     public function getSlot(string $name = 'slot'): ?Element
     {
         foreach ($this->getChildren() as $child) {
-            if (! $child instanceof SlotElement) {
+            if (! ($child instanceof SlotElement)) {
                 continue;
             }
 
@@ -87,16 +87,14 @@ final class ViewComponentElement implements Element
             // Add dynamic slots to the current scope
             ->prepend(
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
-                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // Set the new value of $slots for this view component
+                sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
-
             // Cleanup slots after the view component and restore slots from previous scope
             ->append(
                 '<?php unset($slots); ?>', // Unset current $slots
                 '<?php $slots = $_previousSlots ?? null; ?>', // Restore previous $slots
                 '<?php unset($_previousSlots); ?>', // Cleanup temporary $_previousSlots
             )
-
             // Compile slots
             ->replaceRegex(
                 regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
@@ -108,7 +106,7 @@ final class ViewComponentElement implements Element
                     if ($slot === null) {
                         // A slot doesn't have any content, so we'll comment it out.
                         // This is to prevent DOM parsing errors (slots in <head> tags is one example, see #937)
-                        return $this->environment->isProduction() ? '' : '<!--' . $matches[0] . '-->';
+                        return $this->environment->isProduction() ? '' : ('<!--' . $matches[0] . '-->');
                     }
 
                     return $slot->compile();

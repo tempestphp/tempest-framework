@@ -42,7 +42,7 @@ enum Permission: int
 
     public static function allow(Permission ...$permissions): int
     {
-        if (empty($permissions)) {
+        if ($permissions === []) {
             return 0;
         }
 

@@ -20,8 +20,7 @@ enum Alter: string implements QueryStatement
     {
         return match ($dialect) {
             DatabaseDialect::MYSQL => $this->value,
-            DatabaseDialect::POSTGRESQL,
-            DatabaseDialect::SQLITE => $this->value . ' COLUMN',
+            DatabaseDialect::POSTGRESQL, DatabaseDialect::SQLITE => $this->value . ' COLUMN',
         };
     }
 }

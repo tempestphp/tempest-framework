@@ -30,8 +30,12 @@ final readonly class DateTimeCaster implements Caster
         };
     }
 
-    public function cast(mixed $input): DateTimeInterface
+    public function cast(mixed $input): ?DateTimeInterface
     {
+        if (! $input) {
+            return null;
+        }
+
         if ($input instanceof DateTimeInterface) {
             return $input;
         }
@@ -49,7 +53,7 @@ final readonly class DateTimeCaster implements Caster
 
     public function serialize(mixed $input): string
     {
-        if (! $input instanceof DateTimeInterface) {
+        if (! ($input instanceof DateTimeInterface)) {
             throw new CannotSerializeValue(DateTimeInterface::class);
         }
 
