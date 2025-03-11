@@ -574,4 +574,30 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </body></html>
         HTML, $html);
     }
+
+    public function test_does_not_duplicate_br(): void
+    {
+        $this->registerViewComponent('x-html-base', <<<'HTML'
+            <!doctype html>
+            <html lang="en">
+                <head>
+                </head>
+                <body>
+                    <x-slot />
+                </body>
+            </html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+            <x-html-base>
+                <br />
+                <hr />
+            </x-html-base>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <!DOCTYPE html>
+        <html lang="en"><head></head><body><br></br><hr></hr></body></html>
+        HTML, $html);
+    }
 }
