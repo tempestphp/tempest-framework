@@ -32,7 +32,7 @@ final class ViteInstaller implements Installer
     {
         $argument = $this->consoleArgumentBag->get('tailwind');
 
-        if ($argument === null || !is_bool($argument->value)) {
+        if ($argument === null || ! is_bool($argument->value)) {
             return $this->console->confirm('Install Tailwind CSS as well?', default: true);
         }
 
@@ -52,7 +52,7 @@ final class ViteInstaller implements Installer
             dependencies: [
                 'vite',
                 'vite-plugin-tempest',
-                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : [])
+                ...($shouldInstallTailwind ? ['tailwindcss', '@tailwindcss/vite'] : []),
             ],
             dev: true,
         );
@@ -105,7 +105,10 @@ final class ViteInstaller implements Installer
                 ? sprintf('Configure <href="file://%s">vite.config.ts</href> as you see fit', $viteConfig)
                 : null,
             $mainTs
-                ? sprintf("Add <code><x-vite-tags :entrypoints='%s' /></code> to the <head> of your template", json_encode(array_filter([$mainCss, $mainTs]), JSON_UNESCAPED_SLASHES))
+                ? sprintf(
+                    "Add <code><x-vite-tags :entrypoints='%s' /></code> to the <head> of your template",
+                    json_encode(array_filter([$mainCss, $mainTs]), JSON_UNESCAPED_SLASHES),
+                )
                 : 'Create a file and include it in your template with <code><x-vite-tags entrypoint="./path/to/file.ts" /></code>',
             "Run <code>{$packageManager->getBinaryName()} dev</code> to start the <strong>development server</strong>",
             PHP_EOL,

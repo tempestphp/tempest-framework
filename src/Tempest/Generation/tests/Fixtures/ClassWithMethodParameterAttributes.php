@@ -9,8 +9,8 @@ use Tempest\Generation\Tests\Fixtures\SampleNamespace\SampleParameterAttribute;
 final class ClassWithMethodParameterAttributes
 {
     public function example(
-        #[SampleParameterAttribute]
-        string $parameter,
+        // @mago-expect best-practices/no-unused-parameter
+        #[SampleParameterAttribute] string $parameter,
     ): void {
     }
 }

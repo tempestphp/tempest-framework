@@ -14,7 +14,7 @@ final class HasConditionsTest extends TestCase
 {
     public function test_when(): void
     {
-        $class = new class () {
+        $class = new class() {
             use HasConditions;
 
             public bool $value = false;
@@ -27,7 +27,7 @@ final class HasConditionsTest extends TestCase
 
     public function test_when_with_callback(): void
     {
-        $class = new class () {
+        $class = new class() {
             use HasConditions;
 
             public bool $value = false;
@@ -40,7 +40,7 @@ final class HasConditionsTest extends TestCase
 
     public function test_unless(): void
     {
-        $class = new class () {
+        $class = new class() {
             use HasConditions;
 
             public bool $value = false;
@@ -53,7 +53,7 @@ final class HasConditionsTest extends TestCase
 
     public function test_unless_with_callback(): void
     {
-        $class = new class () {
+        $class = new class() {
             use HasConditions;
 
             public bool $value = false;
@@ -66,7 +66,7 @@ final class HasConditionsTest extends TestCase
 
     public function test_returns_same_instance(): void
     {
-        $class = new class () {
+        $class = new class() {
             use HasConditions;
 
             public string $string = 'foo';

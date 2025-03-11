@@ -11,6 +11,7 @@ use Tempest\Router\Session\SessionDestroyed;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
 use Throwable;
+
 use function Tempest\event;
 use function Tempest\internal_storage_path;
 
@@ -63,7 +64,7 @@ final readonly class FileSessionManager implements SessionManager
 
         $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
 
-        return $validUntil - $this->clock->time() > 0;
+        return ($validUntil - $this->clock->time()) > 0;
     }
 
     private function getPath(SessionId $id): string

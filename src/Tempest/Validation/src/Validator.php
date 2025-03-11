@@ -6,21 +6,28 @@ namespace Tempest\Validation;
 
 use Closure;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
+use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsFloat;
+use Tempest\Validation\Rules\IsInteger;
+use Tempest\Validation\Rules\IsString;
+use Tempest\Validation\Rules\NotEmpty;
+use Tempest\Validation\Rules\NotNull;
+
 use function Tempest\Support\arr;
 
 final readonly class Validator
 {
-    public function validate(object $object): void
+    public function validateObject(object $object): void
     {
         $class = new ClassReflector($object);
 
         $failingRules = [];
 
         foreach ($class->getPublicProperties() as $property) {
-            $rules = $property->getAttributes(Rule::class);
-
             if (! $property->isInitialized($object)) {
                 continue;
             }
@@ -28,14 +35,45 @@ final readonly class Validator
             $value = $property->getValue($object);
 
             try {
-                $this->validateValue($value, $rules);
-            } catch (InvalidValueException $invalidValueException) {
+                $this->validateProperty($property, $value);
+            } catch (PropertyValidationException $invalidValueException) {
                 $failingRules[$property->getName()] = $invalidValueException->failingRules;
             }
         }
 
         if ($failingRules !== []) {
             throw new ValidationException($object, $failingRules);
+        }
+    }
+
+    public function validateProperty(PropertyReflector $property, mixed $value): void
+    {
+        $failingRules = [];
+
+        try {
+            $rules = $property->getAttributes(Rule::class);
+
+            if (! $property->isNullable()) {
+                $rules[] = new NotNull();
+            }
+
+            if ($property->getType()->isScalar()) {
+                $rules[] = match ($property->getType()->getName()) {
+                    'string' => new IsString(orNull: $property->isNullable()),
+                    'int' => new IsInteger(orNull: $property->isNullable()),
+                    'float' => new IsFloat(orNull: $property->isNullable()),
+                    'bool' => new IsBoolean(orNull: $property->isNullable()),
+                    default => null,
+                };
+            }
+
+            $this->validateValue($value, array_filter($rules));
+        } catch (InvalidValueException $invalidValueException) {
+            $failingRules = $invalidValueException->failingRules;
+        }
+
+        if ($failingRules !== []) {
+            throw new PropertyValidationException($property, $failingRules);
         }
     }
 
@@ -70,7 +108,7 @@ final readonly class Validator
             default => [true, ''],
         };
 
-        return new readonly class ($isValid, $message) implements Rule {
+        return new readonly class($isValid, $message) implements Rule {
             public function __construct(
                 private bool $isValid,
                 private string $message,

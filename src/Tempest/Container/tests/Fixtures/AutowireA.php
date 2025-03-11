@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final readonly class AutowireA
 {
-    public function __construct(public AutowireB $b)
-    {
+    public function __construct(
+        public AutowireB $b,
+    ) {
     }
 }

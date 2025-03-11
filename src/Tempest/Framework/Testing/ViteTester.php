@@ -38,7 +38,8 @@ final class ViteTester
      */
     public function clearCaches(): self
     {
-        $this->container->get(Vite::class)
+        $this->container
+            ->get(Vite::class)
             ->clearManifestCache()
             ->clearBridgeCache();
 

@@ -27,7 +27,7 @@ final class CannotInstantiateDependencyException extends Exception implements Co
         foreach ($stack as $currentDependency) {
             $pipe = match (true) {
                 count($stack) > 1 && $i === 0 => '┌──',
-                count($stack) > 1 && $i === count($stack) - 1 => '└──',
+                count($stack) > 1 && $i === (count($stack) - 1) => '└──',
                 count($stack) === 1 => '   ',
                 default => '├──',
             };
@@ -43,7 +43,6 @@ final class CannotInstantiateDependencyException extends Exception implements Co
         //        $fillerSpaces = str_repeat(' ', strlen($firstPart) + 3);
         //        $fillerArrows = str_repeat('▒', strlen($currentDependencyName));
         //        $message .= PHP_EOL . "\t {$fillerSpaces}{$fillerArrows}";
-        //
         //        $message .= PHP_EOL . PHP_EOL;
 
         $message .= "Originally called in {$chain->getOrigin()}";

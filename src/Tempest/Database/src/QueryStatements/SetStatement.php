@@ -21,7 +21,7 @@ final readonly class SetStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        if (empty($this->values)) {
+        if ($this->values === []) {
             throw new InvalidValue($this->name, json_encode($this->values));
         }
 

@@ -22,6 +22,10 @@ final readonly class Length implements Rule
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         $length = strlen($value);
 
         $min = $this->min ?? $length;

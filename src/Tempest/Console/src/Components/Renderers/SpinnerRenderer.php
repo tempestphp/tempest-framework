@@ -9,13 +9,43 @@ use Tempest\Console\Terminal\Terminal;
 
 final class SpinnerRenderer
 {
-    private const array FRAMES = ['⠁', '⠁', '⠉', '⠙', '⠚', '⠒', '⠂', '⠂', '⠒', '⠲', '⠴', '⠤', '⠄', '⠄', '⠤', '⠠', '⠠', '⠤', '⠦', '⠖', '⠒', '⠐', '⠐', '⠒', '⠓', '⠋', '⠉', '⠈', '⠈'];
+    private const array FRAMES = [
+        '⠁',
+        '⠁',
+        '⠉',
+        '⠙',
+        '⠚',
+        '⠒',
+        '⠂',
+        '⠂',
+        '⠒',
+        '⠲',
+        '⠴',
+        '⠤',
+        '⠄',
+        '⠄',
+        '⠤',
+        '⠠',
+        '⠠',
+        '⠤',
+        '⠦',
+        '⠖',
+        '⠒',
+        '⠐',
+        '⠐',
+        '⠒',
+        '⠓',
+        '⠋',
+        '⠉',
+        '⠈',
+        '⠈',
+    ];
 
     private int $index = 0;
 
     private(set) int $speed = 80_000;
 
-    public function render(Terminal $terminal, ComponentState $state): string
+    public function render(Terminal $_, ComponentState $state): string
     {
         if ($state !== ComponentState::ACTIVE) {
             return '';

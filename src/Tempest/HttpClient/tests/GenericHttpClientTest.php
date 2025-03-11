@@ -30,8 +30,7 @@ final class GenericHttpClientTest extends TestCase
 
         $this->client->sendRequest($request);
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('PUT')
             ->assertUri('/testing-put');
     }
@@ -40,8 +39,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->get('/test-get');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('GET')
             ->assertUri('/test-get');
     }
@@ -52,8 +50,7 @@ final class GenericHttpClientTest extends TestCase
             'X-Tempest' => 'We love Tempest!',
         ]);
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('GET')
             ->assertHeaderEquals('X-Tempest', 'We love Tempest!');
     }
@@ -62,8 +59,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->head('/test-head');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('HEAD')
             ->assertUri('/test-head');
     }
@@ -72,8 +68,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->post(uri: '/test-post', body: '{"test":"value"}');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('POST')
             ->assertUri('/test-post')
             ->assertBodyIs('{"test":"value"}');
@@ -83,8 +78,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->trace('/test-trace');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('TRACE')
             ->assertUri('/test-trace');
     }
@@ -93,8 +87,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->put(uri: '/test-put', body: '{"test":"test-value"}');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('PUT')
             ->assertUri('/test-put')
             ->assertBodyIs('{"test":"test-value"}');
@@ -104,8 +97,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->patch(uri: '/test-patch', body: '{"firstName":"Dwight"}');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('PATCH')
             ->assertUri('/test-patch')
             ->assertBodyIs('{"firstName":"Dwight"}');
@@ -115,8 +107,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->delete(uri: '/test-delete');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('DELETE')
             ->assertUri('/test-delete');
     }
@@ -125,8 +116,7 @@ final class GenericHttpClientTest extends TestCase
     {
         $this->client->options('/test-options');
 
-        $this
-            ->mock
+        $this->mock
             ->assertMethod('OPTIONS')
             ->assertUri('/test-options');
     }

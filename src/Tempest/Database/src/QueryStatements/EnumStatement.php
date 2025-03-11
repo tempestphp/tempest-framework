@@ -8,6 +8,7 @@ use BackedEnum;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use UnitEnum;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -19,16 +20,17 @@ final readonly class EnumStatement implements QueryStatement
         private string $enumClass,
         private bool $nullable = false,
         private null|UnitEnum|BackedEnum $default = null,
-    ) {}
+    ) {
+    }
 
     public function compile(DatabaseDialect $dialect): string
     {
         $cases = arr($this->enumClass::cases())
-            ->map(fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
+            ->map(fn (UnitEnum|BackedEnum $case) => ($case instanceof BackedEnum) ? $case->value : $case->name)
             ->map(fn (string $value) => "'{$value}'");
 
         if ($this->default !== null) {
-            $defaultValue = $this->default instanceof BackedEnum ? $this->default->value : $this->default->name;
+            $defaultValue = ($this->default instanceof BackedEnum) ? $this->default->value : $this->default->name;
         } else {
             $defaultValue = null;
         }

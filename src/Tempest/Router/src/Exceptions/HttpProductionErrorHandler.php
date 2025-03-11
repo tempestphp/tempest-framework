@@ -20,11 +20,7 @@ final class HttpProductionErrorHandler implements ErrorHandler
     {
         ll("{$errFile}:{$errLine} {$errstr} ({$errNo})");
 
-        if (
-            $errNo === E_USER_WARNING
-            || $errNo === E_DEPRECATED
-            || $errNo === E_WARNING
-        ) {
+        if ($errNo === E_USER_WARNING || $errNo === E_DEPRECATED || $errNo === E_WARNING) {
             return;
         }
 
@@ -43,6 +39,6 @@ final class HttpProductionErrorHandler implements ErrorHandler
 
         ob_end_flush();
 
-        exit;
+        exit();
     }
 }

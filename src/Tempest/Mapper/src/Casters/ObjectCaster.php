@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use Stringable;
 use Tempest\Mapper\Caster;
-use Tempest\Mapper\Exceptions\CannotSerializeValue;
+use Tempest\Mapper\Mappers\ArrayToObjectMapper;
+use Tempest\Mapper\Mappers\ObjectToJsonMapper;
 use Tempest\Reflection\TypeReflector;
-use Throwable;
+
+use function Tempest\map;
 
 final readonly class ObjectCaster implements Caster
 {
@@ -19,23 +20,11 @@ final readonly class ObjectCaster implements Caster
 
     public function cast(mixed $input): mixed
     {
-        try {
-            return $this->type->asClass()->newInstanceArgs([$input]);
-        } catch (Throwable) {
-            return $input;
-        }
+        return map($input)->with(ArrayToObjectMapper::class)->to($this->type->getName());
     }
 
     public function serialize(mixed $input): string
     {
-        if (! is_object($input)) {
-            throw new CannotSerializeValue('object');
-        }
-
-        if ($input instanceof Stringable) {
-            return (string) $input;
-        }
-
-        return serialize($input);
+        return map($input)->with(ObjectToJsonMapper::class)->do();
     }
 }

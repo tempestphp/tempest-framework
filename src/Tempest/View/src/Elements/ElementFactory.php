@@ -15,6 +15,7 @@ use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+
 use function Tempest\Support\str;
 
 final class ElementFactory
@@ -25,7 +26,8 @@ final class ElementFactory
         private readonly AppConfig $appConfig,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {}
+    ) {
+    }
 
     public function setViewCompiler(TempestViewCompiler $compiler): self
     {
@@ -77,9 +79,7 @@ final class ElementFactory
             $attributes[$name] = $attribute->value;
         }
 
-        if (! $node instanceof DomElement
-            || $tagName === 'pre'
-            || $tagName === 'code') {
+        if (! ($node instanceof DomElement) || $tagName === 'pre' || $tagName === 'code') {
             $content = '';
 
             foreach ($node->childNodes as $child) {
@@ -94,7 +94,7 @@ final class ElementFactory
         }
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$tagName] ?? null) {
-            if (! $viewComponentClass instanceof ViewComponent) {
+            if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
 

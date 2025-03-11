@@ -8,6 +8,7 @@ use BackedEnum;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use UnitEnum;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -16,12 +17,13 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
     public function __construct(
         /** @var class-string<UnitEnum|BackedEnum> */
         private string $enumClass,
-    ) {}
+    ) {
+    }
 
     public function compile(DatabaseDialect $dialect): string
     {
         $cases = arr($this->enumClass::cases())
-            ->map(fn (UnitEnum|BackedEnum $case) => $case instanceof BackedEnum ? $case->value : $case->name)
+            ->map(fn (UnitEnum|BackedEnum $case) => ($case instanceof BackedEnum) ? $case->value : $case->name)
             ->map(fn (string $value) => "'{$value}'");
 
         return match ($dialect) {
@@ -35,7 +37,7 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
                 END $$;
                 PSQL,
                 str($this->enumClass)->replace('\\\\', '_'),
-                $cases->implode(', ')
+                $cases->implode(', '),
             ),
         };
     }

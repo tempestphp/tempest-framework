@@ -38,7 +38,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MysqlConfig(),
-'CREATE TABLE `migrations` (
+            'CREATE TABLE `migrations` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
     `name` VARCHAR(255) NOT NULL
 );',
@@ -46,7 +46,7 @@ final class DatabaseQueryStatementTest extends TestCase
 
         yield 'postgresql' => [
             new PostgresConfig(),
-'CREATE TABLE `migrations` (
+            'CREATE TABLE `migrations` (
     `id` SERIAL PRIMARY KEY, 
     `name` VARCHAR(255) NOT NULL
 );',
@@ -54,7 +54,7 @@ final class DatabaseQueryStatementTest extends TestCase
 
         yield 'sqlite' => [
             new SQLiteConfig(),
-'CREATE TABLE `migrations` (
+            'CREATE TABLE `migrations` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
     `name` VARCHAR(255) NOT NULL
 );',
@@ -78,7 +78,7 @@ final class DatabaseQueryStatementTest extends TestCase
     {
         yield 'mysql' => [
             new MysqlConfig(),
-'CREATE TABLE `books` (
+            'CREATE TABLE `books` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT, 
     `author_id` INTEGER  NOT NULL, 
     CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
@@ -88,7 +88,7 @@ final class DatabaseQueryStatementTest extends TestCase
 
         yield 'postgresql' => [
             new PostgresConfig(),
-'CREATE TABLE `books` (
+            'CREATE TABLE `books` (
     `id` SERIAL PRIMARY KEY, 
     `author_id` INTEGER  NOT NULL, 
     CONSTRAINT fk_authors_books_author_id FOREIGN KEY books(author_id) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE NO ACTION, 
@@ -98,7 +98,7 @@ final class DatabaseQueryStatementTest extends TestCase
 
         yield 'sqlite' => [
             new SQLiteConfig(),
-'CREATE TABLE `books` (
+            'CREATE TABLE `books` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
     `author_id` INTEGER  NOT NULL, 
     `name` VARCHAR(255) NOT NULL

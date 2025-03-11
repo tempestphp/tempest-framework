@@ -12,6 +12,7 @@ use Tempest\Router\GenericRequest;
 use Tempest\Router\Request;
 use Tempest\Router\Upload;
 use Tempest\Validation\Validator;
+
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -68,10 +69,11 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             'files' => $uploads,
             ...$data,
             ...$uploads,
-        ])->to($requestClass);
+        ])
+            ->to($requestClass);
 
         $validator = new Validator();
-        $validator->validate($newRequest);
+        $validator->validateObject($newRequest);
 
         return $newRequest;
     }

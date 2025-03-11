@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests;
 
 use PHPUnit\Framework\TestCase;
+
 use function Tempest\Support\tap;
 
 /**
@@ -14,7 +15,7 @@ final class FunctionsTest extends TestCase
 {
     public function test_tap(): void
     {
-        $class = new class () {
+        $class = new class() {
             public string $value = 'foo';
         };
 

@@ -15,9 +15,11 @@ use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\View;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
+
 use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler
@@ -69,7 +71,7 @@ final readonly class TempestViewCompiler
 
     private function retrieveTemplate(string|View $view): string
     {
-        $path = $view instanceof View ? $view->path : $view;
+        $path = ($view instanceof View) ? $view->path : $view;
 
         if (! str_ends_with($path, '.php')) {
             return $path;
@@ -186,7 +188,6 @@ final readonly class TempestViewCompiler
 
         return $compiled
             ->implode(PHP_EOL)
-
             // Unescape PHP tags
             ->replace(
                 array_values(self::TOKEN_MAPPING),
@@ -203,7 +204,6 @@ final readonly class TempestViewCompiler
                 search: array_keys(self::TOKEN_MAPPING),
                 replace: array_values(self::TOKEN_MAPPING),
             )
-
             // Convert self-closing tags
             ->replaceRegex(
                 regex: '/<x-(?<element>.*?)\/>/',

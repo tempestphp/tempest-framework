@@ -21,11 +21,13 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
+
 use function strlen;
 use function Tempest\root_path;
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
+
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
 
@@ -217,8 +219,7 @@ trait PublishesFiles
         $type = $reflector->getParameters()->current()->getType();
 
         $contents = match (true) {
-            is_null($type),
-            $type->equals(ImmutableString::class) => (string) $callback(new ImmutableString($contents)),
+            is_null($type), $type->equals(ImmutableString::class) => (string) $callback(new ImmutableString($contents)),
             $type->accepts('string') => (string) $callback($contents),
             default => throw new Exception('The callback must accept a string or ImmutableString.'),
         };
@@ -235,28 +236,32 @@ trait PublishesFiles
      */
     public function updateJson(string $path, Closure $callback, bool $ignoreNonExisting = false): void
     {
-        $this->update($path, function (string $content) use ($callback) {
-            $indent = $this->detectIndent($content);
+        $this->update(
+            $path,
+            function (string $content) use ($callback) {
+                $indent = $this->detectIndent($content);
 
-            $json = json_decode($content, associative: true);
-            $json = $callback($json);
+                $json = json_decode($content, associative: true);
+                $json = $callback($json);
 
-            // PHP will output empty arrays for empty dependencies,
-            // which is invalid and will make package managers crash.
-            foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
-                if (isset($json[$key]) && empty($json[$key])) {
-                    unset($json[$key]);
+                // PHP will output empty arrays for empty dependencies,
+                // which is invalid and will make package managers crash.
+                foreach (['dependencies', 'devDependencies', 'peerDependencies'] as $key) {
+                    if (isset($json[$key]) && ! $json[$key]) {
+                        unset($json[$key]);
+                    }
                 }
-            }
 
-            $content = preg_replace_callback(
-                '/^ +/m',
-                fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
-                json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-            );
+                $content = preg_replace_callback(
+                    '/^ +/m',
+                    fn ($m) => str_repeat($indent, strlen($m[0]) / 4),
+                    json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                );
 
-            return "{$content}\n";
-        }, $ignoreNonExisting);
+                return "{$content}\n";
+            },
+            $ignoreNonExisting,
+        );
     }
 
     private function friendlyFileName(string $path): string

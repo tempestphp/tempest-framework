@@ -69,7 +69,7 @@ interface Console
 
     public function warning(string $contents, ?string $title = null): self;
 
-    public function success(string $lcontentsine, ?string $title = null): self;
+    public function success(string $contents, ?string $title = null): self;
 
     public function keyValue(string $key, ?string $value = null): self;
 
@@ -84,7 +84,7 @@ interface Console
     /**
      * @param mixed|Closure(self): bool $condition
      * @param Closure(self): self $callback
-    */
+     */
     public function unless(mixed $condition, Closure $callback): self;
 
     public function withLabel(string $label): self;

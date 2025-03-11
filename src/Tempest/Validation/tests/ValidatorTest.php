@@ -11,6 +11,7 @@ use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
 use Tempest\Validation\Validator;
+
 use function Tempest\Support\arr;
 
 /**
@@ -24,7 +25,7 @@ final class ValidatorTest extends TestCase
 
         $validator = new Validator();
 
-        $validator->validate(new ObjectToBeValidated(name: 'a'));
+        $validator->validateObject(new ObjectToBeValidated(name: 'a'));
     }
 
     public function test_validate_value(): void
@@ -42,7 +43,7 @@ final class ValidatorTest extends TestCase
 
         $validator = new Validator();
 
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return false;
         });
     }
@@ -51,7 +52,7 @@ final class ValidatorTest extends TestCase
     {
         try {
             $validator = new Validator();
-            $validator->validateValue('a', function (mixed $value) {
+            $validator->validateValue('a', function (mixed $_) {
                 return 'I expected b';
             });
         } catch (InvalidValueException $invalidValueException) {
@@ -65,7 +66,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_null_response(): void
     {
         $validator = new Validator();
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return null;
         });
 
@@ -75,7 +76,7 @@ final class ValidatorTest extends TestCase
     public function test_closure_passes_with_true_response(): void
     {
         $validator = new Validator();
-        $validator->validateValue('a', function (mixed $value) {
+        $validator->validateValue('a', function (mixed $_) {
             return true;
         });
 

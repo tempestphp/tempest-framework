@@ -14,9 +14,8 @@ final class NotFound implements Response
 {
     use IsResponse;
 
-    public function __construct(
-        View|Generator|string|array|null $body = null,
-    ) {
+    public function __construct(View|Generator|string|array|null $body = null)
+    {
         $this->status = Status::NOT_FOUND;
         $this->body = $body;
     }

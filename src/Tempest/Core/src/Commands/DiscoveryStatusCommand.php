@@ -10,6 +10,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\Kernel;
+
 use function Tempest\root_path;
 use function Tempest\Support\str;
 

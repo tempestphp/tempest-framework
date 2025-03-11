@@ -53,7 +53,7 @@ final readonly class HasManyRelation implements Relation
 
     public static function getRelationModelClass(
         PropertyReflector $property,
-        HasMany|null $relation = null,
+        ?HasMany $relation = null,
     ): ClassReflector {
         if ($relation !== null && $relation->inverseClassName !== null) {
             return new ClassReflector($relation->inverseClassName);

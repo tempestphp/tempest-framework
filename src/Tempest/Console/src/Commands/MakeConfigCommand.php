@@ -12,6 +12,7 @@ use Tempest\Core\PublishesFiles;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
+
 use function Tempest\Support\str;
 
 final class MakeConfigCommand

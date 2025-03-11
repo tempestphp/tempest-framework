@@ -12,8 +12,11 @@ use UnitEnum;
 #[Attribute]
 final readonly class Enum implements Rule
 {
-    public function __construct(private string $enum, private array $only = [], private array $except = [])
-    {
+    public function __construct(
+        private string $enum,
+        private array $only = [],
+        private array $except = [],
+    ) {
         if (! enum_exists($this->enum)) {
             throw new UnexpectedValueException(sprintf(
                 'The enum parameter must be a valid enum. Was given [%s].',
@@ -71,13 +74,13 @@ final readonly class Enum implements Rule
     private function isDesirable($value): bool
     {
         return match (true) {
-            ! empty($this->only) => in_array(needle: $value, haystack: $this->only, strict: true),
-            ! empty($this->except) => ! in_array(needle: $value, haystack: $this->except, strict: true),
+            $this->only !== [] => in_array(needle: $value, haystack: $this->only, strict: true),
+            $this->except !== [] => ! in_array(needle: $value, haystack: $this->except, strict: true),
             default => true,
         };
     }
 
-    private function retrieveEnumValue(mixed $value)
+    private function retrieveEnumValue(mixed $value): mixed
     {
         if (method_exists($this->enum, 'tryFrom')) {
             return $this->enum::tryFrom($value);
