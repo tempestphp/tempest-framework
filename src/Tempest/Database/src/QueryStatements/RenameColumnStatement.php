@@ -9,14 +9,10 @@ use Tempest\Database\QueryStatement;
 
 final readonly class RenameColumnStatement implements QueryStatement
 {
-    private IdentityStatement $from;
-
-    private IdentityStatement $to;
-
-    public function __construct(string $from, string $to)
-    {
-        $this->from = new IdentityStatement($from);
-        $this->to = new IdentityStatement($to);
+    public function __construct(
+        private IdentityStatement $from,
+        private IdentityStatement $to,
+    ) {
     }
 
     public function compile(DatabaseDialect $dialect): string

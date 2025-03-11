@@ -25,7 +25,7 @@ final readonly class BelongsToStatement implements QueryStatement
 
         return match ($dialect) {
             DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => new ConstraintStatement(
-                new ConstraintNameStatement(
+                ConstraintNameStatement::fromString(
                     sprintf(
                         'fk_%s_%s_%s',
                         strtolower($foreignTable),

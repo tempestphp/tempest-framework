@@ -9,9 +9,6 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Database\QueryStatements\BelongsToStatement;
-use Tempest\Database\QueryStatements\ColumnNameStatement;
-use Tempest\Database\QueryStatements\ConstraintNameStatement;
-use Tempest\Database\QueryStatements\RenameColumnStatement;
 use Tempest\Database\QueryStatements\VarcharStatement;
 use Tempest\Database\UnsupportedDialect;
 
@@ -82,7 +79,7 @@ final class AlterTableStatementTest extends TestCase
     {
         $expected = 'ALTER TABLE `table` DROP COLUMN `foo` ;';
         $statement = new AlterTableStatement('table')
-            ->drop(new ColumnNameStatement('foo'))
+            ->dropColumn('foo')
             ->compile($dialect);
 
         $normalized = self::removeDuplicateWhitespace($statement);
@@ -95,7 +92,7 @@ final class AlterTableStatementTest extends TestCase
     public function test_alter_table_drop_constraint(DatabaseDialect $dialect, string $expected): void
     {
         $statement = new AlterTableStatement('table')
-            ->drop(new ConstraintNameStatement('foo'))
+            ->dropConstraint('foo')
             ->compile($dialect);
 
         $normalized = self::removeDuplicateWhitespace($statement);
@@ -108,7 +105,7 @@ final class AlterTableStatementTest extends TestCase
     {
         $this->expectException(UnsupportedDialect::class);
         new AlterTableStatement('table')
-            ->drop(new ConstraintNameStatement('foo'))
+            ->dropConstraint('foo')
             ->compile($dialect);
     }
 
@@ -134,14 +131,37 @@ final class AlterTableStatementTest extends TestCase
     #[TestWith([DatabaseDialect::SQLITE])]
     public function test_alter_table_rename_column(DatabaseDialect $dialect): void
     {
-        $expected = 'ALTER TABLE `table` RENAME RENAME COLUMN `foo` TO `bar` ;';
+        $expected = 'ALTER TABLE `table` RENAME COLUMN `foo` TO `bar` ;';
         $statement = new AlterTableStatement('table')
-            ->rename(new RenameColumnStatement('foo', 'bar'))
+            ->rename('foo', 'bar')
             ->compile($dialect);
 
         $normalized = self::removeDuplicateWhitespace($statement);
 
         $this->assertEqualsIgnoringCase($expected, $normalized);
+    }
+
+    #[TestWith([DatabaseDialect::MYSQL, 'ALTER TABLE `table` MODIFY COLUMN `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
+    #[TestWith([DatabaseDialect::POSTGRESQL, 'ALTER TABLE `table` ALTER COLUMN `foo` VARCHAR(42) DEFAULT "bar" NOT NULL ;'])]
+    public function test_alter_table_modify_column(DatabaseDialect $dialect, string $expected): void
+    {
+        $statement = new AlterTableStatement('table')
+            ->modify(new VarcharStatement('foo', 42, false, 'bar'))
+            ->compile($dialect);
+
+        $normalized = self::removeDuplicateWhitespace($statement);
+
+        $this->assertEqualsIgnoringCase($expected, $normalized);
+    }
+
+    #[TestWith([DatabaseDialect::SQLITE])]
+    public function test_alter_table_modify_column_unsupported(DatabaseDialect $dialect): void
+    {
+        $this->expectException(UnsupportedDialect::class);
+
+        new AlterTableStatement('table')
+            ->modify(new VarcharStatement('foo', 42, false, 'bar'))
+            ->compile($dialect);
     }
 
     private static function removeDuplicateWhitespace(string $string): string

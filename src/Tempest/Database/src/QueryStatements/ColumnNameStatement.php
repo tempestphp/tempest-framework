@@ -9,15 +9,18 @@ use Tempest\Database\QueryStatement;
 
 final readonly class ColumnNameStatement implements QueryStatement
 {
-    private IdentityStatement $identity;
-
-    public function __construct(string $name)
+    public static function fromString(string $name): self
     {
-        $this->identity = new IdentityStatement($name);
+        return new self(new IdentityStatement($name));
+    }
+
+    public function __construct(
+        private IdentityStatement $name,
+    ) {
     }
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return sprintf('COLUMN %s', $this->identity->compile($dialect));
+        return sprintf('COLUMN %s', $this->name->compile($dialect));
     }
 }

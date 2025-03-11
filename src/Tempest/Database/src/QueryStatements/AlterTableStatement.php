@@ -29,7 +29,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function add(QueryStatement $statement): self
     {
-        $this->statements[] = new AlterStatement(Alter::ADD, $statement);
+        $this->statements[] = new AlterAddColumnStatement($statement);
 
         return $this;
     }
@@ -54,16 +54,33 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function drop(ColumnNameStatement|ConstraintNameStatement $statement): self
+    public function dropColumn(string $name): self
     {
-        $this->statements[] = new AlterStatement(Alter::DROP, $statement);
+        $this->statements[] = new AlterDropStatement(ColumnNameStatement::fromString($name));
 
         return $this;
     }
 
-    public function rename(RenameColumnStatement $rename): self
+    public function dropConstraint(string $name): self
     {
-        $this->statements[] = new AlterStatement(Alter::RENAME, $rename);
+        $this->statements[] = new AlterDropStatement(ConstraintNameStatement::fromString($name));
+
+        return $this;
+    }
+
+    public function rename(string $from, string $to): self
+    {
+        $this->statements[] = new RenameColumnStatement(
+            new IdentityStatement($from),
+            new IdentityStatement($to),
+        );
+
+        return $this;
+    }
+
+    public function modify(QueryStatement $column): self
+    {
+        $this->statements[] = new ModifyColumnStatement($column);
 
         return $this;
     }
