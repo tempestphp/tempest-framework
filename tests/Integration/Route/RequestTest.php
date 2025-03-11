@@ -121,8 +121,13 @@ final class RequestTest extends FrameworkIntegrationTestCase
                 uri: uri([BookController::class, 'store']),
                 body: [
                     'title' => 'a',
+                    'chapters' => [],
                 ],
+                headers: [
+                    'referer' => ['/']
+                ]
             )
+            ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
         $book = Book::get(new Id(1));
@@ -144,8 +149,13 @@ final class RequestTest extends FrameworkIntegrationTestCase
                 body: [
                     'title' => 'a',
                     'author.name' => 'b',
+                    'chapters' => [],
                 ],
+                headers: [
+                    'referer' => ['/'],
+                ]
             )
+            ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
         $book = Book::get(new Id(1), relations: ['author']);
