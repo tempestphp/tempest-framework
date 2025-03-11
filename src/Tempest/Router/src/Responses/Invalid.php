@@ -22,7 +22,7 @@ final class Invalid implements Response
         array $failingRules = [],
     ) {
         $referer = $this->getReferer($request);
-        $body = $request instanceof PsrRequest ? $request->getParsedBody() : $request->body;
+        $body = ($request instanceof PsrRequest) ? $request->getParsedBody() : $request->body;
 
         $this->addHeader('Location', $referer);
         $this->status = Status::FOUND;

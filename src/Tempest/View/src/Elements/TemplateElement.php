@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
@@ -8,9 +10,7 @@ final class TemplateElement implements Element
 {
     use IsElement;
 
-    public function __construct(
-        array $attributes = [],
-    )
+    public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
     }

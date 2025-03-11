@@ -7,17 +7,18 @@ namespace Tempest\Vite\TagsResolver;
 use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteBridgeFile;
+
 use function Tempest\root_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
-final class DevelopmentTagsResolver implements TagsResolver
+final readonly class DevelopmentTagsResolver implements TagsResolver
 {
     public const string CLIENT_SCRIPT_PATH = '@vite/client';
 
     public function __construct(
-        private readonly ViteBridgeFile $bridgeFile,
-        private readonly TagCompiler $tagCompiler,
+        private ViteBridgeFile $bridgeFile,
+        private TagCompiler $tagCompiler,
     ) {
     }
 

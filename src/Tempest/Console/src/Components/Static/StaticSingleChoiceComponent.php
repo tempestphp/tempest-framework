@@ -9,6 +9,7 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
 use UnitEnum;
+
 use function Tempest\Support\str;
 
 final readonly class StaticSingleChoiceComponent implements StaticConsoleComponent
@@ -31,17 +32,18 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
 
         $console->write("<style='bold fg-blue'>{$this->label}</style> ");
 
-        $prompt = $this->options->getOptions()
+        $prompt = $this->options
+            ->getOptions()
             ->map(
                 fn (Option $option, int $index) => str($index)
-                        ->when(
-                            condition: $option->key === $this->default || $option->value === $this->default,
-                            callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
-                        )
-                        ->wrap('[', ']')
-                        ->prepend('- ')
-                        ->append(' ', (string) $option->displayValue)
-                        ->toString(),
+                    ->when(
+                        condition: $option->key === $this->default || $option->value === $this->default,
+                        callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
+                    )
+                    ->wrap('[', ']')
+                    ->prepend('- ')
+                    ->append(' ', (string) $option->displayValue)
+                    ->toString(),
             )
             ->implode(PHP_EOL)
             ->toString();
@@ -54,25 +56,27 @@ final readonly class StaticSingleChoiceComponent implements StaticConsoleCompone
             return $this->default;
         }
 
-        $selectedOption = $this->options->getOptions()->first(function (Option $option, int $index) use ($answer) {
-            if ($answer === $option->displayValue) {
-                return true;
-            }
+        $selectedOption = $this->options
+            ->getOptions()
+            ->first(function (Option $option, int $index) use ($answer) {
+                if ($answer === $option->displayValue) {
+                    return true;
+                }
 
-            if ($answer === $option->value) {
-                return true;
-            }
+                if ($answer === $option->value) {
+                    return true;
+                }
 
-            if ($this->options->getOptions()->isList() && $answer === (string) $index) {
-                return true;
-            }
+                if ($this->options->getOptions()->isList() && $answer === ((string) $index)) {
+                    return true;
+                }
 
-            if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
-                return true;
-            }
+                if ($this->options->getOptions()->isList() && $answer === ((string) $option->key)) {
+                    return true;
+                }
 
-            return false;
-        });
+                return false;
+            });
 
         if ($selectedOption !== null) {
             return $selectedOption->value;

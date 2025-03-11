@@ -48,6 +48,7 @@ use Tempest\Container\Tests\Fixtures\UnionInitializer;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceA;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceB;
 use Tempest\Container\Tests\Fixtures\UnionTypesClass;
+
 use function Tempest\reflect;
 
 /**
@@ -287,9 +288,9 @@ final class ContainerTest extends TestCase
         } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
             $this->assertStringContainsStringIgnoringLineEndings(
                 <<<'TXT'
-                    	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
-                    	└── Tempest\Container\Tests\Fixtures\TaggedDependency
-                    TXT,
+                	┌── DependencyWithTaggedDependency::__construct(TaggedDependency $dependency)
+                	└── Tempest\Container\Tests\Fixtures\TaggedDependency
+                TXT,
                 $cannotResolveTaggedDependency->getMessage(),
             );
         }
@@ -325,7 +326,7 @@ final class ContainerTest extends TestCase
         $container->singleton(SingletonClass::class, fn () => new SingletonClass());
 
         $result = $container->invoke(
-            callable: fn (SingletonClass $class, string $prefix) => $prefix.$class::class,
+            method: fn (SingletonClass $class, string $prefix) => $prefix . $class::class,
             prefix: 'My resolved class is ',
         );
 

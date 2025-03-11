@@ -11,13 +11,15 @@ use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+
 use function Tempest\Support\arr;
 
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {}
+    ) {
+    }
 
     public function canMap(mixed $from, mixed $to): bool
     {

@@ -10,6 +10,7 @@ use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
 use Tempest\Core\Kernel;
+
 use function Tempest\Support\path;
 
 final readonly class LogOutputBufferInitializer implements Initializer

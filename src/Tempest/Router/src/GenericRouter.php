@@ -21,6 +21,7 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
+
 use function Tempest\map;
 use function Tempest\Support\str;
 
@@ -41,7 +42,7 @@ final class GenericRouter implements Router
 
     public function dispatch(Request|PsrRequest $request): Response
     {
-        if (! $request instanceof PsrRequest) {
+        if (! ($request instanceof PsrRequest)) {
             $request = map($request)->with(RequestToPsrRequestMapper::class)->do();
         }
 
@@ -74,7 +75,7 @@ final class GenericRouter implements Router
     {
         $route = $matchedRoute->route;
 
-        $callControllerAction = function (Request $request) use ($route, $matchedRoute) {
+        $callControllerAction = function (Request $_) use ($route, $matchedRoute) {
             $response = $this->container->invoke(
                 $route->handler,
                 ...$matchedRoute->params,

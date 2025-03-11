@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Config;
 
 use Tempest\Log\LogConfig;
+
 use function Tempest\env;
 
 return new LogConfig(

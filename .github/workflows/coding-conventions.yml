@@ -12,19 +12,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-    #  - name: Setup PHP
-    #    uses: shivammathur/setup-php@v2
-    #    with:
-    #      php-version: 8.4
-    #      coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          coverage: none
 
-    #  - name: Install composer dependencies
-    #    uses: ramsey/composer-install@v3
+      - name: Install dependencies
+        run: |
+          composer update --prefer-dist --no-interaction
+          composer mago:install-binary
 
-    #  - name: Run php-cs-fixer
-    #    run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --allow-risky=yes --dry-run -vvv
-    #    env:
-    #      PHP_CS_FIXER_IGNORE_ENV: true
+      - name: Run Mago 
+        run: |
+          ./vendor/bin/mago fmt --dry-run
+          ./vendor/bin/mago lint --reporting-format=github
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

@@ -10,6 +10,7 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Console\Input\ConsoleArgumentBag;
+
 use function Tempest\Support\arr;
 
 final readonly class MonitorAsyncCommands
@@ -60,7 +61,7 @@ final readonly class MonitorAsyncCommands
             }
 
             $availableCommands = arr($this->repository->getPendingCommands())
-                ->filter(fn (object $command, string $uuid) => ! array_key_exists($uuid, $processes));
+                ->filter(fn (object $_, string $uuid) => ! array_key_exists($uuid, $processes));
 
             if (count($processes) === 5) {
                 $this->sleep(0.5);

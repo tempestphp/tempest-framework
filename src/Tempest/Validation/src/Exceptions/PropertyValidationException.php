@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Validation\Exceptions;
 
 use Exception;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rule;
+
 use function Tempest\Support\arr;
 
 final class PropertyValidationException extends Exception
@@ -15,8 +18,7 @@ final class PropertyValidationException extends Exception
     public function __construct(
         public readonly PropertyReflector $property,
         public readonly array $failingRules,
-    )
-    {
+    ) {
         $messages = [];
 
         foreach ($this->failingRules as $failingRule) {

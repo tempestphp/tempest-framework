@@ -8,5 +8,5 @@ interface FakeMigration
 {
     public function getName(): string;
 
-    public function up(): FakeQueryStatement|null;
+    public function up(): ?FakeQueryStatement;
 }

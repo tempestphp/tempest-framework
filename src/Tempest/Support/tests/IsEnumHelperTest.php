@@ -24,7 +24,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusBackedEnum::PUBLISH,
-            actual  : SampleStatusBackedEnum::fromName('PUBLISH'),
+            actual: SampleStatusBackedEnum::fromName('PUBLISH'),
         );
 
         // It's case sensitive
@@ -38,7 +38,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusPureEnum::PUBLISH,
-            actual  : SampleStatusPureEnum::fromName('PUBLISH'),
+            actual: SampleStatusPureEnum::fromName('PUBLISH'),
         );
 
         // It's case sensitive
@@ -52,7 +52,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusBackedEnum::PUBLISH,
-            actual  : SampleStatusBackedEnum::tryFromName('PUBLISH'),
+            actual: SampleStatusBackedEnum::tryFromName('PUBLISH'),
         );
 
         $this->assertNull(
@@ -65,7 +65,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusPureEnum::PUBLISH,
-            actual  : SampleStatusPureEnum::tryFromName('PUBLISH'),
+            actual: SampleStatusPureEnum::tryFromName('PUBLISH'),
         );
 
         // It's case sensitive
@@ -79,7 +79,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusBackedEnum::PUBLISH,
-            actual  : SampleStatusBackedEnum::from('publish'),
+            actual: SampleStatusBackedEnum::from('publish'),
         );
 
         // It's case sensitive
@@ -93,7 +93,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusPureEnum::PUBLISH,
-            actual  : SampleStatusPureEnum::from('PUBLISH'),
+            actual: SampleStatusPureEnum::from('PUBLISH'),
         );
     }
 
@@ -102,7 +102,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusBackedEnum::PUBLISH,
-            actual  : SampleStatusBackedEnum::tryFrom('publish'),
+            actual: SampleStatusBackedEnum::tryFrom('publish'),
         );
 
         // It's case sensitive
@@ -117,7 +117,7 @@ final class IsEnumHelperTest extends TestCase
     {
         $this->assertSame(
             expected: SampleStatusPureEnum::PUBLISH,
-            actual  : SampleStatusPureEnum::tryFrom('PUBLISH'),
+            actual: SampleStatusPureEnum::tryFrom('PUBLISH'),
         );
     }
 

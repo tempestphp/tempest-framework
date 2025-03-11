@@ -7,6 +7,7 @@ namespace Tempest\Console;
 use Attribute;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
 use Tempest\Reflection\MethodReflector;
+
 use function Tempest\Support\str;
 
 #[Attribute]
@@ -27,7 +28,7 @@ final class ConsoleCommand
         public readonly bool $hidden = false,
 
         /** @var class-string<\Tempest\Console\CompletesConsoleCommand>|null */
-        public readonly string|null $complete = null,
+        public readonly ?string $complete = null,
     ) {
     }
 

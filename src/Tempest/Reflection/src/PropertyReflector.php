@@ -132,7 +132,7 @@ final readonly class PropertyReflector implements Reflector
     {
         try {
             return $this->reflectionProperty->getValue($object) ?? $default;
-        } catch (Error $error) {
+        } catch (Error $error) { // @mago-expect best-practices/dont-catch-error
             return $default ?? throw $error;
         }
     }
@@ -146,14 +146,13 @@ final readonly class PropertyReflector implements Reflector
     {
         $constructorParameters = [];
 
-        foreach (($this->getClass()->getConstructor()?->getParameters() ?? []) as $parameter) {
+        foreach ($this->getClass()->getConstructor()?->getParameters() ?? [] as $parameter) {
             $constructorParameters[$parameter->getName()] = $parameter;
         }
 
         $hasDefaultValue = $this->reflectionProperty->hasDefaultValue();
 
-        $hasPromotedDefaultValue = $this->isPromoted()
-            && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
+        $hasPromotedDefaultValue = $this->isPromoted() && $constructorParameters[$this->getName()]->isDefaultValueAvailable();
 
         return $hasDefaultValue || $hasPromotedDefaultValue;
     }

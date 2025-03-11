@@ -29,23 +29,20 @@ final readonly class TailCommand
         #[ConsoleArgument(description: 'Include the debug log', aliases: ['-d'])]
         ?bool $debug = null,
     ): void {
-        $shouldFilter =
-            $project !== null
-            || $server !== null
-            || $debug !== null;
+        $shouldFilter = $project !== null || $server !== null || $debug !== null;
 
         /** @var array<array-key, \Tempest\Console\Commands\TailDebugLogCommand|\Tempest\Console\Commands\TailProjectLogCommand> $loggers */
         $loggers = array_filter([
-            ($shouldFilter === false || $project) ? $this->tailProjectLogCommand : null,
-            ($shouldFilter === false || $server) ? $this->tailServerLogCommand : null,
-            ($shouldFilter === false || $debug) ? $this->tailDebugLogCommand : null,
+            $shouldFilter === false || $project ? $this->tailProjectLogCommand : null,
+            $shouldFilter === false || $server ? $this->tailServerLogCommand : null,
+            $shouldFilter === false || $debug ? $this->tailDebugLogCommand : null,
         ]);
 
         /** @var Fiber[] $fibers */
         $fibers = [];
 
         foreach ($loggers as $key => $logger) {
-            $fiber = new Fiber(fn () => ($logger)());
+            $fiber = new Fiber(fn () => $logger());
             $fibers[$key] = $fiber;
             $fiber->start();
         }

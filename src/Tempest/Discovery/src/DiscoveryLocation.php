@@ -14,8 +14,7 @@ final readonly class DiscoveryLocation
 
     public function isVendor(): bool
     {
-        return str_contains($this->path, '/vendor/')
-            || str_contains($this->path, '\\vendor\\');
+        return str_contains($this->path, '/vendor/') || str_contains($this->path, '\\vendor\\');
     }
 
     public function toClassName(string $path): string

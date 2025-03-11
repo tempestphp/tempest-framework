@@ -8,6 +8,7 @@ use Tempest\Core\Composer;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryException;
 use Tempest\Discovery\DiscoveryLocation;
+
 use function Tempest\Support\path;
 
 /** @internal */
@@ -21,13 +22,12 @@ final readonly class LoadDiscoveryLocations
 
     public function __invoke(): void
     {
-        $this->kernel->discoveryLocations =
-            [
-                ...$this->kernel->discoveryLocations,
-                ...$this->discoverCorePackages(),
-                ...$this->discoverVendorPackages(),
-                ...$this->discoverAppNamespaces(),
-            ];
+        $this->kernel->discoveryLocations = [
+            ...$this->kernel->discoveryLocations,
+            ...$this->discoverCorePackages(),
+            ...$this->discoverVendorPackages(),
+            ...$this->discoverAppNamespaces(),
+        ];
     }
 
     /**
@@ -42,7 +42,7 @@ final readonly class LoadDiscoveryLocations
         $discoveredLocations = [];
 
         foreach ($packages as $package) {
-            $packageName = ($package['name'] ?? '');
+            $packageName = $package['name'] ?? '';
             $isTempest = str_starts_with($packageName, 'tempest');
 
             if (! $isTempest) {
@@ -89,7 +89,7 @@ final readonly class LoadDiscoveryLocations
         $discoveredLocations = [];
 
         foreach ($packages as $package) {
-            $packageName = ($package['name'] ?? '');
+            $packageName = $package['name'] ?? '';
             $isTempest = str_starts_with($packageName, 'tempest');
 
             if ($isTempest) {

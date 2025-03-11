@@ -629,7 +629,7 @@ trait ManipulatesString
      */
     public function equals(string|Stringable $other): bool
     {
-        return $this->value === (string) $other;
+        return $this->value === ((string) $other);
     }
 
     /**
@@ -642,8 +642,8 @@ trait ManipulatesString
 
     /**
      * Executes callback with the given `$value` and returns the same `$value`.
-     * 
-     * @param (Closure(static): void) $callback 
+     *
+     * @param (Closure(static): void) $callback
      */
     public function tap(Closure $callback): static
     {

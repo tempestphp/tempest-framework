@@ -33,10 +33,9 @@ final class CannotAutowireException extends Exception implements ContainerExcept
         }
 
         $selectionLine = preg_replace_callback(
-            pattern: '/(?<prefix>(.*))(?<selection>'. $brokenDependency->getTypeName() .'\s\$\w+)(.*)/',
+            pattern: '/(?<prefix>(.*))(?<selection>' . $brokenDependency->getTypeName() . '\s\$\w+)(.*)/',
             callback: function ($matches) {
-                return str_repeat(' ', strlen($matches['prefix']) + 4)
-                    . str_repeat('▒', strlen($matches['selection']));
+                return str_repeat(' ', strlen($matches['prefix']) + 4) . str_repeat('▒', strlen($matches['selection']));
             },
             subject: $chain->last()->getShortName(),
         );

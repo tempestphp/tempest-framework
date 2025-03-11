@@ -12,6 +12,7 @@ use IteratorAggregate;
 use Tempest\Support\Arr\ImmutableArray;
 use UnitEnum;
 use ValueError;
+
 use function Tempest\Support\Arr\to_array;
 
 /**
@@ -102,8 +103,8 @@ trait IsEnumHelper
             default => throw new InvalidArgumentException(sprintf('The given value must be an iterable value, "%s" given', get_debug_type($enums))),
         };
 
-		return array_any(to_array($iterator), fn($enum) => $this->is($enum));
-	}
+        return array_any(to_array($iterator), fn ($enum) => $this->is($enum));
+    }
 
     /**
      * Check if the current enum case is not in the given list of enums
@@ -128,7 +129,7 @@ trait IsEnumHelper
     {
         $caseNames = array_column(static::cases(), 'name');
 
-        return in_array($name, $caseNames, strict: true); /** @phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable ) */
+        return in_array($name, $caseNames, strict: true); //@phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable )
     }
 
     /**
@@ -160,7 +161,7 @@ trait IsEnumHelper
             ? array_column(static::cases(), 'value')
             : array_column(static::cases(), 'name');
 
-        return in_array($value, $caseValues, strict: true);  /** @phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable ) */
+        return in_array($value, $caseValues, strict: true); // @phpstan-ignore-line function.impossibleType ( prevent to always evaluate to true/false as in enum context the result is predictable )
     }
 
     /**

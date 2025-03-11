@@ -16,6 +16,7 @@ use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\NotNull;
+
 use function Tempest\Support\arr;
 
 final readonly class Validator
@@ -107,7 +108,7 @@ final readonly class Validator
             default => [true, ''],
         };
 
-        return new readonly class ($isValid, $message) implements Rule {
+        return new readonly class($isValid, $message) implements Rule {
             public function __construct(
                 private bool $isValid,
                 private string $message,

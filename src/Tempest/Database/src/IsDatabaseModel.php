@@ -11,6 +11,7 @@ use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+
 use function Tempest\get;
 use function Tempest\make;
 
@@ -19,7 +20,7 @@ trait IsDatabaseModel
 {
     public ?Id $id = null;
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         $property = PropertyReflector::fromParts($this, $name);
 
@@ -57,8 +58,7 @@ trait IsDatabaseModel
     public static function table(): TableName
     {
         $name = get(DatabaseConfig::class)
-            ->namingStrategy
-            ->getName(self::class);
+            ->namingStrategy->getName(self::class);
 
         return new TableName($name);
     }
@@ -94,8 +94,8 @@ trait IsDatabaseModel
     public static function find(mixed ...$conditions): ModelQueryBuilder
     {
         $query = self::query();
-        
-        array_walk($conditions, fn($value, $column) => $query->whereField($column, $value));
+
+        array_walk($conditions, fn ($value, $column) => $query->whereField($column, $value));
 
         return $query;
     }
@@ -170,12 +170,15 @@ trait IsDatabaseModel
     {
         $table = self::table();
 
-        $query = new Query(sprintf(
-            'DELETE FROM %s WHERE `id` = :id',
-            $table,
-        ), [
-            'id' => $this->getId()->id,
-        ]);
+        $query = new Query(
+            sprintf(
+                'DELETE FROM %s WHERE `id` = :id',
+                $table,
+            ),
+            [
+                'id' => $this->getId()->id,
+            ],
+        );
 
         $query->execute();
     }

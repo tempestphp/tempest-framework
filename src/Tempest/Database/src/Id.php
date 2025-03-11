@@ -15,9 +15,9 @@ final readonly class Id implements Stringable
 
     public function __construct(string|int|self $id)
     {
-        $id = $id instanceof self ? $id->id : $id;
+        $id = ($id instanceof self) ? $id->id : $id;
 
-        $this->id = is_numeric($id) ? (int) $id : $id;
+        $this->id = is_numeric($id) ? ((int) $id) : $id;
     }
 
     public function __toString(): string

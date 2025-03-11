@@ -13,6 +13,7 @@ use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewRenderer;
 use Throwable;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -23,14 +24,15 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
-    ) {}
+    ) {
+    }
 
     public function __get(string $name): mixed
     {
         return $this->currentView?->get($name);
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->currentView?->{$name}(...$arguments);
     }
@@ -95,7 +97,7 @@ final class TempestViewRenderer implements ViewRenderer
             throw new ViewCompilationError(
                 path: $_path,
                 content: file_get_contents($_path),
-                previous: $throwable
+                previous: $throwable,
             );
         }
 
@@ -107,10 +109,10 @@ final class TempestViewRenderer implements ViewRenderer
     public function escape(null|string|HtmlString|Stringable $value): string
     {
         if ($value instanceof HtmlString) {
-            return (string)$value;
+            return (string) $value;
         }
 
-        return htmlentities((string)$value);
+        return htmlentities((string) $value);
     }
 
     private function validateView(View $view): void

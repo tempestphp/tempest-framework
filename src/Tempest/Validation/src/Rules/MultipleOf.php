@@ -17,7 +17,7 @@ final readonly class MultipleOf implements Rule
 
     public function isValid(mixed $value): bool
     {
-        return is_int($value) && ($value % $this->divisor === 0);
+        return is_int($value) && ($value % $this->divisor) === 0;
     }
 
     public function message(): string

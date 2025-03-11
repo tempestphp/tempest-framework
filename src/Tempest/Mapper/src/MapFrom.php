@@ -12,9 +12,8 @@ final readonly class MapFrom
     /** @var array<string> */
     public array $names;
 
-    public function __construct(
-        string ...$names,
-    ) {
+    public function __construct(string ...$names)
+    {
         $this->names = $names;
     }
 }
