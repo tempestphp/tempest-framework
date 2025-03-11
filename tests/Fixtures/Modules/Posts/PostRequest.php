@@ -15,5 +15,5 @@ final class PostRequest implements Request
 
     public string $title;
 
-    public ?string $text;
+    public string $text;
 }
