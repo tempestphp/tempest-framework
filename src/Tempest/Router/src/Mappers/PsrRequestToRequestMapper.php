@@ -43,10 +43,6 @@ final readonly class PsrRequestToRequestMapper implements Mapper
             }
         }
 
-        $data = arr($data)
-            ->map(fn (mixed $value) => $value === '' ? null : $value)
-            ->toArray();
-
         $headersAsString = array_map(
             fn (array $items) => implode(',', $items),
             $from->getHeaders(),
