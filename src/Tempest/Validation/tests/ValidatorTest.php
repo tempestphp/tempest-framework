@@ -150,6 +150,29 @@ final class ValidatorTest extends TestCase
         $this->assertEmpty($failingRules);
     }
 
+    public function test_nested_property_validation_with_dotted_keys(): void
+    {
+        $validator = new Validator();
+
+        $class = new ClassReflector(ValidateObjectA::class);
+
+        $failingRules = $validator->validateValuesForClass($class, [
+            'title' => 'test',
+            'b.name' => 'test',
+            'b.age' => 1,
+            'b.c.name' => 'test',
+        ]);
+
+        $this->assertEmpty($failingRules);
+
+        $failingRules = $validator->validateValuesForClass($class, [
+            'title' => 'test',
+            'b.age' => 1,
+        ]);
+
+        $this->assertCount(2, $failingRules);
+    }
+
     public function test_validation_infers_string_rule_from_property_type(): void
     {
         $failingRules = new Validator()->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => (object) []]);

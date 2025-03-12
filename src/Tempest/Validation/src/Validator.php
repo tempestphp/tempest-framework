@@ -13,6 +13,7 @@ use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
+
 use function Tempest\Support\arr;
 
 final readonly class Validator
@@ -41,9 +42,11 @@ final readonly class Validator
     /**
      * @param ClassReflector|class-string $class
      */
-    public function validateValuesForClass(ClassReflector|string $class, mixed $values, string $prefix = ''): array
+    public function validateValuesForClass(ClassReflector|string $class, array $values, string $prefix = ''): array
     {
         $class = is_string($class) ? new ClassReflector($class) : $class;
+
+        $values = arr($values)->undot()->toArray();
 
         $failingRules = [];
 
@@ -60,10 +63,10 @@ final readonly class Validator
                 $failingRules[$prefix . $property->getName()] = $failingRulesForProperty;
             }
 
-            if ($failingRulesForProperty === [] && $property->getType()->isClass()) {
+            if (is_array($value) && $property->getType()->isClass()) {
                 // Only need to validate the child property if the value isn't null or if the property isn't nullable
                 // i.e. If the value is null and the property is nullable, we won't validate it
-                if (! $property->isNullable() || $value !== null) {
+                if (! $property->isNullable()) {
                     $failingRules = [
                         ...$failingRules,
                         ...$this->validateValuesForClass($property->getType()->asClass(), $value, $prefix . $property->getName() . '.'),
