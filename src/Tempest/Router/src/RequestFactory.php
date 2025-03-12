@@ -6,24 +6,19 @@ namespace Tempest\Router;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-
-use function Tempest\Support\str;
+use Tempest\Router\Input\PostInputStream;
 
 final readonly class RequestFactory
 {
+    public function __construct(
+        private PostInputStream $inputStream,
+    ) {
+    }
+
     public function make(): PsrRequest
     {
-        $body = str(file_get_contents('php://input'))
-            ->explode('&')
-            ->mapWithKeys(function (string $value) {
-                $parts = explode('=', $value, 2);
-
-                yield $parts[0] => $parts[1] ?? '';
-            })
-            ->toArray();
-
         return ServerRequestFactory::fromGlobals(
-            body: $body,
+            body: $this->inputStream->parse(),
         );
     }
 }

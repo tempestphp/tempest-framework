@@ -9,12 +9,14 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRequest;
+use Tempest\Router\Input\PostInputStream;
 use Tempest\Router\RequestFactory;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\MemoryPostInputStream;
 use function Tempest\uri;
 
 /**
@@ -65,15 +67,16 @@ final class RequestTest extends FrameworkIntegrationTestCase
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
-        $_POST = ['test'];
         $_SERVER['HTTP_X-TEST'] = 'test';
         $_COOKIE['test'] = 'test';
 
-        $request = (new RequestFactory())->make();
+        $request = new RequestFactory(new MemoryPostInputStream([
+            'test' => 'test',
+        ]))->make();
 
         $this->assertEquals(Method::POST->value, $request->getMethod());
         $this->assertEquals('/test', $request->getUri()->getPath());
-        $this->assertEquals(['test'], $request->getParsedBody());
+        $this->assertEquals(['test' => 'test'], $request->getParsedBody());
         $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
         $this->assertEquals(['test' => 'test'], $request->getCookieParams());
     }

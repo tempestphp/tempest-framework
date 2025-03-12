@@ -13,6 +13,7 @@ use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
+use TypeError;
 
 use function Tempest\Support\arr;
 
@@ -42,36 +43,46 @@ final readonly class Validator
     /**
      * @param ClassReflector|class-string $class
      */
-    public function validateValuesForClass(ClassReflector|string $class, array $values, string $prefix = ''): array
+    public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
     {
         $class = is_string($class) ? new ClassReflector($class) : $class;
 
-        $values = arr($values)->undot()->toArray();
-
         $failingRules = [];
+
+        $values = arr($values)->undot();
 
         foreach ($class->getPublicProperties() as $property) {
             if ($property->hasAttribute(SkipValidation::class)) {
                 continue;
             }
 
-            $value = $values[$property->getName()] ?? null;
+            $key = $prefix . $property->getName();
+
+            if (! $values->has($key) && $property->hasDefaultValue()) {
+                continue;
+            }
+
+            $value = $values->get($key);
 
             $failingRulesForProperty = $this->validateValueForProperty($property, $value);
 
             if ($failingRulesForProperty !== []) {
-                $failingRules[$prefix . $property->getName()] = $failingRulesForProperty;
+                $failingRules[$key] = $failingRulesForProperty;
             }
 
-            if (is_array($value) && $property->getType()->isClass()) {
-                // Only need to validate the child property if the value isn't null or if the property isn't nullable
-                // i.e. If the value is null and the property is nullable, we won't validate it
-                if (! $property->isNullable()) {
-                    $failingRules = [
-                        ...$failingRules,
-                        ...$this->validateValuesForClass($property->getType()->asClass(), $value, $prefix . $property->getName() . '.'),
-                    ];
-                }
+            if ($property->isNullable() && $value === null) {
+                continue;
+            }
+
+            if ($property->getType()->isClass()) {
+                $failingRules = [
+                    ...$failingRules,
+                    ...$this->validateValuesForClass(
+                        class: $property->getType()->asClass(),
+                        values: $values->dot()->toArray(),
+                        prefix: $key . '.',
+                    ),
+                ];
             }
         }
 
@@ -82,10 +93,6 @@ final readonly class Validator
     {
         $rules = $property->getAttributes(Rule::class);
 
-        if (! $property->isNullable()) {
-            $rules[] = new NotNull();
-        }
-
         if ($property->getType()->isScalar()) {
             $rules[] = match ($property->getType()->getName()) {
                 'string' => new IsString(orNull: $property->isNullable()),
@@ -94,6 +101,9 @@ final readonly class Validator
                 'bool' => new IsBoolean(orNull: $property->isNullable()),
                 default => null,
             };
+        } elseif (! $property->isNullable()) {
+            // We only add the NotNull rule if we're not dealing with scalar types, since the null check is included in the scalar rules
+            $rules[] = new NotNull();
         }
 
         return $this->validateValue($value, $rules);

@@ -17,6 +17,7 @@ use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
 use Tempest\Validation\Tests\Fixtures\ObjectWithBoolProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithFloatProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithIntProp;
+use Tempest\Validation\Tests\Fixtures\ObjectWithObjectProperty;
 use Tempest\Validation\Tests\Fixtures\ObjectWithSkipValidation;
 use Tempest\Validation\Tests\Fixtures\ObjectWithStringProperty;
 use Tempest\Validation\Tests\Fixtures\ValidateObjectA;
@@ -109,10 +110,9 @@ final class ValidatorTest extends TestCase
 
         $failingRules = $validator->validateValuesForClass($class, []);
 
-        $this->assertCount(2, $failingRules);
+        $this->assertCount(7, $failingRules);
         $this->assertInstanceOf(NotNull::class, $failingRules['b'][0]);
-        $this->assertInstanceOf(NotNull::class, $failingRules['title'][0]);
-        $this->assertInstanceOf(IsString::class, $failingRules['title'][1]);
+        $this->assertInstanceOf(IsString::class, $failingRules['title'][0]);
 
         $failingRules = $validator->validateValuesForClass($class, [
             'b' => [
@@ -123,7 +123,7 @@ final class ValidatorTest extends TestCase
         $this->assertArrayNotHasKey('b', $failingRules);
         $this->assertCount(1, $failingRules['b.c']);
         $this->assertCount(1, $failingRules['b.name']);
-        $this->assertCount(2, $failingRules['b.age']);
+        $this->assertCount(1, $failingRules['b.age']);
 
         $failingRules = $validator->validateValuesForClass($class, [
             'b' => [
@@ -133,7 +133,6 @@ final class ValidatorTest extends TestCase
             ],
         ]);
 
-        $this->assertArrayNotHasKey('b.c', $failingRules);
         $this->assertCount(1, $failingRules['b.c.name']);
 
         $failingRules = $validator->validateValuesForClass($class, [
@@ -143,6 +142,7 @@ final class ValidatorTest extends TestCase
                 'age' => 1,
                 'c' => [
                     'name' => 'test',
+                    'email' => 'brendt@stitcher.io',
                 ],
             ],
         ]);
@@ -161,6 +161,7 @@ final class ValidatorTest extends TestCase
             'b.name' => 'test',
             'b.age' => 1,
             'b.c.name' => 'test',
+            'b.c.email' => 'brendt@stitcher.io',
         ]);
 
         $this->assertEmpty($failingRules);
@@ -170,7 +171,7 @@ final class ValidatorTest extends TestCase
             'b.age' => 1,
         ]);
 
-        $this->assertCount(2, $failingRules);
+        $this->assertCount(4, $failingRules);
     }
 
     public function test_validation_infers_string_rule_from_property_type(): void
@@ -205,11 +206,19 @@ final class ValidatorTest extends TestCase
         $this->assertInstanceOf(IsBoolean::class, $failingRules['prop'][0]);
     }
 
-    public function test_validation_infers_not_null_from_property_type(): void
+    public function test_validation_infers_not_null_from_scalar_property_type(): void
     {
         $failingRules = new Validator()->validateValuesForClass(ObjectWithStringProperty::class, ['prop' => null]);
 
-        $this->assertCount(2, $failingRules['prop']);
+        $this->assertCount(1, $failingRules['prop']);
+        $this->assertInstanceOf(IsString::class, $failingRules['prop'][0]);
+    }
+
+    public function test_validation_infers_not_null_from_property_type(): void
+    {
+        $failingRules = new Validator()->validateValuesForClass(ObjectWithObjectProperty::class, ['prop' => null]);
+
+        $this->assertCount(1, $failingRules['prop']);
         $this->assertInstanceOf(NotNull::class, $failingRules['prop'][0]);
     }
 
