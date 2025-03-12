@@ -8,8 +8,6 @@ use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
 
-use function Tempest\Support\arr;
-
 /**
  * @template TClassName of object
  */
@@ -52,33 +50,37 @@ final readonly class ClassReflector implements Reflector
     /** @return \Tempest\Reflection\TypeReflector[] */
     public function getInterfaces(): array
     {
-        return arr($this->reflectionClass->getInterfaces())
-            ->map(fn (PHPReflectionClass $interface) => new TypeReflector($interface))
-            ->toArray();
+        return array_map(
+            fn (PHPReflectionClass $interface) => new TypeReflector($interface),
+            $this->reflectionClass->getInterfaces(),
+        );
     }
 
     /** @return PropertyReflector[] */
     public function getPublicProperties(): array
     {
-        return arr($this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC))
-            ->map(fn (PHPReflectionProperty $property) => new PropertyReflector($property))
-            ->toArray();
+        return array_map(
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            $this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC),
+        );
     }
 
     /** @return PropertyReflector[] */
     public function getProperties(): array
     {
-        return arr($this->reflectionClass->getProperties())
-            ->map(fn (PHPReflectionProperty $property) => new PropertyReflector($property))
-            ->toArray();
+        return array_map(
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            $this->reflectionClass->getProperties(),
+        );
     }
 
     /** @return \Tempest\Reflection\MethodReflector[] */
     public function getPublicMethods(): array
     {
-        return arr($this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC))
-            ->map(fn (PHPReflectionMethod $method) => new MethodReflector($method))
-            ->toArray();
+        return array_map(
+            fn (PHPReflectionMethod $method) => new MethodReflector($method),
+            $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+        );
     }
 
     public function getProperty(string $name): PropertyReflector
