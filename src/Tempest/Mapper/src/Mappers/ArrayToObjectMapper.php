@@ -56,7 +56,7 @@ final readonly class ArrayToObjectMapper implements Mapper
         /** @var \Tempest\Validation\Rule[] $failingRules */
         $failingRules = [];
 
-        $from = arr($from)->unwrap()->toArray();
+        $from = arr($from)->undot()->toArray();
 
         $isStrictClass = $class->hasAttribute(Strict::class);
 
@@ -86,7 +86,7 @@ final readonly class ArrayToObjectMapper implements Mapper
             $value = $this->resolveValue($property, $from[$propertyName]);
 
             try {
-                $validator->validateProperty($property, $value);
+                $validator->validateValueForProperty($property, $value);
             } catch (PropertyValidationException $propertyValidationException) {
                 $failingRules[$property->getName()] = $propertyValidationException->failingRules;
                 continue;

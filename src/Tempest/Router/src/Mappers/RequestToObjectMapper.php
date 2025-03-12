@@ -39,7 +39,7 @@ final readonly class RequestToObjectMapper implements Mapper
 
             try {
                 // TODO: validateProperty should also validate child properties
-                $validator->validateProperty($property, $value);
+                $validator->validateValueForProperty($property, $value);
             } catch (PropertyValidationException $validationException) {
                 $failingRules[$propertyName] = $validationException->failingRules;
             }

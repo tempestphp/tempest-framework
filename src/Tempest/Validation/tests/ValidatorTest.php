@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\InvalidValueException;
+use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
+use Tempest\Validation\Tests\Fixtures\ValidateObjectA;
 use Tempest\Validation\Validator;
 
 use function Tempest\Support\arr;
@@ -100,5 +103,21 @@ final class ValidatorTest extends TestCase
         });
 
         $this->expectNotToPerformAssertions();
+    }
+
+    public function test_nested_property_validation(): void
+    {
+        $validator = new Validator();
+
+        $class = new ClassReflector(ValidateObjectA::class);
+
+        $property = $class->getProperty('b');
+
+        $failingRules = $validator->validateValueForProperty(
+            $property,
+            [],
+        );
+
+        ld($failingRules);
     }
 }

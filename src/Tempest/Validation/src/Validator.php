@@ -17,6 +17,7 @@ use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\NotNull;
 
+use Throwable;
 use function Tempest\Support\arr;
 
 final readonly class Validator
@@ -35,7 +36,7 @@ final readonly class Validator
             $value = $property->getValue($object);
 
             try {
-                $this->validateProperty($property, $value);
+                $this->validateValueForProperty($property, $value);
             } catch (PropertyValidationException $invalidValueException) {
                 $failingRules[$property->getName()] = $invalidValueException->failingRules;
             }
@@ -46,42 +47,45 @@ final readonly class Validator
         }
     }
 
-    public function validateProperty(PropertyReflector $property, mixed $value): void
+    public function validateValueForProperty(PropertyReflector $property, mixed $value, string $prefix = ''): array
     {
         $failingRules = [];
 
-        try {
-            $rules = $property->getAttributes(Rule::class);
-
-            if (! $property->isNullable()) {
-                $rules[] = new NotNull();
+        if ($property->getType()->isClass()) {
+            foreach ($property->getType()->asClass()->getPublicProperties() as $subProperty) {
+                $failingRules[ltrim($prefix . '.' . $property->getName() . '.' . $subProperty->getName(), '.')] = $this->validateValueForProperty($subProperty, $value, ltrim($prefix . '.' . $property->getName(), '.'));
             }
-
-            if ($property->getType()->isScalar()) {
-                $rules[] = match ($property->getType()->getName()) {
-                    'string' => new IsString(orNull: $property->isNullable()),
-                    'int' => new IsInteger(orNull: $property->isNullable()),
-                    'float' => new IsFloat(orNull: $property->isNullable()),
-                    'bool' => new IsBoolean(orNull: $property->isNullable()),
-                    default => null,
-                };
-            }
-
-            $this->validateValue($value, array_filter($rules));
-        } catch (InvalidValueException $invalidValueException) {
-            $failingRules = $invalidValueException->failingRules;
         }
 
-        if ($failingRules !== []) {
-            throw new PropertyValidationException($property, $failingRules);
+        $rules = $property->getAttributes(Rule::class);
+
+        if (! $property->isNullable()) {
+            $rules[] = new NotNull();
         }
+
+        if ($property->getType()->isScalar()) {
+            $rules[] = match ($property->getType()->getName()) {
+                'string' => new IsString(orNull: $property->isNullable()),
+                'int' => new IsInteger(orNull: $property->isNullable()),
+                'float' => new IsFloat(orNull: $property->isNullable()),
+                'bool' => new IsBoolean(orNull: $property->isNullable()),
+                default => null,
+            };
+        }
+
+
+        return [...$failingRules, ...$this->validateValue($value, $rules)];
     }
 
-    public function validateValue(mixed $value, Closure|Rule|array $rules): void
+    public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
         $failingRules = [];
 
         foreach (arr($rules) as $rule) {
+            if (! $rule) {
+                continue;
+            }
+
             $rule = $this->convertToRule($rule, $value);
 
             if (! $rule->isValid($value)) {
@@ -89,9 +93,7 @@ final readonly class Validator
             }
         }
 
-        if ($failingRules !== []) {
-            throw new InvalidValueException($value, $failingRules);
-        }
+        return $failingRules;
     }
 
     private function convertToRule(Rule|Closure $rule, mixed $value): Rule
@@ -112,8 +114,7 @@ final readonly class Validator
             public function __construct(
                 private bool $isValid,
                 private string $message,
-            ) {
-            }
+            ) {}
 
             public function isValid(mixed $value): bool
             {
