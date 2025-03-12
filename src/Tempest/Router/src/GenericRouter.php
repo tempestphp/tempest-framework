@@ -51,13 +51,6 @@ final class GenericRouter implements Router
         return $this;
     }
 
-    public function withExceptions(): self
-    {
-        $this->handleExceptions = true;
-
-        return $this;
-    }
-
     public function dispatch(Request|PsrRequest $request): Response
     {
         if (! ($request instanceof PsrRequest)) {
