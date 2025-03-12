@@ -214,10 +214,6 @@ final class GenericRouter implements Router
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton($request::class, fn () => $request);
 
-        // Finally, we validate the request
-        // TODO: is still needed?
-        $request->validate();
-
         return $request;
     }
 
