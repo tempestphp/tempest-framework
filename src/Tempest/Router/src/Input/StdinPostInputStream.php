@@ -8,7 +8,7 @@ final class StdinPostInputStream implements PostInputStream
 {
     public function parse(): array
     {
-        return str(file_get_contents('php://stdin'))
+        return str(file_get_contents('php://input'))
             ->explode('&')
             ->mapWithKeys(function (string $value) {
                 $parts = explode('=', $value, 2);
