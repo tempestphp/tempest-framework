@@ -26,24 +26,25 @@ final readonly class RequestToObjectMapper implements Mapper
         /** @var Request $from */
         $data = $from->body;
 
-        $validator = new Validator();
-
-        $failingRules = [];
-
-        foreach (reflect($to)->getPublicProperties() as $property) {
-            $propertyName = $property->getName();
-
-            $data[$propertyName] ??= null;
-
-            $value = $data[$propertyName];
-
-            try {
-                // TODO: validateProperty should also validate child properties
-                $validator->validateValueForProperty($property, $value);
-            } catch (PropertyValidationException $validationException) {
-                $failingRules[$propertyName] = $validationException->failingRules;
-            }
+        if (is_a($to, Request::class, true)) {
+            $data = [
+                ...[
+                    'method' => $from->method,
+                    'uri' => $from->uri,
+                    'body' => $from->body,
+                    'headers' => $from->headers,
+                    'path' => $from->path,
+                    'query' => $from->query,
+                    'files' => $from->files,
+                    'cookies' => $from->cookies,
+                ],
+                ...$from->files,
+                ...$from->query,
+                ...$data,
+            ];
         }
+
+        $failingRules = new Validator()->validateValuesForClass($to, $data);
 
         if ($failingRules !== []) {
             throw new ValidationException($from, $failingRules);

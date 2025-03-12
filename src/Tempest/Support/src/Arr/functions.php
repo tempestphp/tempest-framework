@@ -859,7 +859,8 @@ namespace Tempest\Support\Arr {
     /**
      * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
      */
-    function dot(iterable $array, string $prefix = ''): array {
+    function dot(iterable $array, string $prefix = ''): array
+    {
         $array = to_array($array);
 
         $result = [];

@@ -8,8 +8,8 @@ final class ValidateObjectB
 {
     public ValidateObjectC $c;
 
-//    #[Length(min: 2)]
-//    public string $name;
-//
-//    public int $age;
+    #[Length(min: 2)]
+    public string $name;
+
+    public int $age;
 }

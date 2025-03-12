@@ -151,7 +151,7 @@ final class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS);
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
         Assert::assertArrayHasKey(
             $key,

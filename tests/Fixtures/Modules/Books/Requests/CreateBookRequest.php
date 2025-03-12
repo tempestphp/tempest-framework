@@ -14,5 +14,7 @@ final class CreateBookRequest implements Request
 
     public string $title;
 
-    public Upload $cover;
+    public ?Upload $cover;
+
+    public ?string $queryParam;
 }

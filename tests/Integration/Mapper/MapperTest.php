@@ -178,63 +178,6 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('casted', $object->prop);
     }
 
-    public function test_validation(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
-    }
-
-    public function test_validation_happens_before_mapping(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => null])->to(ObjectFactoryWithValidation::class);
-    }
-
-    public function test_validation_infers_not_null_from_property_type(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => null])->to(ObjectWithStringProperty::class);
-    }
-
-    public function test_validation_infers_int_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'a'])->to(ObjectWithIntProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be an integer', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_float_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'a'])->to(ObjectWithFloatProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be a float', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_string_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 1])->to(ObjectWithStringProperty::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be a string', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_bool_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'invalid'])->to(ObjectWithBoolProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should represent a boolean value', $validationException->getMessage());
-        }
-    }
-
     public function test_map_from_attribute(): void
     {
         $object = map([

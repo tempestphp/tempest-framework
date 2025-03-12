@@ -2,7 +2,10 @@
 
 namespace Tempest\Validation\Tests\Fixtures;
 
+use Tempest\Validation\Rules\Length;
+
 final class ValidateObjectC
 {
-    public string $c;
+    #[Length(min: 2)]
+    public string $name;
 }

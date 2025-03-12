@@ -34,6 +34,13 @@ final class HttpRouterTester
         );
     }
 
+    public function throwExceptions(): self
+    {
+        $this->container->get(Router::class)->throwExceptions();
+
+        return $this;
+    }
+
     public function head(string $uri, array $headers = []): TestResponseHelper
     {
         return $this->sendRequest(

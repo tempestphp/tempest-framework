@@ -11,9 +11,6 @@ use Tempest\Mapper\Mapper;
 use Tempest\Mapper\Strict;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\Exceptions\PropertyValidationException;
-use Tempest\Validation\Exceptions\ValidationException;
-use Tempest\Validation\Validator;
 use Throwable;
 
 use function Tempest\Support\arr;
@@ -42,8 +39,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
     public function map(mixed $from, mixed $to): object
     {
-        $validator = new Validator();
-
         $class = new ClassReflector($to);
 
         $object = $this->resolveObject($to);
@@ -52,9 +47,6 @@ final readonly class ArrayToObjectMapper implements Mapper
 
         /** @var PropertyReflector[] $unsetProperties */
         $unsetProperties = [];
-
-        /** @var \Tempest\Validation\Rule[] $failingRules */
-        $failingRules = [];
 
         $from = arr($from)->undot()->toArray();
 
@@ -85,18 +77,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 
             $value = $this->resolveValue($property, $from[$propertyName]);
 
-            try {
-                $validator->validateValueForProperty($property, $value);
-            } catch (PropertyValidationException $propertyValidationException) {
-                $failingRules[$property->getName()] = $propertyValidationException->failingRules;
-                continue;
-            }
-
             $property->setValue($object, $value);
-        }
-
-        if ($failingRules !== []) {
-            throw new ValidationException($object, $failingRules);
         }
 
         if ($missingValues !== []) {

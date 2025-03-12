@@ -81,6 +81,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
     public function test_custom_request_test(): void
     {
         $response = $this->http
+            ->throwExceptions()
             ->post(
                 uri: '/create-post',
                 body: [
@@ -117,6 +118,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
         );
 
         $this->http
+            ->throwExceptions()
             ->post(
                 uri: uri([BookController::class, 'store']),
                 body: [

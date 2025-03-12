@@ -20,7 +20,7 @@ final class PropertyValidationException extends Exception
         public readonly array $failingRules,
     ) {
         $messages = [];
-lw($this->failingRules);
+        lw($this->failingRules);
         foreach ($this->failingRules as $key => $failingRulesForProperty) {
             foreach ($failingRulesForProperty as $failingRule) {
                 $messages[$key][] = arr($failingRule->message())->join()->toString();

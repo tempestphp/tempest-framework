@@ -7,17 +7,15 @@ namespace Tempest\Validation;
 use Closure;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\Exceptions\InvalidValueException;
 use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
-use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\NotNull;
 
-use Throwable;
+use function Tempest\reflect;
 use function Tempest\Support\arr;
 
 final readonly class Validator
@@ -35,11 +33,7 @@ final readonly class Validator
 
             $value = $property->getValue($object);
 
-            try {
-                $this->validateValueForProperty($property, $value);
-            } catch (PropertyValidationException $invalidValueException) {
-                $failingRules[$property->getName()] = $invalidValueException->failingRules;
-            }
+            $failingRules[$property->getName()] = $this->validateValueForProperty($property, $value);
         }
 
         if ($failingRules !== []) {
@@ -47,16 +41,45 @@ final readonly class Validator
         }
     }
 
-    public function validateValueForProperty(PropertyReflector $property, mixed $value, string $prefix = ''): array
+    /**
+     * @param ClassReflector|class-string $class
+     */
+    public function validateValuesForClass(ClassReflector|string $class, mixed $values, string $prefix = ''): array
     {
+        $class = is_string($class) ? new ClassReflector($class) : $class;
+
         $failingRules = [];
 
-        if ($property->getType()->isClass()) {
-            foreach ($property->getType()->asClass()->getPublicProperties() as $subProperty) {
-                $failingRules[ltrim($prefix . '.' . $property->getName() . '.' . $subProperty->getName(), '.')] = $this->validateValueForProperty($subProperty, $value, ltrim($prefix . '.' . $property->getName(), '.'));
+        foreach ($class->getPublicProperties() as $property) {
+            if ($property->hasAttribute(SkipValidation::class)) {
+                continue;
+            }
+
+            $value = $values[$property->getName()] ?? null;
+
+            $failingRulesForProperty = $this->validateValueForProperty($property, $value);
+
+            if ($failingRulesForProperty !== []) {
+                $failingRules[$prefix . $property->getName()] = $failingRulesForProperty;
+            }
+
+            if ($failingRulesForProperty === [] && $property->getType()->isClass()) {
+                // Only need to validate the child property if the value isn't null or if the property isn't nullable
+                // i.e. If the value is null and the property is nullable, we won't validate it
+                if (! $property->isNullable() || $value !== null) {
+                    $failingRules = [
+                        ...$failingRules,
+                        ...$this->validateValuesForClass($property->getType()->asClass(), $value, $prefix . $property->getName() . '.'),
+                    ];
+                }
             }
         }
 
+        return $failingRules;
+    }
+
+    public function validateValueForProperty(PropertyReflector $property, mixed $value): array
+    {
         $rules = $property->getAttributes(Rule::class);
 
         if (! $property->isNullable()) {
@@ -73,8 +96,7 @@ final readonly class Validator
             };
         }
 
-
-        return [...$failingRules, ...$this->validateValue($value, $rules)];
+        return $this->validateValue($value, $rules);
     }
 
     public function validateValue(mixed $value, Closure|Rule|array $rules): array
@@ -114,7 +136,8 @@ final readonly class Validator
             public function __construct(
                 private bool $isValid,
                 private string $message,
-            ) {}
+            ) {
+            }
 
             public function isValid(mixed $value): bool
             {

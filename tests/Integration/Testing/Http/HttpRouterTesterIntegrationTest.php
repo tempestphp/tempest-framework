@@ -142,6 +142,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this
             ->http
+            ->throwExceptions()
             ->trace('/test')
             ->assertOk();
     }

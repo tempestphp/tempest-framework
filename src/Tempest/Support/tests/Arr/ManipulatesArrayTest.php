@@ -1727,13 +1727,16 @@ final class ManipulatesArrayTest extends TestCase
                 'b' => 'c',
                 'd' => 'e',
             ],
-            'f' => 'g'
+            'f' => 'g',
         ]);
 
-        $this->assertTrue(arr([
-            "a.b" => "c",
-            "a.d" => "e",
-            "f" => "g",
-        ])->equals($array->dot()));
+        $this->assertTrue(
+            arr([
+                'a.b' => 'c',
+                'a.d' => 'e',
+                'f' => 'g',
+            ])
+                ->equals($array->dot()),
+        );
     }
 }

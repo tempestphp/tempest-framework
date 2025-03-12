@@ -19,7 +19,6 @@ final readonly class RequestToPsrRequestMapper implements Mapper
     public function map(mixed $from, mixed $to): PsrRequest
     {
         /** @var Request $from */
-
         return new ServerRequest(
             uploadedFiles: $from->files,
             uri: $from->uri,
