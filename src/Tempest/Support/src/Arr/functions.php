@@ -827,7 +827,7 @@ namespace Tempest\Support\Arr {
     /**
      * Returns a copy of the array that converts the dot-notated keys to a set of nested arrays.
      */
-    function unwrap(iterable $array): array
+    function undot(iterable $array): array
     {
         $array = to_array($array);
 
@@ -854,6 +854,26 @@ namespace Tempest\Support\Arr {
         }
 
         return array_merge_recursive(...$unwrapped);
+    }
+
+    /**
+     * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
+     */
+    function dot(iterable $array, string $prefix = ''): array
+    {
+        $array = to_array($array);
+
+        $result = [];
+
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $result = [...$result, ...dot($value, $prefix . $key . '.')];
+            } else {
+                $result[$prefix . $key] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**

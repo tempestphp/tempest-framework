@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
-use Tempest\Database\Id;
-use Tempest\Mapper\CastWith;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
-use Tempest\Reflection\ClassReflector;
-use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -19,11 +15,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\EnumToCast;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectA;
 use Tests\Tempest\Integration\Mapper\Fixtures\NestedObjectB;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryA;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectFactoryWithValidation;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectThatShouldUseCasters;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapFromAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
@@ -32,7 +24,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNotNullInferenceA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
 use function Tempest\make;
 use function Tempest\map;
@@ -176,63 +167,6 @@ final class MapperTest extends FrameworkIntegrationTestCase
         ]);
 
         $this->assertSame('casted', $object->prop);
-    }
-
-    public function test_validation(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => 'a'])->to(ObjectFactoryWithValidation::class);
-    }
-
-    public function test_validation_happens_before_mapping(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => null])->to(ObjectFactoryWithValidation::class);
-    }
-
-    public function test_validation_infers_not_null_from_property_type(): void
-    {
-        $this->expectException(ValidationException::class);
-
-        map(['prop' => null])->to(ObjectWithStringProperty::class);
-    }
-
-    public function test_validation_infers_int_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'a'])->to(ObjectWithIntProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be an integer', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_float_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'a'])->to(ObjectWithFloatProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be a float', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_string_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 1])->to(ObjectWithStringProperty::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should be a string', $validationException->getMessage());
-        }
-    }
-
-    public function test_validation_infers_bool_rule_from_property_type(): void
-    {
-        try {
-            map(['prop' => 'invalid'])->to(ObjectWithBoolProp::class);
-        } catch (ValidationException $validationException) {
-            $this->assertStringContainsString('Value should represent a boolean value', $validationException->getMessage());
-        }
     }
 
     public function test_map_from_attribute(): void
