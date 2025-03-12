@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
+use Tempest\Router\GenericRouter;
 use Tempest\Router\Mappers\RequestToPsrRequestMapper;
 use Tempest\Router\Request;
 use Tempest\Router\Router;
@@ -36,7 +37,11 @@ final class HttpRouterTester
 
     public function throwExceptions(): self
     {
-        $this->container->get(Router::class)->throwExceptions();
+        $router = $this->container->get(Router::class);
+
+        if ($router instanceof GenericRouter) {
+            $router->throwExceptions();
+        }
 
         return $this;
     }

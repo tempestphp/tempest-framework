@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Tempest\Integration\Mapper\Fixtures;
+namespace Tempest\Validation\Tests\Fixtures;
 
 use Tempest\Validation\SkipValidation;
 

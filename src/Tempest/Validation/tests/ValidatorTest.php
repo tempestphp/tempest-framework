@@ -14,13 +14,13 @@ use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
+use Tempest\Validation\Tests\Fixtures\ObjectWithBoolProp;
+use Tempest\Validation\Tests\Fixtures\ObjectWithFloatProp;
+use Tempest\Validation\Tests\Fixtures\ObjectWithIntProp;
+use Tempest\Validation\Tests\Fixtures\ObjectWithSkipValidation;
+use Tempest\Validation\Tests\Fixtures\ObjectWithStringProperty;
 use Tempest\Validation\Tests\Fixtures\ValidateObjectA;
 use Tempest\Validation\Validator;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithBoolProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithFloatProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithIntProp;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSkipValidation;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStringProperty;
 
 /**
  * @internal
