@@ -100,7 +100,7 @@ jobs:
         run: php ./tempest discovery:status
 
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
+        run: php -d"error_reporting = E_ALL & ~E_DEPRECATED" vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
       # Only upload coverage once.
       - if: matrix.php == '8.3' && matrix.database == 'sqlite' && matrix.os == 'ubuntu-latest' && matrix.stability == 'prefer-stable'

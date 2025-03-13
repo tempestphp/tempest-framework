@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
+use Symfony\Component\VarDumper\Cloner\Data;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
@@ -43,7 +44,7 @@ final class CreateTableStatement implements QueryStatement
         OnUpdate $onUpdate = OnUpdate::NO_ACTION,
         bool $nullable = false,
     ): self {
-        [$localTable, $localKey] = explode('.', $local);
+        [, $localKey] = explode('.', $local);
 
         $this->integer($localKey, nullable: $nullable);
 
@@ -268,8 +269,10 @@ final class CreateTableStatement implements QueryStatement
             'CREATE TABLE %s (%s);',
             new TableName($this->tableName),
             arr($this->statements)
+                // Remove BelongsTo for sqlLite as it does not support those queries
+                ->filter(fn (QueryStatement $queryStatement) => ! ($dialect === DatabaseDialect::SQLITE && $queryStatement instanceof BelongsToStatement))
                 ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->filter(fn (ImmutableString $line) => $line->isNotEmpty())
+                ->filter(fn (ImmutableString $str) => $str->isNotEmpty())
                 ->implode(', ' . PHP_EOL . '    ')
                 ->wrap(before: PHP_EOL . '    ', after: PHP_EOL)
                 ->toString(),

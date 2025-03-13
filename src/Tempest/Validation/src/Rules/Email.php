@@ -22,7 +22,7 @@ final readonly class Email implements Rule
     {
         $emailValidator = new EmailValidator();
 
-        return $emailValidator->isValid($value, $this->validationMethod);
+        return $emailValidator->isValid($value ?? '', $this->validationMethod);
     }
 
     public function message(): string
