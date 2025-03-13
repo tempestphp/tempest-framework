@@ -10,10 +10,14 @@ final class StdinPostInputStream implements PostInputStream
     {
         $inputStreamData = str(file_get_contents('php://input'))
             ->explode('&')
-            ->mapWithKeys(function (string $value) {
-                $parts = explode('=', $value, 2);
+            ->mapWithKeys(function (string $item) {
+                $parts = explode('=', $item, 2);
 
-                yield $parts[0] => $parts[1] ?? '';
+                $key = $parts[0];
+
+                $value = $_POST[str_replace('.', '_', $key)] ?? $parts[1] ?? '';
+
+                yield $key => $value;
             })
             ->toArray();
 
