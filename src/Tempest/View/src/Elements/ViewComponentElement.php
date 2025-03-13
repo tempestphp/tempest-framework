@@ -87,13 +87,12 @@ final class ViewComponentElement implements Element
             ->prepend(
                 // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',
-                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->attributes, true)),  // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
+                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->attributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
 
                 // Add dynamic slots to the current scope
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
                 sprintf('<?php $slots = \Tempest\Support\arr(%s); ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
-
             ->append(
                 // Restore previous slots
                 '<?php unset($slots); ?>',
