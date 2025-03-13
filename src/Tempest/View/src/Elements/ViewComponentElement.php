@@ -17,6 +17,8 @@ final class ViewComponentElement implements Element
 {
     use IsElement;
 
+    private array $dataAttributes = [];
+
     public function __construct(
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
@@ -24,6 +26,9 @@ final class ViewComponentElement implements Element
         array $attributes,
     ) {
         $this->attributes = $attributes;
+        $this->dataAttributes = arr($attributes)
+            ->filter(fn ($value, $key) => ! str_starts_with($key, ':'))
+            ->toArray();
     }
 
     public function getViewComponent(): ViewComponent
@@ -87,7 +92,7 @@ final class ViewComponentElement implements Element
             ->prepend(
                 // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',
-                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->attributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
+                sprintf('<?php $attributes = \Tempest\Support\arr(%s); ?>', var_export($this->dataAttributes, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
 
                 // Add dynamic slots to the current scope
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
