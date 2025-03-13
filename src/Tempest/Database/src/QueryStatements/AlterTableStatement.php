@@ -29,35 +29,7 @@ final class AlterTableStatement implements QueryStatement
 
     public function add(QueryStatement $statement): self
     {
-        $this->statements[] = new AlterStatement(Alter::ADD, $statement);
-
-        return $this;
-    }
-
-    public function update(QueryStatement $statement): self
-    {
-        $this->statements[] = new AlterStatement(Alter::UPDATE, $statement);
-
-        return $this;
-    }
-
-    public function delete(string $table): self
-    {
-        $this->statements[] = new AlterStatement(
-            Alter::DELETE,
-            new RawStatement($table),
-        );
-
-        return $this;
-    }
-
-    public function constraint(string $constraintName, ?QueryStatement $statement = null): self
-    {
-        $this->statements[] = new ConstraintStatement($constraintName, $statement);
-
-        if ($statement !== null) {
-            $this->statements[] = $statement;
-        }
+        $this->statements[] = new AlterAddColumnStatement($statement);
 
         return $this;
     }
@@ -82,9 +54,33 @@ final class AlterTableStatement implements QueryStatement
         return $this;
     }
 
-    public function drop(QueryStatement $statement): self
+    public function dropColumn(string $name): self
     {
-        $this->statements[] = new AlterStatement(Alter::DROP, $statement);
+        $this->statements[] = new AlterDropStatement(ColumnNameStatement::fromString($name));
+
+        return $this;
+    }
+
+    public function dropConstraint(string $name): self
+    {
+        $this->statements[] = new AlterDropStatement(ConstraintNameStatement::fromString($name));
+
+        return $this;
+    }
+
+    public function rename(string $from, string $to): self
+    {
+        $this->statements[] = new RenameColumnStatement(
+            new IdentityStatement($from),
+            new IdentityStatement($to),
+        );
+
+        return $this;
+    }
+
+    public function modify(QueryStatement $column): self
+    {
+        $this->statements[] = new ModifyColumnStatement($column);
 
         return $this;
     }
