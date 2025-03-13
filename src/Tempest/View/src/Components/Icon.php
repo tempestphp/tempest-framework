@@ -6,6 +6,7 @@ namespace Tempest\View\Components;
 
 use Exception;
 use Tempest\Cache\IconCache;
+use Tempest\Core\AppConfig;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
@@ -14,6 +15,7 @@ use Tempest\View\ViewComponent;
 final readonly class Icon implements ViewComponent
 {
     public function __construct(
+        private AppConfig $config,
         private IconCache $cache,
         private HttpClient $http,
     ) {
@@ -32,7 +34,9 @@ final readonly class Icon implements ViewComponent
         $svg = $this->render($name);
 
         if (! $svg) {
-            return '';
+            return $this->config->environment->isLocal() ?
+                '<!-- unknown-icon: ' . $name . ' -->' :
+                '';
         }
 
         return match ($class) {
