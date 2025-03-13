@@ -7,7 +7,7 @@ namespace Tempest\View\Components;
 use DateInterval;
 use DateTimeImmutable;
 use Exception;
-use Tempest\Cache\Cache;
+use Tempest\Cache\IconCache;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
@@ -16,7 +16,7 @@ use Tempest\View\ViewComponent;
 final readonly class Icon implements ViewComponent
 {
     public function __construct(
-        private Cache $cache,
+        private IconCache $cache,
         private HttpClient $http,
     ) {
     }

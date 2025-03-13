@@ -17,6 +17,8 @@ final class CacheConfig
 
     public ?bool $enable;
 
+    public bool $iconCache = false;
+
     public bool $projectCache = false;
 
     public bool $viewCache = false;
@@ -34,6 +36,7 @@ final class CacheConfig
         ?bool $enable = null,
     ) {
         $this->enable = $enable ?? env('CACHE');
+        $this->iconCache = (bool) env('ICON_CACHE', false);
         $this->projectCache = (bool) env('PROJECT_CACHE', false);
         $this->viewCache = (bool) env('VIEW_CACHE', false);
         $this->discoveryCache = $this->resolveDiscoveryCacheStrategy();
