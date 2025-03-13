@@ -74,9 +74,7 @@ final readonly class Icon implements ViewComponent
             return $this->cache->resolve(
                 key: "iconify-{$prefix}-{$name}",
                 cache: fn () => $this->download($prefix, $name),
-                expiresAt: new DateTimeImmutable()->add(
-                    new DateInterval('PT1H'),
-                ),
+                expiresAt: null,
             );
         } catch (Exception) {
             return null;
