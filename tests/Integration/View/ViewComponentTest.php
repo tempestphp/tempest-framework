@@ -547,7 +547,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-
     public function test_head_injection(): void
     {
         $this->registerViewComponent('x-custom-link', <<<'HTML'
@@ -572,6 +571,21 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         <html lang="en"><head><title>Foo</title><meta charset="utf-8"></meta><link rel="stylesheet" href="#"></link>
         <meta name="description" content="bar"></meta></head><body class="a">b
         </body></html>
+        HTML, $html);
+    }
+
+    public function test_attributes_variable_in_view_component(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="foo {{ $attributes['class'] }}" style="font-weight: bold; {{ $attributes['style'] }}"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="baz" style="text-decoration: underline;"></x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="foo baz" style="font-weight: bold; text-decoration: underline;"></div>
         HTML, $html);
     }
 }

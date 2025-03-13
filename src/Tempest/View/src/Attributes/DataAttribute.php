@@ -23,11 +23,9 @@ final readonly class DataAttribute implements Attribute
     {
         $value = str($element->getAttribute($this->name));
 
-        // Render {{ and {!! tags
-        if ($value->startsWith(['{{', '{!!']) && $value->endsWith(['}}', '!!}'])) {
-            $value = new TextElement($value->toString())->compile();
-            $element->setAttribute($this->name, $value);
-        }
+        $value = new TextElement($value->toString())->compile();
+
+        $element->setAttribute($this->name, $value);
 
         // Data attributes should only be parsed for view components
         if ($element->unwrap(ViewComponentElement::class) === null) {
