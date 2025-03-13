@@ -23,7 +23,6 @@ use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
-
 use function Tempest\map;
 use function Tempest\Support\str;
 
@@ -77,7 +76,7 @@ final class GenericRouter implements Router
             } catch (NotFoundException) {
                 return new NotFound();
             } catch (ValidationException $validationException) {
-                return new Invalid($request, $validationException->failingRules);
+                return new Invalid($validationException->object, $validationException->failingRules);
             }
         } else {
             $request = $this->resolveRequest($request, $matchedRoute);

@@ -6,12 +6,12 @@ namespace Tempest\Router;
 
 use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use Tempest\Router\Input\PostInputStream;
+use Tempest\Router\Input\InputStream;
 
 final readonly class RequestFactory
 {
     public function __construct(
-        private PostInputStream $inputStream,
+        private InputStream $inputStream,
     ) {
     }
 

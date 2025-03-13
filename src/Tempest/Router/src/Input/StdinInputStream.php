@@ -4,7 +4,7 @@ namespace Tempest\Router\Input;
 
 use function Tempest\Support\str;
 
-final class StdinPostInputStream implements PostInputStream
+final class StdinInputStream implements InputStream
 {
     public function parse(): array
     {
