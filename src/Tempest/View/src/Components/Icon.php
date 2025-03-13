@@ -34,9 +34,9 @@ final readonly class Icon implements ViewComponent
         $svg = $this->render($name);
 
         if (! $svg) {
-            return $this->config->environment->isLocal() ?
-                '<!-- unknown-icon: ' . $name . ' -->' :
-                '';
+            return $this->config->environment->isLocal()
+                ? ('<!-- unknown-icon: ' . $name . ' -->')
+                : '';
         }
 
         return match ($class) {
