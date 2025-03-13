@@ -135,7 +135,7 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertTrue(arr($array)->put('a', 'c')->equals(['a' => 'c']));
     }
 
-    public function test_unwrap(): void
+    public function test_undot(): void
     {
         $expected = [
             'a' => [
@@ -149,7 +149,7 @@ final class ManipulatesArrayTest extends TestCase
             'a.b.c' => 'c',
         ];
 
-        $this->assertTrue(arr($input)->unwrap()->equals($expected));
+        $this->assertTrue(arr($input)->undot()->equals($expected));
     }
 
     public function test_implode(): void
@@ -1718,5 +1718,25 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertSame($collection, $result);
         $this->assertEquals(['foo'], $log);
+    }
+
+    public function test_dot(): void
+    {
+        $array = arr([
+            'a' => [
+                'b' => 'c',
+                'd' => 'e',
+            ],
+            'f' => 'g',
+        ]);
+
+        $this->assertTrue(
+            arr([
+                'a.b' => 'c',
+                'a.d' => 'e',
+                'f' => 'g',
+            ])
+                ->equals($array->dot()),
+        );
     }
 }

@@ -13,6 +13,8 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Router\Exceptions\InvalidRouteException;
 use Tempest\Router\Exceptions\NotFoundException;
+use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
+use Tempest\Router\Mappers\RequestToObjectMapper;
 use Tempest\Router\Mappers\RequestToPsrRequestMapper;
 use Tempest\Router\Responses\Invalid;
 use Tempest\Router\Responses\NotFound;
@@ -33,11 +35,20 @@ final class GenericRouter implements Router
     /** @var class-string<MiddlewareClass>[] */
     private array $middleware = [];
 
+    private bool $handleExceptions = true;
+
     public function __construct(
         private readonly Container $container,
         private readonly RouteMatcher $routeMatcher,
         private readonly AppConfig $appConfig,
     ) {
+    }
+
+    public function throwExceptions(): self
+    {
+        $this->handleExceptions = false;
+
+        return $this;
     }
 
     public function dispatch(Request|PsrRequest $request): Response
@@ -59,13 +70,18 @@ final class GenericRouter implements Router
 
         $callable = $this->getCallable($matchedRoute);
 
-        try {
+        if ($this->handleExceptions) {
+            try {
+                $request = $this->resolveRequest($request, $matchedRoute);
+                $response = $callable($request);
+            } catch (NotFoundException) {
+                return new NotFound();
+            } catch (ValidationException $validationException) {
+                return new Invalid($validationException->object, $validationException->failingRules);
+            }
+        } else {
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
-        } catch (NotFoundException) {
-            return new NotFound();
-        } catch (ValidationException $validationException) {
-            return new Invalid($request, $validationException->failingRules);
         }
 
         return $response;
@@ -167,6 +183,7 @@ final class GenericRouter implements Router
         return $input;
     }
 
+    // TODO: could in theory be moved to a dynamic initializer
     private function resolveRequest(\Psr\Http\Message\ServerRequestInterface|\Tempest\Mapper\ObjectFactory $psrRequest, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
@@ -184,17 +201,18 @@ final class GenericRouter implements Router
         }
 
         // We map the original request we got into this method to the right request class
-        /** @var Request $request */
-        $request = map($psrRequest)->to($requestClass);
+        /** @var \Tempest\Router\GenericRequest $request */
+        $request = map($psrRequest)->with(PsrRequestToGenericRequestMapper::class)->do();
+
+        if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {
+            $request = map($request)->with(RequestToObjectMapper::class)->to($requestClass);
+        }
 
         // Next, we register this newly created request object in the container
         // This makes it so that RequestInitializer is bypassed entirely when the controller action needs the request class
         // Making it so that we don't need to set any $_SERVER variables and stuff like that
         $this->container->singleton(Request::class, fn () => $request);
         $this->container->singleton($request::class, fn () => $request);
-
-        // Finally, we validate the request
-        $request->validate();
 
         return $request;
     }

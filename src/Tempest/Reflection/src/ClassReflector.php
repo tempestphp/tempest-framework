@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
-use Generator;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionMethod as PHPReflectionMethod;
 use ReflectionProperty as PHPReflectionProperty;
@@ -25,6 +24,8 @@ final readonly class ClassReflector implements Reflector
     {
         if (is_string($reflectionClass)) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
+        } elseif ($reflectionClass instanceof self) {
+            $reflectionClass = $reflectionClass->getReflection();
         } elseif (! ($reflectionClass instanceof PHPReflectionClass)) {
             $reflectionClass = new PHPReflectionClass($reflectionClass);
         }
@@ -46,36 +47,40 @@ final readonly class ClassReflector implements Reflector
         return null;
     }
 
-    /** @return Generator<\Tempest\Reflection\TypeReflector> */
-    public function getInterfaces(): Generator
+    /** @return \Tempest\Reflection\TypeReflector[] */
+    public function getInterfaces(): array
     {
-        foreach ($this->reflectionClass->getInterfaces() as $interface) {
-            yield new TypeReflector($interface);
-        }
+        return array_map(
+            fn (PHPReflectionClass $interface) => new TypeReflector($interface),
+            $this->reflectionClass->getInterfaces(),
+        );
     }
 
-    /** @return Generator<PropertyReflector> */
-    public function getPublicProperties(): Generator
+    /** @return PropertyReflector[] */
+    public function getPublicProperties(): array
     {
-        foreach ($this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC) as $property) {
-            yield new PropertyReflector($property);
-        }
+        return array_map(
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            $this->reflectionClass->getProperties(PHPReflectionProperty::IS_PUBLIC),
+        );
     }
 
-    /** @return Generator<PropertyReflector> */
-    public function getProperties(): Generator
+    /** @return PropertyReflector[] */
+    public function getProperties(): array
     {
-        foreach ($this->reflectionClass->getProperties() as $property) {
-            yield new PropertyReflector($property);
-        }
+        return array_map(
+            fn (PHPReflectionProperty $property) => new PropertyReflector($property),
+            $this->reflectionClass->getProperties(),
+        );
     }
 
-    /** @return Generator<MethodReflector> */
-    public function getPublicMethods(): Generator
+    /** @return \Tempest\Reflection\MethodReflector[] */
+    public function getPublicMethods(): array
     {
-        foreach ($this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC) as $method) {
-            yield new MethodReflector($method);
-        }
+        return array_map(
+            fn (PHPReflectionMethod $method) => new MethodReflector($method),
+            $this->reflectionClass->getMethods(PHPReflectionMethod::IS_PUBLIC),
+        );
     }
 
     public function getProperty(string $name): PropertyReflector

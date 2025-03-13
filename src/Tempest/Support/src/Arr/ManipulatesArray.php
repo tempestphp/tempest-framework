@@ -532,11 +532,19 @@ trait ManipulatesArray
     }
 
     /**
-     * Converts the dot-notated keys of the instance to a set of nested arrays.
+     * Converts the dot-notation keys of the instance to a set of nested arrays.
      */
-    public function unwrap(): static
+    public function undot(): static
     {
-        return $this->createOrModify(namespace\unwrap($this->value));
+        return $this->createOrModify(namespace\undot($this->value));
+    }
+
+    /**
+     * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
+     */
+    public function dot(): static
+    {
+        return $this->createOrModify(namespace\dot($this->value));
     }
 
     /**

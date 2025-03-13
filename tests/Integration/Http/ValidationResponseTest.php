@@ -20,7 +20,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: ['number' => 11, 'item.number' => 11],
-                headers: ['Referer' => uri([ValidationController::class, 'store'])],
+                headers: ['referer' => uri([ValidationController::class, 'store'])],
             )
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number');
@@ -34,7 +34,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             ->post(
                 uri: uri([ValidationController::class, 'store']),
                 body: $values,
-                headers: ['Referer' => uri([ValidationController::class, 'store'])],
+                headers: ['referer' => uri([ValidationController::class, 'store'])],
             )
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')

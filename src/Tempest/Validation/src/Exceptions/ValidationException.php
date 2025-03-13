@@ -12,7 +12,7 @@ use function Tempest\Support\arr;
 final class ValidationException extends Exception
 {
     public function __construct(
-        object $object,
+        public readonly object $object,
         public readonly array $failingRules,
     ) {
         $messages = [];
