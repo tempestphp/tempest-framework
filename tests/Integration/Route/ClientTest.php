@@ -52,4 +52,20 @@ final class ClientTest extends FrameworkIntegrationTestCase
         $this->assertSame('a a', $response->getHeader('name')[0]);
         $this->assertSame('b', $response->getHeader('b.name')[0]);
     }
+
+    public function test_json_post_request(): void
+    {
+        $request = new RequestFactory()
+            ->createRequest('POST', new Uri('http://localhost:8000/request-test/form'))
+            ->withHeader('Accept', 'application/json')
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody(new StreamFactory()->createStream('{"name": "a a", "b": {"name": "b"}}'))
+        ;
+
+        $response = $this->driver->sendRequest($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('a a', $response->getHeader('name')[0]);
+        $this->assertSame('b', $response->getHeader('b.name')[0]);
+    }
 }

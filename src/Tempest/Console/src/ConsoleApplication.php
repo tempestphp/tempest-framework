@@ -40,13 +40,6 @@ final readonly class ConsoleApplication implements Application
         $consoleConfig = $container->get(ConsoleConfig::class);
         $consoleConfig->name = $name;
 
-        $logConfig = $container->get(LogConfig::class);
-
-        if ($logConfig->debugLogPath === null && $logConfig->channels === []) {
-            $logConfig->debugLogPath = path($container->get(Kernel::class)->root, '/log/debug.log')->toString();
-            $logConfig->channels[] = new AppendLogChannel(path($container->get(Kernel::class)->root, '/log/tempest.log')->toString());
-        }
-
         return $application;
     }
 

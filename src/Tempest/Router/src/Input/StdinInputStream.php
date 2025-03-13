@@ -8,7 +8,13 @@ final class StdinInputStream implements InputStream
 {
     public function parse(): array
     {
-        $inputStreamData = str(file_get_contents('php://input'))
+        $input = file_get_contents('php://input');
+
+        if (json_validate($input)) {
+            return json_decode($input, true);
+        }
+
+        $inputStreamData = str($input)
             ->explode('&')
             ->mapWithKeys(function (string $item) {
                 $parts = explode('=', $item, 2);
