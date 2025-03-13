@@ -26,8 +26,10 @@ final class ClientTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->server = new Process([root_path('tempest'), 'serve']);
-        $this->server->start();
+        $this->server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
+        $this->server->start(function (...$args) {
+            lw(...$args);
+        });
 
         // Server needs to start
         usleep(100000);
@@ -36,11 +38,24 @@ final class ClientTest extends FrameworkIntegrationTestCase
         $this->driver = $this->container->get(ClientInterface::class);
     }
 
+    protected function tearDown(): void
+    {
+        if ($this->server->isRunning()) {
+            $this->server->signal(SIGKILL);
+        }
+
+        while (! $this->server->isTerminated()) {
+            usleep(100000);
+        }
+
+        parent::tearDown();
+    }
+
     public function test_form_post_request(): void
     {
         $request = new RequestFactory()
-            ->createRequest('POST', new Uri('http://localhost:8000/request-test/form'))
-            ->withHeader('Referer', 'http://localhost:8000/request-test/form')
+            ->createRequest('POST', new Uri('http://localhost:8088/request-test/form'))
+            ->withHeader('Referer', 'http://localhost:8088/request-test/form')
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withBody(new StreamFactory()->createStream('name=a a&b.name=b'))
@@ -56,7 +71,7 @@ final class ClientTest extends FrameworkIntegrationTestCase
     public function test_json_post_request(): void
     {
         $request = new RequestFactory()
-            ->createRequest('POST', new Uri('http://localhost:8000/request-test/form'))
+            ->createRequest('POST', new Uri('http://localhost:8088/request-test/form'))
             ->withHeader('Accept', 'application/json')
             ->withHeader('Content-Type', 'application/json')
             ->withBody(new StreamFactory()->createStream('{"name": "a a", "b": {"name": "b"}}'))
