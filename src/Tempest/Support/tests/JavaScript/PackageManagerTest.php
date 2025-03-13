@@ -27,6 +27,7 @@ final class PackageManagerTest extends TestCase
             actual: PackageManager::detect(cwd: __DIR__ . "/Fixtures/{$fixture}"),
         );
     }
+
     #[TestWith(['bun-lock', 'bun dev'])]
     #[TestWith(['bun-lockb', 'bun dev'])]
     #[TestWith(['npm', 'npm run dev'])]
