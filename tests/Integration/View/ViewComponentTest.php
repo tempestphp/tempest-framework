@@ -574,4 +574,21 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </body></html>
         HTML, $html);
     }
+
+    public function test_fallthrough_attributes(): void
+    {
+        ld($this->render(<<<'HTML'
+        <div class="hi {{ 'hi' }}">
+        HTML));
+
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="foo {{ $attributes['class'] ?? '' }}" style="font-weight: bold; {{ $attributes['style'] ?? '' }}"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="baz" style="text-decoration: underline;"></x-test>,
+        HTML);
+
+        ld($html);
+    }
 }

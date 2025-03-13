@@ -84,16 +84,26 @@ final class ViewComponentElement implements Element
             ->toArray();
 
         $compiled = str($this->viewComponent->compile($this))
-            // Add dynamic slots to the current scope
             ->prepend(
+                // Add attributes to the current scope
+                '<?php $_previousAttributes = $attributes ?? null; ?>',
+                sprintf('<?php $attributes = %s; ?>', var_export($this->attributes, true)),  // @mago-expect best-practices/no-debug-symbols Set the new value of $attributes for this view component
+
+                // Add dynamic slots to the current scope
                 '<?php $_previousSlots = $slots ?? null; ?>', // Store previous slots in temporary variable to keep scope
                 sprintf('<?php $slots = %s; ?>', var_export($slots, true)), // @mago-expect best-practices/no-debug-symbols Set the new value of $slots for this view component
             )
-            // Cleanup slots after the view component and restore slots from previous scope
+
             ->append(
-                '<?php unset($slots); ?>', // Unset current $slots
-                '<?php $slots = $_previousSlots ?? null; ?>', // Restore previous $slots
-                '<?php unset($_previousSlots); ?>', // Cleanup temporary $_previousSlots
+                // Restore previous slots
+                '<?php unset($slots); ?>',
+                '<?php $slots = $_previousSlots ?? null; ?>',
+                '<?php unset($_previousSlots); ?>',
+
+                // Restore previous attributes
+                '<?php unset($attributes); ?>',
+                '<?php $attributes = $_previousAttributes ?? null; ?>',
+                '<?php unset($_previousAttributes); ?>',
             )
             // Compile slots
             ->replaceRegex(
