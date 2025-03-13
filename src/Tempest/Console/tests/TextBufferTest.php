@@ -137,10 +137,10 @@ final class TextBufferTest extends TestCase
         $this->assertSame(0, $buffer->cursor);
 
         $buffer = new TextBuffer(<<<TXT
-            This is a line
-            This is a way longer line
-            Shorter
-            TXT);
+        This is a line
+        This is a way longer line
+        Shorter
+        TXT);
         $buffer->moveCursorX(100);
         $buffer->moveCursorToStart();
         $this->assertSame(0, $buffer->cursor);
@@ -155,10 +155,10 @@ final class TextBufferTest extends TestCase
         $this->assertSame(13, $buffer->cursor);
 
         $buffer = new TextBuffer(<<<TXT
-            This is a line
-            This is a way longer line
-            Shorter
-            TXT);
+        This is a line
+        This is a way longer line
+        Shorter
+        TXT);
         $buffer->setCursorIndex(0);
         $buffer->moveCursorToEnd();
         $this->assertSame(48, $buffer->cursor);
@@ -185,10 +185,10 @@ final class TextBufferTest extends TestCase
     public function test_move_cursor_to_start_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
-            This is a line
-            This is a way longer line
-            Shorter
-            TXT);
+        This is a line
+        This is a way longer line
+        Shorter
+        TXT);
 
         $buffer->setCursorIndex($initial);
         $buffer->moveCursorToStartOfLine();
@@ -217,10 +217,10 @@ final class TextBufferTest extends TestCase
     public function test_move_cursor_to_end_of_line_multiline(int $initial, int $expected): void
     {
         $buffer = new TextBuffer(<<<TXT
-            This is a line
-            This is a way longer line
-            Shorter
-            TXT);
+        This is a line
+        This is a way longer line
+        Shorter
+        TXT);
 
         $buffer->setCursorIndex($initial);
         $buffer->moveCursorToEndOfLine();
@@ -258,10 +258,10 @@ final class TextBufferTest extends TestCase
     public function move_cursor_y(int $initialCursor, int $offsetY, int $expectedPosition): void
     {
         $buffer = new TextBuffer(<<<TXT
-            This is a line
-            This is a way longer line
-            Shorter
-            TXT);
+        This is a line
+        This is a way longer line
+        Shorter
+        TXT);
 
         $buffer->setCursorIndex($initialCursor);
         $buffer->moveCursorY($offsetY);

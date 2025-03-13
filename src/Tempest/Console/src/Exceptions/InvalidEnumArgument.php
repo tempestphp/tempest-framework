@@ -6,6 +6,7 @@ namespace Tempest\Console\Exceptions;
 
 use BackedEnum;
 use Tempest\Console\Console;
+
 use function array_map;
 use function gettype;
 use function implode;

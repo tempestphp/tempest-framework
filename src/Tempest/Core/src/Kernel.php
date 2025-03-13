@@ -48,7 +48,7 @@ interface Kernel
         string $root,
         array $discoveryLocations = [],
         ?Container $container = null,
-    );
+    ): self;
 
     public function shutdown(int|string $status = ''): never;
 }

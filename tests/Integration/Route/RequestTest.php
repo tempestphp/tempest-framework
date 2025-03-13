@@ -15,6 +15,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\MemoryInputStream;
 use function Tempest\uri;
 
 /**
@@ -65,15 +66,16 @@ final class RequestTest extends FrameworkIntegrationTestCase
     {
         $_SERVER['REQUEST_METHOD'] = Method::POST->value;
         $_SERVER['REQUEST_URI'] = '/test';
-        $_POST = ['test'];
         $_SERVER['HTTP_X-TEST'] = 'test';
         $_COOKIE['test'] = 'test';
 
-        $request = (new RequestFactory())->make();
+        $request = new RequestFactory(new MemoryInputStream([
+            'test' => 'test',
+        ]))->make();
 
         $this->assertEquals(Method::POST->value, $request->getMethod());
         $this->assertEquals('/test', $request->getUri()->getPath());
-        $this->assertEquals(['test'], $request->getParsedBody());
+        $this->assertEquals(['test' => 'test'], $request->getParsedBody());
         $this->assertEquals(['x-test' => ['test']], $request->getHeaders());
         $this->assertEquals(['test' => 'test'], $request->getCookieParams());
     }
@@ -81,6 +83,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
     public function test_custom_request_test(): void
     {
         $response = $this->http
+            ->throwExceptions()
             ->post(
                 uri: '/create-post',
                 body: [
@@ -117,15 +120,21 @@ final class RequestTest extends FrameworkIntegrationTestCase
         );
 
         $this->http
+            ->throwExceptions()
             ->post(
                 uri: uri([BookController::class, 'store']),
                 body: [
                     'title' => 'a',
+                    'chapters' => [],
                 ],
+                headers: [
+                    'referer' => ['/']
+                ]
             )
+            ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
-        $book = Book::find(new Id(1));
+        $book = Book::get(new Id(1));
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
     }
@@ -144,11 +153,16 @@ final class RequestTest extends FrameworkIntegrationTestCase
                 body: [
                     'title' => 'a',
                     'author.name' => 'b',
+                    'chapters' => [],
                 ],
+                headers: [
+                    'referer' => ['/'],
+                ]
             )
+            ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
 
-        $book = Book::find(new Id(1), relations: ['author']);
+        $book = Book::get(new Id(1), relations: ['author']);
         $this->assertSame(1, $book->id->id);
         $this->assertSame('a', $book->title);
         $this->assertSame('b', $book->author->name);

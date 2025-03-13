@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
-        "friendsofphp/php-cs-fixer": "^3.21",
+        "carthage-software/mago": "0.19.3",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "mikey179/vfsstream": "^2.0@dev",
@@ -167,10 +167,16 @@
     "bin": [
         "src/Tempest/Console/bin/tempest"
     ],
+    "config": {
+        "allow-plugins": {
+            "carthage-software/mago": true
+        }
+    },
     "scripts": {
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
-        "csfixer": "PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "mago:fmt": "vendor/bin/mago fmt",
+        "mago:lint": "vendor/bin/mago lint --fix && vendor/bin/mago lint",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
@@ -179,11 +185,13 @@
             "./bin/release"
         ],
         "qa": [
+            "composer mago:fmt",
             "composer merge",
             "./bin/validate-packages",
             "./tempest discovery:clear",
             "composer rector",
             "composer phpunit",
+            "composer mago:lint",
             "composer phpstan"
         ]
     }

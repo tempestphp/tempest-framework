@@ -24,7 +24,7 @@ final class FileInjectionTest extends TestCase
 
         $this->assertStringContainsString(
             $expected,
-            (new FileInjection())->parse($content, $highlighter)->content,
+            new FileInjection()->parse($content, $highlighter)->content,
         );
     }
 }

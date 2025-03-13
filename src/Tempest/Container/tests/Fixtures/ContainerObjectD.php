@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final class ContainerObjectD
 {
-    public function __construct(public string $prop)
-    {
+    public function __construct(
+        public string $prop,
+    ) {
     }
 }

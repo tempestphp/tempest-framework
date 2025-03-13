@@ -14,14 +14,16 @@ use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\LogConfig;
 use Tempest\Router\Session\Session;
 use Throwable;
+
 use function Tempest\env;
 use function Tempest\Support\path;
 
 #[Singleton]
 final readonly class HttpApplication implements Application
 {
-    public function __construct(private Container $container)
-    {
+    public function __construct(
+        private Container $container,
+    ) {
     }
 
     /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
@@ -36,11 +38,7 @@ final readonly class HttpApplication implements Application
         // Application-specific setup
         $logConfig = $container->get(LogConfig::class);
 
-        if (
-            $logConfig->debugLogPath === null
-            && $logConfig->serverLogPath === null
-            && $logConfig->channels === []
-        ) {
+        if ($logConfig->debugLogPath === null && $logConfig->serverLogPath === null && $logConfig->channels === []) {
             $logConfig->debugLogPath = path($container->get(Kernel::class)->root, '/log/debug.log')->toString();
             $logConfig->serverLogPath = env('SERVER_LOG');
             $logConfig->channels[] = new AppendLogChannel(path($root, '/log/tempest.log')->toString());
@@ -54,7 +52,7 @@ final readonly class HttpApplication implements Application
         try {
             $router = $this->container->get(Router::class);
 
-            $psrRequest = new RequestFactory()->make();
+            $psrRequest = $this->container->get(RequestFactory::class)->make();
 
             $responseSender = $this->container->get(ResponseSender::class);
 

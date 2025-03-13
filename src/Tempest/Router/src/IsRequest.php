@@ -8,26 +8,36 @@ use Tempest\Http\Method;
 use Tempest\Router\Cookie\Cookie;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Session\Session;
+use Tempest\Validation\SkipValidation;
+
 use function Tempest\get;
 
 /** @phpstan-require-implements \Tempest\Router\Request */
 trait IsRequest
 {
+    #[SkipValidation]
     private(set) Method $method;
 
+    #[SkipValidation]
     private(set) string $uri;
 
+    #[SkipValidation]
     private(set) array $body = [];
 
+    #[SkipValidation]
     private(set) array $headers = [];
 
+    #[SkipValidation]
     private(set) string $path;
 
+    #[SkipValidation]
     private(set) array $query;
 
     /** @var \Tempest\Router\Upload[] */
+    #[SkipValidation]
     private(set) array $files;
 
+    #[SkipValidation]
     public array $cookies {
         get => get(CookieManager::class)->all();
     }
@@ -76,11 +86,6 @@ trait IsRequest
         $cookies = get(CookieManager::class);
 
         return $cookies->get($name);
-    }
-
-    public function validate(): void
-    {
-        // No additional validation done
     }
 
     private function resolvePath(): string

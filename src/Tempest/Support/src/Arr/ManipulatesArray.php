@@ -25,9 +25,8 @@ trait ManipulatesArray
     /**
      * @param array<TKey, TValue>|self<TKey, TValue>|TValue $input
      */
-    public function __construct(
-        mixed $input = [],
-    ) {
+    public function __construct(mixed $input = [])
+    {
         $this->value = namespace\wrap($input);
     }
 
@@ -42,7 +41,7 @@ trait ManipulatesArray
             return new static([(string) $string]);
         }
 
-        if ((string) $string === '') {
+        if (((string) $string) === '') {
             return new static();
         }
 
@@ -533,11 +532,19 @@ trait ManipulatesArray
     }
 
     /**
-     * Converts the dot-notated keys of the instance to a set of nested arrays.
+     * Converts the dot-notation keys of the instance to a set of nested arrays.
      */
-    public function unwrap(): static
+    public function undot(): static
     {
-        return $this->createOrModify(namespace\unwrap($this->value));
+        return $this->createOrModify(namespace\undot($this->value));
+    }
+
+    /**
+     * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
+     */
+    public function dot(): static
+    {
+        return $this->createOrModify(namespace\dot($this->value));
     }
 
     /**
@@ -660,8 +667,8 @@ trait ManipulatesArray
 
     /**
      * Executes callback with the given `$value` and returns the same `$value`.
-     * 
-     * @param (Closure(static): void) $callback 
+     *
+     * @param (Closure(static): void) $callback
      */
     public function tap(Closure $callback): static
     {

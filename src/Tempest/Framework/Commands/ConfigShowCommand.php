@@ -12,6 +12,7 @@ use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Highlight\Languages\Json\JsonLanguage;
 use Tempest\Highlight\Languages\Php\PhpLanguage;
 use Tempest\Reflection\ClassReflector;
+
 use function file_get_contents;
 use function function_exists;
 use function is_array;
@@ -42,7 +43,7 @@ final readonly class ConfigShowCommand
     ): ExitCode {
         $configs = $this->resolveConfig($filter, $search);
 
-        if (empty($configs)) {
+        if ($configs === []) {
             $this->console->error('No configuration found.');
 
             return ExitCode::ERROR;
@@ -70,11 +71,7 @@ final readonly class ConfigShowCommand
             $config = require $configPath;
             $configPath = realpath($configPath);
 
-            if (
-                $filter === null
-                || str_contains($configPath, $filter)
-                || str_contains($config::class, $filter)
-            ) {
+            if ($filter === null || str_contains($configPath, $filter) || str_contains($config::class, $filter)) {
                 $configs[$configPath] = $config;
                 $uniqueMap[$config::class] = $configPath;
             }
@@ -92,7 +89,7 @@ final readonly class ConfigShowCommand
             return $resolvedConfigs;
         }
 
-        $selectedPath = $this->search($resolvedConfigs);
+        $selectedPath = $this->searchConfigFile($resolvedConfigs);
 
         return [$selectedPath => $resolvedConfigs[$selectedPath]];
     }
@@ -100,7 +97,7 @@ final readonly class ConfigShowCommand
     /**
      * @param array<string, mixed> $configs
      */
-    private function search(array $configs): string
+    private function searchConfigFile(array $configs): string
     {
         $data = array_keys($configs);
         sort($data);
@@ -136,7 +133,7 @@ final readonly class ConfigShowCommand
             return;
         }
 
-        $this->console->writeln(var_export($configs, true));
+        $this->console->writeln(var_export($configs, true)); // @mago-expect best-practices/no-debug-symbols
     }
 
     /**

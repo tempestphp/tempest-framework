@@ -19,7 +19,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_calls_being_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(true);
@@ -32,7 +33,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_throws_an_exception_when_transaction_cannot_begin(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('beginTransaction')
             ->withAnyParameters()
             ->willReturn(false);
@@ -47,7 +49,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_calls_commit_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('commit')
             ->withAnyParameters()
             ->willReturn(true);
@@ -60,7 +63,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_throws_an_exception_when_transaction_cannot_commit(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('commit')
             ->withAnyParameters()
             ->willReturn(false);
@@ -75,7 +79,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_calls_rollback_transactions(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('rollBack')
             ->withAnyParameters()
             ->willReturn(true);
@@ -88,7 +93,8 @@ final class GenericTransactionManagerTest extends TestCase
     public function test_it_throws_an_exception_when_transaction_cannot_rollback(): void
     {
         $connection = $this->createMock(Connection::class);
-        $connection->expects($this->once())
+        $connection
+            ->expects($this->once())
             ->method('rollBack')
             ->withAnyParameters()
             ->willReturn(false);

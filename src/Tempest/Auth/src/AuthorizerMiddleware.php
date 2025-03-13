@@ -34,7 +34,7 @@ final readonly class AuthorizerMiddleware implements HttpMiddleware
 
         $user = $this->authenticator->currentUser();
 
-        if (! $user instanceof CanAuthorize) {
+        if (! ($user instanceof CanAuthorize)) {
             return new Forbidden();
         }
 

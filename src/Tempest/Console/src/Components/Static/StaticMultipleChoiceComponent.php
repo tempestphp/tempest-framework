@@ -9,6 +9,7 @@ use Tempest\Console\Components\OptionCollection;
 use Tempest\Console\Console;
 use Tempest\Console\StaticConsoleComponent;
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
@@ -59,17 +60,18 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
         $console->writeln("<style='bold fg-blue'>{$this->label}</style> ");
         $console->write('<style="fg-gray">Select multiple items using comas</style>');
 
-        $prompt = $this->options->getOptions()
+        $prompt = $this->options
+            ->getOptions()
             ->map(
                 fn (Option $option, int $index) => str($index)
-                        ->when(
-                            condition: in_array($option->value, $this->default),
-                            callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
-                        )
-                        ->wrap('[', ']')
-                        ->prepend('- ')
-                        ->append(' ', $option->displayValue)
-                        ->toString(),
+                    ->when(
+                        condition: in_array($option->value, $this->default, strict: true),
+                        callback: fn ($s) => $s->wrap('<style="fg-blue">', '</style>'),
+                    )
+                    ->wrap('[', ']')
+                    ->prepend('- ')
+                    ->append(' ', $option->displayValue)
+                    ->toString(),
             )
             ->implode(PHP_EOL)
             ->toString();
@@ -80,25 +82,27 @@ final readonly class StaticMultipleChoiceComponent implements StaticConsoleCompo
             ->map(function (string $answer) {
                 $answer = trim($answer);
 
-                return $this->options->getOptions()->first(function (Option $option, int $index) use ($answer) {
-                    if ($answer === $option->displayValue) {
-                        return true;
-                    }
+                return $this->options
+                    ->getOptions()
+                    ->first(function (Option $option, int $index) use ($answer) {
+                        if ($answer === $option->displayValue) {
+                            return true;
+                        }
 
-                    if ($answer === $option->value) {
-                        return true;
-                    }
+                        if ($answer === $option->value) {
+                            return true;
+                        }
 
-                    if ($this->options->getOptions()->isList() && $answer === (string) $index) {
-                        return true;
-                    }
+                        if ($this->options->getOptions()->isList() && $answer === ((string) $index)) {
+                            return true;
+                        }
 
-                    if ($this->options->getOptions()->isList() && $answer === (string) $option->key) {
-                        return true;
-                    }
+                        if ($this->options->getOptions()->isList() && $answer === ((string) $option->key)) {
+                            return true;
+                        }
 
-                    return false;
-                });
+                        return false;
+                    });
             })
             ->filter()
             ->unique(fn (Option $option) => $option->value)

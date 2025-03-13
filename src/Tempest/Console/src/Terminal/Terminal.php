@@ -11,8 +11,10 @@ use Tempest\Console\GenericCursor;
 use Tempest\Console\HasCursor;
 use Tempest\Console\InteractiveConsoleComponent;
 use Tempest\Console\Point;
+
 use function function_exists;
 use function Tempest\Support\arr;
+
 use const DIRECTORY_SEPARATOR;
 
 final class Terminal
@@ -95,7 +97,7 @@ final class Terminal
             ->setErrors($validationErrors)
             ->render($this);
 
-        if (! $rendered instanceof Generator) {
+        if (! ($rendered instanceof Generator)) {
             $rendered = (function (string $content): Generator {
                 yield $content;
 
@@ -153,7 +155,7 @@ final class Terminal
             return false;
         }
 
-        return (bool) shell_exec('stty 2> '.('\\' === DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
+        return (bool) shell_exec('stty 2> ' . ('\\' === DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
     }
 
     private function clear(): self
@@ -221,8 +223,8 @@ final class Terminal
 
     private function updateActualSize(): self
     {
-        $this->width = $this->supportsTty ? (int) exec('tput cols') : 80;
-        $this->height = $this->supportsTty ? (int) exec('tput lines') : 25;
+        $this->width = $this->supportsTty ? ((int) exec('tput cols')) : 80;
+        $this->height = $this->supportsTty ? ((int) exec('tput lines')) : 25;
 
         return $this;
     }

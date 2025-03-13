@@ -62,7 +62,7 @@ final class RouteTreeNode
 
     private static function convertDynamicSegmentToRegex(string $uriPart): string
     {
-        $regex = '#\{'. DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX .'\}#';
+        $regex = '#\{' . DiscoveredRoute::ROUTE_PARAM_NAME_REGEX . DiscoveredRoute::ROUTE_PARAM_CUSTOM_REGEX . '\}#';
 
         return preg_replace_callback(
             $regex,

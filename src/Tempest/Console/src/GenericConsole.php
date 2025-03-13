@@ -30,6 +30,7 @@ use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Language;
 use Tempest\Support\Conditions\HasConditions;
 use UnitEnum;
+
 use function Tempest\Support\Arr\wrap;
 
 final class GenericConsole implements Console
@@ -108,7 +109,7 @@ final class GenericConsole implements Console
     public function header(string $header, ?string $subheader = null): static
     {
         $this->writeln();
-        $this->writeln("<style='dim fg-blue'>//</style> <style='bold fg-blue'>".mb_strtoupper($header).'</style>');
+        $this->writeln("<style='dim fg-blue'>//</style> <style='bold fg-blue'>" . mb_strtoupper($header) . '</style>');
 
         if ($subheader) {
             $this->writeln($subheader);
@@ -119,7 +120,7 @@ final class GenericConsole implements Console
 
     public function instructions(array|string $lines): static
     {
-        $this->writeln((new InstructionsRenderer())->render(wrap($lines)));
+        $this->writeln(new InstructionsRenderer()->render(wrap($lines)));
 
         return $this;
     }
@@ -151,28 +152,28 @@ final class GenericConsole implements Console
 
     public function info(string $contents, ?string $title = null): self
     {
-        $this->writeln((new MessageRenderer('𝓲', 'blue'))->render($contents));
+        $this->writeln(new MessageRenderer('𝓲', 'blue')->render($contents));
 
         return $this;
     }
 
     public function error(string $contents, ?string $title = null): self
     {
-        $this->writeln((new MessageRenderer('×', 'red'))->render($contents, $title));
+        $this->writeln(new MessageRenderer('×', 'red')->render($contents, $title));
 
         return $this;
     }
 
     public function warning(string $contents, ?string $title = null): self
     {
-        $this->writeln((new MessageRenderer('⚠', 'yellow'))->render($contents, $title));
+        $this->writeln(new MessageRenderer('⚠', 'yellow')->render($contents, $title));
 
         return $this;
     }
 
     public function success(string $contents, ?string $title = null): self
     {
-        $this->writeln((new MessageRenderer('✓', 'green'))->render($contents, $title));
+        $this->writeln(new MessageRenderer('✓', 'green')->render($contents, $title));
 
         return $this;
     }
@@ -188,7 +189,7 @@ final class GenericConsole implements Console
 
     public function keyValue(string $key, ?string $value = null): self
     {
-        $this->writeln((new KeyValueRenderer())->render($key, $value));
+        $this->writeln(new KeyValueRenderer()->render($key, $value));
 
         return $this;
     }
@@ -277,7 +278,7 @@ final class GenericConsole implements Console
         $password = null;
         $passwordConfirm = null;
 
-        while ($password === null || $password !== $passwordConfirm) {
+        while ($password === null || $password !== $passwordConfirm) { // @mago-expect security/no-insecure-comparison
             if ($password !== null) {
                 $this->error("Passwords don't match");
             }

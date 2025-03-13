@@ -6,12 +6,15 @@ namespace Tempest\Validation\Exceptions;
 
 use Exception;
 use Tempest\Validation\Rule;
+
 use function Tempest\Support\arr;
 
 final class ValidationException extends Exception
 {
-    public function __construct(object $object, public readonly array $failingRules)
-    {
+    public function __construct(
+        public readonly object $object,
+        public readonly array $failingRules,
+    ) {
         $messages = [];
 
         foreach ($this->failingRules as $field => $failingRulesForField) {

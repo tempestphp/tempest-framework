@@ -21,7 +21,7 @@ final readonly class IdCaster implements Caster
 
     public function serialize(mixed $input): string
     {
-        if (! $input instanceof Id) {
+        if (! ($input instanceof Id)) {
             throw new CannotSerializeValue(Id::class);
         }
 

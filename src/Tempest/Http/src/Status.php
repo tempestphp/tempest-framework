@@ -91,7 +91,6 @@ enum Status: int
             101 => 'Switching Protocols',
             102 => 'Processing',
             103 => 'Early Hints',
-
             200 => 'OK',
             201 => 'Created',
             202 => 'Accepted',
@@ -102,7 +101,6 @@ enum Status: int
             207 => 'Multi-Status',
             208 => 'Already Reported',
             226 => 'IM Used',
-
             300 => 'Multiple Choices',
             301 => 'Moved Permanently',
             302 => 'Found',
@@ -112,7 +110,6 @@ enum Status: int
             306 => 'Unused',
             307 => 'Temporary Redirect',
             308 => 'Permanent Redirect',
-
             400 => 'Bad Request',
             401 => 'Unauthorized',
             402 => 'Payment Required',
@@ -142,7 +139,6 @@ enum Status: int
             429 => 'Too Many Requests',
             431 => 'Request Header Fields Too Large',
             451 => 'Unavailable For Legal Reasons',
-
             500 => 'Internal Server Error',
             501 => 'Not Implemented',
             502 => 'Bad Gateway',

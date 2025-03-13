@@ -22,9 +22,7 @@ final class InvalidTest extends FrameworkIntegrationTestCase
 {
     public function test_invalid_with_psr_request(): void
     {
-        /** @var PsrRequest $request */
-        $request = map(new GenericRequest(Method::GET, '/original', ['foo' => 'bar']))->with(RequestToPsrRequestMapper::class)->do();
-        $request = $request->withHeader('Referer', '/original');
+        $request = new GenericRequest(Method::GET, '/original', ['foo' => 'bar'], ['referer' => '/original']);
 
         $response = new Invalid(
             $request,

@@ -90,8 +90,7 @@ final class GenericContainer implements Container
 
     public function has(string $className, ?string $tag = null): bool
     {
-        return isset($this->definitions[$className])
-            || isset($this->singletons[$this->resolveTaggedName($className, $tag)]);
+        return isset($this->definitions[$className]) || isset($this->singletons[$this->resolveTaggedName($className, $tag)]);
     }
 
     public function singleton(string $className, mixed $definition, ?string $tag = null): self
@@ -114,7 +113,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className, ?string $tag = null, mixed ...$params): null|object
+    public function get(string $className, ?string $tag = null, mixed ...$params): ?object
     {
         $this->resolveChain();
 
@@ -129,32 +128,32 @@ final class GenericContainer implements Container
         return $dependency;
     }
 
-    public function invoke(MethodReflector|FunctionReflector|callable|string $callable, mixed ...$params): mixed
+    public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed
     {
-        if ($callable instanceof MethodReflector) {
-            return $this->invokeMethod($callable, ...$params);
+        if ($method instanceof MethodReflector) {
+            return $this->invokeMethod($method, ...$params);
         }
 
-        if ($callable instanceof FunctionReflector) {
-            return $this->invokeFunction($callable, ...$params);
+        if ($method instanceof FunctionReflector) {
+            return $this->invokeFunction($method, ...$params);
         }
 
-        if ($callable instanceof Closure) {
-            return $this->invokeClosure($callable, ...$params);
+        if ($method instanceof Closure) {
+            return $this->invokeClosure($method, ...$params);
         }
 
-        if (is_array($callable) && count($callable) === 2) {
-            return $this->invokeClosure($callable(...), ...$params);
+        if (is_array($method) && count($method) === 2) {
+            return $this->invokeClosure($method(...), ...$params);
         }
 
-        if (method_exists($callable, '__invoke')) {
+        if (method_exists($method, '__invoke')) {
             return $this->invokeClosure(
-                $this->get($callable)->__invoke(...),
+                $this->get($method)->__invoke(...),
                 ...$params,
             );
         }
 
-        throw new InvalidCallableException(new Dependency($callable));
+        throw new InvalidCallableException(new Dependency($method));
     }
 
     private function invokeClosure(Closure $closure, mixed ...$params): mixed
@@ -202,7 +201,7 @@ final class GenericContainer implements Container
 
     public function addInitializer(ClassReflector|string $initializerClass): Container
     {
-        if (! $initializerClass instanceof ClassReflector) {
+        if (! ($initializerClass instanceof ClassReflector)) {
             $initializerClass = new ClassReflector($initializerClass);
         }
 
@@ -230,7 +229,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, ?string $tag = null, mixed ...$params): null|object
+    private function resolve(string $className, ?string $tag = null, mixed ...$params): ?object
     {
         $class = new ClassReflector($className);
 
@@ -266,8 +265,7 @@ final class GenericContainer implements Container
                 $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
             };
 
-            $singleton = $initializerClass->getAttribute(Singleton::class)
-                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
+            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singleton($className, $object, $tag);
@@ -285,7 +283,7 @@ final class GenericContainer implements Container
         return $this->autowire($className, ...$params);
     }
 
-    private function initializerForBuiltin(TypeReflector $target, string $tag): null|Initializer
+    private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
     {
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
             return $this->resolve($initializerClass);
@@ -332,21 +330,21 @@ final class GenericContainer implements Container
             throw new CannotInstantiateDependencyException($classReflector, $this->chain);
         }
 
-        $instance = $constructor === null
-            // If there isn't a constructor, don't waste time
-            // trying to build it.
-            ? $classReflector->newInstanceWithoutConstructor()
-
-            // Otherwise, use our autowireDependencies helper to automagically
-            // build up each parameter.
-            : $classReflector->newInstanceArgs(
-                $this->autowireDependencies($constructor, $params),
-            );
+        $instance =
+            $constructor === null
+                ? // If there isn't a constructor, don't waste time
+                // trying to build it.
+                $classReflector->newInstanceWithoutConstructor()
+                : // Otherwise, use our autowireDependencies helper to automagically
+                // build up each parameter.
+                $classReflector->newInstanceArgs(
+                    $this->autowireDependencies($constructor, $params),
+                );
 
         if (
-            ! $classReflector->getType()->matches(Initializer::class)
-            && ! $classReflector->getType()->matches(DynamicInitializer::class)
-            && $classReflector->hasAttribute(Singleton::class)
+            ! $classReflector->getType()->matches(Initializer::class) &&
+                ! $classReflector->getType()->matches(DynamicInitializer::class) &&
+                $classReflector->hasAttribute(Singleton::class)
         ) {
             $this->singleton($className, $instance);
         }
@@ -437,13 +435,12 @@ final class GenericContainer implements Container
         $typeName = $parameter->getType()->getName();
         $tag = $parameter->getAttribute(Tag::class);
 
-        if ($tag !== null && $initializer = $this->initializerForBuiltin($parameter->getType(), $tag->name)) {
+        if ($tag !== null && ($initializer = $this->initializerForBuiltin($parameter->getType(), $tag->name))) {
             $initializerClass = new ClassReflector($initializer);
 
             $object = $initializer->initialize($this->clone());
 
-            $singleton = $initializerClass->getAttribute(Singleton::class)
-                ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
+            $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
 
             if ($singleton !== null) {
                 $this->singleton($typeName, $object, $tag->name);

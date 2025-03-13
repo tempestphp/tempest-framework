@@ -12,8 +12,9 @@ use Tempest\Validation\Rule;
 #[Attribute]
 final readonly class DateTimeFormat implements Rule
 {
-    public function __construct(public string $format = 'Y-m-d')
-    {
+    public function __construct(
+        public string $format = 'Y-m-d',
+    ) {
     }
 
     public function isValid(mixed $value): bool
@@ -23,7 +24,7 @@ final readonly class DateTimeFormat implements Rule
             default => $value,
         };
 
-        if (! is_string($value) || empty($value)) {
+        if (! is_string($value) || ! $value) {
             return false;
         }
 

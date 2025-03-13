@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use Tempest\Mapper\Mapper;
+
 use function Tempest\map;
 use function Tempest\Support\path;
 

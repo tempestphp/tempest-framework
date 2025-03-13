@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Regex {
     use Closure;
     use RuntimeException;
+
     use function Tempest\Support\Str\starts_with;
     use function Tempest\Support\Str\strip_start;
 
@@ -75,10 +76,10 @@ namespace Tempest\Support\Regex {
      * @param non-empty-string $pattern The pattern to search for.
      * @param null|positive-int $limit The maximum possible replacements for $pattern within $haystack.
      */
-    function replace(array|string $haystack, array|string $pattern, callable|array|string $replacement, null|int $limit = null): string
+    function replace(array|string $haystack, array|string $pattern, callable|array|string $replacement, ?int $limit = null): string
     {
         if (is_callable($replacement)) {
-            return (string) call_preg('preg_replace_callback', static fn (): string|null => preg_replace_callback(
+            return (string) call_preg('preg_replace_callback', static fn (): ?string => preg_replace_callback(
                 $pattern,
                 $replacement,
                 $haystack,
@@ -86,7 +87,7 @@ namespace Tempest\Support\Regex {
             ));
         }
 
-        return (string) call_preg('preg_replace', static fn (): string|null => preg_replace(
+        return (string) call_preg('preg_replace', static fn (): ?string => preg_replace(
             $pattern,
             $replacement,
             $haystack,
@@ -101,9 +102,9 @@ namespace Tempest\Support\Regex {
      * @param array<non-empty-string, string> $replacements An array where the keys are regular expression patterns, and the values are the replacements.
      * @param null|positive-int $limit The maximum possible replacements for each pattern in $haystack.
      */
-    function replace_every(string $haystack, array $replacements, null|int $limit = null): string
+    function replace_every(string $haystack, array $replacements, ?int $limit = null): string
     {
-        return (string) call_preg('preg_replace', static fn (): string|null => preg_replace(
+        return (string) call_preg('preg_replace', static fn (): ?string => preg_replace(
             array_keys($replacements),
             array_values($replacements),
             $haystack,
@@ -115,7 +116,7 @@ namespace Tempest\Support\Regex {
      * @return null|array{message: string, code: int, pattern_message: null|string}
      * @internal
      */
-    function get_preg_error(string $function): null|array
+    function get_preg_error(string $function): ?array
     {
         $code = preg_last_error();
         if ($code === PREG_NO_ERROR) {

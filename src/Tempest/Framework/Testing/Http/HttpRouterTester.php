@@ -9,15 +9,18 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Container\Container;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
+use Tempest\Router\GenericRouter;
 use Tempest\Router\Mappers\RequestToPsrRequestMapper;
 use Tempest\Router\Request;
 use Tempest\Router\Router;
+
 use function Tempest\map;
 
 final class HttpRouterTester
 {
-    public function __construct(private Container $container)
-    {
+    public function __construct(
+        private Container $container,
+    ) {
     }
 
     public function get(string $uri, array $headers = []): TestResponseHelper
@@ -30,6 +33,17 @@ final class HttpRouterTester
                 headers: $headers,
             ),
         );
+    }
+
+    public function throwExceptions(): self
+    {
+        $router = $this->container->get(Router::class);
+
+        if ($router instanceof GenericRouter) {
+            $router->throwExceptions();
+        }
+
+        return $this;
     }
 
     public function head(string $uri, array $headers = []): TestResponseHelper

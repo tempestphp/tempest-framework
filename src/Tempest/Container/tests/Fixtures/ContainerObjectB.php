@@ -6,7 +6,8 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final class ContainerObjectB
 {
-    public function __construct(public ContainerObjectA $a)
-    {
+    public function __construct(
+        public ContainerObjectA $a,
+    ) {
     }
 }

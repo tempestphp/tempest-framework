@@ -8,6 +8,7 @@ use Tempest\Console\Highlight\DynamicTokenType;
 use Tempest\Highlight\Highlighter;
 use Tempest\Highlight\Injection;
 use Tempest\Highlight\ParsedInjection;
+
 use function Tempest\Support\str;
 
 final readonly class DynamicInjection implements Injection

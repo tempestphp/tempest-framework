@@ -10,7 +10,7 @@ final class DiscoveryCachingStrategyChangedException extends Exception
 {
     public function __construct(string $previous, mixed $current)
     {
-        $current = var_export($current, true);
+        $current = var_export($current, true); // @mago-expect best-practices/no-debug-symbols
 
         $message = sprintf('Discovery caching was changed from `%s` to `%s`. Make sure to run `./tempest discovery:generate` again', $previous, $current);
 
