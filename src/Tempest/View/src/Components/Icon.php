@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-use DateInterval;
-use DateTimeImmutable;
 use Exception;
 use Tempest\Cache\IconCache;
 use Tempest\HttpClient\HttpClient;
