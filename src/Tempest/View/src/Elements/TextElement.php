@@ -19,9 +19,6 @@ final class TextElement implements Element
 
     public function compile(): string
     {
-        lw(
-            $this->text
-        );
         return str($this->text)
             // Render {{
             ->replaceRegex(
