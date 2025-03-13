@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Mapper\Fixtures;
+namespace Tempest\Validation\Tests\Fixtures;
 
 final class ObjectWithFloatProp
 {

@@ -7,15 +7,13 @@ namespace Tempest\Validation;
 use Closure;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Validation\Exceptions\InvalidValueException;
-use Tempest\Validation\Exceptions\PropertyValidationException;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
-use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\NotNull;
+use TypeError;
 
 use function Tempest\Support\arr;
 
@@ -34,11 +32,7 @@ final readonly class Validator
 
             $value = $property->getValue($object);
 
-            try {
-                $this->validateProperty($property, $value);
-            } catch (PropertyValidationException $invalidValueException) {
-                $failingRules[$property->getName()] = $invalidValueException->failingRules;
-            }
+            $failingRules[$property->getName()] = $this->validateValueForProperty($property, $value);
         }
 
         if ($failingRules !== []) {
@@ -46,42 +40,84 @@ final readonly class Validator
         }
     }
 
-    public function validateProperty(PropertyReflector $property, mixed $value): void
+    /**
+     * @param ClassReflector|class-string $class
+     */
+    public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
     {
+        $class = is_string($class) ? new ClassReflector($class) : $class;
+
         $failingRules = [];
 
-        try {
-            $rules = $property->getAttributes(Rule::class);
+        $values = arr($values)->undot();
 
-            if (! $property->isNullable()) {
-                $rules[] = new NotNull();
+        foreach ($class->getPublicProperties() as $property) {
+            if ($property->hasAttribute(SkipValidation::class)) {
+                continue;
             }
 
-            if ($property->getType()->isScalar()) {
-                $rules[] = match ($property->getType()->getName()) {
-                    'string' => new IsString(orNull: $property->isNullable()),
-                    'int' => new IsInteger(orNull: $property->isNullable()),
-                    'float' => new IsFloat(orNull: $property->isNullable()),
-                    'bool' => new IsBoolean(orNull: $property->isNullable()),
-                    default => null,
-                };
+            $key = $prefix . $property->getName();
+
+            if (! $values->has($key) && $property->hasDefaultValue()) {
+                continue;
             }
 
-            $this->validateValue($value, array_filter($rules));
-        } catch (InvalidValueException $invalidValueException) {
-            $failingRules = $invalidValueException->failingRules;
+            $value = $values->get($key);
+
+            $failingRulesForProperty = $this->validateValueForProperty($property, $value);
+
+            if ($failingRulesForProperty !== []) {
+                $failingRules[$key] = $failingRulesForProperty;
+            }
+
+            if ($property->isNullable() && $value === null) {
+                continue;
+            }
+
+            if ($property->getType()->isClass()) {
+                $failingRules = [
+                    ...$failingRules,
+                    ...$this->validateValuesForClass(
+                        class: $property->getType()->asClass(),
+                        values: $values->dot()->toArray(),
+                        prefix: $key . '.',
+                    ),
+                ];
+            }
         }
 
-        if ($failingRules !== []) {
-            throw new PropertyValidationException($property, $failingRules);
-        }
+        return $failingRules;
     }
 
-    public function validateValue(mixed $value, Closure|Rule|array $rules): void
+    public function validateValueForProperty(PropertyReflector $property, mixed $value): array
+    {
+        $rules = $property->getAttributes(Rule::class);
+
+        if ($property->getType()->isScalar()) {
+            $rules[] = match ($property->getType()->getName()) {
+                'string' => new IsString(orNull: $property->isNullable()),
+                'int' => new IsInteger(orNull: $property->isNullable()),
+                'float' => new IsFloat(orNull: $property->isNullable()),
+                'bool' => new IsBoolean(orNull: $property->isNullable()),
+                default => null,
+            };
+        } elseif (! $property->isNullable()) {
+            // We only add the NotNull rule if we're not dealing with scalar types, since the null check is included in the scalar rules
+            $rules[] = new NotNull();
+        }
+
+        return $this->validateValue($value, $rules);
+    }
+
+    public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
         $failingRules = [];
 
         foreach (arr($rules) as $rule) {
+            if (! $rule) {
+                continue;
+            }
+
             $rule = $this->convertToRule($rule, $value);
 
             if (! $rule->isValid($value)) {
@@ -89,9 +125,7 @@ final readonly class Validator
             }
         }
 
-        if ($failingRules !== []) {
-            throw new InvalidValueException($value, $failingRules);
-        }
+        return $failingRules;
     }
 
     private function convertToRule(Rule|Closure $rule, mixed $value): Rule

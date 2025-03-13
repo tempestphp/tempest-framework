@@ -11,10 +11,12 @@ use Tempest\Http\Status;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Response;
 use Tempest\Router\Session\Session;
+use Tempest\Validation\Rule;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
 use function Tempest\get;
+use function Tempest\Support\arr;
 
 final class TestResponseHelper
 {
@@ -149,7 +151,7 @@ final class TestResponseHelper
         /** @var Session $session */
         $session = get(Session::class);
 
-        $validationErrors = $session->get(Session::VALIDATION_ERRORS);
+        $validationErrors = $session->get(Session::VALIDATION_ERRORS) ?? [];
 
         Assert::assertArrayHasKey(
             $key,
@@ -179,7 +181,13 @@ final class TestResponseHelper
             $validationErrors,
             sprintf(
                 'There should be no validation errors, but there were: %s',
-                implode(', ', array_keys($validationErrors)),
+                arr($validationErrors)
+                    ->map(function (array $failingRules, $key) {
+                        $failingRules = arr($failingRules)->map(fn (Rule $rule) => $rule->message())->implode(', ');
+
+                        return $key . ': ' . $failingRules;
+                    })
+                    ->implode(', '),
             ),
         );
 
