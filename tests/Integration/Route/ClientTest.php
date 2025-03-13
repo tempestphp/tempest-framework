@@ -19,7 +19,7 @@ use function Tempest\root_path;
  */
 final class ClientTest extends FrameworkIntegrationTestCase
 {
-    private Process $server;
+    private static ?Process $server;
 
     private ClientInterface $driver;
 
@@ -27,27 +27,15 @@ final class ClientTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
-        $this->server->start();
-
-        // Server needs to start
-        usleep(100000);
-
-        // We'll use the client interface directly because we want to write raw post data in this test
-        $this->driver = $this->container->get(ClientInterface::class);
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->server->isRunning()) {
-            $this->server->signal(SIGKILL);
-        }
-
-        while (! $this->server->isTerminated()) {
+        if (! isset(self::$server)) {
+            self::$server = new Process([root_path('tempest'), 'serve', 'localhost', '8088']);
+            self::$server->start();
+            // Server needs to start
             usleep(100000);
         }
 
-        parent::tearDown();
+        // We'll use the client interface directly because we want to write raw post data in this test
+        $this->driver = $this->container->get(ClientInterface::class);
     }
 
     public function test_form_post_request(): void
@@ -59,15 +47,11 @@ final class ClientTest extends FrameworkIntegrationTestCase
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withBody(new StreamFactory()->createStream('name=a a&b.name=b'));
 
-        try {
-            $response = $this->driver->sendRequest($request);
+        $response = $this->driver->sendRequest($request);
 
-            $this->assertSame(200, $response->getStatusCode());
-            $this->assertSame('a a', $response->getHeader('name')[0]);
-            $this->assertSame('b', $response->getHeader('b.name')[0]);
-        } catch (ConnectException) {
-            $this->markTestSkipped('Could not connect to server.');
-        }
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('a a', $response->getHeader('name')[0]);
+        $this->assertSame('b', $response->getHeader('b.name')[0]);
     }
 
     public function test_json_post_request(): void
@@ -78,14 +62,10 @@ final class ClientTest extends FrameworkIntegrationTestCase
             ->withHeader('Content-Type', 'application/json')
             ->withBody(new StreamFactory()->createStream('{"name": "a a", "b": {"name": "b"}}'));
 
-        try {
-            $response = $this->driver->sendRequest($request);
+        $response = $this->driver->sendRequest($request);
 
-            $this->assertSame(200, $response->getStatusCode());
-            $this->assertSame('a a', $response->getHeader('name')[0]);
-            $this->assertSame('b', $response->getHeader('b.name')[0]);
-        } catch (ConnectException) {
-            $this->markTestSkipped('Could not connect to server.');
-        }
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('a a', $response->getHeader('name')[0]);
+        $this->assertSame('b', $response->getHeader('b.name')[0]);
     }
 }
