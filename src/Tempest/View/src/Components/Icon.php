@@ -7,6 +7,7 @@ namespace Tempest\View\Components;
 use Exception;
 use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
+use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
@@ -51,7 +52,13 @@ final readonly class Icon implements ViewComponent
     private function download(string $prefix, string $name): ?string
     {
         try {
-            return $this->http->get("https://api.iconify.design/{$prefix}/{$name}.svg")->body;
+            $response = $this->http->get("https://api.iconify.design/{$prefix}/{$name}.svg");
+
+            if ($response->status !== Status::OK) {
+                return null;
+            }
+
+            return $response->body;
         } catch (Exception) {
             return null;
         }
