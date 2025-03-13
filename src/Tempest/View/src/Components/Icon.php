@@ -33,12 +33,14 @@ final readonly class Icon implements ViewComponent
 
         $svg = $this->render($name);
 
-        $svg =  match($class) {
+        if (! $svg) {
+            return '';
+        }
+
+        return match ($class) {
             null => $svg,
             default => $this->injectClass($svg, $class),
         };
-        
-        return $svg;
     }
 
     /**
