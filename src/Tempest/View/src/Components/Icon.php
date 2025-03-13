@@ -83,6 +83,9 @@ final readonly class Icon implements ViewComponent
         }
     }
 
+    /**
+     * Forwards the user-provided class attribute to the SVG element
+     */
     private function injectClass(string $svg, string $class): string
     {
         return new ImmutableString($svg)
