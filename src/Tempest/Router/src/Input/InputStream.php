@@ -2,7 +2,7 @@
 
 namespace Tempest\Router\Input;
 
-interface PostInputStream
+interface InputStream
 {
     public function parse(): array;
 }

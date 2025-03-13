@@ -21,7 +21,6 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToAttribute;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisions;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMapToCollisionsJsonSerializable;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
-use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithNotNullInferenceA;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;

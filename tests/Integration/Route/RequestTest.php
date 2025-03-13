@@ -9,14 +9,13 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRequest;
-use Tempest\Router\Input\PostInputStream;
 use Tempest\Router\RequestFactory;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\Route\Fixtures\MemoryPostInputStream;
+use Tests\Tempest\Integration\Route\Fixtures\MemoryInputStream;
 use function Tempest\uri;
 
 /**
@@ -70,7 +69,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $_SERVER['HTTP_X-TEST'] = 'test';
         $_COOKIE['test'] = 'test';
 
-        $request = new RequestFactory(new MemoryPostInputStream([
+        $request = new RequestFactory(new MemoryInputStream([
             'test' => 'test',
         ]))->make();
 

@@ -2,9 +2,9 @@
 
 namespace Tests\Tempest\Integration\Route\Fixtures;
 
-use Tempest\Router\Input\PostInputStream;
+use Tempest\Router\Input\InputStream;
 
-final readonly class MemoryPostInputStream implements PostInputStream
+final readonly class MemoryInputStream implements InputStream
 {
     public function __construct(
         private array $data,
