@@ -23,7 +23,6 @@ final readonly class DataAttribute implements Attribute
     {
         $value = str($element->getAttribute($this->name));
 
-
         $value = new TextElement($value->toString())->compile();
 
         $element->setAttribute($this->name, $value);

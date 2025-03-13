@@ -577,7 +577,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_attributes_variable_in_view_component(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div class="foo {{ $attributes['class'] ?? '' }}" style="font-weight: bold; {{ $attributes['style'] ?? '' }}"></div>
+        <div class="foo {{ $attributes['class'] }}" style="font-weight: bold; {{ $attributes['style'] }}"></div>
         HTML);
 
         $html = $this->render(<<<'HTML'
