@@ -27,4 +27,18 @@ final class PackageManagerTest extends TestCase
             actual: PackageManager::detect(cwd: __DIR__ . "/Fixtures/{$fixture}"),
         );
     }
+    #[TestWith(['bun-lock', 'bun dev'])]
+    #[TestWith(['bun-lockb', 'bun dev'])]
+    #[TestWith(['npm', 'npm run dev'])]
+    #[TestWith(['yarn', 'yarn dev'])]
+    #[TestWith(['pnpm', 'pnpm dev'])]
+    #[TestWith(['multiple', 'bun dev'])]
+    #[TestWith(['empty', null])]
+    public function test_print_run_command(string $fixture, ?string $expectedCommand): void
+    {
+        $this->assertSame(
+            expected: $expectedCommand,
+            actual: PackageManager::detect(cwd: __DIR__ . "/Fixtures/{$fixture}")?->getRunCommand('dev'),
+        );
+    }
 }

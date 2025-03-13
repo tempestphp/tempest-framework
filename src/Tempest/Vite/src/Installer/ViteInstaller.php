@@ -110,7 +110,7 @@ final class ViteInstaller implements Installer
                     json_encode(array_filter([$mainCss, $mainTs]), JSON_UNESCAPED_SLASHES),
                 )
                 : 'Create a file and include it in your template with <code><x-vite-tags entrypoint="./path/to/file.ts" /></code>',
-            "Run <code>{$packageManager->getBinaryName()} dev</code> to start the <strong>development server</strong>",
+            "Run <code>{$packageManager->getRunCommand('dev')}</code> to start the <strong>development server</strong>",
             PHP_EOL,
             // '<style="fg-green">→</style> Read the <href="https://tempestphp.com/ocs/framework/vite">documentation</href>', // TODO: update when we have Vite docs
             '<style="fg-green">→</style> Join the <href="https://tempestphp.com/discord">Discord server</href>',
