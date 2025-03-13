@@ -33,12 +33,12 @@ final readonly class Icon implements ViewComponent
 
         $svg = $this->render($name);
 
-        return new ImmutableString($svg)
-            ->replace(
-                search: '<svg ',
-                replace: "<svg class=\"{$class}\" ",
-            )
-            ->toString();
+        $svg =  match($class) {
+            null => $svg,
+            default => $this->injectClass($svg, $class),
+        };
+        
+        return $svg;
     }
 
     /**
@@ -79,5 +79,15 @@ final readonly class Icon implements ViewComponent
         } catch (Exception) {
             return null;
         }
+    }
+
+    private function injectClass(string $svg, string $class): string
+    {
+        return new ImmutableString($svg)
+            ->replace(
+                search: '<svg ',
+                replace: "<svg class=\"{$class}\" ",
+            )
+            ->toString();
     }
 }
