@@ -405,7 +405,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_php_code_in_attribute(): void
     {
-        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/x-button-usage.view.php'));
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
 
         $this->assertStringContainsString('/docs/', $html);
     }
@@ -587,5 +587,12 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="foo baz" style="font-weight: bold; text-decoration: underline;"></div>
         HTML, $html);
+    }
+
+    public function test_file_name_component(): void
+    {
+        $html = $this->render('<x-file-component></x-file-component>');
+
+        $this->assertSame('<div>hi!</div>', $html);
     }
 }

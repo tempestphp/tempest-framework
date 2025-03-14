@@ -11,6 +11,8 @@ use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Tempest\View\Components\AnonymousViewComponent;
 
+use function Tempest\Support\str;
+
 final class ViewComponentDiscovery implements Discovery, DiscoversPath
 {
     use IsDiscovery;
@@ -42,19 +44,25 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        $content = ltrim(file_get_contents($path));
+        $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
 
-        if (! str_contains($content, '<x-component name=')) {
+        $contents = str(file_get_contents($path))->ltrim();
+
+        $matches = $contents->match('/(?<header>(.|\n)*?)<x-component\s+name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/');
+
+        if ($fileName->startsWith('x-')) {
+            $this->discoveryItems->add($location, [
+                $fileName->toString(),
+                new AnonymousViewComponent(
+                    contents: $matches['view'] ?? $contents->toString(),
+                    file: $path,
+                ),
+            ]);
+
             return;
         }
 
-        preg_match(
-            pattern: '/(?<header>(.|\n)*?)<x-component name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/',
-            subject: $content,
-            matches: $matches,
-        );
-
-        if (! $matches['name']) {
+        if (! isset($matches['name'], $matches['header'])) {
             return;
         }
 
