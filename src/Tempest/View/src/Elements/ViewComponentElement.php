@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use Dom\HTMLDocument;
 use Tempest\Core\Environment;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
@@ -13,11 +14,13 @@ use Tempest\View\ViewComponent;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+use const Dom\HTML_NO_DEFAULT_NS;
+
 final class ViewComponentElement implements Element
 {
     use IsElement;
 
-    private array $dataAttributes = [];
+    private array $dataAttributes;
 
     public function __construct(
         private readonly Environment $environment,
@@ -28,6 +31,8 @@ final class ViewComponentElement implements Element
         $this->attributes = $attributes;
         $this->dataAttributes = arr($attributes)
             ->filter(fn ($value, $key) => ! str_starts_with($key, ':'))
+            // Attributes are converted to camelCase by default for PHP variable usage, but in the context of data attributes, kebab case is good
+            ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value)
             ->toArray();
     }
 
@@ -89,6 +94,45 @@ final class ViewComponentElement implements Element
             ->toArray();
 
         $compiled = str($this->viewComponent->compile($this))
+            // Fallthrough attributes
+            ->replaceRegex(
+                regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/', // Match the very first opening tag, this will never fail.
+                replace: function ($matches) {
+                    $closingTag = '</' . $matches['tag'] . '>';
+
+                    $html = $matches[0] . $closingTag;
+
+                    $dom = HTMLDocument::createFromString($html, LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
+
+                    /** @var \Dom\HTMLElement $element */
+                    $element = $dom->childNodes[0];
+
+                    foreach (['class', 'style', 'id'] as $attributeName) {
+                        if (! isset($this->dataAttributes[$attributeName])) {
+                            continue;
+                        }
+
+                        if ($attributeName === 'id') {
+                            $value = $this->dataAttributes[$attributeName];
+                        } else {
+                            $value = arr([
+                                $element->getAttribute($attributeName),
+                                $this->dataAttributes[$attributeName],
+                            ])
+                                ->filter()
+                                ->implode(' ')
+                                ->toString();
+                        }
+
+                        $element->setAttribute(
+                            qualifiedName: $attributeName,
+                            value: $value,
+                        );
+                    }
+
+                    return str($element->ownerDocument->saveHTML($element))->replaceLast($closingTag, '');
+                },
+            )
             ->prepend(
                 // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',

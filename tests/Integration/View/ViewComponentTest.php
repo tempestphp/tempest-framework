@@ -577,15 +577,45 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_attributes_variable_in_view_component(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div class="foo {{ $attributes['class'] }}" style="font-weight: bold; {{ $attributes['style'] }}"></div>
+        <div x-data="foo {{ $attributes['x-data'] }}"></div>
         HTML);
 
         $html = $this->render(<<<'HTML'
-        <x-test class="baz" style="text-decoration: underline;"></x-test>
+        <x-test x-data="bar"></x-test>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <div class="foo baz" style="font-weight: bold; text-decoration: underline;"></div>
+        <div x-data="foo bar"></div>
+        HTML, $html);
+    }
+
+    public function test_fallthrough_attributes(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="test" style="text-decoration: underline;" id="test"></div>
+        HTML, $html);
+    }
+
+    public function test_merged_fallthrough_attributes(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="foo" style="font-weight: bold;" id="other"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
         HTML, $html);
     }
 
