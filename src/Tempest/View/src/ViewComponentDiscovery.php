@@ -45,7 +45,6 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
         }
 
         $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
-
         $contents = str(file_get_contents($path))->ltrim();
 
         preg_match(
@@ -54,7 +53,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             matches: $matches,
         );
 
-        if ($fileName->startsWith('x-')) {
+        if ($fileName->startsWith('x-') && ! isset($matches['name'])) {
             $this->discoveryItems->add($location, [
                 $fileName->toString(),
                 new AnonymousViewComponent(
