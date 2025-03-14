@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Attributes;
 
+use Stringable;
+use Tempest\Support\Arr\ArrayInterface;
 use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
@@ -32,8 +34,25 @@ final readonly class ExpressionAttribute implements Attribute
             value: $value->toString(),
             wrappingElement: $element->setAttribute(
                 ltrim($this->name, ':'),
-                sprintf('<?= %s ?>', $value),
+                sprintf('<?= \Tempest\View\Attributes\ExpressionAttribute::toValue(%s); ?>', $value),
             ),
         );
+    }
+
+    public static function toValue(mixed $attribute): mixed
+    {
+        if ($attribute instanceof Stringable) {
+            $attribute = $attribute->__toString();
+        }
+
+        if ($attribute instanceof ArrayInterface) {
+            $attribute = $attribute->toArray();
+        }
+
+        if (is_array($attribute)) {
+            return trim(implode(' ', $attribute));
+        }
+
+        return (string) $attribute;
     }
 }

@@ -626,6 +626,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>hi!</div>', $html);
     }
 
+    public function test_array_attribute(): void
+    {
+        $html = $this->render(<<<'HTML'
+        <div :class="['foo', 'bar']""></div>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="foo bar" ></div>
+        HTML, $html);
+    }
+
     public function test_merge_class(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
