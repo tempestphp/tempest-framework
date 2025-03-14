@@ -42,7 +42,7 @@ final readonly class ExpressionAttribute implements Attribute
     public static function toValue(mixed $attribute): mixed
     {
         if ($attribute instanceof Stringable) {
-            $attribute = $attribute->__toString();
+            $attribute = (string) $attribute;
         }
 
         if ($attribute instanceof ArrayInterface) {

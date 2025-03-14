@@ -176,8 +176,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsStringIgnoringLineEndings(<<<'HTML'
         hi
-
-
+        
+            
         <div class="slot-b"><div class="slot-a"></div></div>
         HTML, $html);
     }
@@ -188,8 +188,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         hi
-
-
+        
+            
         <div class="slot-b"><div class="slot-a">
                     test
                 </div></div>
@@ -381,14 +381,14 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         A: other slot
             B: other slot
             C: other slot
-
-            A:
+        
+            A: 
             main slot
-
-            B:
+            
+            B: 
             main slot
-
-            C:
+            
+            C: 
             main slot
         HTML, $html);
     }
