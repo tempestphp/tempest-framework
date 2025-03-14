@@ -30,7 +30,7 @@ final class ViewComponentElement implements Element
     ) {
         $this->attributes = $attributes;
         $this->dataAttributes = arr($attributes)
-            ->filter(fn ($value, $key) => ! str_starts_with($key, ':'))
+            ->filter(fn ($_, $key) => ! str_starts_with($key, ':'))
             // Attributes are converted to camelCase by default for PHP variable usage, but in the context of data attributes, kebab case is good
             ->mapWithKeys(fn ($value, $key) => yield str($key)->kebab()->toString() => $value)
             ->toArray();
