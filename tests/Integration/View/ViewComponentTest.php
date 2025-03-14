@@ -11,6 +11,7 @@ use Tempest\Core\Environment;
 use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
+use Tempest\View\Exceptions\InvalidDataAttribute;
 use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
@@ -405,9 +406,9 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_php_code_in_attribute(): void
     {
-        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
+        $this->expectException(InvalidDataAttribute::class);
 
-        $this->assertStringContainsString('/docs/', $html);
+        $html = $this->render(view(__DIR__ . '/../../Fixtures/Views/button-usage.view.php'));
     }
 
     public function test_template_component(): void
