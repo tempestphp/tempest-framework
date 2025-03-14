@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
+use DateInterval;
+use DateTimeImmutable;
 use Exception;
 use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
@@ -11,13 +13,15 @@ use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Elements\ViewComponentElement;
+use Tempest\View\IconConfig;
 use Tempest\View\ViewComponent;
 
 final readonly class Icon implements ViewComponent
 {
     public function __construct(
-        private AppConfig $config,
-        private IconCache $cache,
+        private AppConfig $appConfig,
+        private IconCache $iconCache,
+        private IconConfig $iconConfig,
         private HttpClient $http,
     ) {
     }
@@ -35,7 +39,7 @@ final readonly class Icon implements ViewComponent
         $svg = $this->render($name);
 
         if (! $svg) {
-            return $this->config->environment->isLocal()
+            return $this->appConfig->environment->isLocal()
                 ? ('<!-- unknown-icon: ' . $name . ' -->')
                 : '';
         }
@@ -52,7 +56,12 @@ final readonly class Icon implements ViewComponent
     private function download(string $prefix, string $name): ?string
     {
         try {
-            $response = $this->http->get("https://api.iconify.design/{$prefix}/{$name}.svg");
+            $url = new ImmutableString($this->iconConfig->iconifyApiUrl)
+                ->finish('/')
+                ->append("{$prefix}/{$name}.svg")
+                ->toString();
+
+            $response = $this->http->get($url);
 
             if ($response->status !== Status::OK) {
                 return null;
@@ -82,10 +91,13 @@ final readonly class Icon implements ViewComponent
 
             [$prefix, $name] = $parts;
 
-            return $this->cache->resolve(
+            return $this->iconCache->resolve(
                 key: "iconify-{$prefix}-{$name}",
                 cache: fn () => $this->download($prefix, $name),
-                expiresAt: null,
+                expiresAt: $this->iconConfig->cacheDuration
+                    ? new DateTimeImmutable()
+                        ->add(DateInterval::createFromDateString("{$this->iconConfig->cacheDuration} seconds"))
+                    : null,
             );
         } catch (Exception) {
             return null;
