@@ -33,6 +33,7 @@ final readonly class ExpressionAttribute implements Attribute
         if ($this->name === ':class' || $this->name === ':style') {
             return $element->setAttribute(
                 ltrim($this->name, ':'),
+                // I would assume I'd need to merge the original attribute, but I don't. I'm confused and need to investigate
                 $element->getAttribute(ltrim($this->name, ':')),
             );
         }
