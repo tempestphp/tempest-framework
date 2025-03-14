@@ -12,6 +12,7 @@ use Tempest\View\Elements\PhpDataElement;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
 use Tempest\View\Renderers\TempestViewCompiler;
 
+use function Tempest\Support\Arr\dot;
 use function Tempest\Support\str;
 
 final readonly class ExpressionAttribute implements Attribute
@@ -27,6 +28,13 @@ final readonly class ExpressionAttribute implements Attribute
 
         if ($value->startsWith(['{{', '{!!', ...TempestViewCompiler::TOKEN_MAPPING])) {
             throw new InvalidExpressionAttribute($value);
+        }
+
+        if ($this->name === ':class' || $this->name === ':style') {
+            return $element->setAttribute(
+                ltrim($this->name, ':'),
+                $element->getAttribute(ltrim($this->name, ':')),
+            );
         }
 
         return new PhpDataElement(

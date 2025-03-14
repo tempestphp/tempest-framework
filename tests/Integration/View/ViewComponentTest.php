@@ -629,11 +629,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_array_attribute(): void
     {
         $html = $this->render(<<<'HTML'
-        <div :class="['foo', 'bar']""></div>
+        <div :x="['foo', 'bar']""></div>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <div class="foo bar" ></div>
+        <div x="foo bar" ></div>
         HTML, $html);
     }
 
@@ -654,7 +654,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_conflict_attributes(): void
     {
-        $this->expectException('Duplicate attribute [data-foo]');
+        $this->expectExceptionMessage('Duplicate attribute [data-foo]');
 
         $this->registerViewComponent('x-test', <<<'HTML'
         <div data-foo="bar" :data-foo="$attributes['data-foo']"></div>

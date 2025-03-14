@@ -36,13 +36,19 @@ trait IsElement
 
     public function getAttribute(string $name): ?string
     {
+        $originalName = $name;
+
         $name = ltrim($name, ':');
 
         if ($this instanceof WrapsElement) {
             $value = $this->getWrappingElement()->getAttribute($name);
         }
 
-        return $value ?? $this->attributes[":{$name}"] ?? $this->attributes[$name] ?? null;
+        return $value
+            ?? $this->attributes[$originalName]
+            ?? $this->attributes[":{$name}"]
+            ?? $this->attributes[$name]
+            ?? null;
     }
 
     public function setAttribute(string $name, string $value): self
