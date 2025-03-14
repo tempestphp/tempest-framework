@@ -39,7 +39,7 @@ final readonly class StaticGenerateCommand
         name: 'static:generate',
         description: 'Compiles static pages',
     )]
-    public function __invoke(): void
+    public function __invoke(?string $filter = null): void
     {
         $publicPath = path($this->kernel->root, 'public');
 
@@ -57,6 +57,10 @@ final readonly class StaticGenerateCommand
                 $fileName = $uri === '/'
                     ? 'index.html'
                     : ($uri . '/index.html');
+
+                if ($filter !== null && $uri !== $filter) {
+                    continue;
+                }
 
                 $file = path($publicPath, $fileName);
 
@@ -81,7 +85,7 @@ final readonly class StaticGenerateCommand
                         : $body;
 
                     if (! is_string($content)) {
-                        $this->writeln("- <error>{$uri}</error> > No textual body");
+                        $this->error("<u>{$uri}</u> No textual body");
 
                         continue;
                     }
@@ -96,7 +100,7 @@ final readonly class StaticGenerateCommand
 
                     $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");
                 } catch (Throwable $e) {
-                    $this->writeln("- <error>{$uri}</error> {$e->getMessage()}");
+                    $this->error("<u>{$uri}</u> {$e->getMessage()}");
 
                     ob_get_clean();
 
