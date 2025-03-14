@@ -182,6 +182,24 @@ final class ConsoleTester
         return $this->assertContains($text);
     }
 
+    public function assertSeeCount(string $text, int $expectedCount): self
+    {
+        $actualCount = substr_count($this->output->asUnformattedString(), $text);
+
+        Assert::assertSame(
+            $expectedCount,
+            $actualCount,
+            sprintf(
+                'Failed to assert that console output counted: %s exactly %d times. These lines were printed: %s',
+                $text,
+                $expectedCount,
+                PHP_EOL . PHP_EOL . $this->output->asUnformattedString() . PHP_EOL,
+            ),
+        );
+
+        return $this;
+    }
+
     public function assertNotSee(string $text): self
     {
         return $this->assertDoesNotContain($text);
