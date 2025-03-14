@@ -14,6 +14,7 @@ use Tempest\Vite\ViteConfig;
 use function Tempest\root_path;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
+use function Tempest\Support\Str\ensure_starts_with;
 
 final readonly class ManifestTagsResolver implements TagsResolver
 {
@@ -237,7 +238,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
 
     private function getAssetPath(string $path): string
     {
-        return $this->viteConfig->build->buildDirectory . '/' . $path;
+        return ensure_starts_with($this->viteConfig->build->buildDirectory . '/' . $path, prefix: '/');
     }
 
     private function fileToAssetPath(string $file): string
