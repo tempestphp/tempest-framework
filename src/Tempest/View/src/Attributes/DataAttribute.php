@@ -9,9 +9,9 @@ use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
 use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\ViewComponentElement;
-
 use Tempest\View\Exceptions\InvalidDataAttribute;
 use Tempest\View\Renderers\TempestViewCompiler;
+
 use function Tempest\Support\str;
 
 final readonly class DataAttribute implements Attribute
@@ -36,7 +36,7 @@ final readonly class DataAttribute implements Attribute
 
         $value = $element->getAttribute($this->name);
 
-        if (str($value)->startsWith(TempestViewCompiler::TOKEN_MAPPING)){
+        if (str($value)->startsWith(TempestViewCompiler::TOKEN_MAPPING)) {
             throw new InvalidDataAttribute($this->name, $value);
         }
 

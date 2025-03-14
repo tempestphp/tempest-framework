@@ -12,7 +12,7 @@ final class InvalidExpressionAttribute extends Exception
 {
     public function __construct(Stringable $value)
     {
-        $value = str_replace(TempestViewCompiler::TOKEN_MAPPING,array_keys(TempestViewCompiler::TOKEN_MAPPING), $value);
+        $value = str_replace(TempestViewCompiler::TOKEN_MAPPING, array_keys(TempestViewCompiler::TOKEN_MAPPING), (string) $value);
 
         $message = sprintf("An expression attribute's value cannot contain a nested PHP or echo expression (<?php, <?=, {{, or {!!): %s", $value);
 
