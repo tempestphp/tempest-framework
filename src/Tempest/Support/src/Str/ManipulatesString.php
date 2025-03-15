@@ -693,4 +693,9 @@ trait ManipulatesString
     {
         return $this->value;
     }
+
+    public static function __set_state(array $array): object
+    {
+        return new self($array['value']);
+    }
 }

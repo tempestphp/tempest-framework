@@ -24,28 +24,33 @@ trait IsElement
 
     public function getAttributes(): array
     {
-        return $this->attributes;
+        if ($this instanceof WrapsElement) {
+            $wrappingAttributes = $this->getWrappingElement()->getAttributes();
+        } else {
+            $wrappingAttributes = [];
+        }
+
+        return [...$this->attributes, ...$wrappingAttributes];
     }
 
     public function hasAttribute(string $name): bool
     {
         $name = ltrim($name, ':');
 
-        return array_key_exists(":{$name}", $this->attributes) || array_key_exists($name, $this->attributes);
+        $attributes = $this->getAttributes();
+
+        return array_key_exists(":{$name}", $attributes) || array_key_exists($name, $attributes);
     }
 
     public function getAttribute(string $name): ?string
     {
+        $attributes = $this->getAttributes();
+
         $originalName = $name;
 
         $name = ltrim($name, ':');
 
-        if ($this instanceof WrapsElement) {
-            $value = $this->getWrappingElement()->getAttribute($name);
-        }
-
-        return $value
-            ?? $this->attributes[$originalName]
+        return $attributes[$originalName]
             ?? $this->attributes[":{$name}"]
             ?? $this->attributes[$name]
             ?? null;
@@ -56,8 +61,6 @@ trait IsElement
         if ($this instanceof WrapsElement) {
             $this->getWrappingElement()->setAttribute($name, $value);
         }
-
-        $this->unsetAttribute($name);
 
         $this->attributes[$name] = $value;
 
@@ -75,9 +78,11 @@ trait IsElement
 
     public function unsetAttribute(string $name): self
     {
-        $name = ltrim($name, ':');
+        if ($this instanceof WrapsElement) {
+            $this->getWrappingElement()->unsetAttribute($name);
+        }
 
-        unset($this->attributes[$name], $this->attributes[":{$name}"]);
+        unset($this->attributes[$name]);
 
         return $this;
     }

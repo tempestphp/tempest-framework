@@ -629,39 +629,39 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_array_attribute(): void
     {
         $html = $this->render(<<<'HTML'
-        <div :x="['foo', 'bar']""></div>
+        <div :x="['foo', 'bar']"></div>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <div x="foo bar" ></div>
+        <div x="foo bar"></div>
         HTML, $html);
     }
 
     public function test_merge_class(): void
     {
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div class="foo" :class="$attributes['class']"></div>
+        <div class="inner" :class="'upper'"></div>
         HTML);
 
         $html = $this->render(<<<'HTML'
-        <x-test class="bar"></x-test>
+        <x-test></x-test>
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <div class="foo bar"></div>
+        <div class="inner upper"></div>
         HTML, $html);
     }
 
     public function test_conflict_attributes(): void
     {
-        $this->expectExceptionMessage('Duplicate attribute [data-foo]');
-
         $this->registerViewComponent('x-test', <<<'HTML'
-        <div data-foo="bar" :data-foo="$attributes['data-foo']"></div>
+        <div data-foo="innerA" :data-foo="'innerB'"></div>
         HTML);
 
         $html = $this->render(<<<'HTML'
-        <x-test data-foo="baz"></x-test>
+        <x-test data-foo="upperA" :data-foo="'upperB'"></x-test>
         HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
     }
 }

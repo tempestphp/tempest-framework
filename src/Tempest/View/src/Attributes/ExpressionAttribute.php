@@ -12,15 +12,13 @@ use Tempest\View\Elements\PhpDataElement;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
 use Tempest\View\Renderers\TempestViewCompiler;
 
-use function Tempest\Support\Arr\dot;
 use function Tempest\Support\str;
 
 final readonly class ExpressionAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {
-    }
+    ) {}
 
     public function apply(Element $element): Element
     {
@@ -31,37 +29,47 @@ final readonly class ExpressionAttribute implements Attribute
         }
 
         if ($this->name === ':class' || $this->name === ':style') {
-            return $element->setAttribute(
-                ltrim($this->name, ':'),
-                // I would assume I'd need to merge the original attribute, but I don't. I'm confused and need to investigate
+            $value = self::resolveValue([
                 $element->getAttribute(ltrim($this->name, ':')),
+                sprintf('<?= %s ?>', $element->getAttribute($this->name)),
+            ]);
+
+            $element->setAttribute(
+                ltrim($this->name, ':'),
+                sprintf("%s", $value),
+            );
+        } else {
+            $element->setAttribute(
+                ltrim($this->name, ':'),
+                sprintf("<?= \Tempest\View\Attributes\ExpressionAttribute::resolveValue(%s) ?>", $value),
+            );
+
+            $element = new PhpDataElement(
+                name: $this->name,
+                value: $value->toString(),
+                wrappingElement: $element,
             );
         }
 
-        return new PhpDataElement(
-            name: $this->name,
-            value: $value->toString(),
-            wrappingElement: $element->setAttribute(
-                ltrim($this->name, ':'),
-                sprintf('<?= \Tempest\View\Attributes\ExpressionAttribute::toValue(%s); ?>', $value),
-            ),
-        );
+        $element->unsetAttribute($this->name);
+
+        return $element;
     }
 
-    public static function toValue(mixed $attribute): mixed
+    public static function resolveValue(mixed $value): string
     {
-        if ($attribute instanceof Stringable) {
-            $attribute = (string) $attribute;
+        if ($value instanceof Stringable) {
+            $value = (string)$value;
         }
 
-        if ($attribute instanceof ArrayInterface) {
-            $attribute = $attribute->toArray();
+        if ($value instanceof ArrayInterface) {
+            $value = $value->toArray();
         }
 
-        if (is_array($attribute)) {
-            return trim(implode(' ', $attribute));
+        if (is_array($value)) {
+            $value = trim(implode(' ', $value));
         }
 
-        return (string) $attribute;
+        return (string)$value;
     }
 }
