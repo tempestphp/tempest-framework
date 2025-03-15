@@ -652,8 +652,10 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_conflict_attributes(): void
+    public function test_attribute_precedence(): void
     {
+        // Order should be: upperB > upperA > innerB > innerA
+
         $this->registerViewComponent('x-test', <<<'HTML'
         <div data-foo="innerA" :data-foo="'innerB'"></div>
         HTML);
