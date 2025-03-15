@@ -94,7 +94,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
                 $this->assertSame(
                     expected: [
-                        '<script type="module" src="build/assets/main-YJD4Cw3J.js"></script>',
+                        '<script type="module" src="/build/assets/main-YJD4Cw3J.js"></script>',
                     ],
                     actual: $tags,
                 );
@@ -130,8 +130,8 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
                 $this->assertSame(
                     expected: [
-                        '<link rel="stylesheet" href="build/assets/main-DObprJ9K.css" />',
-                        '<script type="module" src="build/assets/main-CK61jJwL.js"></script>',
+                        '<link rel="stylesheet" href="/build/assets/main-DObprJ9K.css" />',
+                        '<script type="module" src="/build/assets/main-CK61jJwL.js"></script>',
                     ],
                     actual: $tags,
                 );
@@ -151,9 +151,9 @@ final class ViteTest extends FrameworkIntegrationTestCase
 
                 $this->assertSame(
                     expected: [
-                        '<link rel="modulepreload" href="build/assets/index-BSdK3M0e.js" />',
-                        '<link rel="stylesheet" href="build/assets/index-B3s1tYeC.css" />',
-                        '<script type="module" src="build/assets/app-lliD09ip.js"></script>',
+                        '<link rel="modulepreload" href="/build/assets/index-BSdK3M0e.js" />',
+                        '<link rel="stylesheet" href="/build/assets/index-B3s1tYeC.css" />',
+                        '<script type="module" src="/build/assets/app-lliD09ip.js"></script>',
                     ],
                     actual: $tags,
                 );
@@ -179,7 +179,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
                 $tags = $vite->getTags(['src/bar.ts']);
 
                 $this->assertSame(
-                    expected: ['<script type="module" src="build/assets/bar-WlXl03ld.js"></script>'],
+                    expected: ['<script type="module" src="/build/assets/bar-WlXl03ld.js"></script>'],
                     actual: $tags,
                 );
             },

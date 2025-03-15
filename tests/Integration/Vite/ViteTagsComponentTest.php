@@ -33,19 +33,19 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags entrypoint="src/foo.ts" />
-                    </head>
-                    <body>Foo</body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags entrypoint="src/foo.ts" />
+                </head>
+                <body>Foo</body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
-                        <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script></head><body>Foo
-                        </body></html>
-                        HTML,
+                    <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script></head><body>Foo
+                    </body></html>
+                    HTML,
                     actual: $html,
                 );
             },
@@ -68,19 +68,19 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags :entrypoint="['src/foo.ts', 'src/bar.css']" />
-                    </head>
-                    <body>Foo</body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags :entrypoint="['src/foo.ts', 'src/bar.css']" />
+                </head>
+                <body>Foo</body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
-                        <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
-                        </body></html>
-                        HTML,
+                    <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
+                    </body></html>
+                    HTML,
                     actual: $html,
                 );
             },
@@ -103,19 +103,19 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags />
-                    </head>
-                    <body>Foo</body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags />
+                </head>
+                <body>Foo</body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(
                     expected: <<<HTML
-                        <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
-                        </body></html>
-                        HTML,
+                    <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
+                    </body></html>
+                    HTML,
                     actual: $html,
                 );
             },
@@ -139,17 +139,17 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags />
-                    </head>
-                    <body></body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags />
+                </head>
+                <body></body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-                    <html lang="en"><head><script type="module" src="build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
-                    HTML, $html);
+                <html lang="en"><head><script type="module" src="/build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
+                HTML, $html);
             },
             files: [
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
@@ -169,17 +169,17 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags entrypoint="src/bar.ts" />
-                    </head>
-                    <body></body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags entrypoint="src/bar.ts" />
+                </head>
+                <body></body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-                    <html lang="en"><head><script type="module" src="build/assets/bar-WlXl03ld.js"></script></head><body></body></html>
-                    HTML, $html);
+                <html lang="en"><head><script type="module" src="/build/assets/bar-WlXl03ld.js"></script></head><body></body></html>
+                HTML, $html);
             },
             files: [
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
@@ -199,17 +199,17 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 ));
 
                 $html = $this->render(<<<'HTML'
-                    <html lang="en">
-                    <head>
-                        <x-vite-tags :entrypoints="['src/bar.ts', 'src/foo.ts']" />
-                    </head>
-                    <body></body>
-                    </html>
-                    HTML);
+                <html lang="en">
+                <head>
+                    <x-vite-tags :entrypoints="['src/bar.ts', 'src/foo.ts']" />
+                </head>
+                <body></body>
+                </html>
+                HTML);
 
                 $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-                    <html lang="en"><head><script type="module" src="build/assets/bar-WlXl03ld.js"></script><script type="module" src="build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
-                    HTML, $html);
+                <html lang="en"><head><script type="module" src="/build/assets/bar-WlXl03ld.js"></script><script type="module" src="/build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
+                HTML, $html);
             },
             files: [
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
