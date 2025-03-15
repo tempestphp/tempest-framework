@@ -50,7 +50,7 @@ final class PhpIfElement implements Element, WrapsElement
         $compiled = sprintf(
             '<?php if(%s): ?>
                 %s',
-            $this->wrappingElement->consumeAttribute('if'),
+            $this->wrappingElement->consumeAttribute(':if'),
             $this->wrappingElement->compile(),
         );
 
@@ -60,13 +60,13 @@ final class PhpIfElement implements Element, WrapsElement
                 <?php elseif(%s): ?>
                 %s',
                 $compiled,
-                $elseif->consumeAttribute('elseif'),
+                $elseif->consumeAttribute(':elseif'),
                 $elseif->compile(),
             );
         }
 
         if ($this->else !== null) {
-            $this->else->consumeAttribute('else');
+            $this->else->consumeAttribute(':else');
 
             $compiled = sprintf(
                 '%s

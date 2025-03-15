@@ -39,7 +39,7 @@ final class PhpForeachElement implements Element, WrapsElement
 
     public function compile(): string
     {
-        $foreachAttribute = $this->wrappingElement->consumeAttribute('foreach');
+        $foreachAttribute = $this->wrappingElement->consumeAttribute(':foreach');
 
         $compiled = sprintf(
             '<?php foreach (%s): ?>
@@ -57,7 +57,7 @@ final class PhpForeachElement implements Element, WrapsElement
         if ($this->else !== null) {
             $collectionName = str($foreachAttribute)->match('/^(?<match>.*)\s+as/')['match'];
 
-            $this->else->consumeAttribute('forelse');
+            $this->else->consumeAttribute(':forelse');
 
             $compiled = sprintf(
                 '<?php if(iterator_count(%s ?? [])): ?>
