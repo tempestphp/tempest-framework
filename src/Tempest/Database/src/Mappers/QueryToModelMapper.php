@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
+use Tempest\Database\AbstractDatabaseModel;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Casters\CasterFactory;
@@ -37,7 +38,9 @@ final readonly class QueryToModelMapper implements Mapper
 
             $id = $row[$idField];
 
-            $model = $models[$id] ?? $class->newInstanceWithoutConstructor();
+            $instanceClass = new ClassReflector($to::getModelInstanceClass($row));
+
+            $model = $models[$id] ?? $instanceClass->newInstanceWithoutConstructor();
 
             $models[$id] = $this->parse($class, $model, $row);
         }
