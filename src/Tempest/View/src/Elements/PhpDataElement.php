@@ -32,7 +32,7 @@ final class PhpDataElement implements Element, WrapsElement
         $name = ltrim($this->name, ':');
         $isExpression = str_starts_with($this->name, ':');
 
-        $value = str($this->value ?? '');
+        $value = $this->value ?? '';
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
