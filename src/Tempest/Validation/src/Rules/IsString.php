@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use Tempest\Validation\Rule;
 use Stringable;
+use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class IsString implements Rule
