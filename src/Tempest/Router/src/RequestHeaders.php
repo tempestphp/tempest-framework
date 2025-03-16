@@ -18,7 +18,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
     public static function normalizeFromArray(array $headers): self
     {
         $normalized = array_combine(
-            array_map('strtolower', array_keys($headers)),
+            array_map(strtolower(...), array_keys($headers)),
             array_values($headers),
         );
         return new self($normalized);
