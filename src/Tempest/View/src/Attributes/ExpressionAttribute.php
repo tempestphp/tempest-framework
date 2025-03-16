@@ -18,7 +18,8 @@ final readonly class ExpressionAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {}
+    ) {
+    }
 
     public function apply(Element $element): Element
     {
@@ -36,12 +37,12 @@ final readonly class ExpressionAttribute implements Attribute
 
             $element->setAttribute(
                 ltrim($this->name, ':'),
-                sprintf("%s", $value),
+                sprintf('%s', $value),
             );
         } else {
             $element->setAttribute(
                 ltrim($this->name, ':'),
-                sprintf("<?= \Tempest\View\Attributes\ExpressionAttribute::resolveValue(%s) ?>", $value),
+                sprintf('<?= ' . \Tempest\View\Attributes\ExpressionAttribute::class . '::resolveValue(%s) ?>', $value),
             );
 
             $element = new PhpDataElement(
@@ -59,7 +60,7 @@ final readonly class ExpressionAttribute implements Attribute
     public static function resolveValue(mixed $value): string
     {
         if ($value instanceof Stringable) {
-            $value = (string)$value;
+            $value = (string) $value;
         }
 
         if ($value instanceof ArrayInterface) {
@@ -70,6 +71,6 @@ final readonly class ExpressionAttribute implements Attribute
             $value = trim(implode(' ', $value));
         }
 
-        return (string)$value;
+        return (string) $value;
     }
 }

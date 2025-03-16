@@ -19,7 +19,8 @@ final class PhpDataElement implements Element, WrapsElement
         private readonly string $name,
         private readonly null|string|array $value,
         private readonly Element $wrappingElement,
-    ) {}
+    ) {
+    }
 
     public function getWrappingElement(): Element
     {
