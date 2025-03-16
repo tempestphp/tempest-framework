@@ -6,6 +6,7 @@ namespace Tempest\Validation\Rules;
 
 use Attribute;
 use Tempest\Validation\Rule;
+use Stringable;
 
 #[Attribute]
 final readonly class IsString implements Rule
@@ -18,6 +19,10 @@ final readonly class IsString implements Rule
     public function isValid(mixed $value): bool
     {
         if ($this->orNull && $value === null) {
+            return true;
+        }
+
+        if ($value instanceof Stringable) {
             return true;
         }
 
