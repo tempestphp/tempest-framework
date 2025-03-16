@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use Stringable;
 use Tempest\View\Element;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\WrapsElement;
@@ -16,7 +17,7 @@ final class PhpDataElement implements Element, WrapsElement
 
     public function __construct(
         private readonly string $name,
-        private readonly ?string $value,
+        private readonly null|string|array $value,
         private readonly Element $wrappingElement,
     ) {
     }
@@ -31,15 +32,7 @@ final class PhpDataElement implements Element, WrapsElement
         $name = ltrim($this->name, ':');
         $isExpression = str_starts_with($this->name, ':');
 
-        $value = str($this->value ?? '');
-
-        // If the value of an attribute is PHP code, it's automatically promoted to an expression with the PHP tags stripped
-        if ($value->startsWith([TempestViewCompiler::TOKEN_PHP_OPEN, TempestViewCompiler::TOKEN_PHP_SHORT_ECHO])) {
-            $value = $value->replace(TempestViewCompiler::TOKEN_MAPPING, '');
-            $isExpression = true;
-        }
-
-        $value = $value->toString();
+        $value = $this->value ?? '';
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(

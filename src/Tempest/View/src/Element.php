@@ -18,6 +18,8 @@ interface Element
 
     public function consumeAttribute(string $name): ?string;
 
+    public function unsetAttribute(string $name): self;
+
     public function setPrevious(?Element $previous): self;
 
     public function getPrevious(): ?Element;

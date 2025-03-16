@@ -11,7 +11,7 @@ final class InvalidDataAttribute extends Exception
     {
         $value = str_replace(TempestViewCompiler::TOKEN_MAPPING, array_keys(TempestViewCompiler::TOKEN_MAPPING), $value);
 
-        $message = sprintf("An data attribute's value cannot contain a PHP expression (<?php or <?=), use expression attributes instead: 
+        $message = sprintf("A data attribute's value cannot contain a PHP expression (<?php or <?=), use expression attributes instead: 
 × %s=\"%s\"
 ✓ %s=\"%s\"", $name, $value, ":{$name}", trim(str_replace(array_keys(TempestViewCompiler::TOKEN_MAPPING), '', $value)));
 
