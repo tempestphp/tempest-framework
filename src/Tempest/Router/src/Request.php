@@ -21,7 +21,7 @@ interface Request
         get;
     }
 
-    public array $headers {
+    public RequestHeaders $headers {
         get;
     }
 

@@ -23,7 +23,7 @@ final readonly class RequestToPsrRequestMapper implements Mapper
             uploadedFiles: $from->files,
             uri: $from->uri,
             method: $from->method->value,
-            headers: $from->headers,
+            headers: $from->headers->toArray(),
             cookieParams: $from->cookies,
             queryParams: $from->query,
             parsedBody: $from->body,
