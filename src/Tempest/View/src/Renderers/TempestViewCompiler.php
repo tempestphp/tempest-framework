@@ -109,22 +109,20 @@ final readonly class TempestViewCompiler
         $template = str($template)
             // Convert self-closing and void tags
             ->replaceRegex(
-                regex: '/<(?<element>.*?)\/>/',
+                regex: '/<(?<element>\w.*?)\/>/',
                 replace: function (array $match) {
-                    $tag = str($match['element'])->trim()->toString();
+                    $element = str($match['element'])->trim();
 
-                    if (in_array($tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+                    if (in_array($element, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
                         // Void tags must not have a closing tag
-                        return sprintf(
-                            '<%s>',
-                            $tag,
-                        );
+                        return sprintf('<%s>', $element->toString());
                     }
+
                     // Other self-closing tags must get a proper closing tag
                     return sprintf(
                         '<%s></%s>',
                         $match['element'],
-                        $tag,
+                        $element->before(' ')->toString(),
                     );
                 },
             );

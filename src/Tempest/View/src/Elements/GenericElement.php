@@ -37,11 +37,6 @@ final class GenericElement implements Element
     {
         $content = [];
 
-        // Void elements
-        if (in_array($this->tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
-            return "<{$this->tag}>";
-        }
-
         foreach ($this->getChildren() as $child) {
             $content[] = $child->compile();
         }
@@ -70,6 +65,11 @@ final class GenericElement implements Element
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;
+        }
+
+        // Void elements
+        if (in_array($this->tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+            return "<{$this->tag}{$attributes}>";
         }
 
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
