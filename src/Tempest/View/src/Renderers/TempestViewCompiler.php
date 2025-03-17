@@ -8,6 +8,7 @@ use Dom\HTMLDocument;
 use Dom\NodeList;
 use Stringable;
 use Tempest\Core\Kernel;
+use Tempest\Debug\DOMDebug;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\Support\Str\ImmutableString;
@@ -105,7 +106,26 @@ final readonly class TempestViewCompiler
     {
         $parserFlags = LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS;
 
-        $template = str($template);
+        $template = str($template)
+            // Convert self-closing and void tags
+            ->replaceRegex(
+                regex: '/<(?<element>\w.*?)\/>/',
+                replace: function (array $match) {
+                    $element = str($match['element'])->trim();
+
+                    if (in_array($element, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+                        // Void tags must not have a closing tag
+                        return sprintf('<%s>', $element->toString());
+                    }
+
+                    // Other self-closing tags must get a proper closing tag
+                    return sprintf(
+                        '<%s></%s>',
+                        $match['element'],
+                        $element->before(' ')->toString(),
+                    );
+                },
+            );
 
         // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
         $headNodes = [];

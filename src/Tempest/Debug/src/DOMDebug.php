@@ -26,7 +26,7 @@ final readonly class DOMDebug
             $content[] = self::dumpNode($node);
         }
 
-        lw(implode(PHP_EOL, $content));
+        lw(dom: implode(PHP_EOL, $content));
     }
 
     private static function dumpNode(Node $node, int $depth = 0): string

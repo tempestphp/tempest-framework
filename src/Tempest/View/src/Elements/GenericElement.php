@@ -67,6 +67,11 @@ final class GenericElement implements Element
             $attributes = ' ' . $attributes;
         }
 
+        // Void elements
+        if (in_array($this->tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+            return "<{$this->tag}{$attributes}>";
+        }
+
         return "<{$this->tag}{$attributes}>{$content}</{$this->tag}>";
     }
 }

@@ -155,7 +155,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->assertStringEqualsStringIgnoringLineEndings(
             expected: <<<'HTML'
-            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></input></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></input></div></form>
+            <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></div></form>
             HTML,
             actual: $this->render(view(
                 <<<'HTML'
@@ -498,7 +498,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></link></head><body></body></html>
+        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></head><body></body></html>
         HTML, $html);
     }
 
@@ -522,7 +522,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><link rel="stylesheet" href="#"></link></head><body></body></html>
+        <html lang="en"><head><link rel="stylesheet" href="#"></head><body></body></html>
         HTML, $html);
     }
 
@@ -542,10 +542,11 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><link rel="stylesheet" href="#"></link>
+        <html lang="en"><head><link rel="stylesheet" href="#">
         </head><body class="a"></body></html>
         HTML, $html);
     }
+
 
     public function test_head_injection(): void
     {
@@ -568,8 +569,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <!DOCTYPE html>
-        <html lang="en"><head><title>Foo</title><meta charset="utf-8"></meta><link rel="stylesheet" href="#"></link>
-        <meta name="description" content="bar"></meta></head><body class="a">b
+        <html lang="en"><head><title>Foo</title><meta charset="utf-8"><link rel="stylesheet" href="#">
+        <meta name="description" content="bar"></head><body class="a">b
         </body></html>
         HTML, $html);
     }
@@ -667,5 +668,31 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 //        HTML);
 //
 //        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
+    }
+
+    public function test_does_not_duplicate_br(): void
+    {
+        $this->registerViewComponent('x-html-base', <<<'HTML'
+            <!doctype html>
+            <html lang="en">
+                <head>
+                </head>
+                <body>
+                    <x-slot />
+                </body>
+            </html>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+            <x-html-base>
+                <br />
+                <hr />
+            </x-html-base>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <!DOCTYPE html>
+        <html lang="en"><head></head><body><br><hr></body></html>
+        HTML, $html);
     }
 }
