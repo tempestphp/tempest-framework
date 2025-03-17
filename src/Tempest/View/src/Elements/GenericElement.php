@@ -6,6 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 
+use function Tempest\Support\Html\is_self_closing_tag;
 use function Tempest\Support\str;
 
 final class GenericElement implements Element
@@ -68,7 +69,7 @@ final class GenericElement implements Element
         }
 
         // Void elements
-        if (in_array($this->tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+        if (is_self_closing_tag($this->tag)) {
             return "<{$this->tag}{$attributes}>";
         }
 
