@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\View\Renderers;
 
 use Stringable;
+use Tempest\Container\Container;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\GenericView;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
+use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
 
@@ -24,6 +26,8 @@ final class TempestViewRenderer implements ViewRenderer
     public function __construct(
         private readonly TempestViewCompiler $compiler,
         private readonly ViewCache $viewCache,
+        private readonly ViewConfig $viewConfig,
+        private readonly Container $container,
     ) {
     }
 
@@ -47,6 +51,8 @@ final class TempestViewRenderer implements ViewRenderer
             path: $view->path,
             compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view)),
         );
+
+        $view = $this->processView($view);
 
         return $this->renderCompiled($view, $path);
     }
@@ -78,6 +84,18 @@ final class TempestViewRenderer implements ViewRenderer
         $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
 
         return $compiled->toString();
+    }
+
+    private function processView(View $view): View
+    {
+        foreach ($this->viewConfig->viewProcessors as $viewProcessorClass) {
+            /** @var \Tempest\View\ViewProcessor $viewProcessor */
+            $viewProcessor = $this->container->get($viewProcessorClass);
+
+            $view = $viewProcessor->process($view);
+        }
+
+        return $view;
     }
 
     private function renderCompiled(View $_view, string $_path): string

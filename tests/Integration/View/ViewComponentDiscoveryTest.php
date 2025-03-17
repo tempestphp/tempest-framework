@@ -30,4 +30,32 @@ final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
             $this->assertStringContainsString('x-input', $duplicateViewComponent->getMessage());
         }
     }
+
+    public function test_auto_registration(): void
+    {
+        $discovery = $this->container->get(ViewComponentDiscovery::class);
+        $discovery->setItems(new DiscoveryItems([]));
+        $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/x-auto-registered.view.php');
+        $discovery->apply();
+
+        $html = $this->render(<<<'HTML'
+        <x-auto-registered></x-auto-registered>
+        HTML);
+
+        $this->assertSame('<span>Hello World</span>', $html);
+    }
+
+    public function test_auto_registration_with_x_component(): void
+    {
+        $discovery = $this->container->get(ViewComponentDiscovery::class);
+        $discovery->setItems(new DiscoveryItems([]));
+        $discovery->discoverPath(new DiscoveryLocation('', ''), __DIR__ . '/x-auto-registered-with-declaration.view.php');
+        $discovery->apply();
+
+        $html = $this->render(<<<'HTML'
+        <x-auto-registered-with-declaration></x-auto-registered-with-x-component>
+        HTML);
+
+        $this->assertSame('<span>Hello World</span>', $html);
+    }
 }

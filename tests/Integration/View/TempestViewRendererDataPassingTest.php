@@ -264,7 +264,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame(
             '<textarea autofocus></textarea>',
-            $this->render('<textarea autofocus></textarea>')
+            $this->render('<textarea autofocus></textarea>'),
         );
     }
 
@@ -288,6 +288,23 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
                 <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre></div>
                 HTML,
             $html,
+        );
+    }
+
+    public function test_echo_in_attributes(): void
+    {
+        $this->assertSame(
+            '<div class="hi hi hi"></div>',
+            $this->render(<<<HTML
+            <div class="hi {{ 'hi' }} hi">
+            HTML),
+        );
+
+        $this->assertSame(
+            '<div class="hi hi hi"></div>',
+            $this->render(<<<HTML
+            <div class="hi {!! 'hi' !!} hi">
+            HTML),
         );
     }
 }

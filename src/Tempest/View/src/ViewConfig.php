@@ -15,9 +15,17 @@ final class ViewConfig
         /** @var array<array-key, class-string<\Tempest\View\ViewComponent>|\Tempest\View\ViewComponent> */
         public array $viewComponents = [],
 
+        /** @var class-string<\Tempest\View\ViewProcessor>[] */
+        public array $viewProcessors = [],
+
         /** @var class-string<\Tempest\View\ViewRenderer> */
         public string $rendererClass = TempestViewRenderer::class,
     ) {
+    }
+
+    public function addViewProcessor(ClassReflector $viewProcessor): void
+    {
+        $this->viewProcessors[] = $viewProcessor->getName();
     }
 
     public function addViewComponent(string $name, ClassReflector|AnonymousViewComponent $viewComponent): void

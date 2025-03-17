@@ -9,6 +9,7 @@ use Psr\Http\Message\UploadedFileInterface;
 use Tempest\Http\Method;
 use Tempest\Mapper\Mapper;
 use Tempest\Router\GenericRequest;
+use Tempest\Router\RequestHeaders;
 use Tempest\Router\Upload;
 
 use function Tempest\map;
@@ -50,7 +51,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
             'method' => Method::from($from->getMethod()),
             'uri' => (string) $from->getUri(),
             'body' => $data,
-            'headers' => $headersAsString,
+            'headers' => RequestHeaders::normalizeFromArray($headersAsString),
             'path' => $from->getUri()->getPath(),
             'query' => $query,
             'files' => $uploads,

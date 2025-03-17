@@ -514,4 +514,11 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('<body', $html);
         $this->assertStringContainsString('<!-- test comment -->', $html);
     }
+
+    public function test_view_processors(): void
+    {
+        $html = $this->render('<div>{{ $global }}</div>');
+
+        $this->assertStringEqualsStringIgnoringLineEndings('<div>test</div>', $html);
+    }
 }

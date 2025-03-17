@@ -25,7 +25,7 @@ trait IsRequest
     private(set) array $body = [];
 
     #[SkipValidation]
-    private(set) array $headers = [];
+    private(set) RequestHeaders $headers;
 
     #[SkipValidation]
     private(set) string $path;
@@ -52,7 +52,7 @@ trait IsRequest
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
-        $this->headers = $headers;
+        $this->headers = RequestHeaders::normalizeFromArray($headers);
         $this->files = $files;
 
         $this->path ??= $this->resolvePath();
