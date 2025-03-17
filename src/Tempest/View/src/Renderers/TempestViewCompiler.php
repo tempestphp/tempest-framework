@@ -15,10 +15,12 @@ use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\View;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\Html\is_self_closing_tag;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
+
 use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class TempestViewCompiler

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
+
 use function Tempest\Support\Html\is_self_closing_tag;
 use function Tempest\Support\str;
 
