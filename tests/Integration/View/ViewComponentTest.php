@@ -597,7 +597,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <!DOCTYPE html>
-        <html lang="en"><head></head><body><br></br><hr></hr></body></html>
+        <html lang="en"><head></head><body><br><hr></body></html>
         HTML, $html);
     }
 }

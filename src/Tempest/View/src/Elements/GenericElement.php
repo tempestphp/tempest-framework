@@ -37,6 +37,11 @@ final class GenericElement implements Element
     {
         $content = [];
 
+        // Void elements
+        if (in_array($this->tag, ['br', 'hr', 'img', 'input', 'link', 'meta', 'area', 'base', 'col', 'embed', 'source', 'track', 'wbr'])) {
+            return "<{$this->tag}>";
+        }
+
         foreach ($this->getChildren() as $child) {
             $content[] = $child->compile();
         }
