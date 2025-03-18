@@ -6,7 +6,7 @@ namespace Tempest\View\Elements;
 
 use Tempest\View\Element;
 
-use function Tempest\Support\Html\is_self_closing_tag;
+use function Tempest\Support\Html\is_void_tag;
 use function Tempest\Support\str;
 
 final class GenericElement implements Element
@@ -69,7 +69,7 @@ final class GenericElement implements Element
         }
 
         // Void elements
-        if (is_self_closing_tag($this->tag)) {
+        if (is_void_tag($this->tag)) {
             return "<{$this->tag}{$attributes}>";
         }
 

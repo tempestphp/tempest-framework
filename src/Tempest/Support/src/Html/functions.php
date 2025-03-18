@@ -8,9 +8,10 @@ namespace Tempest\Support\Html {
     use function Tempest\Support\arr;
 
     /**
-     * Determines whether the specified HTML tag is self-closing.
+     * Determines whether the specified HTML tag is a void tag.
+     * @see https://developer.mozilla.org/en-US/docs/Glossary/Void_element
      */
-    function is_self_closing_tag(Stringable|string $tag): bool
+    function is_void_tag(Stringable|string $tag): bool
     {
         return in_array(
             (string) $tag,
@@ -50,7 +51,7 @@ namespace Tempest\Support\Html {
             )
             ->toString();
 
-        if ($content || ! is_self_closing_tag($tag)) {
+        if ($content || ! is_void_tag($tag)) {
             return new HtmlString(sprintf('<%s%s>%s</%s>', $tag, $attributes, $content ?? '', $tag));
         }
 
