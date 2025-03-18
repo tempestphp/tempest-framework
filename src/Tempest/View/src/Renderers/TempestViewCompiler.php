@@ -17,7 +17,7 @@ use Tempest\View\Elements\ElementFactory;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\Html\is_self_closing_tag;
+use function Tempest\Support\Html\is_void_tag;
 use function Tempest\Support\path;
 use function Tempest\Support\str;
 
@@ -113,7 +113,7 @@ final readonly class TempestViewCompiler
                 replace: function (array $match) {
                     $element = str($match['element'])->trim();
 
-                    if (is_self_closing_tag($element)) {
+                    if (is_void_tag($element)) {
                         // Void tags must not have a closing tag
                         return sprintf('<%s>', $element->toString());
                     }
