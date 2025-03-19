@@ -607,6 +607,34 @@ trait ManipulatesArray
     }
 
     /**
+     * Maps the first item of the instance to the given object.
+     *
+     * @see \Tempest\map()
+     *
+     * @template T
+     * @param class-string<T> $to
+     * @return T
+     */
+    public function mapFirstTo(string $to): mixed
+    {
+        return \Tempest\map($this->first())->to($to);
+    }
+
+    /**
+     * Maps the last item of the instance to the given object.
+     *
+     * @see \Tempest\map()
+     *
+     * @template T
+     * @param class-string<T> $to
+     * @return T
+     */
+    public function mapLastTo(string $to): mixed
+    {
+        return \Tempest\map($this->last())->to($to);
+    }
+
+    /**
      * Returns a new instance of this array sorted by its values.
      *
      * @param bool $desc Sorts in descending order if `true`; defaults to `false` (ascending).
