@@ -8,16 +8,16 @@ use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
-final class DateTimeSerializer implements Serializer
+final readonly class DateTimeSerializer implements Serializer
 {
     public function __construct(
-        private string $format = DATE_ATOM,
+        private string $format = DateTimeFormat::FORMAT,
     ) {
     }
 
     public static function fromProperty(PropertyReflector $property): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? DATE_ATOM;
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? DateTimeFormat::FORMAT;
 
         return new self($format);
     }

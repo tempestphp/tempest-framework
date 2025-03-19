@@ -28,9 +28,9 @@ final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
                         0 => "a",
                     ],
                     "serializableObject" => "O:60:\"Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject\":1:{i:0;s:1:\"a\";}",
-                    "dateTimeImmutableProp" => "2025-01-01T00:00:00+00:00",
-                    "dateTimeProp" => "2025-01-01T00:00:00+00:00",
-                    "dateTimeInterfaceProp" => "2025-01-01T00:00:00+00:00",
+                    "dateTimeImmutableProp" => "2025-01-01 00:00:00",
+                    "dateTimeProp" => "2025-01-01 00:00:00",
+                    "dateTimeInterfaceProp" => "2025-01-01 00:00:00",
                 ]
             ],
             new ArrayOfObjectsSerializer()->serialize([new ObjectWithSerializerProperties()]),

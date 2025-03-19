@@ -20,7 +20,7 @@ final class DateTimeFormatTest extends TestCase
         $this->assertFalse($rule->isValid(null));
         $this->assertFalse($rule->isValid(''));
         $this->assertFalse($rule->isValid('this is not a date'));
-        $this->assertTrue($rule->isValid('2024-02-19'));
+        $this->assertTrue($rule->isValid('2024-02-19 00:00:00'));
     }
 
     public function test_datetime_format_with_different_format(): void
@@ -42,6 +42,6 @@ final class DateTimeFormatTest extends TestCase
     {
         $rule = new DateTimeFormat();
 
-        $this->assertSame('Value should be a valid datetime in the format Y-m-d', $rule->message());
+        $this->assertSame('Value should be a valid datetime in the format Y-m-d H:i:s', $rule->message());
     }
 }

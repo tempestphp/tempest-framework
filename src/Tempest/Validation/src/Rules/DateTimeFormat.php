@@ -12,8 +12,10 @@ use Tempest\Validation\Rule;
 #[Attribute]
 final readonly class DateTimeFormat implements Rule
 {
+    public const string FORMAT = 'Y-m-d H:i:s';
+
     public function __construct(
-        public string $format = 'Y-m-d',
+        public string $format = self::FORMAT,
     ) {
     }
 

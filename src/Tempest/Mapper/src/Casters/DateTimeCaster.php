@@ -14,14 +14,14 @@ use Tempest\Validation\Rules\DateTimeFormat;
 final readonly class DateTimeCaster implements Caster
 {
     public function __construct(
-        private string $format = DATE_ATOM,
+        private string $format = DateTimeFormat::FORMAT,
         private bool $immutable = true,
     ) {
     }
 
     public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? DATE_ATOM;
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? DateTimeFormat::FORMAT;
 
         return match ($property->getType()->getName()) {
             DateTime::class => new DateTimeCaster($format, immutable: false),
