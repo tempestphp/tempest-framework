@@ -663,4 +663,41 @@ b'));
         $this->assertSame('file', str('file.txt')->basename('.txt')->toString());
         $this->assertSame('', str()->basename()->toString());
     }
+
+    public function test_ascii(): void
+    {
+        $this->assertSame('@', str('@')->ascii()->toString());
+        $this->assertSame('u', str('ü')->ascii()->toString());
+        $this->assertSame('', str('')->ascii()->toString());
+        $this->assertSame('a!2e', str('a!2ë')->ascii()->toString());
+    }
+
+    public function test_slug(): void
+    {
+        $this->assertSame('hello-world', str('hello world')->slug()->toString());
+        $this->assertSame('hello-world', str('hello-world')->slug()->toString());
+        $this->assertSame('hello-world', str('hello_world')->slug()->toString());
+        $this->assertSame('hello_world', str('hello_world')->slug(separator: '_')->toString());
+        $this->assertSame('user-at-host', str('user@host')->slug()->toString());
+        $this->assertSame('slam-dnya', str('سلام دنیا')->slug(separator: '-')->toString());
+        $this->assertSame('sometext', str('some text')->slug(separator: '')->toString());
+        $this->assertSame('', str()->slug(separator: '')->toString());
+        $this->assertSame('bsm-allh', str('بسم الله')->slug(separator: '-', replacements: ['allh' => 'allah'])->toString());
+        $this->assertSame('500-dollar-bill', str('500$ bill')->slug('-', replaceSymbols: true)->toString());
+        $this->assertSame('500-bill', str('500$ bill')->slug('-', replaceSymbols: false)->toString());
+        $this->assertSame('500-dollar-bill', str('500--$----bill')->slug(separator: '-')->toString());
+        $this->assertSame('500-dollar-bill', str('500-$-bill')->slug(separator: '-')->toString());
+        $this->assertSame('500-dollar-bill', str('500$--bill')->slug(separator: '-')->toString());
+        $this->assertSame('500-dollar-bill', str('500-$--bill')->slug(separator: '-')->toString());
+        $this->assertSame('ahmdfyalmdrs', str('أحمد@المدرسة')->slug(separator: '-', replacements: ['@' => 'في'])->toString());
+    }
+
+    public function test_is_ascii(): void
+    {
+        $this->assertTrue(str('hello')->isAscii());
+        $this->assertTrue(str()->isAscii());
+
+        $this->assertFalse(str('helloü')->isAscii());
+        $this->assertFalse(str('بسم الله')->isAscii());
+    }
 }

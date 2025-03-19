@@ -178,6 +178,34 @@ trait ManipulatesString
     }
 
     /**
+     * Converts the current string to an URL-safe slug.
+     *
+     * @param bool $replaceSymbols Adds some more replacements e.g. "£" with "pound".
+     */
+    public function slug(Stringable|string $separator = '-', array $replacements = [], bool $replaceSymbols = true): static
+    {
+        return $this->createOrModify(to_slug($this->value, $separator, $replacements, $replaceSymbols));
+    }
+
+    /**
+     * Transliterates the current string to ASCII. Invalid characters are replaced with their closest counterpart.
+     *
+     * @param string $language Language of the source string. Defaults to english.
+     */
+    public function ascii(Stringable|string $language = 'en'): static
+    {
+        return $this->createOrModify(to_ascii($this->value, $language));
+    }
+
+    /**
+     * Asserts whether the instance is an ASCII string.
+     */
+    public function isAscii(): bool
+    {
+        return is_ascii($this->value);
+    }
+
+    /**
      * Replaces consecutive instances of a given character with a single character.
      */
     public function deduplicate(Stringable|string|ArrayAccess|array $characters = ' '): static

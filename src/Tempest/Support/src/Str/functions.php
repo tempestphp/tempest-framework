@@ -7,6 +7,7 @@ namespace Tempest\Support\Str {
     use Countable;
     use Stringable;
     use Tempest\Support\Language;
+    use voku\helper\ASCII;
 
     use function levenshtein as php_levenshtein;
     use function metaphone as php_metaphone;
@@ -87,6 +88,34 @@ namespace Tempest\Support\Str {
     function to_camel_case(Stringable|string $string): string
     {
         return lcfirst(to_pascal_case((string) $string));
+    }
+
+    /**
+     * Converts the given string to an URL-safe slug.
+     *
+     * @param bool $replaceSymbols Adds some more replacements e.g. "£" with "pound".
+     */
+    function to_slug(Stringable|string $string, Stringable|string $separator = '-', array $replacements = [], bool $replaceSymbols = true): string
+    {
+        return ASCII::to_slugify((string) $string, (string) $separator, replacements: $replacements, replace_extra_symbols: $replaceSymbols);
+    }
+
+    /**
+     * Transliterates the given string to ASCII.
+     *
+     * @param string $language Language of the source string. Defaults to english.
+     */
+    function to_ascii(Stringable|string $string, Stringable|string $language = 'en'): string
+    {
+        return ASCII::to_ascii((string) $string, (string) $language, replace_single_chars_only: false);
+    }
+
+    /**
+     * Checks whether the given string is valid ASCII.
+     */
+    function is_ascii(Stringable|string $string): bool
+    {
+        return ASCII::is_ascii((string) $string);
     }
 
     /**
