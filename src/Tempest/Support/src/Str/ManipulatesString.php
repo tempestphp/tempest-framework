@@ -218,6 +218,14 @@ trait ManipulatesString
     }
 
     /**
+     * Keeps only the base name of the instance.
+     */
+    public function basename(string $suffix = ''): static
+    {
+        return $this->createOrModify(basename($this->value, $suffix));
+    }
+
+    /**
      * Keeps only the base name of the instance, assuming the instance is a class name.
      */
     public function classBasename(): static
