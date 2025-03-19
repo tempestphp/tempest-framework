@@ -41,13 +41,13 @@ final readonly class CasterFactory
 
         // If the property has an iterable type, we'll cast it with the array object caster
         if ($property->getIterableType() !== null) {
-            return new ArrayObjectCaster($property);
+            return new ArrayToObjectCaster($property);
         }
 
         // Try a built-in caster
         $builtInCaster = match ($type->getName()) {
             DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
-            'array' => new ArrayJsonCaster(),
+            'array' => new JsonToArrayCaster(),
             default => null,
         };
 

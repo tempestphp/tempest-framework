@@ -9,6 +9,7 @@ use ReflectionException;
 use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
+use Tempest\Mapper\Serializers\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -17,7 +18,7 @@ use function Tempest\Support\arr;
 final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
-        private CasterFactory $casterFactory,
+        private SerializerFactory $serializerFactory,
     ) {
     }
 
@@ -49,8 +50,8 @@ final readonly class ObjectToArrayMapper implements Mapper
     {
         $propertyValue = $property->getValue($object);
 
-        if (($caster = $this->casterFactory->forProperty($property)) !== null) {
-            return $caster->serialize($propertyValue);
+        if (($serializer = $this->serializerFactory->forProperty($property)) !== null) {
+            return $serializer->serialize($propertyValue);
         }
 
         return $propertyValue;

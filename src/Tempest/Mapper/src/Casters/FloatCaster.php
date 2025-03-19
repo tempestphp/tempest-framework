@@ -12,9 +12,4 @@ final readonly class FloatCaster implements Caster
     {
         return floatval($input);
     }
-
-    public function serialize(mixed $input): string
-    {
-        return (string) $input;
-    }
 }
