@@ -41,7 +41,7 @@ final readonly class CasterFactory
 
         // If the property has an iterable type, we'll cast it with the array object caster
         if ($property->getIterableType() !== null) {
-            return new ArrayToObjectCaster($property);
+            return new ArrayToObjectCollectionCaster($property);
         }
 
         // Try a built-in caster

@@ -10,7 +10,7 @@ use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\map;
 
-final readonly class ArrayToObjectCaster implements Caster
+final readonly class ArrayToObjectCollectionCaster implements Caster
 {
     public function __construct(
         private PropertyReflector $property,
