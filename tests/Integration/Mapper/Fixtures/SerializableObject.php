@@ -11,7 +11,7 @@ final class SerializableObject implements Serializable
         return 'a';
     }
 
-    public function unserialize(string $data)
+    public function unserialize(string $data): void
     {
         // nothing
     }

@@ -19,6 +19,7 @@ use Tempest\Mapper\Serializers\ObjectToArraySerializer;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Reflection\PropertyReflector;
+
 use function Tempest\get;
 
 final class SerializerFactory
