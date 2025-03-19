@@ -648,4 +648,19 @@ b'));
         $this->assertSame($string, $result);
         $this->assertEquals('foo', $log);
     }
+
+    public function test_class_basename(): void
+    {
+        $this->assertSame('ImmutableString', str(ImmutableString::class)->classBasename()->toString());
+        $this->assertSame('ImmutableString', str('ImmutableString')->classBasename()->toString());
+        $this->assertSame('', str()->classBasename()->toString());
+    }
+
+    public function test_basename(): void
+    {
+        $this->assertSame('file.txt', str('path/to/file.txt')->basename()->toString());
+        $this->assertSame('file.txt', str('file.txt')->basename()->toString());
+        $this->assertSame('file', str('file.txt')->basename('.txt')->toString());
+        $this->assertSame('', str()->basename()->toString());
+    }
 }
