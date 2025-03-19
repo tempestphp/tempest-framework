@@ -19,6 +19,7 @@ final class UuidTest extends TestCase
         $this->assertSame('Value should contain a valid UUID', $rule->message());
 
         $this->assertFalse($rule->isValid('string_123'));
+        $this->assertFalse($rule->isValid([])); // Should return false, not a TypeError from preg_match
 
         // UUID v1
         $this->assertTrue($rule->isValid('CB2F46B4-D0C6-11EE-A506-0242AC120002'));

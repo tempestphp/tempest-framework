@@ -17,6 +17,10 @@ final readonly class RegEx implements Rule
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         return preg_match($this->pattern, $value) === 1;
     }
 
