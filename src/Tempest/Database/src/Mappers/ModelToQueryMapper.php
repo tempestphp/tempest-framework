@@ -7,9 +7,8 @@ namespace Tempest\Database\Mappers;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Mapper;
-use Tempest\Mapper\Serializers\SerializerFactory;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
-
 use function Tempest\map;
 
 final readonly class ModelToQueryMapper implements Mapper

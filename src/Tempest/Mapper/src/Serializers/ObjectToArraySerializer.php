@@ -2,6 +2,7 @@
 
 namespace Tempest\Mapper\Serializers;
 
+use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Serializer;
 
@@ -11,12 +12,10 @@ final class ObjectToArraySerializer implements Serializer
 {
     public function serialize(mixed $input): array
     {
-        $values = [];
-
-        foreach ($input as $key => $item) {
-            $values[$key] = map($item)->with(ObjectToArrayMapper::class)->do();
+        if (! is_object($input)) {
+            throw new CannotSerializeValue('object');
         }
 
-        return $values;
+        return map($input)->with(ObjectToArrayMapper::class)->do();
     }
 }

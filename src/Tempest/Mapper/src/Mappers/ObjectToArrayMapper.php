@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Mappers;
 
 use JsonSerializable;
-use ReflectionException;
-use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Mapper\MapTo;
-use Tempest\Mapper\Serializers\SerializerFactory;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-
-use function Tempest\Support\arr;
 
 final readonly class ObjectToArrayMapper implements Mapper
 {

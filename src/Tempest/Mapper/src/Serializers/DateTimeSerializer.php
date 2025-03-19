@@ -2,9 +2,7 @@
 
 namespace Tempest\Mapper\Serializers;
 
-use DateTime;
 use DateTimeInterface;
-use Tempest\Mapper\Casters\DateTimeCaster;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;

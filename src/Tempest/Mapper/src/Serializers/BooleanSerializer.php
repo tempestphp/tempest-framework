@@ -5,14 +5,14 @@ namespace Tempest\Mapper\Serializers;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializer;
 
-final class ScalarSerializer implements Serializer
+final class BooleanSerializer implements Serializer
 {
     public function serialize(mixed $input): string
     {
-        if (! is_scalar($input)) {
-            throw new CannotSerializeValue('scalar');
+        if (! is_bool($input)) {
+            throw new CannotSerializeValue('boolean');
         }
 
-        return serialize($input);
+        return $input ? 'true' : 'false';
     }
 }

@@ -1,15 +1,24 @@
 <?php
 
-namespace Tempest\Mapper\Serializers;
+namespace Tempest\Mapper;
 
 use BackedEnum;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Tempest\Mapper\Serializer;
-use Tempest\Mapper\SerializeWith;
+use JsonSerializable;
+use Serializable;
+use Stringable;
+use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
+use Tempest\Mapper\Serializers\BooleanSerializer;
+use Tempest\Mapper\Serializers\DateTimeSerializer;
+use Tempest\Mapper\Serializers\EnumSerializer;
+use Tempest\Mapper\Serializers\FloatSerializer;
+use Tempest\Mapper\Serializers\IntegerSerializer;
+use Tempest\Mapper\Serializers\ObjectToArraySerializer;
+use Tempest\Mapper\Serializers\SerializableSerializer;
+use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Reflection\PropertyReflector;
-
 use function Tempest\get;
 
 final class SerializerFactory
@@ -32,7 +41,26 @@ final class SerializerFactory
             return get($serializeWith->className);
         }
 
-        // If the type is an enum, we'll use the enum serializer
+        if ($type->matches(Serializable::class) || $type->matches(JsonSerializable::class)) {
+            return new SerializableSerializer();
+        }
+
+        if ($type->getName() === 'bool') {
+            return new BooleanSerializer();
+        }
+
+        if ($type->getName() === 'float') {
+            return new FloatSerializer();
+        }
+
+        if ($type->getName() === 'int') {
+            return new IntegerSerializer();
+        }
+
+        if ($type->getName() === 'string' || $type->matches(Stringable::class)) {
+            return new StringSerializer();
+        }
+
         if ($type->matches(BackedEnum::class)) {
             return new EnumSerializer();
         }
