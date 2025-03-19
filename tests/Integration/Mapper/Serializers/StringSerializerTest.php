@@ -25,6 +25,6 @@ final class StringSerializerTest extends TestCase
     {
         $this->expectException(CannotSerializeValue::class);
 
-        new StringSerializer()->serialize('foo');
+        new StringSerializer()->serialize([]);
     }
 }

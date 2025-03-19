@@ -9,13 +9,13 @@ use DateTimeInterface;
 use JsonSerializable;
 use Serializable;
 use Stringable;
+use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
 use Tempest\Mapper\Serializers\BooleanSerializer;
 use Tempest\Mapper\Serializers\DateTimeSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;
 use Tempest\Mapper\Serializers\FloatSerializer;
 use Tempest\Mapper\Serializers\IntegerSerializer;
-use Tempest\Mapper\Serializers\ObjectToArraySerializer;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Reflection\PropertyReflector;
@@ -68,7 +68,7 @@ final class SerializerFactory
 
         // If the property has an iterable type, we'll cast it with the array object caster
         if ($property->getIterableType() !== null) {
-            return new ObjectToArraySerializer();
+            return new ArrayOfObjectsSerializer();
         }
 
         // Try a built-in caster
