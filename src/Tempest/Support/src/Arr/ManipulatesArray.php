@@ -357,10 +357,6 @@ trait ManipulatesArray
     /**
      * Returns the item at the given index in the specified array.
      *
-     * @template TKey of array-key
-     * @template TValue
-     *
-     * @param iterable<TKey,TValue> $array
      *
      * @return TValue
      */
