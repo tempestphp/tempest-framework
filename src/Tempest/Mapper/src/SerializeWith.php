@@ -7,7 +7,7 @@ namespace Tempest\Mapper;
 use Attribute;
 
 #[Attribute]
-final readonly class SerializerWith
+final readonly class SerializeWith
 {
     public function __construct(
         /** @var class-string<\Tempest\Mapper\Serializer> */

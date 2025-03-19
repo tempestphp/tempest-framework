@@ -7,7 +7,7 @@ use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Tempest\Mapper\Serializer;
-use Tempest\Mapper\SerializerWith;
+use Tempest\Mapper\SerializeWith;
 use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\get;
@@ -19,11 +19,11 @@ final class SerializerFactory
         $type = $property->getType();
 
         // Get SerializerWith from the property
-        $serializeWith = $property->getAttribute(SerializerWith::class);
+        $serializeWith = $property->getAttribute(SerializeWith::class);
 
         // Get SerializerWith from the property's type if there's no property-defined SerializerWith
         if ($serializeWith === null && $type->isClass()) {
-            $serializeWith = $type->asClass()->getAttribute(SerializerWith::class, recursive: true);
+            $serializeWith = $type->asClass()->getAttribute(SerializeWith::class, recursive: true);
         }
 
         // Return the serializer if defined with SerializerWith
