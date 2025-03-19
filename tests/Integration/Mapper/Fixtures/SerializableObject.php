@@ -6,6 +6,7 @@ use Serializable;
 
 final class SerializableObject implements Serializable
 {
+    /* @phpstan-ignore-next-line */
     public function serialize()
     {
         return 'a';
