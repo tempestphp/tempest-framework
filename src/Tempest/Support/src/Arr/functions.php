@@ -508,6 +508,28 @@ namespace Tempest\Support\Arr {
     }
 
     /**
+     * Returns the item at the given index in the specified array.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param iterable<TKey,TValue> $array
+     *
+     * @return TValue
+     */
+    function at(iterable $array, int $index, mixed $default = null): mixed
+    {
+        $array = to_array($array);
+
+        if ($index < 0) {
+            $index = abs($index) - 1;
+            $array = namespace\reverse($array);
+        }
+
+        return namespace\get_by_key(array_values($array), key: $index, default: $default);
+    }
+
+    /**
      * Returns the last item in the array that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *

@@ -355,6 +355,21 @@ trait ManipulatesArray
     }
 
     /**
+     * Returns the item at the given index in the specified array.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param iterable<TKey,TValue> $array
+     *
+     * @return TValue
+     */
+    public function at(int $index, mixed $default = null): mixed
+    {
+        return namespace\at($this->value, $index, $default);
+    }
+
+    /**
      * Returns an instance of the array without the last value.
      *
      * @param mixed $value The popped value will be stored in this variable
