@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\DateTimeSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;
-use Tests\Tempest\Integration\Mapper\Fixtures\BackedToSerialize;
-use Tests\Tempest\Integration\Mapper\Fixtures\UnitEnumToSerializer;
+use Tests\Tempest\Integration\Mapper\Fixtures\BackedEnumToSerialize;
+use Tests\Tempest\Integration\Mapper\Fixtures\UnitEnumToSerialize;
 
 final class EnumSerializerTest extends TestCase
 {
@@ -15,12 +15,12 @@ final class EnumSerializerTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            new EnumSerializer()->serialize(BackedToSerialize::FOO),
+            new EnumSerializer()->serialize(BackedEnumToSerialize::FOO),
         );
 
         $this->assertSame(
             'FOO',
-            new EnumSerializer()->serialize(UnitEnumToSerializer::FOO),
+            new EnumSerializer()->serialize(UnitEnumToSerialize::FOO),
         );
     }
 
