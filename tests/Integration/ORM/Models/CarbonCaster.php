@@ -19,6 +19,6 @@ final readonly class CarbonCaster implements Caster
             throw new CannotSerializeValue(Carbon::class);
         }
 
-        return $input->toIso8601String();
+        return $input->format('Y-m-d H:i:s');
     }
 }
