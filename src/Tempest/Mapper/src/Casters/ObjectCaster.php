@@ -19,7 +19,7 @@ final readonly class ObjectCaster implements Caster
 
     public function cast(mixed $input): mixed
     {
-        // TODO: difference with ArrayToObjectCaster?
+        // TODO: difference with ArrayToObjectCaster? This can probably be removed after we've added support for #984
         return map($input)->with(ArrayToObjectMapper::class)->to($this->type->getName());
     }
 }
