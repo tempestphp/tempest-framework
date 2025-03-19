@@ -34,6 +34,8 @@ final class TimeTest extends TestCase
         $this->assertTrue($rule->isValid('01:00 P.M.'));
         $this->assertTrue($rule->isValid('01:00 PM'));
         $this->assertTrue($rule->isValid('01:59 a.m.'));
+
+        $this->assertFalse($rule->isValid([])); // Should return false, not a TypeError from preg_match
     }
 
     public function test_military_time(): void
@@ -80,5 +82,14 @@ final class TimeTest extends TestCase
         $this->assertTrue($rule->isValid('2200'));
         $this->assertTrue($rule->isValid('2300'));
         $this->assertTrue($rule->isValid('2340'));
+    }
+
+    public function test_non_string_pregmatch_subject(): void
+    {
+        $rule = new Time(twentyFourHour: true);
+
+        $this->assertFalse($rule->isValid([]));
+        $this->assertFalse($rule->isValid(new \stdClass()));
+        $this->assertFalse($rule->isValid(null));
     }
 }

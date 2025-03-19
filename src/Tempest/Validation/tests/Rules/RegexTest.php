@@ -28,4 +28,15 @@ final class RegexTest extends TestCase
         $this->assertTrue($rule->isValid('AB'));
         $this->assertTrue($rule->isValid('Ab'));
     }
+
+    public function test_non_imvalid_types(): void
+    {
+        $rule = new RegEx('/^[0-9]+$/');
+
+        // Invalid types should return false, not a TypeError.
+        $this->assertFalse($rule->isValid(false));
+        $this->assertFalse($rule->isValid([]));
+        $this->assertFalse($rule->isValid(new \stdClass()));
+        $this->assertFalse($rule->isValid(null));
+    }
 }

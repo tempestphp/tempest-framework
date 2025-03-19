@@ -17,6 +17,10 @@ final readonly class Time implements Rule
 
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         if ($this->twentyFourHour) {
             return preg_match('/^([0-1][0-9]|2[0-3]):?[0-5][0-9]$|^(([0-1]?[0-9]|2[0-3]):[0-5][0-9])$/', $value) === 1;
         }

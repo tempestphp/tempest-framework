@@ -12,6 +12,10 @@ final readonly class Uuid implements Rule
 {
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         return boolval(preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $value));
     }
 

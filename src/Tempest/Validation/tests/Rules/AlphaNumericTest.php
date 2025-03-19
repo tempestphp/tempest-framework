@@ -20,5 +20,6 @@ final class AlphaNumericTest extends TestCase
         $this->assertFalse($rule->isValid('string_123'));
         $this->assertTrue($rule->isValid('string123'));
         $this->assertTrue($rule->isValid('STRING123'));
+        $this->assertFalse($rule->isValid([])); // Should return false, not a TypeError from preg_match
     }
 }

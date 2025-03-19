@@ -12,6 +12,10 @@ final readonly class Numeric implements Rule
 {
     public function isValid(mixed $value): bool
     {
+        if (! is_string($value)) {
+            return false;
+        }
+
         return boolval(preg_match('/^[0-9]+$/', $value));
     }
 
