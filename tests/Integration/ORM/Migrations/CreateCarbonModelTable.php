@@ -18,7 +18,7 @@ final class CreateCarbonModelTable implements DatabaseMigration
     {
         return CreateTableStatement::forModel(CarbonModel::class)
             ->primary()
-            ->raw('`createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+            ->datetime('createdAt');
     }
 
     public function down(): QueryStatement
