@@ -6,6 +6,7 @@ namespace Tempest\Support\Str {
     use ArrayAccess;
     use Countable;
     use Stringable;
+    use Tempest\Support\Arr\ImmutableArray;
     use Tempest\Support\Language;
     use voku\helper\ASCII;
 
@@ -20,6 +21,19 @@ namespace Tempest\Support\Str {
     function to_title_case(Stringable|string $string): string
     {
         return mb_convert_case((string) $string, mode: MB_CASE_TITLE, encoding: 'UTF-8');
+    }
+
+    /**
+     * Converts the given string to a naive sentence case. This doesn't detect proper nouns and proper adjectives that should stay capitalized.
+     */
+    function to_sentence_case(Stringable|string $string): string
+    {
+        $words = array_map(
+            callback: fn (string $string) => to_lower_case($string),
+            array: to_words($string),
+        );
+
+        return upper_first(implode(' ', $words));
     }
 
     /**
@@ -51,15 +65,33 @@ namespace Tempest\Support\Str {
         }
 
         $string = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string);
-        $string = preg_replace(
-            '![^' . preg_quote($delimiter) . '\pL\pN\s]+!u',
-            $delimiter,
-            mb_strtolower($string, 'UTF-8'),
-        );
+        $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
         return deduplicate($string, $delimiter);
+    }
+
+    /**
+     * Returns an array of words from the specified string.
+     * This is more accurate than {@see str_word_count()}.
+     */
+    function to_words(Stringable|string $string): array
+    {
+        // Remove 'words' that don't consist of alphanumerical characters or punctuation
+        $words = trim(preg_replace("#[^(\w|\d|\'|\"|\.|\!|\?|;|,|\\|\/|\-|:|\&|@)]+#", ' ', (string) $string));
+        // Remove one-letter 'words' that consist only of punctuation
+        $words = trim(preg_replace("#\s*[(\'|\"|\.|\!|\?|;|,|\\|\/|\-|:|\&|@)]\s*#", ' ', $words));
+
+        return array_values(array_filter(explode(' ', namespace\deduplicate($words))));
+    }
+
+    /**
+     * Counts the number of words in the given string.
+     */
+    function word_count(Stringable|string $string): int
+    {
+        return count(to_words($string));
     }
 
     /**
