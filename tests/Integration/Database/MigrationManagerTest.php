@@ -17,13 +17,13 @@ final class MigrationManagerTest extends FrameworkIntegrationTestCase
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        $migrationManager->up();
+        $migrationManager->up(allowChanges: false);
 
         $migrations = Migration::all();
         $this->assertNotEmpty($migrations);
         $oldCount = count($migrations);
 
-        $migrationManager->up();
+        $migrationManager->up(allowChanges: false);
 
         $migrations = Migration::all();
         $this->assertNotEmpty($migrations);
