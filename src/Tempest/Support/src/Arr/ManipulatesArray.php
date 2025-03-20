@@ -556,6 +556,16 @@ trait ManipulatesArray
     }
 
     /**
+     * Groups the array by the results of the provided keyExtractor.
+     *
+     * @param Closure(TValue, TKey): array-key $keyExtractor
+     */
+    public function groupBy(Closure $keyExtractor): static
+    {
+        return $this->createOrModify(namespace\group_by($this->value, $keyExtractor));
+    }
+
+    /**
      * Flattens the instance to a single-level array, or until the specified `$depth` is reached.
      *
      * ### Example
