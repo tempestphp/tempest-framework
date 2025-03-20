@@ -26,7 +26,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
     {
         return arr($entrypoints)
             ->map(function (string $entrypoint) {
-                if (! file_exists(root_path($entrypoint))) {
+                if (! file_exists($entrypoint) && ! file_exists(root_path($entrypoint))) {
                     throw new FileSystemEntrypointNotFoundException($entrypoint);
                 }
 

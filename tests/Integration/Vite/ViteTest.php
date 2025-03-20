@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use Tempest\Discovery\DiscoveryItems;
+use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
+use Tempest\Vite\ViteDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -180,6 +183,31 @@ final class ViteTest extends FrameworkIntegrationTestCase
             },
             files: [
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
+            ],
+        );
+    }
+
+    public function test_discovery(): void
+    {
+        $this->vite->call(
+            root: __DIR__ . '/Fixtures/tmp',
+            callback: function (string $path): void {
+                $discovery = $this->container->get(ViteDiscovery::class);
+                $discovery->setItems(new DiscoveryItems([]));
+                $discovery->discoverPath(new DiscoveryLocation('', ''), $path);
+                $discovery->apply();
+
+                $vite = $this->container->get(Vite::class);
+                $tags = $vite->getTags();
+
+                $this->assertContains(
+                    needle: '<script type="module" src="http://localhost:5173/src/main.entrypoint.ts"></script>',
+                    haystack: $tags,
+                );
+            },
+            files: [
+                'src/main.entrypoint.ts' => '',
+                'public/vite-tempest' => ['url' => 'http://localhost:5173'],
             ],
         );
     }

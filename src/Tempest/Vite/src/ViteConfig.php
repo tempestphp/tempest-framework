@@ -27,4 +27,9 @@ final class ViteConfig
         public array $entrypoints = [],
     ) {
     }
+
+    public function addEntrypoint(string $path): void
+    {
+        $this->entrypoints[] = $path;
+    }
 }
