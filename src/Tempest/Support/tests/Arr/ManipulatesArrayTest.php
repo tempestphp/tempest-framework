@@ -1739,4 +1739,28 @@ final class ManipulatesArrayTest extends TestCase
                 ->equals($array->dot()),
         );
     }
+
+    public function test_group_by(): void
+    {
+        $array = arr([
+            ['brand' => 'brand1', 'model' => 'model1'],
+            ['brand' => 'brand1', 'model' => 'model2'],
+            ['brand' => 'brand2', 'model' => 'model3'],
+            ['brand' => 'brand2', 'model' => 'model4'],
+        ]);
+
+        $this->assertTrue(
+            arr([
+                'brand1' => [
+                    ['brand' => 'brand1', 'model' => 'model1'],
+                    ['brand' => 'brand1', 'model' => 'model2'],
+                ],
+                'brand2' => [
+                    ['brand' => 'brand2', 'model' => 'model3'],
+                    ['brand' => 'brand2', 'model' => 'model4'],
+                ],
+            ])
+                ->equals($array->groupBy(fn ($item) => $item['brand'])),
+        );
+    }
 }
