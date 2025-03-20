@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use Tempest\Generation\DataObjects\StubFile;
+use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\CommandStub;
 use Tempest\Core\PublishesFiles;
-use Tempest\Console\ConsoleCommand;
-use Tempest\Console\ConsoleArgument;
+use Tempest\Generation\DataObjects\StubFile;
 
 use function Tempest\Support\str;
 
@@ -34,8 +34,8 @@ final class MakeCommandCommand
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
             replacements: [
-                'dummy-command-slug' => str($className)->kebab()->toString()
-            ]
+                'dummy-command-slug' => str($className)->kebab()->toString(),
+            ],
         );
 
         $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
