@@ -58,10 +58,10 @@ final class ViteInstaller implements Installer
         );
 
         // Publishes the Vite config
-        $viteConfig = $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
-        $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.entrypoint.ts", destination: src_path('main.entrypoint.ts'));
+        $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
+        $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.entrypoint.ts'));
         $mainCss = $shouldInstallTailwind
-            ? $this->publish(__DIR__ . "/{$templateDirectory}/main.entrypoint.css", destination: src_path('main.entrypoint.css'))
+            ? $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.entrypoint.css'))
             : null;
 
         // Install package.json scripts
