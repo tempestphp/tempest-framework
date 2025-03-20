@@ -10,6 +10,8 @@ use Tempest\Core\PublishesFiles;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
 
+use function Tempest\Support\str;
+
 final class MakeCommandCommand
 {
     use PublishesFiles;
@@ -31,6 +33,9 @@ final class MakeCommandCommand
             stubFile: StubFile::from(CommandStub::class),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
+            replacements: [
+                'dummy-command-slug' => str($className)->kebab()->toString()
+            ]
         );
 
         $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
