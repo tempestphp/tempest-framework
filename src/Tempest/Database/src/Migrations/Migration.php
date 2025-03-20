@@ -12,4 +12,6 @@ final class Migration implements DatabaseModel
     use IsDatabaseModel;
 
     public string $name;
+
+    public string $hash;
 }
