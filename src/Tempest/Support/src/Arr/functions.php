@@ -933,6 +933,51 @@ namespace Tempest\Support\Arr {
     }
 
     /**
+     * Returns a copy of the array grouped by the result of the given `$keyExtractor`.
+     * The keys of the resulting array are the values returned by the `$keyExtractor`.
+     *
+     * ### Example
+     * ```php
+     * group_by(
+     * [
+     * ['country' => 'france', 'continent' => 'europe'],
+     * ['country' => 'Sweden', 'continent' => 'europe'],
+     * ['country' => 'USA', 'continent' => 'america']
+     * ],
+     * fn($item) => $item['continent']
+     * );
+     * // [
+     * //     'europe' => [
+     * //         ['country' => 'france', 'continent' => 'europe'],
+     * //         ['country' => 'Sweden', 'continent' => 'europe']
+     * //     ],
+     * //     'america' => [
+     * //         ['country' => 'USA', 'continent' => 'america']
+     * //     ]
+     * // ]
+     * ```
+     *
+     * @template TKey of array-key
+     * @template TValue
+     * @param iterable<TKey,TValue> $array
+     * @param Closure(TValue, TKey): array-key $keyExtracor
+     */
+    function group_by(iterable $array, Closure $keyExtracor): array
+    {
+        $array = to_array($array);
+
+        $result = [];
+
+        foreach ($array as $key => $item) {
+            $key = $keyExtracor($item, $key);
+
+            $result[$key][] = $item;
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns a copy of the given array, with each item transformed by the given callback, then flattens it by the specified depth.
      *
      * @template TMapValue
