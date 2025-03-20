@@ -22,8 +22,9 @@ final class Back implements Response
 
         $url = $request->headers['referer'] ?? $fallback;
 
-        if($url) {
-            return $this->addHeader('Location', $url);
+        if ($url) {
+            $this->addHeader('Location', $url);
+            return;
         }
 
         $this->addHeader('Location', '/');

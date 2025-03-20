@@ -26,6 +26,7 @@ final class BackResponseTest extends IntegrationTestCase
         $this->assertEquals(new Header('Location', ['/']), $response->headers['Location']);
         $this->assertNotSame(Status::OK, $response->status);
     }
+
     public function test_back_response_with_referer(): void
     {
         $this->bindRequest($url = '/referer-test');
@@ -48,6 +49,7 @@ final class BackResponseTest extends IntegrationTestCase
     public function bindRequest(?string $url = null): void
     {
         $headers = $url ? ['referer' => $url] : [];
+
         $this->container->singleton(Request::class, new GenericRequest(
             method: Method::GET,
             uri: '/',
