@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Support;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tempest\Support\Str\ImmutableString;
+use Tempest\Support\Str\MutableString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Support\Fixtures\TestObject;
+
 use function Tempest\Support\arr;
 
 /**
@@ -19,6 +22,43 @@ final class ArrayTest extends FrameworkIntegrationTestCase
         $array = arr([['name' => 'test']])->mapTo(TestObject::class);
 
         $this->assertInstanceOf(TestObject::class, $array[0]);
+    }
+
+    public function test_map_first_to(): void
+    {
+        $array = arr([
+            'foo',
+            'bar',
+        ]);
+
+        $this->assertInstanceOf(ImmutableString::class, $array->mapFirstTo(ImmutableString::class));
+        $this->assertInstanceOf(MutableString::class, $array->mapFirstTo(MutableString::class));
+        $this->assertEquals('foo', $array->mapFirstTo(MutableString::class));
+
+        $array = arr([
+            ['name' => 'test'],
+        ]);
+
+        $this->assertInstanceOf(TestObject::class, $array->mapFirstTo(TestObject::class));
+    }
+
+    public function test_map_last_to(): void
+    {
+        $array = arr([
+            'foo',
+            'bar',
+        ]);
+
+        $this->assertInstanceOf(ImmutableString::class, $array->mapLastTo(ImmutableString::class));
+        $this->assertInstanceOf(MutableString::class, $array->mapLastTo(MutableString::class));
+        $this->assertEquals('bar', $array->mapLastTo(MutableString::class));
+
+        $array = arr([
+            ['name' => 'jon'],
+            ['name' => 'doe'],
+        ]);
+
+        $this->assertInstanceOf(TestObject::class, $array->mapLastTo(TestObject::class));
     }
 
     #[DataProvider('provide_sort_cases')]
@@ -38,7 +78,10 @@ final class ArrayTest extends FrameworkIntegrationTestCase
             'Reverse order' => [[5, 4, 3, 2, 1], [1, 2, 3, 4, 5]],
             'Negative numbers' => [[-1, -3, -2, 0], [-3, -2, -1, 0]],
             'Mixed positive and negative' => [[3, -1, 4, 1, -5, 9], [-5, -1, 1, 3, 4, 9]],
-            'Strings' => [['apple', 'orange', 'banana'], ['apple', 'banana', 'orange']],
+            'Strings' => [
+                ['apple', 'orange', 'banana'],
+                ['apple', 'banana', 'orange'],
+            ],
             'Large array' => [range(1000, 1, -1), range(1, 1000)],
         ];
     }
