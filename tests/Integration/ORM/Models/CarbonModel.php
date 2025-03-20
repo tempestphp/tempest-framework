@@ -15,8 +15,6 @@ final class CarbonModel implements DatabaseModel
     use IsDatabaseModel;
 
     public function __construct(
-        #[SerializeWith(CarbonSerializer::class)]
-        #[CastWith(CarbonCaster::class)]
         public Carbon $createdAt,
     ) {
     }

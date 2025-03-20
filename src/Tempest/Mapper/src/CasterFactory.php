@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper;
 
-use BackedEnum;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use Tempest\Mapper\Casters\ArrayToObjectCollectionCaster;
-use Tempest\Mapper\Casters\DateTimeCaster;
-use Tempest\Mapper\Casters\EnumCaster;
-use Tempest\Mapper\Casters\JsonToArrayCaster;
-use Tempest\Mapper\Casters\ObjectCaster;
+use Closure;
 use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\get;
 
-final readonly class CasterFactory
+final class CasterFactory
 {
+    /**
+     * @var array{string|Closure, class-string<\Tempest\Mapper\Caster>|Closure}[]
+     */
+    private array $casters = [];
+
+    /**
+     * @param class-string<\Tempest\Mapper\Caster> $casterClass
+     */
+    public function addCaster(string|Closure $for, string|Closure $casterClass): self
+    {
+        $this->casters = [[$for, $casterClass], ...$this->casters];
+
+        return $this;
+    }
+
     public function forProperty(PropertyReflector $property): ?Caster
     {
         $type = $property->getType();
@@ -37,30 +44,13 @@ final readonly class CasterFactory
             return get($castWith->className);
         }
 
-        // If the type is an enum, we'll use the enum caster
-        if ($type->matches(BackedEnum::class)) {
-            return new EnumCaster($type->getName());
-        }
-
-        // If the property has an iterable type, we'll cast it with the array object caster
-        if ($property->getIterableType() !== null) {
-            return new ArrayToObjectCollectionCaster($property);
-        }
-
-        // Try a built-in caster
-        $builtInCaster = match ($type->getName()) {
-            DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeCaster::fromProperty($property),
-            'array' => new JsonToArrayCaster(),
-            default => null,
-        };
-
-        if ($builtInCaster !== null) {
-            return $builtInCaster;
-        }
-
-        // If the type's a class, we'll cast it with the generic object caster
-        if ($type->isClass()) {
-            return new ObjectCaster($type);
+        // Resolve caster from manual additions
+        foreach ($this->casters as [$for, $casterClass]) {
+            if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {
+                return is_callable($casterClass)
+                    ? $casterClass($property)
+                    : get($casterClass);
+            }
         }
 
         return null;

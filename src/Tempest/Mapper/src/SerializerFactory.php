@@ -2,28 +2,28 @@
 
 namespace Tempest\Mapper;
 
-use BackedEnum;
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
-use JsonSerializable;
-use Serializable;
-use Stringable;
-use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
-use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
-use Tempest\Mapper\Serializers\BooleanSerializer;
-use Tempest\Mapper\Serializers\DateTimeSerializer;
-use Tempest\Mapper\Serializers\EnumSerializer;
-use Tempest\Mapper\Serializers\FloatSerializer;
-use Tempest\Mapper\Serializers\IntegerSerializer;
-use Tempest\Mapper\Serializers\SerializableSerializer;
-use Tempest\Mapper\Serializers\StringSerializer;
+use Closure;
 use Tempest\Reflection\PropertyReflector;
 
 use function Tempest\get;
 
 final class SerializerFactory
 {
+    /**
+     * @var array{string|Closure, class-string<\Tempest\Mapper\Serializer>|Closure}[]
+     */
+    private array $serializers = [];
+
+    /**
+     * @param class-string<\Tempest\Mapper\Serializer> $serializerClass
+     */
+    public function addSerializer(string|Closure $for, string|Closure $serializerClass): self
+    {
+        $this->serializers = [[$for, $serializerClass], ...$this->serializers];
+
+        return $this;
+    }
+
     public function forProperty(PropertyReflector $property): ?Serializer
     {
         $type = $property->getType();
@@ -42,44 +42,13 @@ final class SerializerFactory
             return get($serializeWith->className);
         }
 
-        if ($type->matches(Serializable::class) || $type->matches(JsonSerializable::class)) {
-            return new SerializableSerializer();
-        }
-
-        if ($type->getName() === 'bool') {
-            return new BooleanSerializer();
-        }
-
-        if ($type->getName() === 'float') {
-            return new FloatSerializer();
-        }
-
-        if ($type->getName() === 'int') {
-            return new IntegerSerializer();
-        }
-
-        if ($type->getName() === 'string' || $type->matches(Stringable::class)) {
-            return new StringSerializer();
-        }
-
-        if ($type->matches(BackedEnum::class)) {
-            return new EnumSerializer();
-        }
-
-        // If the property has an iterable type, we'll cast it with the array object caster
-        if ($property->getIterableType() !== null) {
-            return new ArrayOfObjectsSerializer();
-        }
-
-        // Try a built-in caster
-        $builtInCaster = match ($type->getName()) {
-            DateTimeImmutable::class, DateTimeInterface::class, DateTime::class => DateTimeSerializer::fromProperty($property),
-            'array' => new ArrayToJsonSerializer(),
-            default => null,
-        };
-
-        if ($builtInCaster !== null) {
-            return $builtInCaster;
+        // Resolve serializer from manual additions
+        foreach ($this->serializers as [$for, $serializerClass]) {
+            if (is_callable($for) && $for($property) || is_string($for) && $type->matches($for) || $type->getName() === $for) {
+                return is_callable($serializerClass)
+                    ? $serializerClass($property)
+                    : get($serializerClass);
+            }
         }
 
         return null;

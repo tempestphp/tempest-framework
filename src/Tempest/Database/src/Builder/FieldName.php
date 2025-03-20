@@ -9,6 +9,8 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
 
+use function Tempest\get;
+
 final class FieldName implements Stringable
 {
     public function __construct(
@@ -21,7 +23,7 @@ final class FieldName implements Stringable
     /** @return \Tempest\Database\Builder\FieldName[] */
     public static function make(ClassReflector $class, ?TableName $tableName = null): array
     {
-        $casterFactory = new CasterFactory();
+        $casterFactory = get(CasterFactory::class);
         $fieldNames = [];
         $tableName ??= $class->callStatic('table');
 

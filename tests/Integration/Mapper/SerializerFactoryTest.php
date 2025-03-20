@@ -19,7 +19,7 @@ final class SerializerFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_serialize(): void
     {
-        $factory = new SerializerFactory();
+        $factory = $this->container->get(SerializerFactory::class);
 
         $class = reflect(ObjectWithSerializerProperties::class);
 
