@@ -12,4 +12,9 @@ final class MigrationException extends Exception
     {
         return new self('Migrations table does not exist. Nothing to roll back.');
     }
+
+    public static function hashMismatch(): self
+    {
+        return new self('Migration hash mismatch.');
+    }
 }
