@@ -657,7 +657,7 @@ namespace Tempest\Support\Arr {
      *
      * @return array<TKey, TMapValue>
      */
-    function map(iterable $array, Closure $map): array
+    function map_array(iterable $array, Closure $map): array
     {
         $result = [];
 
@@ -946,7 +946,7 @@ namespace Tempest\Support\Arr {
      */
     function flat_map(iterable $array, Closure $map, int|float $depth = 1): array
     {
-        return namespace\flatten(namespace\map(to_array($array), $map), $depth);
+        return namespace\flatten(namespace\map_array(to_array($array), $map), $depth);
     }
 
     /**
