@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
-use Tempest\Vite\BuildConfig;
 use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
@@ -60,9 +59,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
         $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts', 'src/bar.css'],
-                    ),
+                    entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
                 $vite = $this->container->get(Vite::class);
@@ -170,9 +167,7 @@ final class ViteTest extends FrameworkIntegrationTestCase
             callback: function (): void {
                 $this->container->config(new ViteConfig(
                     useManifestDuringTesting: true,
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts'],
-                    ),
+                    entrypoints: ['src/foo.ts'],
                 ));
 
                 $vite = $this->container->get(Vite::class);

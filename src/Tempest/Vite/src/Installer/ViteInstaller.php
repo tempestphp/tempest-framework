@@ -79,8 +79,8 @@ final class ViteInstaller implements Installer
 
         // Updates the .gitignore
         $this->update(root_path('.gitignore'), function (ImmutableString $gitignore) {
-            if (! $gitignore->contains($this->viteConfig->build->bridgeFileName)) {
-                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->build->bridgeFileName);
+            if (! $gitignore->contains($this->viteConfig->bridgeFileName)) {
+                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->bridgeFileName);
             }
 
             if (! $gitignore->contains('node_modules')) {
