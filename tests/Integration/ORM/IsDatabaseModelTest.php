@@ -7,6 +7,10 @@ namespace Tests\Tempest\Integration\ORM;
 use Carbon\Carbon;
 use DateTimeImmutable;
 use Tempest\Database\Id;
+use Tempest\Mapper\CasterFactory;
+use Tempest\Mapper\SerializerFactory;
+use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
+use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
 use function Tempest\map;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\B;
@@ -472,6 +476,9 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateMigrationsTable::class,
             CreateCarbonModelTable::class,
         );
+
+        $this->container->get(CasterFactory::class)->addCaster(Carbon::class, CarbonCaster::class);
+        $this->container->get(SerializerFactory::class)->addSerializer(Carbon::class, CarbonSerializer::class);
 
         new CarbonModel(createdAt: new Carbon('2024-01-01'))->save();
 

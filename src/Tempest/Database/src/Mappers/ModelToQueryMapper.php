@@ -6,8 +6,8 @@ namespace Tempest\Database\Mappers;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
-use Tempest\Mapper\Casters\CasterFactory;
 use Tempest\Mapper\Mapper;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 
 use function Tempest\map;
@@ -15,7 +15,7 @@ use function Tempest\map;
 final readonly class ModelToQueryMapper implements Mapper
 {
     public function __construct(
-        private CasterFactory $casterFactory,
+        private SerializerFactory $serializerFactory,
     ) {
     }
 
@@ -138,9 +138,9 @@ final readonly class ModelToQueryMapper implements Mapper
 
             $value = $property->getValue($model);
 
-            // Check if caster is available for value serialization
-            if ($value !== null && ($caster = $this->casterFactory->forProperty($property))) {
-                $value = $caster->serialize($value);
+            // Check if serializer is available for value serialization
+            if ($value !== null && ($serializer = $this->serializerFactory->forProperty($property))) {
+                $value = $serializer->serialize($value);
             }
 
             $fields[$property->getName()] = $value;

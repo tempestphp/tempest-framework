@@ -6,7 +6,7 @@ namespace Tempest\Database\Mappers;
 
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
-use Tempest\Mapper\Casters\CasterFactory;
+use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
