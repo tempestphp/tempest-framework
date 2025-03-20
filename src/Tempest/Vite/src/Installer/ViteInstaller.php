@@ -59,9 +59,9 @@ final class ViteInstaller implements Installer
 
         // Publishes the Vite config
         $viteConfig = $this->publish(__DIR__ . "/{$templateDirectory}/vite.config.ts", destination: root_path('vite.config.ts'));
-        $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.ts", destination: src_path('main.ts'));
+        $mainTs = $this->publish(__DIR__ . "/{$templateDirectory}/main.entrypoint.ts", destination: src_path('main.entrypoint.ts'));
         $mainCss = $shouldInstallTailwind
-            ? $this->publish(__DIR__ . "/{$templateDirectory}/main.css", destination: src_path('main.css'))
+            ? $this->publish(__DIR__ . "/{$templateDirectory}/main.entrypoint.css", destination: src_path('main.entrypoint.css'))
             : null;
 
         // Install package.json scripts
@@ -79,8 +79,8 @@ final class ViteInstaller implements Installer
 
         // Updates the .gitignore
         $this->update(root_path('.gitignore'), function (ImmutableString $gitignore) {
-            if (! $gitignore->contains($this->viteConfig->build->bridgeFileName)) {
-                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->build->bridgeFileName);
+            if (! $gitignore->contains($this->viteConfig->bridgeFileName)) {
+                $gitignore = $gitignore->append(PHP_EOL, $this->viteConfig->bridgeFileName);
             }
 
             if (! $gitignore->contains('node_modules')) {
@@ -101,18 +101,12 @@ final class ViteInstaller implements Installer
                 ? '<strong>Vite and Tailwind CSS are now installed in your project</strong>!'
                 : '<strong>Vite is now installed in your project</strong>!',
             PHP_EOL,
-            $viteConfig
-                ? sprintf('Configure <href="file://%s">vite.config.ts</href> as you see fit', $viteConfig)
-                : null,
-            $mainTs
-                ? sprintf(
-                    "Add <code><x-vite-tags :entrypoints='%s' /></code> to the <head> of your template",
-                    json_encode(array_filter([$mainCss, $mainTs]), JSON_UNESCAPED_SLASHES),
-                )
-                : 'Create a file and include it in your template with <code><x-vite-tags entrypoint="./path/to/file.ts" /></code>',
             "Run <code>{$packageManager->getRunCommand('dev')}</code> to start the <strong>development server</strong>",
+            $mainTs || $mainCss
+                ? 'Update <code>*.entrypoint.{ts,css}</code> files and observe changes in your browser'
+                : 'Create a <code>src/main.entrypoint.ts</code> file to get started with front-end code',
             PHP_EOL,
-            // '<style="fg-green">→</style> Read the <href="https://tempestphp.com/ocs/framework/vite">documentation</href>', // TODO: update when we have Vite docs
+            // '<style="fg-green">→</style> Read the <href="https://tempestphp.com/main/framework/vite">documentation</href>', // TODO: update when we have Vite docs
             '<style="fg-green">→</style> Join the <href="https://tempestphp.com/discord">Discord server</href>',
         ]);
     }

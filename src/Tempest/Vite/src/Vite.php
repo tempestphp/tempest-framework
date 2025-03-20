@@ -48,7 +48,7 @@ final class Vite
     public function getTags(?array $entrypoints = null): array
     {
         return $this->getTagsResolver()->resolveTags(
-            array_filter($entrypoints ?: []) ?: array_filter($this->viteConfig->build->entrypoints ?: []),
+            array_filter($entrypoints ?: []) ?: array_filter($this->viteConfig->entrypoints ?: []),
         );
     }
 
@@ -97,7 +97,7 @@ final class Vite
             return static::$manifest;
         }
 
-        if (! is_file($path = root_path('public', $this->viteConfig->build->buildDirectory, $this->viteConfig->build->manifest))) {
+        if (! is_file($path = root_path('public', $this->viteConfig->buildDirectory, $this->viteConfig->manifest))) {
             throw new ManifestNotFoundException($path);
         }
 
@@ -146,6 +146,6 @@ final class Vite
 
     private function getBridgeFilePath(): string
     {
-        return root_path('public', $this->viteConfig->build->bridgeFileName);
+        return root_path('public', $this->viteConfig->bridgeFileName);
     }
 }

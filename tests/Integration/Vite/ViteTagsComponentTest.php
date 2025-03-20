@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
-use Tempest\Vite\BuildConfig;
 use Tempest\Vite\ViteConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -27,9 +26,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts', 'src/bar.css'],
-                    ),
+                    entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
                 $html = $this->render(<<<'HTML'
@@ -62,9 +59,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts', 'src/bar.css'],
-                    ),
+                    entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
                 $html = $this->render(<<<'HTML'
@@ -97,9 +92,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         $this->vite->call(
             callback: function (): void {
                 $this->container->config(new ViteConfig(
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts', 'src/bar.css'],
-                    ),
+                    entrypoints: ['src/foo.ts', 'src/bar.css'],
                 ));
 
                 $html = $this->render(<<<'HTML'
@@ -133,9 +126,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
             callback: function (): void {
                 $this->container->config(new ViteConfig(
                     useManifestDuringTesting: true,
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts'],
-                    ),
+                    entrypoints: ['src/foo.ts'],
                 ));
 
                 $html = $this->render(<<<'HTML'
@@ -163,9 +154,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
             callback: function (): void {
                 $this->container->config(new ViteConfig(
                     useManifestDuringTesting: true,
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts'],
-                    ),
+                    entrypoints: ['src/foo.ts'],
                 ));
 
                 $html = $this->render(<<<'HTML'
@@ -193,9 +182,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
             callback: function (): void {
                 $this->container->config(new ViteConfig(
                     useManifestDuringTesting: true,
-                    build: new BuildConfig(
-                        entrypoints: ['src/foo.ts'],
-                    ),
+                    entrypoints: ['src/foo.ts'],
                 ));
 
                 $html = $this->render(<<<'HTML'

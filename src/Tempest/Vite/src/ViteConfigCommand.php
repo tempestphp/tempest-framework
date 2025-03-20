@@ -19,10 +19,10 @@ final readonly class ViteConfigCommand
     public function __invoke(): void
     {
         $this->console->writeRaw(json_encode([
-            'build_directory' => $this->viteConfig->build->buildDirectory,
-            'bridge_file_name' => $this->viteConfig->build->bridgeFileName,
-            'manifest' => $this->viteConfig->build->manifest,
-            'entrypoints' => $this->viteConfig->build->entrypoints,
+            'build_directory' => $this->viteConfig->buildDirectory,
+            'bridge_file_name' => $this->viteConfig->bridgeFileName,
+            'manifest' => $this->viteConfig->manifest,
+            'entrypoints' => $this->viteConfig->entrypoints,
         ]));
     }
 }
