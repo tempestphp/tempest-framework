@@ -47,7 +47,7 @@ final readonly class MigrationManager
             );
 
             if ($existingMigration !== null) {
-                if (! $allowChanges) {
+                if ($allowChanges === false) {
                     $this->verifyMigrationHash($migration, $existingMigration);
                 }
 
