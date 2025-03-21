@@ -139,7 +139,7 @@ final class LoadDiscoveryClasses
                     }
                 } elseif ($discovery instanceof DiscoversPath) {
                     // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
-                    $discovery->discoverPath($location, $input);
+                    $discovery->discoverPath($location, realpath($input));
                 }
             }
         }
