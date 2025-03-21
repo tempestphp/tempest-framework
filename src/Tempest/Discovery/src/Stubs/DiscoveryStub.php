@@ -6,8 +6,8 @@ namespace Tempest\Discovery\Stubs;
 
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Reflection\ClassReflector;
 use Tempest\Discovery\IsDiscovery;
+use Tempest\Reflection\ClassReflector;
 
 final class DiscoveryStub implements Discovery
 {
@@ -18,10 +18,10 @@ final class DiscoveryStub implements Discovery
         if (! $class->implements('MyClass::class')) {
             return;
         }
-        
+
         $this->discoveryItems->add($location, $class);
     }
-    
+
     public function apply(): void
     {
         foreach ($this->discoveryItems as $class) {

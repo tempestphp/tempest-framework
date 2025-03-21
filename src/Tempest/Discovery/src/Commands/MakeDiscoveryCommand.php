@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Discovery\Commands;
 
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Discovery\Stubs\DiscoveryStub;
-use Tempest\Core\PublishesFiles;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\Stubs\DiscoveryStub;
+use Tempest\Generation\DataObjects\StubFile;
 
 final class MakeDiscoveryCommand
 {
