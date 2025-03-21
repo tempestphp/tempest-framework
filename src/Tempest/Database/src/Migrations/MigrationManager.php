@@ -10,8 +10,10 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
@@ -29,7 +31,7 @@ final readonly class MigrationManager
     ) {
     }
 
-    public function up(): void
+    public function up(bool $allowChanges): void
     {
         try {
             $existingMigrations = Migration::all();
@@ -39,13 +41,34 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         }
 
-        $existingMigrations = array_map(
-            static fn (Migration $migration) => $migration->name,
-            $existingMigrations,
-        );
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                if ($allowChanges) {
+                    $existingMigration->delete();
+                } else {
+                    event(new MigrationFailed($existingMigration->name, MigrationException::missingMigration()));
+                }
+
+                continue;
+            }
+        }
 
         foreach ($this->migrations as $migration) {
-            if (in_array($migration->name, $existingMigrations, strict: true)) {
+            $existingMigration = array_find(
+                $existingMigrations,
+                static fn (Migration $existingMigration) => $existingMigration->name === $migration->name,
+            );
+
+            if ($existingMigration !== null) {
+                if ($allowChanges === false) {
+                    $this->verifyMigrationHash($migration, $existingMigration);
+                }
+
                 continue;
             }
 
@@ -109,6 +132,32 @@ final readonly class MigrationManager
         }
     }
 
+    public function rehashAll(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            return;
+        }
+
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                $existingMigration->delete();
+
+                continue;
+            }
+
+            $existingMigration->update(
+                hash: $this->getMigrationHash($databaseMigration),
+            );
+        }
+    }
+
     public function executeUp(MigrationInterface $migration): void
     {
         $statement = $migration->up();
@@ -126,6 +175,7 @@ final readonly class MigrationManager
 
             Migration::create(
                 name: $migration->name,
+                hash: $this->getMigrationHash($migration),
             );
         } catch (PDOException $pdoException) {
             event(new MigrationFailed($migration->name, $pdoException));
@@ -198,5 +248,40 @@ final readonly class MigrationManager
             },
             new ShowTablesStatement()->fetch($dialect),
         );
+    }
+
+    private function getMigrationHash(DatabaseMigration $migration): string
+    {
+        $minifiedDownSql = $this->getMinifiedSqlFromStatement($migration->down());
+        $minifiedUpSql = $this->getMinifiedSqlFromStatement($migration->up());
+
+        return hash('xxh128', $minifiedDownSql . $minifiedUpSql);
+    }
+
+    private function getMinifiedSqlFromStatement(?QueryStatement $statement): string
+    {
+        if ($statement === null) {
+            return '';
+        }
+
+        $query = new Query($statement->compile($this->databaseConfig->dialect));
+
+        // Remove comments
+        $sql = preg_replace('/--.*$/m', '', $query->getSql()); // Remove SQL single-line comments
+        $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
+
+        // Remove blank lines and excessive spaces
+        $sql = preg_replace('/\s+/', ' ', trim($sql));
+
+        return $sql;
+    }
+
+    private function verifyMigrationHash(DatabaseMigration $migration, Migration $existingMigration): void
+    {
+        $hash = $this->getMigrationHash($migration);
+
+        if ($hash !== $existingMigration->hash) {
+            event(new MigrationFailed($migration->name, MigrationException::hashMismatch()));
+        }
     }
 }

@@ -56,9 +56,11 @@ final class MigrateUpCommand
         description: 'Run all new migrations',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
-    public function __invoke(): void
-    {
-        $this->migrationManager->up();
+    public function __invoke(
+        #[ConsoleArgument(description: '')]
+        bool $allowChanges = false,
+    ): void {
+        $this->migrationManager->up($allowChanges);
 
         $this->console->success("Everything migrated");
     }
