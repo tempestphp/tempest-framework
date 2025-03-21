@@ -19,7 +19,7 @@ final class CreateMigrationsTable implements DatabaseMigration
         return new CreateTableStatement(Model::table()->tableName)
             ->primary()
             ->text('name')
-            ->varchar('hash', 64);
+            ->varchar('hash', 32);
     }
 
     public function down(): QueryStatement
