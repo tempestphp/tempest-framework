@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Router\Tests\Responses;
+namespace Tests\Tempest\Integration\Router\Responses;
 
 use Tempest\Http\Method;
 use Tempest\Http\Status;
