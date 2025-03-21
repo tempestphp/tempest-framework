@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Stubs;
 
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Core\PublishesFiles;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Core\PublishesFiles;
+use Tempest\Generation\DataObjects\StubFile;
 
 final class GeneratorCommandStub
 {

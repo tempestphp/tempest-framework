@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Commands;
 
-use function Tempest\Support\str;
-use Tempest\Generation\DataObjects\StubFile;
-use Tempest\Core\PublishesFiles;
-use Tempest\Console\Stubs\GeneratorCommandStub;
-use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ConsoleArgument;
+use Tempest\Console\ConsoleCommand;
+use Tempest\Console\Stubs\GeneratorCommandStub;
+use Tempest\Core\PublishesFiles;
+use Tempest\Generation\DataObjects\StubFile;
+
+use function Tempest\Support\str;
 
 final class MakeGeneratorCommandCommand
 {
