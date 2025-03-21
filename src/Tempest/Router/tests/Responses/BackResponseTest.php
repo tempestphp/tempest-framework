@@ -10,12 +10,12 @@ use Tempest\Router\GenericRequest;
 use Tempest\Router\Header;
 use Tempest\Router\Request;
 use Tempest\Router\Responses\Back;
-use Tests\Tempest\Integration\IntegrationTestCase;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class BackResponseTest extends IntegrationTestCase
+final class BackResponseTest extends FrameworkIntegrationTestCase
 {
     public function test_back_response(): void
     {
