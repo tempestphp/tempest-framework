@@ -40,6 +40,23 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         }
 
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                if ($allowChanges) {
+                    $existingMigration->delete();
+                } else {
+                    event(new MigrationFailed($existingMigration->name, MigrationException::missingMigration()));
+                }
+
+                continue;
+            }
+        }
+
         foreach ($this->migrations as $migration) {
             $existingMigration = array_find(
                 $existingMigrations,

@@ -17,4 +17,9 @@ final class MigrationException extends Exception
     {
         return new self('Migration hash mismatch.');
     }
+
+    public static function missingMigration(): self
+    {
+        return new self('Migration not found.');
+    }
 }
