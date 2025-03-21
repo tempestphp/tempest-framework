@@ -254,7 +254,7 @@ final readonly class MigrationManager
         $minifiedDownSql = $this->getMinifiedSqlFromStatement($migration->down());
         $minifiedUpSql = $this->getMinifiedSqlFromStatement($migration->up());
 
-        return hash('sha256', $minifiedDownSql . $minifiedUpSql);
+        return hash('xxh128', $minifiedDownSql . $minifiedUpSql);
     }
 
     private function getMinifiedSqlFromStatement(?QueryStatement $statement): string
