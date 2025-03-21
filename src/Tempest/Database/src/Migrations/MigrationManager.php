@@ -114,6 +114,32 @@ final readonly class MigrationManager
         }
     }
 
+    public function rehashAll(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            return;
+        }
+
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                $existingMigration->delete();
+
+                continue;
+            }
+
+            $existingMigration->update(
+                hash: $this->getMigrationHash($databaseMigration),
+            );
+        }
+    }
+
     public function executeUp(MigrationInterface $migration): void
     {
         $statement = $migration->up();
