@@ -700,4 +700,27 @@ b'));
         $this->assertFalse(str('helloü')->isAscii());
         $this->assertFalse(str('بسم الله')->isAscii());
     }
+
+    #[TestWith(['foo bar baz', ['foo', 'bar', 'baz']])]
+    #[TestWith(['foo-bar-baz', ['foo', 'bar', 'baz']])]
+    #[TestWith(['1foo_bar1', ['1foo_bar1']])]
+    #[TestWith(['fooBar', ['fooBar']])]
+    #[TestWith(['Jon Doe', ['Jon', 'Doe']])]
+    #[TestWith(['-Jon Doe', ['Jon', 'Doe']])]
+    #[TestWith(['_Jon_Doe', ['_Jon_Doe']])]
+    public function test_words(string $input, array $output): void
+    {
+        $this->assertEquals($output, str($input)->words()->toArray());
+    }
+
+    #[TestWith(['foo bar baz', 'Foo bar baz'])]
+    #[TestWith(['foo-bar-baz', 'Foo bar baz'])]
+    #[TestWith(['Foo Bar', 'Foo bar'])]
+    #[TestWith(['1foo_bar1', '1foo_bar1'])]
+    #[TestWith(['getting-started', 'Getting started'])]
+    #[TestWith(['Getting Started', 'Getting started'])]
+    public function test_sentence(string $input, string $output): void
+    {
+        $this->assertEquals($output, str($input)->sentence()->toString());
+    }
 }

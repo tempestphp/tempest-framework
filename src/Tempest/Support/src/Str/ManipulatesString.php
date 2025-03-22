@@ -188,6 +188,22 @@ trait ManipulatesString
     }
 
     /**
+     * Converts the current string to a naive sentence case.
+     */
+    public function sentence(): static
+    {
+        return $this->createOrModify(to_sentence_case($this->value));
+    }
+
+    /**
+     * Returns an array of words from the current string.
+     */
+    public function words(): ImmutableArray
+    {
+        return new ImmutableArray(to_words($this->value));
+    }
+
+    /**
      * Transliterates the current string to ASCII. Invalid characters are replaced with their closest counterpart.
      *
      * @param string $language Language of the source string. Defaults to english.

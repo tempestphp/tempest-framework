@@ -24,7 +24,7 @@ final readonly class ViteTagsComponent implements ViewComponent
         $entrypoints = match (true) {
             $element->hasAttribute('entrypoints') => '$entrypoints',
             $element->hasAttribute('entrypoint') => '$entrypoint',
-            default => var_export($this->viteConfig->build->entrypoints, return: true), // @mago-expect best-practices/no-debug-symbols
+            default => var_export($this->viteConfig->entrypoints, return: true), // @mago-expect best-practices/no-debug-symbols
         };
 
         return <<<HTML

@@ -109,7 +109,7 @@ final readonly class TempestViewCompiler
         $template = str($template)
             // Convert self-closing and void tags
             ->replaceRegex(
-                regex: '/<(?<element>\w.*?)\/>/',
+                regex: '/<(?<element>\w[^<]*?)\/>/',
                 replace: function (array $match) {
                     $element = str($match['element'])->trim();
 

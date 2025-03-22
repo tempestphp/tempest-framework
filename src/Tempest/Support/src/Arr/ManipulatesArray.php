@@ -355,6 +355,17 @@ trait ManipulatesArray
     }
 
     /**
+     * Returns the item at the given index in the specified array.
+     *
+     *
+     * @return TValue
+     */
+    public function at(int $index, mixed $default = null): mixed
+    {
+        return namespace\at($this->value, $index, $default);
+    }
+
+    /**
      * Returns an instance of the array without the last value.
      *
      * @param mixed $value The popped value will be stored in this variable
@@ -556,6 +567,16 @@ trait ManipulatesArray
     }
 
     /**
+     * Groups the array by the results of the provided keyExtractor.
+     *
+     * @param Closure(TValue, TKey): array-key $keyExtractor
+     */
+    public function groupBy(Closure $keyExtractor): static
+    {
+        return $this->createOrModify(namespace\group_by($this->value, $keyExtractor));
+    }
+
+    /**
      * Flattens the instance to a single-level array, or until the specified `$depth` is reached.
      *
      * ### Example
@@ -594,6 +615,34 @@ trait ManipulatesArray
     public function mapTo(string $to): static
     {
         return $this->createOrModify(namespace\map_to($this->value, $to));
+    }
+
+    /**
+     * Maps the first item of the instance to the given object.
+     *
+     * @see \Tempest\map()
+     *
+     * @template T
+     * @param class-string<T> $to
+     * @return T
+     */
+    public function mapFirstTo(string $to): mixed
+    {
+        return \Tempest\map($this->first())->to($to);
+    }
+
+    /**
+     * Maps the last item of the instance to the given object.
+     *
+     * @see \Tempest\map()
+     *
+     * @template T
+     * @param class-string<T> $to
+     * @return T
+     */
+    public function mapLastTo(string $to): mixed
+    {
+        return \Tempest\map($this->last())->to($to);
     }
 
     /**

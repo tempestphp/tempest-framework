@@ -508,6 +508,28 @@ namespace Tempest\Support\Arr {
     }
 
     /**
+     * Returns the item at the given index in the specified array.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param iterable<TKey,TValue> $array
+     *
+     * @return TValue
+     */
+    function at(iterable $array, int $index, mixed $default = null): mixed
+    {
+        $array = to_array($array);
+
+        if ($index < 0) {
+            $index = abs($index) - 1;
+            $array = namespace\reverse($array);
+        }
+
+        return namespace\get_by_key(array_values($array), key: $index, default: $default);
+    }
+
+    /**
      * Returns the last item in the array that matches the given `$filter`.
      * If `$filter` is `null`, returns the last item.
      *
@@ -927,6 +949,51 @@ namespace Tempest\Support\Arr {
             foreach ($values as $value) {
                 $result[] = $value;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns a copy of the array grouped by the result of the given `$keyExtractor`.
+     * The keys of the resulting array are the values returned by the `$keyExtractor`.
+     *
+     * ### Example
+     * ```php
+     * group_by(
+     * [
+     * ['country' => 'france', 'continent' => 'europe'],
+     * ['country' => 'Sweden', 'continent' => 'europe'],
+     * ['country' => 'USA', 'continent' => 'america']
+     * ],
+     * fn($item) => $item['continent']
+     * );
+     * // [
+     * //     'europe' => [
+     * //         ['country' => 'france', 'continent' => 'europe'],
+     * //         ['country' => 'Sweden', 'continent' => 'europe']
+     * //     ],
+     * //     'america' => [
+     * //         ['country' => 'USA', 'continent' => 'america']
+     * //     ]
+     * // ]
+     * ```
+     *
+     * @template TKey of array-key
+     * @template TValue
+     * @param iterable<TKey,TValue> $array
+     * @param Closure(TValue, TKey): array-key $keyExtracor
+     */
+    function group_by(iterable $array, Closure $keyExtracor): array
+    {
+        $array = to_array($array);
+
+        $result = [];
+
+        foreach ($array as $key => $item) {
+            $key = $keyExtracor($item, $key);
+
+            $result[$key][] = $item;
         }
 
         return $result;

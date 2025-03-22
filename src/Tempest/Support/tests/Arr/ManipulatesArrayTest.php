@@ -1739,4 +1739,44 @@ final class ManipulatesArrayTest extends TestCase
                 ->equals($array->dot()),
         );
     }
+
+    public function test_group_by(): void
+    {
+        $array = arr([
+            ['brand' => 'brand1', 'model' => 'model1'],
+            ['brand' => 'brand1', 'model' => 'model2'],
+            ['brand' => 'brand2', 'model' => 'model3'],
+            ['brand' => 'brand2', 'model' => 'model4'],
+        ]);
+
+        $this->assertTrue(
+            arr([
+                'brand1' => [
+                    ['brand' => 'brand1', 'model' => 'model1'],
+                    ['brand' => 'brand1', 'model' => 'model2'],
+                ],
+                'brand2' => [
+                    ['brand' => 'brand2', 'model' => 'model3'],
+                    ['brand' => 'brand2', 'model' => 'model4'],
+                ],
+            ])
+                ->equals($array->groupBy(fn ($item) => $item['brand'])),
+        );
+    }
+
+    #[TestWith([['foo', 'bar', 'baz'], 0, 'foo'])]
+    #[TestWith([['foo', 'bar', 'baz'], 1, 'bar'])]
+    #[TestWith([['foo', 'bar', 'baz'], 2, 'baz'])]
+    #[TestWith([['foo', 'bar', 'baz'], 3, null])]
+    #[TestWith([['foo', 'bar', 'baz'], -1, 'baz'])]
+    #[TestWith([['foo', 'bar', 'baz'], -2, 'bar'])]
+    #[TestWith([['foo', 'bar', 'baz'], -3, 'foo'])]
+    #[TestWith([['foo', 'bar', 'baz'], -4, null])]
+    #[TestWith([[], 0, null])]
+    #[TestWith([[], 1, null])]
+    #[TestWith([[], 1, 'quux', 'quux'])]
+    public function test_at(array $input, int $index, mixed $expected, mixed $default = null): void
+    {
+        $this->assertSame($expected, arr($input)->at($index, $default));
+    }
 }
