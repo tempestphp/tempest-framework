@@ -25,4 +25,24 @@ namespace Tempest {
             ...$params,
         );
     }
+
+    /**
+     * Checks whether the given controller action matches the current URI.
+     */
+    function is_uri(array|string|MethodReflector $action, mixed ...$params): bool
+    {
+        if ($action instanceof MethodReflector) {
+            $action = [
+                $action->getDeclaringClass()->getName(),
+                $action->getName(),
+            ];
+        }
+
+        $router = get(Router::class);
+
+        return $router->isCurrentUri(
+            $action,
+            ...$params,
+        );
+    }
 }
