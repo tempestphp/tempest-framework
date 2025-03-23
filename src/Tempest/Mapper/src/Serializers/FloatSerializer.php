@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper\Serializers;
 
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
