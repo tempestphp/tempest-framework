@@ -42,6 +42,6 @@ final class KernelTest extends TestCase
             root: getcwd(),
         );
 
-        $this->assertTrue(defined('TEMPEST_START'));
+        $this->assertTrue(defined('TEMPEST_START')); // @phpstan-ignore method.alreadyNarrowedType
     }
 }

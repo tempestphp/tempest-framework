@@ -33,6 +33,5 @@
     <env name="BASE_URI" value="" />
     <env name="CACHE" value="null" />
     <env name="DISCOVERY_CACHE" value="true" />
-    <ini name="memory_limit" value="256M" />
   </php>
 </phpunit>
