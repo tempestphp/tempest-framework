@@ -10,6 +10,8 @@ use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Reflection\ClassReflector;
 
+use function Tempest\internal_storage_path;
+
 final readonly class BladeInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class): bool
@@ -28,7 +30,7 @@ final readonly class BladeInitializer implements DynamicInitializer
 
         return new Blade(
             viewPaths: $bladeConfig->viewPaths,
-            cachePath: $bladeConfig->cachePath,
+            cachePath: internal_storage_path($bladeConfig->cachePath ?? 'cache/blade'),
         );
     }
 }

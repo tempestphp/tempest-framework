@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
+use function Tempest\internal_storage_path;
+
 final readonly class TwigConfig
 {
     /**
@@ -11,7 +13,7 @@ final readonly class TwigConfig
      */
     public function __construct(
         public array $viewPaths = [],
-        public ?string $cachePath = null,
+        public null|false|string $cachePath = null,
         public bool $debug = false,
         public string $charset = 'utf-8',
         public bool $strictVariables = false,
@@ -28,7 +30,7 @@ final readonly class TwigConfig
             'charset' => $this->charset,
             'strict_variables' => $this->strictVariables,
             'autoescape' => $this->autoescape,
-            'cache' => $this->cachePath ?: false,
+            'cache' => $this->cachePath === false ? false : internal_storage_path($this->cachePath ?? 'cache/twig'),
             'auto_reload' => $this->autoReload,
             'optimizations' => $this->optimizations,
         ];
