@@ -9,6 +9,7 @@ use Tempest\View\Renderers\TwigViewRenderer;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\view;
 
 /**
@@ -24,7 +25,7 @@ final class TwigViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new TwigConfig(
             viewPaths: [__DIR__ . '/twig'],
-            cachePath: __DIR__ . '/../../../.cache/tempest/twig/cache',
+            cachePath: 'twig-cache',
         ));
 
         $renderer = $this->container->get(ViewRenderer::class);
@@ -32,10 +33,9 @@ final class TwigViewRendererTest extends FrameworkIntegrationTestCase
         $html = $renderer->render(view('index.twig', ...['foo' => 'bar']));
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<HTML
-            <html>
-            <span>bar</span>
-            </html>
-            HTML
-            , $html);
+        <html>
+        <span>bar</span>
+        </html>
+        HTML, $html);
     }
 }

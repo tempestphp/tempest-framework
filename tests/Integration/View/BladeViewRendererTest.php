@@ -9,6 +9,7 @@ use Tempest\View\Renderers\BladeViewRenderer;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\view;
 
 /**
@@ -24,7 +25,7 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new BladeConfig(
             viewPaths: [__DIR__ . '/blade'],
-            cachePath: __DIR__ . '/../../../../.cache/tempest/blade/cache',
+            cachePath: 'blade-cache',
         ));
 
         $renderer = $this->container->get(ViewRenderer::class);
@@ -32,10 +33,9 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
         $html = $renderer->render(view('index'));
 
         $this->assertSame(<<<HTML
-            <html>
-            Hi
-            </html>
-            HTML
-            , $html);
+        <html>
+        Hi
+        </html>
+        HTML, $html);
     }
 }
