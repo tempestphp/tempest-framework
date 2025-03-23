@@ -23,6 +23,7 @@ preserve_breaking_array_like = true
 preserve_breaking_parameter_list = true
 preserve_breaking_attribute_list = true
 preserve_breaking_conditional_expression = true
+empty_line_after_opening_tag = false
 
 [linter]
 default_plugins = true

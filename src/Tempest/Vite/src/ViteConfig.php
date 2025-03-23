@@ -25,8 +25,7 @@ final class ViteConfig
         public string $bridgeFileName = 'vite-tempest',
         public string $manifest = 'manifest.json',
         public array $entrypoints = [],
-    ) {
-    }
+    ) {}
 
     public function addEntrypoint(string $path): void
     {

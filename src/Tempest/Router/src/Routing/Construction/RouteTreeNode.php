@@ -20,8 +20,7 @@ final class RouteTreeNode
     private function __construct(
         public readonly RouteTreeNodeType $type,
         public readonly ?string $segment = null,
-    ) {
-    }
+    ) {}
 
     public static function createRootRoute(): self
     {

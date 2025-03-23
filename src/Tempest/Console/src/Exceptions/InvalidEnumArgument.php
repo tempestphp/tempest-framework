@@ -21,8 +21,7 @@ final class InvalidEnumArgument extends ConsoleException
         private string $argumentName,
         private string $argumentType,
         private mixed $value,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): void
     {

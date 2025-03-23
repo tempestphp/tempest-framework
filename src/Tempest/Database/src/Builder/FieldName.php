@@ -17,8 +17,7 @@ final class FieldName implements Stringable
         public readonly TableName $tableName,
         public readonly string $fieldName,
         public ?string $as = null,
-    ) {
-    }
+    ) {}
 
     /** @return \Tempest\Database\Builder\FieldName[] */
     public static function make(ClassReflector $class, ?TableName $tableName = null): array

@@ -25,8 +25,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
         public string $email,
         /** @var \Tempest\Auth\Install\UserPermission[] $userPermissions */
         public array $userPermissions = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @param string $password The raw password, which will be encrypted as soon as it is set

@@ -9,6 +9,5 @@ final readonly class CircularC
     public function __construct(
         public ContainerObjectA $other,
         public CircularA $a,
-    ) {
-    }
+    ) {}
 }

@@ -26,8 +26,7 @@ final readonly class MigrationManager
         private DatabaseConfig $databaseConfig,
         private Database $database,
         private RunnableMigrations $migrations,
-    ) {
-    }
+    ) {}
 
     public function up(): void
     {

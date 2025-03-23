@@ -12,8 +12,7 @@ final class CollectionElement implements Element
 
     public function __construct(
         private readonly array $elements,
-    ) {
-    }
+    ) {}
 
     /** @return \Tempest\View\Element[] */
     public function getElements(): array

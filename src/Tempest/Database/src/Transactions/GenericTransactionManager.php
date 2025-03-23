@@ -13,8 +13,7 @@ final class GenericTransactionManager implements TransactionManager
 {
     public function __construct(
         private Connection $connection,
-    ) {
-    }
+    ) {}
 
     public function begin(): void
     {

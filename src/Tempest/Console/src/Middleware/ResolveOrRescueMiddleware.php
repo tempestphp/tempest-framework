@@ -27,8 +27,7 @@ final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
         private Console $console,
         private ExecuteConsoleCommand $executeConsoleCommand,
         private ResolveConsoleCommand $resolveConsoleCommand,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {

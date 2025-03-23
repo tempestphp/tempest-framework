@@ -21,8 +21,7 @@ final readonly class ExecuteConsoleCommand
         private ConsoleConfig $consoleConfig,
         private ConsoleArgumentBag $argumentBag,
         private ResolveConsoleCommand $resolveConsoleCommand,
-    ) {
-    }
+    ) {}
 
     public function __invoke(string|array $command, string|array $arguments = []): ExitCode|int
     {

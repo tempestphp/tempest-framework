@@ -21,8 +21,7 @@ final readonly class Manifest
          * @var ImmutableArray<int,Chunk>
          */
         public ImmutableArray $entrypoints,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $chunks): self
     {

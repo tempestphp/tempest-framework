@@ -16,8 +16,7 @@ final readonly class DateTimeCaster implements Caster
     public function __construct(
         private string $format = DateTimeFormat::FORMAT,
         private bool $immutable = true,
-    ) {
-    }
+    ) {}
 
     public static function fromProperty(PropertyReflector $property): DateTimeCaster
     {

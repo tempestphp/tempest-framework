@@ -16,8 +16,7 @@ final readonly class Dependency
 {
     public function __construct(
         public Reflector|Closure|string $dependency,
-    ) {
-    }
+    ) {}
 
     public function getName(): string
     {

@@ -17,8 +17,7 @@ final readonly class Chunk
         public array $dynamicImports,
         public array $assets,
         public ?string $integrity = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $manifestEntry): static
     {

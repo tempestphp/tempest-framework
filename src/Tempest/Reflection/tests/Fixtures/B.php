@@ -8,6 +8,5 @@ final class B
 {
     public function __construct(
         public C $c,
-    ) {
-    }
+    ) {}
 }

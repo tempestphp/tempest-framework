@@ -12,8 +12,7 @@ final readonly class ViteConfigCommand
     public function __construct(
         private Console $console,
         private ViteConfig $viteConfig,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'vite:config', hidden: true)]
     public function __invoke(): void

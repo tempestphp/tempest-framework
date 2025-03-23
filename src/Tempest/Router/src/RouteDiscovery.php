@@ -18,8 +18,7 @@ final class RouteDiscovery implements Discovery
     public function __construct(
         private readonly RouteConfigurator $configurator,
         private readonly RouteConfig $routeConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

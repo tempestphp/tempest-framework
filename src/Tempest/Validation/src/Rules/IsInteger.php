@@ -12,8 +12,7 @@ final readonly class IsInteger implements Rule
 {
     public function __construct(
         private bool $orNull = false,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

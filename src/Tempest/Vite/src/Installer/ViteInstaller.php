@@ -25,8 +25,7 @@ final class ViteInstaller implements Installer
         private readonly DependencyInstaller $javascript,
         private readonly ViteConfig $viteConfig,
         private readonly ConsoleArgumentBag $consoleArgumentBag,
-    ) {
-    }
+    ) {}
 
     private function shouldInstallTailwind(): bool
     {

@@ -23,8 +23,7 @@ final readonly class HttpApplication implements Application
 {
     public function __construct(
         private Container $container,
-    ) {
-    }
+    ) {}
 
     /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(

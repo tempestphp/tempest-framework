@@ -15,8 +15,7 @@ final readonly class Email implements Rule
 {
     public function __construct(
         private EmailValidation $validationMethod = new RFCValidation(),
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

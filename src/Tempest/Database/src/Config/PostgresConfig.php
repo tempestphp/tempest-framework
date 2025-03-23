@@ -26,12 +26,16 @@ final class PostgresConfig implements DatabaseConfig
     }
 
     public function __construct(
-        #[SensitiveParameter] public string $host = '127.0.0.1',
-        #[SensitiveParameter] public string $port = '5432',
-        #[SensitiveParameter] public string $username = '',
-        #[SensitiveParameter] public string $password = '',
-        #[SensitiveParameter] public string $database = 'app',
+        #[SensitiveParameter]
+        public string $host = '127.0.0.1',
+        #[SensitiveParameter]
+        public string $port = '5432',
+        #[SensitiveParameter]
+        public string $username = '',
+        #[SensitiveParameter]
+        public string $password = '',
+        #[SensitiveParameter]
+        public string $database = 'app',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
-    ) {
-    }
+    ) {}
 }

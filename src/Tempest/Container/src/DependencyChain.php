@@ -17,8 +17,7 @@ final class DependencyChain
 
     public function __construct(
         private string $origin,
-    ) {
-    }
+    ) {}
 
     public function add(Reflector|Closure|string $dependency): self
     {

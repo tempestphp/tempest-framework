@@ -11,8 +11,7 @@ final readonly class ViteTagsComponent implements ViewComponent
 {
     public function __construct(
         private ViteConfig $viteConfig,
-    ) {
-    }
+    ) {}
 
     public static function getName(): string
     {

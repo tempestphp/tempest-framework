@@ -18,8 +18,7 @@ final class PhpForeachElement implements Element, WrapsElement
 
     public function __construct(
         private readonly Element $wrappingElement,
-    ) {
-    }
+    ) {}
 
     public function getWrappingElement(): Element
     {

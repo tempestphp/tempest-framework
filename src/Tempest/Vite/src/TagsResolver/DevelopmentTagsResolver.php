@@ -19,8 +19,7 @@ final readonly class DevelopmentTagsResolver implements TagsResolver
     public function __construct(
         private ViteBridgeFile $bridgeFile,
         private TagCompiler $tagCompiler,
-    ) {
-    }
+    ) {}
 
     public function resolveTags(array $entrypoints): array
     {

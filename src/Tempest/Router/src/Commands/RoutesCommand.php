@@ -17,8 +17,7 @@ final readonly class RoutesCommand
     public function __construct(
         private Console $console,
         private RouteConfig $routeConfig,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'routes', description: 'Lists all registered routes', aliases: ['routes:list', 'list:routes'])]
     public function list(

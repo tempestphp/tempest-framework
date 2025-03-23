@@ -15,8 +15,7 @@ final readonly class ConsoleExceptionMiddleware implements ConsoleMiddleware
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {

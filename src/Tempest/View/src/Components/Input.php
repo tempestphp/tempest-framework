@@ -13,8 +13,7 @@ final readonly class Input implements ViewComponent
 {
     public function __construct(
         private Session $session,
-    ) {
-    }
+    ) {}
 
     public static function getName(): string
     {

@@ -14,8 +14,7 @@ final readonly class HeaderSessionIdResolver implements SessionIdResolver
 {
     public function __construct(
         private Request $request,
-    ) {
-    }
+    ) {}
 
     public function resolve(): SessionId
     {

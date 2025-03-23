@@ -12,8 +12,7 @@ final readonly class ModifyColumnStatement implements QueryStatement
 {
     public function __construct(
         private QueryStatement $column,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

@@ -18,8 +18,7 @@ final class ScheduleDiscovery implements Discovery
 
     public function __construct(
         private readonly SchedulerConfig $schedulerConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

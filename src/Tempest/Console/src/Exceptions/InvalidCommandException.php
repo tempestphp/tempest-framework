@@ -16,8 +16,7 @@ final class InvalidCommandException extends ConsoleException
 
         /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidArguments */
         public readonly array $invalidArguments,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): void
     {

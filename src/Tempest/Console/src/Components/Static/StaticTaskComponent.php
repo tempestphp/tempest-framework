@@ -16,8 +16,7 @@ final class StaticTaskComponent implements StaticConsoleComponent
     public function __construct(
         readonly string $label,
         private null|Process|Closure $handler = null,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): bool
     {

@@ -8,6 +8,5 @@ final class ContainerObjectB
 {
     public function __construct(
         public ContainerObjectA $a,
-    ) {
-    }
+    ) {}
 }

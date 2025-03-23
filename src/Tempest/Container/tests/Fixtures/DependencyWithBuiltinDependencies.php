@@ -15,6 +15,5 @@ final readonly class DependencyWithBuiltinDependencies
         public string $stringValue,
         #[Tag('builtin-dependency-bool')]
         public bool $boolValue,
-    ) {
-    }
+    ) {}
 }

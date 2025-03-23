@@ -16,8 +16,7 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
     public function __construct(
         private Console $console,
         private AppConfig $appConfig,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {

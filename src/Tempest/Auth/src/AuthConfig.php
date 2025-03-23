@@ -14,6 +14,5 @@ final class AuthConfig
 
         /** @var class-string<\Tempest\Database\DatabaseModel> */
         public string $userModelClass = User::class,
-    ) {
-    }
+    ) {}
 }

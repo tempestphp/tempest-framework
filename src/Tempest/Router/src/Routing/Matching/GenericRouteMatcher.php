@@ -13,8 +13,7 @@ final readonly class GenericRouteMatcher implements RouteMatcher
 {
     public function __construct(
         private RouteConfig $routeConfig,
-    ) {
-    }
+    ) {}
 
     public function match(PsrRequest $request): ?MatchedRoute
     {

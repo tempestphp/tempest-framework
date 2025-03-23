@@ -19,8 +19,7 @@ final readonly class TailDebugLogCommand
         private LogConfig $logConfig,
         #[Tag('console')]
         private Highlighter $highlighter,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand('tail:debug', description: 'Tails the debug log')]
     public function __invoke(): void

@@ -13,8 +13,7 @@ final readonly class SetCookieMiddleware implements HttpMiddleware
 {
     public function __construct(
         private CookieManager $cookies,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {

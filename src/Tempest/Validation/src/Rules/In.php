@@ -14,8 +14,7 @@ final readonly class In implements Rule
         /** @var array<string|int> */
         private array $values,
         private bool $not = false,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

@@ -15,8 +15,7 @@ final class StaticPage
     public function __construct(
         /** @var class-string<\Tempest\Router\DataProvider> */
         public readonly ?string $dataProviderClass = null,
-    ) {
-    }
+    ) {}
 
     public function setHandler(MethodReflector $handler): void
     {

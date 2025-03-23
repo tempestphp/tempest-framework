@@ -16,8 +16,7 @@ final class RouteConfig
         public array $dynamicRoutes = [],
         /** @var array<string, MatchingRegex> */
         public array $matchingRegexes = [],
-    ) {
-    }
+    ) {}
 
     public function apply(RouteConfig $newConfig): void
     {

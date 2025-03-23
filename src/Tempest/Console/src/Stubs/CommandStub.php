@@ -11,8 +11,7 @@ final class CommandStub
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'dummy-command-slug')]
     public function __invoke(): void

@@ -8,6 +8,5 @@ final readonly class ScheduledInvocationRan
 {
     public function __construct(
         public ScheduledInvocation $invocation,
-    ) {
-    }
+    ) {}
 }

@@ -15,8 +15,7 @@ final class EventBusConfig
 
         /** @var array<array-key, class-string<\Tempest\EventBus\EventBusMiddleware>> */
         public array $middleware = [],
-    ) {
-    }
+    ) {}
 
     public function addClosureHandler(string $event, Closure $handler): self
     {

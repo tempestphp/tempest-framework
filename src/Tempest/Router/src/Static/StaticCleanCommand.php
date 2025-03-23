@@ -20,8 +20,7 @@ final readonly class StaticCleanCommand
 
     public function __construct(
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'static:clean',

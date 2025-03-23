@@ -44,8 +44,7 @@ final class Option
     public function __construct(
         public int|string $key,
         public mixed $value,
-    ) {
-    }
+    ) {}
 
     public function equals(Option $other): bool
     {

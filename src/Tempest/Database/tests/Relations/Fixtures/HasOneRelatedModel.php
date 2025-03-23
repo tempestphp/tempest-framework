@@ -15,8 +15,7 @@ final class HasOneRelatedModel implements DatabaseModel
     public function __construct(
         public HasOneParentModel $parent,
         public HasOneParentModel $otherParent,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

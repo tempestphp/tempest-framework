@@ -58,7 +58,8 @@ trait IsDatabaseModel
     public static function table(): TableName
     {
         $name = get(DatabaseConfig::class)
-            ->namingStrategy->getName(self::class);
+            ->namingStrategy
+            ->getName(self::class);
 
         return new TableName($name);
     }

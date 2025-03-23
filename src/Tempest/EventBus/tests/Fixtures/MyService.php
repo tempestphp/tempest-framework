@@ -8,6 +8,5 @@ final readonly class MyService
 {
     public function __construct(
         public string $value,
-    ) {
-    }
+    ) {}
 }

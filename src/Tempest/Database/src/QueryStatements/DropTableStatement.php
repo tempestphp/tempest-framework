@@ -15,8 +15,7 @@ final class DropTableStatement implements QueryStatement
         private readonly string $tableName,
         /** @var \Tempest\Database\QueryStatements\DropConstraintStatement[] $dropReferences */
         private array $dropReferences = [],
-    ) {
-    }
+    ) {}
 
     public function dropReference(string $foreign): self
     {

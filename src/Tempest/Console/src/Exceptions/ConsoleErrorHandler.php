@@ -23,8 +23,7 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
         private Highlighter $highlighter,
         private Console $console,
         private ConsoleArgumentBag $argumentBag,
-    ) {
-    }
+    ) {}
 
     public function handleException(Throwable $throwable): void
     {

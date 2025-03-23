@@ -14,8 +14,7 @@ final class HasOneInvalidRelatedModel implements DatabaseModel
 
     public function __construct(
         public self $invalidType,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

@@ -21,8 +21,7 @@ final class MigrateDownCommand
     public function __construct(
         private readonly Console $console,
         private readonly MigrationManager $migrationManager,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'migrate:down',

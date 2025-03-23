@@ -14,6 +14,5 @@ final readonly class ConsoleArgument
         public ?string $description = null,
         public string $help = '',
         public array $aliases = [],
-    ) {
-    }
+    ) {}
 }

@@ -20,8 +20,7 @@ final class TextInputRenderer
     public function __construct(
         private ?bool $multiline = false,
         private int $maximumLines = 4,
-    ) {
-    }
+    ) {}
 
     public function render(
         Terminal $terminal,

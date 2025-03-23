@@ -9,6 +9,5 @@ final readonly class AutowireC
     public function __construct(
         public ContainerObjectA $other,
         public string $unknown,
-    ) {
-    }
+    ) {}
 }

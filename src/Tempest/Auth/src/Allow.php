@@ -13,6 +13,5 @@ final readonly class Allow
     public function __construct(
         /** @var string|UnitEnum|class-string<\Tempest\Auth\Authorizer> $permission */
         public string|UnitEnum $permission,
-    ) {
-    }
+    ) {}
 }

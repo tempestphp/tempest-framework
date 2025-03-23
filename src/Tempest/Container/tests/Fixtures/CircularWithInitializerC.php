@@ -6,7 +6,5 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final readonly class CircularWithInitializerC
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

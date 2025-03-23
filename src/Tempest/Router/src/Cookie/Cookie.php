@@ -22,8 +22,7 @@ final class Cookie implements Stringable
         public ?bool $secure = null,
         public ?bool $httpOnly = null,
         public ?SameSite $sameSite = null,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

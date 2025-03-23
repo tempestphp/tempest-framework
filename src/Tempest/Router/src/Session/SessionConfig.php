@@ -31,6 +31,5 @@ final class SessionConfig
          * @var class-string<SessionIdResolver>
          */
         public string $idResolverClass = CookieSessionIdResolver::class,
-    ) {
-    }
+    ) {}
 }

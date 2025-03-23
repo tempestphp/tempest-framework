@@ -20,8 +20,7 @@ final readonly class DiscoveryStatusCommand
         private Console $console,
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'discovery:status', description: 'Lists all discovery locations and discovery classes')]
     public function __invoke(

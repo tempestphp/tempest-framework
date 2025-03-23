@@ -14,8 +14,7 @@ final class TextElement implements Element
 
     public function __construct(
         private readonly string $text,
-    ) {
-    }
+    ) {}
 
     public function compile(): string
     {

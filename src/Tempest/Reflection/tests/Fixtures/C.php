@@ -8,6 +8,5 @@ final class C
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

@@ -12,8 +12,7 @@ final readonly class StaticTextBoxComponent implements StaticConsoleComponent
     public function __construct(
         public string $label,
         public ?string $default = null,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): ?string
     {

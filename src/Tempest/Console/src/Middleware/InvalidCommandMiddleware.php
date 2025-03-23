@@ -25,8 +25,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
     public function __construct(
         private Console $console,
         private ExecuteConsoleCommand $executeConsoleCommand,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {

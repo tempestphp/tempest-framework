@@ -8,6 +8,5 @@ final class ItemsDebugged
 {
     public function __construct(
         public array $items,
-    ) {
-    }
+    ) {}
 }

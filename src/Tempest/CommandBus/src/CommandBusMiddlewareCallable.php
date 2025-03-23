@@ -10,8 +10,7 @@ final readonly class CommandBusMiddlewareCallable
 {
     public function __construct(
         private Closure $closure,
-    ) {
-    }
+    ) {}
 
     public function __invoke(object $command): void
     {

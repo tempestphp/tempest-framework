@@ -19,8 +19,7 @@ final readonly class ArrayToObjectMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
-    ) {
-    }
+    ) {}
 
     public function canMap(mixed $from, mixed $to): bool
     {

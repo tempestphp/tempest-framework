@@ -18,8 +18,7 @@ final readonly class GenericScheduler implements Scheduler
         private SchedulerConfig $config,
         private ConsoleArgumentBag $argumentBag,
         private ShellExecutor $executor,
-    ) {
-    }
+    ) {}
 
     public static function getCachePath(): string
     {
