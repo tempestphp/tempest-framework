@@ -9,6 +9,7 @@ use Tempest\Database\Builder\TableName;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
+use Tempest\Database\TableName as TableNameAttribute;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
@@ -57,10 +58,14 @@ trait IsDatabaseModel
 
     public static function table(): TableName
     {
-        $name = get(DatabaseConfig::class)
+        $specificName = new ClassReflector(static::class)
+            ->getAttribute(TableNameAttribute::class)
+            ?->name;
+
+        $conventionalName = get(DatabaseConfig::class)
             ->namingStrategy->getName(self::class);
 
-        return new TableName($name);
+        return new TableName($specificName ?? $conventionalName);
     }
 
     public static function new(mixed ...$params): self
