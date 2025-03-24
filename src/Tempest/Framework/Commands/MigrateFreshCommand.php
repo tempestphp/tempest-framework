@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Commands;
 
 use Tempest\Console\Console;
+use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Middleware\CautionMiddleware;
@@ -30,8 +31,14 @@ final class MigrateFreshCommand
         description: 'Drops all tables and rerun migrations from scratch',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
-    public function __invoke(): ExitCode
-    {
+    public function __invoke(
+        #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
+        bool $validate = false,
+    ): ExitCode {
+        if ($validate) {
+            $this->console->call('migrate:validate');
+        }
+
         $this->console->info('Dropping tables…');
 
         $this->migrationManager->dropAll();
