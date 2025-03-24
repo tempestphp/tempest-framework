@@ -35,7 +35,17 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
 use Tests\Tempest\Integration\ORM\Models\AttributeTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\BaseModel;
+use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
+use Tests\Tempest\Integration\ORM\Models\CarbonModel;
+use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
+use Tests\Tempest\Integration\ORM\Models\CasterEnum;
+use Tests\Tempest\Integration\ORM\Models\CasterModel;
+use Tests\Tempest\Integration\ORM\Models\ChildModel;
+use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
+use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+
+use function Tempest\map;
 
 /**
  * @internal

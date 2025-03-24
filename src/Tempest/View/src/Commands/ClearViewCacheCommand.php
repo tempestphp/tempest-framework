@@ -16,8 +16,7 @@ final readonly class ClearViewCacheCommand
 
     public function __construct(
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'view:clear', description: 'Clears the view cache')]
     public function __invoke(): void

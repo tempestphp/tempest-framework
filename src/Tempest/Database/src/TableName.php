@@ -9,6 +9,5 @@ final class TableName
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }
