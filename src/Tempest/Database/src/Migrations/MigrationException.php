@@ -15,11 +15,11 @@ final class MigrationException extends Exception
 
     public static function hashMismatch(): self
     {
-        return new self('Migration hash mismatch.');
+        return new self('Migration file has been tampered with.');
     }
 
     public static function missingMigration(): self
     {
-        return new self('Migration not found.');
+        return new self('Migration file is missing.');
     }
 }
