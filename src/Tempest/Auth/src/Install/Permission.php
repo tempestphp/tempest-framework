@@ -15,8 +15,7 @@ final class Permission implements DatabaseModel
 
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 
     public function matches(string|UnitEnum|self $match): bool
     {

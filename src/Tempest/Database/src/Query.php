@@ -11,8 +11,7 @@ final class Query
     public function __construct(
         public string $sql,
         public array $bindings = [],
-    ) {
-    }
+    ) {}
 
     public function execute(mixed ...$bindings): Id
     {

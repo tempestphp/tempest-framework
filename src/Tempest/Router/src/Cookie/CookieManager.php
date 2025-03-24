@@ -14,8 +14,7 @@ final class CookieManager
 
     public function __construct(
         private Clock $clock,
-    ) {
-    }
+    ) {}
 
     /** @return  \Tempest\Router\Cookie\Cookie[] */
     public function all(): array

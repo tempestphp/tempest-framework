@@ -7,6 +7,7 @@ namespace Tests\Tempest\Fixtures\Controllers;
 use Tempest\Router\Get;
 use Tempest\Router\StaticPage;
 use Tempest\View\View;
+
 use function Tempest\view;
 
 final readonly class StaticPageController

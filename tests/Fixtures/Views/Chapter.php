@@ -8,6 +8,5 @@ final readonly class Chapter
 {
     public function __construct(
         public string $title,
-    ) {
-    }
+    ) {}
 }

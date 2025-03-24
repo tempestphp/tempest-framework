@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tempest\Mapper\Serializers;
 
 use DateTimeInterface;
@@ -12,8 +14,7 @@ final readonly class DateTimeSerializer implements Serializer
 {
     public function __construct(
         private string $format = DateTimeFormat::FORMAT,
-    ) {
-    }
+    ) {}
 
     public static function fromProperty(PropertyReflector $property): self
     {

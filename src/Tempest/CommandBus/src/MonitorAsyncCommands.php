@@ -21,8 +21,7 @@ final readonly class MonitorAsyncCommands
         private CommandRepository $repository,
         private ConsoleArgumentBag $argumentBag,
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'command:monitor', description: 'Monitors and executes pending async commands')]
     public function __invoke(): void

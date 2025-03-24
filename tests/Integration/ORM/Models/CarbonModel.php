@@ -16,6 +16,5 @@ final class CarbonModel implements DatabaseModel
 
     public function __construct(
         public Carbon $createdAt,
-    ) {
-    }
+    ) {}
 }

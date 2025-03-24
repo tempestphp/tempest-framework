@@ -13,8 +13,7 @@ final readonly class SetForeignKeyChecksStatement implements QueryStatement
 
     public function __construct(
         public bool $enable = true,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

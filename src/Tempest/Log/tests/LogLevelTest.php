@@ -24,13 +24,13 @@ final class LogLevelTest extends TestCase
     {
         return [
             [Level::Emergency, LogLevel::EMERGENCY],
-            [Level::Alert, LogLevel::ALERT],
-            [Level::Critical, LogLevel::CRITICAL],
-            [Level::Error, LogLevel::ERROR],
-            [Level::Warning, LogLevel::WARNING],
-            [Level::Notice, LogLevel::NOTICE],
-            [Level::Info, LogLevel::INFO],
-            [Level::Debug, LogLevel::DEBUG],
+            [Level::Alert,     LogLevel::ALERT],
+            [Level::Critical,  LogLevel::CRITICAL],
+            [Level::Error,     LogLevel::ERROR],
+            [Level::Warning,   LogLevel::WARNING],
+            [Level::Notice,    LogLevel::NOTICE],
+            [Level::Info,      LogLevel::INFO],
+            [Level::Debug,     LogLevel::DEBUG],
         ];
     }
 }

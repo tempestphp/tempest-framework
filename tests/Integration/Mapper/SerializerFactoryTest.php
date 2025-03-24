@@ -13,6 +13,7 @@ use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\DoubleStringSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
+
 use function Tempest\reflect;
 
 final class SerializerFactoryTest extends FrameworkIntegrationTestCase

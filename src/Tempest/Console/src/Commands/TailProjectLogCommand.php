@@ -20,8 +20,7 @@ final readonly class TailProjectLogCommand
         private LogConfig $logConfig,
         #[Tag('console')]
         private Highlighter $highlighter,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand('tail:project', description: 'Tails the project log')]
     public function __invoke(): void

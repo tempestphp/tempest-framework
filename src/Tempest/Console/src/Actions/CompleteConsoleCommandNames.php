@@ -11,8 +11,7 @@ final readonly class CompleteConsoleCommandNames
 {
     public function __construct(
         private ConsoleConfig $consoleConfig,
-    ) {
-    }
+    ) {}
 
     public function complete(ConsoleArgumentBag $argumentBag, int $_): array
     {

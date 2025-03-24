@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class MyCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('do')]
     public function __invoke(): void

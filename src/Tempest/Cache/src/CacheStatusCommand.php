@@ -17,8 +17,7 @@ final readonly class CacheStatusCommand
         private Console $console,
         private CacheConfig $cacheConfig,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
     public function __invoke(): void

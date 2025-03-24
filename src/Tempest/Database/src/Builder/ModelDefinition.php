@@ -20,8 +20,7 @@ final readonly class ModelDefinition
     public function __construct(
         /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */
         private string $modelClass,
-    ) {
-    }
+    ) {}
 
     /** @return \Tempest\Database\Builder\Relations\Relation[] */
     public function getRelations(string $relationName): array

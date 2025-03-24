@@ -14,6 +14,5 @@ final readonly class HasMany
         public string $inversePropertyName,
         public ?string $inverseClassName = null,
         public string $localPropertyName = 'id',
-    ) {
-    }
+    ) {}
 }

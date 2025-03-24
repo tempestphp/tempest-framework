@@ -22,8 +22,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
         private ViteConfig $viteConfig,
         private TagCompiler $tagCompiler,
         private Manifest $manifest,
-    ) {
-    }
+    ) {}
 
     public function resolveTags(array $entrypoints): array
     {

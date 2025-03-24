@@ -37,10 +37,10 @@ final class GenericRouteMatcherBench
 
     public function provideDynamicMatchingCases(): Generator
     {
-        yield 'Dynamic' => [ 'uri' => '/test/key/5/edit' ];
-        yield 'Non existing long' => [ 'uri' => '/test/key/5/nonexisting' ];
-        yield 'Non existing short' => [ 'uri' => '/404' ];
-        yield 'Static route' => [ 'uri' => '/test/5' ];
+        yield 'Dynamic' => ['uri' => '/test/key/5/edit'];
+        yield 'Non existing long' => ['uri' => '/test/key/5/nonexisting'];
+        yield 'Non existing short' => ['uri' => '/404'];
+        yield 'Static route' => ['uri' => '/test/5'];
     }
 
     private static function makeRouteConfig(): RouteConfig

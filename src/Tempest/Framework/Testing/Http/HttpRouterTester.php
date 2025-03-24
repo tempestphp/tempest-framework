@@ -20,8 +20,7 @@ final class HttpRouterTester
 {
     public function __construct(
         private Container $container,
-    ) {
-    }
+    ) {}
 
     public function get(string $uri, array $headers = []): TestResponseHelper
     {

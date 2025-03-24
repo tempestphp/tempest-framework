@@ -11,9 +11,7 @@ use Tempest\Database\UnsupportedDialect;
 
 final readonly class ShowTablesStatement implements QueryStatement
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function fetch(DatabaseDialect $dialect): array
     {

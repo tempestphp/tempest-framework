@@ -18,6 +18,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMagicGetter;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMyObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\ParentWithChildrenObject;
+
 use function Tempest\map;
 
 /**
@@ -73,7 +74,8 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
             'bool' => 'yes',
             'float' => '0.1',
             'int' => '1',
-        ])->to(ObjectWithBuiltInCasters::class);
+        ])
+            ->to(ObjectWithBuiltInCasters::class);
 
         $this->assertSame('2024-01-01 10:10:10', $object->dateTimeObject->format('Y-m-d H:i:s'));
         $this->assertSame('2024-01-01 10:10:10', $object->dateTimeImmutable->format('Y-m-d H:i:s'));
@@ -92,16 +94,19 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 
         map([
             'dateTimeImmutable' => '01/12/2024',
-        ])->to(ObjectWithBuiltInCasters::class);
+        ])
+            ->to(ObjectWithBuiltInCasters::class);
     }
 
     public function test_parent_child(): void
     {
         $parent = map(
             [
-            'name' => 'a',
-            'child' => ['name' => 'b']],
-        )->to(ParentObject::class);
+                'name' => 'a',
+                'child' => ['name' => 'b'],
+            ],
+        )
+            ->to(ParentObject::class);
 
         $this->assertSame('a', $parent->name);
         $this->assertSame('b', $parent->child->name);
@@ -113,9 +118,11 @@ final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
     {
         $parent = map(
             [
-            'name' => 'a',
-            'children' => [['name' => 'b'], ['name' => 'c']]],
-        )->to(ParentWithChildrenObject::class);
+                'name' => 'a',
+                'children' => [['name' => 'b'], ['name' => 'c']],
+            ],
+        )
+            ->to(ParentWithChildrenObject::class);
 
         $this->assertSame('a', $parent->name);
 

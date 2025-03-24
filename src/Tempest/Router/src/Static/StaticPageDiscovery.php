@@ -16,8 +16,7 @@ final class StaticPageDiscovery implements Discovery
 
     public function __construct(
         private readonly StaticPageConfig $staticPageConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

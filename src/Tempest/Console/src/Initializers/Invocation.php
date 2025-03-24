@@ -12,6 +12,5 @@ final class Invocation
     public function __construct(
         public ConsoleArgumentBag $argumentBag,
         public ?ConsoleCommand $consoleCommand = null,
-    ) {
-    }
+    ) {}
 }

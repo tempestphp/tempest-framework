@@ -14,6 +14,5 @@ final class UserPermission implements DatabaseModel
     public function __construct(
         public User $user,
         public Permission $permission,
-    ) {
-    }
+    ) {}
 }

@@ -12,8 +12,7 @@ final readonly class FinishDeferredTasks
     public function __construct(
         private DeferredTasks $deferredTasks,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {

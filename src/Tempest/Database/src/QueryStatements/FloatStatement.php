@@ -13,8 +13,7 @@ final readonly class FloatStatement implements QueryStatement
         private string $name,
         private bool $nullable = false,
         private ?float $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

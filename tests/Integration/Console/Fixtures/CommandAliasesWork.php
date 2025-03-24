@@ -13,8 +13,7 @@ final class CommandAliasesWork extends FrameworkIntegrationTestCase
 {
     public function test_aliases_work(): void
     {
-        $this
-            ->console
+        $this->console
             ->call('f:l')
             ->assertContains('list');
     }

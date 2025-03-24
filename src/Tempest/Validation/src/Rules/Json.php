@@ -13,8 +13,7 @@ final readonly class Json implements Rule
     public function __construct(
         private ?int $depth = null,
         private ?int $flags = null,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

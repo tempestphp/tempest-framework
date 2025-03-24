@@ -12,8 +12,7 @@ final class CommentElement implements Element
 
     public function __construct(
         private readonly string $content,
-    ) {
-    }
+    ) {}
 
     public function compile(): string
     {

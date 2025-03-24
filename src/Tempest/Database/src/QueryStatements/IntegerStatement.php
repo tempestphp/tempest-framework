@@ -14,8 +14,7 @@ final readonly class IntegerStatement implements QueryStatement
         private bool $unsigned = false,
         private bool $nullable = false,
         private ?int $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

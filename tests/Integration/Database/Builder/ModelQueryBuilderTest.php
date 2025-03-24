@@ -23,10 +23,10 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
-        (Book::new(title: 'B'))->save();
-        (Book::new(title: 'C'))->save();
-        (Book::new(title: 'D'))->save();
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
 
         $book = Book::query()->where('title = ?', 'B')->first();
 
@@ -41,10 +41,10 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
-        (Book::new(title: 'B'))->save();
-        (Book::new(title: 'C'))->save();
-        (Book::new(title: 'D'))->save();
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
 
         $book = Book::query()->orderBy('title DESC')->first();
 
@@ -59,10 +59,10 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
-        (Book::new(title: 'B'))->save();
-        (Book::new(title: 'C'))->save();
-        (Book::new(title: 'D'))->save();
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
 
         $books = Book::query()->limit(2)->all();
 
@@ -79,12 +79,15 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
-        (Book::new(title: 'B'))->save();
-        (Book::new(title: 'C'))->save();
-        (Book::new(title: 'D'))->save();
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
 
-        $books = Book::query()->limit(2)->offset(2)->all();
+        $books = Book::query()
+            ->limit(2)
+            ->offset(2)
+            ->all();
 
         $this->assertCount(2, $books);
         $this->assertSame('C', $books[0]->title);
@@ -99,10 +102,10 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
-        (Book::new(title: 'B'))->save();
-        (Book::new(title: 'C'))->save();
-        (Book::new(title: 'D'))->save();
+        Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
+        Book::new(title: 'C')->save();
+        Book::new(title: 'D')->save();
 
         $results = [];
         Book::query()->chunk(function (array $chunk) use (&$results): void {
@@ -125,7 +128,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        (Book::new(title: 'A'))->save();
+        Book::new(title: 'A')->save();
         $books = Book::query()->raw('LIMIT 1')->all();
 
         $this->assertCount(1, $books);

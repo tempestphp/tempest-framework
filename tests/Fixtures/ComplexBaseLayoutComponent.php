@@ -17,13 +17,13 @@ final readonly class ComplexBaseLayoutComponent implements ViewComponent
     public function compile(ViewComponentElement $element): string
     {
         return <<<HTML
-            <x-slot name="scripts" />
+        <x-slot name="scripts" />
 
-            <div class="base">
-                <x-slot />
-            </div>
+        <div class="base">
+            <x-slot />
+        </div>
 
-            <x-slot name="styles" />
-            HTML;
+        <x-slot name="styles" />
+        HTML;
     }
 }

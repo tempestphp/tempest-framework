@@ -26,6 +26,5 @@ final class ChildModel implements DatabaseModel
 
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

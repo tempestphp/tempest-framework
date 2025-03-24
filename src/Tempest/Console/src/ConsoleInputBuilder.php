@@ -13,8 +13,7 @@ final readonly class ConsoleInputBuilder
     public function __construct(
         private ConsoleCommand $command,
         private ConsoleArgumentBag $argumentBag,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<ConsoleInputArgument>

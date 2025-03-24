@@ -23,8 +23,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
         private Console $console,
         private ConsoleConfig $consoleConfig,
         private DiscoveryCache $discoveryCache,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {

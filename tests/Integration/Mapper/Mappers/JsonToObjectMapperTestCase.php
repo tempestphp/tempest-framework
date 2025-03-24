@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+
 use function Tempest\map;
 
 /**

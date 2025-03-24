@@ -37,8 +37,7 @@ final class ConsoleTester
 
     public function __construct(
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function call(string|Closure|array $command, string|array $arguments = []): self
     {

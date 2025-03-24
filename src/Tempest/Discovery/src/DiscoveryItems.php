@@ -15,8 +15,7 @@ final class DiscoveryItems implements IteratorAggregate, Countable
 {
     public function __construct(
         private array $items = [],
-    ) {
-    }
+    ) {}
 
     public function add(DiscoveryLocation $location, mixed $value): self
     {

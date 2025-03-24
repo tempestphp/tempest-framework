@@ -12,6 +12,5 @@ final readonly class ObjectWithStrictProperty
         #[Strict]
         public string $a,
         public string $b,
-    ) {
-    }
+    ) {}
 }

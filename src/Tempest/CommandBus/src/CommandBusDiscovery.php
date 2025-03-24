@@ -15,8 +15,7 @@ final class CommandBusDiscovery implements Discovery
 
     public function __construct(
         private readonly CommandBusConfig $commandBusConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

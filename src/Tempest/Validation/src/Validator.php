@@ -146,8 +146,7 @@ final readonly class Validator
             public function __construct(
                 private bool $isValid,
                 private string $message,
-            ) {
-            }
+            ) {}
 
             public function isValid(mixed $value): bool
             {

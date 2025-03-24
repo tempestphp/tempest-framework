@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Core\AppConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\path;
 
 /**

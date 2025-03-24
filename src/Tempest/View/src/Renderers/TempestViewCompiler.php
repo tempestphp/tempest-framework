@@ -41,8 +41,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string|View $view): string
     {

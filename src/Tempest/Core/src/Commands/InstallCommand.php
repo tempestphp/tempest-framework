@@ -22,8 +22,7 @@ final readonly class InstallCommand
         private InstallerConfig $installerConfig,
         private Console $console,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'install', description: 'Applies the specified installer', middleware: [ForceMiddleware::class])]
     public function __invoke(?string $installer = null): void

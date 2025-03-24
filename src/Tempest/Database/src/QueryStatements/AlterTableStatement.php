@@ -18,8 +18,7 @@ final class AlterTableStatement implements QueryStatement
         private readonly string $tableName,
         private array $statements = [],
         private array $createIndexStatements = [],
-    ) {
-    }
+    ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
     public static function forModel(string $modelClass): self

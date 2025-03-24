@@ -18,8 +18,7 @@ final readonly class CookieSessionIdResolver implements SessionIdResolver
         private CookieManager $cookies,
         private SessionConfig $sessionConfig,
         private Clock $clock,
-    ) {
-    }
+    ) {}
 
     public function resolve(): SessionId
     {

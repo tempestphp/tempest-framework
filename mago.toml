@@ -1,21 +1,22 @@
 php_version = "8.4.0"
 
 [source]
-paths = ["src"]
+paths = ["src", "tests"]
 includes = ["vendor"]
 excludes = [
   "./vendor/symfony/cache/Traits/ValueWrapper.php",
   "./vendor/composer",
-  "**/.cache"
+  "**/.cache",
+  "**/*.stub.php",
 ]
 
 [format]
 print_width = 180
 tab_width = 4
 use_tabs = false
-space_after_not_operator = true
+space_after_logical_not_unary_prefix_operator = true
 null_type_hint = "question"
-space_before_arrow_function_params = true
+space_before_arrow_function_parameter_list_parenthesis = true
 always_break_named_arguments_list = false
 preserve_breaking_member_access_chain = true
 preserve_breaking_argument_list = true
@@ -23,6 +24,7 @@ preserve_breaking_array_like = true
 preserve_breaking_parameter_list = true
 preserve_breaking_attribute_list = true
 preserve_breaking_conditional_expression = true
+empty_line_after_opening_tag = false
 
 [linter]
 default_plugins = true
@@ -60,9 +62,9 @@ ignore_arrow_function = true
 ignore_closure = true
 
 # https://github.com/carthage-software/mago/issues/146
-# [[linter.rules]]
-# name = "strictness/require-strict-types"
-# level = "off"
+[[linter.rules]]
+name = "strictness/require-strict-types"
+level = "off"
 
 [[linter.rules]]
 name = "strictness/require-parameter-type"

@@ -6,14 +6,13 @@ namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use Tempest\Mapper\MapTo;
 
-final class ObjectWithMapToCollisions
+final readonly class ObjectWithMapToCollisions
 {
     public function __construct(
         #[MapTo('name')]
-        public readonly string $first_name,
+        public string $first_name,
         #[MapTo('full_name')]
-        public readonly string $name,
-        public readonly string $last_name,
-    ) {
-    }
+        public string $name,
+        public string $last_name,
+    ) {}
 }

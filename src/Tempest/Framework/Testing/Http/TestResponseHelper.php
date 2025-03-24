@@ -22,8 +22,7 @@ final class TestResponseHelper
 {
     public function __construct(
         private(set) Response $response,
-    ) {
-    }
+    ) {}
 
     public Status $status {
         get => $this->response->status;

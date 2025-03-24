@@ -11,8 +11,9 @@ use Tempest\Router\Responses\Ok;
 final readonly class ControllerWithEnumBinding
 {
     #[Get('/with-enum/{input}')]
-    public function __invoke(EnumForController $input): Response
-    {
+    public function __invoke(
+        EnumForController $input, // @mago-expect best-practices/no-unused-parameter
+    ): Response {
         return new Ok();
     }
 }

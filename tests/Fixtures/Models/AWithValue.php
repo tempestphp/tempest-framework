@@ -14,8 +14,7 @@ final class AWithValue implements DatabaseModel
 
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

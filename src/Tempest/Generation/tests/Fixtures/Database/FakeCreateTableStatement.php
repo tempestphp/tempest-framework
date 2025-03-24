@@ -8,8 +8,7 @@ final readonly class FakeCreateTableStatement implements FakeQueryStatement
 {
     public function __construct(
         public string $tableName,
-    ) {
-    }
+    ) {}
 
     public function text(string $_text): self
     {

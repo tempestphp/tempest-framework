@@ -17,8 +17,7 @@ final readonly class DependencyInstaller
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     /**
      * Installs the specified JavaScript dependencies.

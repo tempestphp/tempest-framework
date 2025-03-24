@@ -14,9 +14,7 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
         return 'x-with-injection';
     }
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function compile(ViewComponentElement $element): string
     {

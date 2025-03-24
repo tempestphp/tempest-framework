@@ -14,8 +14,7 @@ final class GenericCommandBus implements CommandBus
     public function __construct(
         private readonly Container $container,
         private readonly CommandBusConfig $commandBusConfig,
-    ) {
-    }
+    ) {}
 
     public function dispatch(object $command): void
     {

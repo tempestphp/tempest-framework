@@ -12,8 +12,7 @@ final readonly class RenameColumnStatement implements QueryStatement
     public function __construct(
         private IdentityStatement $from,
         private IdentityStatement $to,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

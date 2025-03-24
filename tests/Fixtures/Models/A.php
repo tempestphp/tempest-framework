@@ -14,8 +14,7 @@ final class A implements DatabaseModel
 
     public function __construct(
         public B $b,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

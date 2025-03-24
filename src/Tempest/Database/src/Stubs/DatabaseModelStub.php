@@ -15,6 +15,5 @@ final class DatabaseModelStub implements DatabaseModel
     public function __construct(
         #[Length(min: 1, max: 120)]
         public string $title,
-    ) {
-    }
+    ) {}
 }

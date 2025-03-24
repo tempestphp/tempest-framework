@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Support;
 use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\Namespace\to_main_namespace;
 use function Tempest\Support\Namespace\to_namespace;

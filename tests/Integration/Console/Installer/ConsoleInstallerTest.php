@@ -37,7 +37,6 @@ final class ConsoleInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists('tempest')
-            ->assertCommandExecuted('composer up')
-        ;
+            ->assertCommandExecuted('composer up');
     }
 }

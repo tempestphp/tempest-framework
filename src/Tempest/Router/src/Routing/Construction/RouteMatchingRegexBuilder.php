@@ -17,8 +17,7 @@ final readonly class RouteMatchingRegexBuilder
 
     public function __construct(
         private RouteTreeNode $rootNode,
-    ) {
-    }
+    ) {}
 
     public function toRegex(): MatchingRegex
     {

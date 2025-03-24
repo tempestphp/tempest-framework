@@ -16,8 +16,7 @@ final class ConfirmRenderer
     public function __construct(
         private string $yes,
         private string $no,
-    ) {
-    }
+    ) {}
 
     public function render(
         Terminal $terminal,

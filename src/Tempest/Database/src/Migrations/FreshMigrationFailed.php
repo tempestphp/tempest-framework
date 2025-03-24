@@ -10,6 +10,5 @@ final readonly class FreshMigrationFailed
 {
     public function __construct(
         public Throwable $throwable,
-    ) {
-    }
+    ) {}
 }

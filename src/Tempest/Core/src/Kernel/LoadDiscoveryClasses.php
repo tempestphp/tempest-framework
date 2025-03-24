@@ -30,8 +30,7 @@ final class LoadDiscoveryClasses
         private readonly Kernel $kernel,
         private readonly Container $container,
         private readonly DiscoveryCache $discoveryCache,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {

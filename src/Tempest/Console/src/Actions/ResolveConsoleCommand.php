@@ -12,8 +12,7 @@ final readonly class ResolveConsoleCommand
 {
     public function __construct(
         private ConsoleConfig $consoleConfig,
-    ) {
-    }
+    ) {}
 
     public function __invoke(array|string $command): ConsoleCommand
     {

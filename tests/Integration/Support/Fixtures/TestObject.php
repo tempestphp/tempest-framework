@@ -8,6 +8,5 @@ final readonly class TestObject
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

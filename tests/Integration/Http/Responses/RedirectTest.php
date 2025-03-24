@@ -23,7 +23,7 @@ final class RedirectTest extends FrameworkIntegrationTestCase
 
     public function test_permanent(): void
     {
-        $response = (new Redirect('/to'))->permanent();
+        $response = new Redirect('/to')->permanent();
 
         $this->assertSame(Status::MOVED_PERMANENTLY, $response->status);
     }

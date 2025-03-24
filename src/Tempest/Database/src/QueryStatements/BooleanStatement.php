@@ -13,8 +13,7 @@ final readonly class BooleanStatement implements QueryStatement
         private string $name,
         private bool $nullable = false,
         private ?bool $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

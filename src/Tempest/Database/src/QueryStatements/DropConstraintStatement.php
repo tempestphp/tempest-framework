@@ -12,8 +12,7 @@ final readonly class DropConstraintStatement implements QueryStatement
     public function __construct(
         private string $localTable,
         private string $foreign,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

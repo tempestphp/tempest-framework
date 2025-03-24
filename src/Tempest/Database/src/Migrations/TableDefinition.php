@@ -9,6 +9,5 @@ final class TableDefinition
     public function __construct(
         public string $name,
         public string $type = 'table',
-    ) {
-    }
+    ) {}
 }

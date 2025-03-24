@@ -12,8 +12,7 @@ final class CallableEventHandler
     public function __construct(
         public null|string|object $event,
         public EventHandler|Closure $handler,
-    ) {
-    }
+    ) {}
 
     public function normalizeCallable(Container $container): Closure
     {

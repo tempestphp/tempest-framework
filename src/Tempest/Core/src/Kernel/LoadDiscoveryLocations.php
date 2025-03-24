@@ -17,8 +17,7 @@ final readonly class LoadDiscoveryLocations
     public function __construct(
         private Kernel $kernel,
         private Composer $composer,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {

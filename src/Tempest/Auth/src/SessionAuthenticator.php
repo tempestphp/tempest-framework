@@ -14,8 +14,7 @@ final readonly class SessionAuthenticator implements Authenticator
     public function __construct(
         private AuthConfig $authConfig,
         private Session $session,
-    ) {
-    }
+    ) {}
 
     public function login(CanAuthenticate $user): void
     {

@@ -11,6 +11,5 @@ final readonly class DependencyWithTaggedDependency
     public function __construct(
         #[Tag('web')]
         public TaggedDependency $dependency,
-    ) {
-    }
+    ) {}
 }

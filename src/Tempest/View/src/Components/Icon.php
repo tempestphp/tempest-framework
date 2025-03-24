@@ -23,8 +23,7 @@ final readonly class Icon implements ViewComponent
         private IconCache $iconCache,
         private IconConfig $iconConfig,
         private HttpClient $http,
-    ) {
-    }
+    ) {}
 
     public static function getName(): string
     {

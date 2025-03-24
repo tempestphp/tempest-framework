@@ -17,8 +17,7 @@ final readonly class WeeklyLogChannel implements LogChannel
         private bool $bubble = true,
         private ?int $filePermission = null,
         private bool $useLocking = false,
-    ) {
-    }
+    ) {}
 
     public function getHandlers(Level $level): array
     {

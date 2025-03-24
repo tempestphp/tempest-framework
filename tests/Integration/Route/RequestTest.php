@@ -16,6 +16,7 @@ use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\MemoryInputStream;
+
 use function Tempest\uri;
 
 /**
@@ -128,8 +129,8 @@ final class RequestTest extends FrameworkIntegrationTestCase
                     'chapters' => [],
                 ],
                 headers: [
-                    'referer' => ['/']
-                ]
+                    'referer' => ['/'],
+                ],
             )
             ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);
@@ -157,7 +158,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
                 ],
                 headers: [
                     'referer' => ['/'],
-                ]
+                ],
             )
             ->assertHasNoValidationsErrors()
             ->assertStatus(Status::FOUND);

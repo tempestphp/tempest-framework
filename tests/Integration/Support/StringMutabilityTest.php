@@ -30,17 +30,25 @@ final class StringMutabilityTest extends FrameworkIntegrationTestCase
 
     public function test_immutable_string(): void
     {
-        $this->assertAllMethods(ImmutableString::class, function (object $expected, object $actual, string $method): void {
-            $this->assertNotSame($expected, $actual, "Method `{$method}` is not immutable.");
-            $this->assertEquals('tempest', $expected->toString());
-        }, except: self::EXCLUDED_METHODS);
+        $this->assertAllMethods(
+            ImmutableString::class,
+            function (object $expected, object $actual, string $method): void {
+                $this->assertNotSame($expected, $actual, "Method `{$method}` is not immutable.");
+                $this->assertEquals('tempest', $expected->toString());
+            },
+            except: self::EXCLUDED_METHODS,
+        );
     }
 
     public function test_mutable_string(): void
     {
-        $this->assertAllMethods(MutableString::class, function (object $expected, object $actual, string $method): void {
-            $this->assertSame($expected, $actual, "Method `{$method}` is not mutable.");
-        }, except: self::EXCLUDED_METHODS);
+        $this->assertAllMethods(
+            MutableString::class,
+            function (object $expected, object $actual, string $method): void {
+                $this->assertSame($expected, $actual, "Method `{$method}` is not mutable.");
+            },
+            except: self::EXCLUDED_METHODS,
+        );
     }
 
     #[TestWith([MutableString::class, ImmutableString::class, 'toImmutableString'])]

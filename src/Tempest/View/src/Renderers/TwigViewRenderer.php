@@ -12,8 +12,7 @@ final readonly class TwigViewRenderer implements ViewRenderer
 {
     public function __construct(
         private Environment $twig,
-    ) {
-    }
+    ) {}
 
     public function render(View|string|null $view): string
     {

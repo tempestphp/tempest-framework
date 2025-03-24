@@ -72,7 +72,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 
         $this->assertNull($auth->currentUser());
 
-        $user = (new User('Brent', 'brendt@stitcher.io'))
+        $user = new User('Brent', 'brendt@stitcher.io')
             ->setPassword('password')
             ->save();
 

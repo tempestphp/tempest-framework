@@ -20,7 +20,7 @@ use Whoops\Run;
 
 interface Kernel
 {
-    public const string VERSION = '1.0.0-alpha.5';
+    public const string VERSION = '1.0.0-alpha.6';
 
     public string $root {
         get;

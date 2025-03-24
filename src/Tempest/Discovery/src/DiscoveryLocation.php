@@ -9,8 +9,7 @@ final readonly class DiscoveryLocation
     public function __construct(
         public string $namespace,
         public string $path,
-    ) {
-    }
+    ) {}
 
     public function isVendor(): bool
     {

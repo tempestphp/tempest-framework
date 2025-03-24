@@ -9,6 +9,7 @@ use Tempest\Router\Post;
 use Tempest\Router\Response;
 use Tempest\Router\Responses\Ok;
 use Tempest\View\View;
+
 use function Tempest\view;
 
 final readonly class FormController
@@ -20,7 +21,7 @@ final readonly class FormController
     }
 
     #[Post('/form/store')]
-    public function store(FormRequest $request): Response
+    public function store(FormRequest $_request): Response
     {
         return new Ok('Ok!');
     }

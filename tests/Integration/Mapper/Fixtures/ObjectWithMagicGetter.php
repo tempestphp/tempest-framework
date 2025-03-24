@@ -8,10 +8,10 @@ final class ObjectWithMagicGetter
 {
     public function __construct(
         public string $a,
-    ) {
-    }
+    ) {}
 
-    public function __get(string $name)
+    /** @mago-expect best-practices/no-unused-parameter */
+    public function __get(string $name): mixed
     {
         return 'magic';
     }

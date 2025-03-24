@@ -12,8 +12,7 @@ final readonly class Time implements Rule
 {
     public function __construct(
         private bool $twentyFourHour = false,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

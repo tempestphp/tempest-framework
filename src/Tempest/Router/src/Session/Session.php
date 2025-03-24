@@ -23,8 +23,7 @@ final class Session
         public DateTimeImmutable $createdAt,
         /** @var array<array-key, mixed> */
         public array $data = [],
-    ) {
-    }
+    ) {}
 
     public function set(string $key, mixed $value): void
     {

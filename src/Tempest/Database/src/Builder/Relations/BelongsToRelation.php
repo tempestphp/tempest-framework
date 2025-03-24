@@ -16,8 +16,7 @@ final readonly class BelongsToRelation implements Relation
         private ClassReflector $relationModelClass,
         private FieldName $localField,
         private FieldName $joinField,
-    ) {
-    }
+    ) {}
 
     public static function fromInference(PropertyReflector $property, string $alias): self
     {

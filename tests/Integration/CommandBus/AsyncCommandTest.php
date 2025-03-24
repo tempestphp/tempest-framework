@@ -11,6 +11,7 @@ use Tempest\Highlight\Themes\TerminalStyle;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\command;
 use function Tempest\Support\arr;
 

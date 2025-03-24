@@ -11,6 +11,5 @@ final readonly class MyFailingAsyncCommand
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

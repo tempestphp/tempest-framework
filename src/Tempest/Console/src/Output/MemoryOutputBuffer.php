@@ -10,9 +10,7 @@ final class MemoryOutputBuffer implements OutputBuffer
 {
     private array $buffer = [];
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function write(string $contents): void
     {
