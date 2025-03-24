@@ -3,10 +3,9 @@
 declare(strict_types=1);
 
 namespace Tempest\Support\Str {
-    use ArrayAccess;
     use Countable;
     use Stringable;
-    use Tempest\Support\Arr\ImmutableArray;
+    use Tempest\Support\Arr;
     use Tempest\Support\Language;
     use voku\helper\ASCII;
 
@@ -177,11 +176,11 @@ namespace Tempest\Support\Str {
     /**
      * Replaces consecutive instances of a given character with a single character.
      */
-    function deduplicate(Stringable|string $string, Stringable|string|ArrayAccess|array $characters = ' '): string
+    function deduplicate(Stringable|string $string, Stringable|string|iterable $characters = ' '): string
     {
         $string = (string) $string;
 
-        foreach (arr($characters) as $character) {
+        foreach (Arr\wrap($characters) as $character) {
             $string = preg_replace('/' . preg_quote($character, '/') . '+/u', $character, $string);
         }
 
@@ -231,7 +230,7 @@ namespace Tempest\Support\Str {
         $nearestPosition = mb_strlen($string); // Initialize with a large value
         $foundSearch = '';
 
-        foreach (arr($search) as $term) {
+        foreach (Arr\wrap($search) as $term) {
             $position = mb_strpos($string, $term);
 
             if ($position !== false && $position < $nearestPosition) {
@@ -262,7 +261,7 @@ namespace Tempest\Support\Str {
         $farthestPosition = -1;
         $foundSearch = null;
 
-        foreach (arr($search) as $term) {
+        foreach (Arr\wrap($search) as $term) {
             $position = mb_strrpos($string, $term);
 
             if ($position !== false && $position > $farthestPosition) {
@@ -292,7 +291,7 @@ namespace Tempest\Support\Str {
 
         $nearestPosition = mb_strlen($string);
 
-        foreach (arr($search) as $char) {
+        foreach (Arr\wrap($search) as $char) {
             $position = mb_strpos($string, $char);
 
             if ($position !== false && $position < $nearestPosition) {
@@ -321,7 +320,7 @@ namespace Tempest\Support\Str {
 
         $farthestPosition = -1;
 
-        foreach (arr($search) as $char) {
+        foreach (Arr\wrap($search) as $char) {
             $position = mb_strrpos($string, $char);
 
             if ($position !== false && $position > $farthestPosition) {
@@ -383,86 +382,102 @@ namespace Tempest\Support\Str {
     /**
      * Replaces the first occurrence of `$search` with `$replace`.
      */
-    function replace_first(Stringable|string $string, Stringable|string $search, Stringable|string $replace): string
+    function replace_first(Stringable|string $string, array|Stringable|string $search, Stringable|string $replace): string
     {
         $string = (string) $string;
         $search = normalize_string($search);
 
-        if ($search === '') {
-            return $string;
+        foreach (Arr\wrap($search) as $item) {
+            if ($search === '') {
+                continue;
+            }
+
+            $position = strpos($string, (string) $item);
+
+            if ($position === false) {
+                continue;
+            }
+
+            return substr_replace($string, $replace, $position, strlen($item));
         }
 
-        $position = strpos($string, (string) $search);
-
-        if ($position === false) {
-            return $string;
-        }
-
-        return substr_replace($string, $replace, $position, strlen($search));
+        return $string;
     }
 
     /**
      * Replaces the last occurrence of `$search` with `$replace`.
      */
-    function replace_last(Stringable|string $string, Stringable|string $search, Stringable|string $replace): string
+    function replace_last(Stringable|string $string, array|Stringable|string $search, Stringable|string $replace): string
     {
         $string = (string) $string;
         $search = normalize_string($search);
 
-        if ($search === '') {
-            return $string;
+        foreach (Arr\wrap($search) as $item) {
+            if ($item === '') {
+                continue;
+            }
+
+            $position = strrpos($string, (string) $item);
+
+            if ($position === false) {
+                continue;
+            }
+
+            return substr_replace($string, $replace, $position, strlen($item));
         }
 
-        $position = strrpos($string, (string) $search);
-
-        if ($position === false) {
-            return $string;
-        }
-
-        return substr_replace($string, $replace, $position, strlen($search));
+        return $string;
     }
 
     /**
      * Replaces `$search` with `$replace` if `$search` is at the end of the string.
      */
-    function replace_end(Stringable|string $string, Stringable|string $search, Stringable|string $replace): string
+    function replace_end(Stringable|string $string, array|Stringable|string $search, Stringable|string $replace): string
     {
         $string = (string) $string;
         $search = normalize_string($search);
 
-        if ($search === '') {
-            return $string;
+        foreach (Arr\wrap($search) as $item) {
+            if ($search === '') {
+                continue;
+            }
+
+            if (! ends_with($string, $item)) {
+                continue;
+            }
+
+            return replace_last($string, $item, $replace);
         }
 
-        if (! ends_with($string, $search)) {
-            return $string;
-        }
-
-        return replace_last($string, $search, $replace);
+        return $string;
     }
 
     /**
      * Replaces `$search` with `$replace` if `$search` is at the start of the string.
      */
-    function replace_start(Stringable|string $string, Stringable|string $search, Stringable|string $replace): string
+    function replace_start(Stringable|string $string, array|Stringable|string $search, Stringable|string $replace): string
     {
         $string = (string) $string;
 
-        if ($search === '') {
-            return $string;
+        foreach (Arr\wrap($search) as $item) {
+            if ($search === '') {
+                continue;
+            }
+
+            if (! starts_with($string, $item)) {
+                continue;
+            }
+
+            return replace_first($string, $item, $replace);
         }
 
-        if (! starts_with($string, $search)) {
-            return $string;
-        }
-
-        return replace_first($string, $search, $replace);
+        return $string;
     }
 
     /**
      * Strips the specified `$prefix` from the start of the string.
      */
-    function strip_start(Stringable|string $string, Stringable|string $prefix): string
+    function strip_start(Stringable|string $string, array|Stringable|string $prefix): string
     {
         return replace_start($string, $prefix, '');
     }
@@ -470,7 +485,7 @@ namespace Tempest\Support\Str {
     /**
      * Strips the specified `$suffix` from the end of the string.
      */
-    function strip_end(Stringable|string $string, Stringable|string $suffix): string
+    function strip_end(Stringable|string $string, array|Stringable|string $suffix): string
     {
         return replace_end($string, $suffix, '');
     }
@@ -635,9 +650,15 @@ namespace Tempest\Support\Str {
     /**
      * Checks whether the given string contains the specified `$needle`.
      */
-    function contains(Stringable|string $string, string|Stringable $needle): bool
+    function contains(Stringable|string $string, Stringable|string|array $needle): bool
     {
-        return str_contains((string) $string, (string) $needle);
+        foreach (Arr\wrap($needle) as $item) {
+            if (str_contains((string) $string, (string) $item)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
