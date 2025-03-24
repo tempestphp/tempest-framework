@@ -19,7 +19,7 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        if (trim(shell_exec('which bun')) === '' || trim(shell_exec('which npm')) === '') {
+        if (! trim(shell_exec('which bun') ?? '') || ! trim(shell_exec('which npm') ?? '')) {
             $this->markTestSkipped('This test requires the `bun` and `npm` binaries to be available.');
         }
     }
