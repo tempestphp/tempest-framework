@@ -2,7 +2,88 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0-alpha.5](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.4..1.0.0-alpha.5)  —  2025-02-24
+## [1.0.0-alpha.6](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.5..1.0.0-alpha.6)  —  2025-03-24
+
+### 🚨 Breaking changes
+
+- **support**: [**breaking**] improve architecture of support utilities (#940) ([bb75e81](https://github.com/tempestphp/tempest-framework/commit/bb75e81b355054f942081a839b40d529b3cb659f))
+- **vite**: [**breaking**] automatically discover entrypoints (#1051) ([ebe3ef4](https://github.com/tempestphp/tempest-framework/commit/ebe3ef4eb43479eb03bf4f189def72e2d711b539))
+
+### 🚀 Features
+
+- **console**: add `make:command` command (#1048) ([13bc731](https://github.com/tempestphp/tempest-framework/commit/13bc73157d97949a882d1e7e4bd885d727f7840f))
+- **console**: add `make:discovery` command (#1057) ([2bd5814](https://github.com/tempestphp/tempest-framework/commit/2bd5814d83dad8751012523f5e19daa315c0d6f5))
+- **console**: add `make:generator-command` command (#1056) ([6992b70](https://github.com/tempestphp/tempest-framework/commit/6992b70cf9264a5c2bb349645ab7e3683063a5c6))
+- **core**: add kernel interface (#924) ([2a2c454](https://github.com/tempestphp/tempest-framework/commit/2a2c4548e622705db24786c89f06f7887d1ec38f))
+- **database**: refactor DatabaseConfig interface (#902) ([3d3a094](https://github.com/tempestphp/tempest-framework/commit/3d3a094bd4cb3456f7e41bdd7b5a4b1b059b134e))
+- **database**: add a `Virtual` attribute to exclude model properties from query builder (#966) ([b6252dc](https://github.com/tempestphp/tempest-framework/commit/b6252dcf5dd03211482c9ac16e97ec9adefabd25))
+- **database**: add a `findBy` method to models (#965) ([8d479bc](https://github.com/tempestphp/tempest-framework/commit/8d479bcba49d5f923a46100baf01fdead5a67192))
+- **http**: empty request values are converted to null (#976) ([dc5323b](https://github.com/tempestphp/tempest-framework/commit/dc5323bae9633c7a34f7214ace13654fadf7e2f6))
+- **http**: fix http header casing on retrieval (#1024) ([be2fb43](https://github.com/tempestphp/tempest-framework/commit/be2fb4332bb13145808f8f15889f3eaf125b8e2b))
+- **mapper**: add two-way casters (#920) ([0748aa9](https://github.com/tempestphp/tempest-framework/commit/0748aa985764e37521226a3aa295e2851ccba296))
+- **mapper**: add `MapFrom` and `MapTo` attributes (#929) ([b9a89de](https://github.com/tempestphp/tempest-framework/commit/b9a89decf4c99cf812b78b118c27585fa9dd77dd))
+- **mapper**: `ObjectToArrayMapper` use `Caster::serialize` to serialize the property value (#947) ([269bfcb](https://github.com/tempestphp/tempest-framework/commit/269bfcb56715e1d446a5bfbdf871afb50bad2889))
+- **mapper**: map()->with()->to() (#951) ([e6f04ee](https://github.com/tempestphp/tempest-framework/commit/e6f04eeab25d55fe7d0a9f4bcafaa308c87c6462))
+- **mapper**: allow multiple fields in `#[MapFrom]` (#944) ([381c58d](https://github.com/tempestphp/tempest-framework/commit/381c58db657c65c7d974ea93c69492e8dd9c6b1e))
+- **support**: add enums support (#878) ([964d55a](https://github.com/tempestphp/tempest-framework/commit/964d55ae92256119151a4639d032a44a086d68b7))
+- **support**: add `basename` to string utils (#1039) ([1d4f563](https://github.com/tempestphp/tempest-framework/commit/1d4f56318c5b817f47fe0323cacc83af50ce6ac2))
+- **support**: add `slug`, `ascii` and `isAscii` to string utils (#1040) ([3eb8b35](https://github.com/tempestphp/tempest-framework/commit/3eb8b352277f1b635e8d1905534e1403156e5de7))
+- **support**: add `words` and `sentence` methods to string utils (#1042) ([b2dfd32](https://github.com/tempestphp/tempest-framework/commit/b2dfd324970ff18d78924ee7bfc92b5c859f9b95))
+- **support**: add `groupBy` to array utils (#1047) ([d696826](https://github.com/tempestphp/tempest-framework/commit/d6968267f9df10b4c8d7e4527831824097e85100))
+- **support**: add `mapFirstTo` and `mapLastTo` to array utils (#1038) ([b188609](https://github.com/tempestphp/tempest-framework/commit/b18860990d0e0c6a92ea8c086ecb6b9dc146b115))
+- **validation**: allow `Stringable` objects in `IsString` rule (#1029) ([bd22988](https://github.com/tempestphp/tempest-framework/commit/bd22988d827a68d2511e64c8ed3ebbffe85c97ba))
+- **view**: support dynamic `$slots` and `x-template` (#911) ([1ba1629](https://github.com/tempestphp/tempest-framework/commit/1ba1629d946878e71cb1b836e480085f9ac7d78e))
+- **view**: more lenient DOM parsing (#941) ([0fe0df9](https://github.com/tempestphp/tempest-framework/commit/0fe0df917a251294682c3a094929c6ee05f91350))
+- **view**: remove empty slots in production (#950) ([64b1ff0](https://github.com/tempestphp/tempest-framework/commit/64b1ff0967675d8504287ea079edb7448733f93f))
+- **view**: support relative view paths (#953) ([2479148](https://github.com/tempestphp/tempest-framework/commit/247914842791e5e43bb8b56acf318621fde15377))
+- **view**: access view component attributes (#1008) ([6c7dfae](https://github.com/tempestphp/tempest-framework/commit/6c7dfae87d3d47f69551f884a5b2eb44da159df7))
+- **view**: add view processors (#1011) ([573d557](https://github.com/tempestphp/tempest-framework/commit/573d5575e617415f4b84567cd905465fbd258033))
+- **view**: view components by file name (#1013) ([12b5503](https://github.com/tempestphp/tempest-framework/commit/12b5503e23cafb9f700d2a2d8f0694a3ccdedbce))
+- **view**: fallthrough attributes (#1014) ([e1ce286](https://github.com/tempestphp/tempest-framework/commit/e1ce286dc0b0cc98711f92045f2ab17e0b032e3b))
+- **view**: add icon component (#1009) ([46570eb](https://github.com/tempestphp/tempest-framework/commit/46570eb92081f949b9e25eadf7dde38172b9e286))
+- **view**: support merging class attributes (#1020) ([80ff7be](https://github.com/tempestphp/tempest-framework/commit/80ff7be9f50de26b298734d265475cd608f7ca93))
+- **view**: cache Blade and Twig templates in internal storage (#1061) ([1e33722](https://github.com/tempestphp/tempest-framework/commit/1e33722b776b3fbe023fe93b734b08cd8fe3cd2f))
+- **vite**: add Tailwind CSS option to the installer (#926) ([cfe1564](https://github.com/tempestphp/tempest-framework/commit/cfe1564adc574c20b8f7bf2a06490f20910b5b2d))
+- **vite**: add `<x-vite-tags />` component (#945) ([888f5b1](https://github.com/tempestphp/tempest-framework/commit/888f5b1465386299cb29635729c7edffa590d49e))
+
+### 🐛 Bug fixes
+
+- **database**: make `AlterTableStatement` produce valid SQL (#979) ([fd63ec0](https://github.com/tempestphp/tempest-framework/commit/fd63ec0c50a19977ab659c43b590650d5cfa162e))
+- **discovery**: pass real paths to discovery classes (#1053) ([97bfbf2](https://github.com/tempestphp/tempest-framework/commit/97bfbf20e3d3b6639dad4156c1b6de58ed26ee40))
+- **linter**: exclude cache directories (#1046) ([0b27762](https://github.com/tempestphp/tempest-framework/commit/0b277626f0649c3785096c9ab6256cfb157cb2ee))
+- **mapper**: nullable datetime caster (#974) ([118eeb5](https://github.com/tempestphp/tempest-framework/commit/118eeb5dc678457e629c9feb65a8c18ae39b11c1))
+- **mapper**: validate before mapping (#980) ([0688c97](https://github.com/tempestphp/tempest-framework/commit/0688c97fd0b26823983d97b5dd1e810fe66cea58))
+- **router**: content-type json support when mapping psr request to tempest request (#956) ([16345b6](https://github.com/tempestphp/tempest-framework/commit/16345b637aa1bbb9f695c970503ce026725a4e75))
+- **router**: use correct input stream (#1005) ([768c6fb](https://github.com/tempestphp/tempest-framework/commit/768c6fbf640a33c02a7347227d8f0b87df8470f6))
+- **validation**: prevent type errors in rules using `preg_match` (#1043) ([4a00657](https://github.com/tempestphp/tempest-framework/commit/4a006575299b67125fa0da7c02944e3f18cd0a61))
+- **view**: render doctype and html tags properly (#910) ([dff3884](https://github.com/tempestphp/tempest-framework/commit/dff38842dd55295015902cb500354a6e7f66696a))
+- **view**: fix for compiling HTML documents that contain PHP (#922) ([f93fb3d](https://github.com/tempestphp/tempest-framework/commit/f93fb3dc30b04e7d4beb39b18a376692065af26f))
+- **view**: comment out empty slots (#938) ([1b3433d](https://github.com/tempestphp/tempest-framework/commit/1b3433d839520166025c2207a98170d5c3263515))
+- **view**: hardcoded boolean attributes shouldn't be parsed (#952) ([dff166b](https://github.com/tempestphp/tempest-framework/commit/dff166bc2fe2f10ec165dc3559eeef655d38bc2f))
+- **view**: regex timeout (#1015) ([2e24641](https://github.com/tempestphp/tempest-framework/commit/2e24641617521e13bb663e196bb79256e7c8aeb1))
+- **view**: support `<x-component>` in auto-registered components (#1018) ([371d9ea](https://github.com/tempestphp/tempest-framework/commit/371d9eaa6289ddfa113e908b039ad93d72cbf41f))
+- **view**: don't allow php expressions in attributes (#1019) ([6931350](https://github.com/tempestphp/tempest-framework/commit/6931350facad78a3f252f8013b94163b8c027866))
+- **view**: do not duplicate `<br />` tag (#995) ([2279402](https://github.com/tempestphp/tempest-framework/commit/2279402615c0f924214e4f4ac7163e24c32dddf7))
+- **view**: prevent compiling parent elements of minified void tags (#1055) ([0b25975](https://github.com/tempestphp/tempest-framework/commit/0b2597511b02a5804a30bc5bb10a231a92f4fb72))
+- **vite**: generate absolute asset urls (#1023) ([3551008](https://github.com/tempestphp/tempest-framework/commit/3551008aeff803f29b915fb95a1683a7a2205197))
+- **vite**: don't discover template entrypoints (#1052) ([3d7cbbd](https://github.com/tempestphp/tempest-framework/commit/3d7cbbd67fdfd760b95a150dfaa640557e71a4cf))
+
+### 🚜 Refactor
+
+- **core**: remove unnecessary set hook from Kernel interface (#959) ([5949729](https://github.com/tempestphp/tempest-framework/commit/5949729119f7f1ef11ebfeefc62e9f5e9103ba1f))
+- **core**: cleanup internal path helper (#960) ([92321b3](https://github.com/tempestphp/tempest-framework/commit/92321b3f145f9207ed8593b7067dc3f7483e02f5))
+- **framework**: centralize internal caches (#948) ([d80bfa9](https://github.com/tempestphp/tempest-framework/commit/d80bfa9c7c263f0ddb85ab341b43be74eb4c8921))
+- **mapper**: mapper improvements (#992) ([7cf0517](https://github.com/tempestphp/tempest-framework/commit/7cf0517dac4a47afd1233391df77af7a688a89ce))
+- **mapper**: split caster and serializer into two (#1041) ([798d0f4](https://github.com/tempestphp/tempest-framework/commit/798d0f4ec1715eb6bc88afc6fb39a73be7721482))
+- **router**: make request mapping consistent (#997) ([cb9dfc7](https://github.com/tempestphp/tempest-framework/commit/cb9dfc71495a77ea2b1342600f9a5b0d7a2563df))
+- **support**: remove duplicate code (#912) ([3f8a330](https://github.com/tempestphp/tempest-framework/commit/3f8a3307d42d4e3195629ddf60d1a8fb3b4e6ed1))
+- **support**: minor code cleanup (#961) ([749e97d](https://github.com/tempestphp/tempest-framework/commit/749e97dce46ae351ac56f71a5be17ff77a958c9e))
+- **support**: rename `map` to `map_array` (#1045) ([51dc620](https://github.com/tempestphp/tempest-framework/commit/51dc620dd0e9bd617ae3e4a8aaeca6367136094e))
+- **view**: use `is_self_closing_tag` where relevant (#1035) ([4d534fe](https://github.com/tempestphp/tempest-framework/commit/4d534fefdb6ebef8b8dfa8f20a3af315ebed5243))
+- **view**: is_void_tag (#1037) ([f5e38d0](https://github.com/tempestphp/tempest-framework/commit/f5e38d062aa18a0df77874bec914c13b44dfb33e))
+
+
+## [1.0.0-alpha.5](https://github.com/tempestphp/tempest-framework/compare/v1.0.0-alpha.4..v1.0.0-alpha.5)  —  2025-02-24
 
 ### 🚀 Features
 

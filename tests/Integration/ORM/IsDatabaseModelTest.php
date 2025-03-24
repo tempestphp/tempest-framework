@@ -33,16 +33,9 @@ use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
-use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
-use Tests\Tempest\Integration\ORM\Models\CarbonModel;
-use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
-use Tests\Tempest\Integration\ORM\Models\CasterEnum;
-use Tests\Tempest\Integration\ORM\Models\CasterModel;
-use Tests\Tempest\Integration\ORM\Models\ChildModel;
-use Tests\Tempest\Integration\ORM\Models\ParentModel;
-use Tests\Tempest\Integration\ORM\Models\ThroughModel;
-
-use function Tempest\map;
+use Tests\Tempest\Integration\ORM\Models\AttributeTableNameModel;
+use Tests\Tempest\Integration\ORM\Models\BaseModel;
+use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
 
 /**
  * @internal
@@ -529,5 +522,12 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $invalid = C::find(name: 'three')->all();
 
         $this->assertCount(0, $invalid);
+    }
+
+    public function test_table_name_overrides(): void
+    {
+        $this->assertEquals('base_models', BaseModel::table()->tableName);
+        $this->assertEquals('custom_attribute_table_name', AttributeTableNameModel::table()->tableName);
+        $this->assertEquals('custom_static_method_table_name', StaticMethodTableNameModel::table()->tableName);
     }
 }
