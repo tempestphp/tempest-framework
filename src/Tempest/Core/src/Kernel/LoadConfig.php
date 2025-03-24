@@ -17,8 +17,7 @@ final readonly class LoadConfig
     public function __construct(
         private Kernel $kernel,
         private ConfigCache $cache,
-    ) {
-    }
+    ) {}
 
     public function __invoke(): void
     {

@@ -8,6 +8,7 @@ use Tempest\Cache\CacheConfig;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\path;
 
 /**

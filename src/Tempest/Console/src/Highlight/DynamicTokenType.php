@@ -13,8 +13,7 @@ final readonly class DynamicTokenType implements TokenType
 {
     public function __construct(
         private string $style,
-    ) {
-    }
+    ) {}
 
     public function getBeforeStyle(): TerminalStyle
     {

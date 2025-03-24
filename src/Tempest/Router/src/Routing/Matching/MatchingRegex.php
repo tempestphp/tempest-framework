@@ -14,8 +14,7 @@ final readonly class MatchingRegex
      */
     public function __construct(
         public array $patterns,
-    ) {
-    }
+    ) {}
 
     public function match(string $uri): ?RouteMatch
     {

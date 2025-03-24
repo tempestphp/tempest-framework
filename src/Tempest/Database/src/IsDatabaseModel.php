@@ -63,7 +63,8 @@ trait IsDatabaseModel
             ?->name;
 
         $conventionalName = get(DatabaseConfig::class)
-            ->namingStrategy->getName(self::class);
+            ->namingStrategy
+            ->getName(self::class);
 
         return new TableName($specificName ?? $conventionalName);
     }

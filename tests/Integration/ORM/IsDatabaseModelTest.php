@@ -6,45 +6,46 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use Tempest\Database\Exceptions\MissingRelation;
+use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
-use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
-use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
-use function Tempest\map;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
-use Tests\Tempest\Fixtures\Models\B;
-use Tests\Tempest\Fixtures\Models\C;
-use Tests\Tempest\Fixtures\Models\AWithLazy;
-use Tempest\Database\Exceptions\MissingValue;
 use Tests\Tempest\Fixtures\Models\AWithEager;
+use Tests\Tempest\Fixtures\Models\AWithLazy;
 use Tests\Tempest\Fixtures\Models\AWithValue;
 use Tests\Tempest\Fixtures\Models\AWithVirtual;
-use Tempest\Database\Exceptions\MissingRelation;
-use Tests\Tempest\Integration\ORM\Models\CasterEnum;
-use Tests\Tempest\Integration\ORM\Models\ChildModel;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Integration\ORM\Models\CarbonModel;
-use Tests\Tempest\Integration\ORM\Models\CasterModel;
-use Tests\Tempest\Integration\ORM\Models\ParentModel;
-use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
-use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+use Tests\Tempest\Fixtures\Models\B;
+use Tests\Tempest\Fixtures\Models\C;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateATable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateBTable;
-use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
-use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCarbonModelTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateCasterModelTable;
+use Tests\Tempest\Integration\ORM\Migrations\CreateCTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyChildTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyParentTable;
 use Tests\Tempest\Integration\ORM\Migrations\CreateHasManyThroughTable;
 use Tests\Tempest\Integration\ORM\Models\AttributeTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\BaseModel;
+use Tests\Tempest\Integration\ORM\Models\CarbonCaster;
+use Tests\Tempest\Integration\ORM\Models\CarbonModel;
+use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
+use Tests\Tempest\Integration\ORM\Models\CasterEnum;
+use Tests\Tempest\Integration\ORM\Models\CasterModel;
+use Tests\Tempest\Integration\ORM\Models\ChildModel;
+use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
+use Tests\Tempest\Integration\ORM\Models\ThroughModel;
+
+use function Tempest\map;
 
 /**
  * @internal
@@ -167,11 +168,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new A(
+        new A(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = A::query()->first();
 
@@ -198,11 +199,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new A(
+        new A(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = A::query()->with('b.c')->first();
         $this->assertSame('test', $a->b->c->name);
@@ -220,11 +221,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new A(
+        new A(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = A::query()->first();
         $this->assertFalse(isset($a->b));
@@ -242,10 +243,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        $author = (new Author(
+        $author = new Author(
             name: 'Author Name',
             type: AuthorType::B,
-        ))->save();
+        )->save();
 
         Book::new(
             title: 'Book Title',
@@ -272,13 +273,13 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateHasManyThroughTable::class,
         );
 
-        $parent = (new ParentModel(name: 'parent'))->save();
+        $parent = new ParentModel(name: 'parent')->save();
 
-        $childA = (new ChildModel(name: 'A'))->save();
-        $childB = (new ChildModel(name: 'B'))->save();
+        $childA = new ChildModel(name: 'A')->save();
+        $childB = new ChildModel(name: 'B')->save();
 
-        (new ThroughModel(parent: $parent, child: $childA))->save();
-        (new ThroughModel(parent: $parent, child: $childB))->save();
+        new ThroughModel(parent: $parent, child: $childA)->save();
+        new ThroughModel(parent: $parent, child: $childB)->save();
 
         $parent = ParentModel::get($parent->id, ['through.child']);
 
@@ -295,7 +296,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateHasManyThroughTable::class,
         );
 
-        $parent = (new ParentModel(name: 'parent'))->save();
+        $parent = new ParentModel(name: 'parent')->save();
 
         $parent = ParentModel::get($parent->id, ['through.child']);
 
@@ -312,13 +313,13 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateHasManyThroughTable::class,
         );
 
-        $parent = (new ParentModel(name: 'parent'))->save();
+        $parent = new ParentModel(name: 'parent')->save();
 
-        $childA = (new ChildModel(name: 'A'))->save();
+        $childA = new ChildModel(name: 'A')->save();
 
-        $childB = (new ChildModel(name: 'B'))->save();
+        $childB = new ChildModel(name: 'B')->save();
 
-        (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
+        new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
 
         $child = ChildModel::get($childA->id, ['through.parent']);
         $child2 = ChildModel::get($childB->id, ['through2.parent']);
@@ -336,13 +337,13 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateHasManyThroughTable::class,
         );
 
-        $parent = (new ParentModel(name: 'parent'))->save();
+        $parent = new ParentModel(name: 'parent')->save();
 
-        $childA = (new ChildModel(name: 'A'))->save();
+        $childA = new ChildModel(name: 'A')->save();
 
-        $childB = (new ChildModel(name: 'B'))->save();
+        $childB = new ChildModel(name: 'B')->save();
 
-        (new ThroughModel(parent: $parent, child: $childA, child2: $childB))->save();
+        new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
 
         $child = ChildModel::get($childA->id, ['through.parent']);
         $child2 = ChildModel::get($childB->id, ['through2.parent']);
@@ -360,11 +361,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new AWithLazy(
+        new AWithLazy(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = AWithLazy::query()->first();
 
@@ -385,11 +386,11 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new AWithLazy(
+        new AWithLazy(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = AWithEager::query()->first();
         $this->assertTrue(isset($a->b->c));
@@ -416,15 +417,15 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new A(
+        new A(
             b: new B(
                 c: new C(name: 'test'),
             ),
-        ))->save();
+        )->save();
 
         $a = AWithVirtual::query()->first();
 
-        $this->assertSame($a->id->id * -1, $a->fake);
+        $this->assertSame(-$a->id->id, $a->fake);
     }
 
     public function test_update_or_create(): void
@@ -519,8 +520,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        (new C(name: 'one'))->save();
-        (new C(name: 'two'))->save();
+        new C(name: 'one')->save();
+        new C(name: 'two')->save();
 
         /** @var C[] */
         $valid = C::find(name: 'one')->all();

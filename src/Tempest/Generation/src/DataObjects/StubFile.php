@@ -18,8 +18,7 @@ final readonly class StubFile
     public function __construct(
         public string $filePath,
         public StubFileType $type,
-    ) {
-    }
+    ) {}
 
     /**
      * @param string|class-string $pathOrClass The path of the file or the class-string

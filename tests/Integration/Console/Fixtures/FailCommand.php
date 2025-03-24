@@ -11,13 +11,16 @@ use Tempest\Console\ConsoleCommand;
 final readonly class FailCommand
 {
     #[ConsoleCommand('fail')]
-    public function __invoke(string $input = 'default', #[ConsoleArgument(aliases: ['-v'])] bool $verbose = false): void
-    {
-        failingFunction($input);
+    public function __invoke(
+        string $input = 'default',
+        #[ConsoleArgument(aliases: ['-v'])]
+        bool $verbose = false, // @mago-expect best-practices/no-unused-parameter
+    ): void {
+        failing_function($input);
     }
 }
 
-function failingFunction(string $string): void
+function failing_function(string $string): void
 {
     throw new Exception("A message from the exception {$string}");
 }

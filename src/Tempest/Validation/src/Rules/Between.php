@@ -13,8 +13,7 @@ final readonly class Between implements Rule
     public function __construct(
         private int $min,
         private int $max,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

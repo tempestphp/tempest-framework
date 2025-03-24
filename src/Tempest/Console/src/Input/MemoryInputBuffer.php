@@ -15,9 +15,7 @@ final class MemoryInputBuffer implements InputBuffer
 
     private ?Fiber $fiber = null;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function add(int|string|Key ...$input): void
     {

@@ -35,7 +35,9 @@ final class InvalidRelation extends Exception
         string $actualType,
     ): self {
         return new self(
-            "Unable to determine inverse property for {$modelClass}::{$modelProperty}, " . "Related class {$relatedClass} expected to have property {$propertyName} of type {$expectedType}, " . "got {$actualType}.",
+            "Unable to determine inverse property for {$modelClass}::{$modelProperty}, " .
+                "Related class {$relatedClass} expected to have property {$propertyName} of type {$expectedType}, " .
+                "got {$actualType}.",
         );
     }
 

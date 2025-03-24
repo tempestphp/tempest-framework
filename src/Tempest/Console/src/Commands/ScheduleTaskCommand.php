@@ -17,8 +17,7 @@ final readonly class ScheduleTaskCommand
     public function __construct(
         private Container $container,
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: self::NAME,

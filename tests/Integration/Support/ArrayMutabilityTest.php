@@ -36,16 +36,24 @@ final class ArrayMutabilityTest extends TestCase
 
     public function test_immutable_array(): void
     {
-        $this->assertAllMethods(ImmutableArray::class, function (object $expected, object $actual, string $method): void {
-            $this->assertNotSame($expected, $actual, "Method `{$method}` is not immutable.");
-        }, except: self::EXCLUDED_METHODS);
+        $this->assertAllMethods(
+            ImmutableArray::class,
+            function (object $expected, object $actual, string $method): void {
+                $this->assertNotSame($expected, $actual, "Method `{$method}` is not immutable.");
+            },
+            except: self::EXCLUDED_METHODS,
+        );
     }
 
     public function test_mutable_array(): void
     {
-        $this->assertAllMethods(MutableArray::class, function (object $expected, object $actual, string $method): void {
-            $this->assertSame($expected, $actual, "Method `{$method}` is not mutable.");
-        }, except: self::EXCLUDED_METHODS);
+        $this->assertAllMethods(
+            MutableArray::class,
+            function (object $expected, object $actual, string $method): void {
+                $this->assertSame($expected, $actual, "Method `{$method}` is not mutable.");
+            },
+            except: self::EXCLUDED_METHODS,
+        );
     }
 
     #[TestWith([MutableArray::class, ImmutableArray::class, 'toImmutableArray'])]

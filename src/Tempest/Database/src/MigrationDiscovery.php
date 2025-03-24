@@ -18,8 +18,7 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
 
     public function __construct(
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

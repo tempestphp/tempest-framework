@@ -12,8 +12,7 @@ final readonly class TableName implements Stringable
     public function __construct(
         public string $tableName,
         public ?string $as = null,
-    ) {
-    }
+    ) {}
 
     public static function for(ClassReflector $reflector, ?string $as = null): self
     {

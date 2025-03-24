@@ -12,8 +12,7 @@ final class TestCursor implements Cursor
     public function __construct(
         private int $x = 1,
         private int $y = 1,
-    ) {
-    }
+    ) {}
 
     public function getPosition(): Point
     {

@@ -21,8 +21,7 @@ final class Composer
     public function __construct(
         private readonly string $root,
         private ShellExecutor $executor,
-    ) {
-    }
+    ) {}
 
     public function load(): self
     {

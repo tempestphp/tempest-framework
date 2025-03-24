@@ -11,6 +11,5 @@ final readonly class HasOne
 {
     public function __construct(
         public ?string $inversePropertyName = null,
-    ) {
-    }
+    ) {}
 }

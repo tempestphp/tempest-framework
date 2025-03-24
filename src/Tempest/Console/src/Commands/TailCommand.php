@@ -14,8 +14,7 @@ final readonly class TailCommand
         private TailDebugLogCommand $tailDebugLogCommand,
         private TailProjectLogCommand $tailProjectLogCommand,
         private TailServerLogCommand $tailServerLogCommand,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'tail',

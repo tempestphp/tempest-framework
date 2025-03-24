@@ -8,6 +8,5 @@ final class UnionTypesClass
 {
     public function __construct(
         public ContainerObjectC|ContainerObjectA $input,
-    ) {
-    }
+    ) {}
 }

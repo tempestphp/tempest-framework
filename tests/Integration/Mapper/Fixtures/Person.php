@@ -8,6 +8,5 @@ final readonly class Person
 {
     public function __construct(
         public Name $name,
-    ) {
-    }
+    ) {}
 }

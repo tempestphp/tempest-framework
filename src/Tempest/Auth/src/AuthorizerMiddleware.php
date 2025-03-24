@@ -18,8 +18,7 @@ final readonly class AuthorizerMiddleware implements HttpMiddleware
         private Authenticator $authenticator,
         private MatchedRoute $matchedRoute,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {

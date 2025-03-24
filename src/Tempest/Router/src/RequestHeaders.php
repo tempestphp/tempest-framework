@@ -27,8 +27,7 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
     /** @param array<string, string> $headers */
     private function __construct(
         private array $headers = [],
-    ) {
-    }
+    ) {}
 
     public function offsetExists(mixed $offset): bool
     {

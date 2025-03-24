@@ -10,7 +10,8 @@ final class ClassWithMethodParameterAttributes
 {
     public function example(
         // @mago-expect best-practices/no-unused-parameter
-        #[SampleParameterAttribute] string $parameter,
+        #[SampleParameterAttribute]
+        string $parameter,
     ): void {
     }
 }

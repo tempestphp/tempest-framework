@@ -11,6 +11,5 @@ final readonly class MarkedRoute
     public function __construct(
         public string $mark,
         public DiscoveredRoute $route,
-    ) {
-    }
+    ) {}
 }

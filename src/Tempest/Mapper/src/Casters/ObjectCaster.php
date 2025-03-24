@@ -14,8 +14,7 @@ final readonly class ObjectCaster implements Caster
 {
     public function __construct(
         private TypeReflector $type,
-    ) {
-    }
+    ) {}
 
     public function cast(mixed $input): mixed
     {

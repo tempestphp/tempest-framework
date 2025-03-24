@@ -15,9 +15,9 @@ final readonly class InteractiveCommand
 {
     use HasConsole;
 
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('interactive:enum')]
     public function enum(): void
@@ -62,7 +62,9 @@ final readonly class InteractiveCommand
         $result = $this->console->ask(
             'Pick one option',
             [
-                'a', 'b', 'c',
+                'a',
+                'b',
+                'c',
             ],
             default: 1,
             multiple: true,
@@ -79,7 +81,9 @@ final readonly class InteractiveCommand
         $result = $this->console->ask(
             'Pick one option',
             [
-                'a', 'b', 'c',
+                'a',
+                'b',
+                'c',
             ],
             multiple: true,
         );

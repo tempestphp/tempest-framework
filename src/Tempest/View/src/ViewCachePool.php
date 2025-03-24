@@ -18,8 +18,7 @@ final readonly class ViewCachePool implements CacheItemPoolInterface
 {
     public function __construct(
         public string $directory,
-    ) {
-    }
+    ) {}
 
     public function getItem(string $key): CacheItemInterface
     {

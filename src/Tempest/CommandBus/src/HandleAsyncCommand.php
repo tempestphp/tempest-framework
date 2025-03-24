@@ -22,8 +22,7 @@ final readonly class HandleAsyncCommand
         private Container $container,
         private Console $console,
         private CommandRepository $repository,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'command:handle', description: 'Manually executes a pending command')]
     public function __invoke(?string $uuid = null): ExitCode

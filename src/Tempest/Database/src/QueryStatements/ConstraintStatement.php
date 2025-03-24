@@ -13,8 +13,7 @@ final readonly class ConstraintStatement implements QueryStatement
     public function __construct(
         private ConstraintNameStatement $constraintName,
         private QueryStatement $statement,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

@@ -6,11 +6,10 @@ namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
 use Tempest\Mapper\MapTo;
 
-final class ObjectWithMapToAttribute
+final readonly class ObjectWithMapToAttribute
 {
     public function __construct(
         #[MapTo('name')]
-        public readonly string $fullName,
-    ) {
-    }
+        public string $fullName,
+    ) {}
 }

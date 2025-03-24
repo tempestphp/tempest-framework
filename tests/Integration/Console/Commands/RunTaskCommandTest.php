@@ -14,8 +14,7 @@ final class RunTaskCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_run_task(): void
     {
-        $this
-            ->console
+        $this->console
             ->call('schedule:task ' . ScheduledCommand::class . '::command')
             ->assertContains(ScheduledCommand::class . '::command')
             ->assertContains('Starting')
@@ -24,16 +23,14 @@ final class RunTaskCommandTest extends FrameworkIntegrationTestCase
 
     public function test_unknown_task(): void
     {
-        $this
-            ->console
+        $this->console
             ->call('schedule:task foo')
             ->assertContains('Invalid task');
     }
 
     public function test_invalid_task(): void
     {
-        $this
-            ->console
+        $this->console
             ->call('schedule:task ' . ScheduledCommand::class . '::unknown')
             ->assertContains(ScheduledCommand::class . '::unknown() does not exist');
     }

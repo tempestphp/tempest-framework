@@ -20,8 +20,7 @@ final readonly class TwigConfig
         public string $autoescape = 'html',
         public ?bool $autoReload = null,
         public int $optimizations = -1,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Core\AppConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\path;
 
 /**
@@ -20,7 +21,8 @@ final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 
         $this->console->call('static:generate');
 
-        $this->console->call('static:clean')
+        $this->console
+            ->call('static:clean')
             ->assertDoesNotContain('https://test.com/static/a/b')
             ->assertContains('/public/static/a/b/index.html')
             ->assertContains('/public/static/c/d/index.html');

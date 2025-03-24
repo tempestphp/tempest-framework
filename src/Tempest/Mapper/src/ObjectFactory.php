@@ -28,8 +28,7 @@ final class ObjectFactory
     public function __construct(
         private readonly MapperConfig $config,
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     /**
      * @template T of object

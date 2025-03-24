@@ -8,6 +8,5 @@ final class BuiltinArrayClass
 {
     public function __construct(
         public array $anArray,
-    ) {
-    }
+    ) {}
 }

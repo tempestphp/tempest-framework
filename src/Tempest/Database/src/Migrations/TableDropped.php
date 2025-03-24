@@ -8,6 +8,5 @@ final readonly class TableDropped
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

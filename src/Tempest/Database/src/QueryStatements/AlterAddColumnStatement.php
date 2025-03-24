@@ -11,8 +11,7 @@ final readonly class AlterAddColumnStatement implements QueryStatement
 {
     public function __construct(
         private QueryStatement $statement,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

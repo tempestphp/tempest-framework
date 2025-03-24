@@ -15,8 +15,7 @@ final class ViewProcessorDiscovery implements Discovery
 
     public function __construct(
         private readonly ViewConfig $viewConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

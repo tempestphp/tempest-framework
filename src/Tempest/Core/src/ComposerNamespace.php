@@ -9,6 +9,5 @@ final readonly class ComposerNamespace
     public function __construct(
         public string $namespace,
         public string $path,
-    ) {
-    }
+    ) {}
 }

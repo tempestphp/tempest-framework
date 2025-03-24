@@ -15,12 +15,14 @@ final class TerminalTest extends FrameworkIntegrationTestCase
 {
     public function test_supports_tty(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console): void {
-            $terminal = new Terminal($console);
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $terminal = new Terminal($console);
 
-            $terminal->disableTty();
+                $terminal->disableTty();
 
-            $this->assertFalse($terminal->supportsTty);
-        });
+                $this->assertFalse($terminal->supportsTty);
+            });
     }
 }

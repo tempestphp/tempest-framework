@@ -8,6 +8,5 @@ final class ContainerObjectD
 {
     public function __construct(
         public string $prop,
-    ) {
-    }
+    ) {}
 }

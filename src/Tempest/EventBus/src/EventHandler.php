@@ -16,8 +16,7 @@ final class EventHandler
 
     public function __construct(
         public null|string|object $event = null,
-    ) {
-    }
+    ) {}
 
     public function setEventName(string $eventName): self
     {

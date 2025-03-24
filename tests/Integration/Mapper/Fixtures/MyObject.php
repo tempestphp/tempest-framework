@@ -9,7 +9,7 @@ use Tempest\Mapper\CastWith;
 #[CastWith(MyObjectCaster::class)]
 final class MyObject
 {
-    public function __construct(public string $name)
-    {
-    }
+    public function __construct(
+        public string $name,
+    ) {}
 }

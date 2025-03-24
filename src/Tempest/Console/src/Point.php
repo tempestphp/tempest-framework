@@ -11,8 +11,7 @@ final class Point implements Stringable
     public function __construct(
         public int $x,
         public int $y,
-    ) {
-    }
+    ) {}
 
     public function equals(self $other): bool
     {

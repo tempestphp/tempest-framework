@@ -20,6 +20,6 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSee(ProjectCache::class)
             ->submit('0')
             ->submit('yes')
-           ->assertSeeCount('CLEARED', 1);
+            ->assertSeeCount('CLEARED', 1);
     }
 }

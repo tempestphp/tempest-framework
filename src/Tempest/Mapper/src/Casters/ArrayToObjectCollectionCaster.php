@@ -14,8 +14,7 @@ final readonly class ArrayToObjectCollectionCaster implements Caster
 {
     public function __construct(
         private PropertyReflector $property,
-    ) {
-    }
+    ) {}
 
     public function cast(mixed $input): mixed
     {

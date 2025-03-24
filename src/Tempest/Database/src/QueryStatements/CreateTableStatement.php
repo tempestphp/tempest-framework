@@ -21,8 +21,7 @@ final class CreateTableStatement implements QueryStatement
         private readonly string $tableName,
         private array $statements = [],
         private array $indexStatements = [],
-    ) {
-    }
+    ) {}
 
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
     public static function forModel(string $modelClass): self

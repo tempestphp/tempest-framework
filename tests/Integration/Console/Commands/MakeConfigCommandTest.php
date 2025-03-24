@@ -18,6 +18,7 @@ use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\TwigConfig;
 use Tempest\View\ViewConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\str;
 
 /**

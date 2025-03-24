@@ -16,7 +16,6 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class IconComponentTest extends FrameworkIntegrationTestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,13 +27,13 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     public function test_it_renders_an_icon(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
-            $mockHttpClient
-                ->expects($this->once())
-                ->method('get')
-                ->with('https://api.iconify.design/ph/eye.svg')
-                ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+        $mockHttpClient
+            ->expects($this->once())
+            ->method('get')
+            ->with('https://api.iconify.design/ph/eye.svg')
+            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg></svg>',
@@ -47,19 +46,19 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     public function test_it_downloads_the_icon_from_a_custom_api(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
-            $mockHttpClient
-                ->expects($this->exactly(1))
-                ->method('get')
-                ->with('https://api.iconify.test/ph/eye.svg')
-                ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.test/ph/eye.svg')
+            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
-        
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
         $this->container->singleton(
-            IconConfig::class, 
-            fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test')
+            IconConfig::class,
+            fn () => new IconConfig(iconifyApiUrl: 'https://api.iconify.test'),
         );
-       
+
         $this->assertSame(
             '<svg></svg>',
             $this->render(
@@ -71,13 +70,13 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     public function test_it_caches_icons_on_the_first_render(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
-            $mockHttpClient
-                ->expects($this->once())
-                ->method('get')
-                ->with('https://api.iconify.design/ph/eye.svg')
-                ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+        $mockHttpClient
+            ->expects($this->once())
+            ->method('get')
+            ->with('https://api.iconify.design/ph/eye.svg')
+            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->render('<x-icon name="ph:eye" />');
 
@@ -97,7 +96,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/ph/eye.svg')
             ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         // Trigger first render, which should cache the icon
         $this->render('<x-icon name="ph:eye" />');
@@ -117,9 +116,9 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/ph/eye.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
         $this->container->singleton(AppConfig::class, fn () => new AppConfig(environment: Environment::LOCAL));
-        
+
         $this->assertSame(
             '<!-- unknown-icon: ph:eye -->',
             $this->render('<x-icon name="ph:eye" />'),
@@ -135,7 +134,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/ph/eye.svg')
             ->willReturn(new GenericResponse(status: Status::NOT_FOUND, body: ''));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
         $this->container->singleton(AppConfig::class, fn () => new AppConfig(environment: Environment::PRODUCTION));
 
         $this->assertSame(
@@ -153,7 +152,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ->with('https://api.iconify.design/ph/eye.svg')
             ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
 
-        $this->container->register(HttpClient::class, fn() => $mockHttpClient);
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
 
         $this->assertSame(
             '<svg class="size-5"></svg>',

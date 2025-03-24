@@ -28,8 +28,7 @@ final class ConsoleConfig
             InvalidCommandMiddleware::class,
             HelpMiddleware::class,
         ],
-    ) {
-    }
+    ) {}
 
     public function addCommand(MethodReflector $handler, ConsoleCommand $consoleCommand): self
     {

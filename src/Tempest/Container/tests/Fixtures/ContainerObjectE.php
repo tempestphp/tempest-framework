@@ -8,6 +8,5 @@ final class ContainerObjectE
 {
     public function __construct(
         public string $id = 'default',
-    ) {
-    }
+    ) {}
 }

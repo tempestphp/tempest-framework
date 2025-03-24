@@ -8,6 +8,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyFailingAsyncCommand;
+
 use function Tempest\command;
 
 final readonly class DispatchAsyncCommand

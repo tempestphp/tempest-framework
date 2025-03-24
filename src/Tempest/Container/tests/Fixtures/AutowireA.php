@@ -8,6 +8,5 @@ final readonly class AutowireA
 {
     public function __construct(
         public AutowireB $b,
-    ) {
-    }
+    ) {}
 }

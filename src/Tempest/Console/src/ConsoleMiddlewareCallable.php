@@ -11,8 +11,7 @@ final readonly class ConsoleMiddlewareCallable
 {
     public function __construct(
         private Closure $closure,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Invocation $invocation): ExitCode|int
     {

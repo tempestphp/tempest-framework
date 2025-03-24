@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures;
 
 use Tempest\Core\Installer;
 use Tempest\Core\PublishesFiles;
+
 use function Tempest\src_path;
 
 final class TestInstaller implements Installer

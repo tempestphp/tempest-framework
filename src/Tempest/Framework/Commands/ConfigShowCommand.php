@@ -29,8 +29,7 @@ final readonly class ConfigShowCommand
 
     public function __construct(
         private LoadConfig $loadConfig,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'config:show', description: 'Shows resolved configuration files', aliases: ['config'])]
     public function __invoke(

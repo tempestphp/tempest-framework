@@ -19,8 +19,7 @@ final class CachedConnectionInitializer implements Initializer
 
     public function __construct(
         private readonly ConnectionInitializer $initializer,
-    ) {
-    }
+    ) {}
 
     #[Singleton]
     public function initialize(Container $container): Connection

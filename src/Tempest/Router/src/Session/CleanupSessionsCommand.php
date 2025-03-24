@@ -16,8 +16,7 @@ final readonly class CleanupSessionsCommand
     public function __construct(
         private Console $console,
         private SessionManager $sessionManager,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'session:clean',

@@ -20,8 +20,7 @@ final class ViteDiscovery implements Discovery, DiscoversPath
 
     public function __construct(
         private readonly ViteConfig $viteConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

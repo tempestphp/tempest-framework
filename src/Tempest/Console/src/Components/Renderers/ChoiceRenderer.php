@@ -20,8 +20,7 @@ final class ChoiceRenderer
         private bool $multiple = true,
         private int $maximumOptions = 10,
         private null|Stringable|UnitEnum|string $default = null,
-    ) {
-    }
+    ) {}
 
     public function render(
         Terminal $terminal,

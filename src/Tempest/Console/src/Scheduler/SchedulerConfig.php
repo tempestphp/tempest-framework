@@ -13,8 +13,7 @@ final class SchedulerConfig
     public function __construct(
         /** @var ScheduledInvocation[] $scheduledInvocations */
         public array $scheduledInvocations = [],
-    ) {
-    }
+    ) {}
 
     public function addMethodInvocation(MethodReflector $handler, Schedule $schedule): self
     {

@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Enums\MiddlewareType;
 use Tempest\Core\ComposerNamespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\str;
 
 /**

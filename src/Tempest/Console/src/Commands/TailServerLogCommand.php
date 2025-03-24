@@ -19,8 +19,7 @@ final readonly class TailServerLogCommand
         private LogConfig $logConfig,
         #[Tag('console')]
         private Highlighter $highlighter,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand('tail:server', description: 'Tails the server log')]
     public function __invoke(): void

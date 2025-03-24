@@ -30,34 +30,34 @@ final class IntervalTest extends FrameworkIntegrationTestCase
     {
         $interval = new Interval(hours: 1, minutes: 1, seconds: 1);
 
-        $this->assertSame(60 * 60 + 60 + 1, $interval->inSeconds());
+        $this->assertSame((60 * 60) + 60 + 1, $interval->inSeconds());
     }
 
     public function test_interval_with_days_returns_correct_in_seconds(): void
     {
         $interval = new Interval(days: 1, hours: 1, minutes: 1, seconds: 1);
 
-        $this->assertSame(24 * 60 * 60 + 60 * 60 + 60 + 1, $interval->inSeconds());
+        $this->assertSame((24 * 60 * 60) + (60 * 60) + 60 + 1, $interval->inSeconds());
     }
 
     public function test_interval_with_weeks_returns_correct_in_seconds(): void
     {
         $interval = new Interval(weeks: 1, days: 1, hours: 1, minutes: 1, seconds: 1);
 
-        $this->assertSame(7 * 24 * 60 * 60 + 24 * 60 * 60 + 60 * 60 + 60 + 1, $interval->inSeconds());
+        $this->assertSame((7 * 24 * 60 * 60) + (24 * 60 * 60) + (60 * 60) + 60 + 1, $interval->inSeconds());
     }
 
     public function test_interval_with_months_returns_correct_in_seconds(): void
     {
         $interval = new Interval(months: 1, weeks: 1, days: 1, hours: 1, minutes: 1, seconds: 1);
 
-        $this->assertSame(30 * 24 * 60 * 60 + 7 * 24 * 60 * 60 + 24 * 60 * 60 + 60 * 60 + 60 + 1, $interval->inSeconds());
+        $this->assertSame((30 * 24 * 60 * 60) + (7 * 24 * 60 * 60) + (24 * 60 * 60) + (60 * 60) + 60 + 1, $interval->inSeconds());
     }
 
     public function test_interval_with_years_returns_correct_in_seconds(): void
     {
         $interval = new Interval(years: 1, months: 1, weeks: 1, days: 1, hours: 1, minutes: 1, seconds: 1);
 
-        $this->assertSame(365 * 24 * 60 * 60 + 30 * 24 * 60 * 60 + 7 * 24 * 60 * 60 + 24 * 60 * 60 + 60 * 60 + 60 + 1, $interval->inSeconds());
+        $this->assertSame((365 * 24 * 60 * 60) + (30 * 24 * 60 * 60) + (7 * 24 * 60 * 60) + (24 * 60 * 60) + (60 * 60) + 60 + 1, $interval->inSeconds());
     }
 }

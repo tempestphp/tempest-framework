@@ -36,6 +36,7 @@ final class BladeViewRendererTest extends FrameworkIntegrationTestCase
         <html>
         Hi
         </html>
+
         HTML, $html);
     }
 }

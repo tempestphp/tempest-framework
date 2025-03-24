@@ -11,6 +11,5 @@ final readonly class HandlesKey
 {
     public function __construct(
         public ?Key $key = null,
-    ) {
-    }
+    ) {}
 }

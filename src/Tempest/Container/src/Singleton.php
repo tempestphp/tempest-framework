@@ -11,6 +11,5 @@ final readonly class Singleton
 {
     public function __construct(
         public ?string $tag = null,
-    ) {
-    }
+    ) {}
 }

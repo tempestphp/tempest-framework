@@ -24,8 +24,7 @@ final readonly class DiscoveryGenerateCommand
     public function __construct(
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'discovery:generate', description: 'Compile and cache all discovery according to the configured discovery caching strategy')]
     public function __invoke(): void

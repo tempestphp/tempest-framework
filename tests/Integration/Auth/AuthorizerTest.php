@@ -20,6 +20,7 @@ use Tempest\Router\Session\SessionManager;
 use Tests\Tempest\Fixtures\Controllers\AdminController;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\uri;
 
 /**
@@ -66,10 +67,10 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
 
     public function test_authorize(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission(UserPermissionUnitEnum::ADMIN);

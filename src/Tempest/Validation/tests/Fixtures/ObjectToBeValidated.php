@@ -11,6 +11,5 @@ final class ObjectToBeValidated
     public function __construct(
         #[Length(min: 2, max: 3)]
         public string $name,
-    ) {
-    }
+    ) {}
 }

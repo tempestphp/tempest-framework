@@ -16,8 +16,7 @@ final class TaskRenderer
     public function __construct(
         private readonly SpinnerRenderer $spinner,
         private readonly string $label,
-    ) {
-    }
+    ) {}
 
     public function render(Terminal $terminal, ComponentState $state, float $startedAt, ?float $finishedAt, ?string $hint = null): string
     {

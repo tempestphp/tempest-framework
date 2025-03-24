@@ -15,8 +15,7 @@ final readonly class BelongsToStatement implements QueryStatement
         private string $foreign,
         private OnDelete $onDelete = OnDelete::RESTRICT,
         private OnUpdate $onUpdate = OnUpdate::NO_ACTION,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

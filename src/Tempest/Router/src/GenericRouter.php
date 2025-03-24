@@ -41,8 +41,7 @@ final class GenericRouter implements Router
         private readonly Container $container,
         private readonly RouteMatcher $routeMatcher,
         private readonly AppConfig $appConfig,
-    ) {
-    }
+    ) {}
 
     public function throwExceptions(): self
     {

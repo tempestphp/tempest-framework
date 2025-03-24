@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class StringEnumCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('string-enum-command')]
     public function __invoke(TestStringEnum $enum): void

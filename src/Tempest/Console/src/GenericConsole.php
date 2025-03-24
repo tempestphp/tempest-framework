@@ -52,8 +52,7 @@ final class GenericConsole implements Console
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
         private readonly ConsoleArgumentBag $argumentBag,
-    ) {
-    }
+    ) {}
 
     public function call(string|array $command, string|array $arguments = []): ExitCode|int
     {

@@ -15,6 +15,5 @@ final readonly class DoNotDiscover
          * @var array<class-string<\Tempest\Discovery\Discovery>>
          */
         public array $except = [],
-    ) {
-    }
+    ) {}
 }

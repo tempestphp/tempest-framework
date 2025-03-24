@@ -15,8 +15,7 @@ final readonly class ObjectToArrayMapper implements Mapper
 {
     public function __construct(
         private SerializerFactory $serializerFactory,
-    ) {
-    }
+    ) {}
 
     public function canMap(mixed $from, mixed $to): bool
     {

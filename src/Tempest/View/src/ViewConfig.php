@@ -20,8 +20,7 @@ final class ViewConfig
 
         /** @var class-string<\Tempest\View\ViewRenderer> */
         public string $rendererClass = TempestViewRenderer::class,
-    ) {
-    }
+    ) {}
 
     public function addViewProcessor(ClassReflector $viewProcessor): void
     {

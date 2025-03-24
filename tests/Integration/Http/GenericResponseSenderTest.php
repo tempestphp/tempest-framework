@@ -11,6 +11,7 @@ use Tempest\Router\Responses\Download;
 use Tempest\Router\Responses\File;
 use Tempest\Router\Responses\Ok;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\view;
 
 /**

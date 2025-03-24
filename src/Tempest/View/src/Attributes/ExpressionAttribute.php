@@ -18,8 +18,7 @@ final readonly class ExpressionAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {
-    }
+    ) {}
 
     public function apply(Element $element): Element
     {

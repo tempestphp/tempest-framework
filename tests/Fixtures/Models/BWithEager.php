@@ -16,8 +16,7 @@ final class BWithEager implements DatabaseModel
     public function __construct(
         #[Eager]
         public C $c,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

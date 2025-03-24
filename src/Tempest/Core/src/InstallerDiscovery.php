@@ -15,8 +15,7 @@ final class InstallerDiscovery implements Discovery
 
     public function __construct(
         private readonly InstallerConfig $installerConfig,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

@@ -12,8 +12,7 @@ final class Slot
         public string $name,
         public array $attributes,
         public string $content,
-    ) {
-    }
+    ) {}
 
     public function __get(string $name): mixed
     {

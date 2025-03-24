@@ -11,6 +11,5 @@ final readonly class MigrationFailed
     public function __construct(
         public string $name,
         public Throwable $exception,
-    ) {
-    }
+    ) {}
 }

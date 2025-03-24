@@ -24,6 +24,5 @@ final class IconConfig
          * @var string
          */
         public string $iconifyApiUrl = 'https://api.iconify.design',
-    ) {
-    }
+    ) {}
 }

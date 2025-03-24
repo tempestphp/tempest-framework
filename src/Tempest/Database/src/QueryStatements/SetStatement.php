@@ -16,8 +16,7 @@ final readonly class SetStatement implements QueryStatement
         private array $values,
         private bool $nullable = false,
         private ?string $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

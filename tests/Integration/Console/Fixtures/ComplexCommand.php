@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class ComplexCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('complex')]
     public function __invoke(string $a, string $b, string $c, bool $flag = false): void

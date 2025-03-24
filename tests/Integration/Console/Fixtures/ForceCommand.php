@@ -10,9 +10,9 @@ use Tempest\Console\Middleware\ForceMiddleware;
 
 final readonly class ForceCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand(
         middleware: [ForceMiddleware::class],

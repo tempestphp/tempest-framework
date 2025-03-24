@@ -22,7 +22,7 @@ final readonly class Package
             with a new line',
             aliases: ['n'],
         )]
-        string $name,
+        string $name, // @mago-expect best-practices/no-unused-parameter
     ): void {
     }
 }

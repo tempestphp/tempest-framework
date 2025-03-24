@@ -13,8 +13,7 @@ final readonly class DatetimeStatement implements QueryStatement
         private string $name,
         private bool $nullable = false,
         private ?string $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

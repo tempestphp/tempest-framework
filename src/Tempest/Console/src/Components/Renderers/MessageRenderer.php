@@ -13,8 +13,7 @@ final readonly class MessageRenderer
     public function __construct(
         private string $label,
         private string $color,
-    ) {
-    }
+    ) {}
 
     public function render(string $contents, ?string $title = null): string
     {

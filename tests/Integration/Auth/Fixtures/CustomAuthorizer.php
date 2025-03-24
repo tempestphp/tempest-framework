@@ -12,7 +12,7 @@ final readonly class CustomAuthorizer implements Authorizer
 {
     public function authorize(CanAuthorize $user): bool
     {
-        if (! $user instanceof User) {
+        if (! ($user instanceof User)) {
             return false;
         }
 

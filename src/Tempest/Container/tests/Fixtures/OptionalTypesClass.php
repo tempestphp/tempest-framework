@@ -8,6 +8,5 @@ final class OptionalTypesClass
 {
     public function __construct(
         public ?string $aString,
-    ) {
-    }
+    ) {}
 }

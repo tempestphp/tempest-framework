@@ -10,8 +10,7 @@ final readonly class HttpMiddlewareCallable
 {
     public function __construct(
         private Closure $closure,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request): Response
     {

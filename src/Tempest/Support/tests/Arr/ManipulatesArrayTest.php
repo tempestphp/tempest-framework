@@ -1426,8 +1426,8 @@ final class ManipulatesArrayTest extends TestCase
                 ->flatMap(fn (array $person) => $person['likes'], depth: 1)
                 ->equals([
                     ['Tower of God', 'The Beginning After The End'],
-                    ['PHP', 'TypeScript'],
-                    ['One Piece', 'Naruto'],
+                    ['PHP',          'TypeScript'],
+                    ['One Piece',    'Naruto'],
                     ['Python'],
                 ]),
         );

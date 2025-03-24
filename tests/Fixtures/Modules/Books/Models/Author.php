@@ -17,6 +17,5 @@ final class Author implements DatabaseModel
 
         /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Book[] */
         public array $books = [],
-    ) {
-    }
+    ) {}
 }

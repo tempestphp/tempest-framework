@@ -12,8 +12,7 @@ final class StaticPageConfig
     public function __construct(
         /** @var StaticPage[] $staticPages */
         public array $staticPages = [],
-    ) {
-    }
+    ) {}
 
     public function addHandler(StaticPage $staticPage, MethodReflector $methodReflector): void
     {

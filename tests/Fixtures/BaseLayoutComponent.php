@@ -17,9 +17,9 @@ final readonly class BaseLayoutComponent implements ViewComponent
     public function compile(ViewComponentElement $element): string
     {
         return <<<HTML
-            <div class="base">
-                <x-slot />
-            </div>
-            HTML;
+        <div class="base">
+            <x-slot />
+        </div>
+        HTML;
     }
 }
