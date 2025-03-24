@@ -5,10 +5,10 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/core": "dev-main",
-        "tempest/container": "dev-main",
-        "tempest/validation": "dev-main",
-        "tempest/cache": "dev-main",
+        "tempest/core": "1.0.0-alpha.6",
+        "tempest/container": "1.0.0-alpha.6",
+        "tempest/validation": "1.0.0-alpha.6",
+        "tempest/cache": "1.0.0-alpha.6",
         "tempest/highlight": "^2.11.2"
     },
     "autoload": {
