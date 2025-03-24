@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Console\Components\Renderers;
 
 use Stringable;
-use Tempest\Support\Str\MutableString;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\root_path;
 use function Tempest\Support\str;
@@ -19,8 +19,8 @@ final readonly class KeyValueRenderer
     public function render(Stringable|string $key, null|Stringable|string $value = null, int $maximumWidth = self::MAX_WIDTH): string
     {
         $key = $this->cleanText($key)->append(' ');
-        $value = $this->cleanText($value)->unless(
-            condition: fn ($s) => $s->stripTags()->length() === 0,
+        $value = $this->cleanText($value)->when(
+            condition: fn ($s) => $s->stripTags()->length() !== 0,
             callback: fn ($s) => $s->prepend(' '),
         );
 
@@ -33,12 +33,12 @@ final readonly class KeyValueRenderer
             ->toString();
     }
 
-    private function cleanText(null|Stringable|string $text): MutableString
+    private function cleanText(null|Stringable|string $text): ImmutableString
     {
-        $text = new MutableString($text)->trim();
+        $text = new ImmutableString($text)->trim();
 
         if ($text->length() === 0) {
-            return new MutableString();
+            return new ImmutableString();
         }
 
         return $text
