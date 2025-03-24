@@ -30,7 +30,7 @@ final readonly class MigrationManager
         private RunnableMigrations $migrations,
     ) {}
 
-    public function up(bool $allowChanges): void
+    public function up(): void
     {
         try {
             $existingMigrations = Migration::all();
@@ -40,34 +40,13 @@ final readonly class MigrationManager
             $existingMigrations = Migration::all();
         }
 
-        foreach ($existingMigrations as $existingMigration) {
-            $databaseMigration = array_find(
-                iterator_to_array($this->migrations),
-                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
-            );
-
-            if ($databaseMigration === null) {
-                if ($allowChanges) {
-                    $existingMigration->delete();
-                } else {
-                    event(new MigrationFailed($existingMigration->name, MigrationException::missingMigration()));
-                }
-
-                continue;
-            }
-        }
+        $existingMigrations = array_map(
+            static fn (Migration $migration) => $migration->name,
+            $existingMigrations,
+        );
 
         foreach ($this->migrations as $migration) {
-            $existingMigration = array_find(
-                $existingMigrations,
-                static fn (Migration $existingMigration) => $existingMigration->name === $migration->name,
-            );
-
-            if ($existingMigration !== null) {
-                if ($allowChanges === false) {
-                    $this->verifyMigrationHash($migration, $existingMigration);
-                }
-
+            if (in_array($migration->name, $existingMigrations, strict: true)) {
                 continue;
             }
 
@@ -154,6 +133,34 @@ final readonly class MigrationManager
             $existingMigration->update(
                 hash: $this->getMigrationHash($databaseMigration),
             );
+        }
+    }
+
+    public function validate(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            return;
+        }
+
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                event(new MigrationValidationFailed($existingMigration->name, MigrationException::missingMigration()));
+
+                continue;
+            }
+
+            if ($this->getMigrationHash($databaseMigration) !== $existingMigration->hash) {
+                event(new MigrationValidationFailed($existingMigration->name, MigrationException::hashMismatch()));
+
+                continue;
+            }
         }
     }
 
@@ -273,14 +280,5 @@ final readonly class MigrationManager
         $sql = preg_replace('/\s+/', ' ', trim($sql));
 
         return $sql;
-    }
-
-    private function verifyMigrationHash(DatabaseMigration $migration, Migration $existingMigration): void
-    {
-        $hash = $this->getMigrationHash($migration);
-
-        if ($hash !== $existingMigration->hash) {
-            event(new MigrationFailed($migration->name, MigrationException::hashMismatch()));
-        }
     }
 }

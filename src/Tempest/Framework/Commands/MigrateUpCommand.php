@@ -30,10 +30,14 @@ final class MigrateUpCommand
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
     public function __invoke(
-        #[ConsoleArgument(description: '')]
-        bool $allowChanges = false,
+        #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
+        bool $validate = false,
     ): void {
-        $this->migrationManager->up($allowChanges);
+        if ($validate) {
+            $this->console->call('migrate:validate');
+        }
+
+        $this->migrationManager->up();
 
         $this->console
             ->success(sprintf('Migrated %s migrations', $this->count));
