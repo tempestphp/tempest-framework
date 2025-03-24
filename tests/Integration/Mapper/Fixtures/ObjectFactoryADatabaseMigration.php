@@ -25,7 +25,7 @@ final class ObjectFactoryADatabaseMigration implements DatabaseMigration
         );
     }
 
-    public function down(): QueryStatement|null
+    public function down(): ?QueryStatement
     {
         return null;
     }

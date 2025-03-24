@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Vite;
 
 use Tempest\Support\Html\HtmlString;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\vite_tags;
 
 /**

@@ -12,6 +12,7 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\get;
 
 /**

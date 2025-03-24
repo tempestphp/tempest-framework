@@ -6,7 +6,10 @@ use Serializable;
 
 final class SerializableObject implements Serializable
 {
-    /* @phpstan-ignore-next-line */
+    /*
+     * @phpstan-ignore-next-line
+     * @mago-expect strictness/require-return-type
+     */
     public function serialize()
     {
         return 'a';
@@ -22,7 +25,7 @@ final class SerializableObject implements Serializable
         return ['a'];
     }
 
-    public function __unserialize(array $data): void
+    public function __unserialize(array $_data): void
     {
         // nothing
     }

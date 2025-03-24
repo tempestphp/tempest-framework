@@ -12,6 +12,5 @@ final readonly class ObjectWithStrictOnClass
     public function __construct(
         public string $a,
         public string $b,
-    ) {
-    }
+    ) {}
 }

@@ -24,6 +24,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithMultipleMapFrom;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictOnClass;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithStrictProperty;
 use Tests\Tempest\Integration\Mapper\Fixtures\Person;
+
 use function Tempest\make;
 use function Tempest\map;
 
@@ -34,10 +35,11 @@ final class MapperTest extends FrameworkIntegrationTestCase
 {
     public function test_make_object_from_class_string(): void
     {
-        $author = make(Author::class)->from([
-            'id' => 1,
-            'name' => 'test',
-        ]);
+        $author = make(Author::class)
+            ->from([
+                'id' => 1,
+                'name' => 'test',
+            ]);
 
         $this->assertSame('test', $author->name);
         $this->assertSame(1, $author->id->id);
@@ -45,12 +47,14 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_make_collection(): void
     {
-        $authors = make(Author::class)->collection()->from([
-            [
-                'id' => 1,
-                'name' => 'test',
-            ],
-        ]);
+        $authors = make(Author::class)
+            ->collection()
+            ->from([
+                [
+                    'id' => 1,
+                    'name' => 'test',
+                ],
+            ]);
 
         $this->assertCount(1, $authors);
         $this->assertSame('test', $authors[0]->name);
@@ -63,10 +67,11 @@ final class MapperTest extends FrameworkIntegrationTestCase
             name: 'original',
         );
 
-        $author = make($author)->from([
-            'id' => 1,
-            'name' => 'other',
-        ]);
+        $author = make($author)
+            ->from([
+                'id' => 1,
+                'name' => 'other',
+            ]);
 
         $this->assertSame('other', $author->name);
         $this->assertSame(1, $author->id->id);
@@ -81,7 +86,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $author = map([
             'id' => 1,
             'name' => 'other',
-        ])->to($author);
+        ])
+            ->to($author);
 
         $this->assertSame('other', $author->name);
         $this->assertSame(1, $author->id->id);
@@ -89,13 +95,14 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_make_object_with_has_many_relation(): void
     {
-        $author = make(Author::class)->from([
-            'name' => 'test',
-            'books' => [
-                ['title' => 'a'],
-                ['title' => 'b'],
-            ],
-        ]);
+        $author = make(Author::class)
+            ->from([
+                'name' => 'test',
+                'books' => [
+                    ['title' => 'a'],
+                    ['title' => 'b'],
+                ],
+            ]);
 
         $this->assertSame('test', $author->name);
         $this->assertCount(2, $author->books);
@@ -106,12 +113,13 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_make_object_with_one_to_one_relation(): void
     {
-        $book = make(Book::class)->from([
-            'title' => 'test',
-            'author' => [
-                'name' => 'author',
-            ],
-        ]);
+        $book = make(Book::class)
+            ->from([
+                'title' => 'test',
+                'author' => [
+                    'name' => 'author',
+                ],
+            ]);
 
         $this->assertSame('test', $book->title);
         $this->assertSame('author', $book->author->name);
@@ -125,8 +133,9 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'author' => new Author(
                 name: 'Author name',
                 type: AuthorType::B,
-            )
-        ])->to(Book::class);
+            ),
+        ])
+            ->to(Book::class);
 
         $this->assertSame('Book Title', $book->title);
         $this->assertSame('Author name', $book->author->name);
@@ -161,9 +170,10 @@ final class MapperTest extends FrameworkIntegrationTestCase
 
     public function test_caster_on_field(): void
     {
-        $object = make(ObjectFactoryA::class)->from([
-            'prop' => [],
-        ]);
+        $object = make(ObjectFactoryA::class)
+            ->from([
+                'prop' => [],
+            ]);
 
         $this->assertSame('casted', $object->prop);
     }
@@ -172,7 +182,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         $object = map([
             'name' => 'Guillaume',
-        ])->to(ObjectWithMapFromAttribute::class);
+        ])
+            ->to(ObjectWithMapFromAttribute::class);
 
         $this->assertSame('Guillaume', $object->fullName);
     }
@@ -270,7 +281,8 @@ final class MapperTest extends FrameworkIntegrationTestCase
     {
         $object = map([
             'fullName' => 'Guillaume',
-        ])->to(ObjectWithMapFromAttribute::class);
+        ])
+            ->to(ObjectWithMapFromAttribute::class);
 
         $this->assertSame('Guillaume', $object->fullName);
     }
@@ -281,7 +293,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             items: [
                 new NestedObjectB('a'),
                 new NestedObjectB('b'),
-            ]
+            ],
         );
 
         $array = map($object)->with(ObjectToArrayMapper::class)->do();
@@ -290,7 +302,7 @@ final class MapperTest extends FrameworkIntegrationTestCase
             'items' => [
                 ['name' => 'a'],
                 ['name' => 'b'],
-            ]
+            ],
         ], $array);
     }
 }

@@ -21,6 +21,5 @@ final class ThroughModel implements DatabaseModel
         public ParentModel $parent,
         public ChildModel $child,
         public ?ChildModel $child2 = null,
-    ) {
-    }
+    ) {}
 }

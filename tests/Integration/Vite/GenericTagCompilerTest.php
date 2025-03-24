@@ -116,7 +116,7 @@ final class GenericTagCompilerTest extends FrameworkIntegrationTestCase
         $this->assertSame('<script nonce="expected-nonce">console.log("Hello, world!")</script>', $tag);
     }
 
-    private function createChunk(?String $src = null, bool $entry = true, ?string $integrity = null, bool $legacy = false): Chunk
+    private function createChunk(?string $src = null, bool $entry = true, ?string $integrity = null, bool $legacy = false): Chunk
     {
         return new Chunk(
             src: $src ?? 'main.ts',

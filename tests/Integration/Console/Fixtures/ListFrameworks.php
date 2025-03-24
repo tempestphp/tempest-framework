@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final class ListFrameworks
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand(
         name: 'frameworks:list',
@@ -19,7 +19,7 @@ final class ListFrameworks
         aliases: ['f:l'],
     )]
     public function handle(
-        bool $sortByBest = false,
+        bool $sortByBest = false, // @mago-expect best-practices/no-unused-parameter
     ): void {
         $this->console->write('list');
     }

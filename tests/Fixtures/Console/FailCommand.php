@@ -15,12 +15,12 @@ final readonly class FailCommand
         if ($error) {
             trigger_error('Error message', E_USER_ERROR);
         } else {
-            failingFunction($input);
+            failing_function($input);
         }
     }
 }
 
-function failingFunction(string $string): void
+function failing_function(string $string): void
 {
     throw new Exception("A message from the exception {$string}");
 }

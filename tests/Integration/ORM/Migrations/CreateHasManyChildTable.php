@@ -14,12 +14,12 @@ final class CreateHasManyChildTable implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return (new CreateTableStatement('child'))
+        return new CreateTableStatement('child')
             ->primary()
             ->varchar('name');
     }
 
-    public function down(): QueryStatement|null
+    public function down(): ?QueryStatement
     {
         return null;
     }

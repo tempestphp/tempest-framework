@@ -19,7 +19,7 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        if (empty(shell_exec('which bun')) || empty(shell_exec('which npm'))) {
+        if (trim(shell_exec('which bun')) === '' || trim(shell_exec('which npm')) === '') {
             $this->markTestSkipped('This test requires the `bun` and `npm` binaries to be available.');
         }
     }
@@ -45,10 +45,12 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
         $this->callInTemporaryDirectory(function (string $directory): void {
             file_put_contents("{$directory}/package.json", data: '{}');
 
-            $this->console->call(function () use ($directory): void {
-                $installer = $this->container->get(DependencyInstaller::class);
-                $installer->installDependencies($directory, 'vite-plugin-tempest', dev: true);
-            })->submit('npm');
+            $this->console
+                ->call(function () use ($directory): void {
+                    $installer = $this->container->get(DependencyInstaller::class);
+                    $installer->installDependencies($directory, 'vite-plugin-tempest', dev: true);
+                })
+                ->submit('npm');
 
             $this->assertTrue(is_dir($directory . '/node_modules'), message: 'Dependencies were not installed.');
             $this->assertTrue(file_exists($directory . '/package-lock.json'), message: 'The lockfile was not created.');

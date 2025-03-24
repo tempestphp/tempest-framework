@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\env;
 
 /**
@@ -21,7 +22,7 @@ final class EnvHelperTest extends FrameworkIntegrationTestCase
     #[DataProvider('types')]
     public function test_env_maps_values(string $value, mixed $expectedValue): void
     {
-        putenv('test='.$value);
+        putenv('test=' . $value);
 
         $this->assertEquals($expectedValue, env('test'));
     }

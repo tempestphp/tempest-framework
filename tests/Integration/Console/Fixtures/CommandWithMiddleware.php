@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class CommandWithMiddleware
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand(
         name: 'with:middleware',

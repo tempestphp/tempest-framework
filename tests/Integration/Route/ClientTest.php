@@ -12,6 +12,7 @@ use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
 use Tempest\HttpClient\HttpClient;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\root_path;
 
 /**

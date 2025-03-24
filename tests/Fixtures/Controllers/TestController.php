@@ -21,6 +21,7 @@ use Tempest\Router\Responses\ServerError;
 use Tempest\Router\Trace;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
+
 use function Tempest\view;
 
 final readonly class TestController
@@ -92,7 +93,7 @@ final readonly class TestController
     #[Get('/view-model-with-response-data')]
     public function viewWithResponseData(): Response
     {
-        return (new Created(new ViewWithResponseData()))
+        return new Created(new ViewWithResponseData())
             ->addHeader('x-from-view', 'true');
     }
 }

@@ -11,8 +11,7 @@ final readonly class TestCommand
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand]
     public function test(): void

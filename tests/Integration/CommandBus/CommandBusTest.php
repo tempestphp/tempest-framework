@@ -11,6 +11,7 @@ use Tests\Tempest\Fixtures\Commands\MyBrokenCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
 use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandBusMiddleware;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\command;
 
 /**
@@ -46,7 +47,7 @@ final class CommandBusTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(CommandHandlerNotFound::class);
 
-        command(new class () {});
+        command(new class() {});
     }
 
     public function test_command_handlers_with_more_than_one_argument_arent_discovered(): void

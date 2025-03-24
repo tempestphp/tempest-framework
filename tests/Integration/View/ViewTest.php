@@ -8,6 +8,7 @@ use Tempest\Http\Status;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Views\ViewModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\uri;
 use function Tempest\view;
 
@@ -40,8 +41,8 @@ final class ViewTest extends FrameworkIntegrationTestCase
         $html = $this->render($view);
 
         $expected = <<<HTML
-            ViewModel Brent, 2020-01-01
-            HTML;
+        ViewModel Brent, 2020-01-01
+        HTML;
 
         $this->assertEquals($expected, $html);
     }

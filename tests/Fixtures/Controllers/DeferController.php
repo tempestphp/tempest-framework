@@ -7,6 +7,7 @@ namespace Tests\Tempest\Fixtures\Controllers;
 use Tempest\Router\Get;
 use Tempest\Router\Response;
 use Tempest\Router\Responses\Ok;
+
 use function Tempest\defer;
 
 final class DeferController

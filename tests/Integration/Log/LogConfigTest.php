@@ -6,6 +6,7 @@ namespace Log;
 
 use Tempest\Log\LogConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\root_path;
 
 /**

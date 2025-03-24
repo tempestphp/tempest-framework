@@ -12,8 +12,7 @@ final readonly class Hello
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     // hello:world {input} --flag
     #[ConsoleCommand]

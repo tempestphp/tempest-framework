@@ -13,6 +13,7 @@ use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
+
 use function Tempest\map;
 use function Tempest\Support\arr;
 
@@ -50,7 +51,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertEquals('cover', array_key_first($request->files));
         $this->assertTrue(arr($request->files)->isAssociative());
     }
-    
+
     public function test_query_parameters_are_mapped_to_properties(): void
     {
         $request = map(new GenericRequest(

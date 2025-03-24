@@ -22,6 +22,5 @@ final class ParentModel implements DatabaseModel
 
         /** @var \Tests\Tempest\Integration\ORM\Models\ThroughModel[] */
         public array $through = [],
-    ) {
-    }
+    ) {}
 }

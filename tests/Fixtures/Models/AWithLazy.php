@@ -16,8 +16,7 @@ final class AWithLazy implements DatabaseModel
     public function __construct(
         #[Lazy]
         public B $b,
-    ) {
-    }
+    ) {}
 
     public static function table(): TableName
     {

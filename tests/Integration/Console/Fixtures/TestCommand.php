@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class TestCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('test:foo')]
     public function __invoke(): void
@@ -24,8 +24,8 @@ final readonly class TestCommand
 
         $this->console->writeln('<comment>Comment
 asd</comment>');
+
         //        $email = $this->console->ask("What's your email?", validation: [new Email()]);
-        //
         //        $this->console->writeln()->writeln("Welcome, <{$email}>");
     }
 

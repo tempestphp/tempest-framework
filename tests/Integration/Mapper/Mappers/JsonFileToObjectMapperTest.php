@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
+
 use function Tempest\map;
 
 /**

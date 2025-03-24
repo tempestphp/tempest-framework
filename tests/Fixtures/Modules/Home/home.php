@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+
 use Tests\Tempest\Fixtures\Modules\Home\HomeView;
 
 /** @var HomeView $this */
@@ -7,4 +8,3 @@ use Tests\Tempest\Fixtures\Modules\Home\HomeView;
 <x-base>
     Hello, <?= $this->name ?>
 </x-base>
-

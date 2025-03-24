@@ -11,6 +11,7 @@ use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Highlight\TempestTerminalTheme;
 use Tempest\Highlight\Highlighter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\root_path;
 
 /**
@@ -52,7 +53,7 @@ final class TempestConsoleLanguageTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(
             "\e[4mcomposer.json\e[24m",
-            (new FileInjection())->parse($content, $highlighter)->content,
+            new FileInjection()->parse($content, $highlighter)->content,
         );
     }
 }

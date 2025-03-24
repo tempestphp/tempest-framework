@@ -9,6 +9,7 @@ use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use const Dom\HTML_NO_DEFAULT_NS;
 
 /**
@@ -20,16 +21,16 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
     {
         // See https://github.com/php/php-src/issues/16960
         $contents = <<<'HTML'
-            <a>
-                <b>
-                    <c>
-                        Hello
-                    </c>
-                    <d></d>
-                    <e></e>
-                </b>    
-            </a>
-            HTML;
+        <a>
+            <b>
+                <c>
+                    Hello
+                </c>
+                <d></d>
+                <e></e>
+            </b>    
+        </a>
+        HTML;
 
         $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$contents}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 

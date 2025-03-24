@@ -10,9 +10,9 @@ use Tempest\Console\ConsoleCommand;
 
 final readonly class CombinedFlagCommand
 {
-    public function __construct(private Console $console)
-    {
-    }
+    public function __construct(
+        private Console $console,
+    ) {}
 
     #[ConsoleCommand('flags')]
     public function __invoke(

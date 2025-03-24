@@ -36,7 +36,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
 
         $database->withinTransaction(function (): never {
-            (new Author(name: 'test'))->save();
+            new Author(name: 'test')->save();
 
             throw new Exception('Dummy exception to force rollback');
         });

@@ -24,7 +24,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             private(set) string $name = '0000_test_migration';
 
             public function up(): QueryStatement
@@ -43,7 +43,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->unique('date', 'datetime');
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }
@@ -59,16 +59,16 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_set_statement(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
-                return (new CreateTableStatement('table'))
+                return new CreateTableStatement('table')
                     ->set('set', values: ['foo', 'bar'], default: 'foo');
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }
@@ -90,7 +90,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_array_statement(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             public string $name = '0';
 
             public function up(): QueryStatement
@@ -99,7 +99,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     ->array('array', default: ['foo', 'bar']);
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }
@@ -115,7 +115,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_enum_statement(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             public string $name = '0';
 
             public function up(): QueryStatement
@@ -128,7 +128,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                     );
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }
@@ -144,16 +144,16 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_json_default(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
-                return (new CreateTableStatement('table'))
+                return new CreateTableStatement('table')
                     ->json('json', default: '{default: "invalid json"}');
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }
@@ -170,16 +170,16 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_invalid_set_values(): void
     {
-        $migration = new class () implements DatabaseMigration {
+        $migration = new class() implements DatabaseMigration {
             private(set) string $name = '0';
 
             public function up(): QueryStatement
             {
-                return (new CreateTableStatement('table'))
+                return new CreateTableStatement('table')
                     ->set('set', values: []);
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }

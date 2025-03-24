@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Console\Middleware;
 
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Support\str;
 
 /**

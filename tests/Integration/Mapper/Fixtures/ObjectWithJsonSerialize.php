@@ -13,8 +13,7 @@ final class ObjectWithJsonSerialize implements JsonSerializable
     public function __construct(
         public string $a,
         public string $b,
-    ) {
-    }
+    ) {}
 
     public function jsonSerialize(): array
     {
