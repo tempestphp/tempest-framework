@@ -20,8 +20,7 @@ final readonly class MigrateRehashCommand
     public function __construct(
         private Console $console,
         private MigrationManager $migrationManager,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: 'migrate:rehash',
