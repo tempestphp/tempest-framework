@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.4",
         "doctrine/inflector": "^2.0",
-        "tempest/container": "1.0.0-alpha.6",
+        "tempest/container": "dev-main",
         "tempest/highlight": "^2.11.2",
         "voku/portable-ascii": "^2.0.3"
     },
