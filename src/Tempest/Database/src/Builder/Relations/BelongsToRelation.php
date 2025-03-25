@@ -9,6 +9,7 @@ use Tempest\Database\Builder\FieldName;
 use Tempest\Database\Builder\TableName;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
 final readonly class BelongsToRelation implements Relation
 {
@@ -59,7 +60,7 @@ final readonly class BelongsToRelation implements Relation
         return $this->joinField->tableName->as;
     }
 
-    public function getFieldNames(): array
+    public function getFieldNames(): ImmutableArray
     {
         return FieldName::make($this->relationModelClass, $this->joinField->tableName);
     }

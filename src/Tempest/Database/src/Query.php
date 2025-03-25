@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Config\DatabaseConfig;
 use function Tempest\get;
 
 final class Query
 {
     public function __construct(
-        public string $sql,
+        public string|QueryStatement $sql,
         public array $bindings = [],
     ) {}
 
@@ -38,9 +39,15 @@ final class Query
         return $this->getDatabase()->fetchFirst($this->withBindings($bindings));
     }
 
-    public function getSql(): string
+    public function getSql(): string|QueryStatement
     {
-        return $this->sql;
+        $sql = $this->sql;
+
+        if ($sql instanceof QueryStatement) {
+            $sql = $sql->compile($this->getDatabaseConfig()->dialect);
+        }
+
+        return $sql;
     }
 
     public function append(string $append): self
@@ -62,5 +69,10 @@ final class Query
     private function getDatabase(): Database
     {
         return get(Database::class);
+    }
+
+    private function getDatabaseConfig(): DatabaseConfig
+    {
+        return get(DatabaseConfig::class);
     }
 }

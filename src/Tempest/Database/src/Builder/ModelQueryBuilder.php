@@ -8,10 +8,15 @@ use Closure;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\JoinStatement;
+use Tempest\Database\QueryStatements\OrderByStatement;
+use Tempest\Database\QueryStatements\SelectStatement;
+use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
 
 use function Tempest\map;
 use function Tempest\reflect;
+use function Tempest\Support\arr;
 
 /**
  * @template TModelClass of DatabaseModel
@@ -20,13 +25,7 @@ final class ModelQueryBuilder
 {
     private ModelDefinition $modelDefinition;
 
-    private array $where = [];
-
-    private array $orderBy = [];
-
-    private ?int $limit = null;
-
-    private ?int $offset = null;
+    private SelectStatement $select;
 
     private array $raw = [];
 
@@ -39,6 +38,10 @@ final class ModelQueryBuilder
         private readonly string $modelClass,
     ) {
         $this->modelDefinition = new ModelDefinition($this->modelClass);
+
+        $this->select = new SelectStatement(
+            table: $this->modelDefinition->getTableName(),
+        );
     }
 
     /**
@@ -62,8 +65,7 @@ final class ModelQueryBuilder
      */
     public function get(Id $id): mixed
     {
-        return $this->whereField('id', $id)
-            ->first();
+        return $this->whereField('id', $id)->first();
     }
 
     /** @return TModelClass[] */
@@ -94,41 +96,9 @@ final class ModelQueryBuilder
     /** @return self<TModelClass> */
     public function where(string $where, mixed ...$bindings): self
     {
-        $this->where[] = $where;
+        $this->select->where[] = new WhereStatement($where);
 
         $this->bind(...$bindings);
-
-        return $this;
-    }
-
-    /** @return self<TModelClass> */
-    public function orderBy(string $statement): self
-    {
-        $this->orderBy[] = $statement;
-
-        return $this;
-    }
-
-    /** @return self<TModelClass> */
-    public function limit(int $limit): self
-    {
-        $this->limit = $limit;
-
-        return $this;
-    }
-
-    /** @return self<TModelClass> */
-    public function offset(int $offset): self
-    {
-        $this->offset = $offset;
-
-        return $this;
-    }
-
-    /** @return self<TModelClass> */
-    public function raw(string $raw): self
-    {
-        $this->raw[] = $raw;
 
         return $this;
     }
@@ -142,9 +112,42 @@ final class ModelQueryBuilder
     }
 
     /** @return self<TModelClass> */
+    public function orderBy(string $statement): self
+    {
+        $this->select->orderBy[] = new OrderByStatement($statement);
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function limit(int $limit): self
+    {
+        $this->select->limit = $limit;
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function offset(int $offset): self
+    {
+        $this->select->offset = $offset;
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function raw(string $raw): self
+    {
+        // TODO
+        $this->raw[] = $raw;
 
         return $this;
     }
@@ -164,66 +167,28 @@ final class ModelQueryBuilder
 
     private function build(array $bindings): Query
     {
-        $modelDefinition = new ModelDefinition($this->modelClass);
+        $this->select->columns = $this->modelDefinition
+            ->getFieldNames()
+            ->filter(fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class))
+            ->map(fn (FieldName $field) => (string) $field->withAlias());
 
-        $relations = $this->getRelations($modelDefinition);
+        $resolvedRelations = $this->resolveRelations($this->modelDefinition);
 
-        $fields = $modelDefinition->getFieldNames();
-
-        $fields = array_filter($fields, fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class));
-
-        foreach ($relations as $relation) {
-            $fields = [...$fields, ...$relation->getFieldNames()];
+        foreach ($resolvedRelations as $relation) {
+            $this->select->columns = $this->select->columns->append(...$relation->getFieldNames()->map(fn (FieldName $field) => (string) $field->withAlias()));
+            $this->select->join[] = new JoinStatement($relation->getStatement());
         }
 
-        $fields = implode(', ', array_map(
-            fn (FieldName $fieldName) => $fieldName->withAlias(),
-            $fields,
-        ));
+// TODO
+//        if ($this->raw !== []) {
+//            $statements[] = implode(', ', $this->raw);
+//        }
 
-        $statements = [];
-
-        $statements[] = sprintf(
-            'SELECT %s FROM %s',
-            $fields,
-            $modelDefinition->getTableName(),
-        );
-
-        foreach ($relations as $relation) {
-            $statements[] = $relation->getStatement();
-        }
-
-        if ($this->where !== []) {
-            $statements[] = sprintf(
-                'WHERE %s',
-                implode(' AND ', $this->where),
-            );
-        }
-
-        if ($this->orderBy !== []) {
-            $statements[] = sprintf(
-                'ORDER BY %s',
-                implode(', ', $this->orderBy),
-            );
-        }
-
-        if ($this->limit) {
-            $statements[] = sprintf('LIMIT %s', $this->limit);
-        }
-
-        if ($this->offset) {
-            $statements[] = sprintf('OFFSET %s', $this->offset);
-        }
-
-        if ($this->raw !== []) {
-            $statements[] = implode(', ', $this->raw);
-        }
-
-        return new Query(implode(PHP_EOL, $statements), [...$this->bindings, ...$bindings]);
+        return new Query($this->select, [...$this->bindings, ...$bindings]);
     }
 
     /** @return \Tempest\Database\Builder\Relations\Relation[] */
-    private function getRelations(ModelDefinition $modelDefinition): array
+    private function resolveRelations(ModelDefinition $modelDefinition): array
     {
         $relations = $modelDefinition->getEagerRelations();
 

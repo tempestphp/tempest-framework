@@ -10,6 +10,7 @@ use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\HasMany;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
 final readonly class HasManyRelation implements Relation
 {
@@ -89,7 +90,7 @@ final readonly class HasManyRelation implements Relation
         return $this->joinField->tableName->as;
     }
 
-    public function getFieldNames(): array
+    public function getFieldNames(): ImmutableArray
     {
         return FieldName::make($this->relationModelClass, $this->joinField->tableName);
     }

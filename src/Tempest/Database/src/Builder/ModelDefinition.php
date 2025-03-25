@@ -12,7 +12,7 @@ use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Reflection\ClassReflector;
-
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\reflect;
 
 final readonly class ModelDefinition
@@ -109,8 +109,8 @@ final readonly class ModelDefinition
         );
     }
 
-    /** @return \Tempest\Database\Builder\FieldName[] */
-    public function getFieldNames(): array
+    /** @return ImmutableArray<array-key, \Tempest\Database\Builder\FieldName> */
+    public function getFieldNames(): ImmutableArray
     {
         return FieldName::make(reflect($this->modelClass));
     }

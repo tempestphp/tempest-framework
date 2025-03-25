@@ -9,6 +9,7 @@ use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
 
+use Tempest\Support\Arr\ImmutableArray;
 use function Tempest\get;
 
 final class FieldName implements Stringable
@@ -20,7 +21,7 @@ final class FieldName implements Stringable
     ) {}
 
     /** @return \Tempest\Database\Builder\FieldName[] */
-    public static function make(ClassReflector $class, ?TableName $tableName = null): array
+    public static function make(ClassReflector $class, ?TableName $tableName = null): ImmutableArray
     {
         $casterFactory = get(CasterFactory::class);
         $fieldNames = [];
@@ -52,7 +53,7 @@ final class FieldName implements Stringable
             $fieldNames[] = new FieldName($tableName, $property->getName());
         }
 
-        return $fieldNames;
+        return new ImmutableArray($fieldNames);
     }
 
     public function as(string $as): self
