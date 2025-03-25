@@ -29,7 +29,7 @@ namespace Tempest {
     /**
      * Checks whether the given controller action matches the current URI.
      */
-    function is_uri(array|string|MethodReflector $action, mixed ...$params): bool
+    function is_current_uri(array|string|MethodReflector $action, mixed ...$params): bool
     {
         if ($action instanceof MethodReflector) {
             $action = [
