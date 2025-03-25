@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Database\Builder\ModelQueryBuilder;
+use Tempest\Database\Builder\SelectModelQuery;
 use Tempest\Database\Builder\TableName;
 
 interface DatabaseModel
 {
     public static function table(): TableName;
 
-    /** @return \Tempest\Database\Builder\ModelQueryBuilder<self> */
-    public static function query(): ModelQueryBuilder;
+    /** @return \Tempest\Database\Builder\SelectModelQuery<self> */
+    public static function query(): SelectModelQuery;
 
     /** @return self[] */
     public static function all(): array;
@@ -25,7 +25,7 @@ interface DatabaseModel
 
     public static function get(Id $id, array $relations = []): ?self;
 
-    public static function find(mixed ...$conditions): ModelQueryBuilder;
+    public static function find(mixed ...$conditions): SelectModelQuery;
 
     public function save(): self;
 

@@ -37,7 +37,7 @@ final readonly class SessionAuthenticator implements Authenticator
 
         $userModelClass = new ClassReflector($this->authConfig->userModelClass);
 
-        /** @var \Tempest\Database\Builder\ModelQueryBuilder<\Tempest\Auth\CanAuthenticate> $query */
+        /** @var \Tempest\Database\Builder\SelectModelQuery<\Tempest\Auth\CanAuthenticate> $query */
         $query = $userModelClass->callStatic('query');
 
         return $query->with('userPermissions.permission')->get($id);

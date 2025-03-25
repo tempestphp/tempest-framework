@@ -129,6 +129,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         );
 
         Book::new(title: 'A')->save();
+        Book::new(title: 'B')->save();
         $books = Book::query()->raw('LIMIT 1')->all();
 
         $this->assertCount(1, $books);

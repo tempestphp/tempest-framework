@@ -19,6 +19,7 @@ final class SelectStatement implements QueryStatement
         public ImmutableArray $having = new ImmutableArray(),
         public ?int $limit = null,
         public ?int $offset = null,
+        public ImmutableArray $raw = new ImmutableArray(),
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
@@ -64,6 +65,12 @@ final class SelectStatement implements QueryStatement
 
         if ($this->offset !== null) {
             $query[] = 'OFFSET ' . $this->offset;
+        }
+
+        if ($this->raw->isNotEmpty()) {
+            $query[] = $this->raw
+                    ->map(fn (RawStatement $raw) => $raw->compile($dialect))
+                    ->implode(PHP_EOL);
         }
 
         return $query->implode(PHP_EOL);

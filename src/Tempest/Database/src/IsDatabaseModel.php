@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Database\Builder\ModelQueryBuilder;
+use Tempest\Database\Builder\SelectModelQuery;
 use Tempest\Database\Builder\TableName;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\MissingRelation;
@@ -75,11 +75,11 @@ trait IsDatabaseModel
     }
 
     /**
-     * @return \Tempest\Database\Builder\ModelQueryBuilder<self>
+     * @return \Tempest\Database\Builder\SelectModelQuery<self>
      */
-    public static function query(): ModelQueryBuilder
+    public static function query(): SelectModelQuery
     {
-        return new ModelQueryBuilder(self::class);
+        return ModelQuery::select(self::class);
     }
 
     /** @return self[] */
@@ -97,7 +97,7 @@ trait IsDatabaseModel
             ->get($id);
     }
 
-    public static function find(mixed ...$conditions): ModelQueryBuilder
+    public static function find(mixed ...$conditions): SelectModelQuery
     {
         $query = self::query();
 

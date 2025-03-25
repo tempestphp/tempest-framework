@@ -10,24 +10,21 @@ use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
+use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
-
 use function Tempest\map;
 use function Tempest\reflect;
-use function Tempest\Support\arr;
 
 /**
  * @template TModelClass of DatabaseModel
  */
-final class ModelQueryBuilder
+final class SelectModelQuery
 {
     private ModelDefinition $modelDefinition;
 
     private SelectStatement $select;
-
-    private array $raw = [];
 
     private array $relations = [];
 
@@ -41,6 +38,10 @@ final class ModelQueryBuilder
 
         $this->select = new SelectStatement(
             table: $this->modelDefinition->getTableName(),
+            columns: $this->modelDefinition
+                ->getFieldNames()
+                ->filter(fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class))
+                ->map(fn (FieldName $field) => (string) $field->withAlias())
         );
     }
 
@@ -146,8 +147,7 @@ final class ModelQueryBuilder
     /** @return self<TModelClass> */
     public function raw(string $raw): self
     {
-        // TODO
-        $this->raw[] = $raw;
+        $this->select->raw[] = new RawStatement($raw);
 
         return $this;
     }
@@ -167,22 +167,12 @@ final class ModelQueryBuilder
 
     private function build(array $bindings): Query
     {
-        $this->select->columns = $this->modelDefinition
-            ->getFieldNames()
-            ->filter(fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class))
-            ->map(fn (FieldName $field) => (string) $field->withAlias());
-
         $resolvedRelations = $this->resolveRelations($this->modelDefinition);
 
         foreach ($resolvedRelations as $relation) {
             $this->select->columns = $this->select->columns->append(...$relation->getFieldNames()->map(fn (FieldName $field) => (string) $field->withAlias()));
             $this->select->join[] = new JoinStatement($relation->getStatement());
         }
-
-// TODO
-//        if ($this->raw !== []) {
-//            $statements[] = implode(', ', $this->raw);
-//        }
 
         return new Query($this->select, [...$this->bindings, ...$bindings]);
     }
