@@ -12,15 +12,15 @@ namespace Tempest {
     use function Tempest\Support\str;
 
     /**
-     * Creates a path scoped within the root of the project
+     * Creates an absolute path scoped to the root of the project.
      */
     function root_path(string ...$parts): string
     {
-        return path(realpath(get(Kernel::class)->root), ...$parts)->toString();
+        return path(get(Kernel::class)->root, ...$parts)->toString();
     }
 
     /**
-     * Creates an absolute path scoped within the framework's internal storage directory.
+     * Creates an absolute path scoped to the framework's internal storage directory.
      */
     function internal_storage_path(string ...$parts): string
     {
@@ -28,7 +28,7 @@ namespace Tempest {
     }
 
     /**
-     * Creates a relative path scoped within the main directory of the project.
+     * Creates an absolute path scoped to the main directory of the project.
      */
     function src_path(string ...$parts): string
     {
@@ -38,7 +38,7 @@ namespace Tempest {
     }
 
     /**
-     * Creates a namespace scoped within the main namespace of the project.
+     * Creates a namespace scoped to the main namespace of the project.
      */
     function src_namespace(?string $append = null): string
     {

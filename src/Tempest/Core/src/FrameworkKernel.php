@@ -51,6 +51,7 @@ final class FrameworkKernel implements Kernel
             discoveryLocations: $discoveryLocations,
             container: $container,
         )
+            ->validateRoot()
             ->loadEnv()
             ->registerKernelErrorHandler()
             ->registerShutdownFunction()
@@ -62,6 +63,19 @@ final class FrameworkKernel implements Kernel
             ->loadDiscovery()
             ->registerErrorHandler()
             ->event(KernelEvent::BOOTED);
+    }
+
+    public function validateRoot(): self
+    {
+        $root = realpath($this->root);
+
+        if (! is_dir($root)) {
+            throw new \RuntimeException('The specified root directory is not valid.');
+        }
+
+        $this->root = $root;
+
+        return $this;
     }
 
     public function shutdown(int|string $status = ''): never
