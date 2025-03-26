@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\Mapper;
@@ -63,7 +64,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
         $valuePlaceholders = implode(', ', $valuePlaceholders);
         $columns = implode(', ', $columns);
-        $table = $model::table();
+        $table = new ModelDefinition($model)->getTableName();
 
         return new Query(
             "INSERT INTO {$table} ({$columns}) VALUES ({$valuePlaceholders});",
@@ -82,7 +83,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
         $fields['id'] = $model->getId();
 
-        $table = $model::table();
+        $table = new ModelDefinition($model)->getTableName();
 
         return new Query(
             "UPDATE {$table} SET {$values} WHERE id = :id;",

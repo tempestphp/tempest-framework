@@ -7,7 +7,7 @@ namespace Tempest\Database\Builder;
 use Stringable;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class TableName implements Stringable
+final readonly class TableDefinition implements Stringable
 {
     public function __construct(
         public string $tableName,
@@ -16,7 +16,9 @@ final readonly class TableName implements Stringable
 
     public static function for(ClassReflector $reflector, ?string $as = null): self
     {
-        return $reflector->callStatic('table')->as($as);
+        return new ModelDefinition($reflector->getName())
+            ->getTableName()
+            ->as($as);
     }
 
     public function as(?string $as = null): self

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Models;
 
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Lazy;
 
+#[\Tempest\Database\TableName('a')]
 final class AWithLazy implements DatabaseModel
 {
     use IsDatabaseModel;
@@ -17,9 +18,4 @@ final class AWithLazy implements DatabaseModel
         #[Lazy]
         public B $b,
     ) {}
-
-    public static function table(): TableName
-    {
-        return new TableName('a');
-    }
 }

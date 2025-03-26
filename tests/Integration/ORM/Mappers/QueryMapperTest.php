@@ -23,9 +23,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = make(Query::class)->from($author);
 
-        $table = Author::table();
-
-        $this->assertSame("INSERT INTO {$table} (name) VALUES (:name);", $query->getSql());
+        $this->assertSame('INSERT INTO `authors` (name) VALUES (:name);', $query->getSql());
         $this->assertSame(['name' => 'test'], $query->bindings);
     }
 
@@ -40,17 +38,13 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = make(Query::class)->from($book);
 
-        $bookTable = Book::table();
-
-        $this->assertSame("INSERT INTO {$bookTable} (title, author_id) VALUES (:title, :author_id);", $query->getSql());
+        $this->assertSame('INSERT INTO `books` (title, author_id) VALUES (:title, :author_id);', $query->getSql());
         $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
         $this->assertSame('Book Title', $query->bindings['title']);
 
-        $authorTable = Author::table();
-
         $authorQuery = $query->bindings['author_id'];
         $this->assertInstanceOf(Query::class, $authorQuery);
-        $this->assertSame("INSERT INTO {$authorTable} (name) VALUES (:name);", $authorQuery->getSql());
+        $this->assertSame('INSERT INTO `authors` (name) VALUES (:name);', $authorQuery->getSql());
         $this->assertSame('Author Name', $authorQuery->bindings['name']);
     }
 
@@ -60,9 +54,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = make(Query::class)->from($author);
 
-        $table = Author::table();
-
-        $this->assertSame("UPDATE {$table} SET name = :name WHERE id = :id;", $query->getSql());
+        $this->assertSame('UPDATE `authors` SET name = :name WHERE id = :id;', $query->getSql());
         $this->assertSame(['name' => 'other', 'id' => $author->id], $query->bindings);
     }
 }

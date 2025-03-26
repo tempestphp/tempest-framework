@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Models;
 
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 use Tempest\Database\Virtual;
 
+#[TableName('a')]
 final class AWithVirtual implements DatabaseModel
 {
     use IsDatabaseModel;
@@ -21,9 +23,4 @@ final class AWithVirtual implements DatabaseModel
     public function __construct(
         public B $b,
     ) {}
-
-    public static function table(): TableName
-    {
-        return new TableName('a');
-    }
 }

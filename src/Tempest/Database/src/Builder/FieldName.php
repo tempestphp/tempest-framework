@@ -8,24 +8,24 @@ use Stringable;
 use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
-
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\get;
 
 final class FieldName implements Stringable
 {
     public function __construct(
-        public readonly TableName $tableName,
+        public readonly TableDefinition $tableName,
         public readonly string $fieldName,
         public ?string $as = null,
     ) {}
 
     /** @return \Tempest\Database\Builder\FieldName[] */
-    public static function make(ClassReflector $class, ?TableName $tableName = null): ImmutableArray
+    public static function make(ClassReflector $class, ?TableDefinition $tableName = null): ImmutableArray
     {
         $casterFactory = get(CasterFactory::class);
         $fieldNames = [];
-        $tableName ??= $class->callStatic('table');
+        $tableName ??= new ModelDefinition($class->getName())->getTableName();
 
         foreach ($class->getPublicProperties() as $property) {
             // Don't include the field if it's a 1:1 or n:1 relation

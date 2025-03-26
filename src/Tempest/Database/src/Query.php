@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseConfig;
+
 use function Tempest\get;
 
 final class Query
@@ -44,7 +45,7 @@ final class Query
         $sql = $this->sql;
 
         if ($sql instanceof QueryStatement) {
-            $sql = $sql->compile($this->getDatabaseConfig()->dialect);
+            return $sql->compile($this->getDatabaseConfig()->dialect);
         }
 
         return $sql;

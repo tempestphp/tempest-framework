@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\Relations\Fixtures;
 
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
@@ -26,8 +26,8 @@ final class BelongsToRelatedModel implements DatabaseModel
     /** @var \Tempest\Database\Tests\Relations\Fixtures\HasOneParentModel[] */
     public array $invalid = [];
 
-    public static function table(): TableName
+    public static function table(): TableDefinition
     {
-        return new TableName('belongs_to_related');
+        return new TableDefinition('belongs_to_related');
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\Query;
 use Tempest\Mapper\CasterFactory;
@@ -27,7 +28,7 @@ final readonly class QueryToModelMapper implements Mapper
         /** @var \Tempest\Database\Query $from */
         /** @var class-string<DatabaseModel> $to */
         $class = new ClassReflector($to);
-        $table = $class->callStatic('table');
+        $table = new ModelDefinition($class)->getTableName();
 
         $models = [];
 

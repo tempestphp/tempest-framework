@@ -6,7 +6,7 @@ namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\FieldName;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -23,10 +23,10 @@ final readonly class BelongsToRelation implements Relation
     {
         $relationModelClass = $property->getType()->asClass();
 
-        $localTable = TableName::for($property->getClass(), $alias);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
         $localField = new FieldName($localTable, $property->getName() . '_id');
 
-        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
+        $joinTable = TableDefinition::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
         $joinField = new FieldName($joinTable, 'id');
 
         return new self($relationModelClass, $localField, $joinField);
@@ -36,10 +36,10 @@ final readonly class BelongsToRelation implements Relation
     {
         $relationModelClass = $property->getType()->asClass();
 
-        $localTable = TableName::for($property->getClass(), $alias);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
         $localField = new FieldName($localTable, $belongsTo->localPropertyName);
 
-        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
+        $joinTable = TableDefinition::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
         $joinField = new FieldName($joinTable, $belongsTo->inversePropertyName);
 
         return new self($relationModelClass, $localField, $joinField);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDOException;
-use Tempest\Container\Container;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
@@ -60,7 +60,7 @@ final readonly class MigrationManager
             /** @throw UnhandledMatchError */
             match ((string) $pdoException->getCode()) {
                 $this->databaseConfig->dialect->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: Migration::table()->tableName, exception: MigrationException::noTable()),
+                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableName()->tableName, exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
             };

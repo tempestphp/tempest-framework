@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Builder\SelectModelQuery;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 
 interface DatabaseModel
 {
-    public static function table(): TableName;
-
     /** @return \Tempest\Database\Builder\SelectModelQuery<self> */
     public static function query(): SelectModelQuery;
 

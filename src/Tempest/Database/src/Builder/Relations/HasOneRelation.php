@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\HasOne;
 use Tempest\Reflection\ClassReflector;
@@ -31,10 +31,10 @@ final readonly class HasOneRelation implements Relation
 
         $this->relationModelClass = $property->getType()->asClass();
 
-        $localTable = TableName::for($property->getClass(), $alias);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
         $this->localField = new FieldName($localTable, 'id');
 
-        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
+        $joinTable = TableDefinition::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
         $this->joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
     }
 

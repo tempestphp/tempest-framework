@@ -14,6 +14,7 @@ use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
+
 use function Tempest\map;
 use function Tempest\reflect;
 
@@ -41,7 +42,7 @@ final class SelectModelQuery
             columns: $this->modelDefinition
                 ->getFieldNames()
                 ->filter(fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class))
-                ->map(fn (FieldName $field) => (string) $field->withAlias())
+                ->map(fn (FieldName $field) => (string) $field->withAlias()),
         );
     }
 

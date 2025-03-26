@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Database\Builder\FieldName;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\HasMany;
 use Tempest\Reflection\ClassReflector;
@@ -42,10 +42,10 @@ final readonly class HasManyRelation implements Relation
             );
         }
 
-        $localTable = TableName::for($property->getClass(), $alias);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
         $localField = new FieldName($localTable, 'id');
 
-        $joinTable = TableName::for($relationModelClass, "{$alias}.{$property->getName()}[]");
+        $joinTable = TableDefinition::for($relationModelClass, "{$alias}.{$property->getName()}[]");
         $joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
 
         return new self($relationModelClass, $localField, $joinField);
@@ -66,10 +66,10 @@ final readonly class HasManyRelation implements Relation
     {
         $relationModelClass = self::getRelationModelClass($property, $relation);
 
-        $localTable = TableName::for($property->getClass(), $alias);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
         $localField = new FieldName($localTable, $relation->localPropertyName);
 
-        $joinTable = TableName::for($relationModelClass, "{$alias}.{$property->getName()}[]");
+        $joinTable = TableDefinition::for($relationModelClass, "{$alias}.{$property->getName()}[]");
         $joinField = new FieldName($joinTable, $relation->inversePropertyName);
 
         return new self($relationModelClass, $localField, $joinField);

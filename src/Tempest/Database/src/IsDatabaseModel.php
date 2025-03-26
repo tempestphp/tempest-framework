@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\SelectModelQuery;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
@@ -56,17 +57,9 @@ trait IsDatabaseModel
         return $this->id;
     }
 
-    public static function table(): TableName
+    public static function table(): ?TableDefinition
     {
-        $specificName = new ClassReflector(static::class)
-            ->getAttribute(TableNameAttribute::class)
-            ?->name;
-
-        $conventionalName = get(DatabaseConfig::class)
-            ->namingStrategy
-            ->getName(self::class);
-
-        return new TableName($specificName ?? $conventionalName);
+        return null;
     }
 
     public static function new(mixed ...$params): self
@@ -174,7 +167,7 @@ trait IsDatabaseModel
 
     public function delete(): void
     {
-        $table = self::table();
+        $table = new ModelDefinition($this)->getTableName();
 
         $query = new Query(
             sprintf(
