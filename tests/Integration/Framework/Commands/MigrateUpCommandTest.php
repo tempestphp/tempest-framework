@@ -31,4 +31,13 @@ final class MigrateUpCommandTest extends FrameworkIntegrationTestCase
 
         Assert::assertNotEmpty(Migration::all());
     }
+
+    public function test_migrate_command_validates_migrations(): void
+    {
+        $this->console
+            ->call('migrate:up --validate')
+            ->assertContains('Migration files are valid');
+
+        Assert::assertNotEmpty(Migration::all());
+    }
 }
