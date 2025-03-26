@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Framework\Commands;
 
 use PHPUnit\Framework\Assert;
+use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -36,8 +37,27 @@ final class MigrateUpCommandTest extends FrameworkIntegrationTestCase
     {
         $this->console
             ->call('migrate:up --validate')
-            ->assertContains('Migration files are valid');
+            ->assertContains('Migration files are valid')
+            ->assertExitCode(ExitCode::SUCCESS);
 
         Assert::assertNotEmpty(Migration::all());
+    }
+
+    public function test_migrate_up_command_fails_with_validate_when_migrations_are_tampered_with(): void
+    {
+        $this->console
+            ->call('migrate:up --validate')
+            ->assertContains('Migration files are valid')
+            ->assertExitCode(ExitCode::SUCCESS);
+
+        $migrations = Migration::all();
+        foreach ($migrations as $migration) {
+            $migration->hash = 'invalid-hash';
+            $migration->save();
+        }
+
+        $this->console
+            ->call('migrate:up --validate')
+            ->assertExitCode(ExitCode::INVALID);
     }
 }

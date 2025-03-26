@@ -12,16 +12,9 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
-final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
+final class MigrateRehashCommandTest extends FrameworkIntegrationTestCase
 {
-    public function test_migration_validate_command_verifies_valid_migrations(): void
-    {
-        $this->console
-            ->call('migrate:validate')
-            ->assertContains('Migration files are valid');
-    }
-
-    public function test_migration_validate_command_fails_when_migrations_are_tampered_with(): void
+    public function test_migrate_rehash_rehashes_all_existing_migrations(): void
     {
         $this->console
             ->call('migrate:fresh --force');
@@ -33,8 +26,13 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
         }
 
         $this->console
-            ->call('migrate:validate')
-            ->assertContains('Migration file has been tampered with')
-            ->assertExitCode(ExitCode::ERROR);
+            ->call('migrate:rehash')
+            ->assertContains('Rehashed all migrations')
+            ->assertExitCode(ExitCode::SUCCESS);
+
+        $migrations = Migration::all();
+        foreach ($migrations as $migration) {
+            Assert::assertNotSame('invalid-hash', $migration->hash);
+        }
     }
 }
