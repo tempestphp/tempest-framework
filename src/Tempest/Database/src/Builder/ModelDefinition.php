@@ -12,12 +12,11 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
-use Tempest\Database\TableName as TableNameAttribute;
+use Tempest\Database\TableName;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
-use function Tempest\reflect;
 
 final readonly class ModelDefinition
 {
@@ -37,7 +36,7 @@ final readonly class ModelDefinition
     {
         $relations = [];
         $relationNames = explode('.', $relationName);
-        $alias = $this->getTableName()->tableName;
+        $alias = $this->getTableDefinition()->name;
         $class = $this->modelClass;
 
         foreach ($relationNames as $relationNamePart) {
@@ -106,10 +105,10 @@ final readonly class ModelDefinition
         return $relations;
     }
 
-    public function getTableName(): TableDefinition
+    public function getTableDefinition(): TableDefinition
     {
         $specificName = $this->modelClass
-            ->getAttribute(TableNameAttribute::class)
+            ->getAttribute(TableName::class)
             ?->name;
 
         $conventionalName = get(DatabaseConfig::class)
@@ -119,17 +118,17 @@ final readonly class ModelDefinition
         return new TableDefinition($specificName ?? $conventionalName);
     }
 
-    public function getFieldName(string $fieldName): FieldName
+    public function getFieldDefinition(string $name): FieldDefinition
     {
-        return new FieldName(
-            tableName: $this->getTableName(),
-            fieldName: $fieldName,
+        return new FieldDefinition(
+            tableDefinition: $this->getTableDefinition(),
+            name: $name,
         );
     }
 
-    /** @return ImmutableArray<array-key, \Tempest\Database\Builder\FieldName> */
-    public function getFieldNames(): ImmutableArray
+    /** @return ImmutableArray<array-key, \Tempest\Database\Builder\FieldDefinition> */
+    public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldName::make($this->modelClass);
+        return FieldDefinition::make($this->modelClass);
     }
 }

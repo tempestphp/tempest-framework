@@ -12,27 +12,17 @@ final class ModelQuery
         return new SelectModelQuery($modelClass);
     }
 
-    /**
-     * @template ModelType
-     * @param ModelType $model
-     * @return ModelType
-     */
-    public static function create(object $model): self
+    public static function create(object $model): object
     {
         // TODO
     }
 
-    /**
-     * @template ModelType
-     * @param ModelType $model
-     * @return ModelType
-     */
-    public static function update(object $model): self
+    public static function update(object $model): object
     {
         // TODO
     }
 
-    public static function delete(object $model): self
+    public static function delete(object $model): object
     {
         // TODO
     }

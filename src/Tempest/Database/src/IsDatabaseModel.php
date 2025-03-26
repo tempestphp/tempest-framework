@@ -167,7 +167,7 @@ trait IsDatabaseModel
 
     public function delete(): void
     {
-        $table = new ModelDefinition($this)->getTableName();
+        $table = new ModelDefinition($this)->getTableDefinition();
 
         $query = new Query(
             sprintf(

@@ -27,7 +27,7 @@ final class CreateTableStatement implements QueryStatement
     /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self(new ModelDefinition($modelClass)->getTableName()->tableName);
+        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
     }
 
     public function primary(string $name = 'id'): self

@@ -28,12 +28,12 @@ final readonly class QueryToModelMapper implements Mapper
         /** @var \Tempest\Database\Query $from */
         /** @var class-string<DatabaseModel> $to */
         $class = new ClassReflector($to);
-        $table = new ModelDefinition($class)->getTableName();
+        $table = new ModelDefinition($class)->getTableDefinition();
 
         $models = [];
 
         foreach ($from->fetch() as $row) {
-            $idField = $table->tableName . '.id';
+            $idField = $table->name . '.id';
 
             $id = $row[$idField];
 

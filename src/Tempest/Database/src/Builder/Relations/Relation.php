@@ -12,6 +12,6 @@ interface Relation
 
     public function getStatement(): string;
 
-    /** @return ImmutableArray<\Tempest\Database\Builder\FieldName> */
-    public function getFieldNames(): ImmutableArray;
+    /** @return ImmutableArray<\Tempest\Database\Builder\FieldDefinition> */
+    public function getFieldDefinitions(): ImmutableArray;
 }

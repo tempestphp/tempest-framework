@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations\Fixtures;
+namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 
+#[TableName('has_one_related')]
 final class HasOneRelatedModel implements DatabaseModel
 {
     use IsDatabaseModel;
@@ -16,9 +17,4 @@ final class HasOneRelatedModel implements DatabaseModel
         public HasOneParentModel $parent,
         public HasOneParentModel $otherParent,
     ) {}
-
-    public static function table(): TableDefinition
-    {
-        return new TableDefinition('has_one_related');
-    }
 }

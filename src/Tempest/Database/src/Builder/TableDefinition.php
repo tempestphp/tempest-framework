@@ -10,14 +10,14 @@ use Tempest\Reflection\ClassReflector;
 final readonly class TableDefinition implements Stringable
 {
     public function __construct(
-        public string $tableName,
+        public string $name,
         public ?string $as = null,
     ) {}
 
     public static function for(ClassReflector $reflector, ?string $as = null): self
     {
         return new ModelDefinition($reflector->getName())
-            ->getTableName()
+            ->getTableDefinition()
             ->as($as);
     }
 
@@ -27,12 +27,12 @@ final readonly class TableDefinition implements Stringable
             return $this;
         }
 
-        return new self($this->tableName, $as);
+        return new self($this->name, $as);
     }
 
     public function __toString(): string
     {
-        $string = "`{$this->tableName}`";
+        $string = "`{$this->name}`";
 
         if ($this->as !== null) {
             $string .= " AS `{$this->as}`";

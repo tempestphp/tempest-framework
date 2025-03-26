@@ -60,7 +60,7 @@ final readonly class MigrationManager
             /** @throw UnhandledMatchError */
             match ((string) $pdoException->getCode()) {
                 $this->databaseConfig->dialect->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableName()->tableName, exception: MigrationException::noTable()),
+                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableDefinition()->name, exception: MigrationException::noTable()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
             };
@@ -186,14 +186,14 @@ final readonly class MigrationManager
     }
 
     /**
-     * @return \Tempest\Database\Migrations\TableDefinition[]
+     * @return \Tempest\Database\Migrations\TableMigrationDefinition[]
      */
     private function getTableDefinitions(DatabaseDialect $dialect): array
     {
         return array_map(
             fn (array $item) => match ($dialect) {
-                DatabaseDialect::SQLITE => new TableDefinition($item['name']),
-                default => new TableDefinition(array_values($item)[0]),
+                DatabaseDialect::SQLITE => new TableMigrationDefinition($item['name']),
+                default => new TableMigrationDefinition(array_values($item)[0]),
             },
             new ShowTablesStatement()->fetch($dialect),
         );

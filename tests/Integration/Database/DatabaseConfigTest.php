@@ -26,6 +26,6 @@ final class DatabaseConfigTest extends FrameworkIntegrationTestCase
             namingStrategy: new $strategy(),
         ));
 
-        $this->assertSame($expected, new ModelDefinition(MultiWordModel::class)->getTableName()->tableName);
+        $this->assertSame($expected, new ModelDefinition(MultiWordModel::class)->getTableDefinition()->name);
     }
 }

@@ -537,8 +537,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_table_name_overrides(): void
     {
-        $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableName()->tableName);
-        $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableName()->tableName);
-        $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableName()->tableName);
+        $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableDefinition()->name);
     }
 }

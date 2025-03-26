@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations\Fixtures;
+namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 
+#[TableName('has_one_invalid_related')]
 final class HasOneInvalidRelatedModel implements DatabaseModel
 {
     use IsDatabaseModel;
@@ -15,9 +16,4 @@ final class HasOneInvalidRelatedModel implements DatabaseModel
     public function __construct(
         public self $invalidType,
     ) {}
-
-    public static function table(): TableDefinition
-    {
-        return new TableDefinition('has_one_invalid_related');
-    }
 }

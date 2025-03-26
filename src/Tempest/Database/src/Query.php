@@ -40,7 +40,7 @@ final class Query
         return $this->getDatabase()->fetchFirst($this->withBindings($bindings));
     }
 
-    public function getSql(): string|QueryStatement
+    public function getSql(): string
     {
         $sql = $this->sql;
 

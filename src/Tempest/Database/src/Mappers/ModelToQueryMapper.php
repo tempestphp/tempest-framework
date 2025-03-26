@@ -64,7 +64,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
         $valuePlaceholders = implode(', ', $valuePlaceholders);
         $columns = implode(', ', $columns);
-        $table = new ModelDefinition($model)->getTableName();
+        $table = new ModelDefinition($model)->getTableDefinition();
 
         return new Query(
             "INSERT INTO {$table} ({$columns}) VALUES ({$valuePlaceholders});",
@@ -83,7 +83,7 @@ final readonly class ModelToQueryMapper implements Mapper
 
         $fields['id'] = $model->getId();
 
-        $table = new ModelDefinition($model)->getTableName();
+        $table = new ModelDefinition($model)->getTableDefinition();
 
         return new Query(
             "UPDATE {$table} SET {$values} WHERE id = :id;",

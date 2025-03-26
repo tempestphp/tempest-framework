@@ -38,11 +38,11 @@ final class SelectModelQuery
         $this->modelDefinition = new ModelDefinition($this->modelClass);
 
         $this->select = new SelectStatement(
-            table: $this->modelDefinition->getTableName(),
+            table: $this->modelDefinition->getTableDefinition(),
             columns: $this->modelDefinition
-                ->getFieldNames()
-                ->filter(fn (FieldName $field) => ! reflect($this->modelClass, $field->fieldName)->hasAttribute(Virtual::class))
-                ->map(fn (FieldName $field) => (string) $field->withAlias()),
+                ->getFieldDefinitions()
+                ->filter(fn (FieldDefinition $field) => ! reflect($this->modelClass, $field->name)->hasAttribute(Virtual::class))
+                ->map(fn (FieldDefinition $field) => (string) $field->withAlias()),
         );
     }
 
@@ -108,9 +108,9 @@ final class SelectModelQuery
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        $field = $this->modelDefinition->getFieldName($field);
+        $field = $this->modelDefinition->getFieldDefinition($field);
 
-        return $this->where("{$field} = :{$field->fieldName}", ...[$field->fieldName => $value]);
+        return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }
 
     /** @return self<TModelClass> */
@@ -171,7 +171,7 @@ final class SelectModelQuery
         $resolvedRelations = $this->resolveRelations($this->modelDefinition);
 
         foreach ($resolvedRelations as $relation) {
-            $this->select->columns = $this->select->columns->append(...$relation->getFieldNames()->map(fn (FieldName $field) => (string) $field->withAlias()));
+            $this->select->columns = $this->select->columns->append(...$relation->getFieldDefinitions()->map(fn (FieldDefinition $field) => (string) $field->withAlias()));
             $this->select->join[] = new JoinStatement($relation->getStatement());
         }
 

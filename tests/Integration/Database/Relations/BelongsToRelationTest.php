@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations;
+namespace Tests\Tempest\Integration\Database\Relations;
 
-use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Tests\Relations\Fixtures\BelongsToParentModel;
+use Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToParentModel;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class BelongsToRelationTest extends TestCase
+final class BelongsToRelationTest extends FrameworkIntegrationTestCase
 {
     public function test_inferred_belongs_to_relation(): void
     {
