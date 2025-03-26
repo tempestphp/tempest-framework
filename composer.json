@@ -128,6 +128,7 @@
             "src/Tempest/Support/src/Html/functions.php",
             "src/Tempest/Support/src/Language/functions.php",
             "src/Tempest/Support/src/Namespace/functions.php",
+            "src/Tempest/Support/src/Path/functions.php",
             "src/Tempest/Support/src/Random/functions.php",
             "src/Tempest/Support/src/Regex/functions.php",
             "src/Tempest/Support/src/Str/functions.php",

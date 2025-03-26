@@ -42,7 +42,44 @@ final class ComposerTest extends FrameworkIntegrationTestCase
     }
 
     #[Test]
-    public function loads_composer_class_with_multiple_namespaces(): void
+    public function test_sorts_namespaces_by_path_length(): void
+    {
+        $composer = $this->initializeComposer([
+            'autoload' => [
+                'psr-4' => [
+                    'Baz\\' => 'src/Module/Bar/Baz',
+                    'Module\\Foo\\' => 'src/Module/Foo/',
+                    'Module\\' => 'src/Module/',
+                ],
+            ],
+        ]);
+
+        $this->assertSame('Module\\', $composer->namespaces[0]->namespace);
+        $this->assertSame('Module\\Foo\\', $composer->namespaces[1]->namespace);
+        $this->assertSame('Baz\\', $composer->namespaces[2]->namespace);
+    }
+
+    #[Test]
+    public function test_sorts_main_namespace_first(): void
+    {
+        $composer = $this->initializeComposer([
+            'autoload' => [
+                'psr-4' => [
+                    'Module\\' => 'source/Module',
+                    'App\\' => 'source/App',
+                    'Test\\' => 'tests',
+                ],
+            ],
+        ]);
+
+        $this->assertSame('App\\', $composer->mainNamespace->namespace);
+        $this->assertSame('App\\', $composer->namespaces[0]->namespace);
+        $this->assertSame('Test\\', $composer->namespaces[1]->namespace);
+        $this->assertSame('Module\\', $composer->namespaces[2]->namespace);
+    }
+
+    #[Test]
+    public function test_loads_composer_class_with_multiple_namespaces(): void
     {
         $composer = $this->initializeComposer([
             'autoload' => [
@@ -56,7 +93,9 @@ final class ComposerTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('Module\\', $composer->mainNamespace->namespace);
         $this->assertSame('src/Module/', $composer->mainNamespace->path);
+
         $this->assertCount(3, $composer->namespaces);
+
         $this->assertSame('Module\\', $composer->namespaces[0]->namespace);
         $this->assertSame('Module\\Foo\\', $composer->namespaces[1]->namespace);
         $this->assertSame('Module\\Bar\\', $composer->namespaces[2]->namespace);

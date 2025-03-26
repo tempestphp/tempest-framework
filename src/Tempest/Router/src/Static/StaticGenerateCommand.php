@@ -91,11 +91,11 @@ final readonly class StaticGenerateCommand
 
                     $directory = $file->dirname();
 
-                    if (! is_dir($directory)) {
-                        mkdir($directory, recursive: true);
+                    if (! $directory->isDirectory()) {
+                        mkdir($directory->toString(), recursive: true);
                     }
 
-                    file_put_contents($file->path(), $content);
+                    file_put_contents($file->toString(), $content);
 
                     $this->writeln("- <em>{$uri}</em> > <u>{$file}</u>");
                 } catch (Throwable $e) {

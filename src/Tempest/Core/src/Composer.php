@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Support\Namespace\Psr4Namespace;
+
 use function Tempest\Support\arr;
-use function Tempest\Support\path;
+use function Tempest\Support\Arr\wrap;
+use function Tempest\Support\Path\normalize;
+use function Tempest\Support\Str\ensure_ends_with;
+use function Tempest\Support\Str\starts_with;
 
 final class Composer
 {
-    /** @var array<ComposerNamespace> */
+    /** @var array<Psr4Namespace> */
     public array $namespaces;
 
-    public ?ComposerNamespace $mainNamespace = null;
+    public ?Psr4Namespace $mainNamespace = null;
 
     private string $composerPath;
 
@@ -25,16 +30,17 @@ final class Composer
 
     public function load(): self
     {
-        $this->composerPath = path($this->root, 'composer.json')->toString();
+        $this->composerPath = normalize($this->root, 'composer.json');
         $this->composer = $this->loadComposerFile($this->composerPath);
         $this->namespaces = arr($this->composer)
             ->get('autoload.psr-4', default: arr())
-            ->map(fn (string $path, string $namespace) => new ComposerNamespace($namespace, $path))
+            ->map(fn (string $path, string $namespace) => new Psr4Namespace($namespace, $path))
+            ->sortByCallback(fn (Psr4Namespace $ns1, Psr4Namespace $ns2) => strlen($ns1->path) <=> strlen($ns2->path))
             ->values()
             ->toArray();
 
         foreach ($this->namespaces as $namespace) {
-            if (str_starts_with($namespace->path, 'app/') || str_starts_with($namespace->path, 'src/')) {
+            if (starts_with(ensure_ends_with($namespace->path, '/'), ['app/', 'src/', 'source/', 'lib/'])) {
                 $this->mainNamespace = $namespace;
 
                 break;
@@ -45,12 +51,27 @@ final class Composer
             $this->mainNamespace = $this->namespaces[0];
         }
 
+        $this->namespaces = arr([
+            $this->mainNamespace,
+            ...$this->namespaces,
+        ])
+            ->filter()
+            ->unique(fn (Psr4Namespace $ns) => $ns->namespace)
+            ->toArray();
+
         return $this;
     }
 
-    public function setMainNamespace(ComposerNamespace $namespace): self
+    public function setMainNamespace(Psr4Namespace $namespace): self
     {
         $this->mainNamespace = $namespace;
+
+        return $this;
+    }
+
+    public function setNamespaces(Psr4Namespace|array $namespaces): self
+    {
+        $this->namespaces = wrap($namespaces);
 
         return $this;
     }

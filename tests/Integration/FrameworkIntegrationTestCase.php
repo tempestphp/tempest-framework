@@ -29,7 +29,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        $this->root = __DIR__ . '/../../';
+        $this->root = realpath(__DIR__ . '/../../');
         $this->discoveryLocations = [
             new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
             new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),

@@ -22,7 +22,8 @@
             "src/Random/functions.php",
             "src/Regex/functions.php",
             "src/Namespace/functions.php",
-            "src/Language/functions.php"
+            "src/Language/functions.php",
+            "src/Path/functions.php"
         ]
     },
     "autoload-dev": {

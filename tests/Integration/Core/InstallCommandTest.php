@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
-use Tempest\Core\ComposerNamespace;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,7 +19,7 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
         $this->installer
             ->configure(
                 __DIR__ . '/install',
-                new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+                new Psr4Namespace('App\\', __DIR__ . '/install/App'),
             )
             ->setRoot(__DIR__ . '/install');
     }

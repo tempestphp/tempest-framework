@@ -6,6 +6,7 @@ namespace Tempest\Support {
     use Closure;
     use Stringable;
     use Tempest\Support\Arr\ImmutableArray;
+    use Tempest\Support\Path\Path;
     use Tempest\Support\Str\ImmutableString;
 
     /**
@@ -25,7 +26,7 @@ namespace Tempest\Support {
     }
 
     /**
-     * Creates and sanitizes a file system path from the given `$parts`. The resulting path is not checked against the file system.
+     * Normalizes the given path without checking it against the filesystem.
      */
     function path(Stringable|string ...$parts): Path
     {

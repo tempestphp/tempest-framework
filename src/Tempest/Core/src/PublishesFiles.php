@@ -26,6 +26,8 @@ use function strlen;
 use function Tempest\root_path;
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
+use function Tempest\Support\Path\to_absolute_path;
+use function Tempest\Support\Path\to_relative_path;
 use function Tempest\Support\str;
 
 use const JSON_PRETTY_PRINT;
@@ -147,18 +149,14 @@ trait PublishesFiles
     {
         // Separate input path and classname
         $inputClassName = to_base_class_name($className);
-        $inputPath = str(path($className))->replaceLast($inputClassName, '')->toString();
+        $inputPath = path($className)->stripEnd($inputClassName);
         $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix ?? '')
             ->toString();
 
         // Prepare the suggested path from the project namespace
-        return str(path(
-            $this->composer->mainNamespace->path,
-            $pathPrefix ?? '',
-            $inputPath,
-        ))
+        return str(to_absolute_path($this->composer->mainNamespace->path, $pathPrefix ?? '', $inputPath))
             ->finish('/')
             ->append($className . '.php')
             ->toString();
@@ -266,7 +264,7 @@ trait PublishesFiles
 
     private function friendlyFileName(string $path): string
     {
-        return str_replace(str(root_path())->finish('/')->toString(), '', $path);
+        return to_relative_path(root_path(), $path);
     }
 
     private function detectIndent(string $raw): string
