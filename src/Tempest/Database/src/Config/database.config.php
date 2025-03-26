@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Tempest\Database\Config\SQLiteConfig;
 
+use function Tempest\internal_storage_path;
+
 return new SQLiteConfig(
-    path: __DIR__ . '/../database.sqlite',
+    path: internal_storage_path('database.sqlite'),
 );
