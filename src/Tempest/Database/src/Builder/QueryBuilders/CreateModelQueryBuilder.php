@@ -3,6 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
@@ -16,6 +17,11 @@ final readonly class CreateModelQueryBuilder
         private object $model,
         private SerializerFactory $serializerFactory,
     ) {}
+
+    public function execute(...$bindings): Id
+    {
+        return $this->build()->execute(...$bindings);
+    }
 
     public function build(): Query
     {

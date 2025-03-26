@@ -14,6 +14,11 @@ final readonly class DeleteModelQueryBuilder
         private object $model,
     ) {}
 
+    public function execute(): void
+    {
+        $this->build()->execute();
+    }
+
     public function build(): Query
     {
         $table = new ModelDefinition($this->model)->getTableDefinition();
