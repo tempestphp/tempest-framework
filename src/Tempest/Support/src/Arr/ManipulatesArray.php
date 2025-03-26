@@ -469,7 +469,7 @@ trait ManipulatesArray
      */
     public function map(Closure $map): static
     {
-        return $this->createOrModify(namespace\map_array($this->value, $map));
+        return $this->createOrModify(namespace\map_iterable($this->value, $map));
     }
 
     /**

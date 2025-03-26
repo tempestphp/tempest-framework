@@ -25,6 +25,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
 use function Tempest\map;
+use function Tempest\Support\Regex\replace;
 use function Tempest\Support\str;
 
 /**
@@ -171,6 +172,19 @@ final class GenericRouter implements Router
         }
 
         return $uri->toString();
+    }
+
+    public function isCurrentUri(array|string $action, ...$params): bool
+    {
+        $matchedRoute = $this->container->get(MatchedRoute::class);
+        $candidateUri = $this->toUri($action, ...[...$matchedRoute->params, ...$params]);
+        $currentUri = $this->toUri([$matchedRoute->route->handler->getDeclaringClass(), $matchedRoute->route->handler->getName()]);
+
+        foreach ($matchedRoute->params as $key => $value) {
+            $currentUri = replace($currentUri, '/({' . preg_quote($key, '/') . '(?::.*?)?})/', $value);
+        }
+
+        return $currentUri === $candidateUri;
     }
 
     private function createResponse(Response|View $input): Response

@@ -247,6 +247,10 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('foobar foobar')->replaceLast('', 'yyy')->equals('foobar foobar'));
         $this->assertTrue(str('Malmö Jönköping')->replaceLast('ö', 'xxx')->equals('Malmö Jönkxxxping'));
         $this->assertTrue(str('Malmö Jönköping')->replaceLast('', 'yyy')->equals('Malmö Jönköping'));
+
+        $this->assertEquals('foobar foobar', str('foobar foobar')->replaceLast([], 'baz')->toString());
+        $this->assertEquals('foobar bazbar', str('foobar foobar')->replaceLast(['foo', 'bar'], 'baz')->toString());
+        $this->assertEquals('foobar foobaz', str('foobar foobar')->replaceLast(['bar', 'foo'], 'baz')->toString());
     }
 
     public function test_replace_first(): void
@@ -258,6 +262,9 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('foobar foobar')->replaceFirst('', 'yyy')->equals('foobar foobar'));
         $this->assertTrue(str('Jönköping Malmö')->replaceFirst('ö', 'xxx')->equals('Jxxxnköping Malmö'));
         $this->assertTrue(str('Jönköping Malmö')->replaceFirst('', 'yyy')->equals('Jönköping Malmö'));
+
+        $this->assertTrue(str('foobar foobar')->replaceFirst([], 'baz')->equals('foobar foobar'));
+        $this->assertTrue(str('foobar foobar')->replaceFirst(['foobar', 'foo'], 'baz')->equals('baz foobar'));
     }
 
     public function test_replace_end(): void
@@ -270,6 +277,9 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('fooxxx foobar')->replaceEnd('xxx', 'yyy')->equals('fooxxx foobar'));
         $this->assertTrue(str('Malmö Jönköping')->replaceEnd('ö', 'xxx')->equals('Malmö Jönköping'));
         $this->assertTrue(str('Malmö Jönköping')->replaceEnd('öping', 'yyy')->equals('Malmö Jönkyyy'));
+
+        $this->assertEquals('foobar foo', str('foobar foo')->replaceEnd([], 'baz')->toString());
+        $this->assertEquals('foobar baz', str('foobar foo')->replaceEnd(['bar', 'foo'], 'baz')->toString());
     }
 
     public function test_append(): void
@@ -602,6 +612,8 @@ b'));
     {
         $this->assertTrue(str('foo')->contains('fo'));
         $this->assertFalse(str('foo')->contains('bar'));
+        $this->assertTrue(str('foo')->contains(['bar', 'foo']));
+        $this->assertFalse(str('foo')->contains([]));
     }
 
     public function test_levenshtein(): void
@@ -722,5 +734,25 @@ b'));
     public function test_sentence(string $input, string $output): void
     {
         $this->assertEquals($output, str($input)->sentence()->toString());
+    }
+
+    #[TestWith(['http://tempestphp.com', 'http://', 'tempestphp.com'])]
+    #[TestWith(['http://tempestphp.com', ['http://', 'https://'], 'tempestphp.com'])]
+    #[TestWith(['http://tempestphp.com', '', 'http://tempestphp.com'])]
+    #[TestWith(['http://tempestphp.com', [], 'http://tempestphp.com'])]
+    #[TestWith(['http://tempestphp.com', '://', 'http://tempestphp.com'])]
+    #[TestWith(['http://tempestphp.com', ['http', 'http://'], '://tempestphp.com'])]
+    public function test_strip_start(string $input, string|array $strip, string $output): void
+    {
+        $this->assertEquals($output, str($input)->stripStart($strip)->toString());
+    }
+
+    #[TestWith(['foo_bar', '_bar', 'foo'])]
+    #[TestWith(['foo.bar/', '/', 'foo.bar'])]
+    #[TestWith(['foo.bar/', ['/', 'bar/'], 'foo.bar'])]
+    #[TestWith(['foo.bar/', ['bar/', '/'], 'foo.'])]
+    public function test_strip_end(string $input, string|array $strip, string $output): void
+    {
+        $this->assertEquals($output, str($input)->stripEnd($strip)->toString());
     }
 }
