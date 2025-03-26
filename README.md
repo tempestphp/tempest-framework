@@ -44,29 +44,46 @@ final class BookController
 ```
 
 ```php
+#[Singleton]
 final class MigrateUpCommand
 {
+    private int $count = 0;
+
     public function __construct(
-        private Console $console,
-        private MigrationManager $migrationManager,
+        private readonly Console $console,
+        private readonly MigrationManager $migrationManager,
     ) {}
 
     #[ConsoleCommand(
         name: 'migrate:up',
-        description: 'Run all new migrations',
+        description: 'Runs all new migrations',
         middleware: [ForceMiddleware::class, CautionMiddleware::class],
     )]
-    public function __invoke(): void
-    {
+    public function __invoke(
+        #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
+        bool $validate = false,
+    ): ExitCode {
+        if ($validate) {
+            $validationSuccess = $this->console->call('migrate:validate');
+
+            if ($validationSuccess !== 0 && $validationSuccess !== ExitCode::SUCCESS) {
+                return ExitCode::INVALID;
+            }
+        }
+
         $this->migrationManager->up();
 
-        $this->console->success("Everything migrated");
+        $this->console
+            ->success(sprintf('Migrated %s migrations', $this->count));
+
+        return ExitCode::SUCCESS;
     }
 
     #[EventHandler]
-    public function onMigrationMigrated(MigrationMigrated $migrationMigrated): void
+    public function onMigrationMigrated(MigrationMigrated $event): void
     {
-        $this->console->writeln("- {$migrationMigrated->name}");
+        $this->console->writeln("- {$event->name}");
+        $this->count += 1;
     }
 }
 ```
