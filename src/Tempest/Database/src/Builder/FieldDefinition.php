@@ -20,7 +20,7 @@ final class FieldDefinition implements Stringable
     ) {}
 
     /** @return ImmutableArray<\Tempest\Database\Builder\FieldDefinition> */
-    public static function make(ClassReflector $class, ?TableDefinition $tableDefinition = null): ImmutableArray
+    public static function all(ClassReflector $class, ?TableDefinition $tableDefinition = null): ImmutableArray
     {
         $casterFactory = get(CasterFactory::class);
         $fieldDefinitions = [];

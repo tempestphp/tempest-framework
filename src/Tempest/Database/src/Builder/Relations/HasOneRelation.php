@@ -55,7 +55,7 @@ final readonly class HasOneRelation implements Relation
 
     public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldDefinition::make($this->relationModelClass, $this->joinField->tableDefinition);
+        return FieldDefinition::all($this->relationModelClass, $this->joinField->tableDefinition);
     }
 
     private function findInversePropertyByType(PropertyReflector $property): PropertyReflector

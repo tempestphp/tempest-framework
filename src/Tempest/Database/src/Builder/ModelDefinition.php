@@ -17,6 +17,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
+use function Tempest\Support\arr;
 
 final readonly class ModelDefinition
 {
@@ -129,6 +130,34 @@ final readonly class ModelDefinition
     /** @return ImmutableArray<array-key, \Tempest\Database\Builder\FieldDefinition> */
     public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldDefinition::make($this->modelClass);
+        return FieldDefinition::all($this->modelClass);
+    }
+
+    public function getDataFields(): ImmutableArray
+    {
+        $fields = new ImmutableArray();
+
+        foreach ($this->modelClass->getPublicProperties() as $property) {
+            // 1:1 or n:1 relations
+            if ($property->getType()->isRelation()) {
+                continue;
+            }
+
+            // 1:n relations
+            if ($property->getIterableType()?->isRelation()) {
+                continue;
+            }
+
+            $value = $property->getValue($model);
+
+            // Check if serializer is available for value serialization
+            if ($value !== null && ($serializer = $this->serializerFactory->forProperty($property))) {
+                $value = $serializer->serialize($value);
+            }
+
+            $fields[$property->getName()] = $value;
+        }
+
+        return $fields;
     }
 }

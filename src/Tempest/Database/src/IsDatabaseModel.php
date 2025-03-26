@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\SelectModelQuery;
+use Tempest\Database\Builder\Queries\CreateModelQuery;
+use Tempest\Database\Builder\Queries\SelectModelQuery;
+use Tempest\Database\Builder\Queries\UpdateModelQuery;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
-use Tempest\Database\Mappers\ModelToQueryMapper;
-use Tempest\Database\Mappers\QueryToModelMapper;
+use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-
+use function Tempest\get;
 use function Tempest\make;
 use function Tempest\map;
 
@@ -31,9 +32,9 @@ trait IsDatabaseModel
     }
 
     /**
-     * @return \Tempest\Database\Builder\SelectModelQuery<self>
+     * @return \Tempest\Database\Builder\Queries\SelectModelQuery<self>
      */
-    public static function query(): SelectModelQuery
+    public static function select(): SelectModelQuery
     {
         return ModelQuery::select(self::class);
     }
@@ -41,21 +42,21 @@ trait IsDatabaseModel
     /** @return self[] */
     public static function all(array $relations = []): array
     {
-        return self::query()
+        return self::select()
             ->with(...$relations)
             ->all();
     }
 
     public static function get(Id $id, array $relations = []): ?self
     {
-        return self::query()
+        return self::select()
             ->with(...$relations)
             ->get($id);
     }
 
     public static function find(mixed ...$conditions): SelectModelQuery
     {
-        $query = self::query();
+        $query = self::select();
 
         array_walk($conditions, fn ($value, $column) => $query->whereField($column, $value));
 
@@ -64,18 +65,12 @@ trait IsDatabaseModel
 
     public static function create(mixed ...$params): self
     {
-        $model = self::new(...$params);
-
-        $id = make(Query::class)->from($model)->execute();
-
-        $model->id = $id;
-
-        return $model;
+        return self::new(...$params)->save();
     }
 
     public static function updateOrNew(array $find, array $update): self
     {
-        $existing = self::query()->bind(...$find);
+        $existing = self::select()->bind(...$find);
 
         foreach ($find as $key => $value) {
             $existing = $existing->where("{$key} = :{$key}");
@@ -131,7 +126,13 @@ trait IsDatabaseModel
 
     public function save(): self
     {
-        $query = map($this)->to(Query::class);
+        $serializerFactory = get(SerializerFactory::class);
+
+        if ($this->id === null) {
+            $query = new CreateModelQuery($serializerFactory)->build($this);
+        } else {
+            $query = new UpdateModelQuery($serializerFactory)->build($this);
+        }
 
         $id = $query->execute();
 
@@ -146,11 +147,7 @@ trait IsDatabaseModel
             $this->{$key} = $value;
         }
 
-        $query = make(Query::class)->from($this);
-
-        $query->execute();
-
-        return $this;
+        return $this->save();
     }
 
     public function delete(): void

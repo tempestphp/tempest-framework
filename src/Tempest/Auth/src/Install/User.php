@@ -78,7 +78,7 @@ final class User implements CanAuthenticate, CanAuthorize
             $permission instanceof UnitEnum => $permission->name,
         };
 
-        $permission = Permission::query()->whereField('name', $name)->first();
+        $permission = Permission::select()->whereField('name', $name)->first();
 
         return $permission ?? new Permission($name)->save();
     }

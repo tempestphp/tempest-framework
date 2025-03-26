@@ -28,7 +28,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::query()->where('title = ?', 'B')->first();
+        $book = Book::select()->where('title = ?', 'B')->first();
 
         $this->assertSame('B', $book->title);
     }
@@ -46,7 +46,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::query()->orderBy('title DESC')->first();
+        $book = Book::select()->orderBy('title DESC')->first();
 
         $this->assertSame('D', $book->title);
     }
@@ -64,7 +64,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $books = Book::query()->limit(2)->all();
+        $books = Book::select()->limit(2)->all();
 
         $this->assertCount(2, $books);
         $this->assertSame('A', $books[0]->title);
@@ -84,7 +84,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $books = Book::query()
+        $books = Book::select()
             ->limit(2)
             ->offset(2)
             ->all();
@@ -108,13 +108,13 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'D')->save();
 
         $results = [];
-        Book::query()->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::query()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);
@@ -130,7 +130,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
 
         Book::new(title: 'A')->save();
         Book::new(title: 'B')->save();
-        $books = Book::query()->raw('LIMIT 1')->all();
+        $books = Book::select()->raw('LIMIT 1')->all();
 
         $this->assertCount(1, $books);
         $this->assertSame('A', $books[0]->title);

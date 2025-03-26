@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Builder;
+namespace Tempest\Database\Builder\Queries;
 
 use Closure;
+use Tempest\Database\Builder\FieldDefinition;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -13,7 +15,6 @@ use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
-
 use function Tempest\map;
 use function Tempest\reflect;
 

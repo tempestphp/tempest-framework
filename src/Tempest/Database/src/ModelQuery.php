@@ -2,14 +2,14 @@
 
 namespace Tempest\Database;
 
-use Tempest\Database\Builder\SelectModelQuery;
+use Tempest\Database\Builder\Queries\SelectModelQuery;
 
 final class ModelQuery
 {
     /** @param class-string $modelClass */
     public static function select(string $modelClass): SelectModelQuery
     {
-        return new SelectModelQuery($modelClass);
+    return new SelectModelQuery($modelClass);
     }
 
     public static function create(object $model): object
