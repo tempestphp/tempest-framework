@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Closure;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -19,7 +18,7 @@ use function Tempest\map;
 use function Tempest\reflect;
 
 /**
- * @template TModelClass of DatabaseModel
+ * @template TModelClass of object
  */
 final class SelectModelQuery
 {

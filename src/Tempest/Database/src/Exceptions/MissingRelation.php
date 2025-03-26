@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database\Exceptions;
 
 use Exception;
-use Tempest\Database\DatabaseModel;
 
 final class MissingRelation extends Exception
 {
-    public function __construct(DatabaseModel $model, string $relation)
+    public function __construct(object $model, string $relation)
     {
         $modelClass = $model::class;
 

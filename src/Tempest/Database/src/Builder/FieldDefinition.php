@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Stringable;
-use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -29,12 +28,12 @@ final class FieldDefinition implements Stringable
 
         foreach ($class->getPublicProperties() as $property) {
             // Don't include the field if it's a 1:1 or n:1 relation
-            if ($property->getType()->matches(DatabaseModel::class)) {
+            if ($property->getType()->isRelation()) {
                 continue;
             }
 
             // Don't include the field if it's a 1:n relation
-            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
+            if ($property->getIterableType()?->isRelation()) {
                 continue;
             }
 

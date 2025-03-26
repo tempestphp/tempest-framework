@@ -8,13 +8,12 @@ use BackedEnum;
 use SensitiveParameter;
 use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use UnitEnum;
 
 use function Tempest\Support\arr;
 
-final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
+final class User implements CanAuthenticate, CanAuthorize
 {
     use IsDatabaseModel;
 

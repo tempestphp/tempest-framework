@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\TableName;
 
 #[TableName('belongs_to_related')]
-final class BelongsToRelatedModel implements DatabaseModel
+final class BelongsToRelatedModel
 {
     use IsDatabaseModel;
 

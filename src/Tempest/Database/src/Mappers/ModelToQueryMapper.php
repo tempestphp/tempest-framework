@@ -21,13 +21,12 @@ final readonly class ModelToQueryMapper implements Mapper
 
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $to === Query::class && $from instanceof DatabaseModel;
+        return $to === Query::class && is_object($from);
     }
 
     // TODO: refactor to ModelQueryBuilder
     public function map(mixed $from, mixed $to): Query
     {
-        /** @var DatabaseModel $model */
         $model = $from;
 
         $fields = $this->fields($model);
@@ -39,7 +38,7 @@ final readonly class ModelToQueryMapper implements Mapper
         return $this->updateQuery($model, $fields);
     }
 
-    private function createQuery(DatabaseModel $model, array $fields): Query
+    private function createQuery(object $model, array $fields): Query
     {
         unset($fields['id']);
 
@@ -59,7 +58,7 @@ final readonly class ModelToQueryMapper implements Mapper
             $key = "{$key}_id";
             $columns[] = $key;
             $valuePlaceholders[] = ":{$key}";
-            $bindings[$key] = map($relation)->to(Query::class);
+            $bindings[$key] = $relation !== null ? map($relation)->to(Query::class) : null;
         }
 
         $valuePlaceholders = implode(', ', $valuePlaceholders);
@@ -72,7 +71,7 @@ final readonly class ModelToQueryMapper implements Mapper
         );
     }
 
-    private function updateQuery(DatabaseModel $model, array $fields): Query
+    private function updateQuery(object $model, array $fields): Query
     {
         unset($fields['id']);
 
@@ -81,7 +80,7 @@ final readonly class ModelToQueryMapper implements Mapper
             array_keys($fields),
         ));
 
-        $fields['id'] = $model->getId();
+        $fields['id'] = $model->id;
 
         $table = new ModelDefinition($model)->getTableDefinition();
 
@@ -91,7 +90,7 @@ final readonly class ModelToQueryMapper implements Mapper
         );
     }
 
-    private function relations(DatabaseModel $model): array
+    private function relations(object $model): array
     {
         $class = new ClassReflector($model);
 
@@ -102,11 +101,11 @@ final readonly class ModelToQueryMapper implements Mapper
                 continue;
             }
 
-            $value = $property->getValue($model);
-
-            if (! ($value instanceof DatabaseModel)) {
+            if (! $property->getType()->isRelation()) {
                 continue;
             }
+
+            $value = $property->getValue($model);
 
             // Only 1:1 or n:1 relations
             $fields[$property->getName()] = $value;
@@ -115,7 +114,7 @@ final readonly class ModelToQueryMapper implements Mapper
         return $fields;
     }
 
-    private function fields(DatabaseModel $model): array
+    private function fields(object $model): array
     {
         $class = new ClassReflector($model);
 
@@ -127,12 +126,12 @@ final readonly class ModelToQueryMapper implements Mapper
             }
 
             // 1:1 or n:1 relations
-            if ($property->getType()->matches(DatabaseModel::class)) {
+            if ($property->getType()->isRelation()) {
                 continue;
             }
 
             // 1:n relations
-            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
+            if ($property->getIterableType()?->isRelation()) {
                 continue;
             }
 

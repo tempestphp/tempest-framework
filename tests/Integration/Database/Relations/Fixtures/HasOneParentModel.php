@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\TableName;
 
 #[TableName('has_one_parent_model')]
-final class HasOneParentModel implements DatabaseModel
+final class HasOneParentModel
 {
     use IsDatabaseModel;
 

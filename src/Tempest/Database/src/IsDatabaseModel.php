@@ -6,65 +6,28 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\SelectModelQuery;
-use Tempest\Database\Builder\TableDefinition;
-use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
-use Tempest\Database\TableName as TableNameAttribute;
+use Tempest\Database\Mappers\ModelToQueryMapper;
+use Tempest\Database\Mappers\QueryToModelMapper;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-use function Tempest\get;
 use function Tempest\make;
+use function Tempest\map;
 
-/** @phpstan-require-implements \Tempest\Database\DatabaseModel */
 trait IsDatabaseModel
 {
     public ?Id $id = null;
 
-    public function __get(string $name): mixed
-    {
-        $property = PropertyReflector::fromParts($this, $name);
-
-        if ($property->hasAttribute(Lazy::class)) {
-            $this->load($name);
-
-            return $property->getValue($this);
-        }
-
-        $type = $property->getType();
-
-        if ($type->isIterable()) {
-            throw new MissingRelation($this, $name);
-        }
-
-        if ($type->isBuiltIn()) {
-            throw new MissingValue($this, $name);
-        }
-
-        throw new MissingRelation($this, $name);
-    }
-
-    public function setId(Id $id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    public function getId(): Id
-    {
-        return $this->id;
-    }
-
-    public static function table(): ?TableDefinition
-    {
-        return null;
-    }
-
     public static function new(mixed ...$params): self
     {
         return make(self::class)->from($params);
+    }
+
+    public static function resolve(string $input): self
+    {
+        return self::get(new Id($input));
     }
 
     /**
@@ -99,24 +62,13 @@ trait IsDatabaseModel
         return $query;
     }
 
-    public function load(string ...$relations): self
-    {
-        $new = self::get($this->getId(), $relations);
-
-        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
-            $property->setValue($this, $property->getValue($new));
-        }
-
-        return $this;
-    }
-
     public static function create(mixed ...$params): self
     {
         $model = self::new(...$params);
 
         $id = make(Query::class)->from($model)->execute();
 
-        $model->setId($id);
+        $model->id = $id;
 
         return $model;
     }
@@ -143,11 +95,47 @@ trait IsDatabaseModel
         return self::updateOrNew($find, $update)->save();
     }
 
+    public function __get(string $name): mixed
+    {
+        $property = PropertyReflector::fromParts($this, $name);
+
+        if ($property->hasAttribute(Lazy::class)) {
+            $this->load($name);
+
+            return $property->getValue($this);
+        }
+
+        $type = $property->getType();
+
+        if ($type->isIterable()) {
+            throw new MissingRelation($this, $name);
+        }
+
+        if ($type->isBuiltIn()) {
+            throw new MissingValue($this, $name);
+        }
+
+        throw new MissingRelation($this, $name);
+    }
+
+    public function load(string ...$relations): self
+    {
+        $new = self::get($this->id, $relations);
+
+        foreach (new ClassReflector($new)->getPublicProperties() as $property) {
+            $property->setValue($this, $property->getValue($new));
+        }
+
+        return $this;
+    }
+
     public function save(): self
     {
-        $id = make(Query::class)->from($this)->execute();
+        $query = map($this)->to(Query::class);
 
-        $this->setId($id);
+        $id = $query->execute();
+
+        $this->id = $id;
 
         return $this;
     }
@@ -175,7 +163,7 @@ trait IsDatabaseModel
                 $table,
             ),
             [
-                'id' => $this->getId()->id,
+                'id' => $this->id->id,
             ],
         );
 

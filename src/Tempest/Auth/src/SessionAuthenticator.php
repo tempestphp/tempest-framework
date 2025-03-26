@@ -18,7 +18,7 @@ final readonly class SessionAuthenticator implements Authenticator
 
     public function login(CanAuthenticate $user): void
     {
-        $this->session->set(self::USER_KEY, $user->getId());
+        $this->session->set(self::USER_KEY, $user->id);
     }
 
     public function logout(): void

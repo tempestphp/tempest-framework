@@ -471,8 +471,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $foo->delete();
 
-        $this->assertNull(Foo::get($foo->getId()));
-        $this->assertNotNull(Foo::get($bar->getId()));
+        $this->assertNull(Foo::get($foo->id));
+        $this->assertNotNull(Foo::get($bar->id));
     }
 
     public function test_property_with_carbon_type(): void
