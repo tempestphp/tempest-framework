@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Database\Builder\Queries;
+namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Query;
@@ -10,18 +10,19 @@ use Tempest\Reflection\ClassReflector;
 /**
  * @template TModelClass of object
  */
-final readonly class UpdateModelQuery
+final readonly class UpdateModelQueryBuilder
 {
     public function __construct(
+        private object $model,
         private SerializerFactory $serializerFactory,
     ) {}
 
-    public function build(object $model): Query
+    public function build(): Query
     {
-        $modelClass = new ClassReflector($model);
-        $modelDefinition = new ModelDefinition($model);
+        $modelClass = new ClassReflector($this->model);
+        $modelDefinition = new ModelDefinition($this->model);
 
-        $fields = $this->fields($modelClass, $model);
+        $fields = $this->fields($modelClass, $this->model);
 
         unset($fields['id']);
 
@@ -32,7 +33,7 @@ final readonly class UpdateModelQuery
 
         // TODO: update relations?
 
-        $fields['id'] = $model->id;
+        $fields['id'] = $this->model->id;
 
         $table = $modelDefinition->getTableDefinition();
 

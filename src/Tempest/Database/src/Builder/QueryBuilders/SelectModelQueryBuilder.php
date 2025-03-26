@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Builder\Queries;
+namespace Tempest\Database\Builder\QueryBuilders;
 
 use Closure;
 use Tempest\Database\Builder\FieldDefinition;
@@ -22,8 +22,11 @@ use function Tempest\reflect;
 /**
  * @template TModelClass of object
  */
-final class SelectModelQuery
+final class SelectModelQueryBuilder
 {
+    /** @var class-string<TModelClass> $modelClass */
+    private readonly string $modelClass;
+
     private ModelDefinition $modelDefinition;
 
     private SelectStatement $select;
@@ -32,10 +35,10 @@ final class SelectModelQuery
 
     private array $bindings = [];
 
-    public function __construct(
-        /** @var class-string<TModelClass> $modelClass */
-        private readonly string $modelClass,
-    ) {
+    public function __construct(string|object $model)
+    {
+        $this->modelClass = is_object($model) ? $model::class : $model;
+
         $this->modelDefinition = new ModelDefinition($this->modelClass);
 
         $this->select = new SelectStatement(

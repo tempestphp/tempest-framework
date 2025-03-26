@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Database\Builder\Queries;
+namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Query;
@@ -10,18 +10,19 @@ use Tempest\Reflection\ClassReflector;
 /**
  * @template TModelClass of object
  */
-final readonly class CreateModelQuery
+final readonly class CreateModelQueryBuilder
 {
     public function __construct(
+        private object $model,
         private SerializerFactory $serializerFactory,
     ) {}
 
-    public function build(object $model): Query
+    public function build(): Query
     {
-        $modelClass = new ClassReflector($model);
-        $modelDefinition = new ModelDefinition($model);
+        $modelClass = new ClassReflector($this->model);
+        $modelDefinition = new ModelDefinition($this->model);
 
-        $fields = $this->fields($modelClass, $model);
+        $fields = $this->fields($modelClass, $this->model);
 
         unset($fields['id']);
 
@@ -35,7 +36,7 @@ final readonly class CreateModelQuery
             $bindings[$key] = $value;
         }
 
-        $relations = $this->relations($modelClass, $model);
+        $relations = $this->relations($modelClass, $this->model);
 
         foreach ($relations as $key => $relation) {
             $key = "{$key}_id";
@@ -43,7 +44,7 @@ final readonly class CreateModelQuery
             $valuePlaceholders[] = ":{$key}";
 
             if ($relation !== null) {
-                $bindings[$key] = $relation->id ?? $this->build($relation);
+                $bindings[$key] = $relation->id ?? new self($relation, $this->serializerFactory)->build();
             } else {
                 $bindings[$key] = null;
             }

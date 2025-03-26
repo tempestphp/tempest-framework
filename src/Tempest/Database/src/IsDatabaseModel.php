@@ -4,20 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
-use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\Queries\CreateModelQuery;
-use Tempest\Database\Builder\Queries\DeleteModelQuery;
-use Tempest\Database\Builder\Queries\SelectModelQuery;
-use Tempest\Database\Builder\Queries\UpdateModelQuery;
+use Tempest\Database\Builder\QueryBuilders\SelectModelQueryBuilder;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
-use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-
-use function Tempest\get;
 use function Tempest\make;
-use function Tempest\map;
 
 trait IsDatabaseModel
 {
@@ -34,11 +26,11 @@ trait IsDatabaseModel
     }
 
     /**
-     * @return \Tempest\Database\Builder\Queries\SelectModelQuery<self>
+     * @return \Tempest\Database\Builder\QueryBuilders\SelectModelQueryBuilder<self>
      */
-    public static function select(): SelectModelQuery
+    public static function select(): SelectModelQueryBuilder
     {
-        return new SelectModelQuery(self::class);
+        return query(self::class)->select();
     }
 
     /** @return self[] */
@@ -56,7 +48,7 @@ trait IsDatabaseModel
             ->get($id);
     }
 
-    public static function find(mixed ...$conditions): SelectModelQuery
+    public static function find(mixed ...$conditions): SelectModelQueryBuilder
     {
         $query = self::select();
 
@@ -128,15 +120,13 @@ trait IsDatabaseModel
 
     public function save(): self
     {
-        $serializerFactory = get(SerializerFactory::class);
-
         if ($this->id === null) {
-            $query = new CreateModelQuery($serializerFactory)->build($this);
+            $query = query($this)->create();
         } else {
-            $query = new UpdateModelQuery($serializerFactory)->build($this);
+            $query = query($this)->update();
         }
 
-        $id = $query->execute();
+        $id = $query->build()->execute();
 
         $this->id = $id;
 
@@ -154,8 +144,9 @@ trait IsDatabaseModel
 
     public function delete(): void
     {
-        $query = new DeleteModelQuery()->build($this);
-
-        $query->execute();
+        query($this)
+            ->delete()
+            ->build()
+            ->execute();
     }
 }

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
-use Tempest\Database\Builder\Queries\CreateModelQuery;
-use Tempest\Database\Builder\Queries\UpdateModelQuery;
+use Tempest\Database\Builder\QueryBuilders\UpdateModelQueryBuilder;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal
@@ -21,7 +22,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
     {
         $author = Author::new(name: 'test');
 
-        $query = $this->container->get(CreateModelQuery::class)->build($author);
+        $query = query($author)->create()->build();
 
         $this->assertSame('INSERT INTO `authors` (name) VALUES (:name);', $query->getSql());
         $this->assertSame(['name' => 'test'], $query->bindings);
@@ -36,7 +37,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
             ),
         );
 
-        $query = $this->container->get(CreateModelQuery::class)->build($book);
+        $query = query($book)->create()->build();
 
         $this->assertSame('INSERT INTO `books` (title, author_id) VALUES (:title, :author_id);', $query->getSql());
         $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
@@ -52,7 +53,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
     {
         $author = Author::new(id: new Id(1), name: 'other');
 
-        $query = $this->container->get(UpdateModelQuery::class)->build($author);
+        $query = query($author)->update()->build();
 
         $this->assertSame('UPDATE `authors` SET name = :name WHERE id = :id;', $query->getSql());
         $this->assertSame(['name' => 'other', 'id' => $author->id], $query->bindings);
