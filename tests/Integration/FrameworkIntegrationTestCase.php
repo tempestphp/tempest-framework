@@ -25,11 +25,14 @@ use Tempest\View\View;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 
+use function Tempest\Support\Path\normalize;
+
 abstract class FrameworkIntegrationTestCase extends IntegrationTest
 {
     protected function setUp(): void
     {
-        $this->root = realpath(__DIR__ . '/../../');
+        // We force forward slashes for consistency even on Windows.
+        $this->root = normalize(realpath(__DIR__ . '/../../'));
         $this->discoveryLocations = [
             new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
             new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
