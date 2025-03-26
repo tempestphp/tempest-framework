@@ -577,20 +577,27 @@ trait ManipulatesString
      *
      * ### Example
      * ```php
-     * str('10-abc')->match('/(?<id>\d+-)/'); // ['id' => '10']
+     * str('10-abc')->match('/(?<id>\d+-)/', match: 'id'); // 10
      * ```
+     *
+     * @param non-empty-string $pattern The regular expression to match on
+     * @param string|int $match The group number or name to retrieve
+     * @param mixed $default The default value to return if no match is found
+     * @param 0|256|512|768 $flags
      */
-    public function match(string $regex): array
+    public function match(string $pattern, array|Stringable|int|string $match = 1, mixed $default = null, int $flags = 0, int $offset = 0): null|int|string|array
     {
-        return Regex\get_first_match($this->value, $regex);
+        return Regex\get_match($this->value, $pattern, $match, $default, $flags, $offset);
     }
 
     /**
      * Gets all portions of the instance that match the given regular expression.
+     *
+     * @param non-empty-string $pattern The regular expression to match on
      */
-    public function matchAll(string $regex, int $flags = 0, int $offset = 0): array
+    public function matchAll(Stringable|string $pattern, array|Stringable|int|string $matches = 0, int $offset = 0): ImmutableArray
     {
-        return Regex\get_all_matches($this->value, $regex, $flags, $offset);
+        return new ImmutableArray(Regex\get_all_matches($this->value, $pattern, $matches, $offset));
     }
 
     /**

@@ -9,7 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Tempest\Support\Regex\InvalidPatternException;
 
 use function Tempest\Support\Regex\get_all_matches;
-use function Tempest\Support\Regex\get_first_match;
+use function Tempest\Support\Regex\get_match;
+use function Tempest\Support\Regex\get_matches;
 use function Tempest\Support\Regex\matches;
 use function Tempest\Support\Regex\replace;
 use function Tempest\Support\Regex\replace_every;
@@ -80,41 +81,87 @@ final class FunctionsTest extends TestCase
         replace_every('April 15, 2003', ['/(\w+) (\d+), (\d+)' => '${1}1,$3']);
     }
 
-    public function test_get_all_matches(): void
+    public function test_get_match(): void
     {
-        // simple pattern
-        $this->assertSame([['Hello', 'Hello']], get_all_matches('Hello world, Hello universe', '/Hello/'));
+        $this->assertSame('10', get_match('10-abc', '/(?<id>\d+)-.*/', match: 'id'));
+        $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/', match: 1));
+        $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/'));
+        $this->assertSame('10-abc', get_match('10-abc', '/\d+-.*/', match: 0));
+        $this->assertSame(null, get_match('10-abc', '/\d+-.*/', match: 1));
 
-        // named capture groups
-        $regex = '/(?<adjective>quick|lazy) (?<noun>brown|dog)/';
-        $matches = get_all_matches('The quick brown fox, then the lazy dog', $regex);
-        $this->assertSame([
+        $this->assertSame(
             [
-                'quick brown',
-                'lazy dog',
+                'match' => "<href='https://tempestphp.com'>Tempest</href>",
+                'quote' => "'",
+                'href' => 'https://tempestphp.com',
             ],
-            'adjective' => [
-                'quick',
-                'lazy',
-            ],
-            1 => [
-                'quick',
-                'lazy',
-            ],
-            'noun' => [
-                'brown',
-                'dog',
-            ],
-            2 => [
-                'brown',
-                'dog',
-            ],
-        ], $matches);
+            get_match("<href='https://tempestphp.com'>Tempest</href>", '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/g', match: [
+                'match',
+                'quote',
+                'href',
+            ]),
+        );
+    }
 
-        // No matches
-        $this->assertSame([], get_all_matches('The quick brown fox, then the lazy dog', '/cat/'));
+    public function test_all_matches(): void
+    {
+        $this->assertSame(
+            [
+                ['Hello'],
+                ['Hello'],
+            ],
+            get_all_matches('Hello world, Hello universe', '/Hello/'),
+        );
 
-        // Mixed captures
+        $this->assertSame(
+            [
+                [
+                    'match' => "<href='https://bsky.app'>Bluesky</href>",
+                    'quote' => "'",
+                    'href' => 'https://bsky.app',
+                ],
+                [
+                    'match' => "<href='https://x.com.com'>X</href>",
+                    'quote' => "'",
+                    'href' => 'https://x.com.com',
+                ],
+            ],
+            get_all_matches(
+                "<href='https://bsky.app'>Bluesky</href><href='https://x.com.com'>X</href>",
+                '/(?<match>\<href=(?<quote>[\"\'])(?<href>.+?)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/g',
+                matches: [
+                    'match',
+                    'quote',
+                    'href',
+                ],
+            ),
+        );
+    }
+
+    public function test_get_matches(): void
+    {
+        $this->assertSame([], get_matches('The quick brown fox, then the lazy dog', '/cat/', global: true));
+
+        $this->assertSame(
+            [
+                0 => '10-',
+                'id' => '10-',
+                1 => '10-',
+            ],
+            get_matches('10-abc', '/(?<id>\d+-)/'),
+        );
+
+        $this->assertSame(
+            [
+                [['foobar', 0]],
+                [['foo', 0]],
+                [['bar', 3]],
+            ],
+            get_matches('foobarbaz', '/(foo)(bar)/', global: true, flags: PREG_OFFSET_CAPTURE),
+        );
+
+        $this->assertSame([], get_matches('abcdef', '/^def/', global: true, offset: 3));
+
         $this->assertSame(
             [
                 [
@@ -146,26 +193,33 @@ final class FunctionsTest extends TestCase
                     'eats',
                 ],
             ],
-            get_all_matches('The quick brown fox, then the lazy dog eats', '/(?<adjective>quick|lazy) (?<noun>brown|dog) (?<action>jumps|eats)?/'),
+            get_matches('The quick brown fox, then the lazy dog eats', '/(?<adjective>quick|lazy) (?<noun>brown|dog) (?<action>jumps|eats)?/', global: true),
         );
 
-        // Test flags
         $this->assertSame(
             [
-                [['foobar', 0]],
-                [['foo', 0]],
-                [['bar', 3]],
+                [
+                    'quick brown',
+                    'lazy dog',
+                ],
+                'adjective' => [
+                    'quick',
+                    'lazy',
+                ],
+                1 => [
+                    'quick',
+                    'lazy',
+                ],
+                'noun' => [
+                    'brown',
+                    'dog',
+                ],
+                2 => [
+                    'brown',
+                    'dog',
+                ],
             ],
-            get_all_matches('foobarbaz', '/(foo)(bar)/', PREG_OFFSET_CAPTURE),
+            get_matches('The quick brown fox, then the lazy dog', '/(?<adjective>quick|lazy) (?<noun>brown|dog)/', global: true),
         );
-
-        $this->assertSame([], get_all_matches('abcdef', '/^def/', offset: 3));
-    }
-
-    public function test_match(): void
-    {
-        $match = get_first_match('10-abc', '/(?<id>\d+-)/')['id'];
-
-        $this->assertSame('10-', $match);
     }
 }
