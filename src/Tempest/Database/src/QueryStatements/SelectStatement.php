@@ -2,6 +2,8 @@
 
 namespace Tempest\Database\QueryStatements;
 
+use Stringable;
+use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
@@ -25,7 +27,24 @@ final class SelectStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         $query = new ImmutableArray([
-            'SELECT ' . $this->columns->implode(', '),
+            'SELECT ' .
+                $this->columns
+                    ->map(function (string|Stringable $column) {
+                        if ($column instanceof FieldDefinition) {
+                            return (string) $column;
+                        }
+
+                        if (! str_starts_with($column, '`')) {
+                            $column = "`{$column}";
+                        }
+
+                        if (! str_ends_with($column, '`')) {
+                            $column = "{$column}`";
+                        }
+
+                        return (string) $column;
+                    })
+                    ->implode(', '),
             'FROM ' . $this->table,
         ]);
 
