@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\Queries\CreateModelQuery;
+use Tempest\Database\Builder\Queries\DeleteModelQuery;
 use Tempest\Database\Builder\Queries\SelectModelQuery;
 use Tempest\Database\Builder\Queries\UpdateModelQuery;
 use Tempest\Database\Exceptions\MissingRelation;
@@ -13,6 +14,7 @@ use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+
 use function Tempest\get;
 use function Tempest\make;
 use function Tempest\map;
@@ -36,7 +38,7 @@ trait IsDatabaseModel
      */
     public static function select(): SelectModelQuery
     {
-        return ModelQuery::select(self::class);
+        return new SelectModelQuery(self::class);
     }
 
     /** @return self[] */
@@ -152,17 +154,7 @@ trait IsDatabaseModel
 
     public function delete(): void
     {
-        $table = new ModelDefinition($this)->getTableDefinition();
-
-        $query = new Query(
-            sprintf(
-                'DELETE FROM %s WHERE `id` = :id',
-                $table,
-            ),
-            [
-                'id' => $this->id->id,
-            ],
-        );
+        $query = new DeleteModelQuery()->build($this);
 
         $query->execute();
     }

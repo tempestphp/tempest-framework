@@ -15,6 +15,7 @@ use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
+
 use function Tempest\map;
 use function Tempest\reflect;
 

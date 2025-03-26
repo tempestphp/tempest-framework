@@ -14,8 +14,7 @@ final readonly class UpdateModelQuery
 {
     public function __construct(
         private SerializerFactory $serializerFactory,
-    ) {
-    }
+    ) {}
 
     public function build(object $model): Query
     {
