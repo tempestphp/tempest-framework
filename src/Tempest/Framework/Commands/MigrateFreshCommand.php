@@ -36,7 +36,11 @@ final class MigrateFreshCommand
         bool $validate = false,
     ): ExitCode {
         if ($validate) {
-            $this->console->call('migrate:validate');
+            $validationSuccess = $this->console->call('migrate:validate');
+
+            if ($validationSuccess !== 0 && $validationSuccess !== ExitCode::SUCCESS) {
+                return ExitCode::INVALID;
+            }
         }
 
         $this->console->info('Dropping tables…');

@@ -7,6 +7,7 @@ namespace Tempest\Framework\Commands;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Console\ExitCode;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;
@@ -32,15 +33,21 @@ final class MigrateUpCommand
     public function __invoke(
         #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
         bool $validate = false,
-    ): void {
+    ): ExitCode {
         if ($validate) {
-            $this->console->call('migrate:validate');
+            $validationSuccess = $this->console->call('migrate:validate');
+
+            if ($validationSuccess !== 0 && $validationSuccess !== ExitCode::SUCCESS) {
+                return ExitCode::INVALID;
+            }
         }
 
         $this->migrationManager->up();
 
         $this->console
             ->success(sprintf('Migrated %s migrations', $this->count));
+
+        return ExitCode::SUCCESS;
     }
 
     #[EventHandler]
