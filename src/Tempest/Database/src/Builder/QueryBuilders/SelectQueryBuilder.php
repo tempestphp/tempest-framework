@@ -22,7 +22,7 @@ use function Tempest\reflect;
 /**
  * @template TModelClass of object
  */
-final class SelectModelQueryBuilder
+final class SelectQueryBuilder
 {
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;

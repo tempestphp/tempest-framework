@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
@@ -17,11 +18,19 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
-use function Tempest\Support\arr;
 
 final readonly class ModelDefinition
 {
     private ClassReflector $modelClass;
+
+    public static function tryFrom(string|object $model): ?self
+    {
+        try {
+            return new self($model);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
 
     public function __construct(string|object $model)
     {

@@ -11,7 +11,7 @@ use Tempest\Reflection\ClassReflector;
 /**
  * @template TModelClass of object
  */
-final readonly class UpdateModelQueryBuilder
+final readonly class CreateQueryBuilder
 {
     public function __construct(
         private object $model,
@@ -32,23 +32,41 @@ final readonly class UpdateModelQueryBuilder
 
         unset($fields['id']);
 
-        $values = implode(', ', array_map(
-            fn (string $key) => "{$key} = :{$key}",
-            array_keys($fields),
-        ));
+        $columns = [];
+        $valuePlaceholders = [];
+        $bindings = [];
 
-        // TODO: update relations?
+        foreach ($fields as $key => $value) {
+            $columns[] = $key;
+            $valuePlaceholders[] = ":{$key}";
+            $bindings[$key] = $value;
+        }
 
-        $fields['id'] = $this->model->id;
+        $relations = $this->relations($modelClass, $this->model);
 
+        foreach ($relations as $key => $relation) {
+            $key = "{$key}_id";
+            $columns[] = $key;
+            $valuePlaceholders[] = ":{$key}";
+
+            if ($relation !== null) {
+                $bindings[$key] = $relation->id ?? new self($relation, $this->serializerFactory)->build();
+            } else {
+                $bindings[$key] = null;
+            }
+        }
+
+        $valuePlaceholders = implode(', ', $valuePlaceholders);
+        $columns = implode(', ', $columns);
         $table = $modelDefinition->getTableDefinition();
 
         return new Query(
-            "UPDATE {$table} SET {$values} WHERE id = :id;",
-            $fields,
+            "INSERT INTO {$table} ({$columns}) VALUES ({$valuePlaceholders});",
+            $bindings,
         );
     }
 
+    // TODO: move to model definition class?
     private function fields(ClassReflector $modelClass, object $model): array
     {
         $fields = [];
@@ -75,6 +93,29 @@ final readonly class UpdateModelQueryBuilder
                 $value = $serializer->serialize($value);
             }
 
+            $fields[$property->getName()] = $value;
+        }
+
+        return $fields;
+    }
+
+    // TODO: move to model definition class?
+    private function relations(ClassReflector $modelClass, object $model): array
+    {
+        $fields = [];
+
+        foreach ($modelClass->getPublicProperties() as $property) {
+            if (! $property->isInitialized($model)) {
+                continue;
+            }
+
+            if (! $property->getType()->isRelation()) {
+                continue;
+            }
+
+            $value = $property->getValue($model);
+
+            // Only 1:1 or n:1 relations
             $fields[$property->getName()] = $value;
         }
 

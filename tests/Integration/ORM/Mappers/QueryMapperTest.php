@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
-use Tempest\Database\Builder\QueryBuilders\UpdateModelQueryBuilder;
+use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;

@@ -1,10 +1,10 @@
 <?php
 
 namespace Tempest\Database {
-    use Tempest\Database\Builder\QueryBuilders\ModelQueryBuilder;
+    use Tempest\Database\Builder\QueryBuilders\QueryBuilder;
 
-    function query(string|object $model): ModelQueryBuilder
+    function query(string|object $model): QueryBuilder
     {
-        return new ModelQueryBuilder($model);
+        return new QueryBuilder($model);
     }
 }
