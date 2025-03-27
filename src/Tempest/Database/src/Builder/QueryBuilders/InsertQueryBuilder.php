@@ -110,7 +110,7 @@ final class InsertQueryBuilder
 
             $values[] = arr($columns)
                 ->map(function (string $column) use ($modelClass, $model) {
-                    // TODO: improve
+                    // TODO: improve by refactoring to some kind of reusable model() inspector
                     $column = str($column)->replaceEnd('_id', '');
 
                     $property = $modelClass->getProperty($column);
