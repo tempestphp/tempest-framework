@@ -25,7 +25,6 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-use function Tempest\reflect;
 use function Tempest\uri;
 
 /**
@@ -249,9 +248,17 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertFalse($router->isCurrentUri(ControllerWithEnumBinding::class, input: EnumForController::BAR));
     }
 
-    public function test_response_processor(): void
+    public function test_discovers_response_processors(): void
     {
-        $this->container->get(RouteConfig::class)->addResponseProcessor(TestResponseProcessor::class);
+        $this->http
+            ->get('/', headers: ['X-Processed' => 'false'])
+            ->assertHeaderContains('X-Processed', 'true')
+            ->assertOk();
+    }
+
+    public function test_can_add_response_processor(): void
+    {
+        $this->container->get(RouteConfig::class)->addResponseProcessor(TestProcessedResponseProcessor::class);
 
         $this->http
             ->get('/')
