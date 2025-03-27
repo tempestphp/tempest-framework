@@ -69,10 +69,6 @@ final class ModelInspector
 
             $name = $property->getName();
 
-            if ($property->getType()->isRelation()) {
-                $name .= '_id';
-            }
-
             $values[$name] = $property->getValue($this->model);
         }
 

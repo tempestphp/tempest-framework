@@ -125,16 +125,13 @@ trait IsDatabaseModel
     {
         if (! isset($this->id)) {
             $query = query($this::class)->insert($this);
+
+            $this->id = $query->execute();
         } else {
-            ld( model($this)->getPropertyValues());
-            $query = query($this)->update(
-                model($this)->getPropertyValues()
-            );
+            query($this)->update(
+                ...model($this)->getPropertyValues()
+            )->execute();
         }
-
-        $id = $query->build()->execute();
-
-        $this->id = $id;
 
         return $this;
     }

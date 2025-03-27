@@ -62,6 +62,8 @@ final class UpdateQueryBuilder
     {
         $values = $this->resolveValues();
 
+        unset($values['id']);
+
         $this->update->values = $values;
 
         if (model($this->model)->isObjectModel() && is_object($this->model)) {
@@ -91,16 +93,30 @@ final class UpdateQueryBuilder
 
         $modelClass = new ClassReflector($this->model);
 
-        foreach ($this->values as $key => $value) {
-            $serializer = $this->serializerFactory->forProperty($modelClass->getProperty($key));
+        foreach ($this->values as $column => $value) {
+            $property = $modelClass->getProperty($column);
 
-            // TODO: insert or update relations
+            if ($property->getType()->isRelation()) {
+                $column .= '_id';
+
+                $value = match (true) {
+                    $value === null => null,
+                    isset($value->id) => $value->id->id,
+                    default => new InsertQueryBuilder(
+                        $value::class,
+                        [$value],
+                        $this->serializerFactory,
+                    )->build(),
+                };
+            }
+
+            $serializer = $this->serializerFactory->forProperty($property);
 
             if ($value !== null && $serializer !== null) {
                 $value = $serializer->serialize($value);
             }
 
-            $values[$key] = $value;
+            $values[$column] = $value;
         }
 
         return $values;

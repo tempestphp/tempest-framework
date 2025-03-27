@@ -145,4 +145,14 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
     }
+
+    public function test_insert_new_relation_on_update(): void
+    {
+
+    }
+
+    public function test_attach_existing_relation_on_update(): void
+    {
+
+    }
 }
