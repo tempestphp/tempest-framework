@@ -11,9 +11,6 @@ use Tempest\Reflection\ClassReflector;
 
 use function Tempest\Support\arr;
 
-/**
- * @template TModelClass of object
- */
 final class InsertQueryBuilder
 {
     public function __construct(
