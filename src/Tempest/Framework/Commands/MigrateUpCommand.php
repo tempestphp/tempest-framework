@@ -35,7 +35,7 @@ final class MigrateUpCommand
         bool $validate = false,
     ): ExitCode {
         if ($validate) {
-            $validationSuccess = $this->console->call('migrate:validate');
+            $validationSuccess = $this->console->call(MigrateValidateCommand::class);
 
             if ($validationSuccess !== 0 && $validationSuccess !== ExitCode::SUCCESS) {
                 return ExitCode::INVALID;
