@@ -8,7 +8,6 @@ use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
-use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\Support\arr;
 
@@ -68,7 +67,7 @@ final class InsertQueryBuilder
         }
 
         if (! is_object($firstEntry)) {
-            // Shouldn't be allowed
+            // TODO: Shouldn't be allowed
         }
 
         $modelClass = new ClassReflector($firstEntry);
