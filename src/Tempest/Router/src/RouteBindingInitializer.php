@@ -6,11 +6,10 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
-use Tempest\Database\Id;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\NotFoundException;
 
-final class RouteModelBindingInitializer implements DynamicInitializer
+final class RouteBindingInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class): bool
     {
