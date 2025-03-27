@@ -24,13 +24,20 @@ final class DeleteQueryBuilder
         $this->delete = new DeleteStatement($table);
 
         if (is_object($this->model)) {
-            $this->where('id = :id', id: $this->model->id);
+            $this->where('`id` = :id', id: $this->model->id);
         }
     }
 
     public function execute(): void
     {
         $this->build()->execute();
+    }
+
+    public function allowAll(): self
+    {
+        $this->delete->allowAll = true;
+
+        return $this;
     }
 
     public function where(string $where, mixed ...$bindings): self
