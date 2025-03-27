@@ -159,27 +159,4 @@ final class InsertQueryBuilder
 
         return $modelDefinition->getTableDefinition();
     }
-
-    //    private function resolveRelations(object $model): array
-    //    {
-    //        $relationColumns = [];
-    //
-    //        $modelClass = new ClassReflector($model);
-    //
-    //        foreach ($modelClass->getPublicProperties() as $property) {
-    //            if (! $property->isInitialized($model)) {
-    //                continue;
-    //            }
-    //
-    //            if (! $property->getType()->isRelation()) {
-    //                continue;
-    //            }
-    //
-    //            $value = $property->getValue($model);
-    //
-    //            $relationColumns[$property->getName()] = $value;
-    //        }
-    //
-    //        return $relationColumns;
-    //    }
 }
