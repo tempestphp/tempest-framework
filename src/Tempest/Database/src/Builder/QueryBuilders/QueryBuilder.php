@@ -5,6 +5,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Tempest\Mapper\SerializerFactory;
 
 use function Tempest\get;
+use function Tempest\Support\arr;
 
 final readonly class QueryBuilder
 {
@@ -12,9 +13,12 @@ final readonly class QueryBuilder
         private string|object $model,
     ) {}
 
-    public function select(): SelectQueryBuilder
+    public function select(string ...$columns): SelectQueryBuilder
     {
-        return new SelectQueryBuilder($this->model);
+        return new SelectQueryBuilder(
+            model: $this->model,
+            columns: $columns !== [] ? arr($columns) : null,
+        );
     }
 
     public function create(): CreateQueryBuilder

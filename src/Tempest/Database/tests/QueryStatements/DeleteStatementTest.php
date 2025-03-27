@@ -8,6 +8,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\InvalidDeleteStatement;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
+
 use function Tempest\Support\arr;
 
 final class DeleteStatementTest extends TestCase
@@ -18,7 +19,7 @@ final class DeleteStatementTest extends TestCase
 
         $statement = new DeleteStatement(
             table: $tableDefinition,
-            where: arr([new WhereStatement('`bar` = "1"')])
+            where: arr([new WhereStatement('`bar` = "1"')]),
         );
 
         $expected = <<<SQL

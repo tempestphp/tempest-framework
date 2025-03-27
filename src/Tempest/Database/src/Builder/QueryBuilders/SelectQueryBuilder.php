@@ -7,6 +7,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\JoinStatement;
@@ -15,9 +16,11 @@ use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
+use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\map;
 use function Tempest\reflect;
+use function Tempest\Support\arr;
 
 /**
  * @template TModelClass of object
@@ -27,7 +30,7 @@ final class SelectQueryBuilder
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;
 
-    private ModelDefinition $modelDefinition;
+    private ?ModelDefinition $modelDefinition;
 
     private SelectStatement $select;
 
@@ -35,18 +38,14 @@ final class SelectQueryBuilder
 
     private array $bindings = [];
 
-    public function __construct(string|object $model)
+    public function __construct(string|object $model, ?ImmutableArray $columns = null)
     {
+        $this->modelDefinition = ModelDefinition::tryFrom($model);
         $this->modelClass = is_object($model) ? $model::class : $model;
 
-        $this->modelDefinition = new ModelDefinition($this->modelClass);
-
         $this->select = new SelectStatement(
-            table: $this->modelDefinition->getTableDefinition(),
-            columns: $this->modelDefinition
-                ->getFieldDefinitions()
-                ->filter(fn (FieldDefinition $field) => ! reflect($this->modelClass, $field->name)->hasAttribute(Virtual::class))
-                ->map(fn (FieldDefinition $field) => (string) $field->withAlias()),
+            table: $this->resolveTable($model),
+            columns: $columns ?? $this->resolveColumns(),
         );
     }
 
@@ -109,6 +108,16 @@ final class SelectQueryBuilder
         return $this;
     }
 
+    public function andWhere(string $where, mixed ...$bindings): self
+    {
+        return $this->where("AND {$where}", ...$bindings);
+    }
+
+    public function orWhere(string $where, mixed ...$bindings): self
+    {
+        return $this->where("OR {$where}", ...$bindings);
+    }
+
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
@@ -167,12 +176,12 @@ final class SelectQueryBuilder
 
     public function toSql(): string
     {
-        return $this->build([])->getSql();
+        return $this->build()->getSql();
     }
 
-    private function build(array $bindings): Query
+    public function build(array $bindings = []): Query
     {
-        $resolvedRelations = $this->resolveRelations($this->modelDefinition);
+        $resolvedRelations = $this->resolveRelations();
 
         foreach ($resolvedRelations as $relation) {
             $this->select->columns = $this->select->columns->append(...$relation->getFieldDefinitions()->map(fn (FieldDefinition $field) => (string) $field->withAlias()));
@@ -182,22 +191,46 @@ final class SelectQueryBuilder
         return new Query($this->select, [...$this->bindings, ...$bindings]);
     }
 
-    /** @return \Tempest\Database\Builder\Relations\Relation[] */
-    private function resolveRelations(ModelDefinition $modelDefinition): array
+    private function clone(): self
     {
-        $relations = $modelDefinition->getEagerRelations();
+        return clone $this;
+    }
+
+    private function resolveTable(string|object $model): TableDefinition
+    {
+        if ($this->modelDefinition === null) {
+            return new TableDefinition($model);
+        }
+
+        return $this->modelDefinition->getTableDefinition();
+    }
+
+    private function resolveColumns(): ImmutableArray
+    {
+        if ($this->modelDefinition === null) {
+            return arr();
+        }
+
+        return $this->modelDefinition
+            ->getFieldDefinitions()
+            ->filter(fn (FieldDefinition $field) => ! reflect($this->modelClass, $field->name)->hasAttribute(Virtual::class))
+            ->map(fn (FieldDefinition $field) => (string) $field->withAlias());
+    }
+
+    private function resolveRelations(): ImmutableArray
+    {
+        if ($this->modelDefinition === null) {
+            return arr();
+        }
+
+        $relations = $this->modelDefinition->getEagerRelations();
 
         foreach ($this->relations as $relationName) {
-            foreach ($modelDefinition->getRelations($relationName) as $relation) {
+            foreach ($this->modelDefinition->getRelations($relationName) as $relation) {
                 $relations[$relation->getRelationName()] = $relation;
             }
         }
 
-        return $relations;
-    }
-
-    private function clone(): self
-    {
-        return clone $this;
+        return arr($relations);
     }
 }

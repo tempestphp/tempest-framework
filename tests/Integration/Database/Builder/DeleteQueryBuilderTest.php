@@ -5,6 +5,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Id;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Database\query;
 
 final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase

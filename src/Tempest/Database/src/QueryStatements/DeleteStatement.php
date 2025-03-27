@@ -7,6 +7,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Exceptions\InvalidDeleteStatement;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\arr;
 
 final class DeleteStatement implements QueryStatement
@@ -24,13 +25,13 @@ final class DeleteStatement implements QueryStatement
         }
 
         $query = arr([
-            sprintf('DELETE FROM `%s`', $this->table->name)
+            sprintf('DELETE FROM `%s`', $this->table->name),
         ]);
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                    ->map(fn (WhereStatement $where) => $where->compile($dialect))
-                    ->implode(PHP_EOL);
+                ->map(fn (WhereStatement $where) => $where->compile($dialect))
+                ->implode(PHP_EOL);
         }
 
         return $query->implode(PHP_EOL);

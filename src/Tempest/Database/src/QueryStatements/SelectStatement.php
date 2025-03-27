@@ -13,7 +13,7 @@ final class SelectStatement implements QueryStatement
 {
     public function __construct(
         public TableDefinition $table,
-        public ImmutableArray $columns = new ImmutableArray('*'),
+        public ImmutableArray $columns = new ImmutableArray(),
         public ImmutableArray $join = new ImmutableArray(),
         public ImmutableArray $where = new ImmutableArray(),
         public ImmutableArray $orderBy = new ImmutableArray(),
@@ -26,25 +26,28 @@ final class SelectStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $query = new ImmutableArray([
-            'SELECT ' .
-                $this->columns
-                    ->map(function (string|Stringable $column) {
-                        if ($column instanceof FieldDefinition) {
-                            return (string) $column;
-                        }
-
-                        if (! str_starts_with($column, '`')) {
-                            $column = "`{$column}";
-                        }
-
-                        if (! str_ends_with($column, '`')) {
-                            $column = "{$column}`";
-                        }
-
+        $columns = $this->columns->isEmpty()
+            ? '*'
+            : $this->columns
+                ->map(function (string|Stringable $column) {
+                    if ($column instanceof FieldDefinition) {
                         return (string) $column;
-                    })
-                    ->implode(', '),
+                    }
+
+                    if (! str_starts_with($column, '`')) {
+                        $column = "`{$column}";
+                    }
+
+                    if (! str_ends_with($column, '`')) {
+                        $column = "{$column}`";
+                    }
+
+                    return (string) $column;
+                })
+                ->implode(', ');
+
+        $query = new ImmutableArray([
+            'SELECT ' . $columns,
             'FROM ' . $this->table,
         ]);
 

@@ -7,14 +7,71 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal
  */
 final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 {
+    public function test_select_query(): void
+    {
+        $query = query('chapters')
+            ->select('title', 'index')
+            ->where('`title` = ?', 'Timeline Taxi')
+            ->andWhere('`index` <> ?', '1')
+            ->orWhere('`createdAt` > ?', '2025-01-01')
+            ->orderBy('`index` ASC')
+            ->build();
+
+        $expected = <<<SQL
+        SELECT `title`, `index`
+        FROM `chapters`
+        WHERE `title` = ?
+        AND `index` <> ?
+        OR `createdAt` > ?
+        ORDER BY `index` ASC
+        SQL;
+
+        $sql = $query->getSql();
+        $bindings = $query->bindings;
+
+        $this->assertSame($expected, $sql);
+        $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
+    }
+
+    public function test_select_without_any_fields_specified(): void
+    {
+        $query = query('chapters')->select()->build();
+
+        $sql = $query->getSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `chapters`
+        SQL;
+
+        $this->assertSame($expected, $sql);
+    }
+
+    public function test_select_from_model(): void
+    {
+        $query = query(Author::class)->select()->build();
+
+        $sql = $query->getSql();
+
+        $expected = <<<SQL
+        SELECT `authors`.`name` AS `authors.name`, `authors`.`type` AS `authors.type`, `authors`.`id` AS `authors.id`
+        FROM `authors`
+        SQL;
+
+        $this->assertSame($expected, $sql);
+    }
+
     public function test_where_statement(): void
     {
         $this->migrate(
