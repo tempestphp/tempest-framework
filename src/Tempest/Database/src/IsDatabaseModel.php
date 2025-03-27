@@ -14,7 +14,7 @@ use function Tempest\make;
 
 trait IsDatabaseModel
 {
-    public ?Id $id = null;
+    public Id $id;
 
     public static function new(mixed ...$params): self
     {
@@ -121,8 +121,8 @@ trait IsDatabaseModel
 
     public function save(): self
     {
-        if ($this->id === null) {
-            $query = query($this)->create();
+        if (! isset($this->id)) {
+            $query = query($this::class)->insert($this);
         } else {
             $query = query($this)->update();
         }

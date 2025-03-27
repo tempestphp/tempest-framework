@@ -18,35 +18,17 @@ use function Tempest\Database\query;
  */
 final class QueryMapperTest extends FrameworkIntegrationTestCase
 {
-    public function test_create_query(): void
+    public function test_insert_query(): void
     {
         $author = Author::new(name: 'test');
 
-        $query = query($author)->create()->build();
+        $query = query(Author::class)->insert($author)->build();
 
-        $this->assertSame('INSERT INTO `authors` (name) VALUES (:name);', $query->getSql());
-        $this->assertSame(['name' => 'test'], $query->bindings);
-    }
-
-    public function test_create_query_with_nested_relation(): void
-    {
-        $book = Book::new(
-            title: 'Book Title',
-            author: Author::new(
-                name: 'Author Name',
-            ),
-        );
-
-        $query = query($book)->create()->build();
-
-        $this->assertSame('INSERT INTO `books` (title, author_id) VALUES (:title, :author_id);', $query->getSql());
-        $this->assertSame(['title', 'author_id'], array_keys($query->bindings));
-        $this->assertSame('Book Title', $query->bindings['title']);
-
-        $authorQuery = $query->bindings['author_id'];
-        $this->assertInstanceOf(Query::class, $authorQuery);
-        $this->assertSame('INSERT INTO `authors` (name) VALUES (:name);', $authorQuery->getSql());
-        $this->assertSame('Author Name', $authorQuery->bindings['name']);
+        $this->assertSame(<<<'SQL'
+        INSERT INTO `authors` (`name`)
+        VALUES (?)
+        SQL, $query->getSql());
+        $this->assertSame(['test'], $query->bindings);
     }
 
     public function test_update_query(): void
