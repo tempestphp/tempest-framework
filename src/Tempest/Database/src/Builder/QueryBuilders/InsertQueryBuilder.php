@@ -6,18 +6,22 @@ use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
-use function Tempest\Support\arr;
-
-final class InsertQueryBuilder
+final readonly class InsertQueryBuilder
 {
+    private InsertStatement $insertStatement;
+
     public function __construct(
         private string|object $model,
         private array $rows,
         private SerializerFactory $serializerFactory,
-    ) {}
+    ) {
+        $this->insertStatement = new InsertStatement($this->resolveTableDefinition());
+    }
 
     public function execute(...$bindings): Id
     {
@@ -26,124 +30,83 @@ final class InsertQueryBuilder
 
     public function build(): Query
     {
-        $table = $this->resolveTableDefinition();
+        $bindings = [];
 
-        $columns = $this->resolveColumns();
+        foreach ($this->resolveEntries() as $entry) {
+            $this->insertStatement->addEntry($entry);
 
-        $values = $this->resolveValues($columns);
-
-        $valuesPlaceholders = arr($values)
-            ->map(function (array $row) {
-                return sprintf(
-                    '(%s)',
-                    arr($row)->map(fn (mixed $value) => '?')->implode(', '),
-                );
-            })
-            ->implode(', ');
+            foreach ($entry as $value) {
+                $bindings[] = $value;
+            }
+        }
 
         return new Query(
-            sprintf(
-                <<<SQL
-                INSERT INTO %s (%s)
-                VALUES %s
-                SQL,
-                $table,
-                arr($columns)->map(fn (string $column) => "`{$column}`")->implode(', '),
-                $valuesPlaceholders,
-            ),
-            arr($values)->flatten(1)->toArray(),
+            $this->insertStatement,
+            $bindings,
         );
     }
 
-    private function resolveColumns(): array
+    private function resolveEntries(): array
     {
-        $firstEntry = $this->rows[array_key_first($this->rows)];
-
-        if (is_array($firstEntry)) {
-            return array_keys($firstEntry);
-        }
-
-        if (! is_object($firstEntry)) {
-            // TODO: Shouldn't be allowed
-        }
-
-        $modelClass = new ClassReflector($firstEntry);
-
-        $columns = [];
-
-        foreach ($modelClass->getPublicProperties() as $property) {
-            if (! $property->isInitialized($firstEntry)) {
-                continue;
-            }
-
-            // 1:n relations
-            if ($property->getIterableType()?->isRelation()) {
-                continue;
-            }
-
-            if ($property->getType()->isRelation()) {
-                $columns[] = $property->getName() . '_id';
-            } else {
-                $columns[] = $property->getName();
-            }
-        }
-
-        return $columns;
-    }
-
-    private function resolveValues(array $columns): array
-    {
-        $values = [];
+        $entries = [];
 
         foreach ($this->rows as $model) {
-            if (is_array($model)) {
-                $values[] = $model;
+            // Raw entries are straight up added
+            if (is_array($model) || $model instanceof ImmutableArray) {
+                $entries[] = $model;
 
                 continue;
             }
 
-            if (! is_object($model)) {
-                // TODO: this should now be allowed
-            }
-
+            // The rest are model objects
             $modelClass = new ClassReflector($model);
 
-            $values[] = arr($columns)
-                ->map(function (string $column) use ($modelClass, $model) {
-                    // TODO: improve by refactoring to some kind of reusable model() inspector
-                    $column = str($column)->replaceEnd('_id', '');
+            $entry = [];
 
-                    $property = $modelClass->getProperty($column);
+            // Including all public properties
+            foreach ($modelClass->getPublicProperties() as $property) {
+                if (! $property->isInitialized($model)) {
+                    continue;
+                }
 
-                    $value = $model->{$column};
+                // HasMany relations are skipped
+                if ($property->getIterableType()?->isRelation()) {
+                    continue;
+                }
 
-                    if ($value === null) {
-                        return $value;
-                    }
+                $column = $property->getName();
 
-                    if ($property->getType()->isRelation()) {
-                        if (isset($value->id)) {
-                            $value = $value->id->id;
-                        } else {
-                            $value = new InsertQueryBuilder(
-                                $value::class,
-                                [$value],
-                                $this->serializerFactory,
-                            )->build();
-                        }
-                    }
+                $value = $property->getValue($model);
 
-                    // Check if serializer is available for value serialization
-                    if (($serializer = $this->serializerFactory->forProperty($property)) !== null) {
-                        return $serializer->serialize($value);
-                    }
+                // BelongsTo and HasMany relations are included
+                if ($property->getType()->isRelation()) {
+                    $column .= '_id';
 
-                    return $value;
-                })
-                ->toArray();
+                    $value = match (true) {
+                        $value === null => null,
+                        isset($value->id) => $value->id->id,
+                        default => new InsertQueryBuilder(
+                            $value::class,
+                            [$value],
+                            $this->serializerFactory,
+                        )->build(),
+                    };
+                }
+
+                // Check if value needs serialization
+                $serializer = $this->serializerFactory->forProperty($property);
+
+                if ($value !== null && $serializer !== null) {
+                    $value = $serializer->serialize($value);
+                }
+
+                $entry[$column] = $value;
+            }
+
+            $entries[] = $entry;
         }
 
-        return $values;
+        return $entries;
     }
 
     private function resolveTableDefinition(): TableDefinition
