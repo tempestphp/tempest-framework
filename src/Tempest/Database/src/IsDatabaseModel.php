@@ -21,7 +21,7 @@ trait IsDatabaseModel
         return make(self::class)->from($params);
     }
 
-    public static function resolve(string $input): self
+    public static function resolve(string $input): static
     {
         return self::get(new Id($input));
     }

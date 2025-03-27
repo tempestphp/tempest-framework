@@ -4,5 +4,5 @@ namespace Tempest\Router;
 
 interface Bindable
 {
-    public static function resolve(string $input): self;
+    public static function resolve(string $input): static;
 }
