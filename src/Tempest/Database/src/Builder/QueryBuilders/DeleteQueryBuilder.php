@@ -8,6 +8,8 @@ use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 
+use function Tempest\Database\model;
+
 /**
  * @template TModelClass of object
  */
@@ -23,7 +25,7 @@ final class DeleteQueryBuilder
         $table = ModelDefinition::tryFrom($this->model)?->getTableDefinition() ?? new TableDefinition($this->model);
         $this->delete = new DeleteStatement($table);
 
-        if (is_object($this->model)) {
+        if (model($this->model)->isObjectModel() && is_object($this->model)) {
             $this->where('`id` = :id', id: $this->model->id);
         }
     }

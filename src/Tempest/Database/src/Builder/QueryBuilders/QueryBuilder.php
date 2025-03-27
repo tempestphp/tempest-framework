@@ -6,7 +6,6 @@ use Tempest\Mapper\SerializerFactory;
 
 use function Tempest\get;
 use function Tempest\Support\arr;
-use function Tempest\Support\Arr\is_list;
 
 final readonly class QueryBuilder
 {
@@ -22,22 +21,26 @@ final readonly class QueryBuilder
         );
     }
 
-    public function insert(mixed ...$data): InsertQueryBuilder
+    public function insert(mixed ...$values): InsertQueryBuilder
     {
-        if (! array_is_list($data)) {
-            $data = [$data];
+        if (! array_is_list($values)) {
+            $values = [$values];
         }
 
         return new InsertQueryBuilder(
             model: $this->model,
-            rows: $data,
+            rows: $values,
             serializerFactory: get(SerializerFactory::class),
         );
     }
 
-    public function update(): UpdateQueryBuilder
+    public function update(mixed ...$values): UpdateQueryBuilder
     {
-        return new UpdateQueryBuilder($this->model, get(SerializerFactory::class));
+        return new UpdateQueryBuilder(
+            model: $this->model,
+            values: $values,
+            serializerFactory: get(SerializerFactory::class),
+        );
     }
 
     public function delete(): DeleteQueryBuilder

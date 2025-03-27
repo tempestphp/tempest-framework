@@ -15,7 +15,8 @@ final class ModelInspector
 
     public function __construct(
         private object|string $model,
-    ) {
+    )
+    {
         if ($this->model instanceof ClassReflector) {
             $this->modelClass = $this->model;
         } else {
@@ -47,5 +48,34 @@ final class ModelInspector
             ->getName($this->modelClass->getName());
 
         return new TableDefinition($specificName ?? $conventionalName);
+    }
+
+    public function getPropertyValues(): array
+    {
+        if (! $this->isObjectModel()) {
+            return [];
+        }
+
+        if (! is_object($this->model)) {
+            return [];
+        }
+
+        $values = [];
+
+        foreach ($this->modelClass->getProperties() as $property) {
+            if ($property->getIterableType()?->isRelation()) {
+                continue;
+            }
+
+            $name = $property->getName();
+
+            if ($property->getType()->isRelation()) {
+                $name .= '_id';
+            }
+
+            $values[$name] = $property->getValue($this->model);
+        }
+
+        return $values;
     }
 }

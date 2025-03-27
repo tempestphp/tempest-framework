@@ -126,7 +126,10 @@ trait IsDatabaseModel
         if (! isset($this->id)) {
             $query = query($this::class)->insert($this);
         } else {
-            $query = query($this)->update();
+            ld( model($this)->getPropertyValues());
+            $query = query($this)->update(
+                model($this)->getPropertyValues()
+            );
         }
 
         $id = $query->build()->execute();
@@ -142,7 +145,12 @@ trait IsDatabaseModel
             $this->{$key} = $value;
         }
 
-        return $this->save();
+        query($this)
+            ->update(...$params)
+            ->build()
+            ->execute();
+
+        return $this;
     }
 
     public function delete(): void

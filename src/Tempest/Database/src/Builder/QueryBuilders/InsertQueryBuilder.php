@@ -13,14 +13,14 @@ use Tempest\Support\Arr\ImmutableArray;
 
 final readonly class InsertQueryBuilder
 {
-    private InsertStatement $insertStatement;
+    private InsertStatement $insert;
 
     public function __construct(
         private string|object $model,
         private array $rows,
         private SerializerFactory $serializerFactory,
     ) {
-        $this->insertStatement = new InsertStatement($this->resolveTableDefinition());
+        $this->insert = new InsertStatement($this->resolveTableDefinition());
     }
 
     public function execute(...$bindings): Id
@@ -33,7 +33,7 @@ final readonly class InsertQueryBuilder
         $bindings = [];
 
         foreach ($this->resolveEntries() as $entry) {
-            $this->insertStatement->addEntry($entry);
+            $this->insert->addEntry($entry);
 
             foreach ($entry as $value) {
                 $bindings[] = $value;
@@ -41,7 +41,7 @@ final readonly class InsertQueryBuilder
         }
 
         return new Query(
-            $this->insertStatement,
+            $this->insert,
             $bindings,
         );
     }

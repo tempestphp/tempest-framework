@@ -2,82 +2,107 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
-use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\UpdateStatement;
+use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
-/**
- * @template TModelClass of object
- */
-final readonly class UpdateQueryBuilder
+use function Tempest\Database\model;
+use function Tempest\Support\arr;
+
+final class UpdateQueryBuilder
 {
+    private UpdateStatement $update;
+
+    private array $bindings = [];
+
     public function __construct(
-        private object $model,
+        private string|object $model,
+        private array|ImmutableArray $values,
         private SerializerFactory $serializerFactory,
-    ) {}
+    )
+    {
+        $this->update = new UpdateStatement(
+            table: model($this->model)->getTableDefinition(),
+        );
+    }
 
     public function execute(...$bindings): Id
     {
         return $this->build()->execute(...$bindings);
     }
 
-    public function build(): Query
+    public function allowAll(): self
     {
-        $modelClass = new ClassReflector($this->model);
-        $modelDefinition = new ModelDefinition($this->model);
+        $this->update->allowAll = true;
 
-        $fields = $this->fields($modelClass, $this->model);
-
-        unset($fields['id']);
-
-        $values = implode(', ', array_map(
-            fn (string $key) => "{$key} = :{$key}",
-            array_keys($fields),
-        ));
-
-        // TODO: update relations?
-
-        $fields['id'] = $this->model->id;
-
-        $table = $modelDefinition->getTableDefinition();
-
-        return new Query(
-            "UPDATE {$table} SET {$values} WHERE id = :id;",
-            $fields,
-        );
+        return $this;
     }
 
-    private function fields(ClassReflector $modelClass, object $model): array
+    public function where(string $where, mixed ...$bindings): self
     {
-        $fields = [];
+        $this->update->where[] = new WhereStatement($where);
 
-        foreach ($modelClass->getPublicProperties() as $property) {
-            if (! $property->isInitialized($model)) {
-                continue;
-            }
+        $this->bind(...$bindings);
 
-            // 1:1 or n:1 relations
-            if ($property->getType()->isRelation()) {
-                continue;
-            }
+        return $this;
+    }
 
-            // 1:n relations
-            if ($property->getIterableType()?->isRelation()) {
-                continue;
-            }
+    public function bind(mixed ...$bindings): self
+    {
+        $this->bindings = [...$this->bindings, ...$bindings];
 
-            $value = $property->getValue($model);
+        return $this;
+    }
 
-            // Check if serializer is available for value serialization
-            if ($value !== null && ($serializer = $this->serializerFactory->forProperty($property))) {
+    public function build(): Query
+    {
+        $values = $this->resolveValues();
+
+        $this->update->values = $values;
+
+        if (model($this->model)->isObjectModel() && is_object($this->model)) {
+            $this->where('`id` = ?', id: $this->model->id->id);
+        }
+
+        $bindings = [];
+
+        foreach ($values as $value) {
+            $bindings[] = $value;
+        }
+
+        foreach ($this->bindings as $binding) {
+            $bindings[] = $binding;
+        }
+
+        return new Query($this->update, $bindings);
+    }
+
+    private function resolveValues(): ImmutableArray
+    {
+        if (! model($this->model)->isObjectModel()) {
+            return arr($this->values);
+        }
+
+        $values = arr();
+
+        $modelClass = new ClassReflector($this->model);
+
+        foreach ($this->values as $key => $value) {
+            $serializer = $this->serializerFactory->forProperty($modelClass->getProperty($key));
+
+            // TODO: insert or update relations
+
+            if ($value !== null && $serializer !== null) {
                 $value = $serializer->serialize($value);
             }
 
-            $fields[$property->getName()] = $value;
+            $values[$key] = $value;
         }
 
-        return $fields;
+        return $values;
     }
 }
