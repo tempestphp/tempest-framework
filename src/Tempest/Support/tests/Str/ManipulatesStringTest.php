@@ -298,7 +298,7 @@ final class ManipulatesStringTest extends TestCase
 
     public function test_match(): void
     {
-        $match = str('10-abc')->match('/(?<id>\d+-)/')['id'];
+        $match = str('10-abc')->match('/(?<id>\d+-)/', match: 'id');
 
         $this->assertSame('10-', $match);
     }
@@ -321,110 +321,32 @@ final class ManipulatesStringTest extends TestCase
 
     public function test_match_all(): void
     {
-        // Test for Simple Pattern
-        $regex = '/Hello/';
-        $matches = str('Hello world, Hello universe')->matchAll($regex);
-        $expected = [['Hello', 'Hello']];
-        $this->assertSame($expected, $matches);
+        $this->assertSame([
+            ['Hello'],
+            ['Hello'],
+        ], str('Hello world, Hello universe')->matchAll('/Hello/')->toArray());
 
-        // Test for Named Capture Groups
-        $regex = '/(?<adjective>quick|lazy) (?<noun>brown|dog)/';
-        $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
-        $expectedAdjectives = [
-            [
-                'quick brown',
-                'lazy dog',
-            ],
-            'adjective' => [
-                'quick',
-                'lazy',
-            ],
-            1 => [
-                'quick',
-                'lazy',
-            ],
-            'noun' => [
-                'brown',
-                'dog',
-            ],
-            2 => [
-                'brown',
-                'dog',
-            ],
-        ];
-
-        $this->assertSame($expectedAdjectives, $matches);
-
-        // Test for No Matches
-        $regex = '/cat/';
-        $matches = str('The quick brown fox, then the lazy dog')->matchAll($regex);
-        $expected = [];
-        $this->assertSame($expected, $matches);
-
-        // Test for Mixed Captures
-        $regex = '/(?<adjective>quick|lazy) (?<noun>brown|dog) (?<action>jumps|eats)?/';
-        $matches = str('The quick brown fox, then the lazy dog eats')->matchAll($regex);
-        $expected = [
-            [
-                'quick brown ',
-                'lazy dog eats',
-            ],
-            'adjective' => [
-                'quick',
-                'lazy',
-            ],
-            [
-                'quick',
-                'lazy',
-            ],
-            'noun' => [
-                'brown',
-                'dog',
-            ],
-            [
-                'brown',
-                'dog',
-            ],
-            'action' => [
-                '',
-                'eats',
-            ],
-            [
-                '',
-                'eats',
-            ],
-        ];
-        $this->assertSame($expected, $matches);
-
-        // Test flags
-        $regex = '/(foo)(bar)/';
-        $matches = str('foobarbaz')->matchAll($regex, PREG_OFFSET_CAPTURE);
-        $expected = [
+        $this->assertSame(
             [
                 [
-                    'foobar',
-                    0,
+                    'match' => "<href='https://bsky.app'>Bluesky</href>",
+                    'quote' => "'",
+                    'href' => 'https://bsky.app',
                 ],
-            ],
-            [
                 [
-                    'foo',
-                    0,
+                    'match' => "<href='https://x.com.com'>X</href>",
+                    'quote' => "'",
+                    'href' => 'https://x.com.com',
                 ],
             ],
-            [
-                [
-                    'bar',
-                    3,
-                ],
-            ],
-        ];
-        $this->assertSame($expected, $matches);
-
-        $regex = '/^def/';
-        $matches = str('abcdef')->matchAll(regex: $regex, offset: 3);
-        $expected = [];
-        $this->assertSame($expected, $matches);
+            str("<href='https://bsky.app'>Bluesky</href><href='https://x.com.com'>X</href>")
+                ->matchAll('/(?<match>\<href=(?<quote>[\"\'])(?<href>.+?)\k<quote>\>(?:(?!\<href).)*?\<\/href\>)/g', matches: [
+                    'match',
+                    'quote',
+                    'href',
+                ])
+                ->toArray(),
+        );
     }
 
     public function test_explode(): void
