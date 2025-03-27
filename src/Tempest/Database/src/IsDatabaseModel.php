@@ -10,10 +10,12 @@ use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
+use Tempest\Validation\SkipValidation;
 use function Tempest\make;
 
 trait IsDatabaseModel
 {
+    #[SkipValidation]
     public Id $id;
 
     public static function new(mixed ...$params): self

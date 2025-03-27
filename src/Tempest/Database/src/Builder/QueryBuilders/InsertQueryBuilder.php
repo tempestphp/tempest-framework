@@ -129,7 +129,7 @@ final class InsertQueryBuilder
                         if (isset($value->id)) {
                             $value = $value->id->id;
                         } else {
-                            $value = new self(
+                            $value = new InsertQueryBuilder(
                                 $value::class,
                                 [$value],
                                 $this->serializerFactory,
