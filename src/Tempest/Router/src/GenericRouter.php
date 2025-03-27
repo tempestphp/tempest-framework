@@ -207,7 +207,7 @@ final class GenericRouter implements Router
     private function processResponse(Response $response): Response
     {
         foreach ($this->routeConfig->responseProcessors as $responseProcessorClass) {
-            /** @var \Tempest\Response\ResponseProcessor $responseProcessor */
+            /** @var \Tempest\Router\ResponseProcessor $responseProcessor */
             $responseProcessor = $this->container->get($responseProcessorClass);
 
             $response = $responseProcessor->process($response);

@@ -9,13 +9,13 @@ use Tempest\Reflection\ClassReflector;
 final class RouteConfig
 {
     public function __construct(
-        /** @var array<string, array<string, DiscoveredRoute>> */
+        /** @var array<string,array<string,\Tempest\Router\Routing\Construction\DiscoveredRoute>> */
         public array $staticRoutes = [],
-        /** @var array<string, array<string, DiscoveredRoute>> */
+        /** @var array<string,array<string,\Tempest\Router\Routing\Construction\DiscoveredRoute>> */
         public array $dynamicRoutes = [],
-        /** @var array<string, MatchingRegex> */
+        /** @var array<string,\Tempest\Router\Routing\Matching\MatchingRegex> */
         public array $matchingRegexes = [],
-        /** @var class-string<\Tempest\Response\ResponseProcessor>[] */
+        /** @var class-string<\Tempest\Router\ResponseProcessor>[] */
         public array $responseProcessors = [],
     ) {}
 
