@@ -4,29 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Commands;
 
-use FilesystemIterator;
 use InvalidArgumentException;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Core\Composer;
-use Tempest\Core\DoNotDiscover;
 use Tempest\Core\PublishesFiles;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\Enums\MigrationType;
-use Tempest\Database\Stubs\MigrationModelStub;
 use Tempest\Database\Stubs\MigrationStub;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
 use Tempest\Generation\Exceptions\FileGenerationFailedException;
-use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
-use Throwable;
-
-use function Tempest\get;
-use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class MakeMigrationCommand
