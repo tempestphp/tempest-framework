@@ -14,7 +14,6 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
-use Tempest\Router\Exceptions\HttpProductionErrorHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -52,7 +51,7 @@ final class FrameworkKernel implements Kernel
             container: $container,
         )
             ->loadEnv()
-            ->registerKernelErrorHandler()
+            ->registerEmergencyErrorHandler()
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->registerKernel()
@@ -150,27 +149,6 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerErrorHandler(): self
-    {
-        $appConfig = $this->container->get(AppConfig::class);
-
-        if ($appConfig->environment->isTesting()) {
-            return $this;
-        }
-
-        if (PHP_SAPI === 'cli') {
-            $handler = $this->container->get(ConsoleErrorHandler::class);
-            set_exception_handler($handler->handleException(...));
-            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
-        } elseif ($appConfig->environment->isProduction()) {
-            $handler = $this->container->get(HttpProductionErrorHandler::class);
-            set_exception_handler($handler->handleException(...));
-            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
-        }
-
-        return $this;
-    }
-
     public function registerInternalStorage(): self
     {
         $path = $this->root . '/vendor/.tempest';
@@ -200,23 +178,43 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerKernelErrorHandler(): self
+    public function registerEmergencyErrorHandler(): self
     {
         $environment = Environment::fromEnv();
 
+        // During tests, PHPUnit registers its own error handling.
         if ($environment->isTesting()) {
             return $this;
         }
 
-        if (PHP_SAPI !== 'cli' && $environment->isProduction()) {
-            $handler = new HttpProductionErrorHandler();
-            set_exception_handler($handler->handleException(...));
-            set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
-        } elseif (PHP_SAPI !== 'cli') {
+        // In development, we want to register a developer-friendly error
+        // handler as soon as possible to catch any kind of exception.
+        if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
             $whoops = new Run();
             $whoops->pushHandler(new PrettyPageHandler());
             $whoops->register();
         }
+
+        return $this;
+    }
+
+    public function registerErrorHandler(): self
+    {
+        $appConfig = $this->container->get(AppConfig::class);
+
+        // During tests, PHPUnit registers its own error handling.
+        if ($appConfig->environment->isTesting()) {
+            return $this;
+        }
+
+        // We already have a non-CLI error handler.
+        if (PHP_SAPI !== 'cli') {
+            return $this;
+        }
+
+        $handler = $this->container->get(ConsoleErrorHandler::class);
+        set_exception_handler($handler->handleException(...));
+        set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
 
         return $this;
     }

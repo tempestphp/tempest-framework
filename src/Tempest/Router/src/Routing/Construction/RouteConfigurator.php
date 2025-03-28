@@ -16,10 +16,10 @@ final class RouteConfigurator
     /** @var string The mark to give the next route in the matching Regex */
     private string $regexMark = 'a';
 
-    /** @var array<string, array<string, DiscoveredRoute>> */
+    /** @var array<string,array<string,\Tempest\Router\Routing\Construction\DiscoveredRoute>> */
     private array $staticRoutes = [];
 
-    /** @var array<string, array<string, DiscoveredRoute>> */
+    /** @var array<string,array<string,\Tempest\Router\Routing\Construction\DiscoveredRoute>> */
     private array $dynamicRoutes = [];
 
     private bool $isDirty = false;

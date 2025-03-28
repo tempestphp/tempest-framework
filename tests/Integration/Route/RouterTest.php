@@ -12,6 +12,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\Responses\Ok;
+use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
@@ -245,5 +246,23 @@ final class RouterTest extends FrameworkIntegrationTestCase
         $this->assertTrue($router->isCurrentUri(ControllerWithEnumBinding::class));
         $this->assertTrue($router->isCurrentUri(ControllerWithEnumBinding::class, input: EnumForController::FOO));
         $this->assertFalse($router->isCurrentUri(ControllerWithEnumBinding::class, input: EnumForController::BAR));
+    }
+
+    public function test_discovers_response_processors(): void
+    {
+        $this->http
+            ->get('/', headers: ['X-Processed' => 'false'])
+            ->assertHeaderContains('X-Processed', 'true')
+            ->assertOk();
+    }
+
+    public function test_can_add_response_processor(): void
+    {
+        $this->container->get(RouteConfig::class)->addResponseProcessor(TestProcessedResponseProcessor::class);
+
+        $this->http
+            ->get('/')
+            ->assertHeaderContains('X-Processed', 'true')
+            ->assertOk();
     }
 }

@@ -21,9 +21,6 @@ parameters:
 		-
 			identifier: argument.named
 		-
-			message: '#.*#'
-			path: src/Tempest/Router/src/Exceptions/exception.php
-		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
 		-
