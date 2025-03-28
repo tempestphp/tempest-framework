@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDOException;
-use Tempest\Container\Container;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
+use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
@@ -32,10 +34,13 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable());
-
-            $existingMigrations = Migration::all();
+        } catch (PDOException $pdoException) {
+            if ($pdoException->getCode() === $this->databaseConfig->dialect->tableNotFoundCode() && str_contains($pdoException->getMessage(), 'table')) {
+                $this->executeUp(new CreateMigrationsTable());
+                $existingMigrations = Migration::all();
+            } else {
+                throw $pdoException;
+            }
         }
 
         $existingMigrations = array_map(
@@ -60,7 +65,7 @@ final readonly class MigrationManager
             /** @throw UnhandledMatchError */
             match ((string) $pdoException->getCode()) {
                 $this->databaseConfig->dialect->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: Migration::table()->tableName, exception: MigrationException::noTable()),
+                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableDefinition()->name, exception: new TableNotFoundException()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
             };
@@ -108,6 +113,65 @@ final readonly class MigrationManager
         }
     }
 
+    public function rehashAll(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            return;
+        }
+
+        foreach ($existingMigrations as $existingMigration) {
+            /**
+             * We need to find and delete migration DB records that no longer have a corresponding migration file.
+             * This can happen if a migration file was deleted or renamed.
+             * If we don't do it, `:validate` will continue failing due to the missing migration file.
+             */
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                $existingMigration->delete();
+
+                continue;
+            }
+
+            $existingMigration->update(
+                hash: $this->getMigrationHash($databaseMigration),
+            );
+        }
+    }
+
+    public function validate(): void
+    {
+        try {
+            $existingMigrations = Migration::all();
+        } catch (PDOException) {
+            return;
+        }
+
+        foreach ($existingMigrations as $existingMigration) {
+            $databaseMigration = array_find(
+                iterator_to_array($this->migrations),
+                static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
+            );
+
+            if ($databaseMigration === null) {
+                event(new MigrationValidationFailed($existingMigration->name, new MissingMigrationFileException()));
+
+                continue;
+            }
+
+            if ($this->getMigrationHash($databaseMigration) !== $existingMigration->hash) {
+                event(new MigrationValidationFailed($existingMigration->name, new MigrationHashMismatchException()));
+
+                continue;
+            }
+        }
+    }
+
     public function executeUp(MigrationInterface $migration): void
     {
         $statement = $migration->up();
@@ -125,6 +189,7 @@ final readonly class MigrationManager
 
             Migration::create(
                 name: $migration->name,
+                hash: $this->getMigrationHash($migration),
             );
         } catch (PDOException $pdoException) {
             event(new MigrationFailed($migration->name, $pdoException));
@@ -186,16 +251,42 @@ final readonly class MigrationManager
     }
 
     /**
-     * @return \Tempest\Database\Migrations\TableDefinition[]
+     * @return \Tempest\Database\Migrations\TableMigrationDefinition[]
      */
     private function getTableDefinitions(DatabaseDialect $dialect): array
     {
         return array_map(
             fn (array $item) => match ($dialect) {
-                DatabaseDialect::SQLITE => new TableDefinition($item['name']),
-                default => new TableDefinition(array_values($item)[0]),
+                DatabaseDialect::SQLITE => new TableMigrationDefinition($item['name']),
+                default => new TableMigrationDefinition(array_values($item)[0]),
             },
             new ShowTablesStatement()->fetch($dialect),
         );
+    }
+
+    private function getMigrationHash(DatabaseMigration $migration): string
+    {
+        $minifiedDownSql = $this->getMinifiedSqlFromStatement($migration->down());
+        $minifiedUpSql = $this->getMinifiedSqlFromStatement($migration->up());
+
+        return hash('xxh128', $minifiedDownSql . $minifiedUpSql);
+    }
+
+    private function getMinifiedSqlFromStatement(?QueryStatement $statement): string
+    {
+        if ($statement === null) {
+            return '';
+        }
+
+        $query = new Query($statement->compile($this->databaseConfig->dialect));
+
+        // Remove comments
+        $sql = preg_replace('/--.*$/m', '', $query->getSql()); // Remove SQL single-line comments
+        $sql = preg_replace('/\/\*[\s\S]*?\*\//', '', $sql); // Remove block comments
+
+        // Remove blank lines and excessive spaces
+        $sql = preg_replace('/\s+/', ' ', trim($sql));
+
+        return $sql;
     }
 }

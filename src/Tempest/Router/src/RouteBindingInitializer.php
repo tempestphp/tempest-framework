@@ -6,16 +6,14 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
-use Tempest\Database\DatabaseModel;
-use Tempest\Database\Id;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\NotFoundException;
 
-final class RouteModelBindingInitializer implements DynamicInitializer
+final class RouteBindingInitializer implements DynamicInitializer
 {
     public function canInitialize(ClassReflector $class): bool
     {
-        return $class->getType()->matches(DatabaseModel::class);
+        return $class->getType()->matches(Bindable::class);
     }
 
     public function initialize(ClassReflector $class, Container $container): object
@@ -32,12 +30,12 @@ final class RouteModelBindingInitializer implements DynamicInitializer
             }
         }
 
-        $model = $class->callStatic('get', new Id($matchedRoute->params[$parameter->getName()]));
+        $object = $class->callStatic('resolve', $matchedRoute->params[$parameter->getName()]);
 
-        if ($model === null) {
+        if ($object === null) {
             throw new NotFoundException();
         }
 
-        return $model;
+        return $object;
     }
 }

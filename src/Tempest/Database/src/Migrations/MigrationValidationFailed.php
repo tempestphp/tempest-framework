@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Migrations;
 
-final class TableDefinition
+use Throwable;
+
+final readonly class MigrationValidationFailed
 {
     public function __construct(
         public string $name,
-        public string $type = 'table',
+        public Throwable $exception,
     ) {}
 }

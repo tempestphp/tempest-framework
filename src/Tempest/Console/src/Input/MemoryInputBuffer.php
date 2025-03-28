@@ -52,4 +52,11 @@ final class MemoryInputBuffer implements InputBuffer
 
         return $next ?? '';
     }
+
+    public function clear(): self
+    {
+        $this->buffer = [];
+
+        return $this;
+    }
 }

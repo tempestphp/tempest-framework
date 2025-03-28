@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder\Relations;
 
-use Tempest\Database\Builder\FieldName;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\FieldDefinition;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\HasMany;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
 final readonly class HasManyRelation implements Relation
 {
     private function __construct(
         private ClassReflector $relationModelClass,
-        private FieldName $localField,
-        private FieldName $joinField,
+        private FieldDefinition $localField,
+        private FieldDefinition $joinField,
     ) {}
 
     public static function fromInference(PropertyReflector $property, string $alias): self
@@ -41,11 +42,11 @@ final readonly class HasManyRelation implements Relation
             );
         }
 
-        $localTable = TableName::for($property->getClass(), $alias);
-        $localField = new FieldName($localTable, 'id');
+        $localTable = TableDefinition::for($property->getClass(), $alias);
+        $localField = new FieldDefinition($localTable, 'id');
 
-        $joinTable = TableName::for($relationModelClass, "{$alias}.{$property->getName()}[]");
-        $joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
+        $joinTable = TableDefinition::for($relationModelClass, "{$alias}.{$property->getName()}[]");
+        $joinField = new FieldDefinition($joinTable, $inverseProperty->getName() . '_id');
 
         return new self($relationModelClass, $localField, $joinField);
     }
@@ -65,11 +66,11 @@ final readonly class HasManyRelation implements Relation
     {
         $relationModelClass = self::getRelationModelClass($property, $relation);
 
-        $localTable = TableName::for($property->getClass(), $alias);
-        $localField = new FieldName($localTable, $relation->localPropertyName);
+        $localTable = TableDefinition::for($property->getClass(), $alias);
+        $localField = new FieldDefinition($localTable, $relation->localPropertyName);
 
-        $joinTable = TableName::for($relationModelClass, "{$alias}.{$property->getName()}[]");
-        $joinField = new FieldName($joinTable, $relation->inversePropertyName);
+        $joinTable = TableDefinition::for($relationModelClass, "{$alias}.{$property->getName()}[]");
+        $joinField = new FieldDefinition($joinTable, $relation->inversePropertyName);
 
         return new self($relationModelClass, $localField, $joinField);
     }
@@ -78,7 +79,7 @@ final readonly class HasManyRelation implements Relation
     {
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $this->joinField->tableName,
+            $this->joinField->tableDefinition,
             $this->localField,
             $this->joinField,
         );
@@ -86,11 +87,11 @@ final readonly class HasManyRelation implements Relation
 
     public function getRelationName(): string
     {
-        return $this->joinField->tableName->as;
+        return $this->joinField->tableDefinition->as;
     }
 
-    public function getFieldNames(): array
+    public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldName::make($this->relationModelClass, $this->joinField->tableName);
+        return FieldDefinition::all($this->relationModelClass, $this->joinField->tableDefinition);
     }
 }

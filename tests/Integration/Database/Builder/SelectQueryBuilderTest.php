@@ -7,14 +7,71 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
+use function Tempest\Database\query;
 
 /**
  * @internal
  */
-final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
+final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 {
+    public function test_select_query(): void
+    {
+        $query = query('chapters')
+            ->select('title', 'index')
+            ->where('`title` = ?', 'Timeline Taxi')
+            ->andWhere('`index` <> ?', '1')
+            ->orWhere('`createdAt` > ?', '2025-01-01')
+            ->orderBy('`index` ASC')
+            ->build();
+
+        $expected = <<<SQL
+        SELECT `title`, `index`
+        FROM `chapters`
+        WHERE `title` = ?
+        AND `index` <> ?
+        OR `createdAt` > ?
+        ORDER BY `index` ASC
+        SQL;
+
+        $sql = $query->getSql();
+        $bindings = $query->bindings;
+
+        $this->assertSame($expected, $sql);
+        $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
+    }
+
+    public function test_select_without_any_fields_specified(): void
+    {
+        $query = query('chapters')->select()->build();
+
+        $sql = $query->getSql();
+
+        $expected = <<<SQL
+        SELECT *
+        FROM `chapters`
+        SQL;
+
+        $this->assertSame($expected, $sql);
+    }
+
+    public function test_select_from_model(): void
+    {
+        $query = query(Author::class)->select()->build();
+
+        $sql = $query->getSql();
+
+        $expected = <<<SQL
+        SELECT `authors`.`name` AS `authors.name`, `authors`.`type` AS `authors.type`, `authors`.`id` AS `authors.id`
+        FROM `authors`
+        SQL;
+
+        $this->assertSame($expected, $sql);
+    }
+
     public function test_where_statement(): void
     {
         $this->migrate(
@@ -28,7 +85,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::query()->where('title = ?', 'B')->first();
+        $book = Book::select()->where('title = ?', 'B')->first();
 
         $this->assertSame('B', $book->title);
     }
@@ -46,7 +103,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $book = Book::query()->orderBy('title DESC')->first();
+        $book = Book::select()->orderBy('title DESC')->first();
 
         $this->assertSame('D', $book->title);
     }
@@ -64,7 +121,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $books = Book::query()->limit(2)->all();
+        $books = Book::select()->limit(2)->all();
 
         $this->assertCount(2, $books);
         $this->assertSame('A', $books[0]->title);
@@ -84,7 +141,7 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'C')->save();
         Book::new(title: 'D')->save();
 
-        $books = Book::query()
+        $books = Book::select()
             ->limit(2)
             ->offset(2)
             ->all();
@@ -108,13 +165,13 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         Book::new(title: 'D')->save();
 
         $results = [];
-        Book::query()->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::query()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);
@@ -129,7 +186,8 @@ final class ModelQueryBuilderTest extends FrameworkIntegrationTestCase
         );
 
         Book::new(title: 'A')->save();
-        $books = Book::query()->raw('LIMIT 1')->all();
+        Book::new(title: 'B')->save();
+        $books = Book::select()->raw('LIMIT 1')->all();
 
         $this->assertCount(1, $books);
         $this->assertSame('A', $books[0]->title);

@@ -2,21 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations\Fixtures;
+namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
 use Tempest\Database\BelongsTo;
-use Tempest\Database\Builder\TableName;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 
-final class BelongsToParentModel implements DatabaseModel
+#[TableName('belongs_to_parent_model')]
+final class BelongsToParentModel
 {
     use IsDatabaseModel;
-
-    public static function table(): TableName
-    {
-        return new TableName('belongs_to_parent_model');
-    }
 
     public BelongsToRelatedModel $relatedModel;
 

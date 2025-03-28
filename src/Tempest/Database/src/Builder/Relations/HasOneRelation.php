@@ -4,20 +4,21 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder\Relations;
 
-use Tempest\Database\Builder\FieldName;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\FieldDefinition;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tempest\Database\HasOne;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
 final readonly class HasOneRelation implements Relation
 {
     private ClassReflector $relationModelClass;
 
-    private FieldName $localField;
+    private FieldDefinition $localField;
 
-    private FieldName $joinField;
+    private FieldDefinition $joinField;
 
     public function __construct(PropertyReflector $property, string $alias)
     {
@@ -30,18 +31,18 @@ final readonly class HasOneRelation implements Relation
 
         $this->relationModelClass = $property->getType()->asClass();
 
-        $localTable = TableName::for($property->getClass(), $alias);
-        $this->localField = new FieldName($localTable, 'id');
+        $localTable = TableDefinition::for($property->getClass(), $alias);
+        $this->localField = new FieldDefinition($localTable, 'id');
 
-        $joinTable = TableName::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
-        $this->joinField = new FieldName($joinTable, $inverseProperty->getName() . '_id');
+        $joinTable = TableDefinition::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
+        $this->joinField = new FieldDefinition($joinTable, $inverseProperty->getName() . '_id');
     }
 
     public function getStatement(): string
     {
         return sprintf(
             'LEFT JOIN %s ON %s = %s',
-            $this->joinField->tableName,
+            $this->joinField->tableDefinition,
             $this->localField,
             $this->joinField,
         );
@@ -49,12 +50,12 @@ final readonly class HasOneRelation implements Relation
 
     public function getRelationName(): string
     {
-        return $this->joinField->tableName->as;
+        return $this->joinField->tableDefinition->as;
     }
 
-    public function getFieldNames(): array
+    public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldName::make($this->relationModelClass, $this->joinField->tableName);
+        return FieldDefinition::all($this->relationModelClass, $this->joinField->tableDefinition);
     }
 
     private function findInversePropertyByType(PropertyReflector $property): PropertyReflector

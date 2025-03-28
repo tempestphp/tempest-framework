@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests\Fixtures;
 
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Generation\Tests\Fixtures\Database\FakeCreateTableStatement;
 use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
 use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
@@ -19,7 +20,7 @@ final readonly class CreateMigrationsTable implements FakeMigration
 
     public function up(): FakeQueryStatement
     {
-        return new FakeCreateTableStatement(Model::table())
+        return new FakeCreateTableStatement(new ModelDefinition(Model::class)->getTableDefinition()->name)
             ->primary()
             ->text('name');
     }
