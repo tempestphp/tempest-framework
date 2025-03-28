@@ -187,9 +187,9 @@ final class GenericRouter implements Router
         return $currentUri === $candidateUri;
     }
 
-    private function createResponse(Response|View $input): Response
+    private function createResponse(string|array|Response|View $input): Response
     {
-        if ($input instanceof View) {
+        if ($input instanceof View || is_array($input) || is_string($input)) {
             return new Ok($input);
         }
 

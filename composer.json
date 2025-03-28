@@ -118,6 +118,7 @@
             "src/Tempest/CommandBus/src/functions.php",
             "src/Tempest/Container/src/functions.php",
             "src/Tempest/Core/src/functions.php",
+            "src/Tempest/Database/src/functions.php",
             "src/Tempest/Debug/src/functions.php",
             "src/Tempest/EventBus/src/functions.php",
             "src/Tempest/Mapper/src/functions.php",

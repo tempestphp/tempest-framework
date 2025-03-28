@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
@@ -20,10 +21,10 @@ final class AlterTableStatement implements QueryStatement
         private array $createIndexStatements = [],
     ) {}
 
-    /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
+    /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self($modelClass::table()->tableName);
+        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
     }
 
     public function add(QueryStatement $statement): self
@@ -89,7 +90,7 @@ final class AlterTableStatement implements QueryStatement
         if ($this->statements !== []) {
             $alterTable = sprintf(
                 'ALTER TABLE %s %s;',
-                new TableName($this->tableName),
+                new TableDefinition($this->tableName),
                 arr($this->statements)
                     ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
                     ->filter(fn (ImmutableString $line) => $line->isNotEmpty())

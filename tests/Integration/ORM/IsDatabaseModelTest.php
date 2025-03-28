@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
 use Tempest\Database\Id;
@@ -174,7 +175,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = A::query()->first();
+        $a = A::select()->first();
 
         $this->expectException(MissingRelation::class);
 
@@ -205,10 +206,10 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = A::query()->with('b.c')->first();
+        $a = A::select()->with('b.c')->first();
         $this->assertSame('test', $a->b->c->name);
 
-        $a = A::query()->with('b.c')->all()[0];
+        $a = A::select()->with('b.c')->all()[0];
         $this->assertSame('test', $a->b->c->name);
     }
 
@@ -227,7 +228,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = A::query()->first();
+        $a = A::select()->first();
         $this->assertFalse(isset($a->b));
 
         $a->load('b.c');
@@ -243,23 +244,22 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateBookTable::class,
         );
 
-        $author = new Author(
+        $author = Author::create(
             name: 'Author Name',
             type: AuthorType::B,
-        )->save();
+        );
 
-        Book::new(
+        Book::create(
             title: 'Book Title',
-            // TODO: nested saves
             author: $author,
-        )->save();
+        );
 
-        Book::new(
+        Book::create(
             title: 'Timeline Taxi',
             author: $author,
-        )->save();
+        );
 
-        $author = Author::query()->with('books')->first();
+        $author = Author::select()->with('books')->first();
 
         $this->assertCount(2, $author->books);
     }
@@ -367,7 +367,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = AWithLazy::query()->first();
+        $a = AWithLazy::select()->first();
 
         $this->assertFalse(isset($a->b));
 
@@ -392,7 +392,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = AWithEager::query()->first();
+        $a = AWithEager::select()->first();
         $this->assertTrue(isset($a->b->c));
     }
 
@@ -405,7 +405,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             CreateCTable::class,
         );
 
-        $this->assertNull(A::query()->first());
+        $this->assertNull(A::select()->first());
     }
 
     public function test_virtual_property(): void
@@ -423,7 +423,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ),
         )->save();
 
-        $a = AWithVirtual::query()->first();
+        $a = AWithVirtual::select()->first();
 
         $this->assertSame(-$a->id->id, $a->fake);
     }
@@ -449,8 +449,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             ['title' => 'B'],
         );
 
-        $this->assertNull(Book::query()->whereField('title', 'A')->first());
-        $this->assertNotNull(Book::query()->whereField('title', 'B')->first());
+        $this->assertNull(Book::select()->whereField('title', 'A')->first());
+        $this->assertNotNull(Book::select()->whereField('title', 'B')->first());
     }
 
     public function test_delete(): void
@@ -470,8 +470,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $foo->delete();
 
-        $this->assertNull(Foo::get($foo->getId()));
-        $this->assertNotNull(Foo::get($bar->getId()));
+        $this->assertNull(Foo::get($foo->id));
+        $this->assertNotNull(Foo::get($bar->id));
     }
 
     public function test_property_with_carbon_type(): void
@@ -486,7 +486,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         new CarbonModel(createdAt: new Carbon('2024-01-01'))->save();
 
-        $model = CarbonModel::query()->first();
+        $model = CarbonModel::select()->first();
 
         $this->assertTrue($model->createdAt->equalTo(new Carbon('2024-01-01')));
     }
@@ -504,7 +504,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
             enum: CasterEnum::BAR,
         )->save();
 
-        $model = CasterModel::query()->first();
+        $model = CasterModel::select()->first();
 
         $this->assertSame(new DateTimeImmutable('2025-01-01 00:00:00')->format('c'), $model->date->format('c'));
         $this->assertSame(['a', 'b', 'c'], $model->array);
@@ -536,8 +536,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
     public function test_table_name_overrides(): void
     {
-        $this->assertEquals('base_models', BaseModel::table()->tableName);
-        $this->assertEquals('custom_attribute_table_name', AttributeTableNameModel::table()->tableName);
-        $this->assertEquals('custom_static_method_table_name', StaticMethodTableNameModel::table()->tableName);
+        $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableDefinition()->name);
+        $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableDefinition()->name);
     }
 }

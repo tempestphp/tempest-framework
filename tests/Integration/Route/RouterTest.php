@@ -11,7 +11,6 @@ use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
-use Tempest\Router\MatchedRoute;
 use Tempest\Router\Responses\Ok;
 use Tempest\Router\Router;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;

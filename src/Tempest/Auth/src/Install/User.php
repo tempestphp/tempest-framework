@@ -8,13 +8,12 @@ use BackedEnum;
 use SensitiveParameter;
 use Tempest\Auth\CanAuthenticate;
 use Tempest\Auth\CanAuthorize;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 use UnitEnum;
 
 use function Tempest\Support\arr;
 
-final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
+final class User implements CanAuthenticate, CanAuthorize
 {
     use IsDatabaseModel;
 
@@ -79,7 +78,7 @@ final class User implements DatabaseModel, CanAuthenticate, CanAuthorize
             $permission instanceof UnitEnum => $permission->name,
         };
 
-        $permission = Permission::query()->whereField('name', $name)->first();
+        $permission = Permission::select()->whereField('name', $name)->first();
 
         return $permission ?? new Permission($name)->save();
     }

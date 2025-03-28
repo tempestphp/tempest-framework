@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations;
+namespace Tests\Tempest\Integration\Database\Relations;
 
 use PHPUnit\Framework\Attributes\TestWith;
-use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
-use Tempest\Database\Tests\Relations\Fixtures\HasOneParentModel;
+use Tests\Tempest\Integration\Database\Relations\Fixtures\HasOneParentModel;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
-final class HasOneRelationTest extends TestCase
+final class HasOneRelationTest extends FrameworkIntegrationTestCase
 {
     #[TestWith(['inversePropertyNotFound'], 'not found')]
     #[TestWith(['inversePropertyMissing'], 'missing property')]

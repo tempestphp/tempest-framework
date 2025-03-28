@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database\Exceptions;
 
 use Exception;
-use Tempest\Database\DatabaseModel;
 
 final class MissingValue extends Exception
 {
-    public function __construct(DatabaseModel $model, string $field)
+    public function __construct(object $model, string $field)
     {
         $modelClass = $model::class;
 
