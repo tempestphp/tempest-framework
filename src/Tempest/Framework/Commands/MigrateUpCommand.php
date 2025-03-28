@@ -32,7 +32,7 @@ final class MigrateUpCommand
     )]
     public function __invoke(
         #[ConsoleArgument(description: 'Validates the integrity of existing migration files by checking if they have been tampered with.')]
-        bool $validate = false,
+        bool $validate = true,
     ): ExitCode {
         if ($validate) {
             $validationSuccess = $this->console->call(MigrateValidateCommand::class);
