@@ -34,10 +34,16 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException) {
-            $this->executeUp(new CreateMigrationsTable());
-
-            $existingMigrations = Migration::all();
+        } catch (PDOException $exception) {
+            if (
+                $exception->getCode() === $this->databaseConfig->dialect->tableNotFoundCode()
+                && str_contains($exception->getMessage(), 'table')
+            ) {
+                $this->executeUp(new CreateMigrationsTable());
+                $existingMigrations = Migration::all();
+            } else {
+                throw $exception;
+            }
         }
 
         $existingMigrations = array_map(
