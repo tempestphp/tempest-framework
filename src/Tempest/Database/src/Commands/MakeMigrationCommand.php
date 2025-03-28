@@ -24,6 +24,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
+
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -76,8 +77,8 @@ final class MakeMigrationCommand
         $tableName = str($fileName)->snake()->toString();
         $suggestedPath = str($this->getSuggestedPath('Dummy'))
             ->replace(
-                [ 'Dummy', '.php' ],
-                [ $now . '_' . $tableName, '.sql' ],
+                ['Dummy', '.php'],
+                [$now . '_' . $tableName, '.sql'],
             )
             ->toString();
 
