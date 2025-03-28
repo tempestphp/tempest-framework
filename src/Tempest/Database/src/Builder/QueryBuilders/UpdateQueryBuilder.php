@@ -30,7 +30,7 @@ final class UpdateQueryBuilder
         );
     }
 
-    public function execute(...$bindings): Id
+    public function execute(mixed ...$bindings): Id
     {
         return $this->build()->execute(...$bindings);
     }
