@@ -505,7 +505,7 @@ final class ContainerTest extends TestCase
          * Set the load time of the dependency, increasing this increases test time but makes the test more robust
          * At extremely low values other operations might have a bigger effect than the usleep inside the slow dependency
          */
-        $delay = 0.001;
+        $delay = 0.01;
         $counter = 1;
 
         $container->register(SlowDependency::class, function () use ($delay, &$counter) {
@@ -535,7 +535,7 @@ final class ContainerTest extends TestCase
          * Set the load time of the dependency, increasing this increases test time but makes the test more robust
          * At extremely low values other operations might have a bigger effect than the usleep inside the slow dependency
          */
-        $delay = 0.001;
+        $delay = 0.01;
         $counter = 1;
 
         $container->register(SlowDependency::class, function () use ($delay, &$counter) {
