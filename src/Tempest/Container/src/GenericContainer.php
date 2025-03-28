@@ -349,8 +349,13 @@ final class GenericContainer implements Container
 
         foreach ($classReflector->getProperties() as $property) {
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
-                // TODO: check if we need a lazy ghost
-                $property->set($instance, $this->get($property->getType()->getName()));
+                if ($property->hasAttribute(Sometimes::class)) {
+                    $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
+                        fn () => $this->get($property->getType()->getName()),
+                    ));
+                } else {
+                    $property->set($instance, $this->get($property->getType()->getName()));
+                }
             }
         }
 
