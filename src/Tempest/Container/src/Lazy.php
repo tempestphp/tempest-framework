@@ -12,6 +12,6 @@ use Attribute;
  * The container may then decide to do lazy initialization
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class Sometimes
+final readonly class Lazy
 {
 }
