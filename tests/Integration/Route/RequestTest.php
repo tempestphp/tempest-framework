@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Method;
@@ -176,6 +177,9 @@ final class RequestTest extends FrameworkIntegrationTestCase
             uri: '/?bar',
             body: [
                 'foo' => false,
+                'nested' => [
+                    'baz' => 'quux',
+                ],
             ],
         );
 
@@ -188,5 +192,26 @@ final class RequestTest extends FrameworkIntegrationTestCase
         $this->assertFalse($request->hasBody('unknown'));
         $this->assertFalse($request->hasQuery('unknown'));
         $this->assertFalse($request->has('unknown'));
+        $this->assertTrue($request->has('nested.baz'));
+        $this->assertFalse($request->has('nested.bar'));
+        $this->assertTrue($request->hasBody('nested.baz'));
+        $this->assertFalse($request->hasBody('nested.bar'));
+    }
+
+    #[TestWith([[], null, false])]
+    #[TestWith([[], '', false])]
+    #[TestWith([[], 'foo', true])]
+    #[TestWith([['foo' => 'bar'], null, true])]
+    #[TestWith([['foo' => 'bar'], 'foo', true])]
+    public function test_body(array $body, ?string $raw, bool $expected): void
+    {
+        $request = new GenericRequest(
+            method: Method::GET,
+            uri: '/?bar',
+            body: $body,
+            raw: $raw,
+        );
+
+        $this->assertSame($expected, $request->hasBody());
     }
 }

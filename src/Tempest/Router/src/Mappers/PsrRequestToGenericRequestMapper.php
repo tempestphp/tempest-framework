@@ -26,13 +26,10 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
     {
         /** @var PsrRequest $from */
         $data = (array) $from->getParsedBody();
+        $raw = $from->getBody()->getContents();
 
-        if (arr($from->getHeader('content-type'))->contains('application/json')) {
-            $bodyContents = $from->getBody()->getContents();
-
-            if (json_validate($bodyContents)) {
-                $data = [...$data, ...json_decode($bodyContents, true)];
-            }
+        if (arr($from->getHeader('content-type'))->contains('application/json') && json_validate($raw)) {
+            $data = [...$data, ...json_decode($raw, associative: true)];
         }
 
         $headersAsString = array_map(
@@ -50,6 +47,7 @@ final readonly class PsrRequestToGenericRequestMapper implements Mapper
         return map([
             'method' => Method::from($from->getMethod()),
             'uri' => (string) $from->getUri(),
+            'raw' => $raw,
             'body' => $data,
             'headers' => RequestHeaders::normalizeFromArray($headersAsString),
             'path' => $from->getUri()->getPath(),
