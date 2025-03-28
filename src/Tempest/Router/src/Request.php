@@ -17,6 +17,10 @@ interface Request
         get;
     }
 
+    public ?string $raw {
+        get;
+    }
+
     public array $body {
         get;
     }

@@ -11,6 +11,8 @@ use Tempest\Router\Session\Session;
 use Tempest\Validation\SkipValidation;
 
 use function Tempest\get;
+use function Tempest\Support\Arr\get_by_key;
+use function Tempest\Support\Arr\has;
 
 /** @phpstan-require-implements \Tempest\Router\Request */
 trait IsRequest
@@ -20,6 +22,9 @@ trait IsRequest
 
     #[SkipValidation]
     private(set) string $uri;
+
+    #[SkipValidation]
+    private(set) ?string $raw = null;
 
     #[SkipValidation]
     private(set) array $body = [];
@@ -48,12 +53,14 @@ trait IsRequest
         array $body = [],
         array $headers = [],
         array $files = [],
+        ?string $raw = null,
     ) {
         $this->method = $method;
         $this->uri = $uri;
         $this->body = $body;
         $this->headers = RequestHeaders::normalizeFromArray($headers);
         $this->files = $files;
+        $this->raw = $raw;
 
         $this->path ??= $this->resolvePath();
         $this->query ??= $this->resolveQuery();
@@ -62,11 +69,11 @@ trait IsRequest
     public function get(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $this->body)) {
-            return $this->body[$key];
+            return get_by_key($this->body, $key);
         }
 
         if (array_key_exists($key, $this->query)) {
-            return $this->query[$key];
+            return get_by_key($this->query, $key);
         }
 
         return $default;
@@ -116,13 +123,17 @@ trait IsRequest
         return $this->hasQuery($key);
     }
 
-    public function hasBody(string $key): bool
+    public function hasBody(?string $key = null): bool
     {
-        return array_key_exists($key, $this->body);
+        if ($key) {
+            return has($this->body, $key);
+        }
+
+        return count($this->body) || ((bool) $this->raw);
     }
 
     public function hasQuery(string $key): bool
     {
-        return array_key_exists($key, $this->query);
+        return has($this->query, $key);
     }
 }

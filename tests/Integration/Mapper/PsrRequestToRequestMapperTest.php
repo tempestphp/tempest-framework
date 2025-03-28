@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
-use Tempest\Mapper\Exceptions\MissingValuesException;
+use Laminas\Diactoros\Uri;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Router\Request;
 use Tempest\Router\Upload;
-use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
-use Tests\Tempest\Fixtures\Modules\Posts\PostRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\map;
-use function Tempest\Support\arr;
 
 /**
  * @internal
@@ -32,6 +29,25 @@ final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertInstanceOf(GenericRequest::class, $request);
+    }
+
+    public function test_raw(): void
+    {
+        $stream = new Stream(fopen('php://memory', 'r+'));
+        $stream->write(json_encode(['foo' => 'bar']));
+        $stream->rewind();
+
+        $request = new PsrRequestToGenericRequestMapper()->map(new ServerRequest(
+            uri: new Uri('/json-endpoint'),
+            method: 'POST',
+            body: $stream,
+            headers: [
+                'Content-Type' => 'application/json',
+            ],
+        ), to: Request::class);
+
+        $this->assertEquals(json_encode(['foo' => 'bar']), $request->raw);
+        $this->assertEquals(['foo' => 'bar'], $request->body);
     }
 
     public function test_files(): void

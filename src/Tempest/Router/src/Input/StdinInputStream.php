@@ -13,7 +13,7 @@ final class StdinInputStream implements InputStream
         $input = file_get_contents('php://input');
 
         if (json_validate($input)) {
-            return json_decode($input, true);
+            return json_decode($input, associative: true);
         }
 
         $inputStreamData = str($input)
