@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Tables\PascalCaseStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
@@ -25,6 +26,6 @@ final class DatabaseConfigTest extends FrameworkIntegrationTestCase
             namingStrategy: new $strategy(),
         ));
 
-        $this->assertSame($expected, MultiWordModel::table()->tableName);
+        $this->assertSame($expected, new ModelDefinition(MultiWordModel::class)->getTableDefinition()->name);
     }
 }

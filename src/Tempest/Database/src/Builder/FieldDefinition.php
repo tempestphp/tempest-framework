@@ -5,42 +5,42 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Stringable;
-use Tempest\Database\DatabaseModel;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
 
-final class FieldName implements Stringable
+final class FieldDefinition implements Stringable
 {
     public function __construct(
-        public readonly TableName $tableName,
-        public readonly string $fieldName,
+        public readonly TableDefinition $tableDefinition,
+        public readonly string $name,
         public ?string $as = null,
     ) {}
 
-    /** @return \Tempest\Database\Builder\FieldName[] */
-    public static function make(ClassReflector $class, ?TableName $tableName = null): array
+    /** @return ImmutableArray<\Tempest\Database\Builder\FieldDefinition> */
+    public static function all(ClassReflector $class, ?TableDefinition $tableDefinition = null): ImmutableArray
     {
         $casterFactory = get(CasterFactory::class);
-        $fieldNames = [];
-        $tableName ??= $class->callStatic('table');
+        $fieldDefinitions = [];
+        $tableDefinition ??= new ModelDefinition($class->getName())->getTableDefinition();
 
         foreach ($class->getPublicProperties() as $property) {
             // Don't include the field if it's a 1:1 or n:1 relation
-            if ($property->getType()->matches(DatabaseModel::class)) {
+            if ($property->getType()->isRelation()) {
                 continue;
             }
 
             // Don't include the field if it's a 1:n relation
-            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
+            if ($property->getIterableType()?->isRelation()) {
                 continue;
             }
 
             $caster = $casterFactory->forProperty($property);
 
             if ($caster !== null) {
-                $fieldNames[] = new FieldName($tableName, $property->getName());
+                $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
 
                 continue;
             }
@@ -49,10 +49,10 @@ final class FieldName implements Stringable
                 continue;
             }
 
-            $fieldNames[] = new FieldName($tableName, $property->getName());
+            $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
         }
 
-        return $fieldNames;
+        return new ImmutableArray($fieldDefinitions);
     }
 
     public function as(string $as): self
@@ -64,16 +64,16 @@ final class FieldName implements Stringable
 
     public function withAlias(): self
     {
-        $tableName = $this->tableName->as ?? $this->tableName->tableName;
+        $name = $this->tableDefinition->as ?? $this->tableDefinition->name;
 
-        return $this->as($tableName . '.' . $this->fieldName);
+        return $this->as($name . '.' . $this->name);
     }
 
     public function __toString(): string
     {
-        $tableName = $this->tableName->as ?? $this->tableName->tableName;
+        $tableName = $this->tableDefinition->as ?? $this->tableDefinition->name;
 
-        $string = "`{$tableName}`.`{$this->fieldName}`";
+        $string = "`{$tableName}`.`{$this->name}`";
 
         if ($this->as) {
             $string .= " AS `{$this->as}`";

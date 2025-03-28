@@ -12,7 +12,7 @@ final class AuthConfig
         /** @var class-string<\Tempest\Auth\Authenticator> */
         public string $authenticatorClass = SessionAuthenticator::class,
 
-        /** @var class-string<\Tempest\Database\DatabaseModel> */
+        /** @var class-string */
         public string $userModelClass = User::class,
     ) {}
 }

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Models;
 
-use Tempest\Database\Builder\TableName;
-use Tempest\Database\DatabaseModel;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Eager;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 
-final class BWithEager implements DatabaseModel
+#[TableName('b')]
+final class BWithEager
 {
     use IsDatabaseModel;
 
@@ -17,9 +18,4 @@ final class BWithEager implements DatabaseModel
         #[Eager]
         public C $c,
     ) {}
-
-    public static function table(): TableName
-    {
-        return new TableName('b');
-    }
 }

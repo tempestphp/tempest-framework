@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\QueryStatements;
 
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 
@@ -24,10 +25,10 @@ final class DropTableStatement implements QueryStatement
         return $this;
     }
 
-    /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
+    /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self($modelClass::table()->tableName);
+        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
     }
 
     public function compile(DatabaseDialect $dialect): string

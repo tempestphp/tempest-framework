@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Mappers;
 
-use Tempest\Database\DatabaseModel;
+use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Query;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Mapper;
@@ -25,14 +25,14 @@ final readonly class QueryToModelMapper implements Mapper
     public function map(mixed $from, mixed $to): array
     {
         /** @var \Tempest\Database\Query $from */
-        /** @var class-string<DatabaseModel> $to */
+        /** @var class-string $to */
         $class = new ClassReflector($to);
-        $table = $class->callStatic('table');
+        $table = new ModelDefinition($class)->getTableDefinition();
 
         $models = [];
 
         foreach ($from->fetch() as $row) {
-            $idField = $table->tableName . '.id';
+            $idField = $table->name . '.id';
 
             $id = $row[$idField];
 
@@ -44,7 +44,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $this->makeLazyCollection($models);
     }
 
-    private function parse(ClassReflector $class, DatabaseModel $model, array $row): DatabaseModel
+    private function parse(ClassReflector $class, object $model, array $row): object
     {
         foreach ($row as $key => $value) {
             $keyParts = explode('.', $key);
@@ -57,7 +57,7 @@ final readonly class QueryToModelMapper implements Mapper
             if ($count > 3) {
                 $property = $class->getProperty(rtrim($propertyName, '[]'));
 
-                if ($property->getIterableType()?->matches(DatabaseModel::class)) {
+                if ($property->getIterableType()?->isRelation()) {
                     $collection = $property->get($model, []);
                     $childId = $row[$keyParts[0] . '.' . $keyParts[1] . '.id'];
 
@@ -122,7 +122,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseProperty(PropertyReflector $property, DatabaseModel $model, mixed $value): DatabaseModel
+    private function parseProperty(PropertyReflector $property, object $model, mixed $value): object
     {
         $caster = $this->casterFactory->forProperty($property);
 
@@ -139,12 +139,8 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseBelongsTo(
-        PropertyReflector $property,
-        DatabaseModel $model,
-        string $childProperty,
-        mixed $value,
-    ): DatabaseModel {
+    private function parseBelongsTo(PropertyReflector $property, object $model, string $childProperty, mixed $value): object
+    {
         $childModel = $property->get(
             $model,
             $property->getType()->asClass()->newInstanceWithoutConstructor(),
@@ -164,13 +160,8 @@ final readonly class QueryToModelMapper implements Mapper
         return $model;
     }
 
-    private function parseHasMany(
-        PropertyReflector $property,
-        DatabaseModel $model,
-        ?string $childId,
-        string $childProperty,
-        mixed $value,
-    ): DatabaseModel {
+    private function parseHasMany(PropertyReflector $property, object $model, ?string $childId, string $childProperty, mixed $value): object
+    {
         $collection = $property->get($model, []);
 
         if (! $childId) {
@@ -208,7 +199,7 @@ final readonly class QueryToModelMapper implements Mapper
         return $lazy;
     }
 
-    private function makeLazyModel(DatabaseModel $model): DatabaseModel
+    private function makeLazyModel(object $model): object
     {
         $classReflector = new ClassReflector($model);
 
@@ -219,7 +210,7 @@ final readonly class QueryToModelMapper implements Mapper
                 continue;
             }
 
-            if ($property->getIterableType()?->matches(DatabaseModel::class)) {
+            if ($property->getIterableType()?->isRelation()) {
                 foreach ($property->get($model) as $childModel) {
                     $this->makeLazyModel($childModel);
                 }

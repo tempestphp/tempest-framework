@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Router\Bindable;
 use Tempest\Validation\Rules\Length;
 
-final class Book implements DatabaseModel
+final class Book implements Bindable
 {
     use IsDatabaseModel;
 

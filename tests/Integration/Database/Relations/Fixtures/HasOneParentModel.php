@@ -2,21 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database\Tests\Relations\Fixtures;
+namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
-use Tempest\Database\Builder\TableName;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Database\TableName;
 
-final class HasOneParentModel implements DatabaseModel
+#[TableName('has_one_parent_model')]
+final class HasOneParentModel
 {
     use IsDatabaseModel;
-
-    public static function table(): TableName
-    {
-        return new TableName('has_one_parent_model');
-    }
 
     #[HasOne]
     public HasOneRelatedModel $relatedModel;
