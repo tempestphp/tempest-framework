@@ -14,6 +14,10 @@ trait HasAttributes
 {
     abstract public function getReflection(): PHPReflectionClass|PHPReflectionMethod|PHPReflectionProperty|PHPReflectionParameter;
 
+    /**
+     * @param class-string $name
+     * @return bool
+     */
     public function hasAttribute(string $name): bool
     {
         return $this->getReflection()->getAttributes($name) !== [];

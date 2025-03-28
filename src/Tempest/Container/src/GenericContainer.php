@@ -390,7 +390,7 @@ final class GenericContainer implements Container
         }
 
         // Support lazy initialization
-        $lazy = $parameter->getAttribute(Sometimes::class) !== null;
+        $lazy = $parameter->hasAttribute(Sometimes::class);
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
             try {
