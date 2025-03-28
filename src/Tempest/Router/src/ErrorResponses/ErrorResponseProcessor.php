@@ -12,10 +12,11 @@ final class ErrorResponseProcessor implements ResponseProcessor
 {
     public function process(Response $response): Response
     {
-        return match ($response->status) {
-            Status::INTERNAL_SERVER_ERROR, Status::NOT_FOUND, Status::FORBIDDEN, Status::UNAUTHORIZED => $response->setBody($this->renderErrorView($response->status)),
-            default => $response,
-        };
+        if ($response->status->isClientError() || $response->status->isServerError()) {
+            $response->setBody($this->renderErrorView($response->status));
+        }
+
+        return $response;
     }
 
     private function renderErrorView(Status $status): View
@@ -26,10 +27,10 @@ final class ErrorResponseProcessor implements ResponseProcessor
             'title' => $status->description(),
             'message' => match ($status) {
                 Status::INTERNAL_SERVER_ERROR => 'An unexpected server error occurred',
-                Status::NOT_FOUND => 'This page could not be found',
+                Status::NOT_FOUND => 'This page could not be found on the server',
                 Status::FORBIDDEN => 'You do not have permission to access this page',
                 Status::UNAUTHORIZED => 'You must be authenticated in to access this page',
-                default => $status->description(),
+                default => null,
             },
         ]);
     }

@@ -195,6 +195,9 @@
   .justify-center {
     justify-content: center;
   }
+  .gap-x-1 {
+    column-gap: calc(var(--spacing) * 1);
+  }
   .bg-\[\#061324\] {
     background-color: #061324;
   }
@@ -212,6 +215,9 @@
   .font-thin {
     --tw-font-weight: var(--font-weight-thin);
     font-weight: var(--font-weight-thin);
+  }
+  .text-\[\#4c6586\] {
+    color: #4c6586;
   }
   .text-\[\#a8caf7\] {
     color: #a8caf7;
