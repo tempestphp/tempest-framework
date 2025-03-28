@@ -6,11 +6,11 @@ namespace Tempest\Container\Tests\Fixtures;
 use Tempest\Container\Inject;
 use Tempest\Container\Lazy;
 
-final readonly class ClassWithLazySlowPropertyDependency
+final class ClassWithLazySlowPropertyDependency
 {
     #[Inject]
     #[Lazy]
-    public SlowDependency $dependency;
+    private(set) SlowDependency $dependency;
 
     public function __construct() {}
 }
