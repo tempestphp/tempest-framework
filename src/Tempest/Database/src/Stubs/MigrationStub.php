@@ -12,9 +12,7 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 
 final class MigrationStub implements DatabaseMigration
 {
-    public string $name {
-        get => 'dummy-date_dummy-table-name';
-    }
+    public string $name = 'dummy-date_dummy-table-name';
 
     public function up(): QueryStatement
     {
