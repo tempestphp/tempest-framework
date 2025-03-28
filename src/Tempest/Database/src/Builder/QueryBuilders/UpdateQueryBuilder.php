@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
@@ -23,8 +24,7 @@ final class UpdateQueryBuilder
         private string|object $model,
         private array|ImmutableArray $values,
         private SerializerFactory $serializerFactory,
-    )
-    {
+    ) {
         $this->update = new UpdateStatement(
             table: model($this->model)->getTableDefinition(),
         );
@@ -96,6 +96,10 @@ final class UpdateQueryBuilder
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
+            if ($property->getIterableType()?->isRelation()) {
+                throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
+            }
+
             if ($property->getType()->isRelation()) {
                 $column .= '_id';
 
@@ -110,10 +114,12 @@ final class UpdateQueryBuilder
                 };
             }
 
-            $serializer = $this->serializerFactory->forProperty($property);
+            if (! $property->getType()->isRelation() && ! $property->getIterableType()?->isRelation()) {
+                $serializer = $this->serializerFactory->forProperty($property);
 
-            if ($value !== null && $serializer !== null) {
-                $value = $serializer->serialize($value);
+                if ($value !== null && $serializer !== null) {
+                    $value = $serializer->serialize($value);
+                }
             }
 
             $values[$column] = $value;

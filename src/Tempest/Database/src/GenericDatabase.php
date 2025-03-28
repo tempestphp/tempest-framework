@@ -76,6 +76,7 @@ final readonly class GenericDatabase implements Database
         $bindings = [];
 
         foreach ($query->bindings as $key => $value) {
+            // TODO: this should be handled by serializers (except the Query)
             if ($value instanceof Id) {
                 $value = $value->id;
             }

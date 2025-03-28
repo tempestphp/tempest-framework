@@ -129,7 +129,7 @@ trait IsDatabaseModel
             $this->id = $query->execute();
         } else {
             query($this)->update(
-                ...model($this)->getPropertyValues()
+                ...model($this)->getPropertyValues(),
             )->execute();
         }
 

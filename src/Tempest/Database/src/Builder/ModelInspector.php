@@ -15,8 +15,7 @@ final class ModelInspector
 
     public function __construct(
         private object|string $model,
-    )
-    {
+    ) {
         if ($this->model instanceof ClassReflector) {
             $this->modelClass = $this->model;
         } else {

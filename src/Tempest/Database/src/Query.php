@@ -25,6 +25,8 @@ final class Query
 
         $database->execute($query);
 
+        // TODO: add support for "after" queries to attach hasMany relations
+
         return isset($query->bindings['id'])
             ? new Id($query->bindings['id'])
             : $database->getLastInsertId();

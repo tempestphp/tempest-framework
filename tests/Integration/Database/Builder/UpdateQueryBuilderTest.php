@@ -2,11 +2,14 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
 use Tempest\Database\Id;
+use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Chapter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
@@ -137,5 +140,77 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ['a', 10],
             $query->bindings,
         );
+    }
+
+    public function test_insert_new_relation_on_update(): void
+    {
+        $book = Book::new(
+            id: new Id(10),
+        );
+
+        $bookQuery = query($book)
+            ->update(author: Author::new(name: 'Brent'))
+            ->build();
+
+        $this->assertSame(
+            <<<SQL
+            UPDATE `books`
+            SET `author_id` = ?
+            WHERE `id` = ?
+            SQL,
+            $bookQuery->getSql(),
+        );
+
+        $this->assertInstanceOf(Query::class, $bookQuery->bindings[0]);
+
+        $authorQuery = $bookQuery->bindings[0];
+
+        $this->assertSame(
+            <<<SQL
+            INSERT INTO `authors` (`name`)
+            VALUES (?)
+            SQL,
+            $authorQuery->getSql(),
+        );
+
+        $this->assertSame(['Brent'], $authorQuery->bindings);
+    }
+
+    public function test_attach_existing_relation_on_update(): void
+    {
+        $book = Book::new(
+            id: new Id(10),
+        );
+
+        $bookQuery = query($book)
+            ->update(author: Author::new(id: new Id(5), name: 'Brent'))
+            ->build();
+
+        $this->assertSame(
+            <<<SQL
+            UPDATE `books`
+            SET `author_id` = ?
+            WHERE `id` = ?
+            SQL,
+            $bookQuery->getSql(),
+        );
+
+        $this->assertSame([5, 10], $bookQuery->bindings);
+    }
+
+    public function test_attach_new_has_many_relation_on_update(): void
+    {
+        $this->markTestSkipped('Not implemented yet');
+
+        //        $book = Book::new(
+        //            id: new Id(10),
+        //        );
+        //        query($book)
+        //            ->update(
+        //                chapters: [
+        //                    Chapter::new(title: 'Chapter 01'),
+        //                ],
+        //            )
+        //            ->build();
     }
 }

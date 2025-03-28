@@ -38,11 +38,10 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
         $query = query($author)->update(name: 'other')->build();
 
         $this->assertSame(<<<'SQL'
-            UPDATE `authors`
-            SET `name` = ?
-            WHERE `id` = ?
-            SQL,
-            $query->getSql());
+        UPDATE `authors`
+        SET `name` = ?
+        WHERE `id` = ?
+        SQL, $query->getSql());
 
         $this->assertSame(['other', 1], $query->bindings);
     }
