@@ -17,7 +17,8 @@ final class CreateMigrationsTable implements DatabaseMigration
     {
         return CreateTableStatement::forModel(Migration::class)
             ->primary()
-            ->text('name');
+            ->text('name')
+            ->varchar('hash', 32);
     }
 
     public function down(): QueryStatement
