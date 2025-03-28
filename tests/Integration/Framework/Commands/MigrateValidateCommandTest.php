@@ -36,4 +36,22 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
             ->call('migrate:validate')
             ->assertExitCode(ExitCode::ERROR);
     }
+
+    public function test_migration_validate_command_fails_when_migration_file_is_missing(): void
+    {
+        $this->console
+            ->call('migrate:fresh --force');
+
+        /**
+         * Creating a Migration Record to simulate a missing migration file.
+         */
+        Migration::create(
+            name: 'create_missing_migration_file',
+            hash: 'hash',
+        );
+
+        $this->console
+            ->call('migrate:validate')
+            ->assertExitCode(ExitCode::ERROR);
+    }
 }
