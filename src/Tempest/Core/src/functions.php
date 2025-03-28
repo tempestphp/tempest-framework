@@ -58,7 +58,7 @@ namespace Tempest {
      *
      * @throws PathCouldNotBeMappedToNamespaceException If the path cannot be mapped to the main namespace
      */
-    function main_namespace(Stringable|string ...$parts): string
+    function src_namespace(Stringable|string ...$parts): string
     {
         return to_psr4_namespace(get(Composer::class)->mainNamespace, root_path(...$parts), root: root_path());
     }

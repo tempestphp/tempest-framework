@@ -12,9 +12,9 @@ use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\internal_storage_path;
-use function Tempest\main_namespace;
 use function Tempest\registered_namespace;
 use function Tempest\root_path;
+use function Tempest\src_namespace;
 use function Tempest\src_path;
 use function Tempest\Support\Path\is_absolute_path;
 
@@ -36,48 +36,48 @@ final class FunctionsTest extends FrameworkIntegrationTestCase
         $this->assertSame(root_path(), $this->root);
     }
 
-    public function test_main_namespace_with_absolute_path(): void
+    public function test_src_namespace_with_absolute_path(): void
     {
         $this->container->get(FrameworkKernel::class)->root = __DIR__ . '/tmp';
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
 
-        $this->assertSame('App', main_namespace(root_path('app')));
-        $this->assertSame('App', main_namespace(root_path('app/Foo.php')));
-        $this->assertSame('App\\Foo', main_namespace(root_path('app/Foo/BarBaz.php')));
-        $this->assertSame('App\\Foo\\BarBaz', main_namespace(root_path('app/Foo/BarBaz')));
+        $this->assertSame('App', src_namespace(root_path('app')));
+        $this->assertSame('App', src_namespace(root_path('app/Foo.php')));
+        $this->assertSame('App\\Foo', src_namespace(root_path('app/Foo/BarBaz.php')));
+        $this->assertSame('App\\Foo\\BarBaz', src_namespace(root_path('app/Foo/BarBaz')));
 
-        $this->assertSame('App', main_namespace(src_path()));
-        $this->assertSame('App', main_namespace(src_path('Foo.php')));
-        $this->assertSame('App\\Foo', main_namespace(src_path('Foo/Bar.php')));
+        $this->assertSame('App', src_namespace(src_path()));
+        $this->assertSame('App', src_namespace(src_path('Foo.php')));
+        $this->assertSame('App\\Foo', src_namespace(src_path('Foo/Bar.php')));
     }
 
-    public function test_main_namespace_with_manual_paths(): void
+    public function test_src_namespace_with_manual_paths(): void
     {
         $this->container->get(FrameworkKernel::class)->root = '/path/to/Auth/install';
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', '/path/to/Auth/install/App'));
 
-        $this->assertSame('App', main_namespace('/path/to/Auth/install/App'));
+        $this->assertSame('App', src_namespace('/path/to/Auth/install/App'));
     }
 
     public function test_main_namespace_with_relative_path(): void
     {
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
 
-        $this->assertSame('App', main_namespace('app'));
-        $this->assertSame('App', main_namespace('app/Foo.php'));
-        $this->assertSame('App\\Foo', main_namespace('app/Foo/BarBaz.php'));
-        $this->assertSame('App\\Foo\\BarBaz', main_namespace('app/Foo/BarBaz'));
+        $this->assertSame('App', src_namespace('app'));
+        $this->assertSame('App', src_namespace('app/Foo.php'));
+        $this->assertSame('App\\Foo', src_namespace('app/Foo/BarBaz.php'));
+        $this->assertSame('App\\Foo\\BarBaz', src_namespace('app/Foo/BarBaz'));
     }
 
     #[TestWith([''])]
     #[TestWith(['Foo.php'])]
     #[TestWith(['src/Foo.php'])]
-    public function test_exception_main_namespace(string $path): void
+    public function test_exception_src_namespace(string $path): void
     {
         $this->expectException(PathCouldNotBeMappedToNamespaceException::class);
         $this->container->get(Composer::class)->setMainNamespace(new Psr4Namespace('App\\', 'app'));
 
-        main_namespace($path);
+        src_namespace($path);
     }
 
     public function test_registered_namespace(): void

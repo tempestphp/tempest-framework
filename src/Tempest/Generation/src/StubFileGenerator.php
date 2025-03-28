@@ -12,7 +12,7 @@ use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
 
-use function Tempest\main_namespace;
+use function Tempest\src_namespace;
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\str;
 
@@ -53,7 +53,7 @@ final class StubFileGenerator
             $this->prepareFilesystem($targetPath);
 
             // Transform stub to class
-            $namespace = main_namespace($targetPath);
+            $namespace = src_namespace($targetPath);
             $classname = to_base_class_name($targetPath);
             $classManipulator = new ClassManipulator($stubFile->filePath)
                 ->setNamespace($namespace)

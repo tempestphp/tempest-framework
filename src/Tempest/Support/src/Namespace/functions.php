@@ -40,8 +40,8 @@ namespace Tempest\Support\Namespace {
      * ## Example
      * ```php
      * // Main namespace is `App`, with path `app/`.
-     * to_main_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User.php'); // App\Auth
-     * to_main_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User'); // App\Auth\User
+     * to_psr4_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User.php'); // App\Auth
+     * to_psr4_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User'); // App\Auth\User
      * ```
      */
     function to_psr4_namespace(Psr4Namespace|array $namespaces, Stringable|string $path, null|Stringable|string $root = null): string
