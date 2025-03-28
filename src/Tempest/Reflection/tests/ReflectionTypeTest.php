@@ -75,6 +75,7 @@ final class ReflectionTypeTest extends TestCase
 
     public function test_is_iterable(): void
     {
+        // TODO
         $this->assertTrue(new TypeReflector(ImmutableArray::class)->isIterable());
         $this->assertTrue(new TypeReflector('array')->isIterable());
         $this->assertFalse(new TypeReflector('string')->isIterable());
