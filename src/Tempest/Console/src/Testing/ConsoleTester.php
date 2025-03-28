@@ -35,6 +35,8 @@ final class ConsoleTester
 
     private bool $withPrompting = true;
 
+    private (Console&GenericConsole)|null $console = null;
+
     public function __construct(
         private readonly Container $container,
     ) {}
@@ -43,19 +45,25 @@ final class ConsoleTester
     {
         $clone = clone $this;
 
-        $memoryOutputBuffer = new MemoryOutputBuffer();
+        $this->output ??= new MemoryOutputBuffer();
+        $this->output->clear();
+        $memoryOutputBuffer = $this->output;
         $clone->container->singleton(OutputBuffer::class, $memoryOutputBuffer);
 
-        $memoryInputBuffer = new MemoryInputBuffer();
+        $this->input ??= new MemoryInputBuffer();
+        $this->input->clear();
+        $memoryInputBuffer = $this->input;
         $clone->container->singleton(InputBuffer::class, $memoryInputBuffer);
 
-        $console = new GenericConsole(
+        $this->console ??= new GenericConsole(
             output: $memoryOutputBuffer,
             input: $memoryInputBuffer,
             highlighter: $clone->container->get(Highlighter::class, 'console'),
             executeConsoleCommand: $clone->container->get(ExecuteConsoleCommand::class),
             argumentBag: $clone->container->get(ConsoleArgumentBag::class),
         );
+
+        $console = $this->console;
 
         if ($this->withPrompting === false) {
             $console->disablePrompting();
