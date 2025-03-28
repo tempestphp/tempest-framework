@@ -34,15 +34,12 @@ final readonly class MigrationManager
     {
         try {
             $existingMigrations = Migration::all();
-        } catch (PDOException $exception) {
-            if (
-                $exception->getCode() === $this->databaseConfig->dialect->tableNotFoundCode()
-                && str_contains($exception->getMessage(), 'table')
-            ) {
+        } catch (PDOException $pdoException) {
+            if ($pdoException->getCode() === $this->databaseConfig->dialect->tableNotFoundCode() && str_contains($pdoException->getMessage(), 'table')) {
                 $this->executeUp(new CreateMigrationsTable());
                 $existingMigrations = Migration::all();
             } else {
-                throw $exception;
+                throw $pdoException;
             }
         }
 
