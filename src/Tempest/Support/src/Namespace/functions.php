@@ -3,18 +3,17 @@
 declare(strict_types=1);
 
 namespace Tempest\Support\Namespace {
-    use Tempest\Core\Composer;
-    use Tempest\Core\Kernel;
+    use Stringable;
     use Tempest\Support\Str\ImmutableString;
 
-    use function Tempest\get;
-    use function Tempest\src_namespace;
-    use function Tempest\src_path;
-    use function Tempest\Support\arr;
+    use function Tempest\Support\Arr\wrap;
+    use function Tempest\Support\Path\to_relative_path;
     use function Tempest\Support\str;
+    use function Tempest\Support\Str\ensure_ends_with;
+    use function Tempest\Support\Str\to_pascal_case;
 
     /**
-     * Converts the given file system path to the equivalent PSR-4 namespace.
+     * Converts the given file system path to the equivalent PSR-4 namespace. The `$root` is stripped from the namespace.
      *
      * ## Example
      * ```php
@@ -22,62 +21,49 @@ namespace Tempest\Support\Namespace {
      * to_namespace('app/Auth/User'); // App\Auth\User
      * ```
      */
-    function to_namespace(string $path, string $root = ''): string
+    function to_namespace(Stringable|string $path, null|Stringable|string $root = null): string
     {
-        $path = prepare_namespace($path, $root)
-            ->replaceEnd('\\', '');
-
-        return arr(explode('\\', (string) $path))
-            ->map(fn (string $segment) => (string) str($segment)->pascal())
+        return prepare_namespace($path, $root)
+            ->stripEnd('\\')
+            ->explode('\\')
+            ->map(fn (string $segment) => to_pascal_case($segment))
             ->implode('\\')
             ->toString();
     }
 
     /**
-     * Converts the given file system path to the equivalent PSR-4 namespace within the application's main namespace.
+     * Converts the given file system path to the equivalent specified PSR-4 namespace.
+     * The given path is expected to be absolute or relative to the root path. An exception will be thrown otherwise.
+     *
+     * @param array<Psr4Namespace> $namespaces
      *
      * ## Example
      * ```php
      * // Main namespace is `App`, with path `app/`.
-     * to_main_namespace('app/Auth/User.php'); // App\Auth
-     * to_main_namespace('app/Auth/User'); // App\Auth\User
+     * to_psr4_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User.php'); // App\Auth
+     * to_psr4_namespace(new Psr4Namespace('App', 'app/'), 'app/Auth/User'); // App\Auth\User
      * ```
      */
-    function to_main_namespace(string $path): string
+    function to_psr4_namespace(Psr4Namespace|array $namespaces, Stringable|string $path, null|Stringable|string $root = null): string
     {
-        return to_namespace(
-            src_namespace() . '/' . str($path)
-                ->replaceStart(src_path(), '')
-                ->trim('/')
-                ->toString(),
-        );
-    }
-
-    /**
-     * Converts a file system path to a namespace registered in the project's `composer.json`.
-     * If the resulting PSR-4 namespace does not match any registered namespace, an exception is thrown.
-     */
-    function to_registered_namespace(string $path): string
-    {
-        $composer = get(Composer::class);
-        $kernel = get(Kernel::class);
-
-        $relativePath = prepare_namespace($path, $kernel->root)
+        $relativePath = prepare_namespace($path, $root)
             ->stripEnd('\\')
             ->replace('\\', '/')
             ->finish('/');
 
-        foreach ($composer->namespaces as $namespace) {
-            if ($relativePath->startsWith($namespace->path)) {
+        foreach (wrap($namespaces) as $namespace) {
+            $namespacePath = to_relative_path($root, $namespace->path);
+
+            if ($relativePath->startsWith($namespacePath)) {
                 return (string) $relativePath
-                    ->replace($namespace->path, $namespace->namespace)
+                    ->replaceStart($namespacePath, $namespace->namespace)
                     ->replace(['\\/', '//', '/'], '\\')
                     ->stripEnd('.php')
                     ->stripEnd('\\');
             }
         }
 
-        throw new NoMatchingRegisteredNamespaceException($path);
+        throw new PathCouldNotBeMappedToNamespaceException($path);
     }
 
     /**
@@ -98,17 +84,19 @@ namespace Tempest\Support\Namespace {
      * This function is used internally by other namespace-related functions. It is not meant for userland usage.
      * @internal
      */
-    function prepare_namespace(string $path, string $root = ''): ImmutableString
+    function prepare_namespace(Stringable|string $path, null|Stringable|string $root = null): ImmutableString
     {
         $normalized = str($path)
-            ->stripStart($root)
+            ->stripStart($root ?? '')
             ->stripStart('/')
             ->replace(['/', '//'], '\\');
 
         // If the path is a to a PHP file, we exclude the file name. Otherwise,
         // it's a path to a directory, which should be included in the namespace.
         if ($normalized->endsWith('.php')) {
-            return $normalized->beforeLast(['/', '\\']);
+            return $normalized->contains(['/', '\\'])
+                ? $normalized->beforeLast(['/', '\\'])
+                : new ImmutableString();
         }
 
         return $normalized;

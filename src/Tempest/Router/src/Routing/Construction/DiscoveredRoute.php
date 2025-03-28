@@ -6,7 +6,6 @@ namespace Tempest\Router\Routing\Construction;
 
 use Tempest\Http\Method;
 use Tempest\Reflection\MethodReflector;
-use Tempest\Router\HttpMiddleware;
 use Tempest\Router\Route;
 
 final readonly class DiscoveredRoute implements Route
@@ -34,7 +33,7 @@ final readonly class DiscoveredRoute implements Route
         public string $uri,
         public Method $method,
         public array $parameters,
-        /** @var class-string<HttpMiddleware>[] */
+        /** @var class-string<\Tempest\Router\HttpMiddleware>[] */
         public array $middleware,
         public MethodReflector $handler,
     ) {

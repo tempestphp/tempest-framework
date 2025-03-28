@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection\Tests;
 
+use ArrayIterator;
 use DateTimeImmutable;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Stringable;
 use Tempest\Reflection\Tests\Fixtures\A;
 use Tempest\Reflection\Tests\Fixtures\B;
 use Tempest\Reflection\Tests\Fixtures\C;
@@ -75,7 +77,7 @@ final class ReflectionTypeTest extends TestCase
 
     public function test_is_iterable(): void
     {
-        $this->assertTrue(new TypeReflector(ImmutableArray::class)->isIterable());
+        $this->assertTrue(new TypeReflector(ArrayIterator::class)->isIterable());
         $this->assertTrue(new TypeReflector('array')->isIterable());
         $this->assertFalse(new TypeReflector('string')->isIterable());
     }
@@ -83,8 +85,8 @@ final class ReflectionTypeTest extends TestCase
     public function test_is_stringable(): void
     {
         $this->assertTrue(new TypeReflector('string')->isStringable());
-        $this->assertTrue(new TypeReflector(ImmutableString::class)->isStringable());
-        $this->assertFalse(new TypeReflector(ImmutableArray::class)->isStringable());
+        $this->assertTrue(new TypeReflector(Stringable::class)->isStringable());
+        $this->assertFalse(new TypeReflector(ArrayIterator::class)->isStringable());
         $this->assertFalse(new TypeReflector('array')->isStringable());
     }
 
