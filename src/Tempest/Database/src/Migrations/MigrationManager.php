@@ -62,7 +62,7 @@ final readonly class MigrationManager
             /** @throw UnhandledMatchError */
             match ((string) $pdoException->getCode()) {
                 $this->databaseConfig->dialect->tableNotFoundCode() => event(
-                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableDefinition()->name, exception: MigrationException::noTable()),
+                    event: new MigrationFailed(name: new ModelDefinition(Migration::class)->getTableDefinition()->name, exception: new TableNotFoundException()),
                 ),
                 default => throw new UnhandledMatchError($pdoException->getMessage()),
             };
@@ -151,13 +151,13 @@ final readonly class MigrationManager
             );
 
             if ($databaseMigration === null) {
-                event(new MigrationValidationFailed($existingMigration->name, MigrationException::missingMigration()));
+                event(new MigrationValidationFailed($existingMigration->name, new MissingMigrationFileException()));
 
                 continue;
             }
 
             if ($this->getMigrationHash($databaseMigration) !== $existingMigration->hash) {
-                event(new MigrationValidationFailed($existingMigration->name, MigrationException::hashMismatch()));
+                event(new MigrationValidationFailed($existingMigration->name, new MigrationHashMismatchException()));
 
                 continue;
             }
