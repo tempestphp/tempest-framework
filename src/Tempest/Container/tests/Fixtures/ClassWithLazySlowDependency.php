@@ -7,8 +7,8 @@ use Tempest\Container\Sometimes;
 
 final readonly class ClassWithLazySlowDependency
 {
-
-    final public function __construct(#[Sometimes] public SlowDependency $dependency) {
-
-    }
+    public function __construct(
+        #[Sometimes]
+        public SlowDependency $dependency,
+    ) {}
 }

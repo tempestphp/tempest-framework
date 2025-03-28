@@ -5,8 +5,7 @@ namespace Tempest\Container\Tests\Fixtures;
 
 final readonly class ClassWithSlowDependency
 {
-
-    final public function __construct(public SlowDependency $dependency) {
-
-    }
+    public function __construct(
+        public SlowDependency $dependency,
+    ) {}
 }

@@ -398,7 +398,7 @@ final class GenericContainer implements Container
                     type: $type,
                     tag: $tag,
                     providedValue: $providedValue,
-                    lazy: $lazy
+                    lazy: $lazy,
                 );
             } catch (Throwable $throwable) {
                 // We were unable to resolve the dependency for the last union
@@ -427,12 +427,14 @@ final class GenericContainer implements Container
             return $providedValue;
         }
 
-
         if ($lazy) {
-            return $type->asClass()->getReflection()->newLazyProxy(function() use ($type, $tag) {
-                return $this->resolve(className: $type->getName(), tag: $tag);
-            });
-        };
+            return $type
+                ->asClass()
+                ->getReflection()
+                ->newLazyProxy(function () use ($type, $tag) {
+                    return $this->resolve(className: $type->getName(), tag: $tag);
+                });
+        }
         // If we can successfully retrieve an instance
         // of the necessary dependency, return it.
         return $this->resolve(className: $type->getName(), tag: $tag);
