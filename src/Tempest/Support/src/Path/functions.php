@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Path {
     use Stringable;
 
-    use function Tempest\Support\Regex\get_first_match;
+    use function Tempest\Support\Regex\matches;
     use function Tempest\Support\Str\ends_with;
     use function Tempest\Support\Str\starts_with;
 
@@ -100,7 +100,7 @@ namespace Tempest\Support\Path {
 
         $absolutePath = namespace\normalize(...$resolved);
 
-        if (get_first_match($cwd, '#^[a-zA-Z]:/#')) {
+        if (matches($cwd, '#^[a-zA-Z]:/#')) {
             return $absolutePath;
         }
 
