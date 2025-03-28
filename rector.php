@@ -37,7 +37,6 @@ return RectorConfig::configure()
         ],
     ])
     ->withRules([
-        ParenthesizeNestedTernaryRector::class,
         ExplicitNullableParamTypeRector::class,
     ])
     ->withSkip([

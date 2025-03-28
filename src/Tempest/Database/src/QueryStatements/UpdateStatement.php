@@ -35,7 +35,7 @@ final class UpdateStatement implements QueryStatement
         }
 
         $query[] = 'SET ' . $this->values
-            ->map(fn (mixed $value, mixed $key) => sprintf("`{$key}` = ?"))
+            ->map(fn (mixed $_, mixed $key) => sprintf("`{$key}` = ?"))
             ->implode(', ');
 
         if ($this->where->isNotEmpty()) {
