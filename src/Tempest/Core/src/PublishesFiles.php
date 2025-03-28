@@ -168,11 +168,11 @@ trait PublishesFiles
     /**
      * Prompt the user for the target path to save the generated file.
      * @param string $suggestedPath The suggested path to show to the user.
-     * @param ?array<Rule> $rules Rules to use instead of the default ones.
+     * @param array<Rule> $rules Rules to use instead of the default ones.
      *
      * @return string The target path that the user has chosen.
      */
-    public function promptTargetPath(string $suggestedPath, ?array $rules = null): string
+    public function promptTargetPath(string $suggestedPath, array $rules = []): string
     {
         $className = to_base_class_name($suggestedPath);
 
