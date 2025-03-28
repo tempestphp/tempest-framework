@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Commands;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tempest\Core\ComposerNamespace;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\ComposerNamespace;
+use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
@@ -67,13 +67,14 @@ final class MakeMigrationCommandTest extends FrameworkIntegrationTestCase
             ],
         ];
     }
-    
+
     #[Test]
-    public function raw_migration(): void {
+    public function raw_migration(): void
+    {
         $this->console
             ->call('make:migration book_migration raw')
             ->submit();
-        
+
         $filePath = sprintf('App/%s_book_migration.sql', date('Y-m-d'));
         $this->installer
             ->assertFileExists($filePath)
