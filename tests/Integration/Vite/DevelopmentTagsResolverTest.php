@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Vite;
 
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\DevelopmentTagsResolver;
@@ -74,7 +75,7 @@ final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
 
     public function test_automatically_converts_relative_paths(): void
     {
-        $this->container->get(Composer::class)->mainNamespace = new ComposerNamespace(
+        $this->container->get(Composer::class)->mainNamespace = new Psr4Namespace(
             namespace: 'App',
             path: 'src/',
         );

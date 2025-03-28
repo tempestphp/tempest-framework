@@ -6,21 +6,8 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Cache\CacheConfig;
-use Tempest\CommandBus\CommandBusConfig;
-use Tempest\Console\ConsoleConfig;
-use Tempest\Console\Enums\ConfigType;
-use Tempest\Core\ComposerNamespace;
-use Tempest\Database\Config\MysqlConfig;
-use Tempest\EventBus\EventBusConfig;
-use Tempest\Log\LogConfig;
-use Tempest\View\Renderers\BladeConfig;
-use Tempest\View\Renderers\TwigConfig;
-use Tempest\View\ViewConfig;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-
-use function Tempest\get;
-use function Tempest\Support\str;
 
 /**
  * @internal
@@ -33,7 +20,7 @@ final class MakeCommandCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+            new Psr4Namespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
