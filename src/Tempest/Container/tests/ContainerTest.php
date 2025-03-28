@@ -466,7 +466,6 @@ final class ContainerTest extends TestCase
         $this->assertTrue($container->has(TaggedDependency::class, 'web'));
     }
 
-
     /**
      * @template T
      * @param (callable(): T) $callable
@@ -510,24 +509,17 @@ final class ContainerTest extends TestCase
         $container->register(SlowDependency::class, fn () => new SlowDependency($slowNess));
 
         // Normal example, this is slow during initialization, fast during use
-        $instance1 = $this->assertSlowerThan(fn() => $container->get(ClassWithSlowDependency::class), $slowNess);
+        $instance1 = $this->assertSlowerThan(fn () => $container->get(ClassWithSlowDependency::class), $slowNess);
         $this->assertInstanceOf(ClassWithSlowDependency::class, $instance1);
         $this->assertInstanceOf(SlowDependency::class, $instance1->dependency);
 
-        $this->assertSame('value1', $this->assertFasterThan(fn() => $instance1->dependency->value, $slowNess));
+        $this->assertSame('value1', $this->assertFasterThan(fn () => $instance1->dependency->value, $slowNess));
 
         // Lazy example, this is fast during initialization, slow during (first) use
-        $instance2 = $this->assertFasterThan(fn() => $container->get(ClassWithLazySlowDependency::class), $slowNess);
+        $instance2 = $this->assertFasterThan(fn () => $container->get(ClassWithLazySlowDependency::class), $slowNess);
         $this->assertInstanceOf(ClassWithLazySlowDependency::class, $instance2);
         $this->assertInstanceOf(SlowDependency::class, $instance2->dependency);
 
-        $this->assertSame('value2', $this->assertSlowerThan(fn() => $instance2->dependency->value, $slowNess));
-
-
-
-
-
-
-
+        $this->assertSame('value2', $this->assertSlowerThan(fn () => $instance2->dependency->value, $slowNess));
     }
 }
