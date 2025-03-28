@@ -11,6 +11,5 @@ namespace Tempest\Database\Enums;
 enum MigrationType: string
 {
     case RAW = 'raw'; // A raw migration file ( .sql )
-    case MODEL = 'model'; // A migration class file for a model
     case OBJECT = 'class'; // A classic migration class file
 }
