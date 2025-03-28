@@ -119,6 +119,11 @@ final readonly class MigrationManager
         }
 
         foreach ($existingMigrations as $existingMigration) {
+            /**
+             * We need to find and delete migration DB records that no longer have a corresponding migration file.
+             * This can happen if a migration file was deleted or renamed.
+             * If we don't do it, `:validate` will continue failing due to the missing migration file.
+             */
             $databaseMigration = array_find(
                 iterator_to_array($this->migrations),
                 static fn (DatabaseMigration $migration) => $migration->name === $existingMigration->name,
