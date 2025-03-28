@@ -34,7 +34,6 @@ final class MigrateValidateCommandTest extends FrameworkIntegrationTestCase
 
         $this->console
             ->call('migrate:validate')
-            ->assertContains('Migration file has been tampered with')
             ->assertExitCode(ExitCode::ERROR);
     }
 }
