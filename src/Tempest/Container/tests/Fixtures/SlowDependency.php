@@ -10,7 +10,7 @@ final class SlowDependency
     {
         // usleep apparently is buggy on windows...
         $start = microtime(true);
-        while (microtime(true) - $start < $delay) {
+        while ((microtime(true) - $start) < $delay) {
             usleep(intval($delay * 1000000));
         }
         $this->value = 'value' . $counter;
