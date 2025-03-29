@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
 use Tempest\Database\HasOne;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('has_one_parent_model')]
+#[Table('has_one_parent_model')]
 final class HasOneParentModel
 {
     use IsDatabaseModel;

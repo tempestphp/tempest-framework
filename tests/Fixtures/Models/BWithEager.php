@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Models;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Eager;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('b')]
+#[Table('b')]
 final class BWithEager
 {
     use IsDatabaseModel;

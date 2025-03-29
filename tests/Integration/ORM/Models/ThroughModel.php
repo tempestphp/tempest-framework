@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Models;
 
-use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('through')]
+#[Table('through')]
 final class ThroughModel
 {
     use IsDatabaseModel;

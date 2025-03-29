@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Database\Relations\Fixtures;
 
 use Tempest\Database\BelongsTo;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('belongs_to_parent_model')]
+#[Table('belongs_to_parent_model')]
 final class BelongsToParentModel
 {
     use IsDatabaseModel;
