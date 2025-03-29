@@ -131,6 +131,14 @@ final class ConsoleArgumentBag
 
     public function add(ConsoleInputArgument $argument): self
     {
+        foreach ($this->arguments as $existing) {
+            if ($existing->name && $existing->name === $argument->name) {
+                $existing->value = $argument->value;
+
+                return $this;
+            }
+        }
+
         $this->arguments[] = $argument;
 
         return $this;
