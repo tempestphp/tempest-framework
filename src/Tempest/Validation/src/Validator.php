@@ -142,7 +142,7 @@ final readonly class Validator
             default => [true, ''],
         };
 
-        return new readonly class($isValid, $message) implements Rule {
+        return new class($isValid, $message) implements Rule {
             public function __construct(
                 private bool $isValid,
                 private string $message,

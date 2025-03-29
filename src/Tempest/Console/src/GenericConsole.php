@@ -239,7 +239,7 @@ final class GenericConsole implements Console
                 placeholder: $placeholder,
                 hint: $hint,
                 multiline: $multiline,
-            ));
+            ), $validation);
         }
 
         if ($multiple) {
@@ -247,7 +247,7 @@ final class GenericConsole implements Console
                 label: $question,
                 options: $options,
                 default: wrap($default),
-            ));
+            ), $validation);
         }
 
         $component = new SingleChoiceComponent(

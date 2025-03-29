@@ -226,15 +226,7 @@ final class InteractiveComponentRenderer
      */
     private function validate(mixed $value, array $validation): ?Rule
     {
-        $validator = new Validator();
-
-        try {
-            $validator->validateValue($value, $validation);
-        } catch (InvalidValueException $invalidValueException) {
-            return $invalidValueException->failingRules[0];
-        }
-
-        return null;
+        return new Validator()->validateValue($value, $validation)[0] ?? null;
     }
 
     public function isComponentSupported(Console $console, InteractiveConsoleComponent $component): bool
