@@ -8,7 +8,7 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Eager;
 use Tempest\Database\IsDatabaseModel;
 
-#[\Tempest\Database\TableName('a')]
+#[\Tempest\Database\Table('a')]
 final class AWithEager
 {
     use IsDatabaseModel;

@@ -13,7 +13,7 @@ use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
@@ -118,7 +118,7 @@ final readonly class ModelDefinition
     public function getTableDefinition(): TableDefinition
     {
         $specificName = $this->modelClass
-            ->getAttribute(TableName::class)
+            ->getAttribute(Table::class)
             ?->name;
 
         $conventionalName = get(DatabaseConfig::class)

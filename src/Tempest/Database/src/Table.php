@@ -5,9 +5,9 @@ namespace Tempest\Database;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class TableName
+final class Table
 {
     public function __construct(
-        public string $name,
+        public ?string $name = null,
     ) {}
 }

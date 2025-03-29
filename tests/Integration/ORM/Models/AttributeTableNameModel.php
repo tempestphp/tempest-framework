@@ -3,9 +3,9 @@
 namespace Tests\Tempest\Integration\ORM\Models;
 
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('custom_attribute_table_name')]
+#[Table('custom_attribute_table_name')]
 final class AttributeTableNameModel
 {
     use IsDatabaseModel;
