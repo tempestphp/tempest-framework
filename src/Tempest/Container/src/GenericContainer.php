@@ -265,7 +265,7 @@ final class GenericContainer implements Container
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone(), $tag),
             };
 
             $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
@@ -283,7 +283,7 @@ final class GenericContainer implements Container
         }
 
         // Finally, autowire the class.
-        return $this->autowire($className, ...$params);
+        return $this->autowire($className, $params, $tag);
     }
 
     private function initializerForBuiltin(TypeReflector $target, string $tag): ?Initializer
@@ -313,7 +313,7 @@ final class GenericContainer implements Container
             /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($target)) {
+            if (! $initializer->canInitialize($target, $tag)) {
                 continue;
             }
 
@@ -323,7 +323,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, mixed ...$params): object
+    private function autowire(string $className, array $params, ?string $tag): object
     {
         $classReflector = new ClassReflector($className);
 
@@ -340,7 +340,7 @@ final class GenericContainer implements Container
             : // Otherwise, use our autowireDependencies helper to automagically
             // build up each parameter.
             $classReflector->newInstanceArgs(
-                $this->autowireDependencies($constructor, $params),
+                $this->autowireDependencies($constructor, $params, $tag),
             );
 
         if (
@@ -355,6 +355,10 @@ final class GenericContainer implements Container
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
                 $property->set($instance, $this->get($property->getType()->getName()));
             }
+
+            if ($tag && $property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
+                $property->set($instance, $tag);
+            }
         }
 
         return $instance;
@@ -363,7 +367,7 @@ final class GenericContainer implements Container
     /**
      * @return ParameterReflector[]
      */
-    private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = []): array
+    private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = [], ?string $tag = null): array
     {
         $this->resolveChain()->add($method);
 
@@ -374,7 +378,9 @@ final class GenericContainer implements Container
         foreach ($method->getParameters() as $parameter) {
             $dependencies[] = $this->clone()->autowireDependency(
                 parameter: $parameter,
-                tag: $parameter->getAttribute(Tag::class)?->name,
+                tag: $parameter->getAttribute(ForwardTag::class) && $tag
+                    ? $tag
+                    : $parameter->getAttribute(Tag::class)?->name,
                 providedValue: $parameters[$parameter->getName()] ?? null,
             );
         }

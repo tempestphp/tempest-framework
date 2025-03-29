@@ -13,7 +13,7 @@ use Twig\Loader\FilesystemLoader;
 
 final readonly class TwigInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class): bool
+    public function canInitialize(ClassReflector $class, ?string $tag = null): bool
     {
         if (! class_exists(Environment::class)) {
             return false;
@@ -23,7 +23,7 @@ final readonly class TwigInitializer implements DynamicInitializer
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, Container $container): object
+    public function initialize(ClassReflector $class, Container $container, ?string $tag = null): object
     {
         $twigConfig = $container->get(TwigConfig::class);
         $twigLoader = new FilesystemLoader($twigConfig->viewPaths);

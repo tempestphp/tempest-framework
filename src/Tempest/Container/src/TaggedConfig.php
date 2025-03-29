@@ -4,7 +4,7 @@ namespace Tempest\Container;
 
 interface TaggedConfig
 {
-    public string $tag {
+    public ?string $tag {
         get;
     }
 }
