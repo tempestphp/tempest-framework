@@ -148,11 +148,10 @@ final class ConsoleArgumentBag
     {
         // Handle arguments manually passed as an associative array first.
         if (is_associative($arguments) && ! is_int(array_key_first($arguments))) {
-            $i = 0;
             foreach ($arguments as $key => $value) {
                 $this->add(new ConsoleInputArgument(
-                    name: $key,
-                    position: $i++,
+                    name: is_int($key) ? null : $key,
+                    position: is_int($key) ? $key : null,
                     value: $value,
                 ));
             }

@@ -56,7 +56,7 @@ final class GenericConsole implements Console
 
     public function call(string|array $command, string|array $arguments = []): ExitCode|int
     {
-        return ($this->executeConsoleCommand)($command, $arguments);
+        return $this->executeConsoleCommand->withoutArgumentBag()($command, $arguments);
     }
 
     public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self

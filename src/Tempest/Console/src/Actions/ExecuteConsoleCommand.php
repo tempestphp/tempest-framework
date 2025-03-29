@@ -41,6 +41,16 @@ final readonly class ExecuteConsoleCommand
         ));
     }
 
+    public function withoutArgumentBag(): self
+    {
+        $bag = new ConsoleArgumentBag([
+            $this->argumentBag->getBinaryPath(),
+            $this->argumentBag->getCommandName(),
+        ]);
+
+        return new self($this->container, $this->consoleConfig, $bag, $this->resolveConsoleCommand);
+    }
+
     private function getCallable(array $commandMiddleware): ConsoleMiddlewareCallable
     {
         $callable = new ConsoleMiddlewareCallable(function (Invocation $invocation) {
