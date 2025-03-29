@@ -130,10 +130,12 @@ final readonly class StaticGenerateCommand
 
                     $this->eventBus->dispatch(new StaticPageGenerated($uri, $file->toString(), $content));
                 } catch (Throwable $exception) {
-                    ob_get_clean();
+                    if (ob_get_contents()) {
+                        ob_clean();
+                    }
 
                     if ($exception instanceof ViewCompilationError && $exception->getPrevious() instanceof ManifestNotFoundException) {
-                        $this->error('Run <code>vite build</code> first.');
+                        $this->error("A Vite build is needed for [{$uri}]. Run <code>vite build</code> first.");
                         return ExitCode::ERROR;
                     }
 

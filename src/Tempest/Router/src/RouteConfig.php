@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
-use Tempest\Reflection\ClassReflector;
-
 final class RouteConfig
 {
     public function __construct(
