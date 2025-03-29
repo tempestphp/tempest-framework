@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use Stringable;
+use Tempest\Database\Column;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
@@ -40,7 +42,7 @@ final class FieldDefinition implements Stringable
             $caster = $casterFactory->forProperty($property);
 
             if ($caster !== null) {
-                $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
+                $fieldDefinitions[] = new FieldDefinition($tableDefinition, self::getColumnNameForProperty($property));
 
                 continue;
             }
@@ -49,7 +51,7 @@ final class FieldDefinition implements Stringable
                 continue;
             }
 
-            $fieldDefinitions[] = new FieldDefinition($tableDefinition, $property->getName());
+            $fieldDefinitions[] = new FieldDefinition($tableDefinition, self::getColumnNameForProperty($property));
         }
 
         return new ImmutableArray($fieldDefinitions);
@@ -80,5 +82,10 @@ final class FieldDefinition implements Stringable
         }
 
         return $string;
+    }
+
+    private static function getColumnNameForProperty(PropertyReflector $property): string
+    {
+        return $property->getAttribute(Column::class)->name ?? $property->getName();
     }
 }
