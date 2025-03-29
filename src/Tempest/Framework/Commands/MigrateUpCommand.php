@@ -8,12 +8,15 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
+use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Container\Singleton;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationMigrated;
 use Tempest\EventBus\EventHandler;
+
+use function Tempest\get;
 
 #[Singleton]
 final class MigrateUpCommand
@@ -46,7 +49,7 @@ final class MigrateUpCommand
         }
 
         if ($fresh) {
-            return $this->console->call(MigrateFreshCommand::class, ['validate' => false]);
+            return $this->console->call(MigrateFreshCommand::class, ['validate' => false, 'fresh' => false]);
         }
 
         $this->console->header('Migrating');

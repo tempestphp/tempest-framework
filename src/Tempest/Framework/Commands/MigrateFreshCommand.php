@@ -50,7 +50,7 @@ final class MigrateFreshCommand
             $this->console->info('There is no migration to drop.');
         }
 
-        return $this->console->call(MigrateUpCommand::class, ['fresh' => false]);
+        return $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false]);
     }
 
     #[EventHandler]
