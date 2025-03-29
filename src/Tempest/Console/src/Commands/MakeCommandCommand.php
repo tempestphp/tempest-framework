@@ -38,6 +38,7 @@ final class MakeCommandCommand
             ],
         );
 
+        $this->console->writeln();
         $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
     }
 }
