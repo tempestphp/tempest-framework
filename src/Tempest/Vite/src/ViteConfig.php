@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Vite;
 
-final class ViteConfig
+use Tempest\Container\TaggedConfig;
+
+final class ViteConfig implements TaggedConfig
 {
     /**
      * @param PrefetchConfig $prefetching Strategy for prefetching assets at runtime.
@@ -25,6 +27,7 @@ final class ViteConfig
         public string $bridgeFileName = 'vite-tempest',
         public string $manifest = 'manifest.json',
         public array $entrypoints = [],
+        public readonly ?string $tag = null,
     ) {}
 
     public function addEntrypoint(string $path): void

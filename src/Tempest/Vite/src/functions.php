@@ -9,10 +9,10 @@ namespace Tempest {
     /**
      * Inject tags for the specified or configured `$entrypoints`.
      */
-    function vite_tags(null|string|array $entrypoints = null): HtmlString
+    function vite_tags(null|string|array $entrypoints = null, ?string $tag = null): HtmlString
     {
         return new HtmlString(
-            string: implode('', get(Vite::class)->getTags(is_array($entrypoints) ? $entrypoints : [$entrypoints])),
+            string: implode('', get(Vite::class, $tag)->getTags(is_array($entrypoints) ? $entrypoints : [$entrypoints])),
         );
     }
 }

@@ -15,7 +15,11 @@ const TEMPEST_ORIGIN_PLACEHOLDER = 'http://__tempest_placeholder__.test'
 
 let exitHandlersBound = false
 
-export default function tempest(): Plugin {
+export interface Options {
+	tag?: string
+}
+
+export default function tempest(options: Options = {}): Plugin {
 	let viteDevServerUrl: DevelopmentServerUrl
 	let bridgeFilePath: string
 	let resolvedConfig: ResolvedConfig
@@ -30,7 +34,7 @@ export default function tempest(): Plugin {
 		name: 'tempest',
 		enforce: 'post',
 		config: async (config, { command, mode }) => {
-			tempestConfig = await loadTempestConfiguration()
+			tempestConfig = await loadTempestConfiguration(options)
 			userConfig = config
 
 			const ssr = !!userConfig.build?.ssr

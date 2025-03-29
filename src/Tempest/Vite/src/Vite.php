@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Vite;
 
 use Tempest\Container\Container;
+use Tempest\Container\ForwardTag;
 use Tempest\Core\AppConfig;
 use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
@@ -26,8 +27,9 @@ final class Vite
     private static ?Manifest $manifest = null;
 
     public function __construct(
-        private readonly AppConfig $appConfig,
+        #[ForwardTag]
         private readonly ViteConfig $viteConfig,
+        private readonly AppConfig $appConfig,
         private readonly Container $container,
         private readonly TagCompiler $tagCompiler,
     ) {}
