@@ -43,6 +43,10 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
             subheader: $invocation->consoleCommand->description,
         );
 
+        if (! $this->console->supportsPrompting()) {
+            throw $exception;
+        }
+
         foreach ($exception->invalidArguments as $argument) {
             $isEnum = is_a($argument->type, BackedEnum::class, allow_string: true);
             $name = str($argument->name)->snake(' ')->upperFirst()->toString();
