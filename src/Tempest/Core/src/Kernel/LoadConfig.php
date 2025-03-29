@@ -8,6 +8,7 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Tempest\Container\TaggedConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Kernel;
 
@@ -29,7 +30,11 @@ final readonly class LoadConfig
         foreach ($configPaths as $path) {
             $configFile = require $path;
 
-            $this->kernel->container->config($configFile);
+            $tag = ($configFile instanceof TaggedConfig)
+                ? $configFile->tag
+                : null;
+
+            $this->kernel->container->config($configFile, $tag);
         }
     }
 

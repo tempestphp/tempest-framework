@@ -101,11 +101,15 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function config(object $config): self
+    public function config(object $config, ?string $tag = null): self
     {
-        $this->singleton($config::class, $config);
+        $this->singleton($config::class, $config, $tag);
 
         foreach (new ClassReflector($config)->getInterfaces() as $interface) {
+            if ($interface === TaggedConfig::class) {
+                continue;
+            }
+
             $this->singleton($interface->getName(), $config);
         }
 
