@@ -6,6 +6,8 @@ namespace Tempest\Console\Input;
 
 use Tempest\Console\Exceptions\InvalidEnumArgument;
 
+use function Tempest\Support\Arr\is_associative;
+
 final class ConsoleArgumentBag
 {
     /** @var ConsoleInputArgument[] */
@@ -136,6 +138,21 @@ final class ConsoleArgumentBag
 
     public function addMany(array $arguments): self
     {
+        // Handle arguments manually passed as an associative array first.
+        if (is_associative($arguments) && ! is_int(array_key_first($arguments))) {
+            $i = 0;
+            foreach ($arguments as $key => $value) {
+                $this->add(new ConsoleInputArgument(
+                    name: $key,
+                    position: $i++,
+                    value: $value,
+                ));
+            }
+
+            return $this;
+        }
+
+        // Otherwise, $arguments is an array of flags or positional argument.
         foreach ($arguments as $argument) {
             if (str_starts_with($argument, '-') && ! str_starts_with($argument, '--')) {
                 $flags = str_split($argument);
@@ -150,9 +167,7 @@ final class ConsoleArgumentBag
         $position = count($this->arguments);
 
         foreach (array_values($arguments) as $index => $argument) {
-            $this->add(
-                ConsoleInputArgument::fromString($argument, $position + $index),
-            );
+            $this->add(ConsoleInputArgument::fromString($argument, $position + $index));
         }
 
         return $this;

@@ -14,6 +14,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Throwable;
 
+use function Tempest\Support\Arr\wrap;
+
 final readonly class ExecuteConsoleCommand
 {
     public function __construct(
@@ -77,9 +79,10 @@ final readonly class ExecuteConsoleCommand
     }
 
     /** @return array{string,array} */
-    private function resolveCommandAndArguments(string|array $command, array $arguments = []): array
+    private function resolveCommandAndArguments(string|array $command, string|array $arguments = []): array
     {
         $commandName = $command;
+        $arguments = wrap($arguments);
 
         if (is_array($command)) {
             $commandName = $command[0] ?? '';
