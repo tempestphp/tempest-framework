@@ -24,11 +24,13 @@ use Throwable;
 
 use function strlen;
 use function Tempest\root_path;
+use function Tempest\src_path;
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
 use function Tempest\Support\Path\to_absolute_path;
 use function Tempest\Support\Path\to_relative_path;
 use function Tempest\Support\str;
+use function Tempest\Support\Str\class_basename;
 
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
@@ -149,17 +151,14 @@ trait PublishesFiles
     {
         // Separate input path and classname
         $inputClassName = to_base_class_name($className);
-        $inputPath = path($className)->stripEnd($inputClassName);
+        $inputPath = path($className)->stripEnd(class_basename($className));
         $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix ?? '')
             ->toString();
 
         // Prepare the suggested path from the project namespace
-        return str(to_absolute_path($this->composer->mainNamespace->path, $pathPrefix ?? '', $inputPath))
-            ->finish('/')
-            ->append($className . '.php')
-            ->toString();
+        return src_path($pathPrefix ?? '', $inputPath, $className . '.php');
     }
 
     /**
@@ -171,11 +170,13 @@ trait PublishesFiles
     {
         $className = to_base_class_name($suggestedPath);
 
-        return $this->console->ask(
+        $targetPath = $this->console->ask(
             question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
-            default: $suggestedPath,
+            default: to_relative_path(root_path(), $suggestedPath),
             validation: [new NotEmpty(), new EndsWith('.php')],
         );
+
+        return to_absolute_path(root_path(), $targetPath);
     }
 
     /**

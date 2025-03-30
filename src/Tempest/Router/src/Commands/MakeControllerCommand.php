@@ -42,6 +42,6 @@ final class MakeControllerCommand
         );
 
         $this->console->writeln();
-        $this->console->success(sprintf('File successfully created at <em>%s</em>.', $targetPath));
+        $this->console->success(sprintf('File successfully created at <file="%s"/>.', $targetPath));
     }
 }
