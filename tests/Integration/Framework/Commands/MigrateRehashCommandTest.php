@@ -7,6 +7,8 @@ namespace Tests\Tempest\Integration\Framework\Commands;
 use PHPUnit\Framework\Assert;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Framework\Commands\MigrateFreshCommand;
+use Tempest\Framework\Commands\MigrateRehashCommand;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -16,23 +18,20 @@ final class MigrateRehashCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rehash_rehashes_all_existing_migrations(): void
     {
-        $this->console
-            ->call('migrate:fresh --force');
+        $this->console->call(MigrateFreshCommand::class, ['force' => true]);
 
-        $migrations = Migration::all();
-        foreach ($migrations as $migration) {
+        foreach (Migration::all() as $migration) {
             $migration->hash = 'invalid-hash';
             $migration->save();
         }
 
         $this->console
-            ->call('migrate:rehash')
-            ->assertContains('Rehashed all migrations')
+            ->call(MigrateRehashCommand::class)
+            ->assertContains('Migrations have been re-hashed')
             ->assertExitCode(ExitCode::SUCCESS);
 
-        $migrations = Migration::all();
-        foreach ($migrations as $migration) {
-            Assert::assertNotSame('invalid-hash', $migration->hash);
+        foreach (Migration::all() as $migration) {
+            $this->assertNotSame('invalid-hash', $migration->hash);
         }
     }
 }

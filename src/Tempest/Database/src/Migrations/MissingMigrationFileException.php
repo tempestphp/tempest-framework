@@ -8,9 +8,8 @@ use Exception;
 
 final class MissingMigrationFileException extends Exception implements MigrationException
 {
-    public function __construct(
-        string $message = 'Migration file is missing.',
-    ) {
+    public function __construct(string $message = 'Migration file is missing.')
+    {
         parent::__construct($message);
     }
 }
