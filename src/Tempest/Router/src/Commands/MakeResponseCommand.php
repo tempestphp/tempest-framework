@@ -35,6 +35,7 @@ final class MakeResponseCommand
             shouldOverride: $shouldOverride,
         );
 
+        $this->console->writeln();
         $this->console->success(sprintf('Response successfully created at "%s".', $targetPath));
     }
 }

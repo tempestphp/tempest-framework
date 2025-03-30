@@ -41,6 +41,7 @@ final class MakeMiddlewareCommand
             shouldOverride: $shouldOverride,
         );
 
+        $this->console->writeln();
         $this->console->success(sprintf('Middleware successfully created at <file="%s"/>.', $targetPath));
     }
 

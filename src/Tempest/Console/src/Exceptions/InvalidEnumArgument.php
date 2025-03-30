@@ -35,6 +35,8 @@ final class InvalidEnumArgument extends ConsoleException
             callback: fn (BackedEnum $case) => $case->value,
             array: $this->argumentType::cases(),
         );
+
+        $console->writeln();
         $console->error("Invalid argument {$value} for `{$this->argumentName}` argument, valid values are: " . implode(', ', $cases));
     }
 }

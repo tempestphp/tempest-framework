@@ -8,8 +8,10 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\ExitCode;
 use Tempest\Container\Singleton;
+use Tempest\Database\Migrations\MigrationHashMismatchException;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Database\Migrations\MigrationValidationFailed;
+use Tempest\Database\Migrations\MissingMigrationFileException;
 use Tempest\EventBus\EventHandler;
 
 #[Singleton]
@@ -28,17 +30,17 @@ final class MigrateValidateCommand
     )]
     public function __invoke(): ExitCode
     {
-        $this->console->info('Validating migration files...');
-
+        $this->console->header('Validating migration files');
         $this->migrationManager->validate();
 
         if (! $this->validationPassed) {
+            $this->console->writeln();
+            $this->console->error('Migration files are invalid.');
+
             return ExitCode::ERROR;
         }
 
-        $this->console
-            ->success('Migration files are valid')
-            ->writeln();
+        $this->console->success('Migration files are valid.');
 
         return ExitCode::SUCCESS;
     }
@@ -46,8 +48,15 @@ final class MigrateValidateCommand
     #[EventHandler]
     public function onMigrationValidationFailed(MigrationValidationFailed $event): void
     {
-        $this->console->error(
-            "Migration file '{$event->name}' failed validation: {$event->exception->getMessage()}",
+        $error = match ($event->exception::class) {
+            MigrationHashMismatchException::class => 'Hash mismatch',
+            MissingMigrationFileException::class => 'Missing file',
+            default => 'Unknown error',
+        };
+
+        $this->console->keyValue(
+            key: "<style='fg-gray'>{$event->name}</style>",
+            value: "<style='fg-red'>" . strtoupper($error) . '</style>',
         );
 
         $this->validationPassed = false;
