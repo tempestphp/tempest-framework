@@ -18,7 +18,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_fake(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->assertInstanceOf(FakeEventBus::class, $this->container->get(EventBus::class));
     }
@@ -26,14 +26,14 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
     public function test_assertion_on_real_event_bus(): void
     {
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('No fake event bus has been set');
+        $this->expectExceptionMessage('Asserting against the event bus require the `preventEventHandling()` method to be called first.');
 
         $this->eventBus->assertDispatched('event-bus-fake-event');
     }
 
     public function test_assert_dispatched(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertDispatched('event-bus-fake-event');
@@ -44,7 +44,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_dispatched_with_callback(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
@@ -59,7 +59,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_dispatched_with_count(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertDispatched('event-bus-fake-event', count: 1);
@@ -82,7 +82,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The number of dispatches does not match');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertDispatched('event-bus-fake-event', count: 2);
@@ -93,7 +93,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The callback failed');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertDispatched('event-bus-fake-event', function (string $event) {
@@ -106,7 +106,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The callback failed');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch(new FakeEvent('foo'));
         $this->eventBus->assertDispatched(FakeEvent::class, function (FakeEvent $event) {
@@ -116,7 +116,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_not_dispatched(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertNotDispatched('this-was-not-dispatched');
@@ -127,7 +127,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The event was dispatched');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch('event-bus-fake-event');
         $this->eventBus->assertNotDispatched('event-bus-fake-event');
@@ -138,7 +138,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The event was dispatched');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->dispatch(new FakeEvent('foo'));
         $this->eventBus->assertNotDispatched(FakeEvent::class);
@@ -146,7 +146,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_listening_to(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
@@ -158,7 +158,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
 
     public function test_assert_listening_to_count(): void
     {
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
             throw new LogicException('This should not be called');
@@ -178,7 +178,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The event is not being listened to');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->eventBus->assertListeningTo(FakeEvent::class);
     }
@@ -188,7 +188,7 @@ final class EventBusTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('The number of handlers does not match');
 
-        $this->eventBus->fake();
+        $this->eventBus->preventEventHandling();
 
         $this->container->get(EventBus::class)->listen(FakeEvent::class, function (FakeEvent $_): never {
             throw new LogicException('This should not be called');

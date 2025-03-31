@@ -5,6 +5,8 @@ namespace Tempest\EventBus\Testing;
 use BackedEnum;
 use Closure;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\GeneratorNotSupportedException;
 use Tempest\Container\Container;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
@@ -18,7 +20,10 @@ final class EventBusTester
         private readonly Container $container,
     ) {}
 
-    public function fake(): self
+    /**
+     * Prevents the registered event handlers from being called.
+     */
+    public function preventEventHandling(): self
     {
         $this->fakeEventBus = new FakeEventBus($this->container->get(EventBusConfig::class));
         $this->container->singleton(EventBus::class, $this->fakeEventBus);
@@ -26,6 +31,12 @@ final class EventBusTester
         return $this;
     }
 
+    /**
+     * Asserts that the given `$event` has been dispatched.
+     *
+     * @param null|Closure $callback A callback accepting the event instance. The assertion fails if the callback returns `false`.
+     * @param null|int $count If specified, the assertion fails if the event has been dispatched a different amount of times.
+     */
     public function assertDispatched(string|object $event, ?Closure $callback = null, ?int $count = null): self
     {
         $this->assertFaked();
@@ -48,6 +59,9 @@ final class EventBusTester
         return $this;
     }
 
+    /**
+     * Asserts that the specified `$event` has not been dispatched.
+     */
     public function assertNotDispatched(string|object $event): self
     {
         $this->assertFaked();
@@ -57,6 +71,11 @@ final class EventBusTester
         return $this;
     }
 
+    /**
+     * Asserts that the specified `$event` is being listened to.
+     *
+     * @param null|int $count If specified, the assertion fails if there are a different amount of listeners.
+     */
     public function assertListeningTo(string $event, ?int $count = null): self
     {
         $this->assertFaked();
@@ -103,7 +122,7 @@ final class EventBusTester
 
     private function assertFaked(): self
     {
-        Assert::assertTrue(isset($this->fakeEventBus), 'No fake event bus has been set.');
+        Assert::assertTrue(isset($this->fakeEventBus), 'Asserting against the event bus require the `preventEventHandling()` method to be called first.');
 
         return $this;
     }
