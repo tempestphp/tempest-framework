@@ -17,6 +17,7 @@ use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\TypeReflector;
 use Throwable;
+use UnitEnum;
 
 final class GenericContainer implements Container
 {
@@ -87,12 +88,12 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function has(string $className, ?string $tag = null): bool
+    public function has(string $className, null|string|UnitEnum $tag = null): bool
     {
         return isset($this->definitions[$className]) || isset($this->singletons[$this->resolveTaggedName($className, $tag)]);
     }
 
-    public function singleton(string $className, mixed $definition, ?string $tag = null): self
+    public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self
     {
         $className = $this->resolveTaggedName($className, $tag);
 
@@ -101,12 +102,16 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function config(object $config, ?string $tag = null): self
+    public function config(object $config): self
     {
+        $tag = ($config instanceof TaggedConfig)
+            ? $config->tag
+            : null;
+
         $this->singleton($config::class, $config, $tag);
 
         foreach (new ClassReflector($config)->getInterfaces() as $interface) {
-            if ($interface === TaggedConfig::class) {
+            if ($interface->getName() === TaggedConfig::class) {
                 continue;
             }
 
@@ -116,7 +121,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function get(string $className, ?string $tag = null, mixed ...$params): ?object
+    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
     {
         $this->resolveChain();
 
@@ -232,7 +237,7 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    private function resolve(string $className, ?string $tag = null, mixed ...$params): ?object
+    private function resolve(string $className, null|string|UnitEnum $tag = null, mixed ...$params): ?object
     {
         $class = new ClassReflector($className);
 
@@ -265,7 +270,7 @@ final class GenericContainer implements Container
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone(), $tag),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone(), $this->resolveTag($tag)),
             };
 
             $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
@@ -278,8 +283,8 @@ final class GenericContainer implements Container
         }
 
         // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
-        if ($tag) {
-            throw new CannotResolveTaggedDependency($this->chain, new Dependency($className), $tag);
+        if ($tag !== null) {
+            throw new CannotResolveTaggedDependency($this->chain, new Dependency($className), $this->resolveTag($tag));
         }
 
         // Finally, autowire the class.
@@ -295,7 +300,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function initializerForClass(ClassReflector $target, ?string $tag = null): null|Initializer|DynamicInitializer
+    private function initializerForClass(ClassReflector $target, null|string|UnitEnum $tag = null): null|Initializer|DynamicInitializer
     {
         // Initializers themselves can't be initialized,
         // otherwise you'd end up with infinite loops
@@ -313,7 +318,7 @@ final class GenericContainer implements Container
             /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($target, $tag)) {
+            if (! $initializer->canInitialize($target, $this->resolveTag($tag))) {
                 continue;
             }
 
@@ -323,7 +328,7 @@ final class GenericContainer implements Container
         return null;
     }
 
-    private function autowire(string $className, array $params, ?string $tag): object
+    private function autowire(string $className, array $params, null|string|UnitEnum $tag): object
     {
         $classReflector = new ClassReflector($className);
 
@@ -357,7 +362,7 @@ final class GenericContainer implements Container
             }
 
             if ($tag && $property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
-                $property->set($instance, $tag);
+                $property->set($instance, $property->accepts(UnitEnum::class) ? $tag : $this->resolveTag($tag));
             }
         }
 
@@ -367,7 +372,7 @@ final class GenericContainer implements Container
     /**
      * @return ParameterReflector[]
      */
-    private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = [], ?string $tag = null): array
+    private function autowireDependencies(MethodReflector|FunctionReflector $method, array $parameters = [], null|string|UnitEnum $tag = null): array
     {
         $this->resolveChain()->add($method);
 
@@ -388,7 +393,7 @@ final class GenericContainer implements Container
         return $dependencies;
     }
 
-    private function autowireDependency(ParameterReflector $parameter, ?string $tag, mixed $providedValue = null): mixed
+    private function autowireDependency(ParameterReflector $parameter, null|string|UnitEnum $tag, mixed $providedValue = null): mixed
     {
         $parameterType = $parameter->getType();
 
@@ -425,7 +430,7 @@ final class GenericContainer implements Container
         throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
-    private function autowireObjectDependency(TypeReflector $type, ?string $tag, mixed $providedValue): mixed
+    private function autowireObjectDependency(TypeReflector $type, null|string|UnitEnum $tag, mixed $providedValue): mixed
     {
         // If the provided value is of the right type,
         // don't waste time autowiring, return it!
@@ -513,10 +518,19 @@ final class GenericContainer implements Container
         $this->chain = $this->chain?->clone();
     }
 
-    private function resolveTaggedName(string $className, ?string $tag): string
+    private function resolveTag(null|string|UnitEnum $tag): ?string
+    {
+        if ($tag instanceof UnitEnum) {
+            return $tag->name;
+        }
+
+        return $tag;
+    }
+
+    private function resolveTaggedName(string $className, null|string|UnitEnum $tag): string
     {
         return $tag
-            ? "{$className}#{$tag}"
+            ? "{$className}#{$this->resolveTag($tag)}"
             : $className;
     }
 }

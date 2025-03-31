@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Container;
 
 use Attribute;
+use UnitEnum;
 
 #[Attribute]
 final readonly class Singleton
 {
     public function __construct(
-        public ?string $tag = null,
+        public null|string|UnitEnum $tag = null,
     ) {}
 }

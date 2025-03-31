@@ -3,11 +3,12 @@
 namespace Tests\Tempest\Fixtures;
 
 use Tempest\Container\TaggedConfig;
+use UnitEnum;
 
-final readonly class TaggedConfigExample implements TaggedConfig
+final readonly class TaggedEnumConfigExample implements TaggedConfig
 {
     public function __construct(
-        public string $tag,
+        public UnitEnum $tag,
         public string $property,
     ) {}
 }

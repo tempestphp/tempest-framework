@@ -7,6 +7,7 @@ namespace Tempest\Container;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
+use UnitEnum;
 
 interface Container
 {
@@ -14,7 +15,7 @@ interface Container
 
     public function unregister(string $className): self;
 
-    public function singleton(string $className, mixed $definition, ?string $tag = null): self;
+    public function singleton(string $className, mixed $definition, null|string|UnitEnum $tag = null): self;
 
     public function config(object $config): self;
 
@@ -23,9 +24,9 @@ interface Container
      * @param class-string<TClassName> $className
      * @return null|TClassName
      */
-    public function get(string $className, ?string $tag = null, mixed ...$params): mixed;
+    public function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): mixed;
 
-    public function has(string $className, ?string $tag = null): bool;
+    public function has(string $className, null|string|UnitEnum $tag = null): bool;
 
     public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 

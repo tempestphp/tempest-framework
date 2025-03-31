@@ -2,9 +2,11 @@
 
 namespace Tempest\Container;
 
+use UnitEnum;
+
 interface TaggedConfig
 {
-    public ?string $tag {
+    public null|UnitEnum|string $tag {
         get;
     }
 }

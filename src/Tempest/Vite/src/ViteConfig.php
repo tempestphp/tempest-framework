@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Vite;
 
 use Tempest\Container\TaggedConfig;
+use UnitEnum;
 
 final class ViteConfig implements TaggedConfig
 {
@@ -27,7 +28,7 @@ final class ViteConfig implements TaggedConfig
         public string $bridgeFileName = 'vite-tempest',
         public string $manifest = 'manifest.json',
         public array $entrypoints = [],
-        public readonly ?string $tag = null,
+        public readonly null|UnitEnum|string $tag = null,
     ) {}
 
     public function addEntrypoint(string $path): void
