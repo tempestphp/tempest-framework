@@ -470,7 +470,6 @@ final class ContainerTest extends TestCase
     /**
      * @template T
      * @param (callable(): T) $callable
-     * @param float $seconds
      * @return T
      */
     private function assertFasterThan(callable $callable, float $seconds): mixed
@@ -485,7 +484,6 @@ final class ContainerTest extends TestCase
     /**
      * @template T
      * @param (callable(): T) $callable
-     * @param float $seconds
      * @return T
      */
     private function assertSlowerThan(callable $callable, float $seconds): mixed

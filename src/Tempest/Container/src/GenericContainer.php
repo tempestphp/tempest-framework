@@ -440,6 +440,7 @@ final class GenericContainer implements Container
                     return $this->resolve(className: $type->getName(), tag: $tag);
                 });
         }
+
         // If we can successfully retrieve an instance
         // of the necessary dependency, return it.
         return $this->resolve(className: $type->getName(), tag: $tag);

@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-final class SlowDependency
+final readonly class SlowDependency
 {
-    public readonly string $value;
+    public string $value;
+
     public function __construct(float $delay = 0.1, $counter = 0)
     {
         // usleep apparently is buggy on windows...
@@ -13,6 +14,7 @@ final class SlowDependency
         while ((microtime(true) - $start) < $delay) {
             usleep(intval($delay * 1000000));
         }
+
         $this->value = 'value' . $counter;
     }
 }
