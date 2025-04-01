@@ -45,7 +45,7 @@ final readonly class ObjectToArrayMapper implements Mapper
     {
         $propertyValue = $property->getValue($object);
 
-        if (($serializer = $this->serializerFactory->forProperty($property)) !== null) {
+        if ($propertyValue !== null && ($serializer = $this->serializerFactory->forProperty($property)) !== null) {
             return $serializer->serialize($propertyValue);
         }
 
