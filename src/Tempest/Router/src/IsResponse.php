@@ -110,4 +110,11 @@ trait IsResponse
 
         return $this;
     }
+
+    public function setBody(View|string|array|Generator|null $body): self
+    {
+        $this->body = $body;
+
+        return $this;
+    }
 }

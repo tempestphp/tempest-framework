@@ -18,6 +18,7 @@ final class UnsupportedComponent extends ConsoleException
 
     public function render(Console $console): void
     {
+        $console->writeln();
         $console->error($this->message);
     }
 }

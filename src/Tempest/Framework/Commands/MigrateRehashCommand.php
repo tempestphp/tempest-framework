@@ -26,9 +26,8 @@ final readonly class MigrateRehashCommand
     )]
     public function __invoke(): void
     {
+        $this->console->header('Hashing migrations');
         $this->migrationManager->rehashAll();
-
-        $this->console
-            ->success('Rehashed all migrations');
+        $this->console->success('Migrations have been re-hashed.');
     }
 }

@@ -43,24 +43,24 @@ final class MigrateFreshCommand
             }
         }
 
-        $this->console->info('Dropping tables…');
-
+        $this->console->header('Dropping tables');
         $this->migrationManager->dropAll();
 
-        $this->console
-            ->success(sprintf('Dropped %s tables', $this->count))
-            ->writeln();
+        if ($this->count === 0) {
+            $this->console->info('There is no migration to drop.');
+        }
 
-        $this->console->info('Migrate up…');
-
-        return $this->console->call(MigrateUpCommand::class);
+        return $this->console->call(MigrateUpCommand::class, ['fresh' => false, 'validate' => false]);
     }
 
     #[EventHandler]
     public function onTableDropped(TableDropped $event): void
     {
-        $this->console->writeln("- Dropped {$event->name}");
         $this->count += 1;
+        $this->console->keyValue(
+            key: "<style='fg-gray'>{$event->name}</style>",
+            value: "<style='fg-green'>DROPPED</style>",
+        );
     }
 
     #[EventHandler]

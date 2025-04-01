@@ -25,9 +25,9 @@ trait IsView
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         if (str_ends_with($trace[0]['file'], 'Tempest/View/src/functions.php')) {
-            $this->relativeRootPath = path($trace[1]['file'])->dirname();
+            $this->relativeRootPath = path($trace[1]['file'])->dirname()->toString();
         } else {
-            $this->relativeRootPath = path($trace[0]['file'])->dirname();
+            $this->relativeRootPath = path($trace[0]['file'])->dirname()->toString();
         }
     }
 

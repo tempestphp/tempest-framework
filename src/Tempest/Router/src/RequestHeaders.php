@@ -41,14 +41,19 @@ final readonly class RequestHeaders implements ArrayAccess, IteratorAggregate
         return $this->get((string) $offset);
     }
 
-    public function get(string $name): string
+    public function get(string $name): ?string
     {
-        return $this->headers[strtolower($name)];
+        return $this->headers[strtolower($name)] ?? null;
+    }
+
+    public function has(string $name): bool
+    {
+        return (bool) $this->get($name);
     }
 
     public function getHeader(string $name): Header
     {
-        return new Header(strtolower($name), [$this->get($name)]);
+        return new Header(strtolower($name), array_filter([$this->get($name)]));
     }
 
     public function offsetSet(mixed $offset, mixed $value): void

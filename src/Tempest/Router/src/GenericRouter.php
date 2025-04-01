@@ -42,6 +42,7 @@ final class GenericRouter implements Router
         private readonly Container $container,
         private readonly RouteMatcher $routeMatcher,
         private readonly AppConfig $appConfig,
+        private readonly RouteConfig $routeConfig,
     ) {}
 
     public function throwExceptions(): self
@@ -52,6 +53,13 @@ final class GenericRouter implements Router
     }
 
     public function dispatch(Request|PsrRequest $request): Response
+    {
+        return $this->processResponse(
+            $this->processRequest($request),
+        );
+    }
+
+    private function processRequest(Request|PsrRequest $request): Response
     {
         if (! ($request instanceof PsrRequest)) {
             $request = map($request)->with(RequestToPsrRequestMapper::class)->do();
@@ -194,6 +202,18 @@ final class GenericRouter implements Router
         }
 
         return $input;
+    }
+
+    private function processResponse(Response $response): Response
+    {
+        foreach ($this->routeConfig->responseProcessors as $responseProcessorClass) {
+            /** @var \Tempest\Router\ResponseProcessor $responseProcessor */
+            $responseProcessor = $this->container->get($responseProcessorClass);
+
+            $response = $responseProcessor->process($response);
+        }
+
+        return $response;
     }
 
     // TODO: could in theory be moved to a dynamic initializer

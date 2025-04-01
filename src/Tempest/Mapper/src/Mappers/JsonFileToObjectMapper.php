@@ -19,7 +19,7 @@ final readonly class JsonFileToObjectMapper implements Mapper
 
         $path = path($from);
 
-        return $path->exists() && $path->extension() === 'json';
+        return $path->exists() && $path->extension()->equals('json');
     }
 
     public function map(mixed $from, mixed $to): array

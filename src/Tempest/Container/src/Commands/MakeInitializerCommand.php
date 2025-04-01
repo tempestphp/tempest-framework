@@ -46,6 +46,7 @@ final class MakeInitializerCommand
             ],
         );
 
+        $this->console->writeln();
         $this->console->success(sprintf('Initializer successfully created at "%s".', $targetPath));
     }
 }

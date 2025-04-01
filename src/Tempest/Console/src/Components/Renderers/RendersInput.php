@@ -17,6 +17,8 @@ trait RendersInput
 
     public const int MARGIN_TOP = 1;
 
+    public const int MARGIN_BOTTOM = 0;
+
     private ImmutableString $frame;
 
     private Terminal $terminal;
@@ -54,10 +56,10 @@ trait RendersInput
     private function finishRender(): string
     {
         if ($this->state->isFinished() && $this->frame->endsWith("\n")) {
-            $this->frame = $this->frame->replaceEnd("\n", '');
+            $this->frame = $this->frame->stripEnd("\n");
         }
 
-        return $this->frame->toString();
+        return $this->frame->append(str_repeat("\n", self::MARGIN_BOTTOM))->toString();
     }
 
     private function truncate(?string $string = null, int $maxLineOffset = 0): string

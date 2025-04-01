@@ -10,11 +10,12 @@ use RecursiveIteratorIterator;
 use Tempest\Container\Container;
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
-use Tempest\Core\Kernel;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Support\Namespace\Psr4Namespace;
 
 use function Tempest\Support\arr;
-use function Tempest\Support\path;
+use function Tempest\Support\Path\to_absolute_path;
 
 final class InstallerTester
 {
@@ -28,21 +29,22 @@ final class InstallerTester
         $this->executor = new NullShellExecutor();
     }
 
-    public function configure(string $root, ComposerNamespace $mainNamespace): self
+    public function configure(string $root, Psr4Namespace $namespace): self
     {
         $this->root = $root;
-        $this->container->get(Kernel::class)->root = $root;
+        $this->container->get(FrameworkKernel::class)->root = $root;
         $this->container
             ->get(Composer::class)
-            ->setMainNamespace($mainNamespace)
+            ->setMainNamespace($namespace)
+            ->setNamespaces($namespace)
             ->setShellExecutor($this->executor);
 
         if (! is_dir($this->root)) {
             mkdir($this->root, recursive: true);
         }
 
-        if (! is_dir($mainNamespace->path)) {
-            mkdir($mainNamespace->path, recursive: true);
+        if (! is_dir($namespace->path)) {
+            mkdir($namespace->path, recursive: true);
         }
 
         return $this;
@@ -50,14 +52,14 @@ final class InstallerTester
 
     public function setRoot(string $root): self
     {
-        $this->container->get(Kernel::class)->root = $root;
+        $this->container->get(FrameworkKernel::class)->root = $root;
 
         return $this;
     }
 
     public function path(string $path): string
     {
-        return path($this->root, $path)->toString();
+        return to_absolute_path($this->root, $path);
     }
 
     public function put(string $path, string $contents): self
