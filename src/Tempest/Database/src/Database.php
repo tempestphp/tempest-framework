@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Container\AllowDynamicTags;
+
+#[AllowDynamicTags]
 interface Database
 {
     public function execute(Query $query): void;

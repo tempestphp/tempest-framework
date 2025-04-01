@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Config;
 
+use Tempest\Container\TaggedConfig;
 use Tempest\Database\Tables\NamingStrategy;
 
-interface DatabaseConfig
+interface DatabaseConfig extends TaggedConfig
 {
     public string $dsn {
         get;

@@ -111,11 +111,7 @@ final class GenericContainer implements Container
         $this->singleton($config::class, $config, $tag);
 
         foreach (new ClassReflector($config)->getInterfaces() as $interface) {
-            if ($interface->getName() === TaggedConfig::class) {
-                continue;
-            }
-
-            $this->singleton($interface->getName(), $config);
+            $this->singleton($interface->getName(), $config, $tag);
         }
 
         return $this;
@@ -309,8 +305,14 @@ final class GenericContainer implements Container
             return null;
         }
 
+        // If an initializer is registered for the specified dependency and tag, we use it.
         if ($initializerClass = $this->initializers[$this->resolveTaggedName($target->getName(), $tag)] ?? null) {
             return $this->resolve($initializerClass);
+        }
+
+        // If the dependency allows dynamic tags, we look for the original initializer, without tags.
+        if ($target->getAttribute(AllowDynamicTags::class) && ($initializerClass = $this->initializers[$target->getName()] ?? null)) {
+            return $this->resolve($initializerClass, $tag);
         }
 
         // Loop through the registered initializers to see if
@@ -362,7 +364,7 @@ final class GenericContainer implements Container
                 $property->set($instance, $this->get($property->getType()->getName()));
             }
 
-            if ($tag && $property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
+            if ($property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
                 $property->set($instance, $property->accepts(UnitEnum::class) ? $tag : $this->resolveTag($tag));
             }
         }

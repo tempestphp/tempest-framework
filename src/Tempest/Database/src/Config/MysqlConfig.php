@@ -35,5 +35,6 @@ final class MysqlConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $database = 'app',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
+        public ?string $tag = null,
     ) {}
 }
