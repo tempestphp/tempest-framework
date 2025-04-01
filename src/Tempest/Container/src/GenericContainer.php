@@ -282,8 +282,9 @@ final class GenericContainer implements Container
             return $object;
         }
 
-        // If we're requesting a tagged dependency and haven't resolved it at this point, something's wrong
-        if ($tag !== null) {
+        // If we're requesting a non-dynamic tagged dependency and
+        // haven't resolved it at this point, something's wrong
+        if ($tag !== null && ! $class->getAttribute(AllowDynamicTags::class)) {
             throw new CannotResolveTaggedDependency($this->chain, new Dependency($className), $this->resolveTag($tag));
         }
 
