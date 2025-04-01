@@ -6,9 +6,9 @@ namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 
-#[TableName('a')]
+#[Table('a')]
 final class AWithValue
 {
     use IsDatabaseModel;
