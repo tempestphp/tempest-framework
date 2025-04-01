@@ -14,6 +14,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
@@ -42,6 +43,8 @@ abstract class IntegrationTest extends TestCase
 
     protected ViteTester $vite;
 
+    protected EventBusTester $eventBus;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -62,6 +65,8 @@ abstract class IntegrationTest extends TestCase
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();
+
+        $this->eventBus = $this->container->get(EventBusTester::class);
 
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
