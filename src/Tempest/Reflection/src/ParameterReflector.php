@@ -12,8 +12,7 @@ final readonly class ParameterReflector implements Reflector
 
     public function __construct(
         private PHPReflectionParameter $reflectionParameter,
-    ) {
-    }
+    ) {}
 
     public function getReflection(): PHPReflectionParameter
     {

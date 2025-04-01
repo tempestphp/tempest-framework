@@ -17,8 +17,7 @@ final readonly class ConstraintNameStatement implements QueryStatement
 
     public function __construct(
         private IdentityStatement $name,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

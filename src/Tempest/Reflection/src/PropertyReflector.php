@@ -13,8 +13,7 @@ final readonly class PropertyReflector implements Reflector
 
     public function __construct(
         private PHPReflectionProperty $reflectionProperty,
-    ) {
-    }
+    ) {}
 
     public static function fromParts(string|object $class, string $name): self
     {

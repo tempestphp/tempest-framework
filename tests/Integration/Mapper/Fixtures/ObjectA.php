@@ -12,6 +12,5 @@ final class ObjectA
     public function __construct(
         public string $a,
         public string $b,
-    ) {
-    }
+    ) {}
 }

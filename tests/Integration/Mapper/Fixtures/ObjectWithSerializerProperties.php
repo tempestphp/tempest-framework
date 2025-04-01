@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Stringable;
 use Tempest\Mapper\SerializeWith;
 
+// @mago-expect maintainability/too-many-properties
 final class ObjectWithSerializerProperties
 {
     public string $stringProp = 'a';
@@ -22,7 +23,8 @@ final class ObjectWithSerializerProperties
 
     public array $arrayProp = ['a'];
 
-    #[SerializeWith(DoubleStringSerializer::class)] public string $serializeWithProp = 'a';
+    #[SerializeWith(DoubleStringSerializer::class)]
+    public string $serializeWithProp = 'a';
 
     public DoubleStringObject $doubleStringProp;
 

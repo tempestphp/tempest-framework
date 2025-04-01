@@ -21,8 +21,7 @@ final readonly class ConsoleArgumentDefinition
         public ?string $description = null,
         public array $aliases = [],
         public ?string $help = null,
-    ) {
-    }
+    ) {}
 
     public static function fromParameter(ParameterReflector $parameter): ConsoleArgumentDefinition
     {

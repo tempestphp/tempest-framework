@@ -32,7 +32,7 @@ final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
             ->assertContains('hidden');
 
         $this->console
-           ->call('', ['--all'])
+            ->call('', ['--all'])
             ->assertContains('hidden');
     }
 }

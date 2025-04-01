@@ -17,7 +17,7 @@ final class SerializableSerializerTest extends TestCase
             ['a'],
             new SerializableSerializer()->serialize(new JsonSerializableObject()),
         );
-        
+
         $this->assertSame(
             'O:60:"Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject":1:{i:0;s:1:"a";}',
             new SerializableSerializer()->serialize(new SerializableObject()),

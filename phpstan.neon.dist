@@ -21,9 +21,6 @@ parameters:
 		-
 			identifier: argument.named
 		-
-			message: '#.*#'
-			path: src/Tempest/Router/src/Exceptions/exception.php
-		-
 		    message: '#.*exec*#'
 		    path: src/Tempest/Console/src/Terminal/Terminal.php
 		-
@@ -36,9 +33,6 @@ parameters:
 		    message: '#.*undefined property Dom*#'
 		-
 		    message: '#.*undefined method Dom*#'
-		-
-		    message: '#File ends with a trailing whitespace*#'
-		    path: src/Tempest/View/src/Stubs/view.stub.php
 
 	disallowedFunctionCalls:
 		-

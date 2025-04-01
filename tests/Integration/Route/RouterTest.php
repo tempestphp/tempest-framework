@@ -12,6 +12,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\Responses\Ok;
+use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
@@ -23,6 +24,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\uri;
 
 /**
@@ -207,5 +209,60 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(Status::OK, $response->status);
         $this->assertSame('foo', $response->body);
+    }
+
+    public function test_is_current_uri(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $this->http->get('/test')->assertOk();
+
+        $this->assertTrue($router->isCurrentUri([TestController::class, '__invoke']));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withParams']));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withParams'], id: 1));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withParams'], id: 1, name: 'a'));
+    }
+
+    public function test_is_current_uri_with_constrained_parameters(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $this->http->get('/test/1/a')->assertOk();
+
+        $this->assertTrue($router->isCurrentUri([TestController::class, 'withCustomRegexParams']));
+        $this->assertTrue($router->isCurrentUri([TestController::class, 'withCustomRegexParams'], id: 1));
+        $this->assertTrue($router->isCurrentUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a'));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'b'));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withCustomRegexParams'], id: 0, name: 'a'));
+        $this->assertFalse($router->isCurrentUri([TestController::class, 'withCustomRegexParams'], id: 0, name: 'b'));
+    }
+
+    public function test_is_current_uri_with_enum(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $this->http->get('/with-enum/foo')->assertOk();
+
+        $this->assertTrue($router->isCurrentUri(ControllerWithEnumBinding::class));
+        $this->assertTrue($router->isCurrentUri(ControllerWithEnumBinding::class, input: EnumForController::FOO));
+        $this->assertFalse($router->isCurrentUri(ControllerWithEnumBinding::class, input: EnumForController::BAR));
+    }
+
+    public function test_discovers_response_processors(): void
+    {
+        $this->http
+            ->get('/', headers: ['X-Processed' => 'false'])
+            ->assertHeaderContains('X-Processed', 'true')
+            ->assertOk();
+    }
+
+    public function test_can_add_response_processor(): void
+    {
+        $this->container->get(RouteConfig::class)->addResponseProcessor(TestProcessedResponseProcessor::class);
+
+        $this->http
+            ->get('/')
+            ->assertHeaderContains('X-Processed', 'true')
+            ->assertOk();
     }
 }

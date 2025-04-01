@@ -18,8 +18,7 @@ final readonly class DataAttribute implements Attribute
 {
     public function __construct(
         private string $name,
-    ) {
-    }
+    ) {}
 
     public function apply(Element $element): Element
     {

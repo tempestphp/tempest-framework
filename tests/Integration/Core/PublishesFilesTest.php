@@ -7,10 +7,11 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
-use Tempest\Core\ComposerNamespace;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Fixtures\Core\PublishesFilesConcreteClass;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use function Tempest\Support\path;
+
+use function Tempest\Support\Path\normalize;
 
 /**
  * @internal
@@ -23,7 +24,7 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+            new Psr4Namespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
@@ -44,10 +45,9 @@ final class PublishesFilesTest extends FrameworkIntegrationTestCase
     ): void {
         $composer = $this->container->get(Composer::class);
         $concreteClass = $this->container->get(PublishesFilesConcreteClass::class);
-        $appPath = str_replace('\\', '/', $composer->mainNamespace->path); // Normalize windows path
 
         $this->assertSame(
-            expected: path($appPath, $expected)->toString(),
+            expected: normalize($composer->mainNamespace->path, $expected),
             actual: $concreteClass->getSuggestedPath(
                 className: $className,
                 pathPrefix: $pathPrefix,

@@ -18,8 +18,7 @@ final class CommandBusConfig
 
         /** @var class-string<\Tempest\CommandBus\CommandRepository> $commandRepositoryClass */
         public string $commandRepositoryClass = FileCommandRepository::class,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws CommandHandlerAlreadyExists

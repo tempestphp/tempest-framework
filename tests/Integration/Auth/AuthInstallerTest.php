@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
-use Tempest\Core\ComposerNamespace;
+use Tempest\Core\Commands\InstallCommand;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -18,7 +19,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+            new Psr4Namespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
@@ -31,7 +32,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
 
     public function test_install_auth(): void
     {
-        $this->console->call('install auth --force');
+        $this->console->call(InstallCommand::class, ['auth', '--force']);
 
         $publishItems = [
             'User',

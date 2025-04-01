@@ -12,8 +12,7 @@ final readonly class DivisibleBy implements Rule
 {
     public function __construct(
         public int $divisor,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

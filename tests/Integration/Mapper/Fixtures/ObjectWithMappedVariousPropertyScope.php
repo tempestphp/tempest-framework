@@ -11,6 +11,5 @@ final class ObjectWithMappedVariousPropertyScope
     public function __construct(
         #[MapTo('public')]
         public string $publicProp,
-    ) {
-    }
+    ) {}
 }

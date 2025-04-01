@@ -20,8 +20,7 @@ final class ViteTester
 
     public function __construct(
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the root directory for subsequent {@see \Tempest\Framework\Testing\ViteTester::call()} calls.

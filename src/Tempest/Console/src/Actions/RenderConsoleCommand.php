@@ -18,8 +18,7 @@ final readonly class RenderConsoleCommand
         private ?int $longestCommandName = null,
         private bool $renderArguments = false,
         private bool $renderDescription = true,
-    ) {
-    }
+    ) {}
 
     public function __invoke(ConsoleCommand $consoleCommand): void
     {

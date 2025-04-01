@@ -13,6 +13,7 @@ use Tempest\Router\Responses\Invalid;
 use Tempest\Router\Session\Session;
 use Tempest\Validation\Rules\NotEmpty;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\map;
 
 /**

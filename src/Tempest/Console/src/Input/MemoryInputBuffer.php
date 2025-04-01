@@ -15,9 +15,7 @@ final class MemoryInputBuffer implements InputBuffer
 
     private ?Fiber $fiber = null;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function add(int|string|Key ...$input): void
     {
@@ -53,5 +51,12 @@ final class MemoryInputBuffer implements InputBuffer
         $next = array_shift($this->buffer);
 
         return $next ?? '';
+    }
+
+    public function clear(): self
+    {
+        $this->buffer = [];
+
+        return $this;
     }
 }

@@ -16,22 +16,23 @@ final class InvalidCommandException extends ConsoleException
 
         /** @var \Tempest\Console\Input\ConsoleArgumentDefinition[] $invalidArguments */
         public readonly array $invalidArguments,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): void
     {
-        $console->error('Invalid command usage:');
-
-        (new RenderConsoleCommand($console))($this->consoleCommand);
-
         $missingArguments = implode(', ', array_map(
             fn (ConsoleArgumentDefinition $argumentDefinition) => $argumentDefinition->name,
             $this->invalidArguments,
         ));
 
         if ($missingArguments) {
-            $console->writeln("Missing arguments: {$missingArguments}");
+            $console->writeln();
+            $console->error("Missing arguments: {$missingArguments}");
+        } else {
+            $console->writeln();
+            $console->error('Invalid command usage.');
         }
+
+        $console->info('Run again with --help for more information.');
     }
 }

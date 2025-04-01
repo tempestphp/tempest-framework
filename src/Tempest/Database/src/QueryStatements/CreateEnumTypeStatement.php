@@ -17,8 +17,7 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
     public function __construct(
         /** @var class-string<UnitEnum|BackedEnum> */
         private string $enumClass,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

@@ -11,6 +11,5 @@ final readonly class MatchedRoute
     public function __construct(
         public DiscoveredRoute $route,
         public array $params,
-    ) {
-    }
+    ) {}
 }

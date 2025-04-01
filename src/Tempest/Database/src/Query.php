@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Config\DatabaseConfig;
+
 use function Tempest\get;
 
 final class Query
 {
     public function __construct(
-        public string $sql,
+        public string|QueryStatement $sql,
         public array $bindings = [],
-    ) {
-    }
+    ) {}
 
     public function execute(mixed ...$bindings): Id
     {
@@ -23,6 +24,8 @@ final class Query
         $query = $this->withBindings($bindings);
 
         $database->execute($query);
+
+        // TODO: add support for "after" queries to attach hasMany relations
 
         return isset($query->bindings['id'])
             ? new Id($query->bindings['id'])
@@ -41,7 +44,13 @@ final class Query
 
     public function getSql(): string
     {
-        return $this->sql;
+        $sql = $this->sql;
+
+        if ($sql instanceof QueryStatement) {
+            return $sql->compile($this->getDatabaseConfig()->dialect);
+        }
+
+        return $sql;
     }
 
     public function append(string $append): self
@@ -63,5 +72,10 @@ final class Query
     private function getDatabase(): Database
     {
         return get(Database::class);
+    }
+
+    private function getDatabaseConfig(): DatabaseConfig
+    {
+        return get(DatabaseConfig::class);
     }
 }

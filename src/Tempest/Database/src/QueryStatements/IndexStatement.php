@@ -15,8 +15,7 @@ final readonly class IndexStatement implements QueryStatement
     public function __construct(
         private string $tableName,
         private array $columns,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

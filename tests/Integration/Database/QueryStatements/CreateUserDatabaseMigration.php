@@ -15,12 +15,12 @@ final class CreateUserDatabaseMigration implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return (new CreateTableStatement('users'))
+        return new CreateTableStatement('users')
             ->varchar('name');
     }
 
     public function down(): QueryStatement
     {
-        return (new DropTableStatement('users'));
+        return new DropTableStatement('users');
     }
 }

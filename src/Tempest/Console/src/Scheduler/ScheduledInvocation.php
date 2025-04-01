@@ -15,8 +15,7 @@ final readonly class ScheduledInvocation
     public function __construct(
         public Schedule $schedule,
         public ConsoleCommand|MethodReflector $handler,
-    ) {
-    }
+    ) {}
 
     public function getCommandName(): string
     {

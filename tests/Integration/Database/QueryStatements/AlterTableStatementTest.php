@@ -72,10 +72,9 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
         $this->assertSame('test@example.com', $user->email);
     }
 
-
     private function getAlterTableMigration(): DatabaseMigration
     {
-        return new class () implements DatabaseMigration {
+        return new class() implements DatabaseMigration {
             private(set) string $name = '0000-01-02_add_email_to_user_table';
 
             public function up(): QueryStatement
@@ -84,7 +83,7 @@ final class AlterTableStatementTest extends FrameworkIntegrationTestCase
                     ->add(new VarcharStatement('email'));
             }
 
-            public function down(): QueryStatement|null
+            public function down(): ?QueryStatement
             {
                 return null;
             }

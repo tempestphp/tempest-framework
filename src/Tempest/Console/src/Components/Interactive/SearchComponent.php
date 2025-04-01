@@ -103,9 +103,10 @@ final class SearchComponent implements InteractiveConsoleComponent, HasCursor, H
             ...$controls,
             '↑' => 'up',
             '↓' => 'down',
-            'enter' => $this->multiple && $this->default && $this->options->getSelectedOptions() === []
-                ? 'skip'
-                : 'confirm',
+            'enter' =>
+                $this->multiple && $this->default && $this->options->getSelectedOptions() === []
+                    ? 'skip'
+                    : 'confirm',
             'ctrl+c' => 'cancel',
         ];
     }

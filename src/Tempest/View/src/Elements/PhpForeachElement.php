@@ -18,8 +18,7 @@ final class PhpForeachElement implements Element, WrapsElement
 
     public function __construct(
         private readonly Element $wrappingElement,
-    ) {
-    }
+    ) {}
 
     public function getWrappingElement(): Element
     {
@@ -55,7 +54,7 @@ final class PhpForeachElement implements Element, WrapsElement
         );
 
         if ($this->else !== null) {
-            $collectionName = str($foreachAttribute)->match('/^(?<match>.*)\s+as/')['match'];
+            $collectionName = str($foreachAttribute)->match('/^(?<match>.*)\s+as/', 'match');
 
             $this->else->consumeAttribute(':forelse');
 

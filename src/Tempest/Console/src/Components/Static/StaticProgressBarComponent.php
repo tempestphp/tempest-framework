@@ -15,8 +15,7 @@ final readonly class StaticProgressBarComponent implements StaticConsoleComponen
         private Closure $handler,
         /** @var null|Closure(int $step, int $count): string $format */
         private ?Closure $format = null,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): array
     {

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection;
 
+use BackedEnum;
+use DateTimeInterface;
 use Exception;
 use Generator;
+use Iterator;
 use ReflectionClass as PHPReflectionClass;
 use ReflectionIntersectionType as PHPReflectionIntersectionType;
 use ReflectionNamedType as PHPReflectionNamedType;
@@ -14,6 +17,8 @@ use ReflectionProperty as PHPReflectionProperty;
 use ReflectionType as PHPReflectionType;
 use ReflectionUnionType as PHPReflectionUnionType;
 use Reflector as PHPReflector;
+use Stringable;
+use UnitEnum;
 
 final readonly class TypeReflector implements Reflector
 {
@@ -144,6 +149,21 @@ final readonly class TypeReflector implements Reflector
         return class_exists($this->cleanDefinition);
     }
 
+    public function isEnum(): bool
+    {
+        if ($this->matches(UnitEnum::class)) {
+            return true;
+        }
+
+        return $this->matches(BackedEnum::class);
+    }
+
+    // TODO: should be refactored outside of the reflector component
+    public function isRelation(): bool
+    {
+        return $this->isClass() && ! $this->isEnum() && ! $this->isIterable() && ! $this->isStringable() && ! $this->matches(DateTimeInterface::class);
+    }
+
     public function isInterface(): bool
     {
         return interface_exists($this->cleanDefinition);
@@ -151,12 +171,31 @@ final readonly class TypeReflector implements Reflector
 
     public function isIterable(): bool
     {
+        if ($this->matches(Iterator::class)) {
+            return true;
+        }
+
         return in_array(
             $this->cleanDefinition,
             [
                 'array',
                 'iterable',
                 Generator::class,
+            ],
+            strict: true,
+        );
+    }
+
+    public function isStringable(): bool
+    {
+        if ($this->matches(Stringable::class)) {
+            return true;
+        }
+
+        return in_array(
+            $this->cleanDefinition,
+            [
+                'string',
             ],
             strict: true,
         );

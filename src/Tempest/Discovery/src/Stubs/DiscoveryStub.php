@@ -22,6 +22,9 @@ final class DiscoveryStub implements Discovery
         $this->discoveryItems->add($location, $class);
     }
 
+    /**
+     * @mago-expect best-practices/no-empty-loop
+     */
     public function apply(): void
     {
         foreach ($this->discoveryItems as $class) {

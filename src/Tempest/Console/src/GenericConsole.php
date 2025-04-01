@@ -52,12 +52,11 @@ final class GenericConsole implements Console
         private readonly Highlighter $highlighter,
         private readonly ExecuteConsoleCommand $executeConsoleCommand,
         private readonly ConsoleArgumentBag $argumentBag,
-    ) {
-    }
+    ) {}
 
     public function call(string|array $command, string|array $arguments = []): ExitCode|int
     {
-        return ($this->executeConsoleCommand)($command, $arguments);
+        return $this->executeConsoleCommand->withoutArgumentBag()($command, $arguments);
     }
 
     public function setComponentRenderer(InteractiveComponentRenderer $componentRenderer): self
@@ -240,7 +239,7 @@ final class GenericConsole implements Console
                 placeholder: $placeholder,
                 hint: $hint,
                 multiline: $multiline,
-            ));
+            ), $validation);
         }
 
         if ($multiple) {
@@ -248,7 +247,7 @@ final class GenericConsole implements Console
                 label: $question,
                 options: $options,
                 default: wrap($default),
-            ));
+            ), $validation);
         }
 
         $component = new SingleChoiceComponent(

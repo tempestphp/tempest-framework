@@ -4,32 +4,50 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Builder;
 
+use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\Relations\BelongsToRelation;
 use Tempest\Database\Builder\Relations\HasManyRelation;
 use Tempest\Database\Builder\Relations\HasOneRelation;
+use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\TableName;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Arr\ImmutableArray;
 
-use function Tempest\reflect;
+use function Tempest\get;
 
 final readonly class ModelDefinition
 {
-    public function __construct(
-        /** @var class-string<\Tempest\Database\DatabaseModel> $modelClass */
-        private string $modelClass,
-    ) {
+    private ClassReflector $modelClass;
+
+    public static function tryFrom(string|object $model): ?self
+    {
+        try {
+            return new self($model);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    public function __construct(string|object $model)
+    {
+        if ($model instanceof ClassReflector) {
+            $this->modelClass = $model;
+        } else {
+            $this->modelClass = new ClassReflector($model);
+        }
     }
 
     /** @return \Tempest\Database\Builder\Relations\Relation[] */
     public function getRelations(string $relationName): array
     {
         $relations = [];
-        $class = reflect($this->modelClass);
         $relationNames = explode('.', $relationName);
-        $alias = TableName::for($class)->tableName;
+        $alias = $this->getTableDefinition()->name;
+        $class = $this->modelClass;
 
         foreach ($relationNames as $relationNamePart) {
             $property = $class->getProperty($relationNamePart);
@@ -69,7 +87,7 @@ final readonly class ModelDefinition
     {
         $relations = [];
 
-        foreach ($this->buildEagerRelationNames(reflect($this->modelClass)) as $relationName) {
+        foreach ($this->buildEagerRelationNames($this->modelClass) as $relationName) {
             foreach ($this->getRelations($relationName) as $relation) {
                 $relations[$relation->getRelationName()] = $relation;
             }
@@ -97,22 +115,30 @@ final readonly class ModelDefinition
         return $relations;
     }
 
-    public function getTableName(): TableName
+    public function getTableDefinition(): TableDefinition
     {
-        return $this->modelClass::table();
+        $specificName = $this->modelClass
+            ->getAttribute(TableName::class)
+            ?->name;
+
+        $conventionalName = get(DatabaseConfig::class)
+            ->namingStrategy
+            ->getName($this->modelClass->getName());
+
+        return new TableDefinition($specificName ?? $conventionalName);
     }
 
-    public function getFieldName(string $fieldName): FieldName
+    public function getFieldDefinition(string $name): FieldDefinition
     {
-        return new FieldName(
-            tableName: $this->getTableName(),
-            fieldName: $fieldName,
+        return new FieldDefinition(
+            tableDefinition: $this->getTableDefinition(),
+            name: $name,
         );
     }
 
-    /** @return \Tempest\Database\Builder\FieldName[] */
-    public function getFieldNames(): array
+    /** @return ImmutableArray<array-key, \Tempest\Database\Builder\FieldDefinition> */
+    public function getFieldDefinitions(): ImmutableArray
     {
-        return FieldName::make(reflect($this->modelClass));
+        return FieldDefinition::all($this->modelClass);
     }
 }

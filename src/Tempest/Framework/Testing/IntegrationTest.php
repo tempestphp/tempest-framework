@@ -19,6 +19,8 @@ use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Request;
 
+use function Tempest\Support\Path\normalize;
+
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;
@@ -44,7 +46,8 @@ abstract class IntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this->root ??= __DIR__ . '/../../';
+        // We force forward slashes for consistency even on Windows.
+        $this->root ??= normalize(realpath(__DIR__ . '/../../'));
 
         $this->kernel ??= FrameworkKernel::boot(
             root: $this->root,
@@ -56,7 +59,9 @@ abstract class IntegrationTest extends TestCase
         $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
         $this->installer = $this->container->get(InstallerTester::class);
+
         $this->vite = $this->container->get(ViteTester::class);
+        $this->vite->preventTagResolution();
 
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);

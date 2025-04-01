@@ -8,6 +8,5 @@ final readonly class CircularZ
 {
     public function __construct(
         public CircularA $a,
-    ) {
-    }
+    ) {}
 }

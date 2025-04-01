@@ -8,6 +8,5 @@ final readonly class TaggedDependency
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

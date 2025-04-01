@@ -24,7 +24,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->begin();
 
-        (new Author(name: 'test'))->save();
+        new Author(name: 'test')->save();
         $this->assertCount(1, Author::all());
 
         $manager->rollback();
@@ -40,7 +40,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->begin();
 
-        (new Author(name: 'test'))->save();
+        new Author(name: 'test')->save();
         $this->assertCount(1, Author::all());
 
         $manager->commit();
@@ -56,7 +56,7 @@ final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 
         $manager->begin();
 
-        (new Author(name: 'test'))->save();
+        new Author(name: 'test')->save();
 
         $manager->commit();
 

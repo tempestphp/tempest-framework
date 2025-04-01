@@ -16,21 +16,23 @@ final class PasswordComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_password_component(): void
     {
-        $this->console->withoutPrompting()->call(function (Console $console): void {
-            $terminal = new Terminal($console);
-            $component = new PasswordComponent('Enter password');
+        $this->console
+            ->withoutPrompting()
+            ->call(function (Console $console): void {
+                $terminal = new Terminal($console);
+                $component = new PasswordComponent('Enter password');
 
-            $this->assertStringContainsString('Enter password', $component->render($terminal));
+                $this->assertStringContainsString('Enter password', $component->render($terminal));
 
-            $component->input('a');
-            $component->input('b');
-            $component->input('c');
+                $component->input('a');
+                $component->input('b');
+                $component->input('c');
 
-            $this->assertStringContainsString('***', $component->render($terminal));
+                $this->assertStringContainsString('***', $component->render($terminal));
 
-            $component->deletePreviousCharacter();
+                $component->deletePreviousCharacter();
 
-            $this->assertSame('ab', $component->enter());
-        });
+                $this->assertSame('ab', $component->enter());
+            });
     }
 }

@@ -21,6 +21,5 @@ final class PrefetchConfig
          * Name of the event that triggers prefetching.
          */
         public string $prefetchEvent = 'load',
-    ) {
-    }
+    ) {}
 }

@@ -13,8 +13,7 @@ final readonly class MessageRenderer
     public function __construct(
         private string $label,
         private string $color,
-    ) {
-    }
+    ) {}
 
     public function render(string $contents, ?string $title = null): string
     {
@@ -24,7 +23,6 @@ final readonly class MessageRenderer
             ->implode("\n");
 
         return str()
-            ->append("\n")
             ->append("<style='fg-{$this->color} bold'>{$title}</style> <style='dim fg-{$this->color}'>//</style>")
             ->append("<style='fg-{$this->color}'>{$lines}</style>")
             ->toString();

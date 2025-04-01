@@ -8,6 +8,5 @@ final class ContainerObjectRequiringC
 {
     public function __construct(
         public ContainerObjectC $c,
-    ) {
-    }
+    ) {}
 }

@@ -11,8 +11,7 @@ final readonly class Upload
 {
     public function __construct(
         private UploadedFileInterface $uploadedFile,
-    ) {
-    }
+    ) {}
 
     public function getStream(): StreamInterface
     {

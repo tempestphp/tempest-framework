@@ -14,8 +14,7 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
     public function __construct(
         private CommandBusConfig $commandBusConfig,
         private CommandRepository $repository,
-    ) {
-    }
+    ) {}
 
     #[EventHandler(KernelEvent::BOOTED)]
     public function onBooted(): void

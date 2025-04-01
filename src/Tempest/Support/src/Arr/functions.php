@@ -492,19 +492,19 @@ namespace Tempest\Support\Arr {
      *
      * @return TValue
      */
-    function first(iterable $array, ?Closure $filter = null): mixed
+    function first(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
     {
         $array = to_array($array);
 
         if ($array === []) {
-            return null;
+            return $default;
         }
 
         if ($filter === null) {
-            return $array[array_key_first($array)];
+            return $array[array_key_first($array)] ?? $default;
         }
 
-        return array_find($array, static fn ($value, $key) => $filter($value, $key));
+        return array_find($array, static fn ($value, $key) => $filter($value, $key)) ?? $default;
     }
 
     /**
@@ -541,19 +541,19 @@ namespace Tempest\Support\Arr {
      *
      * @return TValue
      */
-    function last(iterable $array, ?Closure $filter = null): mixed
+    function last(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
     {
         $array = to_array($array);
 
         if ($array === []) {
-            return null;
+            return $default;
         }
 
         if ($filter === null) {
-            return $array[array_key_last($array)];
+            return $array[array_key_last($array)] ?? $default;
         }
 
-        return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key));
+        return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key)) ?? $default;
     }
 
     /**
@@ -679,7 +679,7 @@ namespace Tempest\Support\Arr {
      *
      * @return array<TKey, TMapValue>
      */
-    function map_array(iterable $array, Closure $map): array
+    function map_iterable(iterable $array, Closure $map): array
     {
         $result = [];
 
@@ -1013,7 +1013,7 @@ namespace Tempest\Support\Arr {
      */
     function flat_map(iterable $array, Closure $map, int|float $depth = 1): array
     {
-        return namespace\flatten(namespace\map_array(to_array($array), $map), $depth);
+        return namespace\flatten(namespace\map_iterable(to_array($array), $map), $depth);
     }
 
     /**

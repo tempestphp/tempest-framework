@@ -13,8 +13,7 @@ final class ConsoleInputArgument
         public ?int $position,
         public mixed $value,
         public bool $isPositional = false,
-    ) {
-    }
+    ) {}
 
     public static function fromString(string $argument, ?int $position = null): ConsoleInputArgument
     {

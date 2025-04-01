@@ -12,8 +12,7 @@ final readonly class StartsWith implements Rule
 {
     public function __construct(
         private string $needle,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

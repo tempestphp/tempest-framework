@@ -35,8 +35,7 @@ final class GenericContainer implements Container
         /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
         private ArrayIterator $dynamicInitializers = new ArrayIterator(),
         private ?DependencyChain $chain = null,
-    ) {
-    }
+    ) {}
 
     public function setDefinitions(array $definitions): self
     {
@@ -330,16 +329,15 @@ final class GenericContainer implements Container
             throw new CannotInstantiateDependencyException($classReflector, $this->chain);
         }
 
-        $instance =
-            $constructor === null
-                ? // If there isn't a constructor, don't waste time
-                // trying to build it.
-                $classReflector->newInstanceWithoutConstructor()
-                : // Otherwise, use our autowireDependencies helper to automagically
-                // build up each parameter.
-                $classReflector->newInstanceArgs(
-                    $this->autowireDependencies($constructor, $params),
-                );
+        $instance = $constructor === null
+            ? // If there isn't a constructor, don't waste time
+            // trying to build it.
+            $classReflector->newInstanceWithoutConstructor()
+            : // Otherwise, use our autowireDependencies helper to automagically
+            // build up each parameter.
+            $classReflector->newInstanceArgs(
+                $this->autowireDependencies($constructor, $params),
+            );
 
         if (
             ! $classReflector->getType()->matches(Initializer::class) &&

@@ -6,6 +6,6 @@ namespace Tempest\Database\Tables;
 
 interface NamingStrategy
 {
-    /** @param class-string<\Tempest\Database\DatabaseModel> $model */
+    /** @param class-string $model */
     public function getName(string $model): string;
 }

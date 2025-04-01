@@ -13,6 +13,7 @@ use Tempest\Console\HasConsole;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Console\Middleware\ForceMiddleware;
 use Tempest\Core\Kernel;
+use Tempest\EventBus\EventBus;
 
 final readonly class StaticCleanCommand
 {
@@ -20,8 +21,8 @@ final readonly class StaticCleanCommand
 
     public function __construct(
         private Kernel $kernel,
-    ) {
-    }
+        private EventBus $eventBus,
+    ) {}
 
     #[ConsoleCommand(
         name: 'static:clean',
@@ -30,13 +31,22 @@ final readonly class StaticCleanCommand
     )]
     public function __invoke(): void
     {
+        $this->console->header('Cleaning static pages');
+
         $directoryIterator = new RecursiveDirectoryIterator($this->kernel->root . '/public');
         $directoryIterator->setFlags(FilesystemIterator::SKIP_DOTS);
+
+        $removed = 0;
+
+        $this->eventBus->listen(StaticPageRemoved::class, function (StaticPageRemoved $event) use (&$removed): void {
+            $removed++;
+            $this->keyValue("<style='fg-gray'>{$event->path}</style>", "<style='fg-green'>REMOVED</style>");
+        });
 
         $this->removeFiles($directoryIterator);
         $this->removeEmptyDirectories($directoryIterator);
 
-        $this->success('Done.');
+        $this->keyValue('Static pages removed', "<style='fg-green'>{$removed}</style>");
     }
 
     private function removeFiles(RecursiveDirectoryIterator $directoryIterator): void
@@ -56,7 +66,7 @@ final readonly class StaticCleanCommand
 
             $pathName = str_replace('\\', '/', $file->getPathname());
 
-            $this->writeln("- <u>{$pathName}</u> removed");
+            $this->eventBus->dispatch(new StaticPageRemoved($pathName));
         }
     }
 
@@ -73,10 +83,6 @@ final readonly class StaticCleanCommand
             }
 
             rmdir($file->getPathname());
-
-            $pathName = str_replace('\\', '/', $file->getPathname());
-
-            $this->writeln("- <u>{$pathName}</u> directory removed");
         }
     }
 }

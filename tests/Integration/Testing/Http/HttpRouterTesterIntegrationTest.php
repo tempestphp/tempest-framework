@@ -14,8 +14,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
 {
     public function test_get_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->get('/test')
             ->assertOk();
     }
@@ -24,16 +23,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->get('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_head_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->head('/test')
             ->assertOk();
     }
@@ -42,16 +39,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->head('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_post_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->post('/test')
             ->assertOk();
     }
@@ -60,16 +55,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->post('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_put_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->put('/test')
             ->assertOk();
     }
@@ -78,16 +71,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->put('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_delete_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->delete('/test')
             ->assertOk();
     }
@@ -96,16 +87,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->delete('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_connect_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->connect('/test')
             ->assertOk();
     }
@@ -114,16 +103,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->connect('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_options_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->options('/test')
             ->assertOk();
     }
@@ -132,16 +119,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->options('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_trace_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->throwExceptions()
             ->trace('/test')
             ->assertOk();
@@ -151,16 +136,14 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->trace('/this-route-does-not-exist')
             ->assertOk();
     }
 
     public function test_patch_requests(): void
     {
-        $this
-            ->http
+        $this->http
             ->patch('/test')
             ->assertOk();
     }
@@ -169,8 +152,7 @@ final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
     {
         $this->expectException(AssertionFailedError::class);
 
-        $this
-            ->http
+        $this->http
             ->patch('/this-route-does-not-exist')
             ->assertOk();
     }

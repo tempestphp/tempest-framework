@@ -14,6 +14,5 @@ final readonly class ObjectThatShouldUseCasters
         #[DateTimeFormat('Y-m-d')]
         public DateTimeImmutable $date,
         public EnumToCast $enum,
-    ) {
-    }
+    ) {}
 }

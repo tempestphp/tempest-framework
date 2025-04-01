@@ -11,8 +11,7 @@ final readonly class AlterDropStatement implements QueryStatement
 {
     public function __construct(
         private ColumnNameStatement|ConstraintNameStatement $toDrop,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

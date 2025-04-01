@@ -13,6 +13,5 @@ final class InvalidValueException extends Exception
         public readonly mixed $value,
         /** @var Rule[] $failingRules */
         public readonly array $failingRules,
-    ) {
-    }
+    ) {}
 }

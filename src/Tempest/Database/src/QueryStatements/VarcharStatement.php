@@ -14,8 +14,7 @@ final readonly class VarcharStatement implements QueryStatement
         private int $size = 255,
         private bool $nullable = false,
         private ?string $default = null,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

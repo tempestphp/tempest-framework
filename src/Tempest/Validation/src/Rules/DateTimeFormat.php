@@ -16,8 +16,7 @@ final readonly class DateTimeFormat implements Rule
 
     public function __construct(
         public string $format = self::FORMAT,
-    ) {
-    }
+    ) {}
 
     public function isValid(mixed $value): bool
     {

@@ -12,8 +12,7 @@ final readonly class StaticConfirmComponent implements StaticConsoleComponent
     public function __construct(
         private string $question,
         private bool $default = false,
-    ) {
-    }
+    ) {}
 
     public function render(Console $console): bool
     {

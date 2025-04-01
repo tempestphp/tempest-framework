@@ -15,8 +15,7 @@ final readonly class CacheClearCommand
     public function __construct(
         private CacheConfig $cacheConfig,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(name: 'cache:clear', description: 'Clears all or specified caches')]
     public function __invoke(bool $all = false): void

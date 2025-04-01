@@ -13,8 +13,7 @@ final readonly class MethodReflector implements Reflector
 
     public function __construct(
         private PHPReflectionMethod $reflectionMethod,
-    ) {
-    }
+    ) {}
 
     public static function fromParts(string|object $class, string $name): self
     {

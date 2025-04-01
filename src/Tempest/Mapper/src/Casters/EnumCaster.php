@@ -10,8 +10,7 @@ final readonly class EnumCaster implements Caster
 {
     public function __construct(
         private string $enum,
-    ) {
-    }
+    ) {}
 
     public function cast(mixed $input): ?object
     {

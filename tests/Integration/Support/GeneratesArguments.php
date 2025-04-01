@@ -41,7 +41,7 @@ trait GeneratesArguments
                 continue;
             }
 
-            if (in_array($reflectionMethod->getName(), $except)) {
+            if (in_array($reflectionMethod->getName(), $except, strict: true)) {
                 continue;
             }
 

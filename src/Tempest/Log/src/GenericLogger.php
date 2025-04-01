@@ -18,8 +18,7 @@ final class GenericLogger implements Logger
     public function __construct(
         private readonly LogConfig $logConfig,
         private readonly EventBus $eventBus,
-    ) {
-    }
+    ) {}
 
     public function emergency(Stringable|string $message, array $context = []): void
     {

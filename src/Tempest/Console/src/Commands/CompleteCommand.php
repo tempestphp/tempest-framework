@@ -21,8 +21,7 @@ final readonly class CompleteCommand
         private Console $console,
         private ConsoleConfig $consoleConfig,
         private Container $container,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand(
         name: '_complete',

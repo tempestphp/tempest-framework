@@ -8,6 +8,5 @@ final readonly class MigrationRolledBack
 {
     public function __construct(
         public string $name,
-    ) {
-    }
+    ) {}
 }

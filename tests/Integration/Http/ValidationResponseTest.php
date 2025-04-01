@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Http;
 use Tempest\Router\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\uri;
 
 /**
@@ -38,7 +39,7 @@ final class ValidationResponseTest extends FrameworkIntegrationTestCase
             )
             ->assertRedirect(uri([ValidationController::class, 'store']))
             ->assertHasValidationError('number')
-            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $session, array $data) use ($values): void {
+            ->assertHasSession(Session::ORIGINAL_VALUES, function (Session $_session, array $data) use ($values): void {
                 $this->assertEquals($values, $data);
             });
     }

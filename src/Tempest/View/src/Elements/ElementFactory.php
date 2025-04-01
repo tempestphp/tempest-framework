@@ -26,8 +26,7 @@ final class ElementFactory
         private readonly AppConfig $appConfig,
         private readonly ViewConfig $viewConfig,
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function setViewCompiler(TempestViewCompiler $compiler): self
     {

@@ -12,6 +12,7 @@ use Tempest\Router\Responses\Ok;
 use Tempest\Router\Responses\Redirect;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
+
 use function Tempest\map;
 use function Tempest\uri;
 
@@ -20,7 +21,7 @@ final readonly class BookController
     #[Get('/books/{book}')]
     public function show(Book $book): Response
     {
-        return (new Ok($book->title));
+        return new Ok($book->title);
     }
 
     #[Post('/books')]

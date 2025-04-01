@@ -14,12 +14,11 @@ final readonly class SessionAuthenticator implements Authenticator
     public function __construct(
         private AuthConfig $authConfig,
         private Session $session,
-    ) {
-    }
+    ) {}
 
     public function login(CanAuthenticate $user): void
     {
-        $this->session->set(self::USER_KEY, $user->getId());
+        $this->session->set(self::USER_KEY, $user->id);
     }
 
     public function logout(): void
@@ -38,8 +37,8 @@ final readonly class SessionAuthenticator implements Authenticator
 
         $userModelClass = new ClassReflector($this->authConfig->userModelClass);
 
-        /** @var \Tempest\Database\Builder\ModelQueryBuilder<\Tempest\Auth\CanAuthenticate> $query */
-        $query = $userModelClass->callStatic('query');
+        /** @var \Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder<\Tempest\Auth\CanAuthenticate> $query */
+        $query = $userModelClass->callStatic('select');
 
         return $query->with('userPermissions.permission')->get($id);
     }

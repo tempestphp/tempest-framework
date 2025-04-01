@@ -13,8 +13,7 @@ final readonly class BooleanAttribute implements Attribute
 {
     public function __construct(
         private string $attributeName,
-    ) {
-    }
+    ) {}
 
     public function apply(Element $element): Element
     {

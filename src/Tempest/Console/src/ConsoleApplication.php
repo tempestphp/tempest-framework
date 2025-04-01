@@ -23,8 +23,7 @@ final readonly class ConsoleApplication implements Application
         private Container $container,
         private AppConfig $appConfig,
         private ConsoleArgumentBag $argumentBag,
-    ) {
-    }
+    ) {}
 
     /** @param \Tempest\Discovery\DiscoveryLocation[] $discoveryLocations */
     public static function boot(

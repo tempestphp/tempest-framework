@@ -12,8 +12,7 @@ final readonly class AuthBootstrap
 {
     public function __construct(
         private Router $router,
-    ) {
-    }
+    ) {}
 
     #[EventHandler(KernelEvent::BOOTED)]
     public function __invoke(): void

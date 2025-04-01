@@ -11,8 +11,7 @@ final readonly class RouteMatch
     private function __construct(
         public string $mark,
         public array $matches,
-    ) {
-    }
+    ) {}
 
     public static function match(array $params): self
     {

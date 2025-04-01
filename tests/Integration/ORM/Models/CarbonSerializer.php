@@ -10,7 +10,7 @@ final readonly class CarbonSerializer implements Serializer
 {
     public function serialize(mixed $input): string
     {
-        if (! $input instanceof Carbon) {
+        if (! ($input instanceof Carbon)) {
             throw new CannotSerializeValue(Carbon::class);
         }
 

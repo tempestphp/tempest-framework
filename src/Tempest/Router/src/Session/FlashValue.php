@@ -8,6 +8,5 @@ final readonly class FlashValue
 {
     public function __construct(
         public mixed $value,
-    ) {
-    }
+    ) {}
 }

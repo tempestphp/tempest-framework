@@ -41,8 +41,7 @@ final readonly class TempestViewCompiler
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,
         private Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function compile(string|View $view): string
     {
@@ -130,7 +129,7 @@ final readonly class TempestViewCompiler
         // Find head nodes, these are parsed separately so that we skip HTML's head-parsing rules
         $headNodes = [];
 
-        $headTemplate = $template->match('/<head>((.|\n)*?)<\/head>/')[1] ?? null;
+        $headTemplate = $template->match('/<head>((.|\n)*?)<\/head>/');
 
         if ($headTemplate) {
             $headNodes = HTMLDocument::createFromString(

@@ -23,8 +23,7 @@ final class Psr18Driver implements ClientInterface, HttpClientDriver
         private UriFactoryInterface $uriFactory,
         private RequestFactoryInterface $requestFactory,
         private StreamFactoryInterface $streamFactory,
-    ) {
-    }
+    ) {}
 
     public function send(Request $request): Response
     {

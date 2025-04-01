@@ -4,51 +4,63 @@ declare(strict_types=1);
 
 namespace Tempest {
     use Closure;
+    use ReflectionException;
+    use RuntimeException;
+    use Stringable;
+    use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
+    use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
+    use Tempest\Container\Exceptions\CircularDependencyException;
     use Tempest\Core\Composer;
     use Tempest\Core\DeferredTasks;
     use Tempest\Core\Kernel;
+    use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
+    use Tempest\Support\Regex\InvalidPatternException;
 
-    use function Tempest\Support\path;
-    use function Tempest\Support\str;
+    use function Tempest\Support\Namespace\to_psr4_namespace;
+    use function Tempest\Support\Path\to_absolute_path;
 
     /**
-     * Creates a path scoped within the root of the project
+     * Creates an absolute path scoped to the root of the project.
      */
-    function root_path(string ...$parts): string
+    function root_path(Stringable|string ...$parts): string
     {
-        return path(realpath(get(Kernel::class)->root), ...$parts)->toString();
+        return to_absolute_path(get(Kernel::class)->root, ...$parts);
     }
 
     /**
-     * Creates an absolute path scoped within the framework's internal storage directory.
+     * Creates an absolute path scoped to the main directory of the project.
      */
-    function internal_storage_path(string ...$parts): string
+    function src_path(Stringable|string ...$parts): string
     {
-        return path(get(Kernel::class)->internalStorage, ...$parts)->toString();
+        return root_path(get(Composer::class)->mainNamespace->path, ...$parts);
     }
 
     /**
-     * Creates a relative path scoped within the main directory of the project.
+     * Creates an absolute path scoped to the framework's internal storage directory.
      */
-    function src_path(string ...$parts): string
+    function internal_storage_path(Stringable|string ...$parts): string
     {
-        $composer = get(Composer::class);
-
-        return path($composer->mainNamespace->path, ...$parts)->toString();
+        return root_path(get(Kernel::class)->internalStorage, ...$parts);
     }
 
     /**
-     * Creates a namespace scoped within the main namespace of the project.
+     * Converts the given path to a registered namespace. The path is expected to be absolute, or relative to the root of the project.
+     *
+     * @throws PathCouldNotBeMappedToNamespaceException If the path cannot be mapped to registered namespace
      */
-    function src_namespace(?string $append = null): string
+    function registered_namespace(Stringable|string ...$parts): string
     {
-        $composer = get(Composer::class);
+        return to_psr4_namespace(get(Composer::class)->namespaces, root_path(...$parts), root: root_path());
+    }
 
-        return str($composer->mainNamespace->namespace)
-            ->append($append ?? '')
-            ->replace('\\\\', '\\')
-            ->trim('\\')
-            ->toString();
+    /**
+     * Converts the given path to the main namespace. The path is expected to be absolute, or relative to the root of the project.
+     *
+     * @throws PathCouldNotBeMappedToNamespaceException If the path cannot be mapped to the main namespace
+     */
+    function src_namespace(Stringable|string ...$parts): string
+    {
+        return to_psr4_namespace(get(Composer::class)->mainNamespace, root_path(...$parts), root: root_path());
     }
 
     /**

@@ -11,8 +11,7 @@ final readonly class PrimaryKeyStatement implements QueryStatement
 {
     public function __construct(
         private string $name = 'id',
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

@@ -20,8 +20,7 @@ final readonly class FileSessionManager implements SessionManager
     public function __construct(
         private Clock $clock,
         private SessionConfig $sessionConfig,
-    ) {
-    }
+    ) {}
 
     public function create(SessionId $id): Session
     {

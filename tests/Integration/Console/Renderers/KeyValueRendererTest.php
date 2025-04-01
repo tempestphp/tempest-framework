@@ -17,7 +17,10 @@ final class KeyValueRendererTest extends FrameworkIntegrationTestCase
         $renderer = new KeyValueRenderer();
         $rendered = $renderer->render('Foo', 'bar');
 
-        $this->assertSame('Foo <style="fg-gray dim">.....................................................................................................................</style> bar', $rendered);
+        $this->assertSame(
+            'Foo <style="fg-gray dim">.....................................................................................................................</style> bar',
+            $rendered,
+        );
     }
 
     public function test_render_total_width_smaller_than_text(): void

@@ -33,10 +33,10 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_grant_permission_string(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission('admin');
@@ -47,10 +47,10 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_grant_permission_backed_enum(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission(UserPermissionBackedEnum::ADMIN);
@@ -61,10 +61,10 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_grant_permission_unit_enum(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission(UserPermissionUnitEnum::ADMIN);
@@ -75,12 +75,12 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_grant_permission_model(): void
     {
-        $permission = (new Permission('admin'))->save();
+        $permission = new Permission('admin')->save();
 
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission($permission);
@@ -92,10 +92,10 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_permissions_are_not_duplicated(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save();
 
@@ -109,10 +109,10 @@ final class UserModelTest extends FrameworkIntegrationTestCase
 
     public function test_revoke_permission(): void
     {
-        $user = (new User(
+        $user = new User(
             name: 'Brent',
             email: 'brendt@stitcher.io',
-        ))
+        )
             ->setPassword('password')
             ->save()
             ->grantPermission(UserPermissionBackedEnum::ADMIN)

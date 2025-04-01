@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Books\Models;
 
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
+use Tempest\Router\Bindable;
 
-final class Author implements DatabaseModel
+final class Author implements Bindable
 {
     use IsDatabaseModel;
 
@@ -17,6 +17,5 @@ final class Author implements DatabaseModel
 
         /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Book[] */
         public array $books = [],
-    ) {
-    }
+    ) {}
 }

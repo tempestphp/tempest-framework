@@ -13,7 +13,6 @@ use Tempest\Auth\Install\User;
 use Tempest\Auth\SessionAuthenticator;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Router\Session\Managers\FileSessionManager;
@@ -72,21 +71,21 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 
         $this->assertNull($auth->currentUser());
 
-        $user = (new User('Brent', 'brendt@stitcher.io'))
+        $user = new User('Brent', 'brendt@stitcher.io')
             ->setPassword('password')
             ->save();
 
         $auth->login($user);
 
         // Current user via authenticator
-        $this->assertTrue($auth->currentUser()->getId()->equals($user->id));
+        $this->assertTrue($auth->currentUser()->id->equals($user->id));
 
         // Current user via session
         $session = $this->container->get(Session::class);
-        $this->assertTrue($auth->currentUser()->getId()->equals($session->get('tempest_session_user')));
+        $this->assertTrue($auth->currentUser()->id->equals($session->get('tempest_session_user')));
 
         // Current user via container
-        $this->assertTrue($auth->currentUser()->getId()->equals($this->container->get(User::class)->id));
+        $this->assertTrue($auth->currentUser()->id->equals($this->container->get(User::class)->id));
 
         $auth->logout();
 

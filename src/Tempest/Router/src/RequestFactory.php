@@ -12,8 +12,7 @@ final readonly class RequestFactory
 {
     public function __construct(
         private InputStream $inputStream,
-    ) {
-    }
+    ) {}
 
     public function make(): PsrRequest
     {

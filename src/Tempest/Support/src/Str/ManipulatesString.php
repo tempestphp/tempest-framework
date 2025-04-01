@@ -224,7 +224,7 @@ trait ManipulatesString
     /**
      * Replaces consecutive instances of a given character with a single character.
      */
-    public function deduplicate(Stringable|string|ArrayAccess|array $characters = ' '): static
+    public function deduplicate(Stringable|string|iterable $characters = ' '): static
     {
         return $this->createOrModify(deduplicate($this->value, $characters));
     }
@@ -280,7 +280,7 @@ trait ManipulatesString
     /**
      * Replaces the first occurrence of `$search` with `$replace`.
      */
-    public function replaceFirst(Stringable|string $search, Stringable|string $replace): static
+    public function replaceFirst(array|Stringable|string $search, Stringable|string $replace): static
     {
         return $this->createOrModify(replace_first($this->value, $search, $replace));
     }
@@ -288,7 +288,7 @@ trait ManipulatesString
     /**
      * Replaces the last occurrence of `$search` with `$replace`.
      */
-    public function replaceLast(Stringable|string $search, Stringable|string $replace): static
+    public function replaceLast(array|Stringable|string $search, Stringable|string $replace): static
     {
         return $this->createOrModify(replace_last($this->value, $search, $replace));
     }
@@ -296,7 +296,7 @@ trait ManipulatesString
     /**
      * Replaces `$search` with `$replace` if `$search` is at the end of the instance.
      */
-    public function replaceEnd(Stringable|string $search, Stringable|string $replace): static
+    public function replaceEnd(array|Stringable|string $search, Stringable|string $replace): static
     {
         return $this->createOrModify(replace_end($this->value, $search, $replace));
     }
@@ -304,7 +304,7 @@ trait ManipulatesString
     /**
      * Replaces `$search` with `$replace` if `$search` is at the start of the instance.
      */
-    public function replaceStart(Stringable|string $search, Stringable|string $replace): static
+    public function replaceStart(array|Stringable|string $search, Stringable|string $replace): static
     {
         return $this->createOrModify(replace_start($this->value, $search, $replace));
     }
@@ -312,7 +312,7 @@ trait ManipulatesString
     /**
      * Strips the specified `$prefix` from the start of the string.
      */
-    public function stripStart(Stringable|string $prefix): static
+    public function stripStart(array|Stringable|string $prefix): static
     {
         return $this->createOrModify(strip_start($this->value, $prefix));
     }
@@ -320,7 +320,7 @@ trait ManipulatesString
     /**
      * Strips the specified `$suffix` from the end of the string.
      */
-    public function stripEnd(Stringable|string $suffix): static
+    public function stripEnd(array|Stringable|string $suffix): static
     {
         return $this->createOrModify(strip_end($this->value, $suffix));
     }
@@ -577,20 +577,27 @@ trait ManipulatesString
      *
      * ### Example
      * ```php
-     * str('10-abc')->match('/(?<id>\d+-)/'); // ['id' => '10']
+     * str('10-abc')->match('/(?<id>\d+-)/', match: 'id'); // 10
      * ```
+     *
+     * @param non-empty-string $pattern The regular expression to match on
+     * @param string|int $match The group number or name to retrieve
+     * @param mixed $default The default value to return if no match is found
+     * @param 0|256|512|768 $flags
      */
-    public function match(string $regex): array
+    public function match(string $pattern, array|Stringable|int|string $match = 1, mixed $default = null, int $flags = 0, int $offset = 0): null|int|string|array
     {
-        return Regex\get_first_match($this->value, $regex);
+        return Regex\get_match($this->value, $pattern, $match, $default, $flags, $offset);
     }
 
     /**
      * Gets all portions of the instance that match the given regular expression.
+     *
+     * @param non-empty-string $pattern The regular expression to match on
      */
-    public function matchAll(string $regex, int $flags = 0, int $offset = 0): array
+    public function matchAll(Stringable|string $pattern, array|Stringable|int|string $matches = 0, int $offset = 0): ImmutableArray
     {
-        return Regex\get_all_matches($this->value, $regex, $flags, $offset);
+        return new ImmutableArray(Regex\get_all_matches($this->value, $pattern, $matches, $offset));
     }
 
     /**
@@ -615,9 +622,9 @@ trait ManipulatesString
      * str('Lorem ipsum')->contains('something else'); // false
      * ```
      */
-    public function contains(string|Stringable $needle): bool
+    public function contains(Stringable|string|array $needle): bool
     {
-        return contains($this->value, (string) $needle);
+        return contains($this->value, $needle);
     }
 
     /**

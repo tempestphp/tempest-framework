@@ -5,26 +5,50 @@ declare(strict_types=1);
 namespace Tempest\Support\Regex {
     use Closure;
     use RuntimeException;
+    use Stringable;
+    use Tempest\Support\Arr\ImmutableArray;
 
+    use function Tempest\Support\arr;
+    use function Tempest\Support\Arr\filter;
+    use function Tempest\Support\Arr\first;
+    use function Tempest\Support\Arr\get_by_key;
+    use function Tempest\Support\Arr\wrap;
     use function Tempest\Support\Str\starts_with;
+    use function Tempest\Support\Str\strip_end;
     use function Tempest\Support\Str\strip_start;
 
     /**
-     * Returns all portions of the `$subject` that match the given `$pattern`.
+     * Returns portions of the `$subject` that match the given `$pattern`. If `$global` is set to `true`, returns all matches. Otherwise, only returns the first one.
      *
      * @param non-empty-string $pattern The pattern to match against.
+     * @param 0|2|256|512|768 $flags
+     * @mago-expect best-practices/no-unused-parameter
      */
-    function get_all_matches(string $subject, string $pattern, int $flags = 0, int $offset = 0): array
+    function get_matches(Stringable|string $subject, Stringable|string $pattern, bool $global = false, int $flags = 0, int $offset = 0): array
     {
-        return call_preg('preg_match_all', static function () use ($subject, $pattern, $flags, $offset): array {
+        if (str_ends_with($pattern, 'g')) {
+            $global = true;
+            $pattern = strip_end($pattern, 'g');
+        }
+
+        return call_preg($global ? 'preg_match_all' : 'preg_match', static function () use ($subject, $pattern, $global, $flags, $offset): array {
             $matches = [];
-            $result = preg_match_all(
-                $pattern,
-                $subject,
-                $matches,
-                $flags,
-                $offset,
-            );
+            $result = match ($global) {
+                true => preg_match_all(
+                    (string) $pattern,
+                    (string) $subject,
+                    $matches,
+                    $flags,
+                    $offset,
+                ),
+                false => preg_match(
+                    (string) $pattern,
+                    (string) $subject,
+                    $matches,
+                    $flags,
+                    $offset,
+                ),
+            };
 
             if ($result === false || $result === 0) {
                 return [];
@@ -35,29 +59,47 @@ namespace Tempest\Support\Regex {
     }
 
     /**
-     * Returns the first match of `$pattern` in `$subject`.
+     * Returns the specified matches of `$pattern` in `$subject`.
+     *
+     * @param non-empty-string $pattern The pattern to match against.
+     */
+    function get_all_matches(
+        Stringable|string $subject,
+        Stringable|string $pattern,
+        Stringable|string|int|array $matches = 0,
+        int $offset = 0,
+    ): array {
+        $result = get_matches($subject, $pattern, true, PREG_SET_ORDER, $offset);
+
+        return arr($result)
+            ->map(fn (array $result) => filter($result, fn ($_, string|int $key) => in_array($key, wrap($matches), strict: false))) // @mago-expect strictness/require-strict-behavior
+            ->toArray();
+    }
+
+    /**
+     * Returns the specified match of `$pattern` in `$subject`. If no match is specified, returns the first group.
      *
      * @param non-empty-string $pattern The pattern to match against.
      * @param 0|256|512|768 $flags
      */
-    function get_first_match(string $subject, string $pattern, int $flags = 0, int $offset = 0): array
-    {
-        return call_preg('preg_match', static function () use ($subject, $pattern, $flags, $offset): array {
-            $matches = [];
-            $result = preg_match(
-                $pattern,
-                $subject,
-                $matches,
-                $flags,
-                $offset,
-            );
+    function get_match(
+        Stringable|string $subject,
+        Stringable|string $pattern,
+        array|Stringable|int|string $match = 1,
+        mixed $default = null,
+        int $flags = 0,
+        int $offset = 0,
+    ): null|int|string|array {
+        $result = get_matches($subject, $pattern, false, $flags, $offset);
 
-            if ($result === false) {
-                return [];
-            }
+        if (is_array($match)) {
+            return arr($result)
+                ->filter(fn ($_, string|int $key) => in_array($key, $match, strict: false)) // @mago-expect strictness/require-strict-behavior
+                ->mapWithKeys(fn (array $matches, string|int $key) => yield $key => first($matches))
+                ->toArray();
+        }
 
-            return $matches;
-        });
+        return get_by_key($result, $match, $default);
     }
 
     /**

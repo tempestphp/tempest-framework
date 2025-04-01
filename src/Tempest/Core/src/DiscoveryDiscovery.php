@@ -15,8 +15,7 @@ final class DiscoveryDiscovery implements Discovery
 
     public function __construct(
         private readonly Kernel $kernel,
-    ) {
-    }
+    ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {

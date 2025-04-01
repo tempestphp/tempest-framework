@@ -11,8 +11,7 @@ final readonly class RawStatement implements QueryStatement
 {
     public function __construct(
         private string $statement,
-    ) {
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {

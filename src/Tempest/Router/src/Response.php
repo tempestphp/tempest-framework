@@ -41,4 +41,8 @@ interface Response
     public function addCookie(Cookie $cookie): self;
 
     public function removeCookie(string $key): self;
+
+    public function setStatus(Status $status): self;
+
+    public function setBody(View|string|array|Generator|null $body): self;
 }

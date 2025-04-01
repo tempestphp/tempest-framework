@@ -14,8 +14,7 @@ final readonly class Interval
         public int $hours = 0,
         public int $minutes = 0,
         public int $seconds = 0,
-    ) {
-    }
+    ) {}
 
     public function inSeconds(): int
     {

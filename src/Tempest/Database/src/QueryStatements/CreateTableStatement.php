@@ -6,7 +6,8 @@ namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
 use Symfony\Component\VarDumper\Cloner\Data;
-use Tempest\Database\Builder\TableName;
+use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
 use Tempest\Support\Str\ImmutableString;
@@ -21,13 +22,12 @@ final class CreateTableStatement implements QueryStatement
         private readonly string $tableName,
         private array $statements = [],
         private array $indexStatements = [],
-    ) {
-    }
+    ) {}
 
-    /** @param class-string<\Tempest\Database\DatabaseModel> $modelClass */
+    /** @param class-string $modelClass */
     public static function forModel(string $modelClass): self
     {
-        return new self($modelClass::table()->tableName);
+        return new self(new ModelDefinition($modelClass)->getTableDefinition()->name);
     }
 
     public function primary(string $name = 'id'): self
@@ -267,7 +267,7 @@ final class CreateTableStatement implements QueryStatement
     {
         $createTable = sprintf(
             'CREATE TABLE %s (%s);',
-            new TableName($this->tableName),
+            new TableDefinition($this->tableName),
             arr($this->statements)
                 // Remove BelongsTo for sqlLite as it does not support those queries
                 ->filter(fn (QueryStatement $queryStatement) => ! ($dialect === DatabaseDialect::SQLITE && $queryStatement instanceof BelongsToStatement))

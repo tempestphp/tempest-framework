@@ -26,8 +26,7 @@ final class ProgressBarComponent implements InteractiveConsoleComponent, HasStat
         private readonly Closure $handler,
         /** @var null|Closure(int $step, int $count): string $format */
         private readonly ?Closure $format = null,
-    ) {
-    }
+    ) {}
 
     public StaticConsoleComponent $staticComponent {
         get => new StaticProgressBarComponent(

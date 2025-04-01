@@ -18,8 +18,7 @@ final readonly class Debug
     private function __construct(
         private ?LogConfig $logConfig = null,
         private ?EventBus $eventBus = null,
-    ) {
-    }
+    ) {}
 
     public static function resolve(): self
     {

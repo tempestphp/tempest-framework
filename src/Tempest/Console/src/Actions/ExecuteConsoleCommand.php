@@ -14,6 +14,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Throwable;
 
+use function Tempest\Support\Arr\wrap;
+
 final readonly class ExecuteConsoleCommand
 {
     public function __construct(
@@ -21,8 +23,7 @@ final readonly class ExecuteConsoleCommand
         private ConsoleConfig $consoleConfig,
         private ConsoleArgumentBag $argumentBag,
         private ResolveConsoleCommand $resolveConsoleCommand,
-    ) {
-    }
+    ) {}
 
     public function __invoke(string|array $command, string|array $arguments = []): ExitCode|int
     {
@@ -38,6 +39,16 @@ final readonly class ExecuteConsoleCommand
             argumentBag: $this->argumentBag,
             consoleCommand: $consoleCommand,
         ));
+    }
+
+    public function withoutArgumentBag(): self
+    {
+        $bag = new ConsoleArgumentBag([
+            $this->argumentBag->getBinaryPath(),
+            $this->argumentBag->getCommandName(),
+        ]);
+
+        return new self($this->container, $this->consoleConfig, $bag, $this->resolveConsoleCommand);
     }
 
     private function getCallable(array $commandMiddleware): ConsoleMiddlewareCallable
@@ -78,9 +89,10 @@ final readonly class ExecuteConsoleCommand
     }
 
     /** @return array{string,array} */
-    private function resolveCommandAndArguments(string|array $command, array $arguments = []): array
+    private function resolveCommandAndArguments(string|array $command, string|array $arguments = []): array
     {
         $commandName = $command;
+        $arguments = wrap($arguments);
 
         if (is_array($command)) {
             $commandName = $command[0] ?? '';

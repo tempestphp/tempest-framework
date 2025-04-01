@@ -30,8 +30,7 @@ final class Vite
         private readonly ViteConfig $viteConfig,
         private readonly Container $container,
         private readonly TagCompiler $tagCompiler,
-    ) {
-    }
+    ) {}
 
     /**
      * Sets the Content Security Policy nonce to be used by Vite.

@@ -13,8 +13,7 @@ final readonly class ScheduledCommand
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[ConsoleCommand('scheduled')]
     #[Schedule(Every::MINUTE)]

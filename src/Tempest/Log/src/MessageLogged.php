@@ -12,6 +12,5 @@ final class MessageLogged
         public LogLevel $level,
         public Stringable|string $message,
         public array $context = [],
-    ) {
-    }
+    ) {}
 }

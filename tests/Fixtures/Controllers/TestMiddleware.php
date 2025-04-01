@@ -13,8 +13,7 @@ final readonly class TestMiddleware implements HttpMiddleware
 {
     public function __construct(
         private MiddlewareDependency $middlewareDependency,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request, HttpMiddlewareCallable $next): Response
     {

@@ -3,10 +3,9 @@
 namespace Tests\Tempest\Integration\ORM\Models;
 
 use DateTimeImmutable;
-use Tempest\Database\DatabaseModel;
 use Tempest\Database\IsDatabaseModel;
 
-final class CasterModel implements DatabaseModel
+final class CasterModel
 {
     use IsDatabaseModel;
 

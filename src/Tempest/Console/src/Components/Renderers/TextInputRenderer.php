@@ -8,6 +8,7 @@ use Tempest\Console\Components\ComponentState;
 use Tempest\Console\Components\TextBuffer;
 use Tempest\Console\Point;
 use Tempest\Console\Terminal\Terminal;
+use Tempest\Support\Str\ImmutableString;
 
 use function Tempest\Support\str;
 
@@ -20,8 +21,7 @@ final class TextInputRenderer
     public function __construct(
         private ?bool $multiline = false,
         private int $maximumLines = 4,
-    ) {
-    }
+    ) {}
 
     public function render(
         Terminal $terminal,
@@ -43,7 +43,8 @@ final class TextInputRenderer
         $lines = str($buffer->text ?: ($placeholder ?: ''))
             ->explode("\n")
             ->flatMap(fn (string $line) => str($line)->chunk($this->maxLineCharacters)->toArray())
-            ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '));
+            ->map(static fn (string $line) => str($line)->replaceEnd("\n", ' '))
+            ->filter(fn (ImmutableString $line) => $line->isNotEmpty());
 
         // calculates scroll offset based on cursor position
         $this->scrollOffset = $this->calculateScrollOffset($lines, $this->maximumLines, $buffer->getRelativeCursorPosition($this->maxLineCharacters)->y);
@@ -52,7 +53,7 @@ final class TextInputRenderer
         $displayLines = $lines->slice($this->scrollOffset, $this->state->isFinished() ? 1 : $this->maximumLines);
 
         // if there is nothing to display after the component is done, show "no input"
-        if ($this->state->isFinished() && $lines->count() === 0) {
+        if ($this->state->isFinished() && $lines->isEmpty()) {
             $this->line($this->style('italic dim', 'No input.'))->newLine();
         }
 

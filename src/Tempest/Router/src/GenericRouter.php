@@ -25,6 +25,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\View\View;
 
 use function Tempest\map;
+use function Tempest\Support\Regex\replace;
 use function Tempest\Support\str;
 
 /**
@@ -41,8 +42,8 @@ final class GenericRouter implements Router
         private readonly Container $container,
         private readonly RouteMatcher $routeMatcher,
         private readonly AppConfig $appConfig,
-    ) {
-    }
+        private readonly RouteConfig $routeConfig,
+    ) {}
 
     public function throwExceptions(): self
     {
@@ -52,6 +53,13 @@ final class GenericRouter implements Router
     }
 
     public function dispatch(Request|PsrRequest $request): Response
+    {
+        return $this->processResponse(
+            $this->processRequest($request),
+        );
+    }
+
+    private function processRequest(Request|PsrRequest $request): Response
     {
         if (! ($request instanceof PsrRequest)) {
             $request = map($request)->with(RequestToPsrRequestMapper::class)->do();
@@ -174,13 +182,38 @@ final class GenericRouter implements Router
         return $uri->toString();
     }
 
-    private function createResponse(Response|View $input): Response
+    public function isCurrentUri(array|string $action, ...$params): bool
     {
-        if ($input instanceof View) {
+        $matchedRoute = $this->container->get(MatchedRoute::class);
+        $candidateUri = $this->toUri($action, ...[...$matchedRoute->params, ...$params]);
+        $currentUri = $this->toUri([$matchedRoute->route->handler->getDeclaringClass(), $matchedRoute->route->handler->getName()]);
+
+        foreach ($matchedRoute->params as $key => $value) {
+            $currentUri = replace($currentUri, '/({' . preg_quote($key, '/') . '(?::.*?)?})/', $value);
+        }
+
+        return $currentUri === $candidateUri;
+    }
+
+    private function createResponse(string|array|Response|View $input): Response
+    {
+        if ($input instanceof View || is_array($input) || is_string($input)) {
             return new Ok($input);
         }
 
         return $input;
+    }
+
+    private function processResponse(Response $response): Response
+    {
+        foreach ($this->routeConfig->responseProcessors as $responseProcessorClass) {
+            /** @var \Tempest\Router\ResponseProcessor $responseProcessor */
+            $responseProcessor = $this->container->get($responseProcessorClass);
+
+            $response = $responseProcessor->process($response);
+        }
+
+        return $response;
     }
 
     // TODO: could in theory be moved to a dynamic initializer

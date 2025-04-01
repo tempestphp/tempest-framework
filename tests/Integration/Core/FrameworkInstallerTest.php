@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
-use Tempest\Core\ComposerNamespace;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,7 +19,7 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
         $this->installer
             ->configure(
                 __DIR__ . '/install',
-                new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+                new Psr4Namespace('App\\', __DIR__ . '/install/App'),
             )
             ->setRoot(__DIR__ . '/install');
     }
@@ -61,8 +61,7 @@ final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
                 path: '.env',
                 content: file_get_contents(__DIR__ . '/../../../.env.example'),
             )
-            ->assertCommandExecuted('composer up')
-        ;
+            ->assertCommandExecuted('composer up');
 
         if (PHP_OS_FAMILY !== 'Windows') {
             $this->assertTrue(is_executable($this->installer->path('tempest')));

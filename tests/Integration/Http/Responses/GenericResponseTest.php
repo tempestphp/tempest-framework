@@ -18,7 +18,7 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
 {
     public function test_sessions(): void
     {
-        $response = (new Ok())
+        $response = new Ok()
             ->addSession('test', 'test')
             ->addSession('original', 'original');
 
@@ -37,7 +37,7 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
 
     public function test_cookies(): void
     {
-        $response = (new Ok())->addCookie(new Cookie('test'));
+        $response = new Ok()->addCookie(new Cookie('test'));
 
         $cookieManager = $this->container->get(CookieManager::class);
 
@@ -50,7 +50,7 @@ final class GenericResponseTest extends FrameworkIntegrationTestCase
 
     public function test_set_status(): void
     {
-        $response = (new Ok())->setStatus(Status::ACCEPTED);
+        $response = new Ok()->setStatus(Status::ACCEPTED);
 
         $this->assertSame(Status::ACCEPTED, $response->status);
     }

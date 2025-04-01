@@ -12,8 +12,7 @@ final readonly class MigrationEventHandlers
 {
     public function __construct(
         private Console $console,
-    ) {
-    }
+    ) {}
 
     #[EventHandler]
     public function onMigrationFailed(MigrationFailed $event): void
