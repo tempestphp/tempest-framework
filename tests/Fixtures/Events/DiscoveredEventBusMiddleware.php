@@ -1,19 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tempest\EventBus\Tests\Fixtures;
+namespace Tests\Tempest\Fixtures\Events;
 
 use Tempest\EventBus\EventBusMiddleware;
 use Tempest\EventBus\EventBusMiddlewareCallable;
 
-final class MyEventBusMiddleware implements EventBusMiddleware
+final class DiscoveredEventBusMiddleware implements EventBusMiddleware
 {
-    public static int $hits = 0;
+    public static bool $hit = false;
 
     public function __invoke(string|object $event, EventBusMiddlewareCallable $next): void
     {
-        self::$hits += 1;
+        self::$hit = true;
 
         $next($event);
     }

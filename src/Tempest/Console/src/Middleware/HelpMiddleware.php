@@ -11,7 +11,9 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\Priority;
 
+#[Priority(Priority::FRAMEWORK)]
 final readonly class HelpMiddleware implements ConsoleMiddleware
 {
     public function __construct(
