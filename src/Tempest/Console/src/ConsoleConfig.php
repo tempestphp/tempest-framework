@@ -22,13 +22,7 @@ final class ConsoleConfig
         public ?string $logPath = null,
 
         /** @var Middleware<\Tempest\Console\ConsoleMiddleware> */
-        public Middleware $middleware = new Middleware(
-            OverviewMiddleware::class,
-            ConsoleExceptionMiddleware::class,
-            ResolveOrRescueMiddleware::class,
-            InvalidCommandMiddleware::class,
-            HelpMiddleware::class,
-        ),
+        public Middleware $middleware = new Middleware(),
     ) {}
 
     public function addCommand(MethodReflector $handler, ConsoleCommand $consoleCommand): self

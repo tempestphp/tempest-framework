@@ -13,6 +13,7 @@ use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleInputArgument;
+use Tempest\Core\Priority;
 use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\NotEmpty;
@@ -20,6 +21,7 @@ use Tempest\Validation\Rules\Numeric;
 
 use function Tempest\Support\str;
 
+#[Priority(Priority::FRAMEWORK - 7)]
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 {
     public function __construct(
