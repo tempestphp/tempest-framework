@@ -9,9 +9,11 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasConsole;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\Priority;
 use Tempest\Discovery\DoNotDiscover;
 
 #[DoNotDiscover]
+#[Priority(Priority::NORMAL)]
 final class ConsoleMiddlewareStub implements ConsoleMiddleware
 {
     use HasConsole;
