@@ -49,6 +49,20 @@ final class PhpDataElement implements Element, WrapsElement
             $name,
         );
 
+        // Support for falsy-attribute values. When an expression attribute has a falsy value, it won't be rendered at all
+        if ($isExpression && $this->wrappingElement instanceof GenericElement) {
+            $this->wrappingElement
+                ->addRawAttribute(
+                    sprintf(
+                        '<?php if($%s) { ?>%s="%s"<?php } ?>',
+                        $name,
+                        str($name)->kebab(),
+                        $this->wrappingElement->getAttribute($name),
+                    ),
+                )
+                ->unsetAttribute($name);
+        }
+
         return sprintf(
             '<?php %s ?>
 %s
