@@ -353,7 +353,13 @@ final class GenericContainer implements Container
 
         foreach ($classReflector->getProperties() as $property) {
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
-                $property->set($instance, $this->get($property->getType()->getName()));
+                if ($property->hasAttribute(Lazy::class)) {
+                    $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
+                        fn () => $this->get($property->getType()->getName()),
+                    ));
+                } else {
+                    $property->set($instance, $this->get($property->getType()->getName()));
+                }
             }
         }
 
@@ -392,6 +398,8 @@ final class GenericContainer implements Container
             return $this->autowireBuiltinDependency($parameter, $providedValue);
         }
 
+        // Support lazy initialization
+        $lazy = $parameter->hasAttribute(Lazy::class);
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
             try {
@@ -399,6 +407,7 @@ final class GenericContainer implements Container
                     type: $type,
                     tag: $tag,
                     providedValue: $providedValue,
+                    lazy: $lazy,
                 );
             } catch (Throwable $throwable) {
                 // We were unable to resolve the dependency for the last union
@@ -419,12 +428,21 @@ final class GenericContainer implements Container
         throw $lastThrowable ?? new CannotAutowireException($this->chain, new Dependency($parameter));
     }
 
-    private function autowireObjectDependency(TypeReflector $type, ?string $tag, mixed $providedValue): mixed
+    private function autowireObjectDependency(TypeReflector $type, ?string $tag, mixed $providedValue, bool $lazy): mixed
     {
         // If the provided value is of the right type,
         // don't waste time autowiring, return it!
         if ($type->accepts($providedValue)) {
             return $providedValue;
+        }
+
+        if ($lazy) {
+            return $type
+                ->asClass()
+                ->getReflection()
+                ->newLazyProxy(function () use ($type, $tag) {
+                    return $this->resolve(className: $type->getName(), tag: $tag);
+                });
         }
 
         // If we can successfully retrieve an instance

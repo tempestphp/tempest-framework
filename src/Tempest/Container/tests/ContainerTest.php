@@ -20,7 +20,10 @@ use Tempest\Container\Tests\Fixtures\BuiltinTypesWithDefaultsClass;
 use Tempest\Container\Tests\Fixtures\CallContainerObjectE;
 use Tempest\Container\Tests\Fixtures\CircularWithInitializerA;
 use Tempest\Container\Tests\Fixtures\CircularWithInitializerBInitializer;
+use Tempest\Container\Tests\Fixtures\ClassWithLazySlowDependency;
+use Tempest\Container\Tests\Fixtures\ClassWithLazySlowPropertyDependency;
 use Tempest\Container\Tests\Fixtures\ClassWithSingletonAttribute;
+use Tempest\Container\Tests\Fixtures\ClassWithSlowDependency;
 use Tempest\Container\Tests\Fixtures\ContainerObjectA;
 use Tempest\Container\Tests\Fixtures\ContainerObjectB;
 use Tempest\Container\Tests\Fixtures\ContainerObjectC;
@@ -41,6 +44,7 @@ use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
 use Tempest\Container\Tests\Fixtures\SingletonInitializer;
+use Tempest\Container\Tests\Fixtures\SlowDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyCliInitializer;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyWebInitializer;
@@ -473,5 +477,84 @@ final class ContainerTest extends TestCase
         );
 
         $this->assertTrue($container->has(TaggedDependency::class, 'web'));
+    }
+
+    /**
+     * @template T
+     * @param (callable(): T) $callable
+     * @return T
+     */
+    private function assertFasterThan(callable $callable, float $seconds): mixed
+    {
+        $start = microtime(true);
+        $result = $callable();
+        $end = microtime(true);
+        $this->assertLessThan($seconds, $end - $start);
+        return $result;
+    }
+
+    /**
+     * @template T
+     * @param (callable(): T) $callable
+     * @return T
+     */
+    private function assertSlowerThan(callable $callable, float $seconds): mixed
+    {
+        $start = microtime(true);
+        $result = $callable();
+        $end = microtime(true);
+        $this->assertGreaterThan($seconds, $end - $start);
+        return $result;
+    }
+
+    public function test_lazy_dependency(): void
+    {
+        $container = new GenericContainer();
+
+        /**
+         * Set the load time of the dependency, increasing this increases test time but makes the test more robust
+         * At extremely low values other operations might have a bigger effect than the usleep inside the slow dependency
+         */
+        $delay = 0.01;
+        $counter = 1;
+
+        $container->register(SlowDependency::class, function () use ($delay, &$counter) {
+            return new SlowDependency($delay, $counter++);
+        });
+
+        // Normal example, this is slow during initialization, fast during use
+        $instance1 = $this->assertSlowerThan(fn () => $container->get(ClassWithSlowDependency::class), $delay);
+        $this->assertInstanceOf(ClassWithSlowDependency::class, $instance1);
+        $this->assertInstanceOf(SlowDependency::class, $instance1->dependency);
+
+        $this->assertSame('value1', $this->assertFasterThan(fn () => $instance1->dependency->value, $delay));
+
+        // Lazy example, this is fast during initialization, slow during (first) use
+        $instance2 = $this->assertFasterThan(fn () => $container->get(ClassWithLazySlowDependency::class), $delay);
+        $this->assertInstanceOf(ClassWithLazySlowDependency::class, $instance2);
+        $this->assertInstanceOf(SlowDependency::class, $instance2->dependency);
+
+        $this->assertSame('value2', $this->assertSlowerThan(fn () => $instance2->dependency->value, $delay));
+    }
+
+    public function test_lazy_property_dependency(): void
+    {
+        $container = new GenericContainer();
+
+        /**
+         * Set the load time of the dependency, increasing this increases test time but makes the test more robust
+         * At extremely low values other operations might have a bigger effect than the usleep inside the slow dependency
+         */
+        $delay = 0.01;
+        $counter = 1;
+
+        $container->register(SlowDependency::class, function () use ($delay, &$counter) {
+            return new SlowDependency($delay, $counter++);
+        });
+
+        $instance = $this->assertFasterThan(fn () => $container->get(ClassWithLazySlowPropertyDependency::class), $delay);
+        $this->assertInstanceOf(SlowDependency::class, $instance->dependency);
+
+        $this->assertSame('value1', $this->assertSlowerThan(fn () => $instance->dependency->value, $delay));
     }
 }
