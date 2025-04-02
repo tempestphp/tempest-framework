@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Fixtures\Controllers;
+namespace Tests\Tempest\Integration\Http\Static\Fixtures;
 
 use Generator;
 use Tempest\Router\DataProvider;

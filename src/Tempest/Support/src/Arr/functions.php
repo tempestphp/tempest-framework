@@ -492,19 +492,19 @@ namespace Tempest\Support\Arr {
      *
      * @return TValue
      */
-    function first(iterable $array, ?Closure $filter = null): mixed
+    function first(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
     {
         $array = to_array($array);
 
         if ($array === []) {
-            return null;
+            return $default;
         }
 
         if ($filter === null) {
-            return $array[array_key_first($array)];
+            return $array[array_key_first($array)] ?? $default;
         }
 
-        return array_find($array, static fn ($value, $key) => $filter($value, $key));
+        return array_find($array, static fn ($value, $key) => $filter($value, $key)) ?? $default;
     }
 
     /**
@@ -541,19 +541,19 @@ namespace Tempest\Support\Arr {
      *
      * @return TValue
      */
-    function last(iterable $array, ?Closure $filter = null): mixed
+    function last(iterable $array, ?Closure $filter = null, mixed $default = null): mixed
     {
         $array = to_array($array);
 
         if ($array === []) {
-            return null;
+            return $default;
         }
 
         if ($filter === null) {
-            return $array[array_key_last($array)];
+            return $array[array_key_last($array)] ?? $default;
         }
 
-        return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key));
+        return array_find(namespace\reverse($array), static fn ($value, $key) => $filter($value, $key)) ?? $default;
     }
 
     /**

@@ -13,6 +13,7 @@ use Tempest\Console\Exceptions\InvalidCommandException;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleInputArgument;
+use Tempest\Core\Priority;
 use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\NotEmpty;
@@ -20,6 +21,7 @@ use Tempest\Validation\Rules\Numeric;
 
 use function Tempest\Support\str;
 
+#[Priority(Priority::FRAMEWORK - 7)]
 final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
 {
     public function __construct(
@@ -43,25 +45,40 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
             subheader: $invocation->consoleCommand->description,
         );
 
+        if (! $this->console->supportsPrompting()) {
+            throw $exception;
+        }
+
         foreach ($exception->invalidArguments as $argument) {
             $isEnum = is_a($argument->type, BackedEnum::class, allow_string: true);
+            $name = str($argument->name)->snake(' ')->upperFirst()->toString();
 
-            $value = $this->console->ask(
-                question: str($argument->name)->snake(' ')->upperFirst()->toString(),
-                options: $isEnum ? $argument->type::cases() : null,
-                default: $argument->default,
-                hint: $argument->help ?? $argument->description,
-                validation: array_filter([
-                    $isEnum
-                        ? new Enum($argument->type)
-                        : new NotEmpty(),
-                    match ($argument->type) {
-                        'bool' => new IsBoolean(),
-                        'int' => new Numeric(),
+            if ($argument->type === 'bool') {
+                $value = $this->console->confirm(
+                    question: $name,
+                    default: $argument->default ?? false,
+                );
+            } else {
+                $value = $this->console->ask(
+                    question: $name,
+                    default: $argument->default,
+                    hint: $argument->help ?: $argument->description,
+                    options: match (true) {
+                        $isEnum => $argument->type::cases(),
                         default => null,
                     },
-                ]),
-            );
+                    validation: array_filter([
+                        $isEnum
+                            ? new Enum($argument->type)
+                            : new NotEmpty(),
+                        match ($argument->type) {
+                            'bool' => new IsBoolean(),
+                            'int' => new Numeric(),
+                            default => null,
+                        },
+                    ]),
+                );
+            }
 
             $invocation->argumentBag->add(new ConsoleInputArgument(
                 name: $argument->name,

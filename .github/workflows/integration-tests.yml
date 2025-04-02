@@ -106,6 +106,7 @@ jobs:
       - if: matrix.php == '8.4' && matrix.database == 'sqlite' && matrix.os == 'ubuntu-latest' && matrix.stability == 'prefer-stable'
         name: Coveralls
         uses: coverallsapp/github-action@v2
+        continue-on-error: true
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           file: build/reports/clover.xml

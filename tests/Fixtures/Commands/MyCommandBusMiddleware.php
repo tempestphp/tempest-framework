@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\CommandBus\Fixtures;
+namespace Tests\Tempest\Fixtures\Commands;
 
 use Tempest\CommandBus\CommandBusMiddleware;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;

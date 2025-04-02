@@ -7,6 +7,7 @@ namespace Tempest\EventBus\Tests;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Middleware;
 use Tempest\EventBus\CallableEventHandler;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\EventBusConfig;
@@ -42,9 +43,9 @@ final class EventBusTest extends TestCase
                     new CallableEventHandler(ItHappened::class, $handler),
                 ],
             ],
-            middleware: [
+            middleware: new Middleware(
                 MyEventBusMiddleware::class,
-            ],
+            ),
         );
 
         $eventBus = new GenericEventBus($container, $config);
@@ -72,9 +73,9 @@ final class EventBusTest extends TestCase
                     new CallableEventHandler(ItHappened::class, $handler),
                 ],
             ],
-            middleware: [
+            middleware: new Middleware(
                 MyEventBusMiddleware::class,
-            ],
+            ),
         );
 
         $eventBus = new GenericEventBus($container, $config);
@@ -102,9 +103,9 @@ final class EventBusTest extends TestCase
                     }),
                 ],
             ],
-            middleware: [
+            middleware: new Middleware(
                 MyEventBusMiddleware::class,
-            ],
+            ),
         );
 
         $eventBus = new GenericEventBus($container, $config);
