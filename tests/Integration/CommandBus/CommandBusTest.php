@@ -9,7 +9,7 @@ use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandHandlerNotFound;
 use Tests\Tempest\Fixtures\Commands\MyBrokenCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
-use Tests\Tempest\Integration\CommandBus\Fixtures\MyCommandBusMiddleware;
+use Tests\Tempest\Fixtures\Commands\MyCommandBusMiddleware;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\command;
@@ -33,10 +33,6 @@ final class CommandBusTest extends FrameworkIntegrationTestCase
     public function test_command_bus_with_middleware(): void
     {
         MyCommandBusMiddleware::$hit = false;
-
-        $config = $this->container->get(CommandBusConfig::class);
-
-        $config->middleware->add(MyCommandBusMiddleware::class);
 
         command(new MyCommand());
 
