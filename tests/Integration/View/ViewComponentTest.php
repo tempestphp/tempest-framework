@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\View;
 
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tempest\Router\Session\Session;
