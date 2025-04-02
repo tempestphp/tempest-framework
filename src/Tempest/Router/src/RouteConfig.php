@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
+use Tempest\Core\Middleware;
+
 final class RouteConfig
 {
     public function __construct(
@@ -15,6 +17,9 @@ final class RouteConfig
         public array $matchingRegexes = [],
         /** @var class-string<\Tempest\Router\ResponseProcessor>[] */
         public array $responseProcessors = [],
+
+        /** @var Middleware<\Tempest\Router\HttpMiddleware> */
+        public Middleware $middleware = new Middleware(),
     ) {}
 
     public function apply(RouteConfig $newConfig): void

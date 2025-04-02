@@ -9,6 +9,7 @@ use Tempest\Console\Middleware\HelpMiddleware;
 use Tempest\Console\Middleware\InvalidCommandMiddleware;
 use Tempest\Console\Middleware\OverviewMiddleware;
 use Tempest\Console\Middleware\ResolveOrRescueMiddleware;
+use Tempest\Core\Middleware;
 use Tempest\Reflection\MethodReflector;
 
 final class ConsoleConfig
@@ -20,14 +21,14 @@ final class ConsoleConfig
         public array $commands = [],
         public ?string $logPath = null,
 
-        /** @var array<array-key, class-string<\Tempest\Console\ConsoleMiddleware>> */
-        public array $middleware = [
+        /** @var Middleware<\Tempest\Console\ConsoleMiddleware> */
+        public Middleware $middleware = new Middleware(
             OverviewMiddleware::class,
             ConsoleExceptionMiddleware::class,
             ResolveOrRescueMiddleware::class,
             InvalidCommandMiddleware::class,
             HelpMiddleware::class,
-        ],
+        ),
     ) {}
 
     public function addCommand(MethodReflector $handler, ConsoleCommand $consoleCommand): self

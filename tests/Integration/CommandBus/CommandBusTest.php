@@ -36,7 +36,7 @@ final class CommandBusTest extends FrameworkIntegrationTestCase
 
         $config = $this->container->get(CommandBusConfig::class);
 
-        $config->addMiddleware(MyCommandBusMiddleware::class);
+        $config->middleware->add(MyCommandBusMiddleware::class);
 
         command(new MyCommand());
 

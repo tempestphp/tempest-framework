@@ -19,7 +19,7 @@ final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
     #[EventHandler(KernelEvent::BOOTED)]
     public function onBooted(): void
     {
-        $this->commandBusConfig->addMiddleware(self::class);
+        $this->commandBusConfig->middleware->add(self::class);
     }
 
     public function __invoke(object $command, CommandBusMiddlewareCallable $next): void
