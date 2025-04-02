@@ -1,29 +1,29 @@
 <?php
 
-namespace Tempest\CommandBus;
+namespace Tempest\EventBus;
 
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-final class CommandBusMiddlewareDiscovery implements Discovery
+final class EventBusMiddlewareDiscovery implements Discovery
 {
     use IsDiscovery;
 
     public function __construct(
-        private readonly CommandBusConfig $commandBusConfig,
+        private readonly EventBusConfig $eventBusConfig,
     ) {}
 
     public function discover(DiscoveryLocation $location, ClassReflector $class): void
     {
-        if ($class->implements(CommandBusMiddleware::class)) {
+        if ($class->implements(EventBusMiddleware::class)) {
             $this->discoveryItems->add($location, $class->getName());
         }
     }
 
     public function apply(): void
     {
-        $this->commandBusConfig->middleware->add(...$this->discoveryItems);
+        $this->eventBusConfig->middleware->add(...$this->discoveryItems);
     }
 }
