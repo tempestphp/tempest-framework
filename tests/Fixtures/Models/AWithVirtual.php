@@ -6,10 +6,10 @@ namespace Tests\Tempest\Fixtures\Models;
 
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 use Tempest\Database\Virtual;
 
-#[TableName('a')]
+#[Table('a')]
 final class AWithVirtual
 {
     use IsDatabaseModel;
