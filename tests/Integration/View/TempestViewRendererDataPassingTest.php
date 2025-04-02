@@ -283,6 +283,19 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML, $html);
     }
 
+    #[TestWith(['true'])]
+    #[TestWith(['$show'])]
+    public function test_truthy_bool_attribute(mixed $value): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-active="{$value}"></div>
+        HTML, show: true);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-active></div>
+        HTML, $html);
+    }
+
     public function test_expression_attribute_in_raw_element(): void
     {
         $this->registerViewComponent(
