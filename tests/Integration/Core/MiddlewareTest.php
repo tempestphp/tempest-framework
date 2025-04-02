@@ -145,4 +145,23 @@ final class MiddlewareTest extends TestCase
             MiddlewareLowest::class,
         ]), array_keys(iterator_to_array($middleware->unwrap())));
     }
+
+    public function test_serialize(): void
+    {
+        $middleware = new Middleware(
+            MiddlewareB::class,
+            MiddlewareA::class,
+            MiddlewareC::class,
+        );
+
+        $middleware = unserialize(serialize($middleware));
+
+        $middlewareAsArray = iterator_to_array($middleware);
+
+        $this->assertSame([
+            MiddlewareB::class,
+            MiddlewareA::class,
+            MiddlewareC::class,
+        ], array_keys($middlewareAsArray));
+    }
 }

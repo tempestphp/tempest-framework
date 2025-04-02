@@ -8,6 +8,8 @@ use IteratorAggregate;
 use Tempest\Reflection\ClassReflector;
 use Traversable;
 
+use function Tempest\Support\arr;
+
 /** @template MiddlewareInterface */
 final class Middleware implements IteratorAggregate
 {
@@ -70,5 +72,21 @@ final class Middleware implements IteratorAggregate
         });
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'middlewareClasses' => arr($this->middlewareClasses)
+                ->map(fn (ClassReflector $class) => $class->getName())
+                ->toArray(),
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->middlewareClasses = arr($data['middlewareClasses'])
+            ->map(fn (string $className) => new ClassReflector($className))
+            ->toArray();
     }
 }

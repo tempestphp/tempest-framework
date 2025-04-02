@@ -135,9 +135,10 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
     public function test_middleware(): void
     {
+        $this
+            ->container->get(RouteConfig::class)
+            ->middleware->add(TestGlobalMiddleware::class);
         $router = $this->container->get(GenericRouter::class);
-
-        $router->addMiddleware(TestGlobalMiddleware::class);
 
         $response = $router->dispatch($this->http->makePsrRequest('/with-middleware'));
 
