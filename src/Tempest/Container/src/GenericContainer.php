@@ -127,8 +127,12 @@ final class GenericContainer implements Container
         return $dependency;
     }
 
-    public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed
+    public function invoke(ClassReflector|MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed
     {
+        if ($method instanceof ClassReflector) {
+            $method = $method->getMethod('__invoke');
+        }
+
         if ($method instanceof MethodReflector) {
             return $this->invokeMethod($method, ...$params);
         }

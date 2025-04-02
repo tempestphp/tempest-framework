@@ -13,6 +13,7 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
+use Tempest\Core\Priority;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Throwable;
@@ -20,6 +21,7 @@ use Throwable;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+#[Priority(Priority::FRAMEWORK - 8)]
 final readonly class ResolveOrRescueMiddleware implements ConsoleMiddleware
 {
     public function __construct(

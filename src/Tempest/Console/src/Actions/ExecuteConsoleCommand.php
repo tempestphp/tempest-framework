@@ -68,11 +68,14 @@ final readonly class ExecuteConsoleCommand
             return $exitCode ?? ExitCode::SUCCESS;
         });
 
-        $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];
+        $middleware = $this->consoleConfig
+            ->middleware
+            ->clone()
+            ->add(...$commandMiddleware);
 
-        while ($middlewareClass = array_pop($middlewareStack)) {
+        foreach ($middleware->unwrap() as $middlewareClass) {
             $callable = new ConsoleMiddlewareCallable(
-                fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable),
+                fn (Invocation $invocation) => $this->container->get($middlewareClass->getName())($invocation, $callable),
             );
         }
 

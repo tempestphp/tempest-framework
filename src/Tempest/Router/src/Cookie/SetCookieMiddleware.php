@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Cookie;
 
+use Tempest\Core\Priority;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\Request;
 use Tempest\Router\Response;
 
+#[Priority(Priority::FRAMEWORK)]
 final readonly class SetCookieMiddleware implements HttpMiddleware
 {
     public function __construct(

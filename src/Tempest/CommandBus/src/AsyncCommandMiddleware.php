@@ -5,22 +5,15 @@ declare(strict_types=1);
 namespace Tempest\CommandBus;
 
 use Symfony\Component\Uid\Uuid;
-use Tempest\Core\KernelEvent;
-use Tempest\EventBus\EventHandler;
+use Tempest\Core\Priority;
 use Tempest\Reflection\ClassReflector;
 
+#[Priority(Priority::FRAMEWORK)]
 final readonly class AsyncCommandMiddleware implements CommandBusMiddleware
 {
     public function __construct(
-        private CommandBusConfig $commandBusConfig,
         private CommandRepository $repository,
     ) {}
-
-    #[EventHandler(KernelEvent::BOOTED)]
-    public function onBooted(): void
-    {
-        $this->commandBusConfig->addMiddleware(self::class);
-    }
 
     public function __invoke(object $command, CommandBusMiddlewareCallable $next): void
     {

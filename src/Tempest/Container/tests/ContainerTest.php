@@ -39,6 +39,7 @@ use Tempest\Container\Tests\Fixtures\InjectB;
 use Tempest\Container\Tests\Fixtures\InterfaceA;
 use Tempest\Container\Tests\Fixtures\IntersectionInitializer;
 use Tempest\Container\Tests\Fixtures\InvokableClass;
+use Tempest\Container\Tests\Fixtures\InvokableClassWithDependencies;
 use Tempest\Container\Tests\Fixtures\InvokableClassWithParameters;
 use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
@@ -52,6 +53,7 @@ use Tempest\Container\Tests\Fixtures\UnionInitializer;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceA;
 use Tempest\Container\Tests\Fixtures\UnionInterfaceB;
 use Tempest\Container\Tests\Fixtures\UnionTypesClass;
+use Tempest\Reflection\ClassReflector;
 
 use function Tempest\reflect;
 
@@ -322,6 +324,16 @@ final class ContainerTest extends TestCase
         $this->assertEquals('foobar', $container->invoke([new InvokableClass(), 'execute']));
         $this->assertEquals('bar', $container->invoke(InvokableClassWithParameters::class, param: 'bar'));
         $this->assertInstanceOf(ReflectionClass::class, $container->invoke(fn (SingletonClass $class) => new ReflectionClass($class)));
+    }
+
+    public function test_invoke_invokable_class(): void
+    {
+        $container = new GenericContainer();
+        $container->singleton(SingletonClass::class, fn () => new SingletonClass());
+
+        $result = $container->invoke(new ClassReflector(InvokableClassWithDependencies::class), param: 'bar');
+
+        $this->assertSame('bar', $result);
     }
 
     public function test_call_function_with_parameters(): void

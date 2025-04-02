@@ -19,10 +19,4 @@ interface Router
      * Checks if the URI to the given `$action` would match the current route.
      */
     public function isCurrentUri(array|string $action, ...$params): bool;
-
-    /**
-     * @template T of \Tempest\Router\HttpMiddleware
-     * @param class-string<T> $middlewareClass
-     */
-    public function addMiddleware(string $middlewareClass): void;
 }

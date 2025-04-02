@@ -7,7 +7,7 @@ namespace Tests\Tempest\Fixtures\Models;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
 
-#[\Tempest\Database\TableName('a')]
+#[\Tempest\Database\Table('a')]
 final class A
 {
     use IsDatabaseModel;

@@ -6,5 +6,5 @@ namespace Tempest\EventBus;
 
 interface EventBusMiddleware
 {
-    public function __invoke(object $event, EventBusMiddlewareCallable $next): void;
+    public function __invoke(string|object $event, EventBusMiddlewareCallable $next): void;
 }

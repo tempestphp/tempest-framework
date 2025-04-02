@@ -4,7 +4,7 @@ namespace Tempest\Database\Builder;
 
 use ReflectionException;
 use Tempest\Database\Config\DatabaseConfig;
-use Tempest\Database\TableName;
+use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
 
 use function Tempest\get;
@@ -39,7 +39,7 @@ final class ModelInspector
         }
 
         $specificName = $this->modelClass
-            ->getAttribute(TableName::class)
+            ->getAttribute(Table::class)
             ?->name;
 
         $conventionalName = get(DatabaseConfig::class)
