@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -265,6 +266,45 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
             '<textarea autofocus></textarea>',
             $this->render('<textarea autofocus></textarea>'),
         );
+    }
+
+    #[TestWith(['false'])]
+    #[TestWith(['null'])]
+    #[TestWith(['0'])]
+    #[TestWith(['$show'])]
+    public function test_falsy_bool_attribute(mixed $value): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-active="{$value}"></div>
+        HTML, show: false);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div ></div>
+        HTML, $html);
+    }
+
+    #[TestWith(['true'])]
+    #[TestWith(['$show'])]
+    public function test_truthy_bool_attribute(mixed $value): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-active="{$value}"></div>
+        HTML, show: true);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-active></div>
+        HTML, $html);
+    }
+
+    public function test_multiple_boolean_attribute(): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-a="false" :data-b="false" :data-c="true"></div>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-c></div>
+        HTML, $html);
     }
 
     public function test_expression_attribute_in_raw_element(): void
