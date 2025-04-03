@@ -296,6 +296,17 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML, $html);
     }
 
+    public function test_multiple_boolean_attribute(): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-a="false" :data-b="false" :data-c="true"></div>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-c></div>
+        HTML, $html);
+    }
+
     public function test_expression_attribute_in_raw_element(): void
     {
         $this->registerViewComponent(

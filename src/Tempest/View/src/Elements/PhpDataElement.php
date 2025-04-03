@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use Stringable;
 use Tempest\View\Element;
-use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\WrapsElement;
 
 use function Tempest\Support\str;
@@ -51,8 +49,10 @@ final class PhpDataElement implements Element, WrapsElement
 
         // Support for truthy and falsy-attribute values. When an expression attribute has a falsy value, it won't be rendered at all.
         // When it's "true", it will only render the attribute name and not the "true" value
-        if ($isExpression && $this->wrappingElement instanceof GenericElement) {
-            $this->wrappingElement
+        $coreElement = $this->unwrap(GenericElement::class);
+
+        if ($isExpression && $coreElement instanceof GenericElement) {
+            $coreElement
                 ->addRawAttribute(
                     sprintf(
                         '<?php if($%s === true) {?>%s<?php } elseif($%s) { ?>%s="%s"<?php } ?>',
@@ -60,7 +60,7 @@ final class PhpDataElement implements Element, WrapsElement
                         str($name)->kebab(),
                         $name,
                         str($name)->kebab(),
-                        $this->wrappingElement->getAttribute($name),
+                        $coreElement->getAttribute($name),
                     ),
                 )
                 ->unsetAttribute($name);
