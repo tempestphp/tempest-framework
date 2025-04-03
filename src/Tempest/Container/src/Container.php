@@ -28,7 +28,7 @@ interface Container
 
     public function has(string $className, null|string|UnitEnum $tag = null): bool;
 
-    public function invoke(MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
+    public function invoke(ClassReflector|MethodReflector|FunctionReflector|callable|string $method, mixed ...$params): mixed;
 
     /**
      * @template T of \Tempest\Container\Initializer

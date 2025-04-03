@@ -13,10 +13,12 @@ use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\Priority;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
+#[Priority(Priority::FRAMEWORK - 10)]
 final readonly class OverviewMiddleware implements ConsoleMiddleware
 {
     public function __construct(

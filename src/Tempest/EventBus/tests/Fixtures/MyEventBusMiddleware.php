@@ -11,7 +11,7 @@ final class MyEventBusMiddleware implements EventBusMiddleware
 {
     public static int $hits = 0;
 
-    public function __invoke(object $event, EventBusMiddlewareCallable $next): void
+    public function __invoke(string|object $event, EventBusMiddlewareCallable $next): void
     {
         self::$hits += 1;
 

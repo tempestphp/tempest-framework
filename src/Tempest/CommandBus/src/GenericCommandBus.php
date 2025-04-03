@@ -42,9 +42,9 @@ final class GenericCommandBus implements CommandBus
 
         $middlewareStack = $this->commandBusConfig->middleware;
 
-        while ($middlewareClass = array_pop($middlewareStack)) {
+        foreach ($middlewareStack->unwrap() as $middlewareClass) {
             $callable = new CommandBusMiddlewareCallable(
-                fn (object $command) => $this->container->get($middlewareClass)($command, $callable),
+                fn (object $command) => $this->container->get($middlewareClass->getName())($command, $callable),
             );
         }
 
