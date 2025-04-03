@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tempest\View\Attributes;
 
 use Tempest\View\Attribute;
-use Tempest\View\Element;
 
 final readonly class AttributeFactory
 {
-    public function make(Element $_element, string $attributeName): Attribute
+    public function make(string $attributeName): Attribute
     {
         return match (true) {
             $attributeName === ':if' => new IfAttribute(),
