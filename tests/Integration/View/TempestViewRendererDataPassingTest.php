@@ -354,4 +354,21 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertSame($expected, $actual);
     }
+
+    public function test_boolean_attributes_in_view_component(): void
+    {
+        $this->registerViewComponent('x-test', <<<HTML
+        <div>
+            <x-slot/>
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <a :href="'hi'"></a>
+        </x-test>
+        HTML);
+
+        ld($html);
+    }
 }
