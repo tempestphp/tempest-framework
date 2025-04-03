@@ -47,7 +47,7 @@ final class PhpDataElement implements Element, WrapsElement
             $name,
         );
 
-        // Support for truthy and falsy-attribute values. When an expression attribute has a falsy value, it won't be rendered at all.
+        // Support for boolean attributes. When an expression attribute has a falsy value, it won't be rendered at all.
         // When it's "true", it will only render the attribute name and not the "true" value
         $coreElement = $this->unwrap(GenericElement::class);
 
