@@ -11,12 +11,12 @@ use Tempest\Router\Exceptions\NotFoundException;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, ?string $tag = null): bool
+    public function canInitialize(ClassReflector $class): bool
     {
         return $class->getType()->matches(Bindable::class);
     }
 
-    public function initialize(ClassReflector $class, Container $container, ?string $tag = null): object
+    public function initialize(ClassReflector $class, Container $container): object
     {
         $matchedRoute = $container->get(MatchedRoute::class);
 

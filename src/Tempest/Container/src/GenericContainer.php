@@ -266,7 +266,7 @@ final class GenericContainer implements Container
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone(), $this->resolveTag($tag)),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
             };
 
             $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
@@ -322,7 +322,7 @@ final class GenericContainer implements Container
             /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($target, $this->resolveTag($tag))) {
+            if (! $initializer->canInitialize($target)) {
                 continue;
             }
 
@@ -367,7 +367,7 @@ final class GenericContainer implements Container
             }
 
             // Injects to the property the tag the class has been resolved with
-            if ($property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
+            if ($property->hasAttribute(CurrentTag::class) && ! $property->isInitialized($instance)) {
                 $property->set($instance, $property->accepts(UnitEnum::class) ? $tag : $this->resolveTag($tag));
             }
         }

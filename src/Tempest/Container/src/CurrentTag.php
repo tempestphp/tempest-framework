@@ -4,7 +4,10 @@ namespace Tempest\Container;
 
 use Attribute;
 
+/**
+ * Injects the current tag to the target property.
+ */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final class TagName
+final class CurrentTag
 {
 }
