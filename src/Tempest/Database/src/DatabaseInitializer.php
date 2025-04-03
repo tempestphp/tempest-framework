@@ -6,9 +6,9 @@ namespace Tempest\Database;
 
 use Tempest\Container\AllowDynamicTags;
 use Tempest\Container\Container;
+use Tempest\Container\CurrentTag;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Container\CurrentTag;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Transactions\TransactionManager;
 

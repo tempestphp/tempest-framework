@@ -7,7 +7,7 @@ final readonly class SlowDependency
 {
     public string $value;
 
-    public function __construct(float $delay = 0.1, $counter = 0)
+    public function __construct(float $delay = 0.1, int $counter = 0)
     {
         // usleep apparently is buggy on windows...
         $start = microtime(true);
