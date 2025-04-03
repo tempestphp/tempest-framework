@@ -195,7 +195,7 @@ final readonly class TempestViewCompiler
                 ->setChildren($children);
 
             foreach ($element->getAttributes() as $name => $value) {
-                $attribute = $this->attributeFactory->make($name);
+                $attribute = $this->attributeFactory->make($element, $name);
 
                 $element = $attribute->apply($element);
 
