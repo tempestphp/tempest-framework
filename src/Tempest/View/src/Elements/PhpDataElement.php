@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
+use Stringable;
 use Tempest\View\Element;
+use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\WrapsElement;
 
 use function Tempest\Support\str;
@@ -46,25 +48,6 @@ final class PhpDataElement implements Element, WrapsElement
             'unset($%s);',
             $name,
         );
-
-        // Support for boolean attributes. When an expression attribute has a falsy value, it won't be rendered at all.
-        // When it's "true", it will only render the attribute name and not the "true" value
-        $coreElement = $this->unwrap(GenericElement::class);
-
-        if ($isExpression && $coreElement instanceof GenericElement) {
-            $coreElement
-                ->addRawAttribute(
-                    sprintf(
-                        '<?php if($%s === true) {?>%s<?php } elseif($%s) { ?>%s="%s"<?php } ?>',
-                        $name,
-                        str($name)->kebab(),
-                        $name,
-                        str($name)->kebab(),
-                        $coreElement->getAttribute($name),
-                    ),
-                )
-                ->unsetAttribute($name);
-        }
 
         return sprintf(
             '<?php %s ?>
