@@ -16,12 +16,11 @@ use Tempest\Database\Transactions\TransactionManager;
 final class DatabaseInitializer implements Initializer
 {
     #[TagName]
-    private ?string $tag;
+    private ?string $tag; // @phpstan-ignore-line this is injected
 
     #[Singleton]
     public function initialize(Container $container): Database
     {
-        dump($this->tag);
         return new GenericDatabase(
             $container->get(Connection::class, $this->tag),
             $container->get(TransactionManager::class, $this->tag),

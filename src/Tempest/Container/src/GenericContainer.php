@@ -310,7 +310,8 @@ final class GenericContainer implements Container
             return $this->resolve($initializerClass);
         }
 
-        // If the dependency allows dynamic tags, we look for the original initializer, without tags.
+        // If the dependency allows dynamic tags, we look for the original
+        // initializer (without tag) and we resolve it, specifying the dynamic tag.
         if ($target->getAttribute(AllowDynamicTags::class) && ($initializerClass = $this->initializers[$target->getName()] ?? null)) {
             return $this->resolve($initializerClass, $tag);
         }
@@ -360,10 +361,12 @@ final class GenericContainer implements Container
         }
 
         foreach ($classReflector->getProperties() as $property) {
+            // Injects to the property the specified dependency
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
                 $property->set($instance, $this->get($property->getType()->getName()));
             }
 
+            // Injects to the property the tag the class has been resolved with
             if ($property->hasAttribute(TagName::class) && ! $property->isInitialized($instance)) {
                 $property->set($instance, $property->accepts(UnitEnum::class) ? $tag : $this->resolveTag($tag));
             }
@@ -384,11 +387,16 @@ final class GenericContainer implements Container
         // Build the class by iterating through its
         // dependencies and resolving them.
         foreach ($method->getParameters() as $parameter) {
+            // If the `ForwardTag` attribute is used on a constructor parameter, we
+            // instantiate this parameter with the current tag. Otherwise we look
+            // for a `Tag` attribute, and if specified, we use this one instead.
+            $dependencyTag = $parameter->getAttribute(ForwardTag::class) && $tag
+                ? $tag
+                : $parameter->getAttribute(Tag::class)?->name;
+
             $dependencies[] = $this->clone()->autowireDependency(
                 parameter: $parameter,
-                tag: $parameter->getAttribute(ForwardTag::class) && $tag
-                    ? $tag
-                    : $parameter->getAttribute(Tag::class)?->name,
+                tag: $dependencyTag,
                 providedValue: $parameters[$parameter->getName()] ?? null,
             );
         }

@@ -15,7 +15,7 @@ use Tempest\Database\Connection\Connection;
 final class TransactionManagerInitializer implements Initializer
 {
     #[TagName]
-    private ?string $tag;
+    private ?string $tag; // @phpstan-ignore-line this is injected
 
     #[Singleton]
     public function initialize(Container $container): TransactionManager
