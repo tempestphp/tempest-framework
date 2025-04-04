@@ -66,8 +66,6 @@ final class ElementFactory
 
         if (
             ! $token->tag
-            || $token->tag === 'code'
-            || $token->tag === 'pre'
             || $token->type === TokenType::COMMENT
             || $token->type === TokenType::PHP
         ) {
@@ -95,7 +93,9 @@ final class ElementFactory
             $attributes[$name] = $value;
         }
 
-        if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
+        if ($token->tag === 'code' || $token->tag === 'pre') {
+            return new RawElement(tag: null, content: $token->compile(), attributes: $attributes);
+        } elseif ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
