@@ -1,0 +1,15 @@
+<?php
+/** @var \App\Web\Blog\BlogPost $post */
+?>
+
+<x-meta-image>
+    <div class="w-full flex flex-col justify-center font-display">
+        <span class="leading-none text-3xl font-extralight text-(--ui-text-highlighted)">{{ $post->title }}</span>
+        <div class="flex items-center gap-x-1 mt-2 text-xs text-(--ui-text-muted)">
+            <span>by</span>
+            <span class="text-(--ui-info)">{{ $post->author->getName() }}</span>
+            <span>on</span>
+            <span class="text-(--ui-text-toned)">{{ $post->createdAt->format('F d, Y') }}</span>
+        </div>
+    </div>
+</x-meta-image>
