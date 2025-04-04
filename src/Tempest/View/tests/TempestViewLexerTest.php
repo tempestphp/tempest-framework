@@ -5,6 +5,7 @@ namespace Tempest\View\Tests;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
+use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
@@ -51,6 +52,44 @@ final class TempestViewLexerTest extends TestCase
         $this->assertTokens([
             new Token($tag, TokenType::CLOSING_TAG),
         ], new TempestViewLexer($tag)->lex());
+    }
+
+    public function test_multiline_attributes(): void
+    {
+        $html = <<<'HTML'
+<div
+    class="abc"
+    foo="bar"
+    x-foo
+    :baz="true"
+>
+
+</div>
+HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $this->assertTokens([
+            new Token('<div', TokenType::OPEN_TAG_START),
+   new Token('
+    class=', TokenType::ATTRIBUTE_NAME),
+   new Token('"abc"', TokenType::ATTRIBUTE_VALUE),
+   new Token('
+    foo=', TokenType::ATTRIBUTE_NAME),
+   new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+   new Token('
+    x-foo
+', TokenType::ATTRIBUTE_NAME),
+   new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
+   new Token('"true"', TokenType::ATTRIBUTE_VALUE),
+   new Token('
+', TokenType::ATTRIBUTE_NAME),
+   new Token('>', TokenType::OPEN_TAG_END),
+   new Token('
+
+', TokenType::CONTENT),
+   new Token('</div>', TokenType::CLOSING_TAG)
+        ], $tokens);
     }
 
     public function test_lexer_with_falsy_values(): void

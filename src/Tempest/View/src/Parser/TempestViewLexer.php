@@ -93,7 +93,7 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ');
+        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ' || $next === PHP_EOL);
 
         $tokens = [];
 
@@ -108,7 +108,7 @@ final class TempestViewLexer
             $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
 
             while ($this->seek() !== null && $this->seek() !== '>') {
-                $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ');
+                $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ' || $next === PHP_EOL);
 
                 $attributeName .= $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');
 
