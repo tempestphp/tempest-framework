@@ -6,6 +6,7 @@ namespace Tempest\Container\Tests;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Tempest\Container\Container;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\Exceptions\CannotInstantiateDependencyException;
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
@@ -32,6 +33,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectDInitializer;
 use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
+use Tempest\Container\Tests\Fixtures\DependencyWithDynamicTag;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
 use Tempest\Container\Tests\Fixtures\ImplementsInterfaceA;
 use Tempest\Container\Tests\Fixtures\InjectA;
@@ -45,6 +47,7 @@ use Tempest\Container\Tests\Fixtures\OptionalTypesClass;
 use Tempest\Container\Tests\Fixtures\SingletonClass;
 use Tempest\Container\Tests\Fixtures\SingletonInitializer;
 use Tempest\Container\Tests\Fixtures\SlowDependency;
+use Tempest\Container\Tests\Fixtures\SubdependencyWithDynamicTag;
 use Tempest\Container\Tests\Fixtures\TaggedDependency;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyCliInitializer;
 use Tempest\Container\Tests\Fixtures\TaggedDependencyWebInitializer;
@@ -556,5 +559,25 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(SlowDependency::class, $instance->dependency);
 
         $this->assertSame('value1', $this->assertSlowerThan(fn () => $instance->dependency->value, $delay));
+    }
+
+    public function test_dynamic_tag_with_forward(): void
+    {
+        $container = new GenericContainer();
+        $dependency = $container->get(DependencyWithDynamicTag::class, tag: 'foo');
+
+        $this->assertEquals('foo', $dependency->tag);
+        $this->assertInstanceOf(SubdependencyWithDynamicTag::class, $dependency->subependency);
+        $this->assertEquals('foo', $dependency->subependency->tag);
+    }
+
+    public function test_dynamic_tag_with_forward_without_tag(): void
+    {
+        $container = new GenericContainer();
+        $dependency = $container->get(DependencyWithDynamicTag::class);
+
+        $this->assertNull($dependency->tag);
+        $this->assertInstanceOf(SubdependencyWithDynamicTag::class, $dependency->subependency);
+        $this->assertNull($dependency->subependency->tag);
     }
 }

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Database\Connection;
 
 use PDOStatement;
+use Tempest\Container\AllowDynamicTags;
 
+#[AllowDynamicTags]
 interface Connection
 {
     public function beginTransaction(): bool;

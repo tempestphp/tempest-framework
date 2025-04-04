@@ -6,6 +6,7 @@ namespace Tempest {
     use Tempest\Container\GenericContainer;
     use Tempest\Reflection\FunctionReflector;
     use Tempest\Reflection\MethodReflector;
+    use UnitEnum;
 
     /**
      * Retrieves an instance of the specified `$className` from the container.
@@ -14,7 +15,7 @@ namespace Tempest {
      * @param class-string<TClassName> $className
      * @return TClassName
      */
-    function get(string $className, ?string $tag = null, mixed ...$params): object
+    function get(string $className, null|string|UnitEnum $tag = null, mixed ...$params): object
     {
         $container = GenericContainer::instance();
 

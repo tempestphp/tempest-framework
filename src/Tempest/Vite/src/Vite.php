@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Vite;
 
+use Tempest\Container\AllowDynamicTags;
 use Tempest\Container\Container;
+use Tempest\Container\ForwardTag;
+use Tempest\Container\Singleton;
 use Tempest\Core\AppConfig;
 use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
@@ -17,6 +20,7 @@ use Tempest\Vite\TagsResolver\TagsResolver;
 use function Tempest\root_path;
 use function Tempest\Support\arr;
 
+#[AllowDynamicTags]
 final class Vite
 {
     public const string CLIENT_SCRIPT_PATH = '@vite/client';
@@ -26,8 +30,9 @@ final class Vite
     private static ?Manifest $manifest = null;
 
     public function __construct(
-        private readonly AppConfig $appConfig,
+        #[ForwardTag]
         private readonly ViteConfig $viteConfig,
+        private readonly AppConfig $appConfig,
         private readonly Container $container,
         private readonly TagCompiler $tagCompiler,
     ) {}
