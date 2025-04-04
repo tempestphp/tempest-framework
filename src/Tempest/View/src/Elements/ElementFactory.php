@@ -89,6 +89,7 @@ final class ElementFactory
 
             $attributes[$name] = $value;
         }
+
         if ($token->tag === 'code' || $token->tag === 'pre') {
             return new RawElement(
                 tag: $token->tag,
@@ -101,6 +102,7 @@ final class ElementFactory
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
+
             $element = new ViewComponentElement(
                 environment: $this->appConfig->environment,
                 compiler: $this->compiler,
@@ -116,8 +118,7 @@ final class ElementFactory
                 name: $token->getAttribute('name') ?? 'slot',
                 attributes: $attributes,
             );
-        }
-        else {
+        } else {
             $element = new GenericElement(
                 tag: $token->tag,
                 attributes: $attributes,
