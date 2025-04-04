@@ -8,6 +8,7 @@ final class Token
 {
     private(set) array $children = [];
     private(set) ?Token $parent = null;
+    private(set) ?Token $endingToken = null;
     private(set) ?Token $closingToken = null;
     private(set) array $rawAttributes = [];
     private(set) array $attributes = [];
@@ -55,7 +56,12 @@ final class Token
         $this->attributes[$this->attributeName($name)] = $this->attributeValue($value);
     }
 
-    public function setCLosingToken(Token $closingToken): void
+    public function setEndingToken(Token $endingToken): void
+    {
+        $this->endingToken = $endingToken;
+    }
+
+    public function setClosingToken(Token $closingToken): void
     {
         $this->closingToken = $closingToken;
     }
@@ -63,6 +69,21 @@ final class Token
     public function compile(): string
     {
         $buffer = $this->content;
+
+        $buffer .= $this->compileAttributes();
+
+        $buffer .= $this->endingToken?->compile();
+
+        $buffer .= $this->compileChildren();
+
+        $buffer .= $this->closingToken?->compile();
+
+        return $buffer;
+    }
+
+    public function compileAttributes(): string
+    {
+        $buffer = '';
 
         foreach ($this->rawAttributes as $name => $value) {
             if ($value !== true) {
@@ -72,11 +93,16 @@ final class Token
             }
         }
 
+        return $buffer;
+    }
+
+    public function compileChildren(): string
+    {
+        $buffer = '';
+
         foreach ($this->children as $child) {
             $buffer .= $child->compile();
         }
-
-        $buffer .= $this->closingToken?->compile();
 
         return $buffer;
     }

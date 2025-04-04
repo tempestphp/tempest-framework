@@ -43,13 +43,13 @@ final class TempestViewParser
                 $currentAttribute = null;
             } elseif ($token->type === TokenType::OPEN_TAG_END) {
                 $tag = $this->currentScope?->tag;
-                $this->currentScope?->addChild($token);
+                $this->currentScope?->setEndingToken($token);
 
                 if ($tag && is_void_tag($tag)) {
                     $this->closeCurrentScope();
                 }
             } elseif ($token->type === TokenType::CLOSING_TAG || $token->type === TokenType::SELF_CLOSING_TAG_END) {
-                $this->currentScope?->setCLosingToken($token);
+                $this->currentScope?->setClosingToken($token);
                 $this->closeCurrentScope();
             } else {
                 $this->currentScope?->addChild($token);
