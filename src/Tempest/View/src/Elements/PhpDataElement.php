@@ -51,11 +51,9 @@ final class PhpDataElement implements Element, WrapsElement
         // When it's "true", it will only render the attribute name and not the "true" value
         $coreElement = $this->unwrap(GenericElement::class);
 
-        if ($isExpression && $coreElement instanceof GenericElement) {
+        if ($isExpression && $coreElement) {
             $coreElement
-                ->addRawAttribute(
-                    new RawConditionalAttribute($name, $coreElement->getAttribute($name))->compile(),
-                )
+                ->addRawAttribute(new RawConditionalAttribute($name, $coreElement->getAttribute($name))->compile())
                 ->unsetAttribute($name);
         }
 
