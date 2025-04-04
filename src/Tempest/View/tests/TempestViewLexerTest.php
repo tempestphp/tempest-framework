@@ -96,9 +96,7 @@ final class TempestViewLexerTest extends TestCase
 ', TokenType::ATTRIBUTE_NAME),
             new Token('    :baz=', TokenType::ATTRIBUTE_NAME),
             new Token('"true"', TokenType::ATTRIBUTE_VALUE),
-            new Token('
-', TokenType::ATTRIBUTE_NAME),
-            new Token('>', TokenType::OPEN_TAG_END),
+            new Token("\n>", TokenType::OPEN_TAG_END),
             new Token('
 
 ', TokenType::CONTENT),
@@ -192,9 +190,11 @@ final class TempestViewLexerTest extends TestCase
 ></div>')->lex();
 
         $this->assertTokens([
-            new Token('<div x-foo="bar"', TokenType::OPEN_TAG_START),
-            new Token("\n>", TokenType::OPEN_TAG_END),
-            new Token('</div>', TokenType::CLOSING_TAG)
+            new Token('<div', TokenType::OPEN_TAG_START),
+   new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
+   new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+   new Token("\n>", TokenType::OPEN_TAG_END),
+   new Token('</div>', TokenType::CLOSING_TAG)
         ], $tokens);
     }
 

@@ -100,11 +100,7 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(function () {
-            $next = $this->seekIgnoringWhitespace();
-
-            return $next === '>';
-        });
+        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ' || $next === PHP_EOL);
 
         $tokens = [];
 
