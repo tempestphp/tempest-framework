@@ -46,6 +46,17 @@ final class TempestViewLexer
         return $seek;
     }
 
+    private function seekIgnoringWhitespace(): ?string
+    {
+        $offset = 0;
+
+        while (trim($this->seek(offset: $offset)) === '') {
+            $offset += 1;
+        }
+
+        return $this->seek(offset: $offset);
+    }
+
     private function consume(int $length = 1): string
     {
         $buffer = '';
@@ -82,29 +93,24 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(fn () => $this->seek(offset: 1) === '>' || $this->seek(offset: 1) === ' ');
+        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ');
 
-        $tagBuffer .= $this->consume();
+        $tokens = [];
 
-        $tokenType = match (true) {
-            substr($tagBuffer, 1, 1) === '/' => TokenType::CLOSING_TAG,
-            substr($tagBuffer, -2, 2) === '/>' => TokenType::SELF_CLOSING_TAG,
-            default => TokenType::OPEN_TAG_START,
-        };
-
-        if ($tokenType === TokenType::CLOSING_TAG) {
+        if (substr($tagBuffer, 1, 1) === '/') {
             $tagBuffer .= $this->consume();
-        } elseif ($tokenType === TokenType::SELF_CLOSING_TAG) {
-            $tagBuffer .= $this->consume(2);
-        }
+            $tokens[] = new Token($tagBuffer, TokenType::CLOSING_TAG);
+        } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tagBuffer, '/')) {
+            $tagBuffer .= $this->consumeUntil(fn (string $next) => $next === '>');
+            $tagBuffer .= $this->consume();
+            $tokens[] = new Token($tagBuffer, TokenType::SELF_CLOSING_TAG);
+        } else {
+            $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
 
-        $tokens = [new Token($tagBuffer, $tokenType)];
-
-        if ($tokenType === TokenType::OPEN_TAG_START && ! str_ends_with($tagBuffer, '>')) {
             while ($this->seek() !== null && $this->seek() !== '>') {
-                $this->consumeWhile(fn (string $next) => $next === ' ');
+                $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ');
 
-                $attributeName = $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');
+                $attributeName .= $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');
 
                 $hasValue = $this->seek() === '=';
 

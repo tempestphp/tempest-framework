@@ -11,22 +11,29 @@ final class TempestViewParser
     }
 
     public function __construct(
-        /** @var \Tempest\View\Parser\Token[] $tokens */
-        private readonly array $tokens,
+        private readonly TokenCollection $tokens,
     ) {}
 
-    public function parse(): ?Token
+    public function parse(): Ast
     {
-        $root = null;
+        $ast = new Ast();
+
+        $currentAttribute = null;
 
         foreach ($this->tokens as $token) {
-            if ($root === null) {
-                $root = $token;
+            if ($this->currentScope === null) {
+                $ast->add($token);
             }
 
             if ($token->type === TokenType::OPEN_TAG_START) {
                 $this->currentScope?->addChild($token);
                 $this->openScope($token);
+            } elseif ($token->type === TokenType::ATTRIBUTE_NAME) {
+                $currentAttribute = $token->content;
+                $this->currentScope?->addAttribute($currentAttribute);
+            } elseif ($token->type === TokenType::ATTRIBUTE_VALUE) {
+                $this->currentScope?->setAttributeValue($currentAttribute, $token->content);
+                $currentAttribute = null;
             } elseif ($token->type === TokenType::CLOSING_TAG) {
                 $this->currentScope?->setCLosingToken($token);
                 $this->closeCurrentScope();
@@ -35,7 +42,7 @@ final class TempestViewParser
             }
         }
 
-        return $root;
+        return $ast;
     }
 
     private function openScope(Token $token): void

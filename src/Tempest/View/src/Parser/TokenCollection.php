@@ -6,15 +6,25 @@ use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
 
-final readonly class TokenCollection implements IteratorAggregate
+/**
+ * @extends IteratorAggregate<\Tempest\View\Parser\Token>
+ */
+final class TokenCollection implements IteratorAggregate
 {
     public function __construct(
-        private array $items,
+        private array $tokens = [],
     ) {}
+
+    public function add(Token $token): self
+    {
+        $this->tokens[] = $token;
+
+        return $this;
+    }
 
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->items);
+        return new ArrayIterator($this->tokens);
     }
 
     public function __debugInfo(): ?array
@@ -22,7 +32,7 @@ final readonly class TokenCollection implements IteratorAggregate
         return [
             implode(
                 ', ' . PHP_EOL,
-                array_map(fn(Token $token) => $token->__debugInfo()[0], $this->items)
+                array_map(fn(Token $token) => $token->__debugInfo()[0], $this->tokens)
             ),
         ];
     }

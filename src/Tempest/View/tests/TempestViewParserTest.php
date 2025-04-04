@@ -8,27 +8,33 @@ use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
 use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Parser\Token;
+use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
 
 final class TempestViewParserTest extends TestCase
 {
     public function test_parser(): void
     {
-        $tokens = [
-            new Token('<div>', TokenType::OPEN_TAG_START),
-            new Token('<span>', TokenType::OPEN_TAG_START),
-            new Token('</span>', TokenType::CLOSING_TAG),
-            new Token('<span>', TokenType::OPEN_TAG_START),
-            new Token('</span>', TokenType::CLOSING_TAG),
+        $tokens = new TokenCollection([
+            new Token('<html', TokenType::OPEN_TAG_START),
+            new Token('>', TokenType::OPEN_TAG_END),
+            new Token('<body ', TokenType::OPEN_TAG_START),
+            new Token('class=', TokenType::ATTRIBUTE_NAME),
+            new Token('"hello"', TokenType::ATTRIBUTE_VALUE),
+            new Token('>', TokenType::OPEN_TAG_END),
+            new Token('hello', TokenType::CONTENT),
             new Token('<x-slot/>', TokenType::SELF_CLOSING_TAG),
+            new Token('</body>', TokenType::CLOSING_TAG),
+            new Token('<?= \'hi\' ?>', TokenType::PHP),
             new Token('<!-- test -->', TokenType::COMMENT),
-            new Token('<?= "hi" ?>', TokenType::PHP),
-            new Token('</div>', TokenType::CLOSING_TAG)
-        ];
+            new Token('</html>', TokenType::CLOSING_TAG)
+        ]);
 
         $parsed = new TempestViewParser($tokens)->parse();
 
-        $this->assertSame('<div><span></span><span></span><x-slot/><!-- test --><?= "hi" ?></div>', $parsed->compile());
+        $this->assertSame(<<<'HTML'
+        <html><body class="hello">hello<x-slot/></body><?= 'hi' ?><!-- test --></html>
+        HTML, $parsed->compile());
     }
 
     #[DataProvider('data')]
