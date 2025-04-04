@@ -85,9 +85,9 @@ final class ElementFactory
             $attributes[$name] = $value;
         }
 
-        $tagName = $token->tag;
+        lw($attributes);
 
-        if ($viewComponentClass = $this->viewConfig->viewComponents[$tagName] ?? null) {
+        if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
@@ -98,18 +98,18 @@ final class ElementFactory
                 viewComponent: $viewComponentClass,
                 attributes: $attributes,
             );
-        } elseif ($tagName === 'x-template') {
+        } elseif ($token->tag === 'x-template') {
             $element = new TemplateElement(
                 attributes: $attributes,
             );
-        } elseif ($tagName === 'x-slot') {
+        } elseif ($token->tag === 'x-slot') {
             $element = new SlotElement(
                 name: $token->getAttribute('name') ?? 'slot',
                 attributes: $attributes,
             );
         } else {
             $element = new GenericElement(
-                tag: $tagName,
+                tag: $token->tag,
                 attributes: $attributes,
             );
         }
