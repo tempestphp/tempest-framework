@@ -94,7 +94,11 @@ final class ElementFactory
         }
 
         if ($token->tag === 'code' || $token->tag === 'pre') {
-            return new RawElement(tag: null, content: $token->compile(), attributes: $attributes);
+            return new RawElement(
+                tag: $token->tag,
+                content: $token->compile(),
+                attributes: $attributes
+            );
         } elseif ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
