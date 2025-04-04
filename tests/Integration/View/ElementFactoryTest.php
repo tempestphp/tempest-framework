@@ -8,6 +8,8 @@ use Dom\HTMLDocument;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
+use Tempest\View\Parser\TempestViewLexer;
+use Tempest\View\Parser\TempestViewParser;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use const Dom\HTML_NO_DEFAULT_NS;
@@ -32,11 +34,11 @@ final class ElementFactoryTest extends FrameworkIntegrationTestCase
         </a>
         HTML;
 
-        $dom = HTMLDocument::createFromString("<div id='tempest_render'>{$contents}</div>", LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
+        $ast = TempestViewParser::ast($contents);
 
         $elementFactory = $this->container->get(ElementFactory::class);
 
-        $a = $elementFactory->make($dom->getElementById('tempest_render')->firstElementChild);
+        $a = $elementFactory->make(iterator_to_array($ast)[0]);
 
         $this->assertInstanceOf(GenericElement::class, $a);
         $this->assertCount(1, $a->getChildren());

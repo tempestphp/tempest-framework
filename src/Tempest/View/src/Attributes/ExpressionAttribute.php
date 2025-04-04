@@ -24,7 +24,7 @@ final readonly class ExpressionAttribute implements Attribute
     {
         $value = str($element->getAttribute($this->name));
 
-        if ($value->startsWith(['{{', '{!!', ...TempestViewCompiler::TOKEN_MAPPING])) {
+        if ($value->startsWith(['{{', '{!!', ...TempestViewCompiler::PHP_TOKENS])) {
             throw new InvalidExpressionAttribute($value);
         }
 

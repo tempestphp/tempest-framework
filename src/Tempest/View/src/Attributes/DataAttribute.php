@@ -35,7 +35,7 @@ final readonly class DataAttribute implements Attribute
 
         $value = $element->getAttribute($this->name);
 
-        if (str($value)->startsWith(TempestViewCompiler::TOKEN_MAPPING)) {
+        if (str($value)->startsWith(TempestViewCompiler::PHP_TOKENS)) {
             throw new InvalidDataAttribute($this->name, $value);
         }
 

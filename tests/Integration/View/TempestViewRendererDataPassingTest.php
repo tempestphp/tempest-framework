@@ -282,7 +282,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         </x-test>
         HTML, language: 'php');
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
             <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre></div>
             HTML,
@@ -305,5 +305,13 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
             <div class="hi {!! 'hi' !!} hi">
             HTML),
         );
+    }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

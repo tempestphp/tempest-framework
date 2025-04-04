@@ -40,6 +40,12 @@ final readonly class TempestViewCompiler
         '?>' => self::TOKEN_PHP_CLOSE,
     ];
 
+    public const array PHP_TOKENS = [
+        '<?php',
+        '<?=',
+        '?>',
+    ];
+
     public function __construct(
         private ElementFactory $elementFactory,
         private AttributeFactory $attributeFactory,

@@ -16,6 +16,11 @@ final class TempestViewParser
         private readonly TokenCollection $tokens,
     ) {}
 
+    public static function ast(string $template): TempestViewAst
+    {
+        return new self(new TempestViewLexer($template)->lex())->parse();
+    }
+
     public function parse(): TempestViewAst
     {
         $ast = new TempestViewAst();
