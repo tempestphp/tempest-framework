@@ -26,6 +26,7 @@ final class TempestViewParser
         $ast = new TempestViewAst();
 
         $currentAttribute = null;
+        $withinTag = false;
 
         foreach ($this->tokens as $token) {
             if ($this->currentScope === null) {
@@ -35,12 +36,15 @@ final class TempestViewParser
             if ($token->type === TokenType::OPEN_TAG_START) {
                 $this->currentScope?->addChild($token);
                 $this->openScope($token);
+                $withinTag = true;
             } elseif ($token->type === TokenType::ATTRIBUTE_NAME) {
                 $currentAttribute = $token->content;
                 $this->currentScope?->addAttribute($currentAttribute);
             } elseif ($token->type === TokenType::ATTRIBUTE_VALUE) {
                 $this->currentScope?->setAttributeValue($currentAttribute, $token->content);
                 $currentAttribute = null;
+            } elseif ($withinTag && $token->type === TokenType::PHP) {
+                $this->currentScope?->addTagContent($token->compile());
             } elseif ($token->type === TokenType::OPEN_TAG_END) {
                 $tag = $this->currentScope?->tag;
                 $this->currentScope?->setEndingToken($token);
@@ -48,9 +52,12 @@ final class TempestViewParser
                 if ($tag && is_void_tag($tag)) {
                     $this->closeCurrentScope();
                 }
+
+                $withinTag = false;
             } elseif ($token->type === TokenType::CLOSING_TAG || $token->type === TokenType::SELF_CLOSING_TAG_END) {
                 $this->currentScope?->setClosingToken($token);
                 $this->closeCurrentScope();
+                $withinTag = false;
             } else {
                 $this->currentScope?->addChild($token);
             }

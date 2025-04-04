@@ -138,6 +138,25 @@ final class TempestViewLexerTest extends TestCase
         );
     }
 
+    public function test_php_within_tag(): void
+    {
+        $html = <<<'HTML'
+        <div <?php if (true) { ?> class="foo" <?php } ?>></div>
+        HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $this->assertTokens([
+            new Token('<div', TokenType::OPEN_TAG_START),
+            new Token(' <?php if (true) { ?>', TokenType::PHP),
+            new Token(' class=', TokenType::ATTRIBUTE_NAME),
+            new Token('"foo"', TokenType::ATTRIBUTE_VALUE),
+            new Token(' <?php } ?>', TokenType::PHP),
+            new Token('>', TokenType::OPEN_TAG_END),
+            new Token('</div>', TokenType::CLOSING_TAG)
+        ], $tokens);
+    }
+
     public function test_doctype(): void
     {
         $html = <<<'HTML'

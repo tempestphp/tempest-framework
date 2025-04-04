@@ -53,7 +53,7 @@ final class TempestViewLexer
         return $seek;
     }
 
-    private function seekIgnoringWhitespace(): ?string
+    private function seekIgnoringWhitespace(int $length = 1): ?string
     {
         $offset = 0;
 
@@ -61,7 +61,7 @@ final class TempestViewLexer
             $offset += 1;
         }
 
-        return $this->seek(offset: $offset);
+        return $this->seek(length: $length, offset: $offset);
     }
 
     private function consume(int $length = 1): string
@@ -115,6 +115,11 @@ final class TempestViewLexer
             $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
 
             while ($this->seek() !== null && $this->seek() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
+                if ($this->seekIgnoringWhitespace(2) === '<?') {
+                    $tokens[] = $this->lexPhp();
+                    continue;
+                }
+
                 $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ' || $next === PHP_EOL);
 
                 $attributeName .= $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');

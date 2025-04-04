@@ -14,7 +14,7 @@ final class Token
 
     private(set) ?Token $closingToken = null;
 
-    private(set) array $rawAttributes = [];
+    private(set) array $rawTagContent = [];
 
     private(set) array $attributes = [];
 
@@ -52,15 +52,20 @@ final class Token
         return $this->attributes[$name] ?? null;
     }
 
+    public function addTagContent(string $content): void
+    {
+        $this->rawTagContent[] = $content;
+    }
+
     public function addAttribute(string $name): void
     {
-        $this->rawAttributes[$name] = true;
+        $this->addTagContent($name);
         $this->attributes[$this->attributeName($name)] = true;
     }
 
     public function setAttributeValue(string $name, string $value): void
     {
-        $this->rawAttributes[$name] = $value;
+        $this->addTagContent($value);
         $this->attributes[$this->attributeName($name)] = $this->attributeValue($value);
     }
 
@@ -89,17 +94,7 @@ final class Token
 
     public function compileAttributes(): string
     {
-        $buffer = '';
-
-        foreach ($this->rawAttributes as $name => $value) {
-            if ($value !== true) {
-                $buffer .= $name . $value;
-            } else {
-                $buffer .= $name;
-            }
-        }
-
-        return $buffer;
+        return implode('', $this->rawTagContent);
     }
 
     public function compileChildren(): string

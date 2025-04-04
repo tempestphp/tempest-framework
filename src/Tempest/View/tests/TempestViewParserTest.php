@@ -96,6 +96,23 @@ final class TempestViewParserTest extends TestCase
         $this->assertSame($html, $ast->compile());
     }
 
+    public function test_php_within_tag(): void
+    {
+        $tokens = new TokenCollection([
+            new Token('<div', TokenType::OPEN_TAG_START),
+            new Token(' <?php if (true) { ?>', TokenType::PHP),
+            new Token(' class=', TokenType::ATTRIBUTE_NAME),
+            new Token('"foo"', TokenType::ATTRIBUTE_VALUE),
+            new Token(' <?php } ?>', TokenType::PHP),
+            new Token('>', TokenType::OPEN_TAG_END),
+            new Token('</div>', TokenType::CLOSING_TAG)
+        ]);
+
+        $parsed = new TempestViewParser($tokens)->parse();
+
+        $this->assertSame('<div <?php if (true) { ?> class="foo" <?php } ?>></div>', $parsed->compile());
+    }
+
     #[DataProvider('data')]
     public function test_parser_from_lexed_result(string $html): void
     {
