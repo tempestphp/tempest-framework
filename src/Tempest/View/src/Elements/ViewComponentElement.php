@@ -102,6 +102,7 @@ final class ViewComponentElement implements Element
 
                     $html = $matches[0] . $closingTag;
 
+                    // TODO refactor to own parser
                     $dom = HTMLDocument::createFromString($html, LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 
                     /** @var \Dom\HTMLElement $element */
