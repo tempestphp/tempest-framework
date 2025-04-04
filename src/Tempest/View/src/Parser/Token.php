@@ -14,7 +14,7 @@ final class Token
 
     private(set) ?Token $closingToken = null;
 
-    private(set) array $rawTagContent = [];
+    private(set) array $rawAttributes = [];
 
     private(set) array $attributes = [];
 
@@ -52,20 +52,20 @@ final class Token
         return $this->attributes[$name] ?? null;
     }
 
-    public function addTagContent(string $content): void
+    public function addAttribute(Token $token): void
     {
-        $this->rawTagContent[] = $content;
-    }
-
-    public function addAttribute(string $name): void
-    {
-        $this->addTagContent($name);
-        $this->attributes[$this->attributeName($name)] = true;
+        if ($token->type === TokenType::PHP) {
+            $this->rawAttributes[] = $token;
+        } else {
+            $name = $token->content;
+            $this->rawAttributes[] = $token->content;
+            $this->attributes[$this->attributeName($name)] = true;
+        }
     }
 
     public function setAttributeValue(string $name, string $value): void
     {
-        $this->addTagContent($value);
+        $this->rawAttributes[] = $value;
         $this->attributes[$this->attributeName($name)] = $this->attributeValue($value);
     }
 
@@ -94,7 +94,17 @@ final class Token
 
     public function compileAttributes(): string
     {
-        return implode('', $this->rawTagContent);
+        $buffer = '';
+
+        foreach ($this->rawAttributes as $rawAttribute) {
+            if ($rawAttribute instanceof Token) {
+                $buffer .= $rawAttribute->compile();
+            } else {
+                $buffer .= $rawAttribute;
+            }
+        }
+
+        return $buffer;
     }
 
     public function compileChildren(): string

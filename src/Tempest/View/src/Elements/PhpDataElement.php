@@ -54,14 +54,7 @@ final class PhpDataElement implements Element, WrapsElement
         if ($isExpression && $coreElement instanceof GenericElement) {
             $coreElement
                 ->addRawAttribute(
-                    sprintf(
-                        '<?php if($%s === true) {?>%s<?php } elseif($%s) { ?>%s="%s"<?php } ?>',
-                        $name,
-                        str($name)->kebab(),
-                        $name,
-                        str($name)->kebab(),
-                        $coreElement->getAttribute($name),
-                    ),
+                    new RawConditionalAttribute($name, $coreElement->getAttribute($name))->compile(),
                 )
                 ->unsetAttribute($name);
         }

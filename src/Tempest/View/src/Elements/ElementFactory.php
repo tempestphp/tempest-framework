@@ -71,7 +71,8 @@ final class ElementFactory
 
         $attributes = [];
 
-        foreach ($token->attributes as $name => $value) {
+        foreach ($token->rawAttributes as $value) {
+            // TODO: need to properly distinguish between PHP code and attributes
             $name = str($name)
                 ->trim()
                 ->before('=')

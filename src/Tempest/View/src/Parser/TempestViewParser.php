@@ -39,12 +39,12 @@ final class TempestViewParser
                 $withinTag = true;
             } elseif ($token->type === TokenType::ATTRIBUTE_NAME) {
                 $currentAttribute = $token->content;
-                $this->currentScope?->addAttribute($currentAttribute);
+                $this->currentScope?->addAttribute($token);
             } elseif ($token->type === TokenType::ATTRIBUTE_VALUE) {
                 $this->currentScope?->setAttributeValue($currentAttribute, $token->content);
                 $currentAttribute = null;
             } elseif ($withinTag && $token->type === TokenType::PHP) {
-                $this->currentScope?->addTagContent($token->compile());
+                $this->currentScope?->addAttribute($token);
             } elseif ($token->type === TokenType::OPEN_TAG_END) {
                 $tag = $this->currentScope?->tag;
                 $this->currentScope?->setEndingToken($token);
