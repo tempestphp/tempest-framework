@@ -25,9 +25,9 @@ final class TempestViewParserTest extends TestCase
             new Token('hello', TokenType::CONTENT),
             new Token('<x-slot/>', TokenType::SELF_CLOSING_TAG),
             new Token('</body>', TokenType::CLOSING_TAG),
-            new Token('<?= \'hi\' ?>', TokenType::PHP),
+            new Token("<?= 'hi' ?>", TokenType::PHP),
             new Token('<!-- test -->', TokenType::COMMENT),
-            new Token('</html>', TokenType::CLOSING_TAG)
+            new Token('</html>', TokenType::CLOSING_TAG),
         ]);
 
         $parsed = new TempestViewParser($tokens)->parse();
@@ -45,7 +45,7 @@ final class TempestViewParserTest extends TestCase
             new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
             new Token(' x-baz=', TokenType::ATTRIBUTE_NAME),
             new Token('"baz"', TokenType::ATTRIBUTE_VALUE),
-            new Token(' />', TokenType::SELF_CLOSING_TAG_END)
+            new Token(' />', TokenType::SELF_CLOSING_TAG_END),
         ]);
 
         $parsed = new TempestViewParser($tokens)->parse();

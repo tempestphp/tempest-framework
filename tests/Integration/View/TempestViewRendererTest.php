@@ -160,27 +160,27 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch(
             <<<'HTML'
-<html lang="en">
-    <head>
-        <title>Home</title>
-    </head>
-    <body>
-    
-    
-<table>
-        <tr>
-            <td>a</td>
-        </tr>
-<tr>
-            <td>b</td>
-        </tr>
-    </table>
+            <html lang="en">
+                <head>
+                    <title>Home</title>
+                </head>
+                <body>
+                
+                
+            <table>
+                    <tr>
+                        <td>a</td>
+                    </tr>
+            <tr>
+                        <td>b</td>
+                    </tr>
+                </table>
 
 
-    </body>
-    </html>
-HTML,
-            $html
+                </body>
+                </html>
+            HTML,
+            $html,
         );
     }
 
@@ -555,4 +555,3 @@ HTML,
         $this->assertSame($expected, $actual);
     }
 }
-

@@ -32,7 +32,7 @@ final class TokenCollection implements IteratorAggregate
         return [
             implode(
                 ', ' . PHP_EOL,
-                array_map(fn(Token $token) => $token->__debugInfo()[0], $this->tokens)
+                array_map(fn (Token $token) => $token->__debugInfo()[0], $this->tokens),
             ),
         ];
     }

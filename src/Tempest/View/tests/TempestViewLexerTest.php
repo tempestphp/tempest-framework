@@ -30,9 +30,9 @@ final class TempestViewLexerTest extends TestCase
             new Token('hello', TokenType::CONTENT),
             new Token('<x-slot/>', TokenType::SELF_CLOSING_TAG),
             new Token('</body>', TokenType::CLOSING_TAG),
-            new Token('<?= \'hi\' ?>', TokenType::PHP),
+            new Token("<?= 'hi' ?>", TokenType::PHP),
             new Token('<!-- test -->', TokenType::COMMENT),
-            new Token('</html>', TokenType::CLOSING_TAG)
+            new Token('</html>', TokenType::CLOSING_TAG),
         ], $tokens);
     }
 
@@ -56,7 +56,7 @@ final class TempestViewLexerTest extends TestCase
             new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
             new Token(' x-baz=', TokenType::ATTRIBUTE_NAME),
             new Token('"baz"', TokenType::ATTRIBUTE_VALUE),
-            new Token(' />', TokenType::SELF_CLOSING_TAG_END)
+            new Token(' />', TokenType::SELF_CLOSING_TAG_END),
         ], $tokens);
     }
 
@@ -71,15 +71,15 @@ final class TempestViewLexerTest extends TestCase
     public function test_multiline_attributes(): void
     {
         $html = <<<'HTML'
-<div
-    class="abc"
-    foo="bar"
-    x-foo
-    :baz="true"
->
+        <div
+            class="abc"
+            foo="bar"
+            x-foo
+            :baz="true"
+        >
 
-</div>
-HTML;
+        </div>
+        HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
 
@@ -102,7 +102,7 @@ HTML;
             new Token('
 
 ', TokenType::CONTENT),
-            new Token('</div>', TokenType::CLOSING_TAG)
+            new Token('</div>', TokenType::CLOSING_TAG),
         ], $tokens);
     }
 
@@ -115,7 +115,7 @@ HTML;
         $tokens = new TempestViewLexer($html)->lex();
 
         $this->assertTokens([
-            new Token('a0a', TokenType::CONTENT)
+            new Token('a0a', TokenType::CONTENT),
         ], $tokens);
     }
 

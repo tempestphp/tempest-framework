@@ -7,18 +7,23 @@ use function Tempest\Support\str;
 final class Token
 {
     private(set) array $children = [];
+
     private(set) ?Token $parent = null;
+
     private(set) ?Token $endingToken = null;
+
     private(set) ?Token $closingToken = null;
+
     private(set) array $rawAttributes = [];
+
     private(set) array $attributes = [];
+
     private(set) ?string $tag = null;
 
     public function __construct(
         public readonly string $content,
         public readonly TokenType $type,
-    )
-    {
+    ) {
         $this->tag = (match ($this->type) {
             TokenType::OPEN_TAG_START => str($this->content)
                 ->afterFirst('<')
@@ -30,7 +35,10 @@ final class Token
                 ->afterFirst('/')
                 ->before(['>', ' ', PHP_EOL]),
             default => null,
-        })?->trim()->lower()->toString();
+        })
+            ?->trim()
+            ->lower()
+            ->toString();
     }
 
     public function addChild(Token $other): void
@@ -76,9 +84,7 @@ final class Token
 
         $buffer .= $this->compileChildren();
 
-        $buffer .= $this->closingToken?->compile();
-
-        return $buffer;
+        return $buffer . $this->closingToken?->compile();
     }
 
     public function compileAttributes(): string
@@ -111,8 +117,8 @@ final class Token
     {
         return [
             sprintf(
-                'new Token(\'%s\', TokenType::%s)',
-                str_replace('\'', "\\'", $this->content),
+                "new Token('%s', TokenType::%s)",
+                str_replace("'", "\\'", $this->content),
                 $this->type->name,
             ),
         ];

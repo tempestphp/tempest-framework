@@ -46,10 +46,11 @@ final class ElementFactory
 
     private function makeElement(Token $token, ?Element $parent): ?Element
     {
-        if ($token->type === TokenType::OPEN_TAG_END
-            || $token->type === TokenType::ATTRIBUTE_NAME
-            || $token->type === TokenType::ATTRIBUTE_VALUE
-            || $token->type === TokenType::SELF_CLOSING_TAG_END
+        if (
+            $token->type === TokenType::OPEN_TAG_END ||
+                $token->type === TokenType::ATTRIBUTE_NAME ||
+                $token->type === TokenType::ATTRIBUTE_VALUE ||
+                $token->type === TokenType::SELF_CLOSING_TAG_END
         ) {
             return null;
         }
@@ -64,11 +65,7 @@ final class ElementFactory
             return new TextElement(text: $text);
         }
 
-        if (
-            ! $token->tag
-            || $token->type === TokenType::COMMENT
-            || $token->type === TokenType::PHP
-        ) {
+        if (! $token->tag || $token->type === TokenType::COMMENT || $token->type === TokenType::PHP) {
             return new RawElement(tag: null, content: $token->compile());
         }
 
@@ -87,23 +84,23 @@ final class ElementFactory
                     ->beforeLast('"')
                     ->toString();
             } else {
-                $value = "";
+                $value = '';
             }
 
             $attributes[$name] = $value;
         }
-
         if ($token->tag === 'code' || $token->tag === 'pre') {
             return new RawElement(
                 tag: $token->tag,
                 content: $token->compileChildren(),
-                attributes: $attributes
+                attributes: $attributes,
             );
-        } elseif ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
+        }
+
+        if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
-
             $element = new ViewComponentElement(
                 environment: $this->appConfig->environment,
                 compiler: $this->compiler,
@@ -119,7 +116,8 @@ final class ElementFactory
                 name: $token->getAttribute('name') ?? 'slot',
                 attributes: $attributes,
             );
-        } else {
+        }
+        else {
             $element = new GenericElement(
                 tag: $token->tag,
                 attributes: $attributes,

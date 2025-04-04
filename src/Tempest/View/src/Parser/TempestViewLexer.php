@@ -148,7 +148,7 @@ final class TempestViewLexer
                     content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
                     type: TokenType::OPEN_TAG_END,
                 );
-            } elseif($this->seekIgnoringWhitespace() === '/') {
+            } elseif ($this->seekIgnoringWhitespace() === '/') {
                 $tokens[] = new Token(
                     content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
                     type: TokenType::SELF_CLOSING_TAG_END,
