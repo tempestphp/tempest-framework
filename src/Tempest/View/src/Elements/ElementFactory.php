@@ -51,7 +51,13 @@ final class ElementFactory
         }
 
         if ($token->type === TokenType::CONTENT) {
-            return new TextElement(text: $token->compile());
+            $text = $token->compile();
+
+            if (trim($text) === '') {
+                return null;
+            }
+
+            return new TextElement(text: $text);
         }
 
         if (! $token->tag || $token->tag === 'code' || $token->tag === 'pre') {
@@ -84,8 +90,6 @@ final class ElementFactory
 
             $attributes[$name] = $value;
         }
-
-        lw($attributes);
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
