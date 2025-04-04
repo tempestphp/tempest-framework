@@ -2,6 +2,8 @@
 
 namespace Tempest\View\Parser;
 
+use function Tempest\Support\Html\is_void_tag;
+
 final class TempestViewParser
 {
     private array $scope = [];
@@ -34,7 +36,14 @@ final class TempestViewParser
             } elseif ($token->type === TokenType::ATTRIBUTE_VALUE) {
                 $this->currentScope?->setAttributeValue($currentAttribute, $token->content);
                 $currentAttribute = null;
-            } elseif ($token->type === TokenType::CLOSING_TAG) {
+            } elseif ($token->type === TokenType::OPEN_TAG_END) {
+                $tag = $this->currentScope?->tag;
+                $this->currentScope?->addChild($token);
+
+                if ($tag && is_void_tag($tag)) {
+                    $this->closeCurrentScope();
+                }
+            } elseif ($token->type === TokenType::CLOSING_TAG || $token->type === TokenType::SELF_CLOSING_TAG_END) {
                 $this->currentScope?->setCLosingToken($token);
                 $this->closeCurrentScope();
             } else {

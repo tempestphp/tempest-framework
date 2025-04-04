@@ -37,6 +37,65 @@ final class TempestViewParserTest extends TestCase
         HTML, $parsed->compile());
     }
 
+    public function test_parse_self_closing_tag_with_attributes(): void
+    {
+        $tokens = new TokenCollection([
+            new Token('<x-foo', TokenType::OPEN_TAG_START),
+            new Token(' x-bar=', TokenType::ATTRIBUTE_NAME),
+            new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+            new Token(' x-baz=', TokenType::ATTRIBUTE_NAME),
+            new Token('"baz"', TokenType::ATTRIBUTE_VALUE),
+            new Token(' />', TokenType::SELF_CLOSING_TAG_END)
+        ]);
+
+        $parsed = new TempestViewParser($tokens)->parse();
+
+        $this->assertSame(<<<'HTML'
+        <x-foo x-bar="bar" x-baz="baz" />
+        HTML, $parsed->compile());
+    }
+
+    public function test_self_closing_tags_with_attributes(): void
+    {
+        $tokens = new TempestViewLexer('<x-foo foo="bar"/><x-bar foo="bar"/>')->lex();
+
+        $ast = new TempestViewParser($tokens)->parse();
+
+        $this->assertSame(<<<'HTML'
+        <x-foo foo="bar"/><x-bar foo="bar"/>
+        HTML, $ast->compile());
+    }
+
+    public function test_doctype(): void
+    {
+        $tokens = new TokenCollection([
+            new Token('<!doctype html>', TokenType::DOCTYPE),
+            new Token('<html', TokenType::OPEN_TAG_START),
+            new Token('>', TokenType::OPEN_TAG_END),
+            new Token('</html>', TokenType::CLOSING_TAG),
+        ]);
+
+        $parsed = new TempestViewParser($tokens)->parse();
+
+        $this->assertSame(<<<'HTML'
+        <!doctype html><html></html>
+        HTML, $parsed->compile());
+    }
+
+    public function test_void_tags(): void
+    {
+        $html = <<<'HTML'
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="/main.css" rel="stylesheet"><div></div>
+        HTML;
+
+        $tokens = new TempestViewLexer($html)->lex();
+
+        $ast = new TempestViewParser($tokens)->parse();
+
+        $this->assertCount(3, $ast);
+        $this->assertSame($html, $ast->compile());
+    }
+
     #[DataProvider('data')]
     public function test_parser_from_lexed_result(string $html): void
     {

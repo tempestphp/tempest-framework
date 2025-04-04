@@ -25,6 +25,8 @@ final class TempestViewLexer
                 $tokens[] = $this->lexPhp();
             } elseif ($this->seek(4) === '<!--') {
                 $tokens[] = $this->lexComment();
+            } elseif ($this->comesNext('<!doctype') || $this->comesNext('<!DOCTYPE')) {
+                $tokens[] = $this->lexDocType();
             } elseif ($this->seek() === '<') {
                 $tokens = [...$tokens, ...$this->lexTag()];
             } else {
@@ -33,6 +35,11 @@ final class TempestViewLexer
         }
 
         return new TokenCollection($tokens);
+    }
+
+    private function comesNext(string $search): bool
+    {
+        return $this->seek(strlen($search)) === $search;
     }
 
     private function seek(int $length = 1, int $offset = 0): ?string
@@ -107,7 +114,7 @@ final class TempestViewLexer
         } else {
             $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
 
-            while ($this->seek() !== null && $this->seek() !== '>') {
+            while ($this->seek() !== null && $this->seek() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
                 $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ' || $next === PHP_EOL);
 
                 $attributeName .= $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');
@@ -136,10 +143,15 @@ final class TempestViewLexer
                 }
             }
 
-            if ($this->seek() === '>') {
+            if ($this->seekIgnoringWhitespace() === '>') {
                 $tokens[] = new Token(
-                    content:  $this->consume(),
+                    content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
                     type: TokenType::OPEN_TAG_END,
+                );
+            } elseif($this->seekIgnoringWhitespace() === '/') {
+                $tokens[] = new Token(
+                    content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
+                    type: TokenType::SELF_CLOSING_TAG_END,
                 );
             }
         }
@@ -170,5 +182,13 @@ final class TempestViewLexer
         $buffer .= $this->consume(3);
 
         return new Token($buffer, TokenType::COMMENT);
+    }
+
+    private function lexDoctype(): Token
+    {
+        $buffer = $this->consumeUntil(fn (string $next) => $next === '>');
+        $buffer .= $this->consume();
+
+        return new Token($buffer, TokenType::DOCTYPE);
     }
 }

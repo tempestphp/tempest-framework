@@ -158,7 +158,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
             HTML,
         )->data(items: ['a', 'b']));
 
-        $this->assertStringContainsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
 <html lang="en">
     <head>
@@ -497,17 +497,17 @@ HTML,
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            str_replace(PHP_EOL, '', $this->render('<x-foo /><x-foo />')),
+            $this->render('<x-foo /><x-foo />'),
         );
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            str_replace(PHP_EOL, '', $this->render('<x-foo/><x-foo/>')),
+            $this->render('<x-foo/><x-foo/>'),
         );
 
         $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
-            str_replace(PHP_EOL, '', $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>')),
+            $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>'),
         );
     }
 

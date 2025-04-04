@@ -46,7 +46,11 @@ final class ElementFactory
 
     private function makeElement(Token $token, ?Element $parent): ?Element
     {
-        if ($token->type === TokenType::OPEN_TAG_END || $token->type === TokenType::ATTRIBUTE_NAME || $token->type === TokenType::ATTRIBUTE_VALUE) {
+        if ($token->type === TokenType::OPEN_TAG_END
+            || $token->type === TokenType::ATTRIBUTE_NAME
+            || $token->type === TokenType::ATTRIBUTE_VALUE
+            || $token->type === TokenType::SELF_CLOSING_TAG_END
+        ) {
             return null;
         }
 
@@ -60,14 +64,14 @@ final class ElementFactory
             return new TextElement(text: $text);
         }
 
-        if (! $token->tag || $token->tag === 'code' || $token->tag === 'pre') {
+        if (
+            ! $token->tag
+            || $token->tag === 'code'
+            || $token->tag === 'pre'
+            || $token->type === TokenType::COMMENT
+            || $token->type === TokenType::PHP
+        ) {
             return new RawElement(tag: null, content: $token->compile());
-        }
-
-        if ($token->type === TokenType::COMMENT) {
-            return new CommentElement(
-                content: $token->compile(),
-            );
         }
 
         $attributes = [];

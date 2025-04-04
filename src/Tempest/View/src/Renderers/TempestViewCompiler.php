@@ -53,9 +53,6 @@ final readonly class TempestViewCompiler
         // 1. Retrieve template
         $template = $this->retrieveTemplate($view);
 
-        // 2. Parse as DOM
-//        $dom = $this->parseDom($template);
-
         // 2. Parse AST
         $ast = $this->parseAst($template);
 
