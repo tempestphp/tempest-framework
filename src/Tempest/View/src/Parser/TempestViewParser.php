@@ -14,9 +14,9 @@ final class TempestViewParser
         private readonly TokenCollection $tokens,
     ) {}
 
-    public function parse(): Ast
+    public function parse(): TempestViewAst
     {
-        $ast = new Ast();
+        $ast = new TempestViewAst();
 
         $currentAttribute = null;
 

@@ -7,11 +7,12 @@ namespace Tempest\View\Elements;
 use Dom\Comment;
 use Dom\DocumentType;
 use Dom\Element as DomElement;
-use Dom\Node;
 use Dom\Text;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Element;
+use Tempest\View\Parser\Token;
+use Tempest\View\Parser\TokenType;
 use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
@@ -35,62 +36,56 @@ final class ElementFactory
         return $this;
     }
 
-    public function make(Node $node): ?Element
+    public function make(Token $token): ?Element
     {
         return $this->makeElement(
-            node: $node,
+            token: $token,
             parent: null,
         );
     }
 
-    private function makeElement(Node $node, ?Element $parent): ?Element
+    private function makeElement(Token $token, ?Element $parent): ?Element
     {
-        if ($node instanceof DocumentType) {
-            $content = $node->ownerDocument->saveHTML($node);
-
-            return new RawElement(tag: null, content: $content);
+        if ($token->type === TokenType::OPEN_TAG_END || $token->type === TokenType::ATTRIBUTE_NAME || $token->type === TokenType::ATTRIBUTE_VALUE) {
+            return null;
         }
 
-        if ($node instanceof Text) {
-            if (trim($node->textContent) === '') {
-                return null;
-            }
-
-            return new TextElement(
-                text: $node->textContent,
-            );
+        if ($token->type === TokenType::CONTENT) {
+            return new TextElement(text: $token->compile());
         }
 
-        if ($node instanceof Comment) {
+        if (! $token->tag || $token->tag === 'code' || $token->tag === 'pre') {
+            return new RawElement(tag: null, content: $token->compile());
+        }
+
+        if ($token->type === TokenType::COMMENT) {
             return new CommentElement(
-                content: $node->textContent,
+                content: $token->compile(),
             );
         }
-
-        $tagName = strtolower($node->tagName);
 
         $attributes = [];
 
-        /** @var \Dom\Attr $attribute */
-        foreach ($node->attributes ?? [] as $attribute) {
-            $name = str($attribute->name)->camel()->toString();
+        foreach ($token->rawAttributes as $name => $value) {
+            $name = str($name)
+                ->trim()
+                ->before('=')
+                ->camel()
+                ->toString();
 
-            $attributes[$name] = $attribute->value;
-        }
-
-        if (! ($node instanceof DomElement) || $tagName === 'pre' || $tagName === 'code') {
-            $content = '';
-
-            foreach ($node->childNodes as $child) {
-                $content .= $node->ownerDocument->saveHTML($child);
+            if (is_string($value)) {
+                $value = str($value)
+                    ->afterFirst('"')
+                    ->beforeLast('"')
+                    ->toString();
+            } else {
+                $value = "";
             }
 
-            return new RawElement(
-                tag: $tagName,
-                content: $content,
-                attributes: $attributes,
-            );
+            $attributes[$name] = $value;
         }
+
+        $tagName = $token->tag;
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$tagName] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
@@ -109,7 +104,7 @@ final class ElementFactory
             );
         } elseif ($tagName === 'x-slot') {
             $element = new SlotElement(
-                name: $node->getAttribute('name') ?: 'slot',
+                name: $token->getAttribute('name') ?? 'slot',
                 attributes: $attributes,
             );
         } else {
@@ -121,9 +116,9 @@ final class ElementFactory
 
         $children = [];
 
-        foreach ($node->childNodes as $child) {
+        foreach ($token->children as $child) {
             $childElement = $this->clone()->makeElement(
-                node: $child,
+                token: $child,
                 parent: $parent,
             );
 

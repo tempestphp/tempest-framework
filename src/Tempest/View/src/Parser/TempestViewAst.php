@@ -2,7 +2,11 @@
 
 namespace Tempest\View\Parser;
 
-final class Ast
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+
+final class TempestViewAst implements IteratorAggregate
 {
     public function __construct(
         private(set) TokenCollection $tokens = new TokenCollection(),
@@ -21,5 +25,10 @@ final class Ast
             fn (Token $token) => $token->compile(),
             iterator_to_array($this->tokens),
         ));
+    }
+
+    public function getIterator(): Traversable
+    {
+        return $this->tokens->getIterator();
     }
 }

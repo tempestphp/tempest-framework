@@ -2,17 +2,35 @@
 
 namespace Tempest\View\Parser;
 
-class Token
+use function Tempest\Support\str;
+
+final class Token
 {
     private(set) array $children = [];
     private(set) ?Token $parent = null;
     private(set) ?Token $closingToken = null;
+    private(set) array $rawAttributes = [];
     private(set) array $attributes = [];
+    private(set) ?string $tag = null;
 
     public function __construct(
         public readonly string $content,
         public readonly TokenType $type,
-    ) {}
+    )
+    {
+        $this->tag = (match ($this->type) {
+            TokenType::OPEN_TAG_START => str($this->content)
+                ->afterFirst('<')
+                ->before(['>', ' ', PHP_EOL]),
+            TokenType::SELF_CLOSING_TAG => str($this->content)
+                ->afterFirst('<')
+                ->before(['/', ' ', PHP_EOL]),
+            TokenType::CLOSING_TAG => str($this->content)
+                ->afterFirst('/')
+                ->before(['>', ' ', PHP_EOL]),
+            default => null,
+        })?->trim()->lower()->toString();
+    }
 
     public function addChild(Token $other): void
     {
@@ -20,14 +38,21 @@ class Token
         $other->parent = $this;
     }
 
+    public function getAttribute(string $name): null|string|bool
+    {
+        return $this->attributes[$name] ?? null;
+    }
+
     public function addAttribute(string $name): void
     {
-        $this->attributes[$name] = true;
+        $this->rawAttributes[$name] = true;
+        $this->attributes[$this->attributeName($name)] = true;
     }
 
     public function setAttributeValue(string $name, string $value): void
     {
-        $this->attributes[$name] = $value;
+        $this->rawAttributes[$name] = $value;
+        $this->attributes[$this->attributeName($name)] = $this->attributeValue($value);
     }
 
     public function setCLosingToken(Token $closingToken): void
@@ -39,7 +64,7 @@ class Token
     {
         $buffer = $this->content;
 
-        foreach ($this->attributes as $name => $value) {
+        foreach ($this->rawAttributes as $name => $value) {
             if ($value !== true) {
                 $buffer .= $name . $value;
             } else {
@@ -65,5 +90,15 @@ class Token
                 $this->type->name,
             ),
         ];
+    }
+
+    private function attributeName(string $name): string
+    {
+        return str($name)->trim()->before('=')->toString();
+    }
+
+    private function attributeValue(string $value): string
+    {
+        return str($value)->afterFirst('"')->beforeLast('"')->toString();
     }
 }

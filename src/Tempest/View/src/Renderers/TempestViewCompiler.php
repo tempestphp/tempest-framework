@@ -14,6 +14,9 @@ use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\Parser\TempestViewAst;
+use Tempest\View\Parser\TempestViewLexer;
+use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
@@ -51,10 +54,13 @@ final readonly class TempestViewCompiler
         $template = $this->retrieveTemplate($view);
 
         // 2. Parse as DOM
-        $dom = $this->parseDom($template);
+//        $dom = $this->parseDom($template);
+
+        // 2. Parse AST
+        $ast = $this->parseAst($template);
 
         // 3. Map to elements
-        $elements = $this->mapToElements($dom);
+        $elements = $this->mapToElements($ast);
 
         // 4. Apply attributes
         $elements = $this->applyAttributes($elements);
@@ -99,6 +105,13 @@ final readonly class TempestViewCompiler
         }
 
         return file_get_contents($searchPath);
+    }
+
+    private function parseAst(string $template): TempestViewAst
+    {
+        $tokens = new TempestViewLexer($template)->lex();
+
+        return new TempestViewParser($tokens)->parse();
     }
 
     private function parseDom(string $template): NodeList
@@ -160,12 +173,12 @@ final readonly class TempestViewCompiler
     /**
      * @return Element[]
      */
-    private function mapToElements(NodeList $nodes): array
+    private function mapToElements(TempestViewAst $ast): array
     {
         $elements = [];
 
-        foreach ($nodes as $node) {
-            $element = $this->elementFactory->make($node);
+        foreach ($ast as $token) {
+            $element = $this->elementFactory->make($token);
 
             if ($element === null) {
                 continue;

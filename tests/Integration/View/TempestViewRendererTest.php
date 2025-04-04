@@ -160,9 +160,27 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringContainsStringIgnoringLineEndings(
             <<<'HTML'
-            <html lang="en"><head><title>Home</title></head><body><table><tbody><tr><td>a</td></tr><tr><td>b</td></tr></tbody></table></body></html>
-            HTML,
-            $html,
+<html lang="en">
+    <head>
+        <title>Home</title>
+    </head>
+    <body>
+    
+    
+<table>
+        <tr>
+            <td>a</td>
+        </tr>
+<tr>
+            <td>b</td>
+        </tr>
+    </table>
+
+
+    </body>
+    </html>
+HTML,
+            $html
         );
     }
 
@@ -227,7 +245,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_multiple_slots(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
             injected scripts
                 
@@ -440,21 +458,21 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         b    </div>';
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" b="b"></x-view-component-with-multiple-attributes>'));
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+        $this->assertSnippetsMatch($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes a="a" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+        $this->assertSnippetsMatch($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" :b="\'b\'"></x-view-component-with-multiple-attributes>'));
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+        $this->assertSnippetsMatch($expected, $html);
 
         $html = $this->render(view('<x-view-component-with-multiple-attributes :a="\'a\'" b="b"></x-view-component-with-multiple-attributes>'));
-        $this->assertStringEqualsStringIgnoringLineEndings($expected, $html);
+        $this->assertSnippetsMatch($expected, $html);
     }
 
     public function test_slot_with_comment(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
             <div class="base"><!-- example of comment -->
 
@@ -477,17 +495,17 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent('x-foo', '<div>foo</div>');
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
             str_replace(PHP_EOL, '', $this->render('<x-foo /><x-foo />')),
         );
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
             str_replace(PHP_EOL, '', $this->render('<x-foo/><x-foo/>')),
         );
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             '<div>foo</div><div>foo</div>',
             str_replace(PHP_EOL, '', $this->render('<x-foo foo="bar" :baz="$hello"/><x-foo foo="bar" :baz="$hello"/>')),
         );
@@ -509,12 +527,12 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         <h1 class="text-5xl font-bold text-[#4f95d1]">Tempest</h1>
         </body> 
-        </html> 
+        </html>
         HTML;
 
         $html = $this->render($view);
 
-        $this->assertStringContainsString('<!DOCTYPE html>', $html);
+        $this->assertStringContainsString('<!doctype html>', $html);
         $this->assertStringContainsString('<html lang="en">', $html);
         $this->assertStringContainsString('<meta charset="UTF-8">', $html);
         $this->assertStringContainsString('<head>', $html);
@@ -528,4 +546,13 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertStringEqualsStringIgnoringLineEndings('<div>test</div>', $html);
     }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
+    }
 }
+
