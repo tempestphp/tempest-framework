@@ -41,7 +41,7 @@ final class TempestViewParser
                 $currentAttribute = $token->content;
                 $this->currentScope?->addAttribute($token);
             } elseif ($token->type === TokenType::ATTRIBUTE_VALUE) {
-                $this->currentScope?->setAttributeValue($currentAttribute, $token->content);
+                $this->currentScope?->setAttributeValue($currentAttribute, $token);
                 $currentAttribute = null;
             } elseif ($withinTag && $token->type === TokenType::PHP) {
                 $this->currentScope?->addAttribute($token);

@@ -9,6 +9,7 @@ use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\Support\Str\ImmutableString;
+use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
@@ -150,7 +151,12 @@ final readonly class TempestViewCompiler
                 ->setChildren($children);
 
             foreach ($element->getAttributes() as $name => $value) {
-                $attribute = $this->attributeFactory->make($name);
+                // TODO: possibly refactor attribute construction to ElementFactory?
+                if ($value instanceof Attribute) {
+                    $attribute = $value;
+                } else {
+                    $attribute = $this->attributeFactory->make($name);
+                }
 
                 $element = $attribute->apply($element);
 

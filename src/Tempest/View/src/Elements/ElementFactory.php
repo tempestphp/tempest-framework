@@ -10,6 +10,7 @@ use Dom\Element as DomElement;
 use Dom\Text;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\View\Attributes\PhpAttribute;
 use Tempest\View\Element;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
@@ -71,14 +72,14 @@ final class ElementFactory
 
         $attributes = [];
 
-        foreach ($token->rawAttributes as $value) {
-            // TODO: need to properly distinguish between PHP code and attributes
+        foreach ($token->htmlAttributes as $name => $value) {
             $name = str($name)
                 ->trim()
                 ->before('=')
                 ->camel()
                 ->toString();
 
+            // TODO: this check can go if the default value in \Tempest\View\Parser\Token::addAttribute is changed to `''` instead of `true`
             if (is_string($value)) {
                 $value = str($value)
                     ->afterFirst('"')
@@ -89,6 +90,10 @@ final class ElementFactory
             }
 
             $attributes[$name] = $value;
+        }
+
+        foreach ($token->phpAttributes as $index => $content) {
+            $attributes[] = new PhpAttribute((string) $index, $content);
         }
 
         if ($token->tag === 'code' || $token->tag === 'pre') {

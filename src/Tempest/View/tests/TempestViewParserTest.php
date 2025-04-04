@@ -105,7 +105,7 @@ final class TempestViewParserTest extends TestCase
             new Token('"foo"', TokenType::ATTRIBUTE_VALUE),
             new Token(' <?php } ?>', TokenType::PHP),
             new Token('>', TokenType::OPEN_TAG_END),
-            new Token('</div>', TokenType::CLOSING_TAG)
+            new Token('</div>', TokenType::CLOSING_TAG),
         ]);
 
         $parsed = new TempestViewParser($tokens)->parse();

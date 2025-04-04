@@ -357,14 +357,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
     public function test_boolean_attributes_in_view_component(): void
     {
-//        $template = <<<'HTML'
-/*<a <?php if($href === true) { echo 'href' } elseif($href) { echo 'href="<?= Tempest\View\Attributes\ExpressionAttribute::resolveValue('hi') ?>"' } ?>></a>*/
-//HTML;
-//
-//        $html = $this->render($template);
-//        ld($html);
-
-
         $this->registerViewComponent('x-test', <<<HTML
         <div>
             <x-slot/>
@@ -377,6 +369,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         </x-test>
         HTML);
 
-        ld($html);
+        $this->assertStringContainsString(' href="hi"', $html);
     }
 }

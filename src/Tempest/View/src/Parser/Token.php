@@ -14,9 +14,12 @@ final class Token
 
     private(set) ?Token $closingToken = null;
 
+    /** @var \Tempest\View\Parser\Token[] */
     private(set) array $rawAttributes = [];
 
-    private(set) array $attributes = [];
+    private(set) array $phpAttributes = [];
+
+    private(set) array $htmlAttributes = [];
 
     private(set) ?string $tag = null;
 
@@ -49,24 +52,24 @@ final class Token
 
     public function getAttribute(string $name): null|string|bool
     {
-        return $this->attributes[$name] ?? null;
+        return $this->htmlAttributes[$name] ?? null;
     }
 
     public function addAttribute(Token $token): void
     {
-        if ($token->type === TokenType::PHP) {
-            $this->rawAttributes[] = $token;
-        } else {
-            $name = $token->content;
-            $this->rawAttributes[] = $token->content;
-            $this->attributes[$this->attributeName($name)] = true;
+        $this->rawAttributes[] = $token;
+
+        if ($token->type === TokenType::ATTRIBUTE_NAME) {
+            $this->htmlAttributes[$this->attributeName($token->content)] = true;
+        } elseif ($token->type === TokenType::PHP) {
+            $this->phpAttributes[] = $token->content;
         }
     }
 
-    public function setAttributeValue(string $name, string $value): void
+    public function setAttributeValue(string $name, Token $token): void
     {
-        $this->rawAttributes[] = $value;
-        $this->attributes[$this->attributeName($name)] = $this->attributeValue($value);
+        $this->rawAttributes[] = $token;
+        $this->htmlAttributes[$this->attributeName($name)] = $this->attributeValue($token->content);
     }
 
     public function setEndingToken(Token $endingToken): void
@@ -97,11 +100,7 @@ final class Token
         $buffer = '';
 
         foreach ($this->rawAttributes as $rawAttribute) {
-            if ($rawAttribute instanceof Token) {
-                $buffer .= $rawAttribute->compile();
-            } else {
-                $buffer .= $rawAttribute;
-            }
+            $buffer .= $rawAttribute->content;
         }
 
         return $buffer;

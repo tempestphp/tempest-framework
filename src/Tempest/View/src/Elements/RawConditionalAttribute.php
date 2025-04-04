@@ -8,13 +8,13 @@ final readonly class RawConditionalAttribute
 {
     public function __construct(
         private string $name,
-        private string $value
+        private string $value,
     ) {}
 
     public function compile(): string
     {
         return sprintf(
-            '<?= %s::render(%s, \'%s\', %s) ?>',
+            "<?= %s::render(%s, '%s', %s) ?>",
             self::class,
             '$' . str($this->name)->camel()->toString(),
             $this->name,
@@ -26,10 +26,11 @@ final readonly class RawConditionalAttribute
     {
         if ($condition === true) {
             return str($name)->kebab()->toString();
-        } elseif ($condition) {
-            return sprintf('%s="%s"', str($name)->kebab(), $value);
-        } else {
-            return '';
         }
+
+        if ($condition) {
+            return sprintf('%s="%s"', str($name)->kebab(), $value);
+        }
+        return '';
     }
 }
