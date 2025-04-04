@@ -8,12 +8,15 @@ use Dotenv\Dotenv;
 use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Exceptions\WhoopsErrorHandler;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
+use Tempest\Router\MatchedRoute;
+use Tempest\Router\Request;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -204,9 +207,7 @@ final class FrameworkKernel implements Kernel
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
         if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
-            $whoops = new Run();
-            $whoops->pushHandler(new PrettyPageHandler());
-            $whoops->register();
+            new WhoopsErrorHandler($this->container)->register();
         }
 
         return $this;
