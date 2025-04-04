@@ -186,6 +186,18 @@ final class TempestViewLexerTest extends TestCase
         ], $tokens);
     }
 
+    public function test_attribute_with_new_line(): void
+    {
+        $tokens = new TempestViewLexer('<div x-foo="bar"
+></div>')->lex();
+
+        $this->assertTokens([
+            new Token('<div x-foo="bar"', TokenType::OPEN_TAG_START),
+            new Token("\n>", TokenType::OPEN_TAG_END),
+            new Token('</div>', TokenType::CLOSING_TAG)
+        ], $tokens);
+    }
+
     private function assertTokens(array $expected, TokenCollection $actual): void
     {
         $this->assertCount(count($expected), $actual);

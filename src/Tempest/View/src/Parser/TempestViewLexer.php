@@ -100,7 +100,11 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ' || $next === PHP_EOL);
+        $tagBuffer = $this->consumeUntil(function () {
+            $next = $this->seekIgnoringWhitespace();
+
+            return $next === '>';
+        });
 
         $tokens = [];
 
@@ -114,7 +118,7 @@ final class TempestViewLexer
         } else {
             $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
 
-            while ($this->seek() !== null && $this->seek() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
+            while ($this->seek() !== null && $this->seekIgnoringWhitespace() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
                 if ($this->seekIgnoringWhitespace(2) === '<?') {
                     $tokens[] = $this->lexPhp();
                     continue;
