@@ -7,7 +7,7 @@ use IteratorAggregate;
 use Traversable;
 
 /**
- * @extends IteratorAggregate<\Tempest\View\Parser\Token>
+ * @implements IteratorAggregate<\Tempest\View\Parser\Token>
  */
 final class TokenCollection implements IteratorAggregate
 {
@@ -27,7 +27,7 @@ final class TokenCollection implements IteratorAggregate
         return new ArrayIterator($this->tokens);
     }
 
-    public function __debugInfo(): ?array
+    public function __debugInfo(): array
     {
         return [
             implode(

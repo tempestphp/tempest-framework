@@ -113,7 +113,7 @@ final class Token
         return $buffer;
     }
 
-    public function __debugInfo(): ?array
+    public function __debugInfo(): array
     {
         return [
             sprintf(
