@@ -19,8 +19,8 @@ final readonly class LexerProfileCommand
         $html = file_get_contents(__DIR__ . "/{$name}.html");
 
         $this->parseTempest($html);
-//        $this->parseMasterminds($html);
-//        $this->parseDom($html);
+        $this->parseMasterminds($html);
+        $this->parseDom($html);
     }
 
     private function parseTempest(string $html): void
@@ -30,7 +30,7 @@ final readonly class LexerProfileCommand
         $end = microtime(true);
 
         $time = round(($end - $start) * 1000, 2);
-        $this->success('[Tempest] ' . $time . 'ms.');
+        $this->success('[Tempest] ' . $time . 'ms');
     }
 
     private function parseDom(string $html): void
@@ -40,7 +40,7 @@ final readonly class LexerProfileCommand
         $end = microtime(true);
 
         $time = round(($end - $start) * 1000, 2);
-        $this->success('[DOM] ' . $time . 'ms.');
+        $this->success('[DOM] ' . $time . 'ms');
     }
 
     private function parseMasterminds(string $html): void
@@ -51,6 +51,6 @@ final readonly class LexerProfileCommand
         $end = microtime(true);
 
         $time = round(($end - $start) * 1000, 2);
-        $this->success('[Masterminds] ' . $time . 'ms.');
+        $this->success('[Masterminds] ' . $time . 'ms');
     }
 }

@@ -66,13 +66,9 @@ final class TempestViewLexer
 
     private function consume(int $length = 1): string
     {
-        $buffer = '';
-
-        while ($length) {
-            $buffer .= $this->current;
-            $this->advance();
-            $length--;
-        }
+        $buffer = substr($this->html, $this->position, $length);
+        $this->position += $length;
+        $this->current = $this->html[$this->position] ?? null;
 
         return $buffer;
     }
@@ -150,12 +146,6 @@ final class TempestViewLexer
         return $this->consumeUntil($search) . $this->consume(strlen($search));
     }
 
-    private function advance(int $amount = 1): void
-    {
-        $this->position += $amount;
-        $this->current = $this->html[$this->position] ?? null;
-    }
-
     private function lexTag(): array
     {
         $tagBuffer = $this->consumeUntil([' ', PHP_EOL, '>']);
@@ -163,7 +153,7 @@ final class TempestViewLexer
         $tokens = [];
 
         if (substr($tagBuffer, 1, 1) === '/') {
-            $tagBuffer .= $this->consume();
+            $tagBuffer .= $this->consumeIncluding('>');
             $tokens[] = new Token($tagBuffer, TokenType::CLOSING_TAG);
         } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tagBuffer, '/')) {
             $tagBuffer .= $this->consumeIncluding('>');
