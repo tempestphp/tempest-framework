@@ -79,15 +79,10 @@ final class ElementFactory
                 ->camel()
                 ->toString();
 
-            // TODO: this check can go if the default value in \Tempest\View\Parser\Token::addAttribute is changed to `''` instead of `true`
-            if (is_string($value)) {
-                $value = str($value)
-                    ->afterFirst('"')
-                    ->beforeLast('"')
-                    ->toString();
-            } else {
-                $value = '';
-            }
+            $value = str($value)
+                ->afterFirst('"')
+                ->beforeLast('"')
+                ->toString();
 
             $attributes[$name] = $value;
         }
