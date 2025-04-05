@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Renderers;
 
-use Stringable;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
-use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
@@ -20,22 +18,9 @@ use Tempest\View\View;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
-use function Tempest\Support\str;
 
 final readonly class TempestViewCompiler
 {
-    public const string TOKEN_PHP_OPEN = '<!--TOKEN_PHP_OPEN__';
-
-    public const string TOKEN_PHP_SHORT_ECHO = '<!--TOKEN_PHP_SHORT_ECHO__';
-
-    public const string TOKEN_PHP_CLOSE = '__TOKEN_PHP_CLOSE-->';
-
-    public const array TOKEN_MAPPING = [
-        '<?php' => self::TOKEN_PHP_OPEN,
-        '<?=' => self::TOKEN_PHP_SHORT_ECHO,
-        '?>' => self::TOKEN_PHP_CLOSE,
-    ];
-
     public const array PHP_TOKENS = [
         '<?php',
         '<?=',
@@ -188,11 +173,6 @@ final readonly class TempestViewCompiler
 
         return $compiled
             ->implode(PHP_EOL)
-            // Unescape PHP tags
-            ->replace(
-                array_values(self::TOKEN_MAPPING),
-                array_keys(self::TOKEN_MAPPING),
-            )
             ->toString();
     }
 }
