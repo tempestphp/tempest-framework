@@ -145,9 +145,9 @@ final class TempestViewLexer
         return $buffer;
     }
 
-    private function consumeIncluding(string $character): string
+    private function consumeIncluding(string $search): string
     {
-        return $this->consumeUntil($character) . $this->consume();
+        return $this->consumeUntil($search) . $this->consume(strlen($search));
     }
 
     private function advance(int $amount = 1): void
@@ -166,8 +166,7 @@ final class TempestViewLexer
             $tagBuffer .= $this->consume();
             $tokens[] = new Token($tagBuffer, TokenType::CLOSING_TAG);
         } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tagBuffer, '/')) {
-            $tagBuffer .= $this->consumeUntil('>');
-            $tagBuffer .= $this->consume();
+            $tagBuffer .= $this->consumeIncluding('>');
             $tokens[] = new Token($tagBuffer, TokenType::SELF_CLOSING_TAG);
         } else {
             $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
@@ -194,10 +193,8 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $attributeValue = $this->consumeUntil('"');
-                    $attributeValue .= $this->consume();
-                    $attributeValue .= $this->consumeUntil('"');
-                    $attributeValue .= $this->consume();
+                    $attributeValue = $this->consumeIncluding('"');
+                    $attributeValue .= $this->consumeIncluding('"');
 
                     $tokens[] = new Token(
                         content: $attributeValue,
@@ -208,12 +205,12 @@ final class TempestViewLexer
 
             if ($this->seekIgnoringWhitespace() === '>') {
                 $tokens[] = new Token(
-                    content: $this->consumeUntil('>') . $this->consume(),
+                    content: $this->consumeIncluding('>'),
                     type: TokenType::OPEN_TAG_END,
                 );
             } elseif ($this->seekIgnoringWhitespace() === '/') {
                 $tokens[] = new Token(
-                    content: $this->consumeUntil('>') . $this->consume(),
+                    content: $this->consumeIncluding('>'),
                     type: TokenType::SELF_CLOSING_TAG_END,
                 );
             }
@@ -224,9 +221,7 @@ final class TempestViewLexer
 
     private function lexPhp(): Token
     {
-        $buffer = $this->consumeUntil(fn () => $this->seek(2) === '?>');
-
-        $buffer .= $this->consume(2);
+        $buffer = $this->consumeIncluding('?>');
 
         return new Token($buffer, TokenType::PHP);
     }
@@ -240,17 +235,14 @@ final class TempestViewLexer
 
     private function lexComment(): Token
     {
-        $buffer = $this->consumeUntil(fn () => $this->seek(3) === '-->');
-
-        $buffer .= $this->consume(3);
+        $buffer = $this->consumeIncluding('-->');
 
         return new Token($buffer, TokenType::COMMENT);
     }
 
     private function lexDoctype(): Token
     {
-        $buffer = $this->consumeUntil('>');
-        $buffer .= $this->consume();
+        $buffer = $this->consumeIncluding('>');
 
         return new Token($buffer, TokenType::DOCTYPE);
     }
