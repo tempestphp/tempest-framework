@@ -77,20 +77,40 @@ final class TempestViewLexer
         return $buffer;
     }
 
-    private function consumeUntil(Closure $shouldStop): string
+    private function consumeUntil(array|string|Closure $shouldStop): string
     {
         $buffer = '';
 
-        while ($this->current !== null && $shouldStop($this->seek()) === false) {
+        while ($this->current !== null) {
+            if (is_string($shouldStop) && $shouldStop === $this->current) {
+                return $buffer;
+            } elseif (is_array($shouldStop) && in_array($this->current, $shouldStop)) {
+                return $buffer;
+            } elseif ($shouldStop instanceof Closure && $shouldStop($this->current)) {
+                return $buffer;
+            }
+
             $buffer .= $this->consume();
         }
 
         return $buffer;
     }
 
-    private function consumeWhile(Closure $shouldContinue): string
+    private function consumeWhile(string|array $shouldContinue): string
     {
-        return $this->consumeUntil(fn (string $next) => $shouldContinue($next) === false);
+        $buffer = '';
+
+        while ($this->current !== null) {
+            if (is_string($shouldContinue) && $shouldContinue !== $this->current) {
+                return $buffer;
+            } elseif (! in_array($this->current, $shouldContinue)) {
+                return $buffer;
+            }
+
+            $buffer .= $this->consume();
+        }
+
+        return $buffer;
     }
 
     private function advance(): void
@@ -100,7 +120,7 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(fn (string $next) => $next === '>' || $next === ' ' || $next === PHP_EOL);
+        $tagBuffer = $this->consumeUntil(['>', ' ', PHP_EOL]);
 
         $tokens = [];
 
@@ -108,7 +128,7 @@ final class TempestViewLexer
             $tagBuffer .= $this->consume();
             $tokens[] = new Token($tagBuffer, TokenType::CLOSING_TAG);
         } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tagBuffer, '/')) {
-            $tagBuffer .= $this->consumeUntil(fn (string $next) => $next === '>');
+            $tagBuffer .= $this->consumeUntil('>');
             $tagBuffer .= $this->consume();
             $tokens[] = new Token($tagBuffer, TokenType::SELF_CLOSING_TAG);
         } else {
@@ -120,9 +140,9 @@ final class TempestViewLexer
                     continue;
                 }
 
-                $attributeName = $this->consumeWhile(fn (string $next) => $next === ' ' || $next === PHP_EOL);
+                $attributeName = $this->consumeWhile([' ', PHP_EOL]);
 
-                $attributeName .= $this->consumeUntil(fn (string $next) => $next === '=' || $next === ' ' || $next === '>');
+                $attributeName .= $this->consumeUntil(['=', ' ', '>']);
 
                 $hasValue = $this->seek() === '=';
 
@@ -136,9 +156,9 @@ final class TempestViewLexer
                 );
 
                 if ($hasValue) {
-                    $attributeValue = $this->consumeUntil(fn (string $next) => $next === '"');
+                    $attributeValue = $this->consumeUntil('"');
                     $attributeValue .= $this->consume();
-                    $attributeValue .= $this->consumeUntil(fn (string $next) => $next === '"');
+                    $attributeValue .= $this->consumeUntil('"');
                     $attributeValue .= $this->consume();
 
                     $tokens[] = new Token(
@@ -150,12 +170,12 @@ final class TempestViewLexer
 
             if ($this->seekIgnoringWhitespace() === '>') {
                 $tokens[] = new Token(
-                    content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
+                    content: $this->consumeUntil('>') . $this->consume(),
                     type: TokenType::OPEN_TAG_END,
                 );
             } elseif ($this->seekIgnoringWhitespace() === '/') {
                 $tokens[] = new Token(
-                    content: $this->consumeUntil(fn (string $next) => $next === '>') . $this->consume(),
+                    content: $this->consumeUntil('>') . $this->consume(),
                     type: TokenType::SELF_CLOSING_TAG_END,
                 );
             }
@@ -175,7 +195,7 @@ final class TempestViewLexer
 
     private function lexContent(): Token
     {
-        $buffer = $this->consumeUntil(fn () => $this->seek() === '<');
+        $buffer = $this->consumeUntil('<');
 
         return new Token($buffer, TokenType::CONTENT);
     }
@@ -191,7 +211,7 @@ final class TempestViewLexer
 
     private function lexDoctype(): Token
     {
-        $buffer = $this->consumeUntil(fn (string $next) => $next === '>');
+        $buffer = $this->consumeUntil('>');
         $buffer .= $this->consume();
 
         return new Token($buffer, TokenType::DOCTYPE);
