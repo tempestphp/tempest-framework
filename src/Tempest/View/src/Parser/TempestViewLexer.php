@@ -8,13 +8,13 @@ final class TempestViewLexer
 {
     private int $position = 0;
 
-    private ?string $current {
-        get => $this->html[$this->position] ?? null;
-    }
+    private ?string $current;
 
     public function __construct(
         private string $html,
-    ) {}
+    ) {
+        $this->current = $this->html[$this->position] ?? null;
+    }
 
     public function lex(): TokenCollection
     {
@@ -79,6 +79,38 @@ final class TempestViewLexer
 
     private function consumeUntil(array|string|Closure $shouldStop): string
     {
+        // Early checks for string values to optimize performance
+        if (is_string($shouldStop)) {
+            $found = strpos($this->html, $shouldStop, $this->position);
+
+            if ($found !== false) {
+                return $this->consume($found - $this->position);
+            }
+        } elseif(is_array($shouldStop)) {
+            $earliestPosition = null;
+
+            foreach ($shouldStop as $shouldStopEntry) {
+                $found = strpos($this->html, $shouldStopEntry, $this->position);
+
+                if (! $found) {
+                    continue;
+                }
+
+                if ($earliestPosition === null) {
+                    $earliestPosition = $found;
+                    continue;
+                }
+
+                if ($earliestPosition > $found) {
+                    $earliestPosition = $found;
+                }
+            }
+
+            if ($earliestPosition) {
+                return $this->consume($earliestPosition - $this->position);
+            }
+        }
+
         $buffer = '';
 
         while ($this->current !== null) {
@@ -113,14 +145,20 @@ final class TempestViewLexer
         return $buffer;
     }
 
-    private function advance(): void
+    private function consumeIncluding(string $character): string
     {
-        $this->position++;
+        return $this->consumeUntil($character) . $this->consume();
+    }
+
+    private function advance(int $amount = 1): void
+    {
+        $this->position += $amount;
+        $this->current = $this->html[$this->position] ?? null;
     }
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil(['>', ' ', PHP_EOL]);
+        $tagBuffer = $this->consumeUntil([' ', PHP_EOL, '>']);
 
         $tokens = [];
 
