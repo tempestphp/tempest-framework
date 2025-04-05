@@ -1,4 +1,4 @@
-<?php
+[<?php
 
 use Tests\Tempest\Fixtures\Controllers\DocsController;
 

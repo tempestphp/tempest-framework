@@ -22,6 +22,8 @@ trait IsElement
 
     private array $attributes = [];
 
+    private array $rawAttributes = [];
+
     public function getAttributes(): array
     {
         if ($this instanceof WrapsElement) {
@@ -60,6 +62,13 @@ trait IsElement
         }
 
         $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    public function addRawAttribute(string $attribute): self
+    {
+        $this->rawAttributes[] = $attribute;
 
         return $this;
     }

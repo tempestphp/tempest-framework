@@ -7,13 +7,11 @@ namespace Tempest\View\Elements;
 use Dom\HTMLDocument;
 use Tempest\Core\Environment;
 use Tempest\View\Element;
-use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
-
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
-
 use const Dom\HTML_NO_DEFAULT_NS;
 
 final class ViewComponentElement implements Element
@@ -102,6 +100,7 @@ final class ViewComponentElement implements Element
 
                     $html = $matches[0] . $closingTag;
 
+                    // TODO refactor to own parser
                     $dom = HTMLDocument::createFromString($html, LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
 
                     /** @var \Dom\HTMLElement $element */

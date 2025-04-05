@@ -1,0 +1,239 @@
+
+<html lang="en" class="h-dvh flex flex-col scroll-smooth"><head><!-- Meta title --><title>Tempest, the PHP framework that gets out of your way</title><meta name="title" content="Tempest, the PHP framework that gets out of your way">
+    <meta name="twitter:title" content="Tempest, the PHP framework that gets out of your way">
+    <meta property="og:title" content="Tempest, the PHP framework that gets out of your way">
+    <meta itemprop="name" content="Tempest, the PHP framework that gets out of your way">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- Meta description --><meta name="description" content="Tempest is a modern framework designed to enable developers to write as little framework-specific code as possible, so that they can focus on application code instead.">
+    <meta name="twitter:description" content="Tempest is a modern framework designed to enable developers to write as little framework-specific code as possible, so that they can focus on application code instead.">
+    <meta property="og:description" content="Tempest is a modern framework designed to enable developers to write as little framework-specific code as possible, so that they can focus on application code instead.">
+    <meta itemprop="description" content="Tempest is a modern framework designed to enable developers to write as little framework-specific code as possible, so that they can focus on application code instead.">
+    <!-- Meta image --><meta property="og:image" content="https://tempestphp.com/meta/home">
+    <meta property="twitter:image" content="https://tempestphp.com/meta/home">
+    <meta name="image" content="https://tempestphp.com/meta/home">
+    <meta name="twitter:card" content="summary_large_image"><meta property="og:type" content="article"><!-- Favicon --><link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png"><link rel="manifest" href="/favicon/site.webmanifest"><!-- Vite tags --><script type="module" src="/build/assets/leaves.entrypoint-4hfbwgNK.js"></script><script type="module" src="/build/assets/rain.entrypoint-BwSn1aVW.js"></script><link rel="stylesheet" href="/build/assets/main-CvlF-4Z5.css" /><script type="module" src="/build/assets/main.entrypoint-KcWJzGTC.js"></script><link rel="stylesheet" href="/build/assets/main-DR42e1mc.css" /><script type="module" src="/build/assets/palette.entrypoint-Bl2Cb_iM.js"></script><!-- Dark mode --><script>
+        function isDark() {
+            return localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        }
+
+        function applyTheme(theme = undefined) {
+            if (theme) {
+                localStorage.theme = theme
+            }
+
+            document.documentElement.classList.toggle('dark', isDark())
+            document.dispatchEvent(new CustomEvent('theme-changed', {detail: {isDark: isDark()}}))
+        }
+
+        function toggleDarkMode() {
+            applyTheme(isDark() ? 'light' : 'dark')
+        }
+
+        applyTheme()
+    </script></head><body class="relative antialiased flex flex-col grow selection:bg-(--ui-primary)/20 selection:text-(--ui-primary) font-sans text-(--ui-text) bg-(--ui-bg) scheme-light dark:scheme-dark !overflow-visible !pr-0 bg-[#f1f7ff] dark:bg-[black]"><div class="absolute pointer-events-none inset-0 bg-repeat" style="background-image: url(/noise.svg)"><div id="command-palette"></div></div>
+<!-- Header -->
+<div class="flex flex-col inset-x-0 items-center lg:justify-center z-[1] h-(--ui-header-height)"><header class="group w-full lg:max-w-5xl xl:max-w-7xl 2xl:max-w-8xl fixed lg:rounded-xl lg:-translate-y-2 ring-[transparent] bg-[transparent] ring-1 py-4 px-8 flex items-center justify-between duration-200 lg:data-[scrolling]:translate-y-2 data-[scrolling]:ring-(--ui-border)/90 data-[scrolling]:backdrop-blur data-[scrolling]:bg-(--ui-bg)/75 z-[1]" id="header"><!-- Left side --><a href="/" class="flex items-center gap-4"><!-- Logo --><div class="size-8"><img src="/img/logo-transparent.svg" alt="Tempest logo" class="size-full"></div><span class="font-medium hidden lg:inline">Tempest</span><span class="hidden md:inline text-xs tracking-wide font-medium text-(--ui-text-muted) bg-(--ui-bg)/50 px-2 py-1 rounded-lg border border-(--ui-border)">
+					v1.0.0-alpha.6				</span></a><!-- Center --><div class="flex items-center gap-4"><button toggle-palette class="cursor-pointer hidden sm:block"><label for="search" class="sr-only">Search</label><div class="flex rounded-xl group-[[data-scrolling]]:bg-(--ui-bg) group-[[data-scrolling]]:ring-[transparent] bg-(--ui-bg)/50 dark:bg-[transparent] text-(--ui-text) hover:bg-(--ui-bg-elevated) ring ring-(--ui-border)/80 transition"><span class="grow px-4 py-2 text-base text-(--ui-text-muted) focus:outline-0 sm:text-sm/6">
+				Search docs, blog...
+			</span><div class="flex py-1.5 pr-1.5"><kbd class="inline-flex items-center rounded px-2 font-sans text-(--ui-text-dimmed) font-medium"><svg class="size-4 size-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 9a2 2 0 1 1 2-2v10a2 2 0 1 1-2-2h10a2 2 0 1 1-2 2V7a2 2 0 1 1 2 2z"></path></svg>
+
+    <span class="text-[.95rem]">K</span></kbd></div></div></button>
+</div><!-- Right side --><div class="flex items-center gap-4 font-medium"><a class="transition hover:text-(--ui-text-highlighted) " href="https://tempestphp.com/docs"><span class="sm:hidden">Docs</span><span class="hidden sm:inline">Documentation</span></a>
+    <a class="transition hover:text-(--ui-text-highlighted) " href="https://tempestphp.com/blog">Blog</a>
+    <a href="https://github.com/tempestphp/tempest-framework" class="transition hover:text-(--ui-text-highlighted) flex items-center gap-x-1.5 ml-4"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2c2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2a4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6c-.6.6-.6 1.2-.5 2V21"></path></svg>
+
+        <span class="font-semibold hidden lg:inline"></span></a></div></header></div>
+<script>
+    const header = document.getElementById('header')
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 0) {
+            header.dataset.scrolling = true
+        } else {
+            delete header.dataset.scrolling
+        }
+    })
+</script>
+<div class="flex flex-col grow font-display"><!-- Falling leaves --><!-- Leaves container --><div class="absolute inset-0 overflow-hidden pointer-events-none motion-reduce:hidden safari-hide" id="leaves-container"></div><!-- Leaves templates --><template id="leaf-template-1"><div class="leaf absolute pointer-events-none origin-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="currentColor" d="M20.998 3v2c0 9.627-5.373 14-12 14H7.096c.212-3.012 1.15-4.835 3.598-7.001c1.204-1.065 1.102-1.68.509-1.327C7.119 13.102 5.09 16.386 5 21.63l-.003.37h-2c0-1.363.116-2.6.346-3.732Q2.999 16.327 2.998 13c0-5.523 4.477-10 10-10c2 0 4 1 8 0"></path></svg></div></template><template id="leaf-template-2"><div class="leaf absolute pointer-events-none origin-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 512 512"><path fill="currentColor" d="m150.38 253.68l21.94-23.3l11.65 11c73.63 69.36 147.51 111.56 234.45 133.07c11.73-32 12.77-67.22 2.64-101.58c-13.44-45.59-44.74-85.31-90.49-114.86c-40.25-26-76.6-32.09-115.09-38.54c-21.12-3.54-43-7.2-66.85-14.43c-43.78-13.28-89.69-52.74-90.15-53.13L33.4 30.15L32 63.33c-.1 2.56-2.42 63.57 14.22 147.77c17.58 89 50.24 155.85 97.07 198.63c38 34.69 87.62 53.9 136.93 53.9a186 186 0 0 0 27.78-2.07c41.72-6.32 76.43-27.27 96-57.75c-89.5-23.28-165.95-67.55-242-139.16Z"></path><path fill="currentColor" d="M467.43 384.19c-16.83-2.59-33.13-5.84-49-9.77a158.5 158.5 0 0 1-12.13 25.68c-.74 1.25-1.51 2.49-2.29 3.71a583 583 0 0 0 58.55 12l15.82 2.44l4.86-31.63Z"></path></svg></div></template><template id="leaf-template-3"><div class="leaf absolute pointer-events-none origin-center"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 512 512"><path d="M453.9 378.7c-51.8-8-55.7-11.7-55.7-11.7 15.6-74-22.4-151.1-76.3-195.6C250.1 112.2 141 155.2 56 65.2c-19.8-21-8.3 235.5 98.1 332.7 77.8 71 169.4 49.2 194.5 37.6 22.8-10.6 38.7-33.9 38.7-33.9 41.5 13 62 14.2 62 14.2 14.6 1.8 22-34.4 4.6-37.1zm-91.8 7.4c-77.7-23.3-145.3-81-189.1-126.2-3.6-3.7 1.6-9.2 5.5-6 43.1 35.5 108.9 80 193.3 107.9.2 8.1-4.5 19.7-9.7 24.3z" fill="currentColor"></path></svg></div></template><!-- Aurora --><div class="absolute inset-0 overflow-hidden pointer-events-none z-[-1] safari-hide dark:hidden"><div class=" 
+          [--color-white-gradient:repeating-linear-gradient(100deg,white_0%,white_7%,transparent_10%,transparent_12%,white_16%)]
+          [--color-aurora-gradient:repeating-linear-gradient(100deg,var(--color-aurora-1)_10%,var(--color-aurora-2)_15%,var(--color-aurora-3)_20%,var(--color-aurora-4)_25%,var(--color-aurora-5)_30%)]
+          [background-image:var(--color-aurora-gradient)] 
+          __uncomment:[background-image:var(--color-white-gradient),var(--color-aurora-gradient)] 
+          [background-size:300%,_200%]
+          __uncomment:[background-position:50%_50%,50%_50%]
+          filter
+          blur-[10px]
+          invert
+          after:content-['']
+          after:absolute
+          after:inset-0
+          after:[background-image:var(--color-aurora-gradient)]
+          __uncomment:after:[background-image:var(--color-white-gradient),var(--color-aurora-gradient)]
+          after:[background-size:200%,_100%]
+          __uncomment:after:animate-aurora
+          after:[background-attachment:fixed]
+          after:mix-blend-difference
+          pointer-events-none
+          absolute
+          inset-0
+          opacity-50
+					after:will-change-auto
+          will-change-auto
+          [mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,transparent_70%)]
+      "></div></div><!-- Rain --><!-- Rain container --><div class="motion-reduce:hidden absolute inset-0 overflow-hidden pointer-events-none dark:opacity-100 opacity-0 duration-500 z-[-1] safari-hide" id="rain-container"></div><!-- Moonlight --><!-- Moonlight container --><div class="
+				hidden
+				dark:block
+				[--color-white-gradient:repeating-linear-gradient(100deg,rgba(255,255,255,.8)_0%,rgba(255,255,255,.4)_1%,transparent_10%,transparent_12%,rgba(255,255,255,.4)_16%)]
+				[background-image:var(--color-white-gradient)]
+				[background-size:300%,_200%]
+				[background-position:50%_50%,50%_50%]
+				filter
+				blur-[10px]
+				invert
+				after:content-['']
+				after:absolute
+				after:inset-0
+				after:[background-image:var(--color-white-gradient)]
+				after:[background-size:200%,_100%]
+				not-motion-reduce:after:animate-aurora
+				after:[background-attachment:fixed]
+				after:mix-blend-difference
+				pointer-events-none
+				absolute
+				inset-0
+				opacity-50
+				will-change-transform
+				[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,transparent_70%)]
+		"></div><!-- Content --><main class="container mx-auto relative flex flex-col gap-4 grow -mt-(--ui-header-height)" style="tab-size: 2"><!-- Hero --><section class="md:h-[85svh] min-h-[75vh] md:pt-24 flex justify-center flex-col tracking-tighter px-6 mt-32 md:mt-0"><h1 class="text-4xl md:text-5xl xl:text-6xl leading-none flex flex-col"><span>The framework that</span><span class="text-(--ui-primary)">gets out of your way.</span></h1><p class="mt-4 md:mt-6 xl:mt-8 max-w-xl text-xl xl:text-2xl text-(--ui-text-toned)">
+    Tempest embraces modern PHP and covers a wide range of features, giving you all the tools you need to focus on your code.
+</p><div class="mt-6 md:mt-8 xl:mt-10 flex gap-x-4 items-center font-medium text-lg"><a class="bg-(--ui-bg-inverted) text-(--ui-bg) hover:bg-(--ui-bg-inverted)/90 rounded-xl px-6 py-2.5 gap-1.5 transition" href="https://tempestphp.com/docs">
+    Get started
+</a><a class="hidden min-[401px]:flex text(--ui-text) hover:bg-(--ui-info)/10 group rounded-xl px-6 py-2.5 items-center gap-x-1.5 transition" href="https://tempestphp.com/github"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2c2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2a4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6c-.6.6-.6 1.2-.5 2V21"></path></svg>
+    Source code
+    <svg class="group-hover:translate-x-0 size-5 scale-85 group-hover:scale-100 transition opacity-0 group-hover:opacity-100 -translate-x-full" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 7l5 5l-5 5m6-10l5 5l-5 5"></path></svg></a></div><button data-copy="#install-tempest-snippet" class="hidden md:flex group mt-6 md:mt-8 xl:mt-10  items-center justify-start gap-x-2 text-base font-mono relative cursor-pointer"><svg class="size-5 text-(--ui-primary) size-5 text-(--ui-primary)" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 7l5 5l-5 5m7 2h7"></path></svg><span id="install-tempest-snippet" class="text-(--ui-text-muted)">composer create-project tempest/app --stability alpha</span><span class="ml-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-(--ui-text-dimmed) bg-(--ui-bg-muted) rounded border border-(--ui-border)"><svg class="size-5 absolute size-5 absolute" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"></path><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"></path></g></svg><svg class="size-5 absolute opacity-0 group-[[data-copied]]:opacity-100 transition text-(--ui-success) size-5 absolute opacity-0 group-[[data-copied]]:opacity-100 transition text-(--ui-success)" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="currentColor" d="M18.333 6A3.667 3.667 0 0 1 22 9.667v8.666A3.667 3.667 0 0 1 18.333 22H9.667A3.667 3.667 0 0 1 6 18.333V9.667A3.667 3.667 0 0 1 9.667 6zM15 2c1.094 0 1.828.533 2.374 1.514a1 1 0 1 1-1.748.972C15.405 4.088 15.284 4 15 4H5c-.548 0-1 .452-1 1v9.998c0 .32.154.618.407.805l.1.065a1 1 0 1 1-.99 1.738A3 3 0 0 1 2 15V5c0-1.652 1.348-3 3-3zm1.293 9.293L13 14.585l-1.293-1.292a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414"></path></svg></span></button></section><!-- Discovery --><section class="mb-20 lg:mb-[7vh] flex justify-center flex-col tracking-tighter px-6"><div class="grid grid-cols-1 lg:grid-cols-2 items-center"><!-- Left --><div class="p-2 lg:p-0 mr-6"><div class="max-w-xl text-sans"><span class="text-xl md:text-4xl xl:text-5xl font-semibold leading-none flex flex-col text-display">Zero-config code discovery</span><p class="mt-3 md:mt-2 xl:mt-4 text-lg xl:text-2xl text-(--ui-text-muted)">Tempest scans your code and finds out what to do with it without you having to write a single line of configuration or bootstrap code.</p></div><div class="mt-6"><a class="no-primary rounded-md font-medium inline-flex items-center focus:outline-hidden disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors px-4 py-2 gap-2 ring ring-inset ring-(--ui-border-accented) text-(--ui-text) bg-(--ui-bg) hover:bg-(--ui-bg-elevated) disabled:bg-(--ui-bg) aria-disabled:bg-(--ui-bg) focus-visible:ring-2 focus-visible:ring-(--ui-border-inverted)" href="https://tempestphp.com/main/internals/discovery"><span>Discovery</span><svg class="size-4 size-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6 6l6-6m-6-6l6 6"></path></svg></a></div></div><!-- Right --><div class="flex flex-col gap-2 p-2 text-sm bg-(--ui-bg)/20 rounded-xl tracking-normal"><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-keyword">final</span> <span class="hl-keyword">readonly</span> <span class="hl-keyword">class</span> <span class="hl-type">BookController</span>
+{
+    <span class="hl-injection"><span class="hl-attribute">#[<span class="hl-type">Post</span>(<span class="hl-value">'/books'</span>)]</span></span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">function</span> <span class="hl-property">store</span>(<span class="hl-injection"><span class="hl-type">CreateBookRequest</span> $request</span>): <span class="hl-type">Response</span>
+    {
+        <span class="hl-variable">$book</span> = <span class="hl-property">map</span>(<span class="hl-variable">$request</span>)-&gt;<span class="hl-property">to</span>(<span class="hl-type">Book</span>::<span class="hl-keyword">class</span>)-&gt;<span class="hl-property">save</span>();
+
+        <span class="hl-keyword">return</span> <span class="hl-keyword">new</span> <span class="hl-type">Redirect</span>(<span class="hl-property">uri</span>([<span class="hl-type">self</span>::<span class="hl-keyword">class</span>, <span class="hl-value">'show'</span>], <span class="hl-property">book</span>: <span class="hl-variable">$book</span>-&gt;<span class="hl-property">id</span>));
+    }
+}
+</pre>
+</div><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-keyword">final</span> <span class="hl-keyword">class</span> <span class="hl-type">StarCountViewProcessor</span> <span class="hl-keyword">implements</span><span class="hl-type"> ViewProcessor
+</span>{
+    <span class="hl-keyword">public</span> <span class="hl-keyword">function</span> <span class="hl-property">__construct</span>(<span class="hl-injection">
+        <span class="hl-keyword">private</span> <span class="hl-keyword">readonly</span> <span class="hl-type">GitHub</span> <span class="hl-property">$github</span>,
+    </span>) {}
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">function</span> <span class="hl-property">process</span>(<span class="hl-injection"><span class="hl-type">View</span> $view</span>): <span class="hl-type">View</span>
+    {
+        <span class="hl-keyword">if</span> (! <span class="hl-variable">$view</span> <span class="hl-keyword">instanceof</span> <span class="hl-type">WithStarCount</span>) {
+            <span class="hl-keyword">return</span> <span class="hl-variable">$view</span>;
+        }
+
+        <span class="hl-keyword">return</span> <span class="hl-variable">$view</span>-&gt;<span class="hl-property">data</span>(<span class="hl-property">starCount</span>: <span class="hl-variable">$this</span>-&gt;<span class="hl-property">github</span>-&gt;<span class="hl-property">getStarCount</span>());
+    }
+}
+</pre>
+</div></div></div></section><style></style><!-- Template engine --><section class="mb-20 lg:mb-[7vh] flex justify-center flex-col tracking-tighter px-6"><div class="grid grid-cols-1 lg:grid-cols-2 items-center"><!-- Left --><div class="p-2 lg:p-0 mr-6"><div class="max-w-xl text-sans"><span class="text-xl md:text-4xl xl:text-5xl font-semibold leading-none flex flex-col text-display">A refreshing new template engine</span><p class="mt-3 md:mt-2 xl:mt-4 text-lg xl:text-2xl text-(--ui-text-muted)">Tempest reimagines templating in PHP with a clean front-end engine, inspired by modern front-end frameworks.</p><p class="mt-3 md:mt-2 xl:mt-4 text-lg xl:text-2xl text-(--ui-text-muted)">Do you prefer something tried and tested? Tempest has built-in support for Blade and Twig as well.</p></div><div class="mt-6"><a class="no-primary rounded-md font-medium inline-flex items-center focus:outline-hidden disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors px-4 py-2 gap-2 ring ring-inset ring-(--ui-border-accented) text-(--ui-text) bg-(--ui-bg) hover:bg-(--ui-bg-elevated) disabled:bg-(--ui-bg) aria-disabled:bg-(--ui-bg) focus-visible:ring-2 focus-visible:ring-(--ui-border-inverted)" href="https://tempestphp.com/main/essentials/views"><span>Templating</span><svg class="size-4 size-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6 6l6-6m-6-6l6 6"></path></svg></a></div></div><!-- Right --><div class="flex flex-col gap-2 p-2 text-sm bg-(--ui-bg)/20 rounded-xl tracking-normal"><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="html" class="notranslate">&lt;<span class="hl-keyword">x-base</span> :<span class="hl-property">title</span>=&quot;<span class="hl-variable">$this</span>-&gt;<span class="hl-property">seo</span>-&gt;<span class="hl-property">title</span>&quot;&gt;
+    &lt;<span class="hl-keyword">ul</span>&gt;
+        &lt;<span class="hl-keyword">li</span> :<span class="hl-property">foreach</span>=&quot;<span class="hl-variable">$this</span>-&gt;<span class="hl-property">posts</span> <span class="hl-keyword">as</span> <span class="hl-variable">$post</span>&quot;&gt;
+            {{ <span class="hl-variable">$post</span>-&gt;<span class="hl-property">title</span> }}
+
+            &lt;<span class="hl-keyword">span</span> :<span class="hl-property">if</span>=&quot;<span class="hl-variable">$this</span>-&gt;<span class="hl-property">showDate</span>(<span class="hl-variable">$post</span>)&quot;&gt;
+                &lt;<span class="hl-keyword">x-tag</span>&gt;
+                    {{ <span class="hl-variable">$post</span>-&gt;<span class="hl-property">date</span> }}
+                &lt;/<span class="hl-keyword">x-tag</span>&gt;
+            &lt;/<span class="hl-keyword">span</span>&gt;
+        &lt;/<span class="hl-keyword">li</span>&gt;
+    &lt;/<span class="hl-keyword">ul</span>&gt;
+&lt;/<span class="hl-keyword">x-base</span>&gt;
+</pre>
+</div><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="html" class="notranslate">&lt;!DOCTYPE html&gt;
+&lt;<span class="hl-keyword">html</span> <span class="hl-property">lang</span>=&quot;en&quot; <span class="hl-property">class</span>=&quot;h-dvh flex flex-col&quot;&gt;
+&lt;<span class="hl-keyword">head</span>&gt;
+    &lt;<span class="hl-keyword">title</span> :<span class="hl-property">if</span>=&quot;<span class="hl-keyword">isset</span>(<span class="hl-variable">$title</span>)&quot;&gt;{{ <span class="hl-variable">$title</span> }} — Bookish&lt;/<span class="hl-keyword">title</span>&gt;
+    &lt;<span class="hl-keyword">title</span> :<span class="hl-property">else</span>&gt;Bookish&lt;/<span class="hl-keyword">title</span>&gt;
+	
+    &lt;<span class="hl-keyword">x-vite-tags</span> /&gt;
+    
+    &lt;<span class="hl-keyword">x-slot</span> <span class="hl-property">name</span>=&quot;head&quot; /&gt;
+&lt;/<span class="hl-keyword">head</span>&gt;
+&lt;<span class="hl-keyword">body</span> <span class="hl-property">class</span>=&quot;antialiased flex flex-col grow&quot;&gt;
+    &lt;<span class="hl-keyword">x-slot</span> /&gt;
+    &lt;<span class="hl-keyword">x-slot</span> <span class="hl-property">name</span>=&quot;scripts&quot; /&gt;
+&lt;/<span class="hl-keyword">body</span>&gt;
+&lt;/<span class="hl-keyword">html</span>&gt;
+</pre>
+</div></div></div></section><style></style><!-- ORM--><section class="mb-20 lg:mb-[7vh] flex justify-center flex-col tracking-tighter px-6"><div class="grid grid-cols-1 lg:grid-cols-2 items-center"><!-- Left --><div class="p-2 lg:p-0 mr-6"><div class="max-w-xl text-sans"><span class="text-xl md:text-4xl xl:text-5xl font-semibold leading-none flex flex-col text-display">An ORM that embraces modern PHP</span><p class="mt-3 md:mt-2 xl:mt-4 text-lg xl:text-2xl text-(--ui-text-muted)">Define models with simple, clean code.</p></div><div class="mt-6"><a class="no-primary rounded-md font-medium inline-flex items-center focus:outline-hidden disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors px-4 py-2 gap-2 ring ring-inset ring-(--ui-border-accented) text-(--ui-text) bg-(--ui-bg) hover:bg-(--ui-bg-elevated) disabled:bg-(--ui-bg) aria-disabled:bg-(--ui-bg) focus-visible:ring-2 focus-visible:ring-(--ui-border-inverted)" href="https://tempestphp.com/main/essentials/models"><span>ORM</span><svg class="size-4 size-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6 6l6-6m-6-6l6 6"></path></svg></a></div></div><!-- Right --><div class="flex flex-col gap-2 p-2 text-sm bg-(--ui-bg)/20 rounded-xl tracking-normal"><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-keyword">final</span> <span class="hl-keyword">class</span> <span class="hl-type">Book</span>
+{
+    <span class="hl-keyword">use</span> <span class="hl-type">IsDatabaseModel</span>;
+
+    <span class="hl-injection"><span class="hl-attribute">#[<span class="hl-type">Length</span>(<span class="hl-property">min</span>: 1, <span class="hl-property">max</span>: 120)]</span></span>
+    <span class="hl-keyword">public</span> <span class="hl-type">string</span> <span class="hl-property">$title</span>;
+
+    <span class="hl-keyword">public</span> <span class="hl-type">?Author</span> <span class="hl-property">$author</span> = <span class="hl-keyword">null</span>;
+
+    <span class="hl-comment">/** <span class="hl-value">@var</span> <span class="hl-type">\App\Books\Chapter[] </span>*/</span>
+    <span class="hl-keyword">public</span> <span class="hl-type">array</span> <span class="hl-property">$chapters</span> = [];
+}
+</pre>
+</div><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-variable">$books</span> = <span class="hl-type">Book</span>::<span class="hl-property">select</span>()
+    -&gt;<span class="hl-property">with</span>(<span class="hl-value">'author.publisher'</span>, <span class="hl-value">'chapters'</span>)
+    -&gt;<span class="hl-property">where</span>(<span class="hl-value">'createdAt &lt; :olderThan'</span>, <span class="hl-property">olderThan</span>: <span class="hl-variable">$olderThan</span>)
+    -&gt;<span class="hl-property">orderBy</span>(<span class="hl-value">'createdAt DESC'</span>)
+    -&gt;<span class="hl-property">limit</span>(5)
+    -&gt;<span class="hl-property">all</span>();
+</pre>
+</div></div></div></section><style></style><!-- Much more--><section class="mb-20 lg:mb-[7vh] flex justify-center flex-col tracking-tighter px-6"><div class="grid grid-cols-1 lg:grid-cols-2 items-center"><!-- Left --><div class="p-2 lg:p-0 mr-6"><div class="max-w-xl text-sans"><span class="text-xl md:text-4xl xl:text-5xl font-semibold leading-none flex flex-col text-display">And much, much more.</span><p class="mt-3 md:mt-2 xl:mt-4 text-lg xl:text-2xl text-(--ui-text-muted)">Configuration objects for easy autocompletion and injection, a data mapper, a powerful dependency container with autowiring. Tempest is designed to be frictionless.</p></div><div class="mt-6"><a class="no-primary rounded-md font-medium inline-flex items-center focus:outline-hidden disabled:cursor-not-allowed aria-disabled:cursor-not-allowed disabled:opacity-75 aria-disabled:opacity-75 transition-colors px-4 py-2 gap-2 ring ring-inset ring-(--ui-border-accented) text-(--ui-text) bg-(--ui-bg) hover:bg-(--ui-bg-elevated) disabled:bg-(--ui-bg) aria-disabled:bg-(--ui-bg) focus-visible:ring-2 focus-visible:ring-(--ui-border-inverted)" href="https://tempestphp.com/docs"><span>Get started</span><svg class="size-4 size-4" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6 6l6-6m-6-6l6 6"></path></svg></a></div></div><!-- Right --><div class="flex flex-col gap-2 p-2 text-sm bg-(--ui-bg)/20 rounded-xl tracking-normal"><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-keyword">return</span> <span class="hl-keyword">new</span> <span class="hl-type">PostgresConfig</span>(
+    <span class="hl-property">host</span>: <span class="hl-property">env</span>(<span class="hl-value">'DB_HOST'</span>),
+    <span class="hl-property">port</span>: <span class="hl-property">env</span>(<span class="hl-value">'DB_PORT'</span>),
+    <span class="hl-property">username</span>: <span class="hl-property">env</span>(<span class="hl-value">'DB_USERNAME'</span>),
+    <span class="hl-property">password</span>: <span class="hl-property">env</span>(<span class="hl-value">'DB_PASSWORD'</span>),
+    <span class="hl-property">database</span>: <span class="hl-property">env</span>(<span class="hl-value">'DB_DATABASE'</span>),
+);
+</pre>
+</div><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-property">query</span>(<span class="hl-value">'authors'</span>)
+    -&gt;<span class="hl-property">insert</span>(...<span class="hl-variable">$rows</span>)
+    -&gt;<span class="hl-property">execute</span>();
+</pre>
+</div><div class="bg-(--ui-bg)/50 border border-(--ui-border) rounded-md p-4 [&_pre]:h-full [&_pre]:overflow-x-auto"><pre data-lang="php" class="notranslate"><span class="hl-keyword">final</span> <span class="hl-keyword">readonly</span> <span class="hl-keyword">class</span> <span class="hl-type">MarkdownInitializer</span> <span class="hl-keyword">implements</span><span class="hl-type"> Initializer
+</span>{
+    <span class="hl-keyword">public</span> <span class="hl-keyword">function</span> <span class="hl-property">initialize</span>(<span class="hl-injection"><span class="hl-type">Container</span> $container</span>): <span class="hl-type">MarkdownConverter</span>
+    {
+        <span class="hl-variable">$environment</span> = <span class="hl-keyword">new</span> <span class="hl-type">Environment</span>();
+        <span class="hl-variable">$highlighter</span> = <span class="hl-keyword">new</span> <span class="hl-type">Highlighter</span>(<span class="hl-keyword">new</span> <span class="hl-type">CssTheme</span>());
+
+        <span class="hl-variable">$highlighter</span>-&gt;<span class="hl-property">addLanguage</span>(<span class="hl-keyword">new</span> <span class="hl-type">TempestViewLanguage</span>());
+
+        <span class="hl-variable">$environment</span>
+            -&gt;<span class="hl-property">addRenderer</span>(<span class="hl-type">FencedCode</span>::<span class="hl-keyword">class</span>, <span class="hl-keyword">new</span> <span class="hl-type">CodeBlockRenderer</span>(<span class="hl-variable">$highlighter</span>))
+            -&gt;<span class="hl-property">addRenderer</span>(<span class="hl-type">Code</span>::<span class="hl-keyword">class</span>, <span class="hl-keyword">new</span> <span class="hl-type">InlineCodeBlockRenderer</span>(<span class="hl-variable">$highlighter</span>));
+
+        <span class="hl-keyword">return</span> <span class="hl-keyword">new</span> <span class="hl-type">MarkdownConverter</span>(<span class="hl-variable">$environment</span>);
+    }
+}
+</pre>
+</div></div></div></section><style></style></main></div>
+<footer class="flex items-center justify-center mb-8 gap-4"><a class="flex items-center gap-1 text-lg font-medium transition hover:text-(--ui-primary)" href="https://tempestphp.com/github"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2c2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2a4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6c-.6.6-.6 1.2-.5 2V21"></path></svg>
+
+</a>
+    <a class="flex items-center gap-1 text-lg font-medium transition hover:text-(--ui-primary)" href="https://tempestphp.com/bluesky"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.335 5.144C4.681 3.945 2 3.017 2 5.97c0 .59.35 4.953.556 5.661C3.269 14.094 5.686 14.381 8 14c-4.045.665-4.889 3.208-2.667 5.41C6.363 20.428 7.246 21 8 21c2 0 3.134-2.769 3.5-3.5q.5-1 .5-1.5q0 .5.5 1.5c.366.731 1.5 3.5 3.5 3.5c.754 0 1.637-.571 2.667-1.59C20.889 17.207 20.045 14.664 16 14c2.314.38 4.73.094 5.444-2.369c.206-.708.556-5.072.556-5.661c0-2.953-2.68-2.025-4.335-.826C15.372 6.806 12.905 10.192 12 12c-.905-1.808-3.372-5.194-5.665-6.856"></path></svg>
+
+    </a>
+    <a class="flex items-center gap-1 text-lg font-medium transition hover:text-(--ui-primary)" href="https://tempestphp.com/twitter"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 4l11.733 16H20L8.267 4zm0 16l6.768-6.768m2.46-2.46L20 4"></path></svg>
+
+    </a>
+    <a href="/rss" class="flex items-center gap-1 text-lg font-medium transition hover:text-(--ui-primary)"><svg class="size-6 size-6" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19a1 1 0 1 0 2 0a1 1 0 1 0-2 0M4 4a16 16 0 0 1 16 16M4 11a9 9 0 0 1 9 9"></path></svg>
+
+    </a><button id="toggle-theme" class="relative size-6 cursor-pointer overflow-hidden transition hover:text-(--ui-primary)"><svg class="absolute inset-0 size-full dark:opacity-0 dark:translate-y-full duration-200 absolute inset-0 size-full dark:opacity-0 dark:translate-y-full duration-200" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3h.393a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 2.992z"></path></svg>
+
+        <svg class="absolute inset-0 size-full -translate-y-full opacity-0 dark:opacity-100 dark:translate-y-0 duration-200 absolute inset-0 size-full -translate-y-full opacity-0 dark:opacity-100 dark:translate-y-0 duration-200" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0m-5 0h1m8-9v1m8 8h1m-9 8v1M5.6 5.6l.7.7m12.1-.7l-.7.7m0 11.4l.7.7m-12.1-.7l-.7.7"></path></svg>
+
+    </button></footer>
+<script>
+    document.getElementById('toggle-theme').addEventListener('click', () => {
+        toggleDarkMode()
+    })
+</script>
+</body></html>

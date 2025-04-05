@@ -54,7 +54,8 @@
         "spaze/phpstan-disallowed-calls": "^4.0",
         "symplify/monorepo-builder": "^11.2",
         "tempest/blade": "^0.1.0",
-        "twig/twig": "^3.16"
+        "twig/twig": "^3.16",
+        "masterminds/html5": "^2.9"
     },
     "replace": {
         "tempest/auth": "self.version",

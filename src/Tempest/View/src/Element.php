@@ -16,6 +16,8 @@ interface Element
 
     public function setAttribute(string $name, string $value): self;
 
+    public function addRawAttribute(string $attribute): self;
+
     public function consumeAttribute(string $name): ?string;
 
     public function unsetAttribute(string $name): self;

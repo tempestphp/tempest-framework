@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -267,6 +268,45 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
+    #[TestWith(['false'])]
+    #[TestWith(['null'])]
+    #[TestWith(['0'])]
+    #[TestWith(['$show'])]
+    public function test_falsy_bool_attribute(mixed $value): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-active="{$value}"></div>
+        HTML, show: false);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div ></div>
+        HTML, $html);
+    }
+
+    #[TestWith(['true'])]
+    #[TestWith(['$show'])]
+    public function test_truthy_bool_attribute(mixed $value): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-active="{$value}"></div>
+        HTML, show: true);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-active></div>
+        HTML, $html);
+    }
+
+    public function test_multiple_boolean_attribute(): void
+    {
+        $html = $this->render(<<<HTML
+        <div :data-a="false" :data-b="false" :data-c="true"></div>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div data-c></div>
+        HTML, $html);
+    }
+
     public function test_expression_attribute_in_raw_element(): void
     {
         $this->registerViewComponent(
@@ -282,7 +322,7 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         </x-test>
         HTML, language: 'php');
 
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             <<<'HTML'
             <div><pre data-lang="php"><hello></hello>foo<p>bar</p></pre></div>
             HTML,
@@ -305,5 +345,30 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
             <div class="hi {!! 'hi' !!} hi">
             HTML),
         );
+    }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function test_boolean_attributes_in_view_component(): void
+    {
+        $this->registerViewComponent('x-test', <<<HTML
+        <div>
+            <x-slot/>
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <a :href="'hi'"></a>
+        </x-test>
+        HTML);
+
+        $this->assertStringContainsString(' href="hi"', $html);
     }
 }
