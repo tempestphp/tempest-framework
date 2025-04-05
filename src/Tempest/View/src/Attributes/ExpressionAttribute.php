@@ -10,8 +10,7 @@ use Tempest\View\Attribute;
 use Tempest\View\Element;
 use Tempest\View\Elements\PhpDataElement;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
-use Tempest\View\Renderers\TempestViewCompiler;
-
+use Tempest\View\Parser\TempestViewCompiler;
 use function Tempest\Support\str;
 
 final readonly class ExpressionAttribute implements Attribute

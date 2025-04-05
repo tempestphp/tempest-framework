@@ -10,12 +10,12 @@ use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\GenericView;
+use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\View;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
-
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

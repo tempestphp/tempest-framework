@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use Dom\Comment;
-use Dom\DocumentType;
-use Dom\Element as DomElement;
-use Dom\Text;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Attributes\PhpAttribute;
 use Tempest\View\Element;
+use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
-use Tempest\View\Renderers\TempestViewCompiler;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
-
 use function Tempest\Support\str;
 
 final class ElementFactory

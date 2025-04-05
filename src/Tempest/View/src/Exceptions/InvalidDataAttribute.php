@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View\Exceptions;
 
 use Exception;
-use Tempest\View\Renderers\TempestViewCompiler;
 
 final class InvalidDataAttribute extends Exception
 {

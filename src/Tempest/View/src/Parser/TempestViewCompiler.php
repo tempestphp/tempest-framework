@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\View\Renderers;
+namespace Tempest\View\Parser;
 
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoveryLocation;
@@ -11,11 +11,7 @@ use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
-use Tempest\View\Parser\TempestViewAst;
-use Tempest\View\Parser\TempestViewLexer;
-use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\View;
-
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
 
