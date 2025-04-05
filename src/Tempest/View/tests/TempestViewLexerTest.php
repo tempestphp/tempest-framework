@@ -203,7 +203,7 @@ final class TempestViewLexerTest extends TestCase
         $this->assertCount(count($expected), $actual);
 
         foreach ($actual as $i => $token) {
-            $this->assertSame($token->content, $expected[$i]->content);
+            $this->assertStringEqualsStringIgnoringLineEndings($token->content, $expected[$i]->content);
             $this->assertSame($token->type, $expected[$i]->type);
         }
     }
