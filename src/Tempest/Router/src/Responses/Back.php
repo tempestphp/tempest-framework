@@ -8,6 +8,7 @@ use Tempest\Http\Status;
 use Tempest\Router\IsResponse;
 use Tempest\Router\Request;
 use Tempest\Router\Response;
+use Tempest\Router\Session\Session;
 
 use function Tempest\get;
 
@@ -20,10 +21,15 @@ final class Back implements Response
         $this->status = Status::FOUND;
         $request = get(Request::class);
 
-        $url = $request->headers['referer'] ?? $fallback;
+        $url = $request->headers['referer'] ?? $request->getSessionValue(Session::PREVIOUS_URL);
 
         if ($url) {
             $this->addHeader('Location', $url);
+            return;
+        }
+
+        if ($fallback) {
+            $this->addHeader('Location', $fallback);
             return;
         }
 

@@ -16,6 +16,8 @@ final class Session
 
     public const string ORIGINAL_VALUES = 'original_values';
 
+    public const string PREVIOUS_URL = '_previous_url';
+
     private array $expiredKeys = [];
 
     public function __construct(
@@ -45,6 +47,16 @@ final class Session
         }
 
         return $value;
+    }
+
+    public function getPreviousUrl(): string
+    {
+        return $this->get(self::PREVIOUS_URL, '');
+    }
+
+    public function setPreviousUrl(string $url): void
+    {
+        $this->set(self::PREVIOUS_URL, $url);
     }
 
     public function consume(string $key, mixed $default = null): mixed

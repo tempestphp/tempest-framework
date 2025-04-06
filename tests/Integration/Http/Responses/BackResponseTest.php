@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Router\Responses;
+namespace Tests\Tempest\Integration\Http\Responses;
 
 use Tempest\Http\Method;
 use Tempest\Http\Status;
@@ -10,6 +10,7 @@ use Tempest\Router\GenericRequest;
 use Tempest\Router\Header;
 use Tempest\Router\Request;
 use Tempest\Router\Responses\Back;
+use Tempest\Router\Session\Session;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -29,30 +30,37 @@ final class BackResponseTest extends FrameworkIntegrationTestCase
 
     public function test_back_response_with_referer(): void
     {
-        $this->bindRequest($url = '/referer-test');
+        $this->bindRequest(referer: $referer = '/referer-test');
 
         $response = new Back();
 
-        $this->assertEquals(new Header('Location', [$url]), $response->headers['Location']);
+        $this->assertEquals(new Header('Location', [$referer]), $response->headers['Location']);
     }
 
     public function test_back_response_with_fallback(): void
     {
         $this->bindRequest();
 
-        $url = '/test';
-        $response = new Back($url);
+        $referer = '/test';
+        $response = new Back($referer);
 
-        $this->assertEquals(new Header('Location', [$url]), $response->headers['Location']);
+        $this->assertEquals(new Header('Location', [$referer]), $response->headers['Location']);
     }
 
-    public function bindRequest(?string $url = null): void
+    public function test_back_response_for_get_request(): void
     {
-        $headers = $url ? ['referer' => $url] : [];
+        $this->http
+            ->get('/test-redirect-back-url')
+            ->assertRedirect('/test-redirect-back-url');
+    }
+
+    public function bindRequest(?string $uri = '/', ?string $referer = null): void
+    {
+        $headers = $referer ? ['referer' => $referer] : [];
 
         $this->container->singleton(Request::class, new GenericRequest(
             method: Method::GET,
-            uri: '/',
+            uri: $uri,
             headers: $headers,
         ));
     }
