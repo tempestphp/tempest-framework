@@ -16,6 +16,7 @@ use Tempest\View\ViewCache;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 

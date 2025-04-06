@@ -196,10 +196,10 @@ final class TempestViewLexerTest extends TestCase
 
         $this->assertTokens([
             new Token('<div', TokenType::OPEN_TAG_START),
-   new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
-   new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
-   new Token("\n>", TokenType::OPEN_TAG_END),
-   new Token('</div>', TokenType::CLOSING_TAG)
+            new Token(' x-foo=', TokenType::ATTRIBUTE_NAME),
+            new Token('"bar"', TokenType::ATTRIBUTE_VALUE),
+            new Token("\n>", TokenType::OPEN_TAG_END),
+            new Token('</div>', TokenType::CLOSING_TAG),
         ], $tokens);
     }
 

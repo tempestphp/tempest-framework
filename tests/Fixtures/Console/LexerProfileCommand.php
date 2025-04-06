@@ -7,6 +7,7 @@ use Masterminds\HTML5;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\View\Parser\TempestViewLexer;
+
 use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class LexerProfileCommand

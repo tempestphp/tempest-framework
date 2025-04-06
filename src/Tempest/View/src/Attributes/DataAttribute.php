@@ -11,6 +11,7 @@ use Tempest\View\Elements\TextElement;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Exceptions\InvalidDataAttribute;
 use Tempest\View\Parser\TempestViewCompiler;
+
 use function Tempest\Support\str;
 
 final readonly class DataAttribute implements Attribute

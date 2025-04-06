@@ -82,7 +82,7 @@ final class TempestViewLexer
             if ($found !== false) {
                 return $this->consume($found - $this->position);
             }
-        } elseif(is_array($shouldStop)) {
+        } elseif (is_array($shouldStop)) {
             $earliestPosition = null;
 
             foreach ($shouldStop as $shouldStopEntry) {

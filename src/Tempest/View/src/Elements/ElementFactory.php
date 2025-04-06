@@ -13,6 +13,7 @@ use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+
 use function Tempest\Support\str;
 
 final class ElementFactory
