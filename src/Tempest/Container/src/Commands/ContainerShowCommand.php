@@ -18,11 +18,11 @@ use function Tempest\Support\Str\after_last;
 use function Tempest\Support\Str\before_last;
 use function Tempest\Support\Str\contains;
 
-final class ContainerShowCommand
+final readonly class ContainerShowCommand
 {
     public function __construct(
-        private readonly Container $container,
-        private readonly Console $console,
+        private Container $container,
+        private Console $console,
     ) {}
 
     #[ConsoleCommand(description: 'Shows the container bindings')]
