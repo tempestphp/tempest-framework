@@ -36,6 +36,28 @@ final class TempestViewLexerTest extends TestCase
         ], $tokens);
     }
 
+    public function test_lex_php(): void
+    {
+        $code = '<?php echo "hi"; ?>';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens([
+            new Token($code, TokenType::PHP),
+        ], $tokens);
+    }
+
+    public function test_lex_comment(): void
+    {
+        $code = '<!-- test -->';
+
+        $tokens = new TempestViewLexer($code)->lex();
+
+        $this->assertTokens([
+            new Token($code, TokenType::COMMENT),
+        ], $tokens);
+    }
+
     #[TestWith(['<x-foo />'])]
     #[TestWith(['<x-foo/>'])]
     #[TestWith(['<x-foo    />'])]

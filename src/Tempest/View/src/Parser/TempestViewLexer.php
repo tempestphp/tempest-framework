@@ -2,32 +2,34 @@
 
 namespace Tempest\View\Parser;
 
-use Closure;
-
 final class TempestViewLexer
 {
     private int $position = 0;
 
     private ?string $current;
 
+    private int $length;
+
     public function __construct(
-        private string $html,
-    ) {
+        private readonly string $html,
+    )
+    {
         $this->current = $this->html[$this->position] ?? null;
+        $this->length = strlen($this->html);
     }
 
     public function lex(): TokenCollection
     {
         $tokens = [];
 
-        while ($this->current !== null) {
-            if ($this->seek(2) === '<?') {
+        while ($this->position < $this->length) {
+            if ($this->comesNext('<?')) {
                 $tokens[] = $this->lexPhp();
-            } elseif ($this->seek(4) === '<!--') {
+            } elseif ($this->comesNext('<!--')) {
                 $tokens[] = $this->lexComment();
             } elseif ($this->comesNext('<!doctype') || $this->comesNext('<!DOCTYPE')) {
                 $tokens[] = $this->lexDocType();
-            } elseif ($this->seek() === '<') {
+            } elseif ($this->comesNext('<')) {
                 $tokens = [...$tokens, ...$this->lexTag()];
             } else {
                 $tokens[] = $this->lexContent();
@@ -55,11 +57,7 @@ final class TempestViewLexer
 
     private function seekIgnoringWhitespace(int $length = 1): ?string
     {
-        $offset = 0;
-
-        while (trim($this->seek(offset: $offset)) === '') {
-            $offset += 1;
-        }
+        $offset = strspn($this->html, "\n\t ", $this->position);
 
         return $this->seek(length: $length, offset: $offset);
     }
@@ -73,75 +71,18 @@ final class TempestViewLexer
         return $buffer;
     }
 
-    private function consumeUntil(array|string|Closure $shouldStop): string
+    private function consumeUntil(string $stopAt): string
     {
-        // Early checks for string values to optimize performance
-        if (is_string($shouldStop)) {
-            $found = strpos($this->html, $shouldStop, $this->position);
+        $offset = strcspn($this->html, $stopAt, $this->position);
 
-            if ($found !== false) {
-                return $this->consume($found - $this->position);
-            }
-        } elseif (is_array($shouldStop)) {
-            $earliestPosition = null;
-
-            foreach ($shouldStop as $shouldStopEntry) {
-                $found = strpos($this->html, (string) $shouldStopEntry, $this->position);
-
-                if (! $found) {
-                    continue;
-                }
-
-                if ($earliestPosition === null) {
-                    $earliestPosition = $found;
-                    continue;
-                }
-
-                if ($earliestPosition > $found) {
-                    $earliestPosition = $found;
-                }
-            }
-
-            if ($earliestPosition) {
-                return $this->consume($earliestPosition - $this->position);
-            }
-        }
-
-        $buffer = '';
-
-        while ($this->current !== null) {
-            if (is_string($shouldStop) && $shouldStop === $this->current) {
-                return $buffer;
-            }
-            if (is_array($shouldStop) && in_array($this->current, $shouldStop)) {
-                return $buffer;
-            }
-            if ($shouldStop instanceof Closure && $shouldStop($this->current)) {
-                return $buffer;
-            }
-
-            $buffer .= $this->consume();
-        }
-
-        return $buffer;
+        return $this->consume($offset);
     }
 
-    private function consumeWhile(string|array $shouldContinue): string
+    private function consumeWhile(string $continueWhile): string
     {
-        $buffer = '';
+        $offset = strspn($this->html, $continueWhile, $this->position);
 
-        while ($this->current !== null) {
-            if (is_string($shouldContinue) && $shouldContinue !== $this->current) {
-                return $buffer;
-            }
-            if (! in_array($this->current, $shouldContinue)) {
-                return $buffer;
-            }
-
-            $buffer .= $this->consume();
-        }
-
-        return $buffer;
+        return $this->consume($offset);
     }
 
     private function consumeIncluding(string $search): string
@@ -151,7 +92,7 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil([' ', PHP_EOL, '>']);
+        $tagBuffer = $this->consumeUntil("\n >");
 
         $tokens = [];
 
@@ -170,9 +111,9 @@ final class TempestViewLexer
                     continue;
                 }
 
-                $attributeName = $this->consumeWhile([' ', PHP_EOL]);
+                $attributeName = $this->consumeWhile("\n ");
 
-                $attributeName .= $this->consumeUntil(['=', ' ', '>']);
+                $attributeName .= $this->consumeUntil("= >");
 
                 $hasValue = $this->seek() === '=';
 
@@ -214,7 +155,13 @@ final class TempestViewLexer
 
     private function lexPhp(): Token
     {
-        $buffer = $this->consumeIncluding('?>');
+        $buffer = '';
+
+        while ($this->seek(2) !== '?>') {
+            $buffer .= $this->consume();
+        }
+
+        $buffer .= $this->consume(2);
 
         return new Token($buffer, TokenType::PHP);
     }
@@ -228,7 +175,13 @@ final class TempestViewLexer
 
     private function lexComment(): Token
     {
-        $buffer = $this->consumeIncluding('-->');
+        $buffer = '';
+
+        while ($this->seek(3) !== '-->') {
+            $buffer .= $this->consume();
+        }
+
+        $buffer .= $this->consume(3);
 
         return new Token($buffer, TokenType::COMMENT);
     }
