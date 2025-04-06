@@ -86,7 +86,7 @@ final class TempestViewLexer
             $earliestPosition = null;
 
             foreach ($shouldStop as $shouldStopEntry) {
-                $found = strpos($this->html, $shouldStopEntry, $this->position);
+                $found = strpos($this->html, (string) $shouldStopEntry, $this->position);
 
                 if (! $found) {
                     continue;
@@ -112,9 +112,11 @@ final class TempestViewLexer
         while ($this->current !== null) {
             if (is_string($shouldStop) && $shouldStop === $this->current) {
                 return $buffer;
-            } elseif (is_array($shouldStop) && in_array($this->current, $shouldStop)) {
+            }
+            if (is_array($shouldStop) && in_array($this->current, $shouldStop)) {
                 return $buffer;
-            } elseif ($shouldStop instanceof Closure && $shouldStop($this->current)) {
+            }
+            if ($shouldStop instanceof Closure && $shouldStop($this->current)) {
                 return $buffer;
             }
 
@@ -131,7 +133,8 @@ final class TempestViewLexer
         while ($this->current !== null) {
             if (is_string($shouldContinue) && $shouldContinue !== $this->current) {
                 return $buffer;
-            } elseif (! in_array($this->current, $shouldContinue)) {
+            }
+            if (! in_array($this->current, $shouldContinue)) {
                 return $buffer;
             }
 

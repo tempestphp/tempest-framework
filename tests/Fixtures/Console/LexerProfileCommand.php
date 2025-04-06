@@ -49,6 +49,7 @@ final readonly class LexerProfileCommand
         $start = microtime(true);
         $html5 = new HTML5();
         $html5->loadHTML($html);
+
         $end = microtime(true);
 
         $time = round(($end - $start) * 1000, 2);

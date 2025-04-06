@@ -31,6 +31,7 @@ final readonly class RawConditionalAttribute
         if ($condition) {
             return sprintf('%s="%s"', str($name)->kebab(), $value);
         }
+
         return '';
     }
 }
