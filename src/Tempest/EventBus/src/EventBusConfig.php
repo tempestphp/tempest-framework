@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\EventBus;
 
 use Closure;
+use Tempest\Core\Middleware;
 use Tempest\Reflection\MethodReflector;
 
 final class EventBusConfig
@@ -13,8 +14,8 @@ final class EventBusConfig
         /** @var array<string,array<\Tempest\EventBus\CallableEventHandler>> */
         public array $handlers = [],
 
-        /** @var array<array-key, class-string<\Tempest\EventBus\EventBusMiddleware>> */
-        public array $middleware = [],
+        /** @var Middleware<\Tempest\EventBus\EventBusMiddleware> */
+        public Middleware $middleware = new Middleware(),
     ) {}
 
     public function addClosureHandler(string $event, Closure $handler): self
@@ -38,14 +39,6 @@ final class EventBusConfig
             event: $event,
             handler: $handler,
         );
-
-        return $this;
-    }
-
-    /** @param class-string<\Tempest\EventBus\EventBusMiddleware> $middlewareClass */
-    public function addMiddleware(string $middlewareClass): self
-    {
-        $this->middleware[] = $middlewareClass;
 
         return $this;
     }

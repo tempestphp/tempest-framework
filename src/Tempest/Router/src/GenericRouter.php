@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Router\Exceptions\InvalidRouteException;
@@ -28,14 +29,8 @@ use function Tempest\map;
 use function Tempest\Support\Regex\replace;
 use function Tempest\Support\str;
 
-/**
- * @template MiddlewareClass of \Tempest\Router\HttpMiddleware
- */
 final class GenericRouter implements Router
 {
-    /** @var class-string<MiddlewareClass>[] */
-    private array $middleware = [];
-
     private bool $handleExceptions = true;
 
     public function __construct(
@@ -114,12 +109,15 @@ final class GenericRouter implements Router
 
         $callable = new HttpMiddlewareCallable(fn (Request $request) => $this->createResponse($callControllerAction($request)));
 
-        $middlewareStack = [...$this->middleware, ...$route->middleware];
+        $middlewareStack = $this->routeConfig
+            ->middleware
+            ->clone()
+            ->add(...$route->middleware);
 
-        while ($middlewareClass = array_pop($middlewareStack)) {
+        foreach ($middlewareStack->unwrap() as $middlewareClass) {
             $callable = new HttpMiddlewareCallable(function (Request $request) use ($middlewareClass, $callable) {
                 /** @var HttpMiddleware $middleware */
-                $middleware = $this->container->get($middlewareClass);
+                $middleware = $this->container->get($middlewareClass->getName());
 
                 return $middleware($request, $callable);
             });
@@ -217,7 +215,7 @@ final class GenericRouter implements Router
     }
 
     // TODO: could in theory be moved to a dynamic initializer
-    private function resolveRequest(\Psr\Http\Message\ServerRequestInterface|\Tempest\Mapper\ObjectFactory $psrRequest, MatchedRoute $matchedRoute): Request
+    private function resolveRequest(PsrRequest|ObjectFactory $psrRequest, MatchedRoute $matchedRoute): Request
     {
         // Let's find out if our input request data matches what the route's action needs
         $requestClass = GenericRequest::class;
@@ -248,10 +246,5 @@ final class GenericRouter implements Router
         $this->container->singleton($request::class, fn () => $request);
 
         return $request;
-    }
-
-    public function addMiddleware(string $middlewareClass): void
-    {
-        $this->middleware[] = $middlewareClass;
     }
 }
