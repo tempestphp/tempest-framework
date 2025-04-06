@@ -63,6 +63,11 @@ final class GenericContainer implements Container
         return $this->definitions->getArrayCopy();
     }
 
+    public function getSingletons(): array
+    {
+        return $this->singletons->getArrayCopy();
+    }
+
     public function getInitializers(): array
     {
         return $this->initializers->getArrayCopy();
