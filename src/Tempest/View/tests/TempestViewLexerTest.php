@@ -92,12 +92,6 @@ final class TempestViewLexerTest extends TestCase
 
     public function test_multiline_attributes(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Multiline attributes are not supported on Windows.');
-            /* @phpstan-ignore-next-line */
-            return;
-        }
-
         $html = <<<'HTML'
         <div
             class="abc"
