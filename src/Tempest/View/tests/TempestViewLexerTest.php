@@ -110,7 +110,7 @@ final class TempestViewLexerTest extends TestCase
         HTML;
 
         $tokens = new TempestViewLexer($html)->lex();
-
+lw($tokens);
         $this->assertTokens([
             new Token('<div', TokenType::OPEN_TAG_START),
             new Token('
