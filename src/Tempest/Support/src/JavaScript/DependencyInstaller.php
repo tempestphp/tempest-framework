@@ -58,11 +58,17 @@ final readonly class DependencyInstaller
      */
     private function getInstallProcess(PackageManager $packageManager, string $cwd, string|array $dependencies, bool $dev = false): Process
     {
-        return new Process([
-            $packageManager->getBinaryName(),
-            $packageManager->getInstallCommand(),
-            $dev ? '-D' : '',
-            ...wrap($dependencies),
-        ], $cwd);
+        return new Process(
+            array_filter(
+                [
+                    $packageManager->getBinaryName(),
+                    $packageManager->getInstallCommand(),
+                    $dev ? '-D' : null,
+                    ...wrap($dependencies),
+                ],
+                fn (?string $arg): bool => $arg !== null,
+            ),
+            $cwd,
+        );
     }
 }
