@@ -107,7 +107,7 @@ final class TempestViewLexer
                     continue;
                 }
 
-                $attributeName = $this->consumeWhile("\n ");
+                $attributeName = $this->consumeWhile(PHP_EOL . "\n\t\f ");
 
                 $attributeName .= $this->consumeUntil('= >');
 
