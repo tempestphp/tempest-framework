@@ -53,7 +53,7 @@ final class TempestViewLexer
 
     private function seekIgnoringWhitespace(int $length = 1): ?string
     {
-        $offset = strspn($this->html, "\n\t ", $this->position);
+        $offset = strspn($this->html, "\t " . PHP_EOL, $this->position);
 
         return $this->seek(length: $length, offset: $offset);
     }
