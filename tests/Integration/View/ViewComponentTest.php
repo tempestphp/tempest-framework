@@ -703,6 +703,34 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_with_at_symbol_in_html_tag(): void
+    {
+        $rendered = $this->render(
+            view('<button @click="foo">test</button>'),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<HTML
+            <button @click="foo">test</button>
+            HTML,
+            $rendered,
+        );
+    }
+
+    public function test_with_colon_symbol_in_html_tag(): void
+    {
+        $rendered = $this->render(
+            view('<button x-on:click="foo">test</button>'),
+        );
+
+        $this->assertStringEqualsStringIgnoringLineEndings(
+            <<<HTML
+            <button x-on:click="foo">test</button>
+            HTML,
+            $rendered,
+        );
+    }
+
     private function assertSnippetsMatch(string $expected, string $actual): void
     {
         $expected = str_replace([PHP_EOL, ' '], '', $expected);
