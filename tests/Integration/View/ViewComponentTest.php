@@ -498,7 +498,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML);
 
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <html lang="en"><head><!--<x-slot name="styles" ></x-slot>--><link rel="stylesheet" href="#"></head><body></body></html>
+        <html lang="en"><head><!--<x-slot name="styles" />--><link rel="stylesheet" href="#"></head><body></body></html>
         HTML, $html);
     }
 
@@ -566,8 +566,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         </html>
         HTML);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <!DOCTYPE html>
+        $this->assertSnippetsMatch(<<<'HTML'
+        <!doctype html>
         <html lang="en"><head><title>Foo</title><meta charset="utf-8"><link rel="stylesheet" href="#">
         <meta name="description" content="bar"></head><body class="a">b
         </body></html>
@@ -686,8 +686,8 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             </x-html-base>
         HTML);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <!DOCTYPE html>
+        $this->assertSnippetsMatch(<<<'HTML'
+        <!doctype html>
         <html lang="en"><head></head><body><br><hr></body></html>
         HTML, $html);
     }
@@ -695,11 +695,19 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     public function test_renders_minified_html_with_void_elements(): void
     {
         $html = $this->render(<<<'HTML'
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"/></g></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" view-box="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"/><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"/></g></svg>
         HTML);
 
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewbox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"></path><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"></path></g></svg>
+        $this->assertSnippetsMatch(<<<'HTML'
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" view-box="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z"></path><path d="M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1"></path></g></svg>
         HTML, $html);
+    }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

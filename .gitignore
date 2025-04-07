@@ -16,3 +16,4 @@ tests/Unit/Log
 log/
 node_modules
 dist
+profile/
