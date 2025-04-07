@@ -94,6 +94,10 @@ final class GenericContainer implements Container
 
     public function singleton(string $className, mixed $definition, ?string $tag = null): self
     {
+        if ($definition instanceof HasTag) {
+            $tag = $definition->tag;
+        }
+
         $className = $this->resolveTaggedName($className, $tag);
 
         $this->singletons[$className] = $definition;
