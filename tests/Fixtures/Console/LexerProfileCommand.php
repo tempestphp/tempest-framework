@@ -7,8 +7,8 @@ use Masterminds\HTML5;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\View\Parser\TempestViewLexer;
-
 use Tempest\View\Parser\TempestViewParser;
+
 use const Dom\HTML_NO_DEFAULT_NS;
 
 final readonly class LexerProfileCommand
@@ -21,8 +21,8 @@ final readonly class LexerProfileCommand
         $html = file_get_contents(__DIR__ . "/{$name}.html");
 
         $this->parseTempest($html);
-//        $this->parseMasterminds($html);
-//        $this->parseDom($html);
+        $this->parseMasterminds($html);
+        $this->parseDom($html);
     }
 
     private function parseTempest(string $html): void

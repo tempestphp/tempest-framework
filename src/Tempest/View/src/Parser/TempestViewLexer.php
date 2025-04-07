@@ -8,21 +8,17 @@ final class TempestViewLexer
 
     private ?string $current;
 
-    private int $length;
-
     public function __construct(
         private readonly string $html,
-    )
-    {
+    ) {
         $this->current = $this->html[$this->position] ?? null;
-        $this->length = strlen($this->html);
     }
 
     public function lex(): TokenCollection
     {
         $tokens = [];
 
-        while ($this->position < $this->length) {
+        while ($this->current) {
             if ($this->comesNext('<?')) {
                 $tokens[] = $this->lexPhp();
             } elseif ($this->comesNext('<!--')) {
@@ -92,18 +88,18 @@ final class TempestViewLexer
 
     private function lexTag(): array
     {
-        $tagBuffer = $this->consumeUntil("\n >");
+        $tag = $this->consumeWhile('</0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-:');
 
         $tokens = [];
 
-        if (substr($tagBuffer, 1, 1) === '/') {
-            $tagBuffer .= $this->consumeIncluding('>');
-            $tokens[] = new Token($tagBuffer, TokenType::CLOSING_TAG);
-        } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tagBuffer, '/')) {
-            $tagBuffer .= $this->consumeIncluding('>');
-            $tokens[] = new Token($tagBuffer, TokenType::SELF_CLOSING_TAG);
+        if (substr($tag, 1, 1) === '/') {
+            $tag .= $this->consumeIncluding('>');
+            $tokens[] = new Token($tag, TokenType::CLOSING_TAG);
+        } elseif ($this->seekIgnoringWhitespace() === '/' || str_ends_with($tag, '/')) {
+            $tag .= $this->consumeIncluding('>');
+            $tokens[] = new Token($tag, TokenType::SELF_CLOSING_TAG);
         } else {
-            $tokens[] = new Token($tagBuffer, TokenType::OPEN_TAG_START);
+            $tokens[] = new Token($tag, TokenType::OPEN_TAG_START);
 
             while ($this->seek() !== null && $this->seekIgnoringWhitespace() !== '>' && $this->seekIgnoringWhitespace() !== '/') {
                 if ($this->seekIgnoringWhitespace(2) === '<?') {
@@ -113,7 +109,7 @@ final class TempestViewLexer
 
                 $attributeName = $this->consumeWhile("\n ");
 
-                $attributeName .= $this->consumeUntil("= >");
+                $attributeName .= $this->consumeUntil('= >');
 
                 $hasValue = $this->seek() === '=';
 
