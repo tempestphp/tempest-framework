@@ -39,7 +39,7 @@
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
-        "carthage-software/mago": "0.22.0",
+        "carthage-software/mago": "0.22.2",
         "guzzlehttp/psr7": "^2.6.1",
         "illuminate/view": "~11.7.0",
         "masterminds/html5": "^2.9",
@@ -180,7 +180,7 @@
         "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "mago:fmt": "vendor/bin/mago fmt && vendor/bin/mago lint --fix --potentially-unsafe --fmt",
-        "mago:lint": "vendor/bin/mago lint",
+        "mago:lint": "vendor/bin/mago lint --minimum-level=note",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G",
         "rector": "vendor/bin/rector process --no-ansi",
         "merge": "php -d\"error_reporting = E_ALL & ~E_DEPRECATED\" vendor/bin/monorepo-builder merge",
