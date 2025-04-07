@@ -1,0 +1,152 @@
+<?php
+/** @var \App\Web\Documentation\ChapterView $this */
+?>
+
+<x-base :copy-code-blocks="true" :description="$this->currentChapter->description ?? null">
+    <!-- Main container -->
+    <main class="container grow px-4 mx-auto xl:px-8 flex">
+        <!-- Sidebar -->
+        <div data-save-scroll="docs-sidebar" class="hidden lg:block xl:px-6 sticky xl:w-[20rem] max-h-[calc(100dvh-var(--ui-header-height))] overflow-auto top-28 pt-4 shrink-0">
+            <!-- Menu -->
+            <nav class="flex flex-col gap-y-6 pb-8">
+                <div :foreach="$this->categories() as $category" class="flex flex-col">
+                    <!-- Category title -->
+                    <span class="font-semibold text-(--ui-text) mb-2">
+            {{ \Tempest\Support\Str\to_sentence_case($category) }}
+          </span>
+                    <!-- Chapter list -->
+                    <ul class="flex flex-col border-s border-(--ui-border)">
+                        <li :foreach="$this->chaptersForCategory($category) as $chapter" class="-ms-px ps-1.5">
+                            <a
+                                    :href="$chapter->getUri()"
+                                    class="
+                  group relative w-full px-2.5 py-1.5 flex items-center gap-1.5 text-sm focus:outline-none focus-visible:outline-none hover:text-(--ui-text-highlighted) data-[state=open]:text-(--ui-text-highlighted) transition-colors
+                 <?= $this->isCurrent($chapter)
+                     ? 'text-(--ui-primary) after:absolute after:-left-1.5 after:inset-y-0.5 after:block after:w-px after:rounded-full after:transition-colors after:bg-(--ui-primary)'
+                     : 'text-(--ui-text-muted)' ?>
+                ">
+                                {{ $chapter->title }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- Mobile sidebar button -->
+        <button onclick="toggleSideBar()" class="fixed md:hidden bottom-5 right-5 z-[10] border rounded-lg p-3 border-(--ui-border) bg-(--ui-bg-elevated) text-(--ui-text-muted) hover:text-(--ui-text) transition flex items-center justify-center">
+            <x-icon name="tabler:list" class="size-6" />
+        </button>
+        <!-- Mobile sidebar -->
+        <div data-sidebar class="hidden fixed md:hidden inset-0 overflow-auto z-[9] bg-(--ui-bg) text-(--ui-text) p-8 starting:opacity-0 starting:scale-90 transition opacity-100 scale-100 origin-bottom-right">
+            <!-- Menu -->
+            <nav class="flex flex-col gap-y-8 pb-16 overflow-hidden">
+                <div :foreach="$this->categories() as $category" class="flex flex-col text-right text-lg">
+                    <!-- Category title -->
+                    <span class="font-semibold text-(--ui-text) mb-2">
+            <?= ucfirst($category) ?>
+          </span>
+                    <!-- Chapter list -->
+                    <ul class="flex flex-col">
+                        <li :foreach="$this->chaptersForCategory($category) as $chapter" class="-ms-px ps-1.5">
+                            <a :href="$chapter->getUri()" class="inline-flex py-1 <?= $this->isCurrent($chapter) ? 'text-(--ui-primary)' : 'text-(--ui-text-muted)' ?>">
+                                {{ $chapter->title }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- Main content -->
+        <div class="grow px-2 w-full lg:pl-12 flex min-w-0">
+            <!-- Documentation page -->
+            <article class="grow w-full flex flex-col min-w-0">
+                <x-template :if="$this->currentChapter">
+                    <!-- Header -->
+                    <div class="relative border-b border-(--ui-border) pb-8">
+                        <a :href="$this->currentChapter->getUri()" class="text-(--ui-info) font-semibold">
+                            {{ \Tempest\Support\Str\to_sentence_case($this->currentChapter->category) }}
+                        </a>
+                        <h1 id="top" class="mt-2 font-bold text-4xl text-(--ui-text-highlighted) lg:scroll-mt-[calc(1.5*var(--ui-header-height))]">
+                            {{ $this->currentChapter->title }}
+                        </h1>
+                        <div :if="$this->currentChapter->description" class="text-lg text-(--ui-text-muted) mt-4">
+                            {!! $this->currentChapter->description !!}
+                        </div>
+                    </div>
+                    <!-- Docs content -->
+                    <div :if="$this->currentChapter" class="prose prose-large dark:prose-invert mt-8 space-y-12" highlights-titles>
+                        {!! $this->currentChapter->body !!}
+                    </div>
+                    <!-- Docs footer -->
+                    <nav class="not-prose grid grid-cols-2 my-10 justify-between gap-4">
+                        <div>
+                            <a :if="$this->previousChapter()" :href="$this->previousChapter()?->getUri()" class="p-4 flex items-center gap-x-3 size-full hover:border-(--ui-border-accented) hover:text-(--ui-text) transition rounded-md text-(--ui-text-muted) border border-(--ui-border) bg-(--ui-bg-elevated)">
+                                <x-icon name="tabler:arrow-left" class="size-5" />
+                                {{ $this->previousChapter()?->title }}
+                            </a>
+                        </div>
+                        <div>
+                            <a :if="$this->nextChapter()" :href="$this->nextChapter()?->getUri()" class="p-4 flex items-center gap-x-3 size-full justify-end hover:border-(--ui-border-accented) hover:text-(--ui-text) transition rounded-md text-(--ui-text-muted) border border-(--ui-border) bg-(--ui-bg-elevated)">
+                                {{ $this->nextChapter()?->title }}
+                                <x-icon name="tabler:arrow-right" class="size-5" />
+                            </a>
+                        </div>
+                    </nav>
+                </x-template>
+            </article>
+            <!-- On this page -->
+            <nav class="w-2xs shrink-0 hidden xl:flex flex-col sticky max-h-[calc(100dvh-var(--ui-header-height))] overflow-auto top-28 pt-4 pl-12 pr-4">
+                <div class="text-sm flex flex-col grow">
+                    <x-template :if="($subChapters = $this->getSubChapters()) !== []">
+                        <span class="inline-block font-bold text-[--primary] mb-3">On this page</span>
+                        <ul class="flex flex-col">
+                            <x-template :foreach="$subChapters as $url => $chapter">
+                                <li>
+                                    <a :href="$url" :data-on-this-page="$chapter['title']" class="group relative text-sm flex items-center focus-visible:outline-(--ui-primary) py-1 text-(--ui-text-muted) hover:text-(--ui-text) data-[active]:text-(--ui-primary) transition-colors">
+                                        {{ \Tempest\Support\Str\strip_tags($chapter['title']) }}
+                                    </a>
+                                </li>
+                                <li :foreach="$chapter['children'] as $url => $title">
+                                    <a :href="$url" :data-on-this-page="$title" class="pl-4 group relative text-sm flex items-center focus-visible:outline-(--ui-primary) py-1 text-(--ui-text-dimmed) hover:text-(--ui-text) data-[active]:text-(--ui-primary) transition-colors">
+                                        {{ \Tempest\Support\Str\strip_tags($title) }}</span>
+                                    </a>
+                                </li>
+                            </x-template>
+                        </ul>
+                    </x-template>
+                    <div class="justify-end mt-4 grow flex flex-col gap-y-4">
+                        <!-- Version warning -->
+                        <div :if="$this->currentChapter->version === \App\Web\Documentation\Version::MAIN" class="mt-4">
+                            <div class="text-sm text-(--ui-warning) inline-flex items-baseline gap-x-1.5">
+                                <x-icon name="tabler:info-circle" class="translate-y-[2px] size-4 shrink-0" />
+                                <span>This documentation is for an upcoming version of Tempest and is subject to change.</span>
+                            </div>
+                        </div>
+                        <!-- Suggest changes -->
+                        <a class="text-sm text-(--ui-text-dimmed) hover:text-(--ui-text) transition inline-flex items-center gap-x-1.5" :href="$this->currentChapter->getEditPageUri()" target="_blank">
+                            <x-icon name="tabler:edit" class="size-4 shrink-0" />
+                            <span>Suggest changes to this page</span>
+                        </a>
+                    </div>
+                    <div class="my-10 flex">
+                        <a href="#top" class="border border-(--ui-border) bg-(--ui-bg-elevated) text-(--ui-text-muted) hover:text-(--ui-text) transition rounded-lg p-2">
+                            <x-icon name="tabler:arrow-up" class="size-5" />
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <script>
+            function toggleSideBar() {
+                const sidebar = document.querySelector('[data-sidebar]')
+                if (sidebar.classList.contains('hidden')) {
+                    sidebar.classList.remove('hidden', '!opacity-0', '!scale-80', 'pointer-event-none')
+                } else {
+                    sidebar.classList.add('!opacity-0', '!scale-80', 'pointer-event-none')
+                    setTimeout(() => sidebar.classList.add('hidden'), 250);
+                }
+            }
+
+        </script>
+    </main>
+</x-base>
