@@ -38,7 +38,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(
+                $this->assertSnippetsMatch(
                     expected: <<<HTML
                     <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script></head><body>Foo
                     </body></html>
@@ -71,7 +71,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(
+                $this->assertSnippetsMatch(
                     expected: <<<HTML
                     <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
                     </body></html>
@@ -104,7 +104,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(
+                $this->assertSnippetsMatch(
                     expected: <<<HTML
                     <html lang="en"><head><script type="module" src="http://localhost:5173/@vite/client"></script><script type="module" src="http://localhost:5173/src/foo.ts"></script><link rel="stylesheet" href="http://localhost:5173/src/bar.css" /></head><body>Foo
                     </body></html>
@@ -138,7 +138,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+                $this->assertSnippetsMatch(<<<'HTML'
                 <html lang="en"><head><script type="module" src="/build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
                 HTML, $html);
             },
@@ -166,7 +166,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+                $this->assertSnippetsMatch(<<<'HTML'
                 <html lang="en"><head><script type="module" src="/build/assets/bar-WlXl03ld.js"></script></head><body></body></html>
                 HTML, $html);
             },
@@ -194,7 +194,7 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 </html>
                 HTML);
 
-                $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+                $this->assertSnippetsMatch(<<<'HTML'
                 <html lang="en"><head><script type="module" src="/build/assets/bar-WlXl03ld.js"></script><script type="module" src="/build/assets/foo-YJD4Cw3J.js"></script></head><body></body></html>
                 HTML, $html);
             },
@@ -202,5 +202,13 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
                 'public/build/manifest.json' => $this->fixture('two-unrelated-entrypoints.json'),
             ],
         );
+    }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

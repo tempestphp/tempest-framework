@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use Dom\Comment;
-use Dom\DocumentType;
-use Dom\Element as DomElement;
-use Dom\Node;
-use Dom\Text;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\View\Attributes\PhpAttribute;
 use Tempest\View\Element;
-use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\Parser\TempestViewCompiler;
+use Tempest\View\Parser\Token;
+use Tempest\View\Parser\TokenType;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
 
@@ -35,64 +33,54 @@ final class ElementFactory
         return $this;
     }
 
-    public function make(Node $node): ?Element
+    public function make(Token $token): ?Element
     {
         return $this->makeElement(
-            node: $node,
+            token: $token,
             parent: null,
         );
     }
 
-    private function makeElement(Node $node, ?Element $parent): ?Element
+    private function makeElement(Token $token, ?Element $parent): ?Element
     {
-        if ($node instanceof DocumentType) {
-            $content = $node->ownerDocument->saveHTML($node);
-
-            return new RawElement(tag: null, content: $content);
+        if (
+            $token->type === TokenType::OPEN_TAG_END ||
+                $token->type === TokenType::ATTRIBUTE_NAME ||
+                $token->type === TokenType::ATTRIBUTE_VALUE ||
+                $token->type === TokenType::SELF_CLOSING_TAG_END
+        ) {
+            return null;
         }
 
-        if ($node instanceof Text) {
-            if (trim($node->textContent) === '') {
+        if ($token->type === TokenType::CONTENT) {
+            $text = $token->compile();
+
+            if (trim($text) === '') {
                 return null;
             }
 
-            return new TextElement(
-                text: $node->textContent,
-            );
+            return new TextElement(text: $text);
         }
 
-        if ($node instanceof Comment) {
-            return new CommentElement(
-                content: $node->textContent,
-            );
+        if (! $token->tag || $token->type === TokenType::COMMENT || $token->type === TokenType::PHP) {
+            return new RawElement(tag: null, content: $token->compile());
         }
 
-        $tagName = strtolower($node->tagName);
+        $attributes = $token->htmlAttributes;
 
-        $attributes = [];
-
-        /** @var \Dom\Attr $attribute */
-        foreach ($node->attributes ?? [] as $attribute) {
-            $name = str($attribute->name)->camel()->toString();
-
-            $attributes[$name] = $attribute->value;
+        foreach ($token->phpAttributes as $index => $content) {
+            $attributes[] = new PhpAttribute((string) $index, $content);
         }
 
-        if (! ($node instanceof DomElement) || $tagName === 'pre' || $tagName === 'code') {
-            $content = '';
-
-            foreach ($node->childNodes as $child) {
-                $content .= $node->ownerDocument->saveHTML($child);
-            }
-
+        if ($token->tag === 'code' || $token->tag === 'pre') {
             return new RawElement(
-                tag: $tagName,
-                content: $content,
+                tag: $token->tag,
+                content: $token->compileChildren(),
                 attributes: $attributes,
             );
         }
 
-        if ($viewComponentClass = $this->viewConfig->viewComponents[$tagName] ?? null) {
+        if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
@@ -103,27 +91,27 @@ final class ElementFactory
                 viewComponent: $viewComponentClass,
                 attributes: $attributes,
             );
-        } elseif ($tagName === 'x-template') {
+        } elseif ($token->tag === 'x-template') {
             $element = new TemplateElement(
                 attributes: $attributes,
             );
-        } elseif ($tagName === 'x-slot') {
+        } elseif ($token->tag === 'x-slot') {
             $element = new SlotElement(
-                name: $node->getAttribute('name') ?: 'slot',
+                name: $token->getAttribute('name') ?? 'slot',
                 attributes: $attributes,
             );
         } else {
             $element = new GenericElement(
-                tag: $tagName,
+                tag: $token->tag,
                 attributes: $attributes,
             );
         }
 
         $children = [];
 
-        foreach ($node->childNodes as $child) {
+        foreach ($token->children as $child) {
             $childElement = $this->clone()->makeElement(
-                node: $child,
+                token: $child,
                 parent: $parent,
             );
 

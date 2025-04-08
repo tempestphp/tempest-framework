@@ -204,12 +204,18 @@ final class ManipulatesArrayTest extends TestCase
     {
         $this->assertSame(null, arr()->last());
         $this->assertSame('c', arr(['a', 'b', 'c'])->last());
+
+        $this->assertSame('foo', arr()->last(default: 'foo'));
+        $this->assertSame(2, arr([1, 2])->last(default: 'foo'));
     }
 
     public function test_first(): void
     {
         $this->assertSame('a', arr(['a', 'b', 'c'])->first());
         $this->assertSame(null, arr()->first());
+
+        $this->assertSame('foo', arr()->first(default: 'foo'));
+        $this->assertSame(1, arr([1, 2])->first(default: 'foo'));
     }
 
     public function test_is_empty(): void
@@ -1778,5 +1784,6 @@ final class ManipulatesArrayTest extends TestCase
     public function test_at(array $input, int $index, mixed $expected, mixed $default = null): void
     {
         $this->assertSame($expected, arr($input)->at($index, $default));
+        $this->assertSame($expected, arr($input)->nth($index, $default));
     }
 }

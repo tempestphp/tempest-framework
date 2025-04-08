@@ -14,6 +14,8 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Throwable;
 
+use function Tempest\Support\Arr\wrap;
+
 final readonly class ExecuteConsoleCommand
 {
     public function __construct(
@@ -39,6 +41,16 @@ final readonly class ExecuteConsoleCommand
         ));
     }
 
+    public function withoutArgumentBag(): self
+    {
+        $bag = new ConsoleArgumentBag([
+            $this->argumentBag->getBinaryPath(),
+            $this->argumentBag->getCommandName(),
+        ]);
+
+        return new self($this->container, $this->consoleConfig, $bag, $this->resolveConsoleCommand);
+    }
+
     private function getCallable(array $commandMiddleware): ConsoleMiddlewareCallable
     {
         $callable = new ConsoleMiddlewareCallable(function (Invocation $invocation) {
@@ -56,11 +68,14 @@ final readonly class ExecuteConsoleCommand
             return $exitCode ?? ExitCode::SUCCESS;
         });
 
-        $middlewareStack = [...$this->consoleConfig->middleware, ...$commandMiddleware];
+        $middleware = $this->consoleConfig
+            ->middleware
+            ->clone()
+            ->add(...$commandMiddleware);
 
-        while ($middlewareClass = array_pop($middlewareStack)) {
+        foreach ($middleware->unwrap() as $middlewareClass) {
             $callable = new ConsoleMiddlewareCallable(
-                fn (Invocation $invocation) => $this->container->get($middlewareClass)($invocation, $callable),
+                fn (Invocation $invocation) => $this->container->get($middlewareClass->getName())($invocation, $callable),
             );
         }
 
@@ -77,9 +92,10 @@ final readonly class ExecuteConsoleCommand
     }
 
     /** @return array{string,array} */
-    private function resolveCommandAndArguments(string|array $command, array $arguments = []): array
+    private function resolveCommandAndArguments(string|array $command, string|array $arguments = []): array
     {
         $commandName = $command;
+        $arguments = wrap($arguments);
 
         if (is_array($command)) {
             $commandName = $command[0] ?? '';

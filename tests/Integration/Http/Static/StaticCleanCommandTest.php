@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Core\AppConfig;
+use Tempest\Router\Static\StaticCleanCommand;
+use Tempest\Router\Static\StaticGenerateCommand;
+use Tempest\Router\Static\StaticPageConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Http\Static\Fixtures\StaticPageController;
 
 use function Tempest\Support\path;
 
@@ -14,15 +18,23 @@ use function Tempest\Support\path;
  */
 final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->registerRoute(StaticPageController::class);
+        $this->registerStaticPage(StaticPageController::class);
+    }
+
     public function test_generate(): void
     {
         $appConfig = new AppConfig(baseUri: 'https://test.com');
         $this->container->config($appConfig);
 
-        $this->console->call('static:generate');
+        $this->console->call(StaticGenerateCommand::class);
 
         $this->console
-            ->call('static:clean')
+            ->call(StaticCleanCommand::class)
             ->assertDoesNotContain('https://test.com/static/a/b')
             ->assertContains('/public/static/a/b/index.html')
             ->assertContains('/public/static/c/d/index.html');

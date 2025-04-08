@@ -94,6 +94,14 @@ final class FileSessionTest extends FrameworkIntegrationTestCase
         $this->assertFileDoesNotExist($path);
     }
 
+    public function test_set_previous_url(): void
+    {
+        $session = $this->container->get(Session::class);
+        $session->setPreviousUrl('http://localhost/previous');
+
+        $this->assertEquals('http://localhost/previous', $session->getPreviousUrl());
+    }
+
     public function test_is_valid(): void
     {
         $clock = $this->clock('2023-01-01 00:00:00');

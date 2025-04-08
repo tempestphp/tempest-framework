@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\CommandBus;
 
 use Tempest\CommandBus\AsyncCommandRepositories\FileCommandRepository;
+use Tempest\Core\Middleware;
 use Tempest\Reflection\MethodReflector;
 
 final class CommandBusConfig
@@ -13,8 +14,8 @@ final class CommandBusConfig
         /** @var \Tempest\CommandBus\CommandHandler[] */
         public array $handlers = [],
 
-        /** @var array<array-key, class-string<\Tempest\CommandBus\CommandBusMiddleware>> */
-        public array $middleware = [],
+        /** @var Middleware<\Tempest\CommandBus\CommandBusMiddleware> */
+        public Middleware $middleware = new Middleware(),
 
         /** @var class-string<\Tempest\CommandBus\CommandRepository> $commandRepositoryClass */
         public string $commandRepositoryClass = FileCommandRepository::class,
@@ -32,14 +33,6 @@ final class CommandBusConfig
         $this->handlers[$commandName] = $commandHandler
             ->setCommandName($commandName)
             ->setHandler($handler);
-
-        return $this;
-    }
-
-    /** @param class-string<\Tempest\CommandBus\CommandBusMiddleware> $middlewareClass */
-    public function addMiddleware(string $middlewareClass): self
-    {
-        $this->middleware[] = $middlewareClass;
 
         return $this;
     }

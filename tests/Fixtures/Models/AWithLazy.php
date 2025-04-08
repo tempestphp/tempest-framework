@@ -8,7 +8,7 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Lazy;
 
-#[\Tempest\Database\TableName('a')]
+#[\Tempest\Database\Table('a')]
 final class AWithLazy
 {
     use IsDatabaseModel;

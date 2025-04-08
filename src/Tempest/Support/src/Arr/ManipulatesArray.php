@@ -336,9 +336,9 @@ trait ManipulatesArray
      *
      * @return TValue
      */
-    public function first(?Closure $filter = null): mixed
+    public function first(?Closure $filter = null, mixed $default = null): mixed
     {
-        return namespace\first($this->value, $filter);
+        return namespace\first($this->value, $filter, $default);
     }
 
     /**
@@ -349,14 +349,24 @@ trait ManipulatesArray
      *
      * @return TValue
      */
-    public function last(?Closure $filter = null): mixed
+    public function last(?Closure $filter = null, mixed $default = null): mixed
     {
-        return namespace\last($this->value, $filter);
+        return namespace\last($this->value, $filter, $default);
     }
 
     /**
      * Returns the item at the given index in the specified array.
+     * @alias of `at()`
      *
+     * @return TValue
+     */
+    public function nth(int $index, mixed $default = null): mixed
+    {
+        return $this->at($index, $default);
+    }
+
+    /**
+     * Returns the item at the given index in the specified array.
      *
      * @return TValue
      */

@@ -23,7 +23,6 @@ final readonly class MessageRenderer
             ->implode("\n");
 
         return str()
-            ->append("\n")
             ->append("<style='fg-{$this->color} bold'>{$title}</style> <style='dim fg-{$this->color}'>//</style>")
             ->append("<style='fg-{$this->color}'>{$lines}</style>")
             ->toString();

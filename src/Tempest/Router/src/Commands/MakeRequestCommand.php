@@ -35,6 +35,7 @@ final class MakeRequestCommand
             shouldOverride: $shouldOverride,
         );
 
+        $this->console->writeln();
         $this->console->success(sprintf('Request successfully created at "%s".', $targetPath));
     }
 }

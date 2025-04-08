@@ -41,7 +41,7 @@ final class InsertStatement implements QueryStatement
 
                 return sprintf(
                     '(%s)',
-                    $row->map(fn (mixed $value) => '?')->implode(', '),
+                    $row->map(fn () => '?')->implode(', '),
                 );
             })
             ->implode(', ');

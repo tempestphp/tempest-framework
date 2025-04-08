@@ -18,18 +18,19 @@ use Tempest\Generation\Exceptions\FileGenerationFailedException;
 use Tempest\Generation\StubFileGenerator;
 use Tempest\Reflection\FunctionReflector;
 use Tempest\Support\Str\ImmutableString;
-use Tempest\Validation\Rule;
 use Tempest\Validation\Rules\EndsWith;
 use Tempest\Validation\Rules\NotEmpty;
 use Throwable;
 
 use function strlen;
 use function Tempest\root_path;
+use function Tempest\src_path;
 use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\path;
 use function Tempest\Support\Path\to_absolute_path;
 use function Tempest\Support\Path\to_relative_path;
 use function Tempest\Support\str;
+use function Tempest\Support\Str\class_basename;
 
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
@@ -150,35 +151,34 @@ trait PublishesFiles
     {
         // Separate input path and classname
         $inputClassName = to_base_class_name($className);
-        $inputPath = path($className)->stripEnd($inputClassName);
+        $inputPath = path($className)->stripEnd(class_basename($className));
         $className = str($inputClassName)
             ->pascal()
             ->finish($classSuffix ?? '')
             ->toString();
 
         // Prepare the suggested path from the project namespace
-        return str(to_absolute_path($this->composer->mainNamespace->path, $pathPrefix ?? '', $inputPath))
-            ->finish('/')
-            ->append($className . '.php')
-            ->toString();
+        return src_path($pathPrefix ?? '', $inputPath, $className . '.php');
     }
 
     /**
      * Prompt the user for the target path to save the generated file.
      * @param string $suggestedPath The suggested path to show to the user.
-     * @param array<Rule> $rules Rules to use instead of the default ones.
+     * @param \Tempest\Validation\Rule[]|null $rules Rules to use instead of the default ones.
      *
      * @return string The target path that the user has chosen.
      */
-    public function promptTargetPath(string $suggestedPath, array $rules = []): string
+    public function promptTargetPath(string $suggestedPath, ?array $rules = null): string
     {
         $className = to_base_class_name($suggestedPath);
 
-        return $this->console->ask(
+        $targetPath = $this->console->ask(
             question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
-            default: $suggestedPath,
-            validation: $rules,
+            default: to_relative_path(root_path(), $suggestedPath),
+            validation: $rules ?? [new NotEmpty(), new EndsWith('.php')],
         );
+
+        return to_absolute_path(root_path(), $targetPath);
     }
 
     /**

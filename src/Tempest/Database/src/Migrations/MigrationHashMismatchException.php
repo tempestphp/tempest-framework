@@ -8,9 +8,8 @@ use Exception;
 
 final class MigrationHashMismatchException extends Exception implements MigrationException
 {
-    public function __construct(
-        string $message = 'Migration file has been tampered with.',
-    ) {
+    public function __construct(string $message = 'Migration file has been tampered with.')
+    {
         parent::__construct($message);
     }
 }

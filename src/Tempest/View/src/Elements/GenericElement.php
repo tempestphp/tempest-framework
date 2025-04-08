@@ -13,8 +13,6 @@ final class GenericElement implements Element
 {
     use IsElement;
 
-    private array $rawAttributes = [];
-
     public function __construct(
         private readonly string $tag,
         array $attributes,
@@ -25,13 +23,6 @@ final class GenericElement implements Element
     public function getTag(): string
     {
         return $this->tag;
-    }
-
-    public function addRawAttribute(string $attribute): self
-    {
-        $this->rawAttributes[] = $attribute;
-
-        return $this;
     }
 
     public function compile(): string
@@ -47,14 +38,6 @@ final class GenericElement implements Element
         $attributes = [];
 
         foreach ($this->getAttributes() as $name => $value) {
-            $name = str($name);
-
-            if ($name->startsWith(':')) {
-                $name = ':' . $name->kebab()->toString();
-            } else {
-                $name = $name->kebab()->toString();
-            }
-
             if ($value) {
                 $attributes[] = $name . '="' . $value . '"';
             } else {
@@ -66,6 +49,11 @@ final class GenericElement implements Element
 
         if ($attributes !== '') {
             $attributes = ' ' . $attributes;
+            $attributes = str_replace(
+                ['?> <?php', '?> <?='],
+                ['?><?php', '?><?='],
+                $attributes,
+            );
         }
 
         // Void elements

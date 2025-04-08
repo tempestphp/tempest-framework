@@ -7,7 +7,7 @@ namespace Tempest\View\Elements;
 use Dom\HTMLDocument;
 use Tempest\Core\Environment;
 use Tempest\View\Element;
-use Tempest\View\Renderers\TempestViewCompiler;
+use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 
