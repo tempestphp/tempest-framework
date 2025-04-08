@@ -703,14 +703,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    private function assertSnippetsMatch(string $expected, string $actual): void
-    {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
-
-        $this->assertSame($expected, $actual);
-    }
-
     public function test_multiple_instances_of_custom_component_using_slots(): void
     {
         $this->registerViewComponent('x-foo-bar', 'FOO-BAR');
@@ -729,9 +721,19 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             </x-slot>
         </x-test>
         HTML);
-ld($html);
-        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
 
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div>FOO-BAR
+        FOO-BAR
+        </div>
         HTML, $html);
+    }
+
+    private function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
     }
 }
