@@ -20,6 +20,10 @@ final readonly class IsFloat implements Rule
             return true;
         }
 
+        if (floatval($value) == $value) {
+            return true;
+        }
+
         return is_float($value);
     }
 

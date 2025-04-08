@@ -10,7 +10,7 @@ use Tempest\Validation\Rules\IsBoolean;
 /**
  * @internal
  */
-final class BooleanTest extends TestCase
+final class IsBooleanTest extends TestCase
 {
     public function test_boolean(): void
     {
