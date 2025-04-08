@@ -20,7 +20,12 @@ final readonly class IsFloat implements Rule
             return true;
         }
 
-        return is_float($value);
+        if ($value === null || $value === false || $value === '' || $value === []) {
+            return false;
+        }
+
+        // @mago-expect strictness/require-identity-comparison
+        return is_float($value) || floatval($value) == $value;
     }
 
     public function message(): string

@@ -20,7 +20,12 @@ final readonly class IsInteger implements Rule
             return true;
         }
 
-        return is_int($value);
+        if ($value === null || $value === false || $value === '' || $value === []) {
+            return false;
+        }
+
+        // @mago-expect strictness/require-identity-comparison
+        return is_int($value) || intval($value) == $value;
     }
 
     public function message(): string

@@ -13,7 +13,6 @@ use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
-use TypeError;
 
 use function Tempest\Support\arr;
 
