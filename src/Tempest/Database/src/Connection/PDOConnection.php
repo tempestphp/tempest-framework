@@ -14,7 +14,7 @@ final class PDOConnection implements Connection
     private ?PDO $pdo = null;
 
     public function __construct(
-        private readonly DatabaseConfig $config,
+        private(set) readonly DatabaseConfig $config,
     ) {}
 
     public function beginTransaction(): bool
