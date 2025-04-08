@@ -56,7 +56,7 @@ final class PhpDataElement implements Element, WrapsElement
             $coreElement
                 ->addRawAttribute(new RawConditionalAttribute(
                     name: $attributeName,
-                    value: $coreElement->getAttribute($attributeName)
+                    value: $coreElement->getAttribute($attributeName),
                 )->compile())
                 ->unsetAttribute($attributeName);
         }
