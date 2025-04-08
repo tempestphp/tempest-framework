@@ -19,5 +19,6 @@ final class IsIntegerTest extends TestCase
         $this->assertTrue($rule->isValid(1));
         $this->assertTrue($rule->isValid('1'));
         $this->assertFalse($rule->isValid('a'));
+        $this->assertFalse($rule->isValid(''));
     }
 }

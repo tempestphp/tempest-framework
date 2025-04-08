@@ -10,7 +10,10 @@ final class RequestWithTypedQueryParam implements Request
     use IsRequest;
 
     public string $stringParam;
+
     public float $floatParam;
+
     public bool $boolParam;
+
     public int $intParam;
 }

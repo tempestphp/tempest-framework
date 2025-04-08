@@ -13,8 +13,8 @@ use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
-
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
+
 use function Tempest\map;
 use function Tempest\Support\arr;
 
