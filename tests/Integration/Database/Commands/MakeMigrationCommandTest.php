@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Database\Commands;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Core\ComposerNamespace;
+use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -20,7 +20,7 @@ final class MakeMigrationCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer->configure(
             __DIR__ . '/install',
-            new ComposerNamespace('App\\', __DIR__ . '/install/App'),
+            new Psr4Namespace('App\\', __DIR__ . '/install/App'),
         );
     }
 
