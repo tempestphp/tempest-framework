@@ -59,7 +59,7 @@ jobs:
           coverage: pcov
 
       - name: Install PHPUnit
-        run: composer global require phpunit/phpunit:^11.5
+        run: composer global require phpunit/phpunit:^11.5.17
 
       - name: Setup problem matchers
         run: |
