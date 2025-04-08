@@ -710,4 +710,28 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    public function test_multiple_instances_of_custom_component_using_slots(): void
+    {
+        $this->registerViewComponent('x-foo-bar', 'FOO-BAR');
+
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>
+            <x-foo-bar />
+            <x-slot name="test" />
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="test">
+                <x-foo-bar />
+            </x-slot>
+        </x-test>
+        HTML);
+ld($html);
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+
+        HTML, $html);
+    }
 }
