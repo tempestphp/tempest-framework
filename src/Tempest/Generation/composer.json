@@ -21,6 +21,7 @@
         }
     },
     "require-dev": {
-        "spatie/phpunit-snapshot-assertions": "^5.1.6"
+        "spatie/phpunit-snapshot-assertions": "^5.1.8",
+        "phpunit/phpunit": "^11.5.17"
     }
 }
