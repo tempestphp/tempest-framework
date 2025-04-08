@@ -39,6 +39,10 @@ final class MigrationDiscovery implements Discovery, DiscoversPath
             return;
         }
 
+        if (str_ends_with($path, '.stub.sql')) {
+            return;
+        }
+
         $fileName = pathinfo($path, PATHINFO_FILENAME);
 
         $contents = explode(';', file_get_contents($path));
