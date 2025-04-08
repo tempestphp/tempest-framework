@@ -155,7 +155,7 @@ final class ViewComponentElement implements Element
             )
             // Compile slots
             ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
+                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|><\/x-slot>)/',
                 replace: function ($matches) {
                     $name = $matches['name'] ?: 'slot';
 
