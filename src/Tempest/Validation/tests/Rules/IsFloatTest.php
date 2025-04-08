@@ -23,5 +23,6 @@ final class IsFloatTest extends TestCase
         $this->assertFalse($rule->isValid(''));
         $this->assertFalse($rule->isValid(null));
         $this->assertFalse($rule->isValid(false));
+        $this->assertFalse($rule->isValid([]));
     }
 }
