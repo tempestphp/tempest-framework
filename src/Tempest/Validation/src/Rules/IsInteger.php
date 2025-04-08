@@ -20,11 +20,7 @@ final readonly class IsInteger implements Rule
             return true;
         }
 
-        if ($value === null) {
-            return false;
-        }
-
-        if ($value === '') {
+        if ($value === null || $value === false || $value === '') {
             return false;
         }
 
