@@ -703,6 +703,55 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_multiple_instances_of_custom_component_using_slots(): void
+    {
+        $this->registerViewComponent('x-foo-bar', 'FOO-BAR');
+
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>
+            <x-foo-bar />
+            <x-slot name="test" />
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="test">
+                <x-foo-bar />
+            </x-slot>
+        </x-test>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div>FOO-BAR
+        FOO-BAR
+        </div>
+        HTML, $html);
+    }
+
+    public function test_slots_with_hyphens(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>
+            <x-slot name="test-slot" />
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="test-slot">
+                Hi
+            </x-slot>
+        </x-test>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+            <div>
+                    Hi
+            </div>
+        HTML, $html);
+    }
+
     private function assertSnippetsMatch(string $expected, string $actual): void
     {
         $expected = str_replace([PHP_EOL, ' '], '', $expected);
