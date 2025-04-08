@@ -51,9 +51,11 @@ final class PhpDataElement implements Element, WrapsElement
         $coreElement = $this->unwrap(GenericElement::class);
 
         if ($isExpression && $coreElement) {
+            $attributeName = ltrim($this->name, ':');
+
             $coreElement
-                ->addRawAttribute(new RawConditionalAttribute(ltrim($this->name, ':'), $coreElement->getAttribute($this->name))->compile())
-                ->unsetAttribute(ltrim($this->name, ':'));
+                ->addRawAttribute(new RawConditionalAttribute($attributeName, $coreElement->getAttribute($this->name))->compile())
+                ->unsetAttribute($attributeName);
         }
 
         return sprintf(
