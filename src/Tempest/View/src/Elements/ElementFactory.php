@@ -66,22 +66,7 @@ final class ElementFactory
             return new RawElement(tag: null, content: $token->compile());
         }
 
-        $attributes = [];
-
-        foreach ($token->htmlAttributes as $name => $value) {
-            $name = str($name)
-                ->trim()
-                ->before('=')
-                ->camel()
-                ->toString();
-
-            $value = str($value)
-                ->afterFirst('"')
-                ->beforeLast('"')
-                ->toString();
-
-            $attributes[$name] = $value;
-        }
+        $attributes = $token->htmlAttributes;
 
         foreach ($token->phpAttributes as $index => $content) {
             $attributes[] = new PhpAttribute((string) $index, $content);

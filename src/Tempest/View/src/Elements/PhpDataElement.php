@@ -26,15 +26,14 @@ final class PhpDataElement implements Element, WrapsElement
 
     public function compile(): string
     {
-        $name = ltrim($this->name, ':');
+        $variableName = str($this->name)->ltrim(':')->camel()->toString();
         $isExpression = str_starts_with($this->name, ':');
-
         $value = $this->value ?? '';
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
             '$%s ??= %s ?? null;',
-            $name,
+            $variableName,
             $isExpression
                 ? ($value ?: 'null')
                 : var_export($value, true), // @mago-expect best-practices/no-debug-symbols
@@ -44,7 +43,7 @@ final class PhpDataElement implements Element, WrapsElement
         // where the variable is only available to that specific element.
         $variableRemoval = sprintf(
             'unset($%s);',
-            $name,
+            $variableName,
         );
 
         // Support for boolean attributes. When an expression attribute has a falsy value, it won't be rendered at all.
@@ -53,8 +52,8 @@ final class PhpDataElement implements Element, WrapsElement
 
         if ($isExpression && $coreElement) {
             $coreElement
-                ->addRawAttribute(new RawConditionalAttribute($name, $coreElement->getAttribute($name))->compile())
-                ->unsetAttribute($name);
+                ->addRawAttribute(new RawConditionalAttribute(ltrim($this->name, ':'), $coreElement->getAttribute($this->name))->compile())
+                ->unsetAttribute(ltrim($this->name, ':'));
         }
 
         return sprintf(
