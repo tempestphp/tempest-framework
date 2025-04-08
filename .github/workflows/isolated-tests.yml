@@ -56,8 +56,10 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, pcntl, fileinfo
-          tools: phpunit
           coverage: pcov
+
+      - name: Install PHPUnit
+        run: composer global require phpunit/phpunit
 
       - name: Setup problem matchers
         run: |
@@ -71,7 +73,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: |
-          pwd
-          cat "src/Tempest/${{ matrix.package.basename }}/phpunit.xml"
-          phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml"
+        run: phpunit -c "src/Tempest/${{ matrix.package.basename }}/phpunit.xml"
