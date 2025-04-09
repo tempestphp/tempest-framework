@@ -65,7 +65,7 @@ final class ModelInspector
         $values = [];
 
         foreach ($this->modelClass->getProperties() as $property) {
-            if (is_object($this->model) && ! $property->isInitialized($this->model)) {
+            if (! $property->isInitialized($this->model)) {
                 continue;
             }
 
