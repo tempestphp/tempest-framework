@@ -44,7 +44,8 @@ final class MakeGeneratorCommandCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists($expectedPath)
-            ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';');
+            ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';')
+            ->assertFileNotContains($expectedPath, '#[DoNotDiscover]');
     }
 
     public static function command_input_provider(): array
