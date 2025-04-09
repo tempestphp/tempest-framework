@@ -13,6 +13,7 @@ use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\SerializerFactory;
+use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Models\A;
@@ -42,10 +43,12 @@ use Tests\Tempest\Integration\ORM\Models\CarbonSerializer;
 use Tests\Tempest\Integration\ORM\Models\CasterEnum;
 use Tests\Tempest\Integration\ORM\Models\CasterModel;
 use Tests\Tempest\Integration\ORM\Models\ChildModel;
+use Tests\Tempest\Integration\ORM\Models\ModelWithValidation;
 use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
+use function Tempest\Database\model;
 use function Tempest\map;
 
 /**
@@ -539,5 +542,55 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $this->assertEquals('base_models', new ModelDefinition(BaseModel::class)->getTableDefinition()->name);
         $this->assertEquals('custom_attribute_table_name', new ModelDefinition(AttributeTableNameModel::class)->getTableDefinition()->name);
         $this->assertEquals('custom_static_method_table_name', new ModelDefinition(StaticMethodTableNameModel::class)->getTableDefinition()->name);
+    }
+
+    public function test_validation_on_create(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        ModelWithValidation::create(
+            index: -1,
+        );
+    }
+
+    public function test_validation_on_update(): void
+    {
+        $model = ModelWithValidation::new(
+            id: new Id(1),
+            index: 1,
+        );
+
+        $this->expectException(ValidationException::class);
+
+        $model->update(
+            index: -1,
+        );
+    }
+
+    public function test_validation_on_new(): void
+    {
+        $model = ModelWithValidation::new(
+            index: 1,
+        );
+
+        $model->index = -1;
+
+        $this->expectException(ValidationException::class);
+
+        $model->save();
+    }
+
+    public function test_skipped_validation(): void
+    {
+        try {
+            model(ModelWithValidation::class)->validate(
+                index: -1,
+                skip: -1,
+            );
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('index', $validationException->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationException->getMessage());
+            $this->assertStringNotContainsString('skip', $validationException->getMessage());
+        }
     }
 }
