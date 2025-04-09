@@ -64,10 +64,17 @@ trait IsDatabaseModel
     {
         model(self::class)->validate(...$params);
 
-        return self::new(...$params)->save();
+        $model = self::new(...$params);
+
+        $model->id = query(self::class)
+            ->insert($model)
+            ->build()
+            ->execute();
+
+        return $model;
     }
 
-    public static function updateOrNew(array $find, array $update): self
+    public static function findOrNew(array $find, array $update): self
     {
         $existing = self::select()->bind(...$find);
 
@@ -86,7 +93,13 @@ trait IsDatabaseModel
 
     public static function updateOrCreate(array $find, array $update): self
     {
-        return self::updateOrNew($find, $update)->save();
+        $model = self::findOrNew($find, $update);
+
+        if (! isset($model->id)) {
+            return self::create(...$update);
+        }
+
+        return $model->save();
     }
 
     public function __get(string $name): mixed
@@ -125,6 +138,10 @@ trait IsDatabaseModel
 
     public function save(): self
     {
+        $model = model($this);
+
+        $model->validate(...model($this)->getPropertyValues());
+
         if (! isset($this->id)) {
             $query = query($this::class)->insert($this);
 

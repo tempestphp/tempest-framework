@@ -48,6 +48,7 @@ use Tests\Tempest\Integration\ORM\Models\ParentModel;
 use Tests\Tempest\Integration\ORM\Models\StaticMethodTableNameModel;
 use Tests\Tempest\Integration\ORM\Models\ThroughModel;
 
+use function Tempest\Database\model;
 use function Tempest\map;
 
 /**
@@ -564,5 +565,32 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         $model->update(
             index: -1,
         );
+    }
+
+    public function test_validation_on_new(): void
+    {
+        $model = ModelWithValidation::new(
+            index: 1,
+        );
+
+        $model->index = -1;
+
+        $this->expectException(ValidationException::class);
+
+        $model->save();
+    }
+
+    public function test_skipped_validation(): void
+    {
+        try {
+            model(ModelWithValidation::class)->validate(
+                index: -1,
+                skip: -1,
+            );
+        } catch (ValidationException $validationException) {
+            $this->assertStringContainsString('index', $validationException->getMessage());
+            $this->assertStringContainsString(ModelWithValidation::class, $validationException->getMessage());
+            $this->assertStringNotContainsString('skip', $validationException->getMessage());
+        }
     }
 }
