@@ -6,6 +6,8 @@ use ReflectionException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\Validator;
 
 use function Tempest\get;
 
@@ -72,5 +74,26 @@ final class ModelInspector
         }
 
         return $values;
+    }
+
+    public function validate(mixed ...$data): void
+    {
+        if ($this->modelClass === null) {
+            return;
+        }
+
+        $validator = new Validator();
+        $failingRules = [];
+
+        foreach ($data as $key => $value) {
+            $failingRules = [...$failingRules, ...$validator->validateValueForProperty(
+                    $this->modelClass->getProperty($key),
+                    $value,
+                )];
+        }
+
+        if ($failingRules !== []) {
+            throw new ValidationException(self::class, $failingRules);
+        }
     }
 }

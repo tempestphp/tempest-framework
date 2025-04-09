@@ -62,6 +62,8 @@ trait IsDatabaseModel
 
     public static function create(mixed ...$params): self
     {
+        model(self::class)->validate(...$params);
+
         return self::new(...$params)->save();
     }
 
@@ -138,6 +140,8 @@ trait IsDatabaseModel
 
     public function update(mixed ...$params): self
     {
+        model(self::class)->validate(...$params);
+
         foreach ($params as $key => $value) {
             $this->{$key} = $value;
         }
