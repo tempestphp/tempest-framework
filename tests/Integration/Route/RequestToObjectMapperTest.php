@@ -83,7 +83,7 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(true, $request->boolParam);
         $this->assertSame(0.1, $request->floatParam);
     }
-    
+
     public function test_mapping_with_enum(): void
     {
         $request = map(new GenericRequest(
