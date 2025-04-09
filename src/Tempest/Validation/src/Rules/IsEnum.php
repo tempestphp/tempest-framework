@@ -10,7 +10,7 @@ use UnexpectedValueException;
 use UnitEnum;
 
 #[Attribute]
-final readonly class Enum implements Rule
+final readonly class IsEnum implements Rule
 {
     public function __construct(
         private string $enum,

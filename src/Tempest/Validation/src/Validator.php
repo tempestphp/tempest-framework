@@ -9,6 +9,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
@@ -73,7 +74,7 @@ final readonly class Validator
                 continue;
             }
 
-            if ($property->getType()->isClass()) {
+            if ($property->getType()->isClass() && ! $property->getType()->isEnum()) {
                 $failingRules = [
                     ...$failingRules,
                     ...$this->validateValuesForClass(
@@ -103,6 +104,10 @@ final readonly class Validator
         } elseif (! $property->isNullable()) {
             // We only add the NotNull rule if we're not dealing with scalar types, since the null check is included in the scalar rules
             $rules[] = new NotNull();
+        }
+
+        if ($property->getType()->isEnum()) {
+            $rules[] = new IsEnum($property->getType()->getName());
         }
 
         return $this->validateValue($value, $rules);

@@ -9,12 +9,14 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\Email;
 use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
 use Tempest\Validation\Tests\Fixtures\ObjectToBeValidated;
 use Tempest\Validation\Tests\Fixtures\ObjectWithBoolProp;
+use Tempest\Validation\Tests\Fixtures\ObjectWithEnumProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithFloatProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithIntProp;
 use Tempest\Validation\Tests\Fixtures\ObjectWithObjectProperty;
@@ -204,6 +206,14 @@ final class ValidatorTest extends TestCase
 
         $this->assertCount(1, $failingRules['prop']);
         $this->assertInstanceOf(IsBoolean::class, $failingRules['prop'][0]);
+    }
+
+    public function test_validation_infers_enum_rule_from_property_type(): void
+    {
+        $failingRules = new Validator()->validateValuesForClass(ObjectWithEnumProp::class, ['prop' => 'a']);
+
+        $this->assertCount(1, $failingRules['prop']);
+        $this->assertInstanceOf(IsEnum::class, $failingRules['prop'][0]);
     }
 
     public function test_validation_infers_not_null_from_scalar_property_type(): void
