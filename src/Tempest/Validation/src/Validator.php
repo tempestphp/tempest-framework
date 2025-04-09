@@ -7,7 +7,6 @@ namespace Tempest\Validation;
 use Closure;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
-use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\IsBoolean;
 use Tempest\Validation\Rules\IsEnum;
@@ -15,7 +14,6 @@ use Tempest\Validation\Rules\IsFloat;
 use Tempest\Validation\Rules\IsInteger;
 use Tempest\Validation\Rules\IsString;
 use Tempest\Validation\Rules\NotNull;
-use UnitEnum;
 
 use function Tempest\Support\arr;
 
@@ -51,7 +49,7 @@ final readonly class Validator
 
         $failingRules = [];
 
-        $values = $this->resolveValues($values);
+        $values = arr($values)->undot();
 
         foreach ($class->getPublicProperties() as $property) {
             if ($property->hasAttribute(SkipValidation::class)) {
@@ -164,20 +162,5 @@ final readonly class Validator
                 return $this->message;
             }
         };
-    }
-
-    private function resolveValues(mixed $values): mixed
-    {
-        if (is_object($values) && ! ($values instanceof UnitEnum)) {
-            return new ImmutableArray((array) $values);
-        }
-
-        if (is_array($values)) {
-            return arr($values)
-                ->undot()
-                ->map(fn (mixed $value) => $this->resolveValues($value));
-        }
-
-        return $values;
     }
 }
