@@ -8,6 +8,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\GeneratorCommandStub;
 use Tempest\Core\PublishesFiles;
+use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
 use function Tempest\Support\str;
@@ -35,6 +36,9 @@ final class MakeGeneratorCommandCommand
             shouldOverride: $shouldOverride,
             replacements: [
                 'dummy-command-slug' => str($className)->kebab()->toString(),
+            ],
+            manipulations: [
+                fn(ClassManipulator $manipulator) => $manipulator->removeClassAttribute('DoNotDiscover')
             ],
         );
 
