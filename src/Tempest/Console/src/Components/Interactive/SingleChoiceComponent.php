@@ -81,7 +81,7 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         }
 
         if ($this->default !== null) {
-            $controls['alt+enter'] = 'default';
+            $controls['tab'] = 'select default';
         }
 
         return [
@@ -138,12 +138,10 @@ final class SingleChoiceComponent implements InteractiveConsoleComponent, HasCur
         return $this->options->getRawActiveOption($this->default);
     }
 
-    #[HandlesKey(Key::ALT_ENTER)]
-    public function altEnter(): null|int|string|Stringable|UnitEnum
+    #[HandlesKey(Key::TAB)]
+    public function tab(): void
     {
         $this->options->setActive($this->default);
-
-        return $this->default;
     }
 
     #[HandlesKey(Key::ESCAPE)]
