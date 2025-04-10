@@ -44,6 +44,7 @@ final class MakeCommandCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists($expectedPath)
+            ->assertFileNotContains($expectedPath, 'DoNotDiscover')
             ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';');
     }
 

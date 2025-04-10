@@ -9,6 +9,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Container\Singleton;
 use Tempest\Container\Stubs\InitializerStub;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\DoNotDiscover;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
@@ -37,6 +38,8 @@ final class MakeInitializerCommand
             shouldOverride: $shouldOverride,
             manipulations: [
                 function (ClassManipulator $stubClass) use ($isSingleton) {
+                    $stubClass->removeClassAttribute(DoNotDiscover::class);
+
                     if ($isSingleton) {
                         $stubClass->addMethodAttribute('initialize', Singleton::class);
                     }

@@ -44,6 +44,7 @@ class MakeInitializerCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists($expectedPath)
+            ->assertFileNotContains($expectedPath, 'DoNotDiscover')
             ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';')
             ->assertFileExists($expectedPath, 'implements Initializer')
             ->assertFileContains($expectedPath, 'public function initialize');

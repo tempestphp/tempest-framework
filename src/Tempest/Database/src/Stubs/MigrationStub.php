@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Database\Stubs;
 
 use Tempest\Database\DatabaseMigration;
-use Tempest\Database\Migrations\Migration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
+use Tempest\Discovery\DoNotDiscover;
 
+#[DoNotDiscover]
 final class MigrationStub implements DatabaseMigration
 {
     public string $name = 'dummy-date_dummy-table-name';
