@@ -88,6 +88,7 @@ final class ElementFactory
             $element = new ViewComponentElement(
                 environment: $this->appConfig->environment,
                 compiler: $this->compiler,
+                elementFactory: $this,
                 viewComponent: $viewComponentClass,
                 attributes: $attributes,
             );
