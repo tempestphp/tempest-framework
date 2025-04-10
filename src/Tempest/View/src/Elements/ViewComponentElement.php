@@ -8,6 +8,7 @@ use Dom\HTMLDocument;
 use Tempest\Core\Environment;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
+use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 
@@ -25,6 +26,7 @@ final class ViewComponentElement implements Element
     public function __construct(
         private readonly Environment $environment,
         private readonly TempestViewCompiler $compiler,
+        private readonly ElementFactory $elementFactory,
         private readonly ViewComponent $viewComponent,
         array $attributes,
     ) {
@@ -100,12 +102,9 @@ final class ViewComponentElement implements Element
                 replace: function ($matches) {
                     $closingTag = '</' . $matches['tag'] . '>';
 
-                    $html = $matches[0] . $closingTag;
+                    $ast = TempestViewParser::ast($matches[0] . $closingTag);
 
-                    $dom = HTMLDocument::createFromString($html, LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
-
-                    /** @var \Dom\HTMLElement $element */
-                    $element = $dom->childNodes[0];
+                    $element = $this->elementFactory->make($ast[0]);
 
                     foreach (['class', 'style', 'id'] as $attributeName) {
                         if (! isset($this->dataAttributes[$attributeName])) {
@@ -125,12 +124,12 @@ final class ViewComponentElement implements Element
                         }
 
                         $element->setAttribute(
-                            qualifiedName: $attributeName,
+                            name: $attributeName,
                             value: $value,
                         );
                     }
 
-                    return str($element->ownerDocument->saveHTML($element))->replaceLast($closingTag, '');
+                    return str($element->compile())->replaceLast($closingTag, '');
                 },
             )
             ->prepend(

@@ -752,6 +752,45 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_nested_table_components(): void
+    {
+        $this->registerViewComponent('x-my-table-thead', '<thead><x-slot/></thead>');
+        $this->registerViewComponent('x-my-table-tbody', '<tbody><x-slot/></tbody>');
+        $this->registerViewComponent('x-my-table-tr', '<tr><x-slot/></tr>');
+        $this->registerViewComponent('x-my-table-td', '<td><x-slot/></td>');
+        $this->registerViewComponent('x-my-table-th', '<th><x-slot/></th>');
+
+        $html = $this->render(<<<'HTML'
+        <table>
+            <x-my-table-thead>
+                <x-my-table-tr>
+                    <x-my-table-th>Header 1</x-my-table-th>
+                </x-my-table-tr>
+            </x-my-table-thead>
+            <x-my-table-tbody>
+                <x-my-table-tr>
+                    <x-my-table-td>Row 1, Cell 1</x-my-table-td>
+                </x-my-table-tr>
+            </x-my-table-tbody>
+        </table>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+            <table>
+                <thead>
+                    <tr>
+                        <th>Header1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Row 1, Cell 1</td>
+                    </tr>
+                </tbody>
+            </table>
+        HTML, $html);
+    }
+
     private function assertSnippetsMatch(string $expected, string $actual): void
     {
         $expected = str_replace([PHP_EOL, ' '], '', $expected);
