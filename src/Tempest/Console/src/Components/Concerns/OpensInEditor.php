@@ -22,9 +22,9 @@ trait OpensInEditor
         return is_subclass_of(static::class, CanOpenInEditor::class) && ((bool) $this->getEditorCommand());
     }
 
-    private function getEditorCommand(): string
+    private function getEditorCommand(): ?string
     {
-        return env('TEMPEST_EDITOR') ?? env('EDITOR');
+        return env('TEMPEST_EDITOR') ?? env('EDITOR') ?? null;
     }
 
     public function openInEditor(?string $text): string

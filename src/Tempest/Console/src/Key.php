@@ -12,6 +12,7 @@ enum Key: string
     case CTRL_LEFT = "\eb";
     case RIGHT = "\e[C";
     case CTRL_RIGHT = "\ef";
+    case TAB = "\t";
     case ENTER = "\n";
     case ALT_ENTER = "\e\n";
     case BACKSPACE = "\x7F";
