@@ -33,5 +33,6 @@ final class SQLiteConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $path = 'localhost',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
+        public ?string $tag = null,
     ) {}
 }
