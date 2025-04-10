@@ -7,8 +7,10 @@ namespace Tempest\Console\Stubs;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\DoNotDiscover;
 use Tempest\Generation\DataObjects\StubFile;
 
+#[DoNotDiscover]
 final class GeneratorCommandStub
 {
     use PublishesFiles;
