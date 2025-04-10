@@ -9,7 +9,7 @@ use Exception;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
@@ -83,7 +83,7 @@ trait PublishesFiles
                     targetPath: $destination,
                     shouldOverride: true,
                     manipulations: [
-                        fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
+                        fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                     ],
                 );
 

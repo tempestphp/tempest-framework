@@ -8,7 +8,7 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\CommandStub;
 use Tempest\Core\PublishesFiles;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
@@ -39,7 +39,7 @@ final class MakeCommandCommand
                 'dummy-command-slug' => str($className)->kebab()->toString(),
             ],
             manipulations: [
-                fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

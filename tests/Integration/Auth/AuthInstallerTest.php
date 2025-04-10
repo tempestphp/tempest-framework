@@ -49,7 +49,7 @@ final class AuthInstallerTest extends FrameworkIntegrationTestCase
             $this->installer
                 ->assertFileExists($path)
                 ->assertFileContains($path, 'namespace App\Auth;')
-                ->assertFileNotContains($path, 'DoNotDiscover');
+                ->assertFileNotContains($path, 'SkipDiscovery');
         }
 
         $this->installer->assertFileContains(

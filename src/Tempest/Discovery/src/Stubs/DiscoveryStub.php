@@ -6,11 +6,11 @@ namespace Tempest\Discovery\Stubs;
 
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\DoNotDiscover;
 use Tempest\Discovery\IsDiscovery;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final class DiscoveryStub implements Discovery
 {
     use IsDiscovery;

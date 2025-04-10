@@ -42,7 +42,7 @@ final class InstallCommandTest extends FrameworkIntegrationTestCase
             )
             ->assertFileNotContains(
                 path: 'App/Foo/Bar/TestInstallerClass.php',
-                search: 'DoNotDiscover',
+                search: 'SkipDiscovery',
             )
             ->assertFileContains(
                 path: 'App/Foo/Bar/TestInstallerClass.php',

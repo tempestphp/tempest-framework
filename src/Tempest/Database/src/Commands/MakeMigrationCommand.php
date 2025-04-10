@@ -10,7 +10,7 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
 use Tempest\Database\Enums\MigrationType;
 use Tempest\Database\Stubs\MigrationStub;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Exceptions\FileGenerationAbortedException;
@@ -116,7 +116,7 @@ final class MakeMigrationCommand
                 'dummy-table-name' => str($fileName)->snake()->toString(),
             ],
             manipulations: [
-                fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 
