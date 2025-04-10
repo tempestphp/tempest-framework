@@ -17,7 +17,7 @@ use Tempest\Discovery\DiscoversPath;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Throwable;
 
@@ -161,11 +161,11 @@ final class LoadDiscoveryClasses
     }
 
     /**
-     * Check whether discovery for a specific class should be skipped based on the #[DoNotDiscover] attribute
+     * Check whether discovery for a specific class should be skipped based on the #[SkipDiscovery] attribute
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
-        $attribute = $input->getAttribute(DoNotDiscover::class);
+        $attribute = $input->getAttribute(SkipDiscovery::class);
 
         if ($attribute === null) {
             return false;

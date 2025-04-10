@@ -6,9 +6,9 @@ namespace Tempest\Console\Stubs;
 
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleCommand;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final class CommandStub
 {
     public function __construct(

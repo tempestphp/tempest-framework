@@ -6,9 +6,9 @@ namespace Tempest\Container\Stubs;
 
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final class InitializerStub implements Initializer
 {
     public function initialize(Container $container): mixed

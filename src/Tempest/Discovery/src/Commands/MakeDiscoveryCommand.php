@@ -7,7 +7,7 @@ namespace Tempest\Discovery\Commands;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Discovery\Stubs\DiscoveryStub;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
@@ -34,7 +34,7 @@ final class MakeDiscoveryCommand
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
             manipulations: [
-                fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

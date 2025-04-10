@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Console\Stubs;
 
 use Tempest\Core\Priority;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\EventBus\EventBusMiddleware;
 use Tempest\EventBus\EventBusMiddlewareCallable;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 #[Priority(Priority::NORMAL)]
 final class EventBusMiddlewareStub implements EventBusMiddleware
 {
