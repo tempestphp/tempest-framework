@@ -33,6 +33,7 @@ use Tempest\Container\Tests\Fixtures\ContainerObjectE;
 use Tempest\Container\Tests\Fixtures\ContainerObjectEInitializer;
 use Tempest\Container\Tests\Fixtures\DependencyWithBuiltinDependencies;
 use Tempest\Container\Tests\Fixtures\DependencyWithTaggedDependency;
+use Tempest\Container\Tests\Fixtures\HasTagObject;
 use Tempest\Container\Tests\Fixtures\ImplementsInterfaceA;
 use Tempest\Container\Tests\Fixtures\InjectA;
 use Tempest\Container\Tests\Fixtures\InjectB;
@@ -556,5 +557,16 @@ final class ContainerTest extends TestCase
         $this->assertInstanceOf(SlowDependency::class, $instance->dependency);
 
         $this->assertSame('value1', $this->assertSlowerThan(fn () => $instance->dependency->value, $delay));
+    }
+
+    public function test_has_tags_support(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(HasTagObject::class, new HasTagObject('A', 'tagA'));
+        $container->singleton(HasTagObject::class, new HasTagObject('B', 'tagB'));
+
+        $this->assertSame('A', $container->get(HasTagObject::class, 'tagA')->name);
+        $this->assertSame('B', $container->get(HasTagObject::class, 'tagB')->name);
     }
 }

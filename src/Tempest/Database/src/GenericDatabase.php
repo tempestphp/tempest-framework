@@ -16,8 +16,8 @@ use Throwable;
 final readonly class GenericDatabase implements Database
 {
     public function __construct(
-        private Connection $connection,
-        private TransactionManager $transactionManager,
+        private(set) Connection $connection,
+        private(set) TransactionManager $transactionManager,
     ) {}
 
     public function execute(Query $query): void

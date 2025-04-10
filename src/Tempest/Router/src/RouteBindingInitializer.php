@@ -6,17 +6,18 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
+use Tempest\Container\Tag;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\NotFoundException;
 
 final class RouteBindingInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class): bool
+    public function canInitialize(ClassReflector $class, ?string $tag): bool
     {
         return $class->getType()->matches(Bindable::class);
     }
 
-    public function initialize(ClassReflector $class, Container $container): object
+    public function initialize(ClassReflector $class, ?string $tag, Container $container): object
     {
         $matchedRoute = $container->get(MatchedRoute::class);
 

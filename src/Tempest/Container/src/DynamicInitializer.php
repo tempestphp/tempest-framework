@@ -8,7 +8,7 @@ use Tempest\Reflection\ClassReflector;
 
 interface DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class): bool;
+    public function canInitialize(ClassReflector $class, ?string $tag): bool;
 
-    public function initialize(ClassReflector $class, Container $container): object;
+    public function initialize(ClassReflector $class, ?string $tag, Container $container): object;
 }

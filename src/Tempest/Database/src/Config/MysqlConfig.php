@@ -7,6 +7,7 @@ namespace Tempest\Database\Config;
 use SensitiveParameter;
 use Tempest\Database\Tables\NamingStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
+use UnitEnum;
 
 final class MysqlConfig implements DatabaseConfig
 {
@@ -35,5 +36,6 @@ final class MysqlConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $database = 'app',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
+        public null|string|UnitEnum $tag = null,
     ) {}
 }
