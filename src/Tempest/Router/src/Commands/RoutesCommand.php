@@ -8,9 +8,13 @@ use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Http\Method;
+use Tempest\Reflection\MethodReflector;
 use Tempest\Router\RouteConfig;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 
 use function Tempest\Support\str;
+use function Tempest\Support\Str\after_last;
+use function Tempest\Support\Str\before_last;
 
 final readonly class RoutesCommand
 {
@@ -19,7 +23,7 @@ final readonly class RoutesCommand
         private RouteConfig $routeConfig,
     ) {}
 
-    #[ConsoleCommand(name: 'routes', description: 'Lists all registered routes', aliases: ['routes:list', 'list:routes'])]
+    #[ConsoleCommand(name: 'routes', description: 'Lists all registered routes', aliases: ['routes:list', 'list:routes', 'route:list'])]
     public function list(
         #[ConsoleArgument(description: 'Outputs registered routes as JSON')]
         bool $json = false,
@@ -49,6 +53,7 @@ final readonly class RoutesCommand
         $this->console->header('Registered routes', subheader: 'These routes are registered in your application.');
         $this->console->writeln();
 
+        /** @var DiscoveredRoute $route */
         foreach ($sortedRoutes as $route) {
             $color = match ($route->method) {
                 Method::GET => 'magenta',
@@ -61,14 +66,26 @@ final readonly class RoutesCommand
 
             $this->console->keyValue(
                 key: str($route->method->value)
-                    ->alignLeft(width: 5)
+                    ->alignRight(width: 8)
                     ->wrap("<style='fg-{$color}'>", '</style>')
-                    ->append($route->uri)
+                    ->append(' ', $route->uri)
                     ->toString(),
-                value: str()
-                    ->append("<style='dim'>{$route->handler->getDeclaringClass()->getName()}::{$route->handler->getName()}</style>")
-                    ->toString(),
+                value: $this->formatRouteHandler($route->handler),
             );
         }
+    }
+
+    private function formatRouteHandler(MethodReflector $handler): string
+    {
+        $namespace = before_last($handler->getDeclaringClass()->getName(), '\\');
+        $name = after_last($handler->getDeclaringClass()->getName(), '\\');
+        $method = $handler->getName();
+
+        return sprintf(
+            "<style='fg-white dim'>%s\\</style><style='fg-white'>%s</style><style='dim'>::</style><style='fg-white'>%s</style><style='dim'>()</style>",
+            $namespace,
+            $name,
+            $method,
+        );
     }
 }
