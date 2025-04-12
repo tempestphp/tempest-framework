@@ -21,6 +21,9 @@ final class StorageTester
         private readonly Container $container,
     ) {}
 
+    /**
+     * Forces the usage of a testing storage.
+     */
     public function fake(null|string|UnitEnum $tag = null): void
     {
         $this->storage = new TestingStorage(match (true) {
@@ -32,6 +35,16 @@ final class StorageTester
         $this->storage->cleanDirectory();
 
         $this->container->singleton(Storage::class, $this->storage, $tag);
+    }
+
+    /**
+     * Prevents storage from being used without a fake.
+     */
+    public function preventUsageWithoutFake(): void
+    {
+        // TODO(innocenzi): unregister for all tags when this is implemented
+        $this->container->unregister(Storage::class);
+        $this->container->addInitializer(RestrictedStorageInitializer::class);
     }
 
     public function createTemporaryUrlsUsing(Closure $closure): void

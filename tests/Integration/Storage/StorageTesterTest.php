@@ -4,6 +4,7 @@ namespace Tests\Tempest\Integration\Storage;
 
 use DateTime;
 use DateTimeInterface;
+use Tempest\Storage\ForbiddenStorageUsageException;
 use Tempest\Storage\Storage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -78,5 +79,26 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $url = $storage->temporaryUrl('bar.txt', DateTime::createFromFormat('Y-m-d', '2024-01-01')->setTime(0, 0));
 
         $this->assertEquals('https://localhost/bar.txt?expires=2024-01-01T00:00:00+00:00', $url);
+    }
+
+    public function test_prevent_usage_without_fake(): void
+    {
+        $this->expectException(ForbiddenStorageUsageException::class);
+
+        $this->storage->preventUsageWithoutFake();
+
+        $storage = $this->container->get(Storage::class);
+        $storage->write('bar.txt', 'baz');
+    }
+
+    public function test_prevent_usage_without_fake_with_fake(): void
+    {
+        $this->storage->preventUsageWithoutFake();
+        $this->storage->fake();
+
+        $storage = $this->container->get(Storage::class);
+        $storage->write('bar.txt', 'baz');
+
+        $this->storage->assertFileExists('bar.txt');
     }
 }
