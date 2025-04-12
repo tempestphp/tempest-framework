@@ -1,0 +1,30 @@
+{
+    "name": "tempest/storage",
+    "description": "A component for working with storage.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "league/flysystem": "^3.0"
+    },
+    "require-dev": {
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "league/flysystem-read-only": "^3.0",
+				"league/flysystem-ftp": "^3.0",
+				"league/flysystem-memory": "^3.0",
+				"league/flysystem-ziparchive": "^3.0",
+				"league/flysystem-sftp-v3": "^3.0",
+				"league/flysystem-azure-blob-storage": "^3.0",
+				"league/flysystem-google-cloud-storage": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Storage\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Storage\\Tests\\": "tests"
+        }
+    }
+}
