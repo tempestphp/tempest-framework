@@ -7,10 +7,10 @@ use Tempest\Storage\DirectoryListing;
 use Tempest\Storage\ForbiddenStorageUsageException;
 use Tempest\Storage\Storage;
 
-final class RestrictedStorage implements Storage
+final readonly class RestrictedStorage implements Storage
 {
     public function __construct(
-        private readonly ?string $tag = null,
+        private ?string $tag = null,
     ) {}
 
     public function write(string $location, string $contents): static

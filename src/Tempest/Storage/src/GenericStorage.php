@@ -156,7 +156,7 @@ final class GenericStorage implements Storage
     private function createAdapter(): FilesystemAdapter
     {
         $this->assertAdapterInstalled(
-            new ReflectionMethod($this->storageConfig, 'createAdapter')->getReturnType()->getName(),
+            new ReflectionMethod($this->storageConfig, 'createAdapter')->getReturnType()->getName(), // @phpstan-ignore method.notFound
         );
 
         $adapter = $this->storageConfig->createAdapter();
