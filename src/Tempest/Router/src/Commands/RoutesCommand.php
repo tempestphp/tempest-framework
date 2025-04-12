@@ -68,11 +68,19 @@ final readonly class RoutesCommand
                 key: str($route->method->value)
                     ->alignRight(width: 8)
                     ->wrap("<style='fg-{$color}'>", '</style>')
-                    ->append(' ', $route->uri)
+                    ->append(' ', $this->formatRouteUri($route->uri))
                     ->toString(),
                 value: $this->formatRouteHandler($route->handler),
+                useAvailableWidth: true,
             );
         }
+    }
+
+    private function formatRouteUri(string $uri): string
+    {
+        return str($uri)
+            ->replaceRegex('/{.*?}/', '<style="fg-blue">$0</style>')
+            ->toString();
     }
 
     private function formatRouteHandler(MethodReflector $handler): string

@@ -71,7 +71,7 @@ interface Console
 
     public function success(string $contents, ?string $title = null): self;
 
-    public function keyValue(string $key, ?string $value = null): self;
+    public function keyValue(string $key, ?string $value = null, bool $useAvailableWidth = false): self;
 
     public function instructions(array|string $lines): self;
 
