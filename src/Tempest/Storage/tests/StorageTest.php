@@ -55,6 +55,33 @@ final class StorageTest extends TestCase
         $this->assertSame('baz', $storage->read('foo.txt'));
     }
 
+    public function test_storage_list(): void
+    {
+        mkdir($this->fixtures);
+        file_put_contents($this->fixtures . 'foo.txt', 'baz');
+
+        $storage = new GenericStorage(new LocalStorageConfig(
+            path: $this->fixtures,
+        ));
+
+        $this->assertCount(1, $storage->list()->toArray());
+    }
+
+    public function test_storage_list_deep(): void
+    {
+        mkdir($this->fixtures);
+        file_put_contents($this->fixtures . 'foo.txt', 'baz');
+        mkdir($this->fixtures . 'dir');
+        file_put_contents($this->fixtures . 'dir/baz.txt', 'bar');
+
+        $storage = new GenericStorage(new LocalStorageConfig(
+            path: $this->fixtures,
+        ));
+
+        $this->assertCount(3, $storage->list(deep: true)->toArray());
+        $this->assertCount(1, $storage->list(location: 'dir')->toArray());
+    }
+
     public function test_storage_clean_directory(): void
     {
         mkdir($this->fixtures);
