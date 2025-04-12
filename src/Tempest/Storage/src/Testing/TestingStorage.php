@@ -161,7 +161,7 @@ final class TestingStorage implements Storage
     {
         return new GenericStorage(
             storageConfig: new LocalStorageConfig(
-                path: internal_storage_path('tests/' . ($path ?? 'storage')),
+                path: internal_storage_path('tests/storage/' . ($path ?? 'storage')),
                 readonly: false,
             ),
             temporaryUrlGenerator: $temporaryUrlGenerator,
