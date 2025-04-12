@@ -22,16 +22,6 @@ final class S3StorageConfig implements StorageConfig
         public string $region,
 
         /**
-         * If specified, scope operations to the that path.
-         */
-        public ?string $prefix = null,
-
-        /**
-         * Whether the storage is read-only.
-         */
-        public bool $readonly = false,
-
-        /**
          * AWS access key ID. If null, the SDK will attempt to use the default credential provider chain (env vars, config files, IAM role).
          */
         public ?string $accessKeyId = null,
@@ -47,6 +37,16 @@ final class S3StorageConfig implements StorageConfig
         public ?string $sessionToken = null,
 
         /**
+         * If specified, scope operations to that path.
+         */
+        public ?string $prefix = null,
+
+        /**
+         * Whether the storage is read-only.
+         */
+        public bool $readonly = false,
+
+        /**
          * Optional custom endpoint URL (e.g., for S3-compatible storage like R2).
          */
         public ?string $endpoint = null,
@@ -60,8 +60,7 @@ final class S3StorageConfig implements StorageConfig
          * Other options.
          */
         public array $options = [],
-    ) {
-    }
+    ) {}
 
     public function createAdapter(): FilesystemAdapter
     {
