@@ -3,8 +3,6 @@
 namespace Tempest\Storage\Testing;
 
 use DateTimeInterface;
-use League\Flysystem\FilesystemAdapter;
-use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\DirectoryListing;
