@@ -2,11 +2,14 @@
 
 namespace Tempest\Storage\Config;
 
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 
 final class SFTPStorageConfig implements StorageConfig
 {
+    public string $adapter = SftpAdapter::class;
+
     public function __construct(
         public string $host,
         public string $root,
@@ -22,7 +25,7 @@ final class SFTPStorageConfig implements StorageConfig
         public bool $readonly = false,
     ) {}
 
-    public function createAdapter(): SftpAdapter
+    public function createAdapter(): FilesystemAdapter
     {
         return new SftpAdapter(
             connectionProvider: new SftpConnectionProvider(

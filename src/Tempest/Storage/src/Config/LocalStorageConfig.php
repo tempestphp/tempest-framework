@@ -7,6 +7,8 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 
 final class LocalStorageConfig implements StorageConfig
 {
+    public string $adapter = LocalFilesystemAdapter::class;
+
     public function __construct(
         /**
          * Absolute path to the storage directory.
@@ -19,7 +21,7 @@ final class LocalStorageConfig implements StorageConfig
         public bool $readonly = false,
     ) {}
 
-    public function createAdapter(): LocalFilesystemAdapter
+    public function createAdapter(): FilesystemAdapter
     {
         return new LocalFilesystemAdapter(
             location: $this->path,

@@ -15,6 +15,13 @@ interface StorageConfig
     }
 
     /**
+     * The adapter class.
+     */
+    public string $adapter {
+        get;
+    }
+
+    /**
      * Creates the adapter.
      */
     public function createAdapter(): FilesystemAdapter;

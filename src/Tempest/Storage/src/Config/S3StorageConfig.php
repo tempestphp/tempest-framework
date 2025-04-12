@@ -4,9 +4,12 @@ namespace Tempest\Storage\Config;
 
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
+use League\Flysystem\FilesystemAdapter;
 
 final class S3StorageConfig implements StorageConfig
 {
+    public string $adapter = AwsS3V3Adapter::class;
+
     public function __construct(
         /**
          * Name of the bucket.
@@ -57,14 +60,15 @@ final class S3StorageConfig implements StorageConfig
          * Other options.
          */
         public array $options = [],
-    ) {}
+    ) {
+    }
 
-    public function createAdapter(): AwsS3V3Adapter
+    public function createAdapter(): FilesystemAdapter
     {
         return new AwsS3V3Adapter(
             client: new S3Client($this->buildClientConfig()),
             bucket: $this->bucket,
-            prefix: $this->prefix,
+            prefix: $this->prefix ?? '',
         );
     }
 

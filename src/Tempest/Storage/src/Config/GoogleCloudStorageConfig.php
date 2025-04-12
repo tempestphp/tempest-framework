@@ -3,12 +3,13 @@
 namespace Tempest\Storage\Config;
 
 use Google\Cloud\Storage\StorageClient;
-use League\Flysystem\AzureBlobStorage\AzureBlobStorageAdapter;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 
 final class GoogleCloudStorageConfig implements StorageConfig
 {
+    public string $adapter = GoogleCloudStorageAdapter::class;
+
     public function __construct(
         /**
          * Name of the bucket to use.
@@ -46,7 +47,7 @@ final class GoogleCloudStorageConfig implements StorageConfig
         public bool $readonly = false,
     ) {}
 
-    public function createAdapter(): GoogleCloudStorageAdapter
+    public function createAdapter(): FilesystemAdapter
     {
         $client = new StorageClient($this->buildClientConfig());
 

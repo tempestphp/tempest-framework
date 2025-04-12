@@ -2,11 +2,14 @@
 
 namespace Tempest\Storage\Config;
 
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 
 final class FTPStorageConfig implements StorageConfig
 {
+    public string $adapter = FtpAdapter::class;
+
     public const string WINDOWS = 'windows';
 
     public const string UNIX = 'UNIX';
@@ -29,7 +32,7 @@ final class FTPStorageConfig implements StorageConfig
         public bool $readonly = false,
     ) {}
 
-    public function createAdapter(): FtpAdapter
+    public function createAdapter(): FilesystemAdapter
     {
         return new FtpAdapter(
             connectionOptions: FtpConnectionOptions::fromArray([

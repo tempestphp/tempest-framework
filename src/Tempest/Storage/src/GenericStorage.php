@@ -7,8 +7,6 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\ReadOnly\ReadOnlyFilesystemAdapter;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
-use ReflectionMethod;
-use Tempest\Reflection\MethodReflector;
 use Tempest\Storage\Config\StorageConfig;
 
 final class GenericStorage implements Storage
@@ -155,9 +153,7 @@ final class GenericStorage implements Storage
 
     private function createAdapter(): FilesystemAdapter
     {
-        $this->assertAdapterInstalled(
-            new ReflectionMethod($this->storageConfig, 'createAdapter')->getReturnType()->getName(), // @phpstan-ignore method.notFound
-        );
+        $this->assertAdapterInstalled($this->storageConfig->adapter);
 
         $adapter = $this->storageConfig->createAdapter();
 

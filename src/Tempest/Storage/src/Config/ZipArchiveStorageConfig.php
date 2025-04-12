@@ -9,6 +9,8 @@ use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
 final class ZipArchiveStorageConfig implements StorageConfig
 {
+    public string $adapter = ZipArchiveAdapter::class;
+
     public function __construct(
         /**
          * Absolute path to the zip file.
@@ -26,7 +28,7 @@ final class ZipArchiveStorageConfig implements StorageConfig
         public bool $readonly = false,
     ) {}
 
-    public function createAdapter(): ZipArchiveAdapter
+    public function createAdapter(): FilesystemAdapter
     {
         return new ZipArchiveAdapter(
             zipArchiveProvider: new FilesystemZipArchiveProvider($this->path),
