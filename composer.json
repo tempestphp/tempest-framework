@@ -16,7 +16,7 @@
         "giggsey/libphonenumber-for-php-lite": "^9.0",
         "guzzlehttp/guzzle": "^7.8",
         "laminas/laminas-diactoros": "^3.3",
-        "league/flysystem": "^3.0",
+        "league/flysystem": "^3.29.1",
         "monolog/monolog": "^3.7.0",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
