@@ -4,7 +4,11 @@ namespace Tests\Tempest\Integration\Storage;
 
 use DateTime;
 use DateTimeInterface;
+use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use Tempest\Storage\Config\StorageConfig;
 use Tempest\Storage\ForbiddenStorageUsageException;
+use Tempest\Storage\MissingAdapterException;
 use Tempest\Storage\Storage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -100,5 +104,24 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->write('bar.txt', 'baz');
 
         $this->storage->assertFileExists('bar.txt');
+    }
+
+    public function test_no_adapter(): void
+    {
+        $this->expectException(MissingAdapterException::class);
+        $this->expectExceptionMessage('The `UnknownClass` adapter is missing');
+
+        $this->container->config(new class implements StorageConfig {
+            public string $adapter = 'UnknownClass';
+            public bool $readonly = false;
+
+            public function createAdapter(): FilesystemAdapter
+            {
+                return new LocalFilesystemAdapter(__DIR__);
+            }
+        });
+
+        $storage = $this->container->get(Storage::class);
+        $storage->write('bar.txt', 'baz');
     }
 }
