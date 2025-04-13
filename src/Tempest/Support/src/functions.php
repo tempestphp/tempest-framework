@@ -49,4 +49,32 @@ namespace Tempest\Support {
 
         return $value;
     }
+
+    /**
+     * @template T
+     *
+     * @param (Closure(): T) $callback
+     *
+     * @return array{0: T, 1: ?string}
+     */
+    function box(Closure $callback): array
+    {
+        $lastMessage = null;
+
+        set_error_handler(static function (int $_type, string $message) use (&$lastMessage): void {
+            $lastMessage = $message;
+        });
+
+        if (null !== $lastMessage && Str\contains($lastMessage, '): ')) {
+            $lastMessage = Str\after_first(Str\to_lower_case($lastMessage), '): ');
+        }
+
+        try {
+            $value = $callback();
+
+            return [$value, $lastMessage];
+        } finally {
+            restore_error_handler();
+        }
+    }
 }
