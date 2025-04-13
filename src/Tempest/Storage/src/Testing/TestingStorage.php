@@ -30,6 +30,7 @@ final class TestingStorage implements Storage
 
     public function setTemporaryUrlGenerator(TemporaryUrlGenerator $generator): static
     {
+        $this->temporaryUrlGenerator = $generator;
         $this->storage = $this->createStorage($this->path, temporaryUrlGenerator: $generator);
 
         return $this;
@@ -37,6 +38,7 @@ final class TestingStorage implements Storage
 
     public function setPublicUrlGenerator(PublicUrlGenerator $generator): static
     {
+        $this->publicUrlGenerator = $generator;
         $this->storage = $this->createStorage($this->path, publicUrlGenerator: $generator);
 
         return $this;
