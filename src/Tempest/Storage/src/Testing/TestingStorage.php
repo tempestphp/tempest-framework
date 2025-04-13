@@ -3,6 +3,7 @@
 namespace Tempest\Storage\Testing;
 
 use DateTimeInterface;
+use League\Flysystem\UrlGeneration\PublicUrlGenerator;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\DirectoryListing;
@@ -15,16 +16,28 @@ final class TestingStorage implements Storage
 {
     private Storage $storage;
 
+    private ?TemporaryUrlGenerator $temporaryUrlGenerator = null;
+
+    private ?PublicUrlGenerator $publicUrlGenerator = null;
+
     public function __construct(
         private readonly ?string $path = null,
         ?TemporaryUrlGenerator $temporaryUrlGenerator = null,
+        ?PublicUrlGenerator $publicUrlGenerator = null,
     ) {
-        $this->storage = $this->createStorage($path, $temporaryUrlGenerator);
+        $this->storage = $this->createStorage($path, $temporaryUrlGenerator, $publicUrlGenerator);
     }
 
     public function setTemporaryUrlGenerator(TemporaryUrlGenerator $generator): static
     {
-        $this->storage = $this->createStorage($this->path, $generator);
+        $this->storage = $this->createStorage($this->path, temporaryUrlGenerator: $generator);
+
+        return $this;
+    }
+
+    public function setPublicUrlGenerator(PublicUrlGenerator $generator): static
+    {
+        $this->storage = $this->createStorage($this->path, publicUrlGenerator: $generator);
 
         return $this;
     }
@@ -157,14 +170,15 @@ final class TestingStorage implements Storage
         return $this->storage->list($location, $deep);
     }
 
-    private function createStorage(?string $path = null, ?TemporaryUrlGenerator $temporaryUrlGenerator = null): Storage
+    private function createStorage(?string $path = null, ?TemporaryUrlGenerator $temporaryUrlGenerator = null, ?PublicUrlGenerator $publicUrlGenerator = null): Storage
     {
         return new GenericStorage(
             storageConfig: new LocalStorageConfig(
                 path: internal_storage_path('tests/storage/' . ($path ?? 'storage')),
                 readonly: false,
             ),
-            temporaryUrlGenerator: $temporaryUrlGenerator,
+            temporaryUrlGenerator: $temporaryUrlGenerator ?? $this->temporaryUrlGenerator,
+            publicUrlGenerator: $publicUrlGenerator ?? $this->publicUrlGenerator,
         );
     }
 }

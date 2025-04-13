@@ -5,6 +5,7 @@ namespace Tempest\Storage\Testing;
 use Closure;
 use DateTimeInterface;
 use League\Flysystem\Config;
+use League\Flysystem\UrlGeneration\PublicUrlGenerator;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use PHPUnit\Framework\Assert;
 use Tempest\Container\Container;
@@ -63,11 +64,35 @@ final class StorageTester
         $this->storage->setTemporaryUrlGenerator($generator);
     }
 
+    public function createPublicUrlsUsing(Closure $closure): void
+    {
+        $generator = new class($closure) implements PublicUrlGenerator {
+            public function __construct(
+                private readonly Closure $closure,
+            ) {}
+
+            public function publicUrl(string $path, Config $config): string
+            {
+                return ($this->closure)($path);
+            }
+        };
+
+        $this->storage->setPublicUrlGenerator($generator);
+    }
+
     public function assertFileExists(string $path): void
     {
         $storage = $this->container->get(Storage::class);
 
         Assert::assertTrue($storage->fileExists($path), sprintf('File `%s` does not exist.', $path));
+    }
+
+    public function assertChecksumEquals(string $path, string $checksum): void
+    {
+        $storage = $this->container->get(Storage::class);
+
+        $this->assertFileExists($path);
+        Assert::assertEquals($checksum, $storage->checksum($path), sprintf('File `%s` checksum does not match `%s`.', $path, $checksum));
     }
 
     public function assertSee(string $path, string $contents): void

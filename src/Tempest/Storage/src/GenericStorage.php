@@ -6,6 +6,7 @@ use DateTimeInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\ReadOnly\ReadOnlyFilesystemAdapter;
+use League\Flysystem\UrlGeneration\PublicUrlGenerator;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
 use Tempest\Storage\Config\StorageConfig;
 
@@ -15,9 +16,11 @@ final class GenericStorage implements Storage
         private StorageConfig $storageConfig,
         private ?Filesystem $filesystem = null,
         ?TemporaryUrlGenerator $temporaryUrlGenerator = null,
+        ?PublicUrlGenerator $publicUrlGenerator = null,
     ) {
         $this->filesystem ??= new Filesystem(
             adapter: $this->createAdapter(),
+            publicUrlGenerator: $publicUrlGenerator,
             temporaryUrlGenerator: $temporaryUrlGenerator,
         );
     }

@@ -48,6 +48,8 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage->write('foo/bar.txt', 'baz');
         $storage->createDirectory('empty');
 
+        $this->storage->assertChecksumEquals('foo/bar.txt', '73feffa4b7f6bb68e44cf984c85f6e88');
+
         $this->storage->assertFileExists('foo/bar.txt');
         $this->storage->assertFileOrDirectoryExists('foo/bar.txt');
         $this->storage->assertDirectoryExists('foo');
@@ -65,12 +67,29 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
 
         $storage->cleanDirectory();
         $this->storage->assertDirectoryEmpty();
+
+        $storage->write('foo/bar.txt', 'baz');
+        $storage->delete('foo/bar.txt');
+        $this->storage->assertDirectoryEmpty('foo');
+
+        $storage->deleteDirectory('foo');
+        $this->storage->assertDirectoryEmpty();
+    }
+
+    public function test_public_url(): void
+    {
+        $this->storage->fake();
+        $this->storage->createPublicUrlsUsing(fn (string $path) => sprintf('https://localhost/%s', $path));
+
+        $storage = $this->container->get(Storage::class);
+        $storage->write('foo.txt', 'bar');
+
+        $this->assertSame('https://localhost/foo.txt', $storage->publicUrl('foo.txt'));
     }
 
     public function test_temporary_urls(): void
     {
         $this->storage->fake();
-
         $this->storage->createTemporaryUrlsUsing(fn (string $path, DateTimeInterface $expiresAt) => sprintf(
             'https://localhost/%s?expires=%s',
             $path,
@@ -113,6 +132,7 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
 
         $this->container->config(new class implements StorageConfig {
             public string $adapter = 'UnknownClass';
+
             public bool $readonly = false;
 
             public function createAdapter(): FilesystemAdapter
