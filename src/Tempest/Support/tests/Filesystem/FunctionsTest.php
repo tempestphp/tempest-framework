@@ -184,6 +184,10 @@ final class FunctionsTest extends TestCase
 
     public function test_get_permissions(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
         $file = $this->fixtures . '/file.txt';
 
         file_put_contents($file, '');
@@ -219,6 +223,10 @@ final class FunctionsTest extends TestCase
 
     public function test_ensure_directory_empty_keeps_permissions(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
         $dir = $this->fixtures . '/tmp';
 
         mkdir($dir, 0o755);
@@ -295,8 +303,11 @@ final class FunctionsTest extends TestCase
         $files = Filesystem\list_directory($dir);
 
         $this->assertCount(2, $files);
-        $this->assertContains(realpath($dir . '/file.txt'), $files);
-        $this->assertContains(realpath($dir . '/sub'), $files);
+
+        if (PHP_OS_FAMILY !== 'Windows') {
+            $this->assertContains(realpath($dir . '/file.txt'), $files);
+            $this->assertContains(realpath($dir . '/sub'), $files);
+        }
     }
 
     public function test_read_symbolic_link(): void
@@ -320,7 +331,7 @@ final class FunctionsTest extends TestCase
 
         $directory = Filesystem\get_directory($file);
 
-        $this->assertEquals(realpath($this->fixtures), $directory);
+        $this->assertEquals(realpath($this->fixtures), realpath($directory));
     }
 
     public function test_copy(): void
@@ -360,6 +371,10 @@ final class FunctionsTest extends TestCase
 
     public function test_copy_non_readable_file(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
         $this->expectException(NotReadableException::class);
 
         $source = $this->fixtures . '/file.txt';
