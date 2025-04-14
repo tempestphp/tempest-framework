@@ -7,12 +7,16 @@ namespace Tempest\Framework\Testing;
 use InvalidArgumentException;
 use Tempest\Container\Container;
 use Tempest\Container\Exceptions\ContainerException;
+use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
-use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Vite\TagsResolver\NullTagsResolver;
 use Tempest\Vite\TagsResolver\TagsResolver;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
+
+use function Tempest\Support\Filesystem\delete_directory;
+use function Tempest\Support\Filesystem\ensure_directory_exists;
+use function Tempest\Support\Filesystem\write_file;
 
 final class ViteTester
 {
@@ -126,30 +130,29 @@ final class ViteTester
             $tagsResolver = null;
         }
 
-        $filesystem = new LocalFilesystem();
-        $filesystem->deleteDirectory($temporaryRootDirectory, recursive: true);
-        $filesystem->ensureDirectoryExists($temporaryRootDirectory);
+        ensure_directory_exists($temporaryRootDirectory);
 
         $paths = [];
 
         foreach ($files as $path => $content) {
             $path = "{$temporaryRootDirectory}/{$path}";
             $paths[] = $path;
-            $filesystem->ensureDirectoryExists(dirname($path));
-            $filesystem->write($path, is_array($content) ? json_encode($content, flags: JSON_UNESCAPED_SLASHES) : $content);
+
+            ensure_directory_exists(dirname($path));
+            write_file($path, is_array($content) ? json_encode($content, flags: JSON_UNESCAPED_SLASHES) : $content);
         }
 
-        $this->container->get(Kernel::class)->root = $temporaryRootDirectory;
+        $this->container->get(FrameworkKernel::class)->root = $temporaryRootDirectory;
         $this->container->config($temporaryViteConfig);
         $this->container->unregister(TagsResolver::class);
         $callback(...$paths);
-        $this->container->get(Kernel::class)->root = $actualRootDirectory;
+        $this->container->get(FrameworkKernel::class)->root = $actualRootDirectory;
         $this->container->config($actualViteConfig);
 
         if ($tagsResolver) {
             $this->container->register(TagsResolver::class, fn () => $tagsResolver);
         }
 
-        $filesystem->deleteDirectory($temporaryRootDirectory, recursive: true);
+        delete_directory($temporaryRootDirectory);
     }
 }

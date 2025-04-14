@@ -32,6 +32,7 @@ final class ArrayMutabilityTest extends TestCase
         'dd',
         'tap',
         'groupBy',
+        'partition',
     ];
 
     public function test_immutable_array(): void

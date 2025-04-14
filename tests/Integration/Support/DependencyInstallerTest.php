@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Support;
 
 use Closure;
 use PHPUnit\Framework\Attributes\TestWith;
-use Tempest\Filesystem\LocalFilesystem;
+use Tempest\Support\Filesystem;
 use Tempest\Support\JavaScript\DependencyInstaller;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -78,10 +78,8 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
     {
         $directory = __DIR__ . '/Fixtures/tmp';
 
-        $filesystem = new LocalFilesystem();
-        $filesystem->deleteDirectory($directory, recursive: true);
-        $filesystem->ensureDirectoryExists($directory);
+        Filesystem\ensure_directory_empty($directory);
         $callback($directory);
-        $filesystem->deleteDirectory($directory, recursive: true);
+        Filesystem\delete_directory($directory);
     }
 }

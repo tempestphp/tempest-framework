@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Filesystem {
     use FilesystemIterator;
-    use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
     use function copy as php_copy;
     use function dirname;
@@ -122,13 +121,13 @@ namespace Tempest\Support\Filesystem {
             return;
         }
 
-        [$result, $error_message] = box(static fn (): bool => mkdir($directory, $permissions, true));
+        [$result, $errorMessage] = box(static fn (): bool => mkdir($directory, $permissions, recursive: true));
 
-        if (false === $result && ! namespace\is_directory($directory)) {
+        if ($result === false && ! namespace\is_directory($directory)) { // @phpstan-ignore booleanNot.alwaysTrue
             throw new Exceptions\RuntimeException(sprintf(
                 'Failed to create directory "%s": %s.',
                 $directory,
-                $error_message ?? 'internal error',
+                $errorMessage ?? 'internal error',
             ));
         }
     }
@@ -217,7 +216,7 @@ namespace Tempest\Support\Filesystem {
 
         [$result, $errorMessage] = box(static fn (): bool => unlink($file));
 
-        if (false === $result && namespace\is_file($file)) {
+        if ($result === false && namespace\is_file($file)) { // @phpstan-ignore booleanAnd.rightAlwaysTrue
             throw new Exceptions\RuntimeException(sprintf(
                 'Failed to delete file "%s": %s.',
                 $file,
@@ -253,13 +252,13 @@ namespace Tempest\Support\Filesystem {
     /**
      * Cleans the specified `$directory` by deleting its contents, optionally creating it if it doesn't exist.
      */
-    function empty_directory(string $directory, bool $create = false): void
+    function ensure_directory_empty(string $directory): void
     {
-        if (! namespace\is_directory($directory) && ! $create) {
+        if (namespace\exists($directory) && ! namespace\is_directory($directory)) {
             throw Exceptions\NotDirectoryException::for($directory);
         }
 
-        if (! namespace\is_directory($directory) && $create) {
+        if (! namespace\is_directory($directory)) {
             namespace\create_directory($directory);
             return;
         }

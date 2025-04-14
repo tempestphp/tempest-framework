@@ -727,11 +727,11 @@ trait ManipulatesArray
     /**
      * Returns a pair containing lists for which the given predicate returned `true` and `false`, respectively.
      *
-     * @param (Closure(T): bool) $predicate
+     * @param (Closure(TValue): bool) $predicate
      *
-     * @return static<array<T>, array<T>>
+     * @return static<int, array<array<TValue>, array<TValue>>>
      */
-    function partition(Closure $predicate): static
+    public function partition(Closure $predicate): static
     {
         $success = [];
         $failure = [];

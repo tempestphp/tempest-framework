@@ -61,7 +61,7 @@ namespace Tempest\Support {
     {
         $lastMessage = null;
 
-        set_error_handler(static function (int $_type, string $message) use (&$lastMessage): void {
+        set_error_handler(static function (int $_type, string $message) use (&$lastMessage): void { // @phpstan-ignore argument.type
             $lastMessage = $message;
         });
 
