@@ -8,6 +8,7 @@ use Tempest\Support\Filesystem\Exceptions\NotDirectoryException;
 use Tempest\Support\Filesystem\Exceptions\NotFileException;
 use Tempest\Support\Filesystem\Exceptions\NotFoundException;
 use Tempest\Support\Filesystem\Exceptions\NotReadableException;
+use Tempest\Support\Filesystem\Exceptions\NotSymbolicLinkException;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
 final class FunctionsTest extends TestCase
@@ -197,6 +198,17 @@ final class FunctionsTest extends TestCase
         $this->assertEquals(0o644, $permissions & 0o777);
     }
 
+    public function test_get_permissions_not_found(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
+        $this->expectException(NotFoundException::class);
+
+        Filesystem\get_permissions($this->fixtures . '/file.txt');
+    }
+
     public function test_ensure_directory_empty(): void
     {
         $dir = $this->fixtures . '/tmp';
@@ -310,6 +322,17 @@ final class FunctionsTest extends TestCase
         }
     }
 
+    public function test_list_directory_on_non_directory(): void
+    {
+        $this->expectException(NotDirectoryException::class);
+
+        $file = $this->fixtures . '/file.txt';
+
+        file_put_contents($file, '');
+
+        Filesystem\list_directory($file);
+    }
+
     public function test_read_symbolic_link(): void
     {
         $file = $this->fixtures . '/file.txt';
@@ -321,6 +344,21 @@ final class FunctionsTest extends TestCase
         $target = Filesystem\read_symbolic_link($link);
 
         $this->assertEquals(realpath($file), $target);
+    }
+
+    public function test_read_symbolic_link_on_non_symlink(): void
+    {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
+        $this->expectException(NotSymbolicLinkException::class);
+
+        $file = $this->fixtures . '/file.txt';
+
+        file_put_contents($file, '');
+
+        Filesystem\read_symbolic_link($file);
     }
 
     public function test_get_directory(): void
@@ -410,6 +448,10 @@ final class FunctionsTest extends TestCase
 
     public function test_write_non_writable_file(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
+
         $this->expectException(RuntimeException::class);
 
         $file = $this->fixtures . '/file.txt';

@@ -241,7 +241,7 @@ namespace Tempest\Support\Filesystem {
     function get_permissions(string $path): int
     {
         if (! namespace\exists($path)) {
-            throw Exceptions\NotFoundException::forNode($path);
+            throw Exceptions\NotFoundException::forPath($path);
         }
 
         [$result, $message] = box(static fn (): int|false => fileperms($path));
@@ -271,7 +271,9 @@ namespace Tempest\Support\Filesystem {
             return;
         }
 
-        $permissions = namespace\get_permissions($directory);
+        $permissions = PHP_OS_FAMILY === 'Windows'
+            ? namespace\get_permissions($directory)
+            : 0o777;
 
         namespace\delete_directory($directory, recursive: true);
         namespace\create_directory($directory, $permissions);

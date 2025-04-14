@@ -6,9 +6,9 @@ use Exception;
 
 final class NotFoundException extends Exception implements FilesystemException
 {
-    public static function forNode(string $node): static
+    public static function forPath(string $path): static
     {
-        return new self(sprintf('Node "%s" is not found.', $node));
+        return new self(sprintf('Path "%s" is not found.', $path));
     }
 
     public static function forFile(string $file): static
