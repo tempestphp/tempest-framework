@@ -11,13 +11,17 @@ use Tempest\Support\Filesystem\Exceptions\NotReadableException;
 use Tempest\Support\Filesystem\Exceptions\NotSymbolicLinkException;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
+use function Tempest\Support\Path\normalize;
+
 final class FunctionsTest extends TestCase
 {
-    private string $fixtures = __DIR__ . '/Fixtures';
+    private string $fixtures;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->fixtures = normalize(__DIR__, '/Fixtures/', uniqid('tempest', more_entropy: true));
 
         Filesystem\ensure_directory_empty($this->fixtures);
 
@@ -28,9 +32,7 @@ final class FunctionsTest extends TestCase
     {
         parent::tearDown();
 
-        Filesystem\delete_directory($this->fixtures);
-
-        $this->assertFalse(is_dir($this->fixtures));
+        Filesystem\delete_directory(dirname($this->fixtures));
     }
 
     public function test_create_directory(): void
