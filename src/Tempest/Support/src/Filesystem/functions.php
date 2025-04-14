@@ -33,12 +33,16 @@ namespace Tempest\Support\Filesystem {
     /**
      * Copies a file from `$source` to `$destination`.
      */
-    function copy(string $source, string $destination, bool $overwrite = false): void
+    function copy_file(string $source, string $destination, bool $overwrite = false): void
     {
         $destination_exists = namespace\is_file($destination);
 
         if (! $overwrite && $destination_exists) {
             return;
+        }
+
+        if (namespace\is_directory($source)) {
+            throw Exceptions\NotFileException::for($source);
         }
 
         if (! namespace\is_file($source)) {
@@ -49,9 +53,13 @@ namespace Tempest\Support\Filesystem {
             throw Exceptions\NotReadableException::forFile($source);
         }
 
-        if (! php_copy($source, $destination)) {
+        namespace\create_directory_for_file($destination);
+
+        [$result, $errorMessage] = box(static fn (): bool => php_copy($source, $destination));
+
+        if ($result === false) {
             throw new Exceptions\RuntimeException(
-                sprintf('Failed to copy source file "%s" to destination "%s".', $source, $destination),
+                sprintf('Failed to copy source file "%s" to destination "%s": %s', $source, $destination, $errorMessage),
             );
         }
     }
