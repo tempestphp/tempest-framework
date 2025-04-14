@@ -51,6 +51,8 @@ namespace Tempest\Support {
     }
 
     /**
+     * Returns a tuple containing the result of the `$callback` as the first element and the error message as the second element if there was an error.
+     *
      * @template T
      *
      * @param (Closure(): T) $callback
