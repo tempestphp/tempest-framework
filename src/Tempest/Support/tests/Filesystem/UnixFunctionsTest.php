@@ -11,17 +11,17 @@ use Tempest\Support\Filesystem\Exceptions\NotReadableException;
 use Tempest\Support\Filesystem\Exceptions\NotSymbolicLinkException;
 use Tempest\Support\Filesystem\Exceptions\RuntimeException;
 
-use function Tempest\Support\Path\normalize;
-
-final class FunctionsTest extends TestCase
+final class UnixFunctionsTest extends TestCase
 {
-    private string $fixtures;
+    private string $fixtures = __DIR__ . '/Fixtures';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->fixtures = normalize(__DIR__, '/Fixtures/', uniqid('tempest', more_entropy: true));
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Irrelevant on Windows.');
+        }
 
         Filesystem\ensure_directory_empty($this->fixtures);
 
@@ -32,7 +32,9 @@ final class FunctionsTest extends TestCase
     {
         parent::tearDown();
 
-        Filesystem\delete_directory(dirname($this->fixtures));
+        Filesystem\delete_directory($this->fixtures);
+
+        $this->assertFalse(is_dir($this->fixtures));
     }
 
     public function test_create_directory(): void
@@ -187,10 +189,6 @@ final class FunctionsTest extends TestCase
 
     public function test_get_permissions(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $file = $this->fixtures . '/file.txt';
 
         file_put_contents($file, '');
@@ -202,10 +200,6 @@ final class FunctionsTest extends TestCase
 
     public function test_get_permissions_not_found(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $this->expectException(NotFoundException::class);
 
         Filesystem\get_permissions($this->fixtures . '/file.txt');
@@ -237,10 +231,6 @@ final class FunctionsTest extends TestCase
 
     public function test_ensure_directory_empty_keeps_permissions(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $dir = $this->fixtures . '/tmp';
 
         mkdir($dir, 0o755);
@@ -350,10 +340,6 @@ final class FunctionsTest extends TestCase
 
     public function test_read_symbolic_link_on_non_symlink(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $this->expectException(NotSymbolicLinkException::class);
 
         $file = $this->fixtures . '/file.txt';
@@ -411,10 +397,6 @@ final class FunctionsTest extends TestCase
 
     public function test_copy_non_readable_file(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $this->expectException(NotReadableException::class);
 
         $source = $this->fixtures . '/file.txt';
@@ -450,10 +432,6 @@ final class FunctionsTest extends TestCase
 
     public function test_write_non_writable_file(): void
     {
-        if (PHP_OS_FAMILY === 'Windows') {
-            $this->markTestSkipped('Irrelevant on Windows.');
-        }
-
         $this->expectException(RuntimeException::class);
 
         $file = $this->fixtures . '/file.txt';
