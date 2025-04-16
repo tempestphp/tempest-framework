@@ -118,6 +118,14 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function plusSeconds(int $seconds): static;
 
     /**
+     * Adds the specified milliseconds to this temporal object, returning a new instance with the added milliseconds.
+     *
+     * @throws Exception\UnderflowException If adding the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the milliseconds results in an arithmetic overflow.
+     */
+    public function plusMilliseconds(int $milliseconds): static;
+
+    /**
      * Adds the specified nanoseconds to this temporal object, returning a new instance with the added nanoseconds.
      *
      * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
@@ -148,6 +156,14 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      * @throws Exception\OverflowException If subtracting the seconds results in an arithmetic overflow.
      */
     public function minusSeconds(int $seconds): static;
+
+    /**
+     * Substracts the specified milliseconds to this temporal object, returning a new instance with the subtracted milliseconds.
+     *
+     * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the milliseconds results in an arithmetic overflow.
+     */
+    public function minusMilliseconds(int $milliseconds): static;
 
     /**
      * Subtracts the specified nanoseconds from this temporal object, returning a new instance with the subtracted nanoseconds.

@@ -6,6 +6,8 @@ namespace Tempest\DateTime;
 
 use Tempest\Support\Language\Locale;
 use Tempest\Support\Math;
+use Tempest\Support\Math\Exception\ArithmeticException;
+use Tempest\Support\Math\Exception\DivisionByZeroException;
 
 /**
  * Represents a precise point in time, with seconds and nanoseconds since the Unix epoch.
@@ -192,6 +194,18 @@ final readonly class Timestamp implements TemporalInterface
     public function getSeconds(): int
     {
         return $this->seconds;
+    }
+
+    /**
+     * Returns the number of milliseconds since the Unix epoch represented by this timestamp.
+     */
+    public function getMilliseconds(): int
+    {
+        try {
+            return ($this->seconds * MILLISECONDS_PER_SECOND) + Math\div($this->nanoseconds, NANOSECONDS_PER_MILLISECOND);
+        } catch (DivisionByZeroException $e) {
+            throw new ArithmeticException('Division by zero occurred while calculating milliseconds.', 0, $e);
+        }
     }
 
     /**

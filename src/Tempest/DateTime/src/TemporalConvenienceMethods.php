@@ -140,6 +140,17 @@ trait TemporalConvenienceMethods
     }
 
     /**
+     * Adds the specified milliseconds to this temporal object, returning a new instance with the added milliseconds.
+     *
+     * @throws Exception\UnderflowException If adding the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the milliseconds results in an arithmetic overflow.
+     */
+    public function plusMilliseconds(int $milliseconds): static
+    {
+        return $this->plus(Duration::milliseconds($milliseconds));
+    }
+
+    /**
      * Adds the specified nanoseconds to this temporal object, returning a new instance with the added nanoseconds.
      *
      * @throws Exception\UnderflowException If adding the nanoseconds results in an arithmetic underflow.
@@ -181,6 +192,17 @@ trait TemporalConvenienceMethods
     public function minusSeconds(int $seconds): static
     {
         return $this->minus(Duration::seconds($seconds));
+    }
+
+    /**
+     * Subtracts the specified milliseconds from this temporal object, returning a new instance with the subtracted milliseconds.
+     *
+     * @throws Exception\UnderflowException If subtracting the milliseconds results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the milliseconds results in an arithmetic overflow.
+     */
+    public function minusMilliseconds(int $milliseconds): static
+    {
+        return $this->minus(Duration::milliseconds($milliseconds));
     }
 
     /**
