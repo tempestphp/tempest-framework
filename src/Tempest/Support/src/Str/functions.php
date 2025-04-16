@@ -506,6 +506,20 @@ namespace Tempest\Support\Str {
     }
 
     /**
+     * Returns the '$haystack' string with all occurrences of the keys of `$replacements` replaced by the corresponding values.
+     *
+     * @param array<string, string> $replacements
+     */
+    function replace_every(Stringable|string $haystack, array $replacements): string
+    {
+        foreach ($replacements as $needle => $replacement) {
+            $haystack = namespace\replace($haystack, $needle, (string) $replacement);
+        }
+
+        return $haystack;
+    }
+
+    /**
      * Appends the given strings to the string.
      */
     function append(Stringable|string $string, string|Stringable ...$append): string
@@ -642,8 +656,14 @@ namespace Tempest\Support\Str {
     /**
      * Gets parts of the string.
      */
-    function substring(Stringable|string $string, int $start, ?int $length = null): string
+    function slice(Stringable|string $string, int $start, ?int $length = null): string
     {
+        $stringLength = namespace\length($string);
+
+        if (0 === $start && (null === $length || $stringLength <= $length)) {
+            return $string;
+        }
+
         return mb_substr((string) $string, $start, $length);
     }
 
@@ -669,10 +689,10 @@ namespace Tempest\Support\Str {
         $string = (string) $string;
 
         if ($length < 0) {
-            return substring($string, $length);
+            return slice($string, $length);
         }
 
-        return substring($string, 0, $length);
+        return slice($string, 0, $length);
     }
 
     /**
@@ -751,6 +771,92 @@ namespace Tempest\Support\Str {
         $rightPadding = ($actualWidth - $textLength) - $padding;
 
         return str_repeat(' ', $padding) . $text . str_repeat(' ', $rightPadding);
+    }
+
+    /**
+     * Returns the string padded to the total length by appending the `$pad_string` to the left.
+     *
+     * If the length of the input string plus the pad string exceeds the total
+     * length, the pad string will be truncated. If the total length is less than or
+     * equal to the length of the input string, no padding will occur.
+     *
+     * Example:
+     *      pad_left('Ay', 4)
+     *      => '  Ay'
+     *
+     *      pad_left('ay', 3, 'A')
+     *      => 'Aay'
+     *
+     *      pad_left('eet', 4, 'Yeeeee')
+     *      => 'Yeet'
+     *
+     *      pad_left('مرحبا', 8, 'م')
+     *      => 'ممممرحبا'
+     *
+     * @param non-empty-string $padString
+     * @param int<0, max> $totalLength
+     */
+    function pad_left(string $string, int $totalLength, string $padString = ' '): string
+    {
+        do {
+            $length = namespace\length($string);
+
+            if ($length >= $totalLength) {
+                return $string;
+            }
+
+            /** @var int<0, max> $remaining */
+            $remaining = $totalLength - $length;
+
+            if ($remaining <= namespace\length($padString)) {
+                $padString = namespace\slice($padString, 0, $remaining);
+            }
+
+            $string = $padString . $string;
+        } while (true);
+    }
+
+    /**
+     * Returns the string padded to the total length by appending the `$pad_string` to the right.
+     *
+     * If the length of the input string plus the pad string exceeds the total
+     * length, the pad string will be truncated. If the total length is less than or
+     * equal to the length of the input string, no padding will occur.
+     *
+     * Example:
+     *      pad_right('Ay', 4)
+     *      => 'Ay  '
+     *
+     *      pad_right('Ay', 5, 'y')
+     *      => 'Ayyyy'
+     *
+     *      pad_right('Yee', 4, 't')
+     *      => 'Yeet'
+     *
+     *      pad_right('مرحبا', 8, 'ا')
+     *      => 'مرحباااا'
+     *
+     * @param non-empty-string $padString
+     * @param int<0, max> $totalLength
+     */
+    function pad_right(string $string, int $totalLength, string $padString = ' '): string
+    {
+        do {
+            $length = namespace\length($string);
+
+            if ($length >= $totalLength) {
+                return $string;
+            }
+
+            /** @var int<0, max> $remaining */
+            $remaining = $totalLength - $length;
+
+            if ($remaining <= namespace\length($padString)) {
+                $padString = namespace\slice($padString, 0, $remaining);
+            }
+
+            $string .= $padString;
+        } while (true);
     }
 
     /**
