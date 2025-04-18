@@ -807,17 +807,20 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <<<'HTML'
                     <x-some-component-with-loop :items="$this->items" />
                 HTML,
-            )->data(items: [
-                new class {
-                    public string $title = 'Item 1';
-                    public string $uri = '/item-1';
-                },
-                new class {
-                    public string $title = 'Item 2';
-                    public string $uri = '/item-2';
-                },
-            ]
-        ));
+            )
+                ->data(items: [
+                    new class {
+                        public string $title = 'Item 1';
+
+                        public string $uri = '/item-1';
+                    },
+                    new class {
+                        public string $title = 'Item 2';
+
+                        public string $uri = '/item-2';
+                    },
+                ]),
+        );
 
         $this->assertSnippetsMatch(<<<'HTML'
         <a href="/item-1">Item 1</a><a href="/item-2">Item 2</a>
