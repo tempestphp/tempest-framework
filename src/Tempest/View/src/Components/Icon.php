@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\View\Components;
 
-use DateInterval;
-use DateTimeImmutable;
 use Exception;
 use Tempest\Cache\IconCache;
+use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
@@ -23,6 +22,7 @@ final readonly class Icon implements ViewComponent
         private IconCache $iconCache,
         private IconConfig $iconConfig,
         private HttpClient $http,
+        private Clock $clock,
     ) {}
 
     public static function getName(): string
@@ -94,8 +94,7 @@ final readonly class Icon implements ViewComponent
                 key: "iconify-{$prefix}-{$name}",
                 cache: fn () => $this->download($prefix, $name),
                 expiresAt: $this->iconConfig->cacheDuration
-                    ? new DateTimeImmutable()
-                        ->add(DateInterval::createFromDateString("{$this->iconConfig->cacheDuration} seconds"))
+                    ? $this->clock->now()->plusSeconds($this->iconConfig->cacheDuration)
                     : null,
             );
         } catch (Exception) {

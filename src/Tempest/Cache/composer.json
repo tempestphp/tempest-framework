@@ -6,6 +6,7 @@
         "psr/cache": "^3.0",
         "symfony/cache": "^7.2",
         "tempest/core": "dev-main",
+        "tempest/clock": "dev-main",
         "tempest/container": "dev-main",
         "tempest/highlight": "^2.11.2"
     },

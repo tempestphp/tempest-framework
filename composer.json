@@ -119,6 +119,7 @@
             "Tempest\\Vite\\": "src/Tempest/Vite/src"
         },
         "files": [
+            "src/Tempest/Clock/src/functions.php",
             "src/Tempest/CommandBus/src/functions.php",
             "src/Tempest/Container/src/functions.php",
             "src/Tempest/Core/src/functions.php",

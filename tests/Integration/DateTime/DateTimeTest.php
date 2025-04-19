@@ -2,8 +2,6 @@
 
 namespace Tests\Tempest\Integration\DateTime;
 
-use DateTime as GlobalDateTime;
-use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
 use Tempest\DateTime\DateTime;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

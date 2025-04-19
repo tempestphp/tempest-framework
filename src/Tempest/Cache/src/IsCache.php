@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tempest\Cache;
 
 use Closure;
-use DateTimeInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Tempest\DateTime\DateTimeInterface;
 
 trait IsCache
 {
@@ -20,7 +20,7 @@ trait IsCache
             ->set($value);
 
         if ($expiresAt !== null) {
-            $item = $item->expiresAt($expiresAt);
+            $item = $item->expiresAt($expiresAt->toNativeDateTime());
         }
 
         if ($this->isEnabled()) {

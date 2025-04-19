@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Cache;
 
 use Closure;
-use DateTimeInterface;
 use Psr\Cache\CacheItemInterface;
+use Tempest\DateTime\DateTimeInterface;
 
 interface Cache
 {
