@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use DateTimeInterface as NativeDateTimeInterface;
 use JsonSerializable;
 use Stringable;
 use Tempest\Support\Comparison\Comparable;
@@ -19,6 +20,11 @@ use Tempest\Support\Language\Locale;
  */
 interface TemporalInterface extends Comparable, Equable, JsonSerializable, Stringable
 {
+    /**
+     * Returns a native {@see DateTimeInterface} instance for this {@see TemporalInterface} object.
+     */
+    public function toNativeDateTime(): NativeDateTimeInterface;
+
     /**
      * Returns the timestamp representation of this temporal object.
      */
@@ -288,4 +294,9 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      * @param Timezone $timezone The target timezone for the conversion.
      */
     public function convertToTimezone(Timezone $timezone): DateTimeInterface;
+
+    /**
+     * Stops the execution and dumps the current state of this temporal object.
+     */
+    public function dd(): void;
 }

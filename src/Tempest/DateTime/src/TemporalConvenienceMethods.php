@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use DateTimeImmutable as NativeDateTimeImmutable;
+use DateTimeInterface as NativeDateTimeInterface;
 use Tempest\Support\Comparison;
 use Tempest\Support\Comparison\Order;
 use Tempest\Support\Language\Locale;
@@ -13,6 +15,14 @@ use Tempest\Support\Language\Locale;
  */
 trait TemporalConvenienceMethods
 {
+    /**
+     * Returns a native {@see DateTimeInterface} instance for this {@see TemporalInterface} object.
+     */
+    public function toNativeDateTime(): NativeDateTimeInterface
+    {
+        return NativeDateTimeImmutable::createFromTimestamp($this->getTimestamp()->getSeconds());
+    }
+
     /**
      * Compare this {@see TemporalInterface} object to the given one.
      *
@@ -355,5 +365,14 @@ trait TemporalConvenienceMethods
     public function __toString(): string
     {
         return $this->toString();
+    }
+
+    /**
+     * Stops the execution and dumps the current state of this temporal object.
+     */
+    public function dd(): void
+    {
+        // @phpstan-ignore disallowed.function
+        dd($this); // @mago-expect best-practices/no-debug-symbols
     }
 }

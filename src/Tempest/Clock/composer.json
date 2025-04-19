@@ -9,7 +9,10 @@
     "autoload": {
         "psr-4": {
             "Tempest\\Clock\\": "src"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

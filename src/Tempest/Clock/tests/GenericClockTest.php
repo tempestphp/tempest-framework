@@ -7,6 +7,9 @@ namespace Tempest\Clock\Tests;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\GenericClock;
+use Tempest\DateTime\Duration;
+
+use const Tempest\DateTime\NANOSECONDS_PER_MILLISECOND;
 
 /**
  * @internal
@@ -15,29 +18,19 @@ final class GenericClockTest extends TestCase
 {
     public function test_that_generic_clock_returns_the_current_date_time(): void
     {
-        $clock = new GenericClock();
-
-        // It's a little tough to test "real" time without mocking stuff.
-        // Because of this, we are just going to get the date/time before and after
-        // getting the date/time from the clock and make sure it all checks out.
         $dateTimeBefore = new DateTimeImmutable('now');
-        $clockDateTime = $clock->now();
+        $clockDateTime = new GenericClock()->now();
         $dateTimeAfter = new DateTimeImmutable('now');
 
-        $this->assertGreaterThanOrEqual($dateTimeBefore->getTimestamp(), $clockDateTime->getTimestamp());
-        $this->assertLessThanOrEqual($dateTimeAfter->getTimestamp(), $clockDateTime->getTimestamp());
+        $this->assertGreaterThanOrEqual($dateTimeBefore->getTimestamp(), $clockDateTime->getTimestamp()->getSeconds());
+        $this->assertLessThanOrEqual($dateTimeAfter->getTimestamp(), $clockDateTime->getTimestamp()->getSeconds());
     }
 
     public function test_that_generic_clock_returns_the_current_time(): void
     {
-        $clock = new GenericClock();
-
-        // It's a little tough to test "real" time without mocking stuff.
-        // Because of this, we are just going to get the time before and after
-        // getting the time from the clock and make sure it all checks out.
-        $timeBefore = hrtime(true);
-        $clockTime = $clock->time();
-        $timeAfter = hrtime(true);
+        $timeBefore = new DateTimeImmutable()->getTimestamp();
+        $clockTime = new GenericClock()->timestamp();
+        $timeAfter = new DateTimeImmutable()->getTimestamp();
 
         $this->assertGreaterThanOrEqual($timeBefore, $clockTime);
         $this->assertLessThanOrEqual($timeAfter, $clockTime);
@@ -45,12 +38,19 @@ final class GenericClockTest extends TestCase
 
     public function test_that_generic_clock_sleeps(): void
     {
-        $timeBefore = time();
+        $timeBefore = hrtime(true);
+        new GenericClock()->sleep(milliseconds: 250);
+        $timeAfter = hrtime(true);
 
-        new GenericClock()->sleep(1);
+        $this->assertGreaterThanOrEqual($timeBefore + (250 * NANOSECONDS_PER_MILLISECOND), $timeAfter);
+    }
 
-        $timeAfter = time();
+    public function test_that_generic_clock_sleeps_with_duration(): void
+    {
+        $timeBefore = hrtime(true);
+        new GenericClock()->sleep(Duration::milliseconds(250));
+        $timeAfter = hrtime(true);
 
-        $this->assertGreaterThanOrEqual($timeBefore + 1, $timeAfter);
+        $this->assertGreaterThanOrEqual($timeBefore + (250 * NANOSECONDS_PER_MILLISECOND), $timeAfter);
     }
 }

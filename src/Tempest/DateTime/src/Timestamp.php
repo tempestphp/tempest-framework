@@ -203,8 +203,8 @@ final readonly class Timestamp implements TemporalInterface
     {
         try {
             return ($this->seconds * MILLISECONDS_PER_SECOND) + Math\div($this->nanoseconds, NANOSECONDS_PER_MILLISECOND);
-        } catch (DivisionByZeroException $e) {
-            throw new ArithmeticException('Division by zero occurred while calculating milliseconds.', 0, $e);
+        } catch (DivisionByZeroException $divisionByZeroException) {
+            throw new ArithmeticException('Division by zero occurred while calculating milliseconds.', 0, $divisionByZeroException);
         }
     }
 

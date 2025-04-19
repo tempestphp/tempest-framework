@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Testing;
 
-use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
@@ -14,7 +13,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
-use Tempest\DateTime\Testing\DateTimeTester;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\Method;
@@ -23,9 +22,6 @@ use Tempest\Router\Request;
 
 use function Tempest\Support\Path\normalize;
 
-/**
- * @mago-expect maintainability/too-many-properties
- */
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;
@@ -49,8 +45,6 @@ abstract class IntegrationTest extends TestCase
 
     protected EventBusTester $eventBus;
 
-    protected DateTimeTester $datetime;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,7 +62,6 @@ abstract class IntegrationTest extends TestCase
         $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
         $this->installer = $this->container->get(InstallerTester::class);
-        $this->datetime = $this->container->get(DateTimeTester::class);
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();

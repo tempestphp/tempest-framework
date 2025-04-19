@@ -7,6 +7,7 @@ namespace Tempest\Clock\Tests;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
+use Tempest\DateTime\DateTime;
 
 /**
  * @internal
@@ -18,7 +19,7 @@ final class MockClockTest extends TestCase
         $time = new DateTimeImmutable('2024-09-11 13:54:23');
         $clock = new MockClock($time);
 
-        $this->assertEquals($time, $clock->now());
+        $this->assertEquals($time, $clock->now()->toNativeDateTime());
     }
 
     public function test_mock_clock_defaults_to_now(): void
@@ -31,44 +32,44 @@ final class MockClockTest extends TestCase
         $clockDateTime = $clock->now();
         $afterDateTime = new DateTimeImmutable('now');
 
-        $this->assertGreaterThanOrEqual($beforeDateTime->getTimestamp(), $clockDateTime->getTimestamp());
-        $this->assertLessThanOrEqual($afterDateTime->getTimestamp(), $clockDateTime->getTimestamp());
+        $this->assertGreaterThanOrEqual($beforeDateTime->getTimestamp(), $clockDateTime->getTimestamp()->getSeconds());
+        $this->assertLessThanOrEqual($afterDateTime->getTimestamp(), $clockDateTime->getTimestamp()->getSeconds());
     }
 
     public function test_mock_clock_returns_the_time_we_want(): void
     {
-        $time = new DateTimeImmutable('2024-09-11 13:54:23');
+        $time = DateTime::parse('2024-09-11 13:54:23');
         $clock = new MockClock($time);
 
-        $this->assertEquals($time->getTimestamp(), $clock->time());
+        $this->assertEquals($time->getTimestamp()->getSeconds(), $clock->timestamp());
     }
 
     public function test_mock_clock_sleeps_time(): void
     {
-        $oldTime = new DateTimeImmutable('2024-09-11 13:54:23');
-        $expectedTime = new DateTimeImmutable('2024-09-11 13:54:25');
+        $oldTime = DateTime::parse('2024-09-11 13:54:23');
+        $expectedTime = DateTime::parse('2024-09-11 13:54:25');
 
         $clock = new MockClock($oldTime);
-        $clock->sleep(2);
+        $clock->sleep(2_000);
 
-        $this->assertSame($expectedTime->getTimestamp(), $clock->time());
+        $this->assertSame($expectedTime->getTimestamp()->getSeconds(), $clock->timestamp());
     }
 
     public function test_mock_clock_can_change_time(): void
     {
-        $dateTime = new DateTimeImmutable('2024-09-11 13:54:23');
-        $subtractedTime = new DateTimeImmutable('2024-09-11 13:54:21');
-        $addedTime = new DateTimeImmutable('2024-09-11 13:54:25');
+        $dateTime = DateTime::parse('2024-09-11 13:54:23');
+        $subtractedTime = DateTime::parse('2024-09-11 13:54:21');
+        $addedTime = DateTime::parse('2024-09-11 13:54:25');
         $clock = new MockClock($dateTime);
 
         $clock->changeTime(-2);
 
         $this->assertEquals($subtractedTime, $clock->now());
-        $this->assertEquals($subtractedTime->getTimestamp(), $clock->time());
+        $this->assertEquals($subtractedTime->getTimestamp()->getSeconds(), $clock->timestamp());
 
         $clock->changeTime(4);
 
         $this->assertEquals($addedTime, $clock->now());
-        $this->assertEquals($addedTime->getTimestamp(), $clock->time());
+        $this->assertEquals($addedTime->getTimestamp()->getSeconds(), $clock->timestamp());
     }
 }

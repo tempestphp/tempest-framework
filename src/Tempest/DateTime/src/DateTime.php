@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\DateTime;
 
 use IntlCalendar;
+use Tempest\Clock\Clock;
 use Tempest\Container\GenericContainer;
 use Tempest\Support\Language\Locale;
 
@@ -518,16 +519,15 @@ final readonly class DateTime implements DateTimeInterface
             return null;
         }
 
-        if (! GenericContainer::instance()->has(DateTimeInterface::class)) {
+        if (! GenericContainer::instance()->has(Clock::class)) {
             return null;
         }
 
-        $datetime = GenericContainer::instance()->get(DateTimeInterface::class);
+        $interface = GenericContainer::instance()
+            ->get(Clock::class)
+            ->now()
+            ->convertToTimezone($timezone);
 
-        if (! ($datetime instanceof self)) {
-            return null;
-        }
-
-        return $datetime->convertToTimezone($timezone);
+        return DateTime::parse($interface);
     }
 }
