@@ -38,6 +38,10 @@ final class GenericClockTest extends TestCase
 
     public function test_that_generic_clock_sleeps(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Sleeping on Windows is not precise enough.');
+        }
+
         $timeBefore = hrtime(true);
         new GenericClock()->sleep(milliseconds: 250);
         $timeAfter = hrtime(true);
@@ -47,6 +51,10 @@ final class GenericClockTest extends TestCase
 
     public function test_that_generic_clock_sleeps_with_duration(): void
     {
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestSkipped('Sleeping on Windows is not precise enough.');
+        }
+
         $timeBefore = hrtime(true);
         new GenericClock()->sleep(Duration::milliseconds(250));
         $timeAfter = hrtime(true);
