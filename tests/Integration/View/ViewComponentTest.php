@@ -795,17 +795,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
     {
         $this->registerViewComponent(
             'x-my-aside',
-            '<aside><x-template :foreach="$items as $item"><a href="$item[\'id\']">{{$item[\'label\']}}</a></x-template></aside>'
+            '<aside><x-template :foreach="$items as $item"><a href="$item[\'id\']">{{$item[\'label\']}}</a></x-template></aside>',
         );
 
         $this->registerViewComponent(
             'x-my-main',
-            '<main><x-template :foreach="$items as $item"><div>{{$item$item[\'label\']}}</div></x-template></main>'
+            '<main><x-template :foreach="$items as $item"><div>{{$item$item[\'label\']}}</div></x-template></main>',
         );
 
         $this->registerViewComponent(
             'x-my-footer',
-            '<footer><x-template :foreach="$items as $item"><p>{{$item[\'label\']}}</p></x-template></footer>'
+            '<footer><x-template :foreach="$items as $item"><p>{{$item[\'label\']}}</p></x-template></footer>',
         );
 
         $html = $this->render(
@@ -815,12 +815,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 <x-my-main :items="$items" />
                 <x-my-footer :items="$items" />
                 HTML,
-            )->data(
-                items: [
-                    ['id' => '1', 'label' => 'Item 1'],
-                    ['id' => '2', 'label' => 'Item 2'],
-                ],
             )
+                ->data(
+                    items: [
+                        ['id' => '1', 'label' => 'Item 1'],
+                        ['id' => '2', 'label' => 'Item 2'],
+                    ],
+                ),
         );
 
         $this->assertSnippetsMatch(<<<HTML
