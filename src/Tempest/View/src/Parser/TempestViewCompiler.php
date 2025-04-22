@@ -48,7 +48,7 @@ final readonly class TempestViewCompiler
 
         // 5. Compile to PHP
         $compiled = $this->compileElements($elements);
-
+lw($compiled);
         return $compiled;
     }
 

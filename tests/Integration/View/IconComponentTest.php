@@ -161,4 +161,26 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ),
         );
     }
+    
+    public function test_with_dynamic_data(): void
+    {
+        $mockHttpClient = $this->createMock(HttpClient::class);
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.design/ph/eye.svg')
+            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
+        $rendered = $this->render(
+            '<x-icon :name="$iconName" class="size-5" />',
+            iconName: "ph:eye",
+        );
+
+        $this->assertSame(
+            '<svg class="size-5"></svg>',
+            $rendered,
+        );
+    }
 }
