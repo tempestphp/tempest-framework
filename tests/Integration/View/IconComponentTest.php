@@ -161,7 +161,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
             ),
         );
     }
-    
+
     public function test_with_dynamic_data(): void
     {
         $mockHttpClient = $this->createMock(HttpClient::class);
@@ -175,7 +175,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
 
         $rendered = $this->render(
             '<x-icon :name="$iconName" class="size-5" />',
-            iconName: "ph:eye",
+            iconName: 'ph:eye',
         );
 
         $this->assertSame(

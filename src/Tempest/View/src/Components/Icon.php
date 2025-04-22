@@ -50,7 +50,7 @@ final readonly class Icon implements ViewComponent
      * it will be downloaded it on the fly and cached for future use.
      * If the icon is already in the cache, it will be served from there.
      */
-    public function render(string $name, ?string $class): ?string
+    public function render(string $name, ?string $class): string
     {
         $svg = self::svg($name);
 
@@ -61,7 +61,7 @@ final readonly class Icon implements ViewComponent
         }
 
         if ($class !== null) {
-            $svg = self::injectClass($svg, $class);
+            return self::injectClass($svg, $class);
         }
 
         return $svg;
