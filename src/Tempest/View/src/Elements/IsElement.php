@@ -32,7 +32,23 @@ trait IsElement
             $wrappingAttributes = [];
         }
 
-        return [...$this->attributes, ...$wrappingAttributes];
+        $attributes = [...$this->attributes, ...$wrappingAttributes];
+
+        // Some attributes should always come after others,
+        // so that these expressions have access to the data attributes
+        $attributePrecedence = [
+            ':foreach' => 1,
+            ':if' => 2,
+        ];
+
+        uksort($attributes, function (string $a, string $b) use ($attributePrecedence) {
+            $precedenceA = $attributePrecedence[$a] ?? 0;
+            $precedenceB = $attributePrecedence[$b] ?? 0;
+
+            return $precedenceA <=> $precedenceB;
+        });
+
+        return $attributes;
     }
 
     public function hasAttribute(string $name): bool

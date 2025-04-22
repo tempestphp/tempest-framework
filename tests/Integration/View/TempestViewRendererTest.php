@@ -575,6 +575,35 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         );
     }
 
+    public function test_loop_variable_can_be_used_within_the_looped_tag(): void
+    {
+        $html = $this->render(
+            view(
+                <<<'HTML'
+                    <a :foreach="$items as $item" :href="$item->uri">
+                        {{ $item->title }}
+                    </a>
+                HTML,
+            )
+                ->data(items: [
+                    new class {
+                        public string $title = 'Item 1';
+
+                        public string $uri = '/item-1';
+                    },
+                    new class {
+                        public string $title = 'Item 2';
+
+                        public string $uri = '/item-2';
+                    },
+                ]),
+        );
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <a href="/item-1">Item 1</a><a href="/item-2">Item 2</a>
+        HTML, $html);
+    }
+
     private function assertSnippetsMatch(string $expected, string $actual): void
     {
         $expected = str_replace([PHP_EOL, ' '], '', $expected);
