@@ -371,4 +371,23 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
 
         $this->assertStringContainsString(' href="hi"', $html);
     }
+
+    public function test_global_variables_are_kept(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>{{ $item }}</div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test :item="$item"></x-test>
+        <x-test :item="$item"></x-test>
+        <x-test :item="$item"></x-test>
+        HTML, item: 'foo');
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div>foo</div>
+        <div>foo</div>
+        <div>foo</div>
+        HTML, $html);
+    }
 }

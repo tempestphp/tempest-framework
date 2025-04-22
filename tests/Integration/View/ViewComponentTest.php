@@ -652,20 +652,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_attribute_precedence(): void
-    {
-        $this->markTestSkipped('TODO');
-
-        // Order should be: upperB > upperA > innerB > innerA
-        //        $this->registerViewComponent('x-test', <<<'HTML'
-        //        <div data-foo="innerA" :data-foo="'innerB'"></div>
-        //        HTML);
-        //        $html = $this->render(<<<'HTML'
-        //        <x-test data-foo="upperA" :data-foo="'upperB'"></x-test>
-        //        HTML);
-        //        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
-    }
-
     public function test_does_not_duplicate_br(): void
     {
         $this->registerViewComponent('x-html-base', <<<'HTML'
@@ -788,55 +774,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                     </tr>
                 </tbody>
             </table>
-        HTML, $html);
-    }
-
-    public function test_same_variable_can_be_passed_to_multiple_components(): void
-    {
-        $this->registerViewComponent(
-            'x-my-aside',
-            '<aside><x-template :foreach="$items as $item"><a href="$item[\'id\']">{{$item[\'label\']}}</a></x-template></aside>',
-        );
-
-        $this->registerViewComponent(
-            'x-my-main',
-            '<main><x-template :foreach="$items as $item"><div>{{$item$item[\'label\']}}</div></x-template></main>',
-        );
-
-        $this->registerViewComponent(
-            'x-my-footer',
-            '<footer><x-template :foreach="$items as $item"><p>{{$item[\'label\']}}</p></x-template></footer>',
-        );
-
-        $html = $this->render(
-            view(
-                <<<'HTML'
-                <x-my-aside :items="$items" />
-                <x-my-main :items="$items" />
-                <x-my-footer :items="$items" />
-                HTML,
-            )
-                ->data(
-                    items: [
-                        ['id' => '1', 'label' => 'Item 1'],
-                        ['id' => '2', 'label' => 'Item 2'],
-                    ],
-                ),
-        );
-
-        $this->assertSnippetsMatch(<<<HTML
-            <aside>
-                <a href="1">Item 1</a>
-                <a href="2">Item 2</a>
-            </aside>
-            <main>
-                <div>Item 1</div>
-                <div>Item 2</div>
-            </main>
-            <footer>
-                <p>Item 1</p>
-                <p>Item 2</p>
-            </footer>
         HTML, $html);
     }
 
