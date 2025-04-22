@@ -36,20 +36,19 @@ final readonly class Icon implements ViewComponent
         $class = $element->getAttribute('class');
 
         return sprintf(
-            '<?= \Tempest\get(%s::class)->render(%s, \'%s\') ?>',
+            '<?= \Tempest\get(%s::class)->render(%s, \'%s\' ?: null) ?>',
             self::class,
-            // Having to replace `<?=` is a bit of a hack and should be improved
-            str_replace(['<?=', '?>'], '', $name),
+            str_starts_with($name, '<?=')
+                ? str_replace(['<?=', '?>'], '', $name)
+                : "\"{$name}\"",
             $class,
         );
     }
 
     /**
-     * Renders an icon
-     *
-     * This method is responsible for rendering the icon. If the icon is not
-     * in the cache, it will download it on the fly and cache it for future
-     * use. If the icon is already in the cache, it will be served from there.
+     * Renders the specified icon. If the icon is not in the cache,
+     * it will be downloaded it on the fly and cached for future use.
+     * If the icon is already in the cache, it will be served from there.
      */
     public function render(string $name, ?string $class): ?string
     {
