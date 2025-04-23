@@ -652,20 +652,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_attribute_precedence(): void
-    {
-        $this->markTestSkipped('TODO');
-
-        // Order should be: upperB > upperA > innerB > innerA
-        //        $this->registerViewComponent('x-test', <<<'HTML'
-        //        <div data-foo="innerA" :data-foo="'innerB'"></div>
-        //        HTML);
-        //        $html = $this->render(<<<'HTML'
-        //        <x-test data-foo="upperA" :data-foo="'upperB'"></x-test>
-        //        HTML);
-        //        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
-    }
-
     public function test_does_not_duplicate_br(): void
     {
         $this->registerViewComponent('x-html-base', <<<'HTML'
