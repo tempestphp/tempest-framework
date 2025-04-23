@@ -31,8 +31,7 @@ final readonly class Icon
         if (! $html) {
             return new HtmlString($this->appConfig->environment->isLocal()
                 ? ('<!-- unknown-icon: ' . $name . ' -->')
-                : '',
-            );
+                : '');
         }
 
         if ($class) {

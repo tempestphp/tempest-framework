@@ -1,6 +1,7 @@
 <?php
 
 use Tempest\View\Components\Icon;
+
 use function Tempest\get;
 
 ?>
