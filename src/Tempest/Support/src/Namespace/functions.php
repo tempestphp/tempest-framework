@@ -52,7 +52,7 @@ namespace Tempest\Support\Namespace {
             ->finish('/');
 
         foreach (wrap($namespaces) as $namespace) {
-            $namespacePath = to_relative_path($root, $namespace->path);
+            $namespacePath = ltrim(to_relative_path($root, $namespace->path), './');
 
             if ($relativePath->startsWith($namespacePath)) {
                 return (string) $relativePath
