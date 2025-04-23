@@ -65,10 +65,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->container->config(require $databaseConfigPath);
 
-        // Vite
-        $this->vite->preventTagResolution();
-        $this->vite->clearCaches();
-
         $this->rollbackDatabase();
     }
 

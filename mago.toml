@@ -5,6 +5,9 @@ paths = ["src", "tests"]
 includes = ["vendor"]
 excludes = [
   "./vendor/symfony/cache/Traits/ValueWrapper.php",
+  "./vendor/google/common-protos/metadata",
+  "./vendor/google/gax/metadata",
+  "./vendor/google/longrunning/metadata",
   "./vendor/composer",
   "**/.cache",
   "**/*.stub.php",
