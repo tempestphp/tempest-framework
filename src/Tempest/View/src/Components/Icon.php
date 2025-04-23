@@ -52,7 +52,7 @@ final readonly class Icon implements ViewComponent
      */
     public function render(string $name, ?string $class): string
     {
-        $svg = self::svg($name);
+        $svg = $this->svg($name);
 
         if (! $svg) {
             return $this->appConfig->environment->isLocal()
@@ -61,7 +61,7 @@ final readonly class Icon implements ViewComponent
         }
 
         if ($class !== null) {
-            return self::injectClass($svg, $class);
+            return $this->injectClass($svg, $class);
         }
 
         return $svg;
@@ -80,7 +80,7 @@ final readonly class Icon implements ViewComponent
 
             return $this->iconCache->resolve(
                 key: "iconify-{$prefix}-{$name}",
-                cache: fn () => self::download($prefix, $name),
+                cache: fn () => $this->download($prefix, $name),
                 expiresAt: $this->iconConfig->cacheDuration
                     ? new DateTimeImmutable()
                         ->add(DateInterval::createFromDateString("{$this->iconConfig->cacheDuration} seconds"))
