@@ -17,6 +17,7 @@ use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Database\Virtual;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\map;
 use function Tempest\reflect;
@@ -27,6 +28,8 @@ use function Tempest\Support\arr;
  */
 final class SelectQueryBuilder
 {
+    use HasConditions;
+
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;
 

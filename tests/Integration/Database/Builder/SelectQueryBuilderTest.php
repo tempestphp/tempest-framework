@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
@@ -191,5 +192,42 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertCount(1, $books);
         $this->assertSame('A', $books[0]->title);
+    }
+
+    public function test_select_query_with_conditions(): void
+    {
+        $query = query('chapters')
+            ->select('title', 'index')
+            ->when(
+                true,
+                fn (SelectQueryBuilder $query) => $query
+                    ->where('`title` = ?', 'Timeline Taxi')
+                    ->andWhere('`index` <> ?', '1')
+                    ->orWhere('`createdAt` > ?', '2025-01-01'),
+            )
+            ->when(
+                false,
+                fn (SelectQueryBuilder $query) => $query
+                    ->where('`title` = ?', 'Timeline Uber')
+                    ->andWhere('`index` <> ?', '2')
+                    ->orWhere('`createdAt` > ?', '2025-01-02'),
+            )
+            ->orderBy('`index` ASC')
+            ->build();
+
+        $expected = <<<SQL
+        SELECT `title`, `index`
+        FROM `chapters`
+        WHERE `title` = ?
+        AND `index` <> ?
+        OR `createdAt` > ?
+        ORDER BY `index` ASC
+        SQL;
+
+        $sql = $query->getSql();
+        $bindings = $query->bindings;
+
+        $this->assertSame($expected, $sql);
+        $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 }

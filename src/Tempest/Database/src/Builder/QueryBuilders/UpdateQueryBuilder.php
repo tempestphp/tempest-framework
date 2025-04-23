@@ -10,12 +10,15 @@ use Tempest\Database\QueryStatements\WhereStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
 final class UpdateQueryBuilder
 {
+    use HasConditions;
+
     private UpdateStatement $update;
 
     private array $bindings = [];
