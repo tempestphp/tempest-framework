@@ -792,6 +792,39 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_dynamic_view_component_with_string_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component is="x-test" prop="test"/>
+        HTML);
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_expression_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" prop="test" />
+        HTML, name: 'x-test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_variable_attribute(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" :prop="$input" />
+        HTML, name: 'x-test', input: 'test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
     public function test_nested_slots(): void
     {
         $this->registerViewComponent('x-a', '<a><x-slot /></a>');
