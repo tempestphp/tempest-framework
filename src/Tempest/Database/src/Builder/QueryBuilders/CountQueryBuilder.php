@@ -18,9 +18,6 @@ final class CountQueryBuilder
 {
     use HasConditions;
 
-    /** @var class-string<TModelClass> $modelClass */
-    private readonly string $modelClass;
-
     private ?ModelDefinition $modelDefinition;
 
     private CountStatement $count;
@@ -30,7 +27,6 @@ final class CountQueryBuilder
     public function __construct(string|object $model, ?string $column = null)
     {
         $this->modelDefinition = ModelDefinition::tryFrom($model);
-        $this->modelClass = is_object($model) ? $model::class : $model;
 
         $this->count = new CountStatement(
             table: $this->resolveTable($model),
@@ -89,11 +85,6 @@ final class CountQueryBuilder
     public function build(array $bindings = []): Query
     {
         return new Query($this->count, [...$this->bindings, ...$bindings]);
-    }
-
-    private function clone(): self
-    {
-        return clone $this;
     }
 
     private function resolveTable(string|object $model): TableDefinition
