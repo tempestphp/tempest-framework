@@ -43,7 +43,7 @@ trait IsElement
             }
         }
 
-        return [...$attributes, ...$tailingAttributes];
+        return [...$attributes, ...array_reverse($tailingAttributes)];
     }
 
     public function hasAttribute(string $name): bool
