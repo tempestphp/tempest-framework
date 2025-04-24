@@ -782,7 +782,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
         $html = $this->render(<<<'HTML'
-        <x-component is="x-test" prop="test"/>
+        <x-dynamic-component is="x-test" prop="test"/>
         HTML);
 
         $this->assertSame('<div>test</div>', $html);
@@ -793,7 +793,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
         $html = $this->render(<<<'HTML'
-        <x-component :is="$name" prop="test" />
+        <x-dynamic-component :is="$name" prop="test" />
         HTML, name: 'x-test');
 
         $this->assertSame('<div>test</div>', $html);
@@ -804,7 +804,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
 
         $html = $this->render(<<<'HTML'
-        <x-component :is="$name" :prop="$input" />
+        <x-dynamic-component :is="$name" :prop="$input" />
         HTML, name: 'x-test', input: 'test');
 
         $this->assertSame('<div>test</div>', $html);
