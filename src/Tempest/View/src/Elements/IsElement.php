@@ -34,21 +34,16 @@ trait IsElement
 
         $attributes = [...$this->attributes, ...$wrappingAttributes];
 
-        // Some attributes should always come after others,
-        // so that these expressions have access to the data attributes
-        $attributePrecedence = [
-            ':foreach' => 1,
-            ':if' => 2,
-        ];
+        $tailingAttributes = [];
 
-        uksort($attributes, function (string $a, string $b) use ($attributePrecedence) {
-            $precedenceA = $attributePrecedence[$a] ?? 0;
-            $precedenceB = $attributePrecedence[$b] ?? 0;
+        foreach ($attributes as $name => $value) {
+            if ($name === ':foreach' || $name === ':if') {
+                unset($attributes[$name]);
+                $tailingAttributes[$name] = $value;
+            }
+        }
 
-            return $precedenceA <=> $precedenceB;
-        });
-
-        return $attributes;
+        return [...$attributes, ...$tailingAttributes];
     }
 
     public function hasAttribute(string $name): bool
