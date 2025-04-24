@@ -76,7 +76,7 @@ final class TempestViewRendererCombinedExpressionsTest extends FrameworkIntegrat
     public function test_foreach_with_if_and_forelse_expression(): void
     {
         $view = <<<'HTML'
-        <div :foreach="$items as $item" :if="$label ?? null">
+        <div :if="$label ?? null" :foreach="$items as $item">
             {{ $label }} {{ $item }}
         </div>
         <span :forelse>

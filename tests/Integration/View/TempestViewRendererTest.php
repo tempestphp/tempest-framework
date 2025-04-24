@@ -604,7 +604,7 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_if_and_foreach_precedence()
+    public function test_if_and_foreach_precedence(): void
     {
         $html = $this->render(
             <<<'HTML'
