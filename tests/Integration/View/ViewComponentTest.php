@@ -799,6 +799,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
+    public function test_dynamic_view_component_with_variable_attribute(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" :prop="$input" />
+        HTML, name: 'x-test', input: 'test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
     private function assertSnippetsMatch(string $expected, string $actual): void
     {
         $expected = str_replace([PHP_EOL, ' '], '', $expected);
