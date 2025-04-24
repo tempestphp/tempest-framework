@@ -47,4 +47,12 @@ final readonly class QueryBuilder
     {
         return new DeleteQueryBuilder($this->model);
     }
+
+    public function count(?string $column = null): CountQueryBuilder
+    {
+        return new CountQueryBuilder(
+            model: $this->model,
+            column: $column,
+        );
+    }
 }
