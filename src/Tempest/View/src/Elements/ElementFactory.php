@@ -7,6 +7,7 @@ namespace Tempest\View\Elements;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Attributes\PhpAttribute;
+use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
@@ -81,6 +82,11 @@ final class ElementFactory
         }
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
+            if ($token->getAttribute('is') || $token->getAttribute(':is')) {
+                $viewComponentClass = $this->container->get(DynamicViewComponent::class);
+                $viewComponentClass->setToken($token);
+            }
+
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
