@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\View\Elements;
 
 use Tempest\Core\Environment;
-use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
