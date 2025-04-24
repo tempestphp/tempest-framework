@@ -43,6 +43,7 @@ trait IsElement
             }
         }
 
+        // Tailing attributes are reversed because they need to be applied in reverse order
         return [...$attributes, ...array_reverse($tailingAttributes)];
     }
 
