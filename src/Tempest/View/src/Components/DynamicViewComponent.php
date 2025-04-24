@@ -54,7 +54,6 @@ final class DynamicViewComponent implements ViewComponent
         $element = new ViewComponentElement(
             environment: $this->appConfig->environment,
             compiler: $this->compiler,
-            elementFactory: $this->elementFactory,
             viewComponent: $viewComponent,
             attributes: $attributes,
         );
