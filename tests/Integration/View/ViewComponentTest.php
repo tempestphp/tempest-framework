@@ -652,20 +652,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    public function test_attribute_precedence(): void
-    {
-        $this->markTestSkipped('TODO');
-
-        // Order should be: upperB > upperA > innerB > innerA
-        //        $this->registerViewComponent('x-test', <<<'HTML'
-        //        <div data-foo="innerA" :data-foo="'innerB'"></div>
-        //        HTML);
-        //        $html = $this->render(<<<'HTML'
-        //        <x-test data-foo="upperA" :data-foo="'upperB'"></x-test>
-        //        HTML);
-        //        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
-    }
-
     public function test_does_not_duplicate_br(): void
     {
         $this->registerViewComponent('x-html-base', <<<'HTML'
@@ -789,6 +775,39 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
                 </tbody>
             </table>
         HTML, $html);
+    }
+
+    public function test_dynamic_view_component_with_string_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component is="x-test" prop="test"/>
+        HTML);
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_expression_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" prop="test" />
+        HTML, name: 'x-test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_variable_attribute(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" :prop="$input" />
+        HTML, name: 'x-test', input: 'test');
+
+        $this->assertSame('<div>test</div>', $html);
     }
 
     private function assertSnippetsMatch(string $expected, string $actual): void

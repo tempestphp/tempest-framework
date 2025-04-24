@@ -26,14 +26,16 @@ final class PhpDataElement implements Element, WrapsElement
 
     public function compile(): string
     {
-        $variableName = str($this->name)->ltrim(':')->camel()->toString();
+        $localVariableName = str($this->name)->ltrim(':')->camel()->toString();
         $isExpression = str_starts_with($this->name, ':');
         $value = $this->value ?? '';
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
-            '$%s ??= %s ?? null;',
-            $variableName,
+            '$_%sIsLocal = isset($%s) === false; $%s ??= %s ?? null;',
+            $localVariableName,
+            $localVariableName,
+            $localVariableName,
             $isExpression
                 ? ($value ?: 'null')
                 : var_export($value, true), // @mago-expect best-practices/no-debug-symbols
@@ -42,8 +44,9 @@ final class PhpDataElement implements Element, WrapsElement
         // And we'll remove it right after the element, this way we've created a "local scope"
         // where the variable is only available to that specific element.
         $variableRemoval = sprintf(
-            'unset($%s);',
-            $variableName,
+            'if ($_%sIsLocal) { unset($%s); }',
+            $localVariableName,
+            $localVariableName,
         );
 
         // Support for boolean attributes. When an expression attribute has a falsy value, it won't be rendered at all.

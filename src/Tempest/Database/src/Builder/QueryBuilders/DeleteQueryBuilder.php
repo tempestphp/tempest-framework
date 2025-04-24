@@ -7,6 +7,7 @@ use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\DeleteStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Support\Conditions\HasConditions;
 
 use function Tempest\Database\model;
 
@@ -15,6 +16,8 @@ use function Tempest\Database\model;
  */
 final class DeleteQueryBuilder
 {
+    use HasConditions;
+
     private DeleteStatement $delete;
 
     private array $bindings = [];

@@ -19,9 +19,11 @@ use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Request;
+use Tempest\Storage\Testing\StorageTester;
 
 use function Tempest\Support\Path\normalize;
 
+/** @mago-expect maintainability/too-many-properties */
 abstract class IntegrationTest extends TestCase
 {
     protected string $root;
@@ -45,6 +47,8 @@ abstract class IntegrationTest extends TestCase
 
     protected EventBusTester $eventBus;
 
+    protected StorageTester $storage;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -62,11 +66,12 @@ abstract class IntegrationTest extends TestCase
         $this->console = $this->container->get(ConsoleTester::class);
         $this->http = $this->container->get(HttpRouterTester::class);
         $this->installer = $this->container->get(InstallerTester::class);
+        $this->eventBus = $this->container->get(EventBusTester::class);
+        $this->storage = $this->container->get(StorageTester::class);
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();
-
-        $this->eventBus = $this->container->get(EventBusTester::class);
+        $this->vite->clearCaches();
 
         $request = new GenericRequest(Method::GET, '/', []);
         $this->container->singleton(Request::class, fn () => $request);
