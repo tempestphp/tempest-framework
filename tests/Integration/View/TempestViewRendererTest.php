@@ -702,12 +702,4 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('', $html);
     }
-
-    private function assertSnippetsMatch(string $expected, string $actual): void
-    {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
-
-        $this->assertSame($expected, $actual);
-    }
 }

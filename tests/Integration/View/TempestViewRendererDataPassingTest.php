@@ -347,14 +347,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    private function assertSnippetsMatch(string $expected, string $actual): void
-    {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
-
-        $this->assertSame($expected, $actual);
-    }
-
     public function test_boolean_attributes_in_view_component(): void
     {
         $this->registerViewComponent('x-test', <<<HTML
