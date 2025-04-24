@@ -606,90 +606,97 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
     public function test_if_and_foreach_precedence()
     {
-        $html = $this->render(<<<'HTML'
-        <div :foreach="$items as $item" :if="$item->show">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :foreach="$items as $item" :if="$item->show">{{ $item->name }}</div>    
+            HTML,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('<div>A</div><div>C</div>', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
+            HTML,
             show: true,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('<div>A</div><div>B</div><div>C</div>', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             show: true,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('<div>A</div><div>B</div><div>C</div>', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :foreach="$items as $item" :if="$show">{{ $item->name }}</div>    
+            HTML,
             show: false,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :if="$show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             show: false,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :if="$item->show" :foreach="$items as $item">{{ $item->name }}</div>    
-        HTML,
-            item: (object)['show' => true],
+        $html = $this->render(
+            <<<'HTML'
+            <div :if="$item->show" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
+            item: (object) ['show' => true],
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
         $this->assertSnippetsMatch('<div>A</div><div>B</div><div>C</div>', $html);
 
-        $html = $this->render(<<<'HTML'
-        <div :if="$item->show ?? null" :foreach="$items as $item">{{ $item->name }}</div>    
-        HTML,
+        $html = $this->render(
+            <<<'HTML'
+            <div :if="$item->show ?? null" :foreach="$items as $item">{{ $item->name }}</div>    
+            HTML,
             items: [
-                (object)['name' => 'A', 'show' => true],
-                (object)['name' => 'B', 'show' => false],
-                (object)['name' => 'C', 'show' => true],
+                (object) ['name' => 'A', 'show' => true],
+                (object) ['name' => 'B', 'show' => false],
+                (object) ['name' => 'C', 'show' => true],
             ],
         );
 
