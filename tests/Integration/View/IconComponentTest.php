@@ -202,7 +202,7 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $view = view(__DIR__ . '/../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
         $html = $this->render($view);
 
-        $this->assertSame(
+        $this->assertSnippetsMatch(
             '<html lang="en"><head><title></title></head><body><div><svg class="size-5"></svg></div>Test</body></html>',
             $html,
         );
