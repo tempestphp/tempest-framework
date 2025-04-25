@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Arr\InvalidMapWithKeysUsage;
-
 use Tempest\Support\Arr\ManipulatesArray;
+
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
