@@ -5,8 +5,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/reflection": "dev-main",
-        "tempest/highlight": "^2.11.2"
+        "tempest/reflection": "dev-main"
     },
     "autoload": {
         "psr-4": {

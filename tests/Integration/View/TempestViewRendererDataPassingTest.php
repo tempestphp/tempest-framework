@@ -347,14 +347,6 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         );
     }
 
-    private function assertSnippetsMatch(string $expected, string $actual): void
-    {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
-
-        $this->assertSame($expected, $actual);
-    }
-
     public function test_boolean_attributes_in_view_component(): void
     {
         $this->registerViewComponent('x-test', <<<HTML
@@ -370,5 +362,24 @@ final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestC
         HTML);
 
         $this->assertStringContainsString(' href="hi"', $html);
+    }
+
+    public function test_global_variables_are_kept(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>{{ $item }}</div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test :item="$item"></x-test>
+        <x-test :item="$item"></x-test>
+        <x-test :item="$item"></x-test>
+        HTML, item: 'foo');
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div>foo</div>
+        <div>foo</div>
+        <div>foo</div>
+        HTML, $html);
     }
 }

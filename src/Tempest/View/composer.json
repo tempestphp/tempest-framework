@@ -8,8 +8,7 @@
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",
-        "tempest/cache": "dev-main",
-        "tempest/highlight": "^2.11.2"
+        "tempest/cache": "dev-main"
     },
     "autoload": {
         "files": [

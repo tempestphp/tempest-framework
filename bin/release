@@ -48,6 +48,10 @@ function setPhpDependencyVersion(string $package, string $version): void
         updateJsonFile(
             path: $path,
             callback: function (array $content) use ($version, $package) {
+                if (! isset($content['require'][$package])) {
+                    return $content;
+                }
+
                 $content['require'][$package] = $version;
 
                 return $content;
