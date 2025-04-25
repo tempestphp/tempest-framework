@@ -17,3 +17,4 @@ log/
 node_modules
 dist
 profile/
+.phpunit.result.cache
