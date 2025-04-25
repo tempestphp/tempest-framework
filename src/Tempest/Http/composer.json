@@ -4,8 +4,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.4",
-        "tempest/highlight": "^2.11.2"
+        "php": "^8.4"
     },
     "autoload": {
         "psr-4": {

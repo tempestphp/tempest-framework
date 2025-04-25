@@ -153,7 +153,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_nested_components(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             expected: <<<'HTML'
             <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></div></form>
             HTML,
@@ -619,6 +619,21 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_fallthrough_attributes_with_other_attributes(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="foo" style="font-weight: bold;" id="other"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
+        HTML, $html);
+    }
+
     public function test_file_name_component(): void
     {
         $html = $this->render('<x-file-component></x-file-component>');
@@ -823,11 +838,39 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div><p>test</p></div>', $html);
     }
 
-    private function assertSnippetsMatch(string $expected, string $actual): void
+    public function test_nested_slots(): void
     {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+        $this->registerViewComponent('x-a', '<a><x-slot /></a>');
+        $this->registerViewComponent('x-b', '<x-a><b><x-slot /></b></x-a>');
 
-        $this->assertSame($expected, $actual);
+        $html = $this->render(<<<'HTML'
+        <x-b>
+            hi
+        </x-b>
+        HTML);
+
+        $this->assertSnippetsMatch('<a><b>hi</b></a>', $html);
+    }
+
+    public function test_nested_slots_with_escaping(): void
+    {
+        $this->registerViewComponent('x-a', '<a><x-slot /></a>');
+        $this->registerViewComponent('x-b', <<<'HTML'
+        <?php 
+        use function \Tempest\get;
+        use \Tempest\Core\AppConfig;
+        ?>
+        {{ get(AppConfig::class)->environment->value }}
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-a>
+            <x-slot>
+                <x-b />
+            </x-slot>
+        </x-a>
+        HTML);
+
+        $this->assertSnippetsMatch('<a>testing</a>', $html);
     }
 }

@@ -15,6 +15,7 @@ use Tempest\View\View;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\path;
+use function Tempest\Support\str;
 
 final readonly class TempestViewCompiler
 {
@@ -49,7 +50,10 @@ final readonly class TempestViewCompiler
         // 5. Compile to PHP
         $compiled = $this->compileElements($elements);
 
-        return $compiled;
+        // 6. Cleanup compiled PHP
+        $cleaned = $this->cleanupCompiled($compiled);
+
+        return $cleaned;
     }
 
     private function retrieveTemplate(string|View $view): string
@@ -171,5 +175,39 @@ final readonly class TempestViewCompiler
         return $compiled
             ->implode(PHP_EOL)
             ->toString();
+    }
+
+    private function cleanupCompiled(string $compiled): string
+    {
+        // Remove strict type declarations
+        $compiled = str($compiled)->replace('declare(strict_types=1);', '');
+
+        // Cleanup and bundle imports
+        $imports = arr();
+
+        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
+            // The import contains escaped slashes, meaning it's a var_exported string; we can ignore those
+            if (str_contains($matches[0], '\\\\')) {
+                return $matches[0];
+            }
+
+            $imports[$matches[0]] = $matches[0];
+
+            return '';
+        });
+
+        $compiled = $compiled->prepend(
+            sprintf(
+                '<?php
+%s
+?>',
+                $imports->implode(PHP_EOL),
+            ),
+        );
+
+        // Remove empty PHP blocks
+        $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
+
+        return $compiled->toString();
     }
 }

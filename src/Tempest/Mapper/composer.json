@@ -6,8 +6,7 @@
     "require": {
         "php": "^8.4",
         "tempest/validation": "dev-main",
-        "tempest/core": "dev-main",
-        "tempest/highlight": "^2.11.2"
+        "tempest/core": "dev-main"
     },
     "autoload": {
         "files": [
