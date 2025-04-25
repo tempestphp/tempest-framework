@@ -42,13 +42,13 @@ function bumpKernelVersion(string $version): void
 /**
  * Forcibly sets the specified package to the specified version in all `composer.json` files.
  */
-function setPhpDependencyVersion(string $package, string $version, bool $addIfMissing = true): void
+function setPhpDependencyVersion(string $package, string $version): void
 {
     foreach (glob(__DIR__ . '/../src/Tempest/*/composer.json') as $path) {
         updateJsonFile(
             path: $path,
-            callback: function (array $content) use ($version, $package, $addIfMissing) {
-                if (! isset($content['require'][$package]) && ! $addIfMissing) {
+            callback: function (array $content) use ($version, $package) {
+                if (! isset($content['require'][$package])) {
                     return $content;
                 }
 
@@ -72,7 +72,6 @@ function bumpPhpPackages(string $version, bool $isMajor): void
     setPhpDependencyVersion(
         package: 'tempest/highlight',
         version: json_decode(file_get_contents(__DIR__ . '/../composer.json'), associative: true)['require']['tempest/highlight'],
-        addIfMissing: false,
     );
 
     // Validates
@@ -92,7 +91,6 @@ function cleanUpAfterRelease(): void
     setPhpDependencyVersion(
         package: 'tempest/highlight',
         version: json_decode(file_get_contents(__DIR__ . '/../composer.json'), associative: true)['require']['tempest/highlight'],
-        addIfMissing: false,
     );
 
     // Validates
