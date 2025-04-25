@@ -15,7 +15,7 @@ use function Tempest\Database\query;
  */
 final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 {
-    public function test_count_query(): void
+    public function test_simple_count_query(): void
     {
         $query = query('chapters')
             ->count()
@@ -26,6 +26,31 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = <<<SQL
         SELECT COUNT(*)
+        FROM `chapters`
+        WHERE `title` = ?
+        AND `index` <> ?
+        OR `createdAt` > ?
+        SQL;
+
+        $sql = $query->getSql();
+        $bindings = $query->bindings;
+
+        $this->assertSame($expected, $sql);
+        $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
+    }
+
+    public function test_count_query_with_alias(): void
+    {
+        $query = query('chapters')
+            ->count()
+            ->as('total')
+            ->where('`title` = ?', 'Timeline Taxi')
+            ->andWhere('`index` <> ?', '1')
+            ->orWhere('`createdAt` > ?', '2025-01-01')
+            ->build();
+
+        $expected = <<<SQL
+        SELECT COUNT(*) AS `total`
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?

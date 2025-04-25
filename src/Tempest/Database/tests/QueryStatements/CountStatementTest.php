@@ -37,6 +37,27 @@ final class CountStatementTest extends TestCase
         $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
     }
 
+    public function test_count_statement_with_alias(): void
+    {
+        $tableDefinition = new TableDefinition('foo', 'bar');
+
+        $statement = new CountStatement(
+            table: $tableDefinition,
+            column: null,
+        );
+
+        $statement->alias = 'foobar';
+
+        $expected = <<<SQL
+        SELECT COUNT(*) AS `foobar`
+        FROM `foo`
+        SQL;
+
+        $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
+        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
+        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
+    }
+
     public function test_count_statement_with_specified_column(): void
     {
         $tableDefinition = new TableDefinition('foo', 'bar');

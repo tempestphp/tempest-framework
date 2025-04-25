@@ -13,6 +13,8 @@ final class CountStatement implements QueryStatement
 {
     public readonly string $countArgument;
 
+    public ?string $alias = null;
+
     public function __construct(
         public readonly TableDefinition $table,
         public ?string $column = null,
@@ -26,7 +28,11 @@ final class CountStatement implements QueryStatement
     public function compile(DatabaseDialect $dialect): string
     {
         $query = arr([
-            sprintf('SELECT COUNT(%s)', $this->countArgument),
+            sprintf(
+                'SELECT COUNT(%s)%s',
+                $this->countArgument,
+                $this->alias ? " AS `{$this->alias}`" : '',
+            ),
             sprintf('FROM `%s`', $this->table->name),
         ]);
 
@@ -37,5 +43,14 @@ final class CountStatement implements QueryStatement
         }
 
         return $query->implode(PHP_EOL);
+    }
+
+    public function getKey(): string
+    {
+        if ($this->alias !== null) {
+            return $this->alias;
+        }
+
+        return "COUNT({$this->countArgument})";
     }
 }

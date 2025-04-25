@@ -36,9 +36,15 @@ final class CountQueryBuilder
 
     public function execute(mixed ...$bindings): int
     {
-        $key = "COUNT({$this->count->countArgument})";
+        return $this->build()->fetchFirst(...$bindings)[$this->count->getKey()];
+    }
 
-        return $this->build()->fetchFirst(...$bindings)[$key];
+    /** @return self<TModelClass> */
+    public function as(string $alias): self
+    {
+        $this->count->alias = $alias;
+
+        return $this;
     }
 
     /** @return self<TModelClass> */
