@@ -6,6 +6,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
@@ -43,6 +44,18 @@ final class CountQueryBuilder
     public function as(string $alias): self
     {
         $this->count->alias = $alias;
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
+    public function distinct(): self
+    {
+        if ($this->count->column === null || $this->count->column === '*') {
+            throw new CannotCountDistinctWithoutSpecifyingAColumn();
+        }
+
+        $this->count->distinct = true;
 
         return $this;
     }

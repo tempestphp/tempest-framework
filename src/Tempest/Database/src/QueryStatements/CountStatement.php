@@ -11,26 +11,22 @@ use function Tempest\Support\arr;
 
 final class CountStatement implements QueryStatement
 {
-    public readonly string $countArgument;
-
     public ?string $alias = null;
+
+    public bool $distinct = false;
 
     public function __construct(
         public readonly TableDefinition $table,
         public ?string $column = null,
         public ImmutableArray $where = new ImmutableArray(),
-    ) {
-        $this->countArgument = $this->column === null
-            ? '*'
-            : "`{$this->column}`";
-    }
+    ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {
         $query = arr([
             sprintf(
                 'SELECT COUNT(%s)%s',
-                $this->countArgument,
+                $this->getCountArgument(),
                 $this->alias ? " AS `{$this->alias}`" : '',
             ),
             sprintf('FROM `%s`', $this->table->name),
@@ -45,12 +41,23 @@ final class CountStatement implements QueryStatement
         return $query->implode(PHP_EOL);
     }
 
+    public function getCountArgument(): string
+    {
+        return $this->column === null || $this->column === '*'
+            ? '*'
+            : sprintf(
+                '%s`%s`',
+                $this->distinct ? 'DISTINCT ' : '',
+                $this->column,
+            );
+    }
+
     public function getKey(): string
     {
         if ($this->alias !== null) {
             return $this->alias;
         }
 
-        return "COUNT({$this->countArgument})";
+        return "COUNT({$this->getCountArgument()})";
     }
 }
