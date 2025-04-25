@@ -5,8 +5,7 @@
         "php": "^8.4",
         "tempest/core": "dev-main",
         "tempest/router": "dev-main",
-        "tempest/database": "dev-main",
-        "tempest/highlight": "^2.11.2"
+        "tempest/database": "dev-main"
     },
     "autoload": {
         "psr-4": {

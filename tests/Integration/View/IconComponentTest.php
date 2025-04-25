@@ -14,6 +14,8 @@ use Tempest\Router\GenericResponse;
 use Tempest\View\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+use function Tempest\view;
+
 final class IconComponentTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void
@@ -181,6 +183,28 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             '<svg class="size-5"></svg>',
             $rendered,
+        );
+    }
+
+    public function test_icon_renders_inside_named_slot_in_a_layout(): void
+    {
+        $this->registerViewComponent('x-test-layout', '<x-index><div><x-slot name="icon" /></div><x-slot /></x-index>');
+
+        $mockHttpClient = $this->createMock(HttpClient::class);
+        $mockHttpClient
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('https://api.iconify.design/ph/eye.svg')
+            ->willReturn(new GenericResponse(status: Status::OK, body: '<svg></svg>'));
+
+        $this->container->register(HttpClient::class, fn () => $mockHttpClient);
+
+        $view = view(__DIR__ . '/../../Fixtures/Views/view-with-icon-inside-named-slot.view.php');
+        $html = $this->render($view);
+
+        $this->assertSnippetsMatch(
+            '<html lang="en"><head><title></title></head><body><div><svg class="size-5"></svg></div>Test</body></html>',
+            $html,
         );
     }
 }
