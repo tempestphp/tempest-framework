@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
 use Tempest\Database\Id;
@@ -212,5 +213,37 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         //                ],
         //            )
         //            ->build();
+    }
+
+    public function test_update_on_plain_table_with_conditions(): void
+    {
+        $query = query('chapters')
+            ->update(
+                title: 'Chapter 01',
+                index: 1,
+            )
+            ->when(
+                true,
+                fn (UpdateQueryBuilder $query) => $query->where('`id` = ?', 10),
+            )
+            ->when(
+                false,
+                fn (UpdateQueryBuilder $query) => $query->where('`id` = ?', 20),
+            )
+            ->build();
+
+        $this->assertSame(
+            <<<SQL
+            UPDATE `chapters`
+            SET `title` = ?, `index` = ?
+            WHERE `id` = ?
+            SQL,
+            $query->getSql(),
+        );
+
+        $this->assertSame(
+            ['Chapter 01', 1, 10],
+            $query->bindings,
+        );
     }
 }

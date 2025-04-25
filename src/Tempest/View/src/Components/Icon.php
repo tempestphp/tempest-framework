@@ -11,12 +11,11 @@ use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
+use Tempest\Support\Html\HtmlString;
 use Tempest\Support\Str\ImmutableString;
-use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\IconConfig;
-use Tempest\View\ViewComponent;
 
-final readonly class Icon implements ViewComponent
+final readonly class Icon
 {
     public function __construct(
         private AppConfig $appConfig,
@@ -25,28 +24,21 @@ final readonly class Icon implements ViewComponent
         private HttpClient $http,
     ) {}
 
-    public static function getName(): string
+    public function render(string $name, ?string $class = null): HtmlString
     {
-        return 'x-icon';
-    }
+        $html = $this->svg($name);
 
-    public function compile(ViewComponentElement $element): string
-    {
-        $name = $element->getAttribute('name');
-        $class = $element->getAttribute('class');
-
-        $svg = $this->render($name);
-
-        if (! $svg) {
-            return $this->appConfig->environment->isLocal()
+        if (! $html) {
+            return new HtmlString($this->appConfig->environment->isLocal()
                 ? ('<!-- unknown-icon: ' . $name . ' -->')
-                : '';
+                : '');
         }
 
-        return match ($class) {
-            null => $svg,
-            default => $this->injectClass($svg, $class),
-        };
+        if ($class) {
+            $html = $this->injectClass($html, $class);
+        }
+
+        return new HtmlString($html);
     }
 
     /**
@@ -79,7 +71,7 @@ final readonly class Icon implements ViewComponent
      * in the cache, it will download it on the fly and cache it for future
      * use. If the icon is already in the cache, it will be served from there.
      */
-    private function render(string $name): ?string
+    private function svg(string $name): ?string
     {
         try {
             $parts = explode(':', $name, 2);
@@ -110,8 +102,8 @@ final readonly class Icon implements ViewComponent
     {
         return new ImmutableString($svg)
             ->replace(
-                search: '<svg ',
-                replace: "<svg class=\"{$class}\" ",
+                search: '<svg',
+                replace: "<svg class=\"{$class}\"",
             )
             ->toString();
     }
