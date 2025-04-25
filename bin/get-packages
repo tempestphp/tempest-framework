@@ -17,6 +17,8 @@ function getPackageNameFromComposerFile(string $composerFile)
 {
     $composer = json_decode(file_get_contents($composerFile), true);
 
+    var_dump($composer);
+
     $name = $composer['name'] ?? throw new UnexpectedValueException(
         'The referenced package is invalid because it is missing a name: ' . $composerFile
     );
