@@ -1,0 +1,19 @@
+{
+    "name": "tempest/message-bus",
+    "description": "A message bus component designed to dispatch messages to their respective handlers.",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\MessageBus\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\MessageBus\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}

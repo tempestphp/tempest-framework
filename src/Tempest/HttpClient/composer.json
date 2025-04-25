@@ -11,8 +11,7 @@
         "tempest/http": "dev-main",
         "tempest/router": "dev-main",
         "psr-discovery/http-factory-implementations": "1.x-dev",
-        "psr-discovery/http-client-implementations": "1.x-dev",
-        "tempest/highlight": "^2.11.2"
+        "psr-discovery/http-client-implementations": "1.x-dev"
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",
