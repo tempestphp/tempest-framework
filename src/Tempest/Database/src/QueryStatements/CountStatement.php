@@ -11,8 +11,6 @@ use function Tempest\Support\arr;
 
 final class CountStatement implements QueryStatement
 {
-    public ?string $alias = null;
-
     public bool $distinct = false;
 
     public function __construct(
@@ -25,9 +23,8 @@ final class CountStatement implements QueryStatement
     {
         $query = arr([
             sprintf(
-                'SELECT COUNT(%s)%s',
+                'SELECT COUNT(%s)',
                 $this->getCountArgument(),
-                $this->alias ? " AS `{$this->alias}`" : '',
             ),
             sprintf('FROM `%s`', $this->table->name),
         ]);
@@ -54,10 +51,6 @@ final class CountStatement implements QueryStatement
 
     public function getKey(): string
     {
-        if ($this->alias !== null) {
-            return $this->alias;
-        }
-
         return "COUNT({$this->getCountArgument()})";
     }
 }

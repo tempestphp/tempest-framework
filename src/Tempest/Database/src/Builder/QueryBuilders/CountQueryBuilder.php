@@ -41,14 +41,6 @@ final class CountQueryBuilder
     }
 
     /** @return self<TModelClass> */
-    public function as(string $alias): self
-    {
-        $this->count->alias = $alias;
-
-        return $this;
-    }
-
-    /** @return self<TModelClass> */
     public function distinct(): self
     {
         if ($this->count->column === null || $this->count->column === '*') {
