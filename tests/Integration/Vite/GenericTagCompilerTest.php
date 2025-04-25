@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\TagCompiler\GenericTagCompiler;
 use Tempest\Vite\TagCompiler\TagCompiler;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericTagCompilerTest extends FrameworkIntegrationTestCase
 {
     public function test_wired(): void

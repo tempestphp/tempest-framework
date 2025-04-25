@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -31,6 +32,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MapperTest extends FrameworkIntegrationTestCase
 {
     public function test_make_object_from_class_string(): void

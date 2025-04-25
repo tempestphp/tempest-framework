@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Actions;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\GenericConsole;
 use Tests\Tempest\Integration\Console\Fixtures\ArrayInputCommand;
 use Tests\Tempest\Integration\Console\Fixtures\CommandWithMiddleware;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_command_specific_middleware(): void

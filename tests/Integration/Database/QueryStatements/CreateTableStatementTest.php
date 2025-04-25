@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
@@ -20,6 +21,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_defaults(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Tempest\Database\Config\DatabaseConfig;
@@ -21,6 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class AlterTableStatementTest extends FrameworkIntegrationTestCase
 {
     #[Test]

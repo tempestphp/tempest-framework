@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Components\Option;
 use Tempest\Console\Components\OptionCollection;
@@ -11,6 +12,7 @@ use Tempest\Console\Components\OptionCollection;
 /**
  * @internal
  */
+#[CoversClass(OptionCollection::class)]
 final class OptionCollectionTest extends TestCase
 {
     public function test_filter(): void

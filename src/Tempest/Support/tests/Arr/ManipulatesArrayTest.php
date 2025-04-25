@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests\Arr;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Arr\InvalidMapWithKeysUsage;
 
+use Tempest\Support\Arr\ManipulatesArray;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 /**
  * @internal
  */
+#[CoversClass(ManipulatesArray::class)]
 final class ManipulatesArrayTest extends TestCase
 {
     public function test_wrap(): void

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
@@ -54,6 +55,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 {
     public function test_create_and_update_model(): void

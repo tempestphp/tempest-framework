@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Input;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -15,6 +16,7 @@ use Tests\Tempest\Fixtures\Console\CommandWithDifferentArguments;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ConsoleArgumentDefinitionTest extends TestCase
 {
     #[TestWith(['string', 'string', 'string', null])]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Construction;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\Routing\Construction\DuplicateRouteException;
@@ -14,6 +15,7 @@ use Tempest\Router\Tests\FakeRouteBuilder;
 /**
  * @internal
  */
+#[CoversClass(RoutingTree::class)]
 final class RoutingTreeTest extends TestCase
 {
     public function test_empty_tree(): void

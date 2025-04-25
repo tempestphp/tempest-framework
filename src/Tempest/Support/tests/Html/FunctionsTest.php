@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Html;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Support\Html\HtmlString;
@@ -15,6 +16,7 @@ use function Tempest\Support\Html\create_tag;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\Html\create_tag')]
 final class FunctionsTest extends TestCase
 {
     public function test_conversions(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Support;
 
 use Countable;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -14,6 +15,7 @@ use function Tempest\Support\Language\singularize;
 /**
  * @internal
  */
+#[CoversNothing]
 final class LanguageTest extends FrameworkIntegrationTestCase
 {
     #[TestWith(['migration', 'migrations', 0])]

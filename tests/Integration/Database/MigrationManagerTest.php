@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -11,6 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MigrationManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_migration(): void

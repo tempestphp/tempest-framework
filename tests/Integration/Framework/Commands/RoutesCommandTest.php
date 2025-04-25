@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Fixtures\Modules\Posts\PostController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class RoutesCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_displays_uri_and_controller(): void

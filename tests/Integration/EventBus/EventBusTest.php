@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\EventBus;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Fixtures\Events\DiscoveredEventBusMiddleware;
 use Tests\Tempest\Fixtures\Events\EnumEvent;
 use Tests\Tempest\Fixtures\Events\EventInterfaceImplementation;
@@ -16,6 +17,7 @@ use function Tempest\event;
 /**
  * @internal
  */
+#[CoversNothing]
 final class EventBusTest extends FrameworkIntegrationTestCase
 {
     public function test_string_events(): void

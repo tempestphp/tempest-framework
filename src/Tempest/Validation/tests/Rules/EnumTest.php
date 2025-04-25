@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Tests\Rules\Fixtures\SomeBackedEnum;
@@ -13,6 +14,7 @@ use UnexpectedValueException;
 /**
  * @internal
  */
+#[CoversClass(IsEnum::class)]
 final class EnumTest extends TestCase
 {
     public function test_validating_enums(): void

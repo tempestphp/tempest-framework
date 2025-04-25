@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use PDOException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Transactions\TransactionManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericTransactionManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager(): void

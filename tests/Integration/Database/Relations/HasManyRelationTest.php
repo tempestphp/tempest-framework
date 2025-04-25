@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Relations;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
 use Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToRelatedModel;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class HasManyRelationTest extends FrameworkIntegrationTestCase
 {
     public function test_cannot_find_inverse(): void

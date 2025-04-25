@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Reflection\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Reflection\ClassReflector;
@@ -16,6 +17,7 @@ use Tempest\Reflection\Tests\Fixtures\TestClassB;
 /**
  * @internal
  */
+#[CoversClass(ClassReflector::class)]
 final class ClassReflectorTest extends TestCase
 {
     public function test_getting_underlying_reflection_class(): void

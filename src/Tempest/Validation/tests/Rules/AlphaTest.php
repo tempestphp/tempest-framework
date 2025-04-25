@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Alpha;
 
 /**
  * @internal
  */
+#[CoversClass(Alpha::class)]
 final class AlphaTest extends TestCase
 {
     public function test_alpha(): void

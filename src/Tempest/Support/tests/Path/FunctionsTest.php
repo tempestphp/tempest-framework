@@ -3,8 +3,10 @@
 namespace Tempest\Support\Tests\Path;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\Attributes\UsesFunction;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
 
@@ -15,6 +17,12 @@ use function Tempest\Support\Path\normalize;
 use function Tempest\Support\Path\to_absolute_path;
 use function Tempest\Support\Path\to_relative_path;
 
+#[CoversFunction('Tempest\Support\Path\is_absolute_path')]
+#[CoversFunction('Tempest\Support\Path\is_relative_path')]
+#[CoversFunction('Tempest\Support\Path\normalize')]
+#[CoversFunction('Tempest\Support\Path\to_absolute_path')]
+#[CoversFunction('Tempest\Support\Path\to_relative_path')]
+#[UsesFunction('Tempest\Support\Arr\wrap')]
 final class FunctionsTest extends TestCase
 {
     #[TestWith(['/invalid/file', true])]

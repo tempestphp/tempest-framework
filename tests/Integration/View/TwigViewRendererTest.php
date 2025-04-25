@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\View\Renderers\TwigConfig;
 use Tempest\View\Renderers\TwigViewRenderer;
 use Tempest\View\ViewConfig;
@@ -15,6 +16,7 @@ use function Tempest\view;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TwigViewRendererTest extends FrameworkIntegrationTestCase
 {
     public function test_twig(): void

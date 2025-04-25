@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Console;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TextInputComponentTest extends FrameworkIntegrationTestCase
 {
     #[Test]

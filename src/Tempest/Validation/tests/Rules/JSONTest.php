@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Json;
 use ValueError;
@@ -11,6 +12,7 @@ use ValueError;
 /**
  * @internal
  */
+#[CoversClass(Json::class)]
 final class JSONTest extends TestCase
 {
     public function test_it_returns_true_for_valid_json_string(): void

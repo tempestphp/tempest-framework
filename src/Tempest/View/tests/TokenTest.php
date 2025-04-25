@@ -2,11 +2,13 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenType;
 
+#[CoversClass(Token::class)]
 final class TokenTest extends TestCase
 {
     #[TestWith(['div', '<div/>', TokenType::SELF_CLOSING_TAG])]

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Console\Scheduler\Every;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class EveryTest extends TestCase
 {
     public function test_every_minute_gets_transformed_to_interval(): void

@@ -6,12 +6,14 @@ use DateTime;
 use DateTimeInterface;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Storage\Config\StorageConfig;
 use Tempest\Storage\ForbiddenStorageUsageException;
 use Tempest\Storage\MissingAdapterException;
 use Tempest\Storage\Storage;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+#[CoversNothing]
 final class StorageTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_basic(): void

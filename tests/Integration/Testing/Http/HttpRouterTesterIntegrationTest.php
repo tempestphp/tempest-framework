@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class HttpRouterTesterIntegrationTest extends FrameworkIntegrationTestCase
 {
     public function test_get_requests(): void

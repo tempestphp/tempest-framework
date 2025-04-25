@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
@@ -21,6 +22,7 @@ use function Tempest\Support\path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class FileSessionTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionMethod;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Actions\RenderConsoleCommand;
@@ -21,6 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class RenderConsoleCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_render(): void

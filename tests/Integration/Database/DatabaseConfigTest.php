@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\SQLiteConfig;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class DatabaseConfigTest extends FrameworkIntegrationTestCase
 {
     #[TestWith([PascalCaseStrategy::class, 'MultiWordModel'])]

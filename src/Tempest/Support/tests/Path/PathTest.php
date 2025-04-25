@@ -2,10 +2,12 @@
 
 namespace Tempest\Support\Tests\Path;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Path\Path;
 
+#[CoversClass(Path::class)]
 final class PathTest extends TestCase
 {
     #[TestWith([['FunctionsTest.php', 'PathTest.php'], __DIR__, '*.php'])]

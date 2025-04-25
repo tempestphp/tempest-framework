@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ViteTest extends FrameworkIntegrationTestCase
 {
     use HasFixtures;

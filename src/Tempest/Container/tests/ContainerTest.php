@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tempest\Container\Exceptions\CannotAutowireException;
@@ -60,6 +61,7 @@ use function Tempest\reflect;
 /**
  * @internal
  */
+#[CoversClass(GenericContainer::class)]
 final class ContainerTest extends TestCase
 {
     public function test_get_with_autowire(): void

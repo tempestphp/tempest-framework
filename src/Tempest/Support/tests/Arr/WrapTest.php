@@ -7,6 +7,7 @@ namespace Tempest\Support\Tests\Arr;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
 
@@ -15,6 +16,7 @@ use function Tempest\Support\Arr\wrap;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\Arr\wrap')]
 final class WrapTest extends TestCase
 {
     public function test_array_input_returns_unchanged(): void

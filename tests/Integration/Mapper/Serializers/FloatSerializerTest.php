@@ -2,10 +2,12 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\FloatSerializer;
 
+#[CoversNothing]
 final class FloatSerializerTest extends TestCase
 {
     public function test_serialize(): void

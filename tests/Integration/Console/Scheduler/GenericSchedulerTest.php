@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use ReflectionMethod;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -19,6 +20,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericSchedulerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

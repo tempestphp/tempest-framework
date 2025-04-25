@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\Tables;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Migrations\Migration;
@@ -12,6 +13,7 @@ use Tempest\Database\Tables\PascalCaseStrategy;
 /**
  * @internal
  */
+#[CoversClass(PascalCaseStrategy::class)]
 final class PascalCaseStrategyTest extends TestCase
 {
     #[TestWith([Migration::class, 'Migration'])]

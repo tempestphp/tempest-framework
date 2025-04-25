@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Auth\Install\CreatePermissionsTable;
 use Tempest\Auth\Install\CreateUserPermissionsTable;
 use Tempest\Auth\Install\CreateUsersTable;
@@ -17,6 +18,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class UserModelTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

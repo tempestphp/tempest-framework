@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -12,6 +13,7 @@ use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\arr;
 
+#[CoversClass(UpdateStatement::class)]
 final class UpdateStatementTest extends TestCase
 {
     public function test_update(): void

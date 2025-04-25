@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tests\Tempest\Fixtures\Controllers\DeferController;
@@ -15,6 +16,7 @@ use function Tempest\uri;
 /**
  * @internal
  */
+#[CoversNothing]
 final class DeferredTasksTest extends FrameworkIntegrationTestCase
 {
     public function test_deferred_tasks_are_executed(): void

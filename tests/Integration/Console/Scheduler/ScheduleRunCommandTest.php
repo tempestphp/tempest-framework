@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class ScheduleRunCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_invoke(): void

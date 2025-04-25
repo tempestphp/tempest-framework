@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponse;
 use Tempest\Router\GenericResponseSender;
@@ -17,6 +18,7 @@ use function Tempest\view;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
 {
     public function test_sending(): void

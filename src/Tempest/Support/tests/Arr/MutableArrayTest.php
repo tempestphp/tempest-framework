@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Arr;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\MutableArray;
 
 /**
  * @internal
  */
+#[CoversClass(MutableArray::class)]
 final class MutableArrayTest extends TestCase
 {
     public function test_add(): void

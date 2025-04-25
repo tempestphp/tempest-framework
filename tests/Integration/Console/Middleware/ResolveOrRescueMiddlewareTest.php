@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,6 +13,7 @@ use function Tempest\Support\str;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ResolveOrRescueMiddlewareTest extends FrameworkIntegrationTestCase
 {
     #[Test]

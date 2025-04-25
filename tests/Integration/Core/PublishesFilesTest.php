@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
@@ -16,6 +17,7 @@ use function Tempest\Support\Path\normalize;
 /**
  * @internal
  */
+#[CoversNothing]
 final class PublishesFilesTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

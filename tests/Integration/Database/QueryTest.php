@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Integration\Database;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class QueryTest extends FrameworkIntegrationTestCase
 {
     public function test_with_bindings(): void

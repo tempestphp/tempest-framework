@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Scheduler\Interval;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class IntervalTest extends FrameworkIntegrationTestCase
 {
     public function test_interval_with_seconds_returns_correct_in_seconds(): void

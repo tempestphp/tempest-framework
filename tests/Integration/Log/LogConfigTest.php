@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Log;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Log\LogConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -12,6 +13,7 @@ use function Tempest\root_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class LogConfigTest extends FrameworkIntegrationTestCase
 {
     public function test_log_path_defaults(): void

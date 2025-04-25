@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class CompleteCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_complete_commands(): void

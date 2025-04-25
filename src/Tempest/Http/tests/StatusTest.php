@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Http\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Status;
@@ -11,6 +12,7 @@ use Tempest\Http\Status;
 /**
  * @internal
  */
+#[CoversClass(Status::class)]
 final class StatusTest extends TestCase
 {
     private static function descriptionToStatus(string $description): Status

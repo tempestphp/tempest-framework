@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\View\Components\Input;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ViewComponentDiscoveryTest extends FrameworkIntegrationTestCase
 {
     public function test_duplicates(): void

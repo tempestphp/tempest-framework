@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassGenerator;
 use Tempest\Generation\Tests\Fixtures\Database\FakeMigration;
@@ -12,6 +13,7 @@ use Tempest\Generation\Tests\Fixtures\Database\FakeQueryStatement;
 /**
  * @internal
  */
+#[CoversClass(ClassGenerator::class)]
 final class ClassGeneratorTest extends TestCase
 {
     #[Test]

@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
 
+#[CoversNothing]
 final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_update_on_plain_table(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests\Random;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Random;
 
@@ -13,6 +14,7 @@ use function Tempest\Support\Str\contains;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\Str\contains')]
 final class FunctionsTest extends TestCase
 {
     public function test_string(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Router\Tests\Routing\Matching;
 
 use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
@@ -15,6 +16,7 @@ use Tempest\Router\Tests\FakeRouteBuilder;
 /**
  * @internal
  */
+#[CoversClass(GenericRouteMatcher::class)]
 final class GenericRouteMatcherTest extends TestCase
 {
     private RouteConfig $routeConfig;

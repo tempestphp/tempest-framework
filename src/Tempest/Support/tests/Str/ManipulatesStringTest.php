@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Str\Tests;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\Attributes\UsesFunction;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
 
@@ -14,6 +16,8 @@ use function Tempest\Support\str;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\str')]
+#[UsesFunction('Tempest\Support\arr')]
 final class ManipulatesStringTest extends TestCase
 {
     public function test_title(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Routing\Matching;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Router\Routing\Matching\MatchingRegex;
@@ -11,6 +12,7 @@ use Tempest\Router\Routing\Matching\MatchingRegex;
 /**
  * @internal
  */
+#[CoversClass(MatchingRegex::class)]
 final class MatchingRegexTest extends TestCase
 {
     private MatchingRegex $subject;

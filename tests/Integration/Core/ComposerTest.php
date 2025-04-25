@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
 use Tempest\Core\KernelException;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ComposerTest extends FrameworkIntegrationTestCase
 {
     private function initializeComposer(array $composer): Composer

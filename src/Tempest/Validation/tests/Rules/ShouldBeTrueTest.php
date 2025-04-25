@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\ShouldBeTrue;
 
 /**
  * @internal
  */
+#[CoversClass(ShouldBeTrue::class)]
 final class ShouldBeTrueTest extends TestCase
 {
     public function test_should_be_true(): void

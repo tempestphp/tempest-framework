@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Cache\CacheConfig;
@@ -24,6 +25,7 @@ use function Tempest\Support\str;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

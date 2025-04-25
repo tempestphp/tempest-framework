@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
 use Tempest\Database\Id;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -9,6 +10,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
 
+#[CoversNothing]
 final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_delete_on_plain_table(): void

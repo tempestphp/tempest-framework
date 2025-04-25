@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
 use Tempest\Mapper\Serializers\BooleanSerializer;
@@ -16,6 +17,7 @@ use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 
 use function Tempest\reflect;
 
+#[CoversNothing]
 final class SerializerFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_serialize(): void

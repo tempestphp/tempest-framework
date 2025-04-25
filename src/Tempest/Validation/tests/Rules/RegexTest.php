@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\RegEx;
 
 /**
  * @internal
  */
+#[CoversClass(RegEx::class)]
 final class RegexTest extends TestCase
 {
     public function test_regex_rule(): void

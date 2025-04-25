@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Status;
@@ -30,6 +31,7 @@ use function Tempest\uri;
 /**
  * @internal
  */
+#[CoversNothing]
 final class RouterTest extends FrameworkIntegrationTestCase
 {
     public function test_dispatch(): void

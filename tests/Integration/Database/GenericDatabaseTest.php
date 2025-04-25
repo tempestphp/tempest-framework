@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericDatabaseTest extends FrameworkIntegrationTestCase
 {
     public function test_transaction_manager_execute(): void

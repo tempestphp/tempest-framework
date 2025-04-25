@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
@@ -17,6 +18,7 @@ use function Tempest\Database\query;
 /**
  * @internal
  */
+#[CoversNothing]
 final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_select_query(): void

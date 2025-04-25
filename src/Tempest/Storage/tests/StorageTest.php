@@ -3,12 +3,14 @@
 namespace Tempest\Storage\Tests;
 
 use League\Flysystem\UnableToWriteFile;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\GenericStorage;
 
+#[CoversClass(GenericStorage::class)]
 final class StorageTest extends TestCase
 {
     private string $fixtures = __DIR__ . '/Fixtures/';

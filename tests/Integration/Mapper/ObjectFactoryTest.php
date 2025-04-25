@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Mapper\Exceptions\CannotMapDataException;
 use Tempest\Mapper\Exceptions\MissingMapperException;
 use Tempest\Mapper\Mappers\ArrayToJsonMapper;
@@ -19,6 +20,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ObjectFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_single_object(): void

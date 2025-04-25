@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\DateTimeSerializer;
@@ -9,6 +10,7 @@ use Tempest\Mapper\Serializers\EnumSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\BackedEnumToSerialize;
 use Tests\Tempest\Integration\Mapper\Fixtures\UnitEnumToSerialize;
 
+#[CoversNothing]
 final class EnumSerializerTest extends TestCase
 {
     public function test_serialize(): void

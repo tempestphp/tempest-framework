@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
@@ -16,6 +17,7 @@ use function Tempest\Database\query;
 /**
  * @internal
  */
+#[CoversNothing]
 final class QueryMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_insert_query(): void

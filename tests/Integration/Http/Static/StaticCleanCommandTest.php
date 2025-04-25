@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Static;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Core\AppConfig;
 use Tempest\Router\Static\StaticCleanCommand;
 use Tempest\Router\Static\StaticGenerateCommand;
@@ -16,6 +17,7 @@ use function Tempest\Support\path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class StaticCleanCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

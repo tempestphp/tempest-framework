@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -10,6 +11,7 @@ use Tempest\Database\QueryStatements\InsertStatement;
 
 use function Tempest\Support\arr;
 
+#[CoversClass(InsertStatement::class)]
 final class InsertStatementTest extends TestCase
 {
     public function test_insert_statement(): void

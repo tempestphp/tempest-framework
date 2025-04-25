@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 
 use function Tempest\Support\tap;
@@ -11,6 +12,7 @@ use function Tempest\Support\tap;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\tap')]
 final class FunctionsTest extends TestCase
 {
     public function test_tap(): void

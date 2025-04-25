@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Migrations\TableNotFoundException;
 use Tempest\Framework\Commands\MigrateDownCommand;
 use Tempest\Framework\Commands\MigrateUpCommand;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MigrateDownCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_rollback_command(): void

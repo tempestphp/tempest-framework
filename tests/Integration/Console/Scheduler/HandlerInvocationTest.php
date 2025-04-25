@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Scheduler;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Console\Schedule;
@@ -14,6 +15,7 @@ use Tempest\Reflection\MethodReflector;
 /**
  * @internal
  */
+#[CoversNothing]
 final class HandlerInvocationTest extends TestCase
 {
     public function test_name_gets_constructed_properly(): void

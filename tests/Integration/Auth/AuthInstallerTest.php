@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Core\Commands\InstallCommand;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -11,6 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class AuthInstallerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Auth;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Auth\Authenticator;
 use Tempest\Auth\CurrentUserNotLoggedIn;
 use Tempest\Auth\Install\CreatePermissionsTable;
@@ -24,6 +25,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';

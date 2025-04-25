@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests\Config;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,9 @@ use Tempest\Database\Config\SQLiteConfig;
 /**
  * @internal
  */
+#[CoversClass(MysqlConfig::class)]
+#[CoversClass(PostgresConfig::class)]
+#[CoversClass(SQLiteConfig::class)]
 final class DatabaseConfigTest extends TestCase
 {
     #[DataProvider('provide_database_drivers')]

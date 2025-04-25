@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
@@ -10,6 +11,7 @@ use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
 
+#[CoversClass(TempestViewLexer::class)]
 final class TempestViewLexerTest extends TestCase
 {
     public function test_lexer(): void

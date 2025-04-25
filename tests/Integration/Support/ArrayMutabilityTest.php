@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
@@ -12,6 +13,7 @@ use Tempest\Support\Arr\MutableArray;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ArrayMutabilityTest extends TestCase
 {
     use GeneratesArguments;

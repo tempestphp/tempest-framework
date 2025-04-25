@@ -2,11 +2,13 @@
 
 namespace Tests\Tempest\Integration\Container\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
+#[CoversNothing]
 final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_command(): void

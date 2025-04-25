@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,7 @@ use Tempest\Console\Components\TextBuffer;
 /**
  * @internal
  */
+#[CoversClass(TextBuffer::class)]
 final class TextBufferTest extends TestCase
 {
     #[TestWith(['Hello', 5])]

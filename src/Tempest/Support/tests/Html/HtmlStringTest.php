@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Html;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Support\Html\HtmlString;
@@ -13,6 +14,7 @@ use Tempest\Support\Str\MutableString;
 /**
  * @internal
  */
+#[CoversClass(HtmlString::class)]
 final class HtmlStringTest extends TestCase
 {
     public function test_conversions(): void

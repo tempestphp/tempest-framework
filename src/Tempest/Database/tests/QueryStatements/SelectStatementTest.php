@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\TableDefinition;
@@ -15,6 +16,7 @@ use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\arr;
 
+#[CoversClass(SelectStatement::class)]
 final class SelectStatementTest extends TestCase
 {
     public function test_select(): void

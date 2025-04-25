@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Log;
 
 use Monolog\Level;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LogLevel as PsrLogLevel;
 use ReflectionClass;
@@ -21,6 +22,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class GenericLoggerTest extends FrameworkIntegrationTestCase
 {
     public function test_append_log_channel_works(): void

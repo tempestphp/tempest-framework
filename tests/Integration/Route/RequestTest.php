@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Route;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
@@ -23,6 +24,7 @@ use function Tempest\uri;
 /**
  * @internal
  */
+#[CoversNothing]
 final class RequestTest extends FrameworkIntegrationTestCase
 {
     public function test_request_get(): void

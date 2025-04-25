@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Database\Relations;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class HasOneRelationTest extends FrameworkIntegrationTestCase
 {
     #[TestWith(['inversePropertyNotFound'], 'not found')]

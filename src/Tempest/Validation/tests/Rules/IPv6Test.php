@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IPv6;
 
 /**
  * @internal
  */
+#[CoversClass(IPv6::class)]
 final class IPv6Test extends TestCase
 {
     public function test_ipv6_address(): void

@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\Mapper\Mappers;
 
 use DateTimeImmutable;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Http\Method;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -24,6 +25,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ArrayToObjectMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_missing_values(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Highlight\LogLanguage;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\FileInjection;
@@ -17,6 +18,7 @@ use function Tempest\root_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TempestConsoleLanguageTest extends FrameworkIntegrationTestCase
 {
     #[Test]

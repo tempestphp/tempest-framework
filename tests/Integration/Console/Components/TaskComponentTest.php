@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Components;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\Process\Process;
 use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Console;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TaskComponentTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

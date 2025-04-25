@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
@@ -20,6 +21,7 @@ use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
 use function Tempest\map;
 use function Tempest\Support\arr;
 
+#[CoversNothing]
 final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_request(): void

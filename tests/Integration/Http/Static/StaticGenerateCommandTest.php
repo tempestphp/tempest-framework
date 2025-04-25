@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Static;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\ExitCode;
 use Tempest\Core\AppConfig;
 use Tempest\Router\Static\StaticGenerateCommand;
@@ -15,6 +16,7 @@ use function Tempest\root_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class FrameworkInstallerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

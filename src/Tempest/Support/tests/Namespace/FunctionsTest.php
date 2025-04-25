@@ -2,6 +2,7 @@
 
 namespace Tempest\Support\Tests\Namespace;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -12,6 +13,9 @@ use function Tempest\Support\Namespace\to_base_class_name;
 use function Tempest\Support\Namespace\to_namespace;
 use function Tempest\Support\Namespace\to_psr4_namespace;
 
+#[CoversFunction('Tempest\Support\Namespace\to_base_class_name')]
+#[CoversFunction('Tempest\Support\Namespace\to_namespace')]
+#[CoversFunction('Tempest\Support\Namespace\to_psr4_namespace')]
 final class FunctionsTest extends TestCase
 {
     #[TestWith(['app/SomeNewClass.php', null, 'App'])]

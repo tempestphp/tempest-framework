@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsInteger;
 
 /**
  * @internal
  */
+#[CoversClass(IsInteger::class)]
 final class IsIntegerTest extends TestCase
 {
     public function test_integer(): void

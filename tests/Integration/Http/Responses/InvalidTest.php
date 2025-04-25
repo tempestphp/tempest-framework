@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
@@ -19,6 +20,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class InvalidTest extends FrameworkIntegrationTestCase
 {
     public function test_invalid_with_psr_request(): void

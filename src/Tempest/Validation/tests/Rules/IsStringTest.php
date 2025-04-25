@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Tempest\Validation\Rules\IsString;
@@ -11,6 +12,7 @@ use Tempest\Validation\Rules\IsString;
 /**
  * @internal
  */
+#[CoversClass(IsString::class)]
 final class IsStringTest extends TestCase
 {
     public function test_valid_non_nullable_string(): void

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class OverviewMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_overview(): void

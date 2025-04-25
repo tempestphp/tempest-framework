@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;
 use Tempest\Core\FrameworkKernel;
@@ -14,6 +15,7 @@ use Tests\Tempest\Fixtures\TestDependency;
 /**
  * @internal
  */
+#[CoversNothing]
 final class KernelTest extends TestCase
 {
     public function test_discovery_boot(): void

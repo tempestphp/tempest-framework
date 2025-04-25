@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\Process\Process;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\CommandRepository;
@@ -18,6 +19,7 @@ use function Tempest\Support\arr;
 /**
  * @internal
  */
+#[CoversNothing]
 final class AsyncCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_async_commands_are_stored_and_handled_afterwards(): void

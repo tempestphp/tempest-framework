@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -11,6 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CautionMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_in_local(): void

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Conditions;
 
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Conditions\HasConditions;
 
 /**
  * @internal
  */
+#[CoversTrait(HasConditions::class)]
 final class HasConditionsTest extends TestCase
 {
     public function test_when(): void

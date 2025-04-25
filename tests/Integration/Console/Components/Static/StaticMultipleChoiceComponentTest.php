@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components\Static;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Console;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -11,6 +12,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class StaticMultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_ask(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Testing;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
 use Tests\Tempest\Integration\Console\Fixtures\ComplexCommand;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ConsoleTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_call_with_invokable(): void

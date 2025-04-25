@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\JavaScript;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\JavaScript\PackageManager;
@@ -11,6 +12,7 @@ use Tempest\Support\JavaScript\PackageManager;
 /**
  * @internal
  */
+#[CoversClass(PackageManager::class)]
 final class PackageManagerTest extends TestCase
 {
     #[TestWith(['bun-lock', PackageManager::BUN])]

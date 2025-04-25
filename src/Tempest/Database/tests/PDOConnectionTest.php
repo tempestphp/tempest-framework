@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\SQLiteConfig;
@@ -14,6 +15,7 @@ use Tempest\Database\Exceptions\ConnectionClosed;
 /**
  * @internal
  */
+#[CoversClass(PDOConnection::class)]
 final class PDOConnectionTest extends TestCase
 {
     private const string PATH = ':memory:';

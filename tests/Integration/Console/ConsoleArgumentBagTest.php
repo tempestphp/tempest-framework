@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Exceptions\InvalidEnumArgument;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ConsoleArgumentBagTest extends FrameworkIntegrationTestCase
 {
     public function test_argument_bag_works(): void

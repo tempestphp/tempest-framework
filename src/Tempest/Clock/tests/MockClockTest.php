@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Clock\Tests;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\MockClock;
 
 /**
  * @internal
  */
+#[CoversClass(MockClock::class)]
 final class MockClockTest extends TestCase
 {
     public function test_mock_clock_returns_the_date_time_we_want(): void

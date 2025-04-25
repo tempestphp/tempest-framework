@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
@@ -13,6 +14,7 @@ use Tempest\Database\Transactions\GenericTransactionManager;
 /**
  * @internal
  */
+#[CoversClass(GenericDatabase::class)]
 final class GenericDatabaseTest extends TestCase
 {
     public function test_it_executes_transactions(): void

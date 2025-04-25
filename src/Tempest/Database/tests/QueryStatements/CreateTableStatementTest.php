@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Tests\QueryStatements;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +18,7 @@ use Tempest\Database\QueryStatements\RawStatement;
 /**
  * @internal
  */
+#[CoversClass(CreateTableStatement::class)]
 final class CreateTableStatementTest extends TestCase
 {
     #[DataProvider('provide_create_table_database_dialects')]

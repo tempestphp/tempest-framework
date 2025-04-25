@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Session\Resolvers\CookieSessionIdResolver;
 use Tempest\Router\Session\Session;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class SessionFromCookieTest extends FrameworkIntegrationTestCase
 {
     public function test_resolving_session_from_cookie(): void

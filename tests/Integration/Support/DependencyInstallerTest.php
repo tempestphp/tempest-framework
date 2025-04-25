@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Support;
 
 use Closure;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Support\JavaScript\DependencyInstaller;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class DependencyInstallerTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

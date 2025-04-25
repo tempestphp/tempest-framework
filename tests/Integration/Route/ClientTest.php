@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ConnectException;
 use Laminas\Diactoros\RequestFactory;
 use Laminas\Diactoros\StreamFactory;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
 use Tempest\HttpClient\HttpClient;
@@ -18,6 +19,7 @@ use function Tempest\root_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ClientTest extends FrameworkIntegrationTestCase
 {
     private Process $server;

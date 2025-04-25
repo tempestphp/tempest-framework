@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Dom\HTMLDocument;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\View\Elements\ElementFactory;
 use Tempest\View\Elements\GenericElement;
 use Tempest\View\Elements\TextElement;
@@ -17,6 +18,7 @@ use const Dom\HTML_NO_DEFAULT_NS;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ElementFactoryTest extends FrameworkIntegrationTestCase
 {
     public function test_parental_relations(): void

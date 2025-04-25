@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Length;
@@ -12,6 +13,7 @@ use Tempest\Validation\Rules\Length;
 /**
  * @internal
  */
+#[CoversClass(Length::class)]
 final class LengthTest extends TestCase
 {
     #[DataProvider('provide_length_cases')]

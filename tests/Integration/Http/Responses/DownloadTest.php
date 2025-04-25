@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\Responses\Download;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class DownloadTest extends FrameworkIntegrationTestCase
 {
     public function test_download(): void

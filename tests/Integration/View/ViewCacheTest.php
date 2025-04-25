@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Cache\CacheConfig;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
@@ -14,6 +15,7 @@ use function Tempest\Support\path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ViewCacheTest extends FrameworkIntegrationTestCase
 {
     private const string DIRECTORY = __DIR__ . '/.cache';

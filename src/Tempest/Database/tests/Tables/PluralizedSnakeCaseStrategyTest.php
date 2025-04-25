@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\Tables;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\GenericContainer;
@@ -14,6 +15,7 @@ use Tempest\Support\Pluralizer\PluralizerInitializer;
 /**
  * @internal
  */
+#[CoversClass(PluralizedSnakeCaseStrategy::class)]
 final class PluralizedSnakeCaseStrategyTest extends TestCase
 {
     #[TestWith([Migration::class, 'migrations'])]

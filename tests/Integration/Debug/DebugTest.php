@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Debug;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use stdClass;
 use Tempest\Debug\Debug;
 use Tempest\Debug\ItemsDebugged;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class DebugTest extends FrameworkIntegrationTestCase
 {
     public function test_event(): void

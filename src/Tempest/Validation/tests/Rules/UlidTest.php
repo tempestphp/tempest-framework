@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Ulid;
 
 /**
  * @internal
  */
+#[CoversClass(Ulid::class)]
 final class UlidTest extends TestCase
 {
     public function test_ulid(): void

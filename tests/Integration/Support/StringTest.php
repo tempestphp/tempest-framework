@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
@@ -11,6 +12,7 @@ use function Tempest\Support\str;
 /**
  * @internal
  */
+#[CoversNothing]
 final class StringTest extends FrameworkIntegrationTestCase
 {
     public function test_plural_studly(): void

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Validation\Tests\Rules;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Count;
@@ -12,6 +13,7 @@ use Tempest\Validation\Rules\Count;
 /**
  * @internal
  */
+#[CoversClass(Count::class)]
 final class CountTest extends TestCase
 {
     #[DataProvider('provide_count_cases')]

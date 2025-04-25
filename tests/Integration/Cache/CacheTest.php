@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use DateInterval;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\ProjectCache;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CacheTest extends FrameworkIntegrationTestCase
 {
     public function test_put(): void

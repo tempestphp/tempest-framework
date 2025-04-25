@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
@@ -16,6 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
 
+#[CoversNothing]
 final class IconComponentTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

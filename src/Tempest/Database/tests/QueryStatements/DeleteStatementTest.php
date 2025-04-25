@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -11,6 +12,7 @@ use Tempest\Database\QueryStatements\WhereStatement;
 
 use function Tempest\Support\arr;
 
+#[CoversClass(DeleteStatement::class)]
 final class DeleteStatementTest extends TestCase
 {
     public function test_delete(): void

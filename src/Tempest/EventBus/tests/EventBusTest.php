@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\EventBus\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use Tempest\Container\GenericContainer;
@@ -28,6 +29,7 @@ use function Tempest\listen;
 /**
  * @internal
  */
+#[CoversClass(EventBus::class)]
 final class EventBusTest extends TestCase
 {
     public function test_class_based_handlers(): void

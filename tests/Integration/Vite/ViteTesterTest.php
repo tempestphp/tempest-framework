@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Vite;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Tempest\Vite\TagsResolver\NullTagsResolver;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ViteTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_does_not_throw_if_tag_resolution_is_disabled(): void

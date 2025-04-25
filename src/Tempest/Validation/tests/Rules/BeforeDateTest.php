@@ -6,12 +6,14 @@ namespace Tempest\Validation\Tests\Rules;
 
 use DateTimeImmutable;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\BeforeDate;
 
 /**
  * @internal
  */
+#[CoversClass(BeforeDate::class)]
 final class BeforeDateTest extends TestCase
 {
     public function test_it_works_without_inclusive_param(): void

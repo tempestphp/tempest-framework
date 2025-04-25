@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests;
 
 use ArrayIterator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Arr\ImmutableArray;
+use Tempest\Support\IsEnumHelper;
 use Tempest\Support\Tests\Fixtures\Enums\EmptyEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleIntegerBackedEnum;
 use Tempest\Support\Tests\Fixtures\Enums\SampleStatusBackedEnum;
@@ -17,6 +20,7 @@ use ValueError;
 /**
  * @internal
  */
+#[CoversTrait(IsEnumHelper::class)]
 final class IsEnumHelperTest extends TestCase
 {
     #[Test]

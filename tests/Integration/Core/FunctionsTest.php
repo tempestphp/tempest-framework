@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
@@ -21,6 +22,7 @@ use function Tempest\Support\Path\is_absolute_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class FunctionsTest extends FrameworkIntegrationTestCase
 {
     public function test_src_path(): void

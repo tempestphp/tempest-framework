@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Http\Tests;
 
 use LogicException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Header;
 use Tempest\Router\RequestHeaders;
 
+#[CoversClass(GenericRequest::class)]
 final class GenericRequestTest extends TestCase
 {
     public function test_normalizes_header_access(): void

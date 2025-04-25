@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests\Pluralizer;
 
 use Countable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Pluralizer\InflectorPluralizer;
@@ -12,6 +13,7 @@ use Tempest\Support\Pluralizer\InflectorPluralizer;
 /**
  * @internal
  */
+#[CoversClass(InflectorPluralizer::class)]
 final class InflectorPluralizerTest extends TestCase
 {
     #[TestWith(['migration', 'migrations', 0])]

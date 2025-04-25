@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\IsFloat;
 
 /**
  * @internal
  */
+#[CoversClass(IsFloat::class)]
 final class IsFloatTest extends TestCase
 {
     public function test_float(): void

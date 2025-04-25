@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\Tempest\Integration\Console\Fixtures\ComplexCommand;
 use Tests\Tempest\Integration\Console\Fixtures\IntEnumCommand;
 use Tests\Tempest\Integration\Console\Fixtures\StringEnumCommand;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class InvalidCommandMiddlewareTest extends FrameworkIntegrationTestCase
 {
     public function test_provide_missing_input(): void

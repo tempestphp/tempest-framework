@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Tempest\Clock\Tests;
 
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\GenericClock;
 
 /**
  * @internal
  */
+#[CoversClass(GenericClock::class)]
 final class GenericClockTest extends TestCase
 {
     public function test_that_generic_clock_returns_the_current_date_time(): void

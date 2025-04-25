@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Regex;
 
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Regex\InvalidPatternException;
@@ -18,6 +19,12 @@ use function Tempest\Support\Regex\replace_every;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\Regex\get_all_matches')]
+#[CoversFunction('Tempest\Support\Regex\get_match')]
+#[CoversFunction('Tempest\Support\Regex\get_matches')]
+#[CoversFunction('Tempest\Support\Regex\matches')]
+#[CoversFunction('Tempest\Support\Regex\replace')]
+#[CoversFunction('Tempest\Support\Regex\replace_every')]
 final class FunctionsTest extends TestCase
 {
     #[TestWith([true, 'PHP is the web scripting language of choice.', '/php/i'])]

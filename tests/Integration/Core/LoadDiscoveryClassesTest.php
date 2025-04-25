@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\MigrationDiscovery;
@@ -18,6 +19,7 @@ use function Tempest\get;
 /**
  * @internal
  */
+#[CoversNothing]
 final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
 {
     #[Test]

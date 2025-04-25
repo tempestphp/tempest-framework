@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Mapper\Mappers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectA;
@@ -13,6 +14,7 @@ use function Tempest\map;
 /**
  * @internal
  */
+#[CoversNothing]
 final class JsonToObjectMapperTestCase extends FrameworkIntegrationTestCase
 {
     public function test_json_to_object(): void

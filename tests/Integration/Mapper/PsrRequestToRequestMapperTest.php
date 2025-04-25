@@ -8,6 +8,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\GenericRequest;
 use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Router\Request;
@@ -17,6 +18,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class PsrRequestToRequestMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_generic_request_is_used_when_interface_is_passed(): void

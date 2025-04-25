@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Router\Cookie\Cookie;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CookieManagerTest extends FrameworkIntegrationTestCase
 {
     public function test_existing_cookies(): void

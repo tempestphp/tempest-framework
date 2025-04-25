@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Support;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
@@ -15,6 +16,7 @@ use function Tempest\Support\arr;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ArrayTest extends FrameworkIntegrationTestCase
 {
     public function test_map_to(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\CouldNotBeginTransaction;
@@ -14,6 +15,7 @@ use Tempest\Database\Transactions\GenericTransactionManager;
 /**
  * @internal
  */
+#[CoversClass(GenericTransactionManager::class)]
 final class GenericTransactionManagerTest extends TestCase
 {
     public function test_it_calls_being_transactions(): void

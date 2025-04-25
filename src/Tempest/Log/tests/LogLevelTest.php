@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Log\Tests;
 
 use Monolog\Level;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Log\LogLevel;
@@ -12,6 +13,7 @@ use Tempest\Log\LogLevel;
 /**
  * @internal
  */
+#[CoversClass(LogLevel::class)]
 final class LogLevelTest extends TestCase
 {
     #[DataProvider('levelsProvider')]

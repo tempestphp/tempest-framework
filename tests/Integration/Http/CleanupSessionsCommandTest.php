@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionId;
 use Tempest\Router\Session\SessionManager;
@@ -14,6 +15,7 @@ use function Tempest\internal_storage_path;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_destroy_sessions(): void

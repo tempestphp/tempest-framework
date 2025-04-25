@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests\Responses;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Status;
 use Tempest\Router\Responses\Created;
@@ -11,6 +12,7 @@ use Tempest\Router\Responses\Created;
 /**
  * @internal
  */
+#[CoversClass(Created::class)]
 final class CreatedResponseTest extends TestCase
 {
     public function test_created_response(): void

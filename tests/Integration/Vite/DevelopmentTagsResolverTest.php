@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
 use Tempest\Support\Namespace\Psr4Namespace;
@@ -16,6 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class DevelopmentTagsResolverTest extends FrameworkIntegrationTestCase
 {
     use HasFixtures;

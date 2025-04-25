@@ -6,6 +6,7 @@ namespace Tempest\Filesystem\Tests;
 
 use bovigo\vfs\vfsStream;
 use bovigo\vfs\vfsStreamDirectory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Filesystem\ErrorContext;
 use Tempest\Filesystem\Exceptions\FileDoesNotExist;
@@ -22,6 +23,7 @@ use const PHP_EOL;
 /**
  * @internal
  */
+#[CoversClass(LocalFilesystem::class)]
 final class LocalFilesystemTest extends TestCase
 {
     private vfsStreamDirectory $root;

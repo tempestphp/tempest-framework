@@ -3,6 +3,7 @@
 namespace Tempest\View\Tests;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\View\Parser\TempestViewLexer;
@@ -11,6 +12,7 @@ use Tempest\View\Parser\Token;
 use Tempest\View\Parser\TokenCollection;
 use Tempest\View\Parser\TokenType;
 
+#[CoversClass(TempestViewParser::class)]
 final class TempestViewParserTest extends TestCase
 {
     public function test_parser(): void

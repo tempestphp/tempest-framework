@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Components\Interactive\MultipleChoiceComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MultipleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_without_filtering(): void

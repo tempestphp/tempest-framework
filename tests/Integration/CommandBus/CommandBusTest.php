@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\CommandBus;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandHandlerNotFound;
@@ -17,6 +18,7 @@ use function Tempest\command;
 /**
  * @internal
  */
+#[CoversNothing]
 final class CommandBusTest extends FrameworkIntegrationTestCase
 {
     public function test_command_handlers_are_auto_discovered(): void

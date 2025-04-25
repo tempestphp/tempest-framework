@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Testing\Http;
 
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Framework\Testing\Http\TestResponseHelper;
@@ -14,6 +15,7 @@ use Tempest\Router\GenericResponse;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TestResponseHelperTest extends TestCase
 {
     public function test_get_response(): void

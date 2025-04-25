@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\View\Exceptions\InvalidExpressionAttribute;
 use Tempest\View\ViewCache;
@@ -12,6 +13,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TempestViewRendererDataPassingTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

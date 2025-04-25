@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tempest\CommandBus\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
+use Tempest\CommandBus\CommandBusMiddlewareCallable;
 use Tempest\CommandBus\CommandHandler;
 use Tempest\CommandBus\CommandHandlerAlreadyExists;
 use Tempest\CommandBus\CommandHandlerNotFound;
@@ -14,12 +17,32 @@ use Tempest\CommandBus\GenericCommandBus;
 use Tempest\CommandBus\Tests\Fixtures\CreateUserCommand;
 use Tempest\CommandBus\Tests\Fixtures\CreateUserCommandHandler;
 use Tempest\CommandBus\Tests\Fixtures\DeleteUserCommand;
+use Tempest\Container\DependencyChain;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\Middleware;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\MethodReflector;
+use Tempest\Reflection\ParameterReflector;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Reflection\TypeReflector;
 
 /**
  * @internal
  */
+#[CoversClass(GenericCommandBus::class)]
+#[UsesClass(CommandBusConfig::class)]
+#[UsesClass(ClassReflector::class)]
+#[UsesClass(GenericContainer::class)]
+#[UsesClass(CommandHandler::class)]
+#[UsesClass(CommandHandlerAlreadyExists::class)]
+#[UsesClass(Middleware::class)]
+#[UsesClass(MethodReflector::class)]
+#[UsesClass(ParameterReflector::class)]
+#[UsesClass(TypeReflector::class)]
+#[UsesClass(CommandBusMiddlewareCallable::class)]
+#[UsesClass(CommandHandlerNotFound::class)]
+#[UsesClass(DependencyChain::class)]
+#[UsesClass(PropertyReflector::class)]
 final class GenericCommandBusTest extends TestCase
 {
     private CommandBusConfig $config;

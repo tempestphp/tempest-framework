@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Tests\QueryStatements;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Tempest\Database\Config\DatabaseDialect;
@@ -15,6 +16,7 @@ use Tempest\Database\UnsupportedDialect;
 /**
  * @internal
  */
+#[CoversClass(AlterTableStatement::class)]
 final class AlterTableStatementTest extends TestCase
 {
     #[TestWith([DatabaseDialect::MYSQL])]

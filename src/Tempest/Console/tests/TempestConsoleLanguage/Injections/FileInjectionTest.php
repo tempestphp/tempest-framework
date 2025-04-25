@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Console\Tests\TempestConsoleLanguage\Injections;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,7 @@ use Tempest\Highlight\Highlighter;
 /**
  * @internal
  */
+#[CoversClass(FileInjection::class)]
 final class FileInjectionTest extends TestCase
 {
     #[Test]

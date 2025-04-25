@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\Timestamp;
 
 /**
  * @internal
  */
+#[CoversClass(Timestamp::class)]
 final class TimestampTest extends TestCase
 {
     public function test_timestamp(): void

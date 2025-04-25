@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Components;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\Components\Interactive\SingleChoiceComponent;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class SingleChoiceComponentTest extends FrameworkIntegrationTestCase
 {
     public function test_without_filtering(): void

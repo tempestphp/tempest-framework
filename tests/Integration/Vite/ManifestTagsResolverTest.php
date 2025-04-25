@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Vite;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\PrefetchConfig;
@@ -16,6 +17,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ManifestTagsResolverTest extends FrameworkIntegrationTestCase
 {
     use HasFixtures;

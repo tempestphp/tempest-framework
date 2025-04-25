@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Id;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
 
+#[CoversNothing]
 final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 {
     public function test_insert_on_plain_table(): void

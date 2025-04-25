@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\Responses\File;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal
  */
+#[CoversNothing]
 final class FileTest extends FrameworkIntegrationTestCase
 {
     public function test_file(): void

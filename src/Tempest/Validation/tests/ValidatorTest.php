@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
@@ -28,6 +29,7 @@ use Tempest\Validation\Validator;
 /**
  * @internal
  */
+#[CoversClass(Validator::class)]
 final class ValidatorTest extends TestCase
 {
     public function test_validate(): void

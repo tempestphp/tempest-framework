@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Commands;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Enums\MiddlewareType;
@@ -15,6 +16,7 @@ use function Tempest\Support\str;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MakeMiddlewareCommandTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

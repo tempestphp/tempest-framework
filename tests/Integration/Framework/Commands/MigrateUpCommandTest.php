@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Framework\Commands;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
 use Tempest\Framework\Commands\MigrateUpCommand;
@@ -13,6 +14,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class MigrateUpCommandTest extends FrameworkIntegrationTestCase
 {
     public function test_migrate_command(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Http\Method;
 use Tempest\Router\RouteConfig;
@@ -12,6 +13,7 @@ use Tempest\Router\Routing\Matching\MatchingRegex;
 /**
  * @internal
  */
+#[CoversClass(RouteConfig::class)]
 final class RouteConfigTest extends TestCase
 {
     public function test_serialization(): void

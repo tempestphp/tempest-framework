@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\SerializableSerializer;
@@ -9,6 +10,7 @@ use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\Mapper\Fixtures\JsonSerializableObject;
 use Tests\Tempest\Integration\Mapper\Fixtures\SerializableObject;
 
+#[CoversNothing]
 final class SerializableSerializerTest extends TestCase
 {
     public function test_serialize(): void

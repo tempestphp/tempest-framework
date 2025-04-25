@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Core;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Core\Middleware;
 use Tempest\Reflection\ClassReflector;
@@ -15,6 +16,7 @@ use Tests\Tempest\Integration\Core\Fixtures\MiddlewareLow;
 use Tests\Tempest\Integration\Core\Fixtures\MiddlewareLowest;
 use Tests\Tempest\Integration\Core\Fixtures\MiddlewareNormal;
 
+#[CoversNothing]
 final class MiddlewareTest extends TestCase
 {
     public function test_middleware_construct(): void

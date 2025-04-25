@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
@@ -16,6 +17,7 @@ use function Tempest\view;
 /**
  * @internal
  */
+#[CoversNothing]
 final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

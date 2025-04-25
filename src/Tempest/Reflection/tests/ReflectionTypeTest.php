@@ -7,6 +7,7 @@ namespace Tempest\Reflection\Tests;
 use ArrayIterator;
 use DateTimeImmutable;
 use Generator;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Stringable;
@@ -21,6 +22,7 @@ use Tempest\Support\Str\ImmutableString;
 /**
  * @internal
  */
+#[CoversClass(TypeReflector::class)]
 final class ReflectionTypeTest extends TestCase
 {
     #[DataProvider('data')]

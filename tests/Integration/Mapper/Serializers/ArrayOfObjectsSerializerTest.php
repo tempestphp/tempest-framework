@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
@@ -9,6 +10,7 @@ use Tempest\Mapper\Serializers\EnumSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mapper\Fixtures\ObjectWithSerializerProperties;
 
+#[CoversNothing]
 final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
 {
     public function test_serialize(): void

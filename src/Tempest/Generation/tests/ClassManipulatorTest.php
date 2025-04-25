@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Generation\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\Tests\Fixtures\ClassWithDummyStringToBeReplacedByFqcn;
@@ -19,6 +20,7 @@ use Tempest\Support\Str\ImmutableString;
 /**
  * @internal
  */
+#[CoversClass(ClassManipulator::class)]
 final class ClassManipulatorTest extends TestCase
 {
     public function test_from_file(): void

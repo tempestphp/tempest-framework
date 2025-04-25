@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Exceptions;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Exceptions\CannotAutowireException;
 use Tempest\Container\GenericContainer;
@@ -12,6 +13,7 @@ use Tempest\Container\Tests\Fixtures\AutowireA;
 /**
  * @internal
  */
+#[CoversClass(CannotAutowireException::class)]
 final class CannotAutowireExceptionTest extends TestCase
 {
     public function test_autowire_without_exception(): void
@@ -33,7 +35,7 @@ final class CannotAutowireExceptionTest extends TestCase
             TXT;
 
             $this->assertStringContainsStringIgnoringLineEndings($expected, $cannotAutowireException->getMessage());
-            $this->assertStringContainsString('CannotAutowireExceptionTest.php:24', $cannotAutowireException->getMessage());
+            $this->assertStringContainsString('CannotAutowireExceptionTest.php:26', $cannotAutowireException->getMessage());
 
             throw $cannotAutowireException;
         }

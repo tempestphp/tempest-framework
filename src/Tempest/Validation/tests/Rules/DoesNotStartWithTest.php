@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Validation\Tests\Rules;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Validation\Rules\DoesNotStartWith;
@@ -11,6 +12,7 @@ use Tempest\Validation\Rules\DoesNotStartWith;
 /**
  * @internal
  */
+#[CoversClass(DoesNotStartWith::class)]
 final class DoesNotStartWithTest extends TestCase
 {
     #[DataProvider('provide_rule_cases')]

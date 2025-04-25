@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Generator;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
@@ -23,6 +24,7 @@ use function Tempest\view;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ViewComponentTest extends FrameworkIntegrationTestCase
 {
     protected function setUp(): void

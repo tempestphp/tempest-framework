@@ -3,10 +3,12 @@
 namespace Tests\Tempest\Integration\Mapper\Serializers;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\DateTimeSerializer;
 
+#[CoversNothing]
 final class DateTimeSerializerTest extends TestCase
 {
     public function test_serialize(): void

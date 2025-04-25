@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Filesystem\Tests;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tempest\Filesystem\Permission;
@@ -11,6 +12,7 @@ use Tempest\Filesystem\Permission;
 /**
  * @internal
  */
+#[CoversClass(Permission::class)]
 final class PermissionTest extends TestCase
 {
     #[DataProvider('permissionDataProvider')]

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\EventBus;
 
 use LogicException;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\Testing\FakeEventBus;
@@ -14,6 +15,7 @@ use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 /**
  * @internal
  */
+#[CoversNothing]
 final class EventBusTesterTest extends FrameworkIntegrationTestCase
 {
     public function test_fake(): void

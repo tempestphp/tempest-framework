@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Tempest\Router\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -13,6 +14,7 @@ use function Tempest\uri;
 /**
  * @internal
  */
+#[CoversNothing]
 final class ValidationResponseTest extends FrameworkIntegrationTestCase
 {
     public function test_validation_errors_are_listed_in_the_response_body(): void

@@ -7,6 +7,8 @@ namespace Tempest\Support\Tests\Arr;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use Tempest\Support\Str\ImmutableString;
 
@@ -15,6 +17,7 @@ use function Tempest\Support\Arr\to_array;
 /**
  * @internal
  */
+#[CoversFunction('Tempest\Support\Arr\to_array')]
 final class ToArrayTest extends TestCase
 {
     public function test_array_input_returns_unchanged(): void
