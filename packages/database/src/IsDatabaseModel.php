@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Database;
 
+use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
@@ -58,6 +59,16 @@ trait IsDatabaseModel
         array_walk($conditions, fn ($value, $column) => $query->whereField($column, $value));
 
         return $query;
+    }
+
+    public static function count(): CountQueryBuilder
+    {
+        return query(self::class)->count();
+    }
+
+    public static function countAll(): int
+    {
+        return query(self::class)->count()->execute();
     }
 
     public static function create(mixed ...$params): self
