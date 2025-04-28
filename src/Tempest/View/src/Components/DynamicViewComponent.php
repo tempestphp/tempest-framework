@@ -5,7 +5,6 @@ namespace Tempest\View\Components;
 use Stringable;
 use Tempest\Core\AppConfig;
 use Tempest\Support\Str\ImmutableString;
-use Tempest\Support\Str\MutableString;
 use Tempest\View\Elements\CollectionElement;
 use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\Parser\TempestViewCompiler;
@@ -66,14 +65,19 @@ final class DynamicViewComponent implements ViewComponent
         );
 
         $compiled = sprintf(
-            '<?php echo \Tempest\get(\Tempest\View\Renderers\TempestViewRenderer::class)->render(sprintf(<<<\'HTML\'
+'<?php 
+$vars = get_defined_vars();
+unset($vars[\'_view\'], $vars[\'_path\'], $vars[\'_data\'], $vars[\'_propIsLocal\'], $vars[\'_isIsLocal\'], $vars[\'_previousAttributes\'], $vars[\'_previousSlots\'], $vars[\'slots\']);
+
+echo \Tempest\get(\Tempest\View\Renderers\TempestViewRenderer::class)->render(\Tempest\view(sprintf(<<<\'HTML\'
 %s
-HTML, %s, %s)); ?>',
+HTML, %s, %s), ...$vars)); ?>
+',
             $compiledChildren,
             $isExpression ? $name : "'{$name}'",
             $isExpression ? $name : "'{$name}'",
         );
-lw($compiled);
+
         return $compiled;
     }
 }
