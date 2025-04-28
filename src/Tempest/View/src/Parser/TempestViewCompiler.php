@@ -132,8 +132,7 @@ final readonly class TempestViewCompiler
         $previous = null;
 
         foreach ($elements as $element) {
-            $isDynamicViewComponent = $element instanceof ViewComponentElement
-                && $element->getViewComponent() instanceof DynamicViewComponent;
+            $isDynamicViewComponent = $element instanceof ViewComponentElement && $element->getViewComponent() instanceof DynamicViewComponent;
 
             if (! $isDynamicViewComponent) {
                 $children = $this->applyAttributes($element->getChildren());

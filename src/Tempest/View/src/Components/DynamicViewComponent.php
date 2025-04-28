@@ -11,17 +11,16 @@ use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
 use Tempest\View\ViewComponent;
 use Tempest\View\ViewConfig;
+
 use function Tempest\Support\arr;
 
 final class DynamicViewComponent implements ViewComponent
 {
     private Token $token;
 
-    public function __construct(
-        private AppConfig $appConfig,
-        private TempestViewCompiler $compiler,
-        private ViewConfig $viewConfig,
-    ) {}
+    public function __construct()
+    {
+    }
 
     public function setToken(Token $token): void
     {
@@ -42,13 +41,13 @@ final class DynamicViewComponent implements ViewComponent
         $collectionElement = new CollectionElement($element->getChildren());
 
         $attributes = arr($element->getAttributes())
-            ->filter(fn (string $value, string $key) => $key !== 'is' && $key !== ':is')
+            ->filter(fn (string $_value, string $key) => $key !== 'is' && $key !== ':is')
             ->map(function (string $value, string $key) {
                 return sprintf('%s="%s"', $key, trim($value));
             })
             ->implode(' ')
             ->when(
-                fn (Stringable $string) => (string) $string !== '',
+                fn (Stringable $string) => ((string) $string) !== '',
                 fn (Stringable $string) => new ImmutableString(" {$string}"),
             );
 
@@ -64,12 +63,12 @@ final class DynamicViewComponent implements ViewComponent
             '%s',
         );
 
-        $compiled = sprintf(
-'<?php 
+        return sprintf(
+            '<?php 
 $vars = get_defined_vars();
 unset($vars[\'_view\'], $vars[\'_path\'], $vars[\'_data\'], $vars[\'_propIsLocal\'], $vars[\'_isIsLocal\'], $vars[\'_previousAttributes\'], $vars[\'_previousSlots\'], $vars[\'slots\']);
 
-echo \Tempest\get(\Tempest\View\Renderers\TempestViewRenderer::class)->render(\Tempest\view(sprintf(<<<\'HTML\'
+echo \Tempest\get(' . \Tempest\View\Renderers\TempestViewRenderer::class . '::class)->render(\Tempest\view(sprintf(<<<\'HTML\'
 %s
 HTML, %s, %s), ...$vars)); ?>
 ',
@@ -77,7 +76,5 @@ HTML, %s, %s), ...$vars)); ?>
             $isExpression ? $name : "'{$name}'",
             $isExpression ? $name : "'{$name}'",
         );
-
-        return $compiled;
     }
 }
