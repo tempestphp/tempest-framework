@@ -58,6 +58,22 @@ final class DependencyInstallerTest extends FrameworkIntegrationTestCase
         });
     }
 
+    #[TestWith(['bun.lock'])]
+    #[TestWith(['package-lock.json'])]
+    public function test_can_install_non_dev_dependencies(string $lockfile): void
+    {
+        $this->callInTemporaryDirectory(function (string $directory) use ($lockfile): void {
+            file_put_contents("{$directory}/package.json", data: '{}');
+            file_put_contents("{$directory}/{$lockfile}", data: null);
+
+            $installer = $this->container->get(DependencyInstaller::class);
+            $installer->silentlyInstallDependencies($directory, 'vite-plugin-tempest', dev: false);
+
+            $this->assertTrue(is_dir($directory . '/node_modules'), message: 'Dependencies were not installed.');
+            $this->assertNotNull(json_decode(file_get_contents($directory . '/package.json'), associative: true)['dependencies']['vite-plugin-tempest']);
+        });
+    }
+
     private function callInTemporaryDirectory(Closure $callback): void
     {
         $directory = __DIR__ . '/Fixtures/tmp';

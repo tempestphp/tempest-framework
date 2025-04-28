@@ -66,8 +66,7 @@ final readonly class InteractiveCommand
                 'b',
                 'c',
             ],
-            default: 1,
-            multiple: true,
+            default: 'b',
         );
 
         $result = json_encode($result);
@@ -91,6 +90,17 @@ final readonly class InteractiveCommand
         $result = json_encode($result);
 
         $this->console->writeln("You picked <em>{$result}</em>");
+    }
+
+    #[ConsoleCommand('interactive:multiline')]
+    public function multiline(): void
+    {
+        $result = $this->console->ask(
+            question: 'Write something',
+            multiline: true,
+        );
+
+        $this->console->writeln($result);
     }
 
     #[ConsoleCommand('interactive:multiple')]

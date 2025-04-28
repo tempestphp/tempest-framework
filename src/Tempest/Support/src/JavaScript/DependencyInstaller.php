@@ -6,7 +6,7 @@ namespace Tempest\Support\JavaScript;
 
 use Symfony\Component\Process\Process;
 use Tempest\Console\Console;
-use Tempest\Validation\Rules\Enum;
+use Tempest\Validation\Rules\IsEnum;
 
 use function Tempest\Support\Arr\wrap;
 
@@ -31,7 +31,7 @@ final readonly class DependencyInstaller
             options: PackageManager::class,
             default: PackageManager::BUN,
             validation: [
-                new Enum(PackageManager::class),
+                new IsEnum(PackageManager::class),
             ],
         );
 
@@ -58,11 +58,17 @@ final readonly class DependencyInstaller
      */
     private function getInstallProcess(PackageManager $packageManager, string $cwd, string|array $dependencies, bool $dev = false): Process
     {
-        return new Process([
-            $packageManager->getBinaryName(),
-            $packageManager->getInstallCommand(),
-            $dev ? '-D' : '',
-            ...wrap($dependencies),
-        ], $cwd);
+        return new Process(
+            array_filter(
+                [
+                    $packageManager->getBinaryName(),
+                    $packageManager->getInstallCommand(),
+                    $dev ? '-D' : null,
+                    ...wrap($dependencies),
+                ],
+                fn (?string $arg): bool => $arg !== null,
+            ),
+            $cwd,
+        );
     }
 }

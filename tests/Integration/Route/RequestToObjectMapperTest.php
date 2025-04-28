@@ -12,7 +12,10 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\EnumForRequest;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
+use Tests\Tempest\Integration\Route\Fixtures\RequestWithEnum;
+use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
 
 use function Tempest\map;
 use function Tempest\Support\arr;
@@ -63,5 +66,47 @@ final class RequestToObjectMapperTest extends FrameworkIntegrationTestCase
         )->to(CreateBookRequest::class);
 
         $this->assertSame('hello', $request->queryParam);
+    }
+
+    public function test_query_params_with_types(): void
+    {
+        $request = map(new GenericRequest(
+            method: Method::GET,
+            uri: '/books?stringParam=a&intParam=1&floatParam=0.1&boolParam=1',
+            body: ['title' => 'Timeline Taxi'],
+        ))->with(
+            RequestToObjectMapper::class,
+        )->to(RequestWithTypedQueryParam::class);
+
+        $this->assertSame(1, $request->intParam);
+        $this->assertSame('a', $request->stringParam);
+        $this->assertSame(true, $request->boolParam);
+        $this->assertSame(0.1, $request->floatParam);
+    }
+
+    public function test_mapping_with_enum(): void
+    {
+        $request = map(new GenericRequest(
+            method: Method::GET,
+            uri: '/books?enumParam=bar',
+        ))->with(
+            RequestToObjectMapper::class,
+        )->to(RequestWithEnum::class);
+
+        $this->assertSame(EnumForRequest::BAR, $request->enumParam);
+    }
+
+    public function test_validation_fails_for_enum(): void
+    {
+        try {
+            map(new GenericRequest(
+                method: Method::GET,
+                uri: '/books?enumParam=unknown',
+            ))->with(
+                RequestToObjectMapper::class,
+            )->to(RequestWithEnum::class);
+        } catch (ValidationException $validationException) {
+            $this->assertArrayHasKey('enumParam', $validationException->failingRules);
+        }
     }
 }

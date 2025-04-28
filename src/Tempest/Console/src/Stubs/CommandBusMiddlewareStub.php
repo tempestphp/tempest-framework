@@ -7,9 +7,9 @@ namespace Tempest\Console\Stubs;
 use Tempest\CommandBus\CommandBusMiddleware;
 use Tempest\CommandBus\CommandBusMiddlewareCallable;
 use Tempest\Core\Priority;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 #[Priority(Priority::NORMAL)]
 final class CommandBusMiddlewareStub implements CommandBusMiddleware
 {

@@ -80,7 +80,7 @@ final class GenericRouter implements Router
             } catch (NotFoundException) {
                 return new NotFound();
             } catch (ValidationException $validationException) {
-                return new Invalid($validationException->object, $validationException->failingRules);
+                return new Invalid($validationException->subject, $validationException->failingRules);
             }
         } else {
             $request = $this->resolveRequest($request, $matchedRoute);

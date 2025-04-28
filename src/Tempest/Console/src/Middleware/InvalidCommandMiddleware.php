@@ -14,8 +14,8 @@ use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
 use Tempest\Console\Input\ConsoleInputArgument;
 use Tempest\Core\Priority;
-use Tempest\Validation\Rules\Enum;
 use Tempest\Validation\Rules\IsBoolean;
+use Tempest\Validation\Rules\IsEnum;
 use Tempest\Validation\Rules\NotEmpty;
 use Tempest\Validation\Rules\Numeric;
 
@@ -69,7 +69,7 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
                     },
                     validation: array_filter([
                         $isEnum
-                            ? new Enum($argument->type)
+                            ? new IsEnum($argument->type)
                             : new NotEmpty(),
                         match ($argument->type) {
                             'bool' => new IsBoolean(),

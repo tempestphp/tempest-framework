@@ -4,6 +4,8 @@ namespace Tempest\View\Parser;
 
 final class TempestViewLexer
 {
+    private const string WHITESPACE = PHP_EOL . "\n\t\f ";
+
     private int $position = 0;
 
     private ?string $current;
@@ -53,7 +55,7 @@ final class TempestViewLexer
 
     private function seekIgnoringWhitespace(int $length = 1): ?string
     {
-        $offset = strspn($this->html, PHP_EOL . "\n\t\f ", $this->position);
+        $offset = strspn($this->html, self::WHITESPACE, $this->position);
 
         return $this->seek(length: $length, offset: $offset);
     }
@@ -107,7 +109,7 @@ final class TempestViewLexer
                     continue;
                 }
 
-                $attributeName = $this->consumeWhile("\n ");
+                $attributeName = $this->consumeWhile(self::WHITESPACE);
 
                 $attributeName .= $this->consumeUntil('= >');
 

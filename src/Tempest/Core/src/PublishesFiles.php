@@ -9,7 +9,7 @@ use Exception;
 use Tempest\Console\Exceptions\ConsoleException;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Inject;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 use Tempest\Generation\Enums\StubFileType;
@@ -83,7 +83,7 @@ trait PublishesFiles
                     targetPath: $destination,
                     shouldOverride: true,
                     manipulations: [
-                        fn (ClassManipulator $class) => $class->removeClassAttribute(DoNotDiscover::class),
+                        fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
                     ],
                 );
 
@@ -164,16 +164,18 @@ trait PublishesFiles
     /**
      * Prompt the user for the target path to save the generated file.
      * @param string $suggestedPath The suggested path to show to the user.
+     * @param \Tempest\Validation\Rule[]|null $rules Rules to use instead of the default ones.
+     *
      * @return string The target path that the user has chosen.
      */
-    public function promptTargetPath(string $suggestedPath): string
+    public function promptTargetPath(string $suggestedPath, ?array $rules = null): string
     {
         $className = to_base_class_name($suggestedPath);
 
         $targetPath = $this->console->ask(
             question: sprintf('Where do you want to save the file <em>%s</em>?', $className),
             default: to_relative_path(root_path(), $suggestedPath),
-            validation: [new NotEmpty(), new EndsWith('.php')],
+            validation: $rules ?? [new NotEmpty(), new EndsWith('.php')],
         );
 
         return to_absolute_path(root_path(), $targetPath);

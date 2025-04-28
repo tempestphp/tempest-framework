@@ -12,11 +12,11 @@ use function Tempest\Support\str;
 
 final readonly class KeyValueRenderer
 {
-    private const int MAX_WIDTH = 125;
+    public const int MAX_WIDTH = 125;
 
-    private const int MIN_WIDTH = 3;
+    public const int MIN_WIDTH = 3;
 
-    public function render(Stringable|string $key, null|Stringable|string $value = null, int $maximumWidth = self::MAX_WIDTH): string
+    public function render(Stringable|string $key, null|Stringable|string $value = null, bool $useAvailableWidth = false): string
     {
         $key = $this->cleanText($key)->append(' ');
         $value = $this->cleanText($value)->when(
@@ -24,13 +24,28 @@ final readonly class KeyValueRenderer
             callback: fn ($s) => $s->prepend(' '),
         );
 
+        $maximumWidth = $useAvailableWidth
+            ? $this->getTerminalWidth()
+            : self::MAX_WIDTH;
+
         $dotsWidth = ($maximumWidth - $key->stripTags()->length()) - $value->stripTags()->length();
 
         return str()
             ->append($key)
-            ->append('<style="fg-gray dim">', str_repeat('.', max(self::MIN_WIDTH, min($dotsWidth, self::MAX_WIDTH))), '</style>')
+            ->append('<style="fg-gray dim">', str_repeat('.', max(self::MIN_WIDTH, min($dotsWidth, $maximumWidth))), '</style>')
             ->append($value)
             ->toString();
+    }
+
+    private function getTerminalWidth(): int
+    {
+        $width = shell_exec('tput cols');
+
+        if ($width === false) {
+            return self::MAX_WIDTH;
+        }
+
+        return ((int) $width) - 5;
     }
 
     private function cleanText(null|Stringable|string $text): ImmutableString

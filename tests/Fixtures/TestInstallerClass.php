@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures;
 
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final readonly class TestInstallerClass
 {
 }

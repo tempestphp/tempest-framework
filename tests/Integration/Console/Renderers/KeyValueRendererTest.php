@@ -26,8 +26,11 @@ final class KeyValueRendererTest extends FrameworkIntegrationTestCase
     public function test_render_total_width_smaller_than_text(): void
     {
         $renderer = new KeyValueRenderer();
-        $rendered = $renderer->render('Some long text', 'Some long text', maximumWidth: 0);
+        $rendered = $renderer->render('Some long text', str_repeat('a', KeyValueRenderer::MAX_WIDTH));
 
-        $this->assertSame('Some long text <style="fg-gray dim">...</style> Some long text', $rendered);
+        $this->assertSame(
+            'Some long text <style="fg-gray dim">...</style> aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            $rendered,
+        );
     }
 }

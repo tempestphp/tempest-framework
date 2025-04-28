@@ -17,9 +17,6 @@ use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
 
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
-
 final class TempestViewRenderer implements ViewRenderer
 {
     private ?View $currentView = null;
@@ -49,41 +46,12 @@ final class TempestViewRenderer implements ViewRenderer
 
         $path = $this->viewCache->getCachedViewPath(
             path: $view->path,
-            compiledView: fn () => $this->cleanupCompiled($this->compiler->compile($view)),
+            compiledView: fn () => $this->compiler->compile($view),
         );
 
         $view = $this->processView($view);
 
         return $this->renderCompiled($view, $path);
-    }
-
-    private function cleanupCompiled(string $compiled): string
-    {
-        // Remove strict type declarations
-        $compiled = str($compiled)->replace('declare(strict_types=1);', '');
-
-        // Cleanup and bundle imports
-        $imports = arr();
-
-        $compiled = $compiled->replaceRegex("/^\s*use (function )?.*;/m", function (array $matches) use (&$imports) {
-            $imports[$matches[0]] = $matches[0];
-
-            return '';
-        });
-
-        $compiled = $compiled->prepend(
-            sprintf(
-                '<?php
-%s
-?>',
-                $imports->implode(PHP_EOL),
-            ),
-        );
-
-        // Remove empty PHP blocks
-        $compiled = $compiled->replaceRegex('/<\?php\s*\?>/', '');
-
-        return $compiled->toString();
     }
 
     private function processView(View $view): View

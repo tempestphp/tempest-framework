@@ -32,7 +32,19 @@ trait IsElement
             $wrappingAttributes = [];
         }
 
-        return [...$this->attributes, ...$wrappingAttributes];
+        $attributes = [...$this->attributes, ...$wrappingAttributes];
+
+        $tailingAttributes = [];
+
+        foreach ($attributes as $name => $value) {
+            if ($name === ':foreach' || $name === ':if') {
+                unset($attributes[$name]);
+                $tailingAttributes[$name] = $value;
+            }
+        }
+
+        // Tailing attributes are reversed because they need to be applied in reverse order
+        return [...$attributes, ...array_reverse($tailingAttributes)];
     }
 
     public function hasAttribute(string $name): bool

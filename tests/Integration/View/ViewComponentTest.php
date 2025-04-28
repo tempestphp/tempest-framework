@@ -153,7 +153,7 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
     public function test_nested_components(): void
     {
-        $this->assertStringEqualsStringIgnoringLineEndings(
+        $this->assertSnippetsMatch(
             expected: <<<'HTML'
             <form action="#" method="post"><div><div><label for="a">a</label><input type="number" name="a" id="a" value></div></div><div><label for="b">b</label><input type="text" name="b" id="b" value></div></form>
             HTML,
@@ -619,6 +619,21 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
+    public function test_fallthrough_attributes_with_other_attributes(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div class="foo" style="font-weight: bold;" id="other"></div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test class="test" style="text-decoration: underline;" id="test"></x-test>
+        HTML);
+
+        $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
+        <div class="foo test" style="font-weight: bold; text-decoration: underline;" id="test"></div>
+        HTML, $html);
+    }
+
     public function test_file_name_component(): void
     {
         $html = $this->render('<x-file-component></x-file-component>');
@@ -650,20 +665,6 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertStringEqualsStringIgnoringLineEndings(<<<'HTML'
         <div class="inner upper"></div>
         HTML, $html);
-    }
-
-    public function test_attribute_precedence(): void
-    {
-        $this->markTestSkipped('TODO');
-
-        // Order should be: upperB > upperA > innerB > innerA
-        //        $this->registerViewComponent('x-test', <<<'HTML'
-        //        <div data-foo="innerA" :data-foo="'innerB'"></div>
-        //        HTML);
-        //        $html = $this->render(<<<'HTML'
-        //        <x-test data-foo="upperA" :data-foo="'upperB'"></x-test>
-        //        HTML);
-        //        $this->assertStringEqualsStringIgnoringLineEndings('<div data-foo="upperB"></div>', $html);
     }
 
     public function test_does_not_duplicate_br(): void
@@ -703,11 +704,171 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         HTML, $html);
     }
 
-    private function assertSnippetsMatch(string $expected, string $actual): void
+    public function test_multiple_instances_of_custom_component_using_slots(): void
     {
-        $expected = str_replace([PHP_EOL, ' '], '', $expected);
-        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+        $this->registerViewComponent('x-foo-bar', 'FOO-BAR');
 
-        $this->assertSame($expected, $actual);
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>
+            <x-foo-bar />
+            <x-slot name="test" />
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="test">
+                <x-foo-bar />
+            </x-slot>
+        </x-test>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+        <div>FOO-BAR
+        FOO-BAR
+        </div>
+        HTML, $html);
+    }
+
+    public function test_slots_with_hyphens(): void
+    {
+        $this->registerViewComponent('x-test', <<<'HTML'
+        <div>
+            <x-slot name="test-slot" />
+        </div>
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-test>
+            <x-slot name="test-slot">
+                Hi
+            </x-slot>
+        </x-test>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+            <div>
+                    Hi
+            </div>
+        HTML, $html);
+    }
+
+    public function test_nested_table_components(): void
+    {
+        $this->registerViewComponent('x-my-table-thead', '<thead><x-slot/></thead>');
+        $this->registerViewComponent('x-my-table-tbody', '<tbody><x-slot/></tbody>');
+        $this->registerViewComponent('x-my-table-tr', '<tr><x-slot/></tr>');
+        $this->registerViewComponent('x-my-table-td', '<td><x-slot/></td>');
+        $this->registerViewComponent('x-my-table-th', '<th><x-slot/></th>');
+
+        $html = $this->render(<<<'HTML'
+        <table>
+            <x-my-table-thead>
+                <x-my-table-tr>
+                    <x-my-table-th>Header 1</x-my-table-th>
+                </x-my-table-tr>
+            </x-my-table-thead>
+            <x-my-table-tbody>
+                <x-my-table-tr>
+                    <x-my-table-td>Row 1, Cell 1</x-my-table-td>
+                </x-my-table-tr>
+            </x-my-table-tbody>
+        </table>
+        HTML);
+
+        $this->assertSnippetsMatch(<<<'HTML'
+            <table>
+                <thead>
+                    <tr>
+                        <th>Header1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Row 1, Cell 1</td>
+                    </tr>
+                </tbody>
+            </table>
+        HTML, $html);
+    }
+
+    public function test_dynamic_view_component_with_string_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component is="x-test" prop="test"/>
+        HTML);
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_expression_name(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" prop="test" />
+        HTML, name: 'x-test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_variable_attribute(): void
+    {
+        $this->registerViewComponent('x-test', '<div>{{ $prop }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-component :is="$name" :prop="$input" />
+        HTML, name: 'x-test', input: 'test');
+
+        $this->assertSame('<div>test</div>', $html);
+    }
+
+    public function test_dynamic_view_component_with_slot(): void
+    {
+        $this->registerViewComponent('x-test', '<div><x-slot/></div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-dynamic-component :is="$name">test</x-dynamic-component>
+        HTML, name: 'x-test');
+
+        $this->assertSnippetsMatch('<div>test</div>', $html);
+    }
+
+    public function test_nested_slots(): void
+    {
+        $this->registerViewComponent('x-a', '<a><x-slot /></a>');
+        $this->registerViewComponent('x-b', '<x-a><b><x-slot /></b></x-a>');
+
+        $html = $this->render(<<<'HTML'
+        <x-b>
+            hi
+        </x-b>
+        HTML);
+
+        $this->assertSnippetsMatch('<a><b>hi</b></a>', $html);
+    }
+
+    public function test_nested_slots_with_escaping(): void
+    {
+        $this->registerViewComponent('x-a', '<a><x-slot /></a>');
+        $this->registerViewComponent('x-b', <<<'HTML'
+        <?php 
+        use function \Tempest\get;
+        use \Tempest\Core\AppConfig;
+        ?>
+        {{ get(AppConfig::class)->environment->value }}
+        HTML);
+
+        $html = $this->render(<<<'HTML'
+        <x-a>
+            <x-slot>
+                <x-b />
+            </x-slot>
+        </x-a>
+        HTML);
+
+        $this->assertSnippetsMatch('<a>testing</a>', $html);
     }
 }

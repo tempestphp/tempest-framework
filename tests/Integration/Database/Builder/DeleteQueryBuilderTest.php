@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\Builder\QueryBuilders\DeleteQueryBuilder;
 use Tempest\Database\Id;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -66,6 +67,34 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             10,
             $query->bindings['id']->id,
+        );
+    }
+
+    public function test_delete_on_plain_table_with_conditions(): void
+    {
+        $query = query('foo')
+            ->delete()
+            ->when(
+                true,
+                fn (DeleteQueryBuilder $query) => $query->where('`bar` = ?', 'boo'),
+            )
+            ->when(
+                false,
+                fn (DeleteQueryBuilder $query) => $query->where('`bar` = ?', 'foo'),
+            )
+            ->build();
+
+        $this->assertSame(
+            <<<SQL
+            DELETE FROM `foo`
+            WHERE `bar` = ?
+            SQL,
+            $query->getSql(),
+        );
+
+        $this->assertSame(
+            'boo',
+            $query->bindings[0],
         );
     }
 }

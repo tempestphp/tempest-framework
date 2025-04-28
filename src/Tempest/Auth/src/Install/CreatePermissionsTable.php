@@ -7,9 +7,9 @@ namespace Tempest\Auth\Install;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final class CreatePermissionsTable implements DatabaseMigration
 {
     private(set) string $name = '0000-00-01_create_permissions_table';

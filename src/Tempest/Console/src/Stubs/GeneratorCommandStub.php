@@ -7,8 +7,11 @@ namespace Tempest\Console\Stubs;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
+#[SkipDiscovery]
 final class GeneratorCommandStub
 {
     use PublishesFiles;
@@ -26,6 +29,9 @@ final class GeneratorCommandStub
             stubFile: StubFile::from('MyStubClass::class'),
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
+            manipulations: [
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+            ],
         );
 
         $this->console->writeln();

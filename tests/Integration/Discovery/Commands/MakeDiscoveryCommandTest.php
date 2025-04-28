@@ -44,6 +44,7 @@ class MakeDiscoveryCommandTest extends FrameworkIntegrationTestCase
 
         $this->installer
             ->assertFileExists($expectedPath)
+            ->assertFileNotContains($expectedPath, 'SkipDiscovery')
             ->assertFileContains($expectedPath, 'namespace ' . $expectedNamespace . ';')
             ->assertFileExists($expectedPath, 'implements Discovery')
             ->assertFileContains($expectedPath, 'public function discover');

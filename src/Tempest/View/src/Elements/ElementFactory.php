@@ -7,6 +7,7 @@ namespace Tempest\View\Elements;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\View\Attributes\PhpAttribute;
+use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
 use Tempest\View\Parser\Token;
@@ -66,22 +67,7 @@ final class ElementFactory
             return new RawElement(tag: null, content: $token->compile());
         }
 
-        $attributes = [];
-
-        foreach ($token->htmlAttributes as $name => $value) {
-            $name = str($name)
-                ->trim()
-                ->before('=')
-                ->camel()
-                ->toString();
-
-            $value = str($value)
-                ->afterFirst('"')
-                ->beforeLast('"')
-                ->toString();
-
-            $attributes[$name] = $value;
-        }
+        $attributes = $token->htmlAttributes;
 
         foreach ($token->phpAttributes as $index => $content) {
             $attributes[] = new PhpAttribute((string) $index, $content);
@@ -96,6 +82,11 @@ final class ElementFactory
         }
 
         if ($viewComponentClass = $this->viewConfig->viewComponents[$token->tag] ?? null) {
+            if ($token->getAttribute('is') || $token->getAttribute(':is')) {
+                $viewComponentClass = $this->container->get(DynamicViewComponent::class);
+                $viewComponentClass->setToken($token);
+            }
+
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }

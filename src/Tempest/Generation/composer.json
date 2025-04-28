@@ -7,8 +7,7 @@
         "php": "^8.4",
         "nette/php-generator": "^4.1.6",
         "nikic/php-parser": "^5.3",
-        "tempest/support": "dev-main",
-        "tempest/highlight": "^2.11.2"
+        "tempest/support": "dev-main"
     },
     "autoload": {
         "psr-4": {
@@ -21,6 +20,7 @@
         }
     },
     "require-dev": {
-        "spatie/phpunit-snapshot-assertions": "^5.1.6"
+        "spatie/phpunit-snapshot-assertions": "^5.1.8",
+        "phpunit/phpunit": "^11.5.17"
     }
 }

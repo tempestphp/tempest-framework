@@ -6,6 +6,9 @@ use ReflectionException;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Validation\Exceptions\ValidationException;
+use Tempest\Validation\SkipValidation;
+use Tempest\Validation\Validator;
 
 use function Tempest\get;
 
@@ -62,6 +65,10 @@ final class ModelInspector
         $values = [];
 
         foreach ($this->modelClass->getProperties() as $property) {
+            if (! $property->isInitialized($this->model)) {
+                continue;
+            }
+
             if ($property->getIterableType()?->isRelation()) {
                 continue;
             }
@@ -72,5 +79,36 @@ final class ModelInspector
         }
 
         return $values;
+    }
+
+    public function validate(mixed ...$data): void
+    {
+        if (! $this->isObjectModel()) {
+            return;
+        }
+
+        $validator = new Validator();
+        $failingRules = [];
+
+        foreach ($data as $key => $value) {
+            $property = $this->modelClass->getProperty($key);
+
+            if ($property->hasAttribute(SkipValidation::class)) {
+                continue;
+            }
+
+            $failingRulesForProperty = $validator->validateValueForProperty(
+                $property,
+                $value,
+            );
+
+            if ($failingRulesForProperty !== []) {
+                $failingRules[$key] = $failingRulesForProperty;
+            }
+        }
+
+        if ($failingRules !== []) {
+            throw new ValidationException($this->modelClass->getName(), $failingRules);
+        }
     }
 }

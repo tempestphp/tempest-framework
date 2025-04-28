@@ -12,7 +12,7 @@ use function Tempest\Support\arr;
 final class ValidationException extends Exception
 {
     public function __construct(
-        public readonly object $object,
+        public readonly object|string $subject,
         public readonly array $failingRules,
     ) {
         $messages = [];
@@ -24,6 +24,10 @@ final class ValidationException extends Exception
             }
         }
 
-        parent::__construct($object::class . PHP_EOL . json_encode($messages, JSON_PRETTY_PRINT));
+        if (is_object($subject)) {
+            $subject = $subject::class;
+        }
+
+        parent::__construct($subject . PHP_EOL . json_encode($messages, JSON_PRETTY_PRINT));
     }
 }

@@ -186,9 +186,9 @@ final class GenericConsole implements Console
         return $clone;
     }
 
-    public function keyValue(string $key, ?string $value = null): self
+    public function keyValue(string $key, ?string $value = null, bool $useAvailableWidth = false): self
     {
-        $this->writeln(new KeyValueRenderer()->render($key, $value));
+        $this->writeln(new KeyValueRenderer()->render($key, $value, $useAvailableWidth));
 
         return $this;
     }

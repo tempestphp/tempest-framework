@@ -65,10 +65,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->container->config(require $databaseConfigPath);
 
-        // Vite
-        $this->vite->preventTagResolution();
-        $this->vite->clearCaches();
-
         $this->rollbackDatabase();
     }
 
@@ -166,5 +162,13 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             $reflector->getAttribute(StaticPage::class),
             $reflector,
         );
+    }
+
+    protected function assertSnippetsMatch(string $expected, string $actual): void
+    {
+        $expected = str_replace([PHP_EOL, ' '], '', $expected);
+        $actual = str_replace([PHP_EOL, ' '], '', $actual);
+
+        $this->assertSame($expected, $actual);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tempest\View\Parser;
 
+use ArrayAccess;
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
@@ -9,7 +10,7 @@ use Traversable;
 /**
  * @implements IteratorAggregate<\Tempest\View\Parser\Token>
  */
-final class TokenCollection implements IteratorAggregate
+final class TokenCollection implements IteratorAggregate, ArrayAccess
 {
     public function __construct(
         private array $tokens = [],
@@ -35,5 +36,25 @@ final class TokenCollection implements IteratorAggregate
                 array_map(fn (Token $token) => $token->__debugInfo()[0], $this->tokens),
             ),
         ];
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return $this->tokens[$offset] ?? false;
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->tokens[$offset] ?? null;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->tokens[$offset] = $value;
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        unset($this->tokens[$offset]);
     }
 }

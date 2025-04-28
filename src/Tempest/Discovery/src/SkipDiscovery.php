@@ -6,8 +6,11 @@ namespace Tempest\Discovery;
 
 use Attribute;
 
+/**
+ * Instruct Tempest to not discover this class.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class DoNotDiscover
+final readonly class SkipDiscovery
 {
     public function __construct(
         /**

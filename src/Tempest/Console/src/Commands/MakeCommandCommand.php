@@ -8,6 +8,8 @@ use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\Stubs\CommandStub;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
 use function Tempest\Support\str;
@@ -35,6 +37,9 @@ final class MakeCommandCommand
             shouldOverride: $shouldOverride,
             replacements: [
                 'dummy-command-slug' => str($className)->kebab()->toString(),
+            ],
+            manipulations: [
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
             ],
         );
 

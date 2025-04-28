@@ -13,6 +13,8 @@ use Tempest\Console\Stubs\ConsoleMiddlewareStub;
 use Tempest\Console\Stubs\EventBusMiddlewareStub;
 use Tempest\Console\Stubs\HttpMiddlewareStub;
 use Tempest\Core\PublishesFiles;
+use Tempest\Discovery\SkipDiscovery;
+use Tempest\Generation\ClassManipulator;
 use Tempest\Generation\DataObjects\StubFile;
 
 final class MakeMiddlewareCommand
@@ -39,6 +41,9 @@ final class MakeMiddlewareCommand
             stubFile: $stubFile,
             targetPath: $targetPath,
             shouldOverride: $shouldOverride,
+            manipulations: [
+                fn (ClassManipulator $class) => $class->removeClassAttribute(SkipDiscovery::class),
+            ],
         );
 
         $this->console->writeln();

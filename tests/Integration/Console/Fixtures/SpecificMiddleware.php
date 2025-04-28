@@ -9,9 +9,9 @@ use Tempest\Console\ConsoleMiddleware;
 use Tempest\Console\ConsoleMiddlewareCallable;
 use Tempest\Console\ExitCode;
 use Tempest\Console\Initializers\Invocation;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover]
+#[SkipDiscovery]
 final readonly class SpecificMiddleware implements ConsoleMiddleware
 {
     public function __construct(

@@ -7,9 +7,9 @@ namespace Tests\Tempest\Fixtures\Discovery;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\MigrationDiscovery;
 use Tempest\Database\QueryStatement;
-use Tempest\Discovery\DoNotDiscover;
+use Tempest\Discovery\SkipDiscovery;
 
-#[DoNotDiscover(except: [MigrationDiscovery::class])]
+#[SkipDiscovery(except: [MigrationDiscovery::class])]
 final class HiddenMigratableDatabaseMigration implements DatabaseMigration
 {
     private(set) string $name = 'hidden-migratable-migration';

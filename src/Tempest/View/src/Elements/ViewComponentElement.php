@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Tempest\View\Elements;
 
-use Dom\HTMLDocument;
 use Tempest\Core\Environment;
+use Tempest\Support\Str\ImmutableString;
+use Tempest\Support\Str\MutableString;
 use Tempest\View\Element;
 use Tempest\View\Parser\TempestViewCompiler;
+use Tempest\View\Parser\TempestViewParser;
 use Tempest\View\Slot;
 use Tempest\View\ViewComponent;
 
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
-
-use const Dom\HTML_NO_DEFAULT_NS;
 
 final class ViewComponentElement implements Element
 {
@@ -93,46 +93,49 @@ final class ViewComponentElement implements Element
             ->mapWithKeys(fn (SlotElement $element) => yield $element->name => Slot::fromElement($element))
             ->toArray();
 
-        $compiled = str($this->viewComponent->compile($this))
+        $compiled = str($this->viewComponent->compile($this));
+
+        $compiled = $compiled
             // Fallthrough attributes
             ->replaceRegex(
                 regex: '/^<(?<tag>[\w-]+)(.*?["\s])?>/', // Match the very first opening tag, this will never fail.
                 replace: function ($matches) {
-                    $closingTag = '</' . $matches['tag'] . '>';
+                    /** @var \Tempest\View\Parser\Token $token */
+                    $token = TempestViewParser::ast($matches[0])[0];
 
-                    $html = $matches[0] . $closingTag;
-
-                    $dom = HTMLDocument::createFromString($html, LIBXML_HTML_NOIMPLIED | LIBXML_NOERROR | HTML_NO_DEFAULT_NS);
-
-                    /** @var \Dom\HTMLElement $element */
-                    $element = $dom->childNodes[0];
+                    $attributes = arr($token->htmlAttributes)->map(fn (string $value) => new MutableString($value));
 
                     foreach (['class', 'style', 'id'] as $attributeName) {
                         if (! isset($this->dataAttributes[$attributeName])) {
                             continue;
                         }
 
-                        if ($attributeName === 'id') {
-                            $value = $this->dataAttributes[$attributeName];
-                        } else {
-                            $value = arr([
-                                $element->getAttribute($attributeName),
-                                $this->dataAttributes[$attributeName],
-                            ])
-                                ->filter()
-                                ->implode(' ')
-                                ->toString();
-                        }
+                        $attributes[$attributeName] ??= new MutableString();
 
-                        $element->setAttribute(
-                            qualifiedName: $attributeName,
-                            value: $value,
-                        );
+                        if ($attributeName === 'id') {
+                            $attributes[$attributeName] = new MutableString(' ' . $this->dataAttributes[$attributeName]);
+                        } else {
+                            $attributes[$attributeName]->append(' ' . $this->dataAttributes[$attributeName]);
+                        }
                     }
 
-                    return str($element->ownerDocument->saveHTML($element))->replaceLast($closingTag, '');
+                    return sprintf(
+                        '<%s%s>',
+                        $matches['tag'],
+                        $attributes
+                            ->map(function (MutableString $value, string $key) {
+                                return sprintf('%s="%s"', $key, $value->trim());
+                            })
+                            ->implode(' ')
+                            ->when(
+                                fn (ImmutableString $string) => $string->isNotEmpty(),
+                                fn (ImmutableString $string) => $string->prepend(' '),
+                            ),
+                    );
                 },
-            )
+            );
+
+        $compiled = $compiled
             ->prepend(
                 // Add attributes to the current scope
                 '<?php $_previousAttributes = $attributes ?? null; ?>',
@@ -155,7 +158,7 @@ final class ViewComponentElement implements Element
             )
             // Compile slots
             ->replaceRegex(
-                regex: '/<x-slot\s*(name="(?<name>\w+)")?((\s*\/>)|><\/x-slot>)/',
+                regex: '/<x-slot\s*(name="(?<name>[\w-]+)")?((\s*\/>)|><\/x-slot>)/',
                 replace: function ($matches) {
                     $name = $matches['name'] ?: 'slot';
 
