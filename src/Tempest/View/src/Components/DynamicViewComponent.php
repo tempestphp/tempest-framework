@@ -18,9 +18,7 @@ final class DynamicViewComponent implements ViewComponent
 {
     private Token $token;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function setToken(Token $token): void
     {
