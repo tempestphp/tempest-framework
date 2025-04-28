@@ -825,6 +825,17 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
         $this->assertSame('<div>test</div>', $html);
     }
 
+    public function test_dynamic_view_component_with_slot(): void
+    {
+        $this->registerViewComponent('x-test', '<div><x-slot/></div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-dynamic-component :is="$name">test</x-dynamic-component>
+        HTML, name: 'x-test');
+
+        $this->assertSnippetsMatch('<div>test</div>', $html);
+    }
+
     public function test_nested_slots(): void
     {
         $this->registerViewComponent('x-a', '<a><x-slot /></a>');

@@ -17,9 +17,6 @@ use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
 use Throwable;
 
-use function Tempest\Support\arr;
-use function Tempest\Support\str;
-
 final class TempestViewRenderer implements ViewRenderer
 {
     private ?View $currentView = null;
