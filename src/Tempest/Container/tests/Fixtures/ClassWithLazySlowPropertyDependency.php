@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Tempest\Container\Tests\Fixtures;
 
-use Tempest\Container\Proxy;
 use Tempest\Container\Inject;
+use Tempest\Container\Proxy;
 
 final class ClassWithLazySlowPropertyDependency
 {
