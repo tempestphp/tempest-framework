@@ -358,7 +358,7 @@ final class GenericContainer implements Container
 
         foreach ($classReflector->getProperties() as $property) {
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
-                if ($property->hasAttribute(Lazy::class)) {
+                if ($property->hasAttribute(Proxy::class)) {
                     $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
                         fn () => $this->get($property->getType()->getName()),
                     ));
@@ -404,7 +404,7 @@ final class GenericContainer implements Container
         }
 
         // Support lazy initialization
-        $lazy = $parameter->hasAttribute(Lazy::class);
+        $lazy = $parameter->hasAttribute(Proxy::class);
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
             try {
