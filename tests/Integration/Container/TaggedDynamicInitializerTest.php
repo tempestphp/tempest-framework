@@ -33,8 +33,11 @@ final class TaggedDynamicInitializerTest extends TestCase
         $tenant2 = $container->get(Database::class, tag: 'tenant-2');
         $main = $container->get(Database::class);
 
+        /** @phpstan-ignore-next-line */
         $this->assertSame('db-tenant-1.sqlite', $tenant1->connection->config->path);
+        /** @phpstan-ignore-next-line */
         $this->assertSame('db-tenant-2.sqlite', $tenant2->connection->config->path);
+        /** @phpstan-ignore-next-line */
         $this->assertSame('db-main.sqlite', $main->connection->config->path);
     }
 }

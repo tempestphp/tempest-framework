@@ -8,6 +8,7 @@ use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\Reflection\ClassReflector;
@@ -22,9 +23,16 @@ final readonly class DatabaseInitializer implements DynamicInitializer
     #[Singleton]
     public function initialize(ClassReflector $class, ?string $tag, Container $container): Database
     {
-        $config = $container->get(DatabaseConfig::class, $tag);
+        $container->singleton(Connection::class, function () use ($tag, $container) {
+            $config = $container->get(DatabaseConfig::class, $tag);
 
-        $connection = new PDOConnection($config);
+            $connection = new PDOConnection($config);
+            $connection->connect();
+
+            return $connection;
+        });
+
+        $connection = $container->get(Connection::class);
 
         return new GenericDatabase(
             $connection,
