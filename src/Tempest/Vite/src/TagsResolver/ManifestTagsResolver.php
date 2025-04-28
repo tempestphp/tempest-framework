@@ -225,6 +225,7 @@ final readonly class ManifestTagsResolver implements TagsResolver
                     setTimeout(() => loadNext({$assets}, {$this->viteConfig->prefetching->concurrent}))
                 })
             JS,
+            PrefetchStrategy::NONE => '',
         };
 
         return $this->tagCompiler->compilePrefetchTag($script, $chunk);
