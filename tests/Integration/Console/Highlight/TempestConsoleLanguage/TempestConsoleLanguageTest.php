@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Console\Highlight\LogLanguage;
+namespace Tests\Tempest\Integration\Console\Highlight\TempestConsoleLanguage;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Support\Str\Tests;
+namespace Tempest\Support\Tests\Str;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
