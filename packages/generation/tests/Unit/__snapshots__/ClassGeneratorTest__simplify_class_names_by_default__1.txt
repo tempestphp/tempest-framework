@@ -1,0 +1,17 @@
+<?php
+
+namespace App;
+
+use Tempest\Generation\Tests\Unit\Fixtures\Database\FakeCreateTableStatement;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\FakeQueryStatement;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\MigrationModel;
+
+class CreateUsersTable
+{
+    public function up(): FakeQueryStatement
+    {
+        return (new FakeCreateTableStatement(MigrationModel::table()))
+                ->primary()
+                ->text('name');
+    }
+}

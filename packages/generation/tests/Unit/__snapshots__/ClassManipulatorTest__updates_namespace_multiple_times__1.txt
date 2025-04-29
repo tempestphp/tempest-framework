@@ -1,0 +1,26 @@
+<?php
+
+namespace Database;
+
+use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\FakeCreateTableStatement;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\FakeMigration;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\FakeQueryStatement;
+use Tempest\Generation\Tests\Unit\Fixtures\Database\MigrationModel;
+use Tempest\Generation\Tests\Unit\Fixtures\TestAttribute;
+
+#[TestAttribute]
+final readonly class CreateMigrationsTable implements FakeMigration
+{
+    public function getName(): string
+    {
+        return '0000-00-00_create_migrations_table';
+    }
+
+    public function up(): FakeQueryStatement
+    {
+        return new FakeCreateTableStatement(new ModelDefinition(MigrationModel::class)->getTableDefinition()->name)
+            ->primary()
+            ->text('name');
+    }
+}

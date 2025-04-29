@@ -11,5 +11,10 @@
         "psr-4": {
             "Tempest\\Discovery\\": "src"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Discovery\\Tests\\": "tests"
+        }
     }
 }

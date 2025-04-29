@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Console;
 
+use Tempest\CommandBus\Tests\Integration\Fixtures\MyAsyncCommand;
+use Tempest\CommandBus\Tests\Integration\Fixtures\MyFailingAsyncCommand;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
-use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
-use Tests\Tempest\Integration\CommandBus\Fixtures\MyFailingAsyncCommand;
 
 use function Tempest\command;
 

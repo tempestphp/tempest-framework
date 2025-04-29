@@ -8,7 +8,7 @@ use PhpBench\Attributes\BeforeMethods;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
-use Tempest\Router\Tests\FakeRouteBuilder;
+use Tempest\Router\Tests\Unit\FakeRouteBuilder;
 
 final class RouteConfiguratorBench
 {

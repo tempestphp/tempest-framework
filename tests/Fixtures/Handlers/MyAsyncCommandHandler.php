@@ -6,8 +6,8 @@ namespace Tests\Tempest\Fixtures\Handlers;
 
 use Exception;
 use Tempest\CommandBus\CommandHandler;
-use Tests\Tempest\Integration\CommandBus\Fixtures\MyAsyncCommand;
-use Tests\Tempest\Integration\CommandBus\Fixtures\MyFailingAsyncCommand;
+use Tempest\CommandBus\Tests\Integration\Fixtures\MyAsyncCommand;
+use Tempest\CommandBus\Tests\Integration\Fixtures\MyFailingAsyncCommand;
 
 final class MyAsyncCommandHandler
 {

@@ -12,7 +12,7 @@ use PhpBench\Attributes\Warmup;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\RouteConfigurator;
 use Tempest\Router\Routing\Matching\GenericRouteMatcher;
-use Tempest\Router\Tests\FakeRouteBuilder;
+use Tempest\Router\Tests\Unit\FakeRouteBuilder;
 
 final class GenericRouteMatcherBench
 {

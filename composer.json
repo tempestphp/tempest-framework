@@ -161,6 +161,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Tempest\\Auth\\Tests\\": "packages/auth/tests",
             "Tempest\\Cache\\Tests\\": "packages/cache/tests",
             "Tempest\\Clock\\Tests\\": "packages/clock/tests",
             "Tempest\\CommandBus\\Tests\\": "packages/command-bus/tests",
@@ -169,6 +170,8 @@
             "Tempest\\Core\\Tests\\": "packages/core/tests",
             "Tempest\\Database\\Tests\\": "packages/database/tests",
             "Tempest\\DateTime\\Tests\\": "packages/datetime/tests",
+            "Tempest\\Debug\\Tests\\": "packages/debug/tests",
+            "Tempest\\Discovery\\Tests\\": "packages/discovery/tests",
             "Tempest\\EventBus\\Tests\\": "packages/event-bus/tests",
             "Tempest\\Generation\\Tests\\": "packages/generation/tests",
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",

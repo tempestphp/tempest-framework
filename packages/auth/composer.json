@@ -12,6 +12,11 @@
             "Tempest\\Auth\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Auth\\Tests\\": "tests"
+        }
+    },
     "license": "MIT",
     "minimum-stability": "dev"
 }

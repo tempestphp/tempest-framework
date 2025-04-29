@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Controllers;
 
 use Tempest\Auth\Allow;
+use Tempest\Auth\Tests\Integration\Fixtures\CustomAuthorizer;
+use Tempest\Auth\Tests\Integration\Fixtures\UserPermissionUnitEnum;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Ok;
 use Tempest\Router\Get;
-use Tests\Tempest\Integration\Auth\Fixtures\CustomAuthorizer;
-use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 
 final readonly class AdminController
 {

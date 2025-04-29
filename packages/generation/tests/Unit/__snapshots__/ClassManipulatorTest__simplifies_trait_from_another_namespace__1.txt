@@ -1,0 +1,10 @@
+<?php
+
+namespace Tempest\Generation\Tests\Fixtures;
+
+use Tempest\Generation\Tests\Unit\Fixtures\SampleNamespace\ExampleTrait;
+
+final class ClassWithTraitInAnotherNamespace
+{
+    use ExampleTrait;
+}
