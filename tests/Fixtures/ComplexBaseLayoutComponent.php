@@ -14,7 +14,7 @@ final readonly class ComplexBaseLayoutComponent implements ViewComponent
         return 'x-complex-base';
     }
 
-    public function compile(ViewComponentElement $element): string
+    public function compile(ViewComponentElement $_element): string
     {
         return <<<HTML
         <x-slot name="scripts" />

@@ -16,7 +16,7 @@
  * @link https://github.com/ecotoneframework/ecotone-dev/blob/main/bin/get-packages
  */
 
-const PACKAGES_DIRECTORY = __DIR__ . '/../src/Tempest/';
+const PACKAGES_DIRECTORY = __DIR__ . '/../packages/';
 
 function getPackageNameFromComposerFile(string $composerFile)
 {

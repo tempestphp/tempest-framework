@@ -29,7 +29,7 @@ require_once getcwd() . '/vendor/autoload.php';
  */
 function bumpKernelVersion(string $version): void
 {
-    $kernel = __DIR__ . '/../src/Tempest/Core/src/Kernel.php';
+    $kernel = __DIR__ . '/../packages/core/src/Kernel.php';
     $content = preg_replace(
         pattern: '/public const string VERSION = \'.*\';/',
         replacement: "public const string VERSION = '{$version}';",
@@ -44,7 +44,7 @@ function bumpKernelVersion(string $version): void
  */
 function setPhpDependencyVersion(string $package, string $version): void
 {
-    foreach (glob(__DIR__ . '/../src/Tempest/*/composer.json') as $path) {
+    foreach (glob(__DIR__ . '/../packages/*/composer.json') as $path) {
         updateJsonFile(
             path: $path,
             callback: function (array $content) use ($version, $package) {
@@ -68,7 +68,7 @@ function bumpPhpPackages(string $version, bool $isMajor): void
     // Bumps dependencies
     executeCommands("./vendor/bin/monorepo-builder bump-interdependency {$version}");
 
-    // Finds all `composer.json` files in `src/Tempest`, and revert the `tempest/highlight` dependency to the saved version
+    // Finds all `composer.json` files in `packages/`, and revert the `tempest/highlight` dependency to the saved version
     setPhpDependencyVersion(
         package: 'tempest/highlight',
         version: json_decode(file_get_contents(__DIR__ . '/../composer.json'), associative: true)['require']['tempest/highlight'],
@@ -87,7 +87,7 @@ function cleanUpAfterRelease(): void
     // to update back all composer files to use `dev-main` instead of a fixed version.
     executeCommands('./vendor/bin/monorepo-builder bump-interdependency dev-main');
 
-    // Finds all `composer.json` files in `src/Tempest`, and revert the `tempest/highlight` dependency to the saved version
+    // Finds all `composer.json` files in `packages/`, and revert the `tempest/highlight` dependency to the saved version
     setPhpDependencyVersion(
         package: 'tempest/highlight',
         version: json_decode(file_get_contents(__DIR__ . '/../composer.json'), associative: true)['require']['tempest/highlight'],

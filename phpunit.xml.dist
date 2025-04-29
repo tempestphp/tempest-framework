@@ -15,7 +15,7 @@
       <directory suffix="Test.php">tests/Integration</directory>
     </testsuite>
     <testsuite name="Unit">
-      <directory suffix="Test.php">src/Tempest/**/tests</directory>
+      <directory suffix="Test.php">packages/**/tests</directory>
     </testsuite>
   </testsuites>
   <coverage />
