@@ -11,6 +11,7 @@ use Tempest\Router\StaticPage;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\View;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
+
 use function Tempest\view;
 
 final readonly class StaticPageController

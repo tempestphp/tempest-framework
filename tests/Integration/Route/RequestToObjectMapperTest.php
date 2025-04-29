@@ -16,6 +16,7 @@ use Tests\Tempest\Integration\Route\Fixtures\EnumForRequest;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithEnum;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithTypedQueryParam;
+
 use function Tempest\map;
 use function Tempest\Support\arr;
 

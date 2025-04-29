@@ -9,6 +9,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Router\Get;
 use Tempest\Router\Post;
 use Tempest\View\View;
+
 use function Tempest\view;
 
 final readonly class FormController

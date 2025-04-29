@@ -12,6 +12,7 @@ use Tempest\Router\Get;
 use Tempest\Router\Post;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
+
 use function Tempest\map;
 use function Tempest\uri;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Http\Session;
 
 use Tempest\DateTime\DateTimeInterface;
+
 use function Tempest\get;
 
 final class Session

@@ -9,6 +9,7 @@ use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Session\Session;
 use Tempest\View\View;
+
 use function Tempest\get;
 
 /** @phpstan-require-implements \Tempest\Http\Response */

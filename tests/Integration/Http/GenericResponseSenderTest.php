@@ -11,6 +11,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\view;
 
 /**

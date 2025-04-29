@@ -21,6 +21,7 @@ use Tempest\Router\Put;
 use Tempest\Router\Trace;
 use Tempest\View\View;
 use Tests\Tempest\Fixtures\Views\ViewWithResponseData;
+
 use function Tempest\view;
 
 final readonly class TestController

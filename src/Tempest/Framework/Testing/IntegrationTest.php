@@ -20,6 +20,7 @@ use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Storage\Testing\StorageTester;
+
 use function Tempest\Support\Path\normalize;
 
 /** @mago-expect maintainability/too-many-properties */

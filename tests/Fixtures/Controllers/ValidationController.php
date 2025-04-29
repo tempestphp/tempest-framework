@@ -9,6 +9,7 @@ use Tempest\Http\Responses\Ok;
 use Tempest\Http\Responses\Redirect;
 use Tempest\Router\Get;
 use Tempest\Router\Post;
+
 use function Tempest\uri;
 
 final readonly class ValidationController

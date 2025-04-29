@@ -11,6 +11,7 @@ use Tempest\Http\Session\SessionDestroyed;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Throwable;
+
 use function Tempest\event;
 use function Tempest\internal_storage_path;
 

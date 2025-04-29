@@ -9,6 +9,7 @@ use Tempest\Http\Request;
 use Tempest\Http\Response;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
+
 use function Tempest\get;
 
 final class Back implements Response

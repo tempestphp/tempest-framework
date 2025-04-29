@@ -13,6 +13,7 @@ use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Router\GenericRouter;
 use Tempest\Router\Router;
+
 use function Tempest\map;
 
 final class HttpRouterTester

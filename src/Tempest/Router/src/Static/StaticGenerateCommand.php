@@ -24,6 +24,7 @@ use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Throwable;
+
 use function Tempest\Support\path;
 use function Tempest\uri;
 
