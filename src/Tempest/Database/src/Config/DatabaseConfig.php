@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Database\Config;
 
+use Tempest\Container\HasTag;
 use Tempest\Database\Tables\NamingStrategy;
 
-interface DatabaseConfig
+interface DatabaseConfig extends HasTag
 {
     public string $dsn {
         get;
