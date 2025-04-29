@@ -1,5 +1,6 @@
 # Top level directories
 /log/
+/package-lock.json
 
 # Top-level+Sub directories
 .cache/
