@@ -19,7 +19,6 @@ use Tempest\Database\Connection\CachedConnectionInitializer;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
-use Tempest\Framework\Testing\IntegrationTest;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Router\HttpApplication;
 use Tempest\Router\Route;

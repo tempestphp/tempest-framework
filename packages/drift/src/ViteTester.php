@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Testing;
+namespace Tempest\Drift;
 
 use InvalidArgumentException;
 use Tempest\Container\Container;

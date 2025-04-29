@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Testing;
+namespace Tempest\Drift;
 
 use PHPUnit\Framework\Assert;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Tempest\Container\Container;
 use Tempest\Core\Composer;
-use Tempest\Core\ComposerNamespace;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Support\Namespace\Psr4Namespace;

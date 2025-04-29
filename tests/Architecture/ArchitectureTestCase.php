@@ -8,7 +8,7 @@ use Attribute;
 use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
-use Tempest\Framework\Testing\IntegrationTest;
+use Tempest\Drift\IntegrationTest;
 
 final class ArchitectureTestCase
 {

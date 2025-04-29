@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Framework\Testing;
+namespace Tempest\Drift;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
@@ -14,8 +14,8 @@ use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\DateTime\DateTimeInterface;
+use Tempest\Drift\Http\HttpRouterTester;
 use Tempest\EventBus\Testing\EventBusTester;
-use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
