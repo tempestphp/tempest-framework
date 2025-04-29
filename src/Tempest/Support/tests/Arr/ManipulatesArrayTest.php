@@ -1786,4 +1786,9 @@ final class ManipulatesArrayTest extends TestCase
         $this->assertSame($expected, arr($input)->at($index, $default));
         $this->assertSame($expected, arr($input)->nth($index, $default));
     }
+
+    public function test_partition(): void
+    {
+        $this->assertSame([[true, true], [false]], arr([true, true, false])->partition(fn (bool $value) => $value === true)->toArray());
+    }
 }

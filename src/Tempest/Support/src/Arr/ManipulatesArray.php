@@ -725,6 +725,30 @@ trait ManipulatesArray
     }
 
     /**
+     * Returns a pair containing lists for which the given predicate returned `true` and `false`, respectively.
+     *
+     * @param (Closure(TValue): bool) $predicate
+     *
+     * @return static<int, array<array<TValue>, array<TValue>>>
+     */
+    public function partition(Closure $predicate): static
+    {
+        $success = [];
+        $failure = [];
+
+        foreach ($this->value as $value) {
+            if ($predicate($value)) {
+                $success[] = $value;
+                continue;
+            }
+
+            $failure[] = $value;
+        }
+
+        return $this->createOrModify([$success, $failure]);
+    }
+
+    /**
      * Executes callback with the given `$value` and returns the same `$value`.
      *
      * @param (Closure(static): void) $callback

@@ -11,12 +11,11 @@ use Tempest\Auth\Install\CreateUsersTable;
 use Tempest\Auth\Install\User;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
-use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Router\Session\Managers\FileSessionManager;
 use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionManager;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Fixtures\Controllers\AdminController;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -30,8 +29,6 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
 
-    private LocalFilesystem $filesystem;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,9 +41,8 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
         );
 
         $this->path = __DIR__ . '/Fixtures/tmp';
-        $this->filesystem = new LocalFilesystem();
-        $this->filesystem->deleteDirectory($this->path, recursive: true);
-        $this->filesystem->ensureDirectoryExists($this->path);
+
+        Filesystem\ensure_directory_empty($this->path);
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
@@ -62,7 +58,7 @@ final class AuthorizerTest extends FrameworkIntegrationTestCase
 
     protected function tearDown(): void
     {
-        $this->filesystem->deleteDirectory($this->path, recursive: true);
+        Filesystem\delete_directory($this->path);
     }
 
     public function test_authorize(): void

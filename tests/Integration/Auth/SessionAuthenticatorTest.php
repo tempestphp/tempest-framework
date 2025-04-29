@@ -14,11 +14,11 @@ use Tempest\Auth\SessionAuthenticator;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Filesystem\LocalFilesystem;
 use Tempest\Router\Session\Managers\FileSessionManager;
 use Tempest\Router\Session\Session;
 use Tempest\Router\Session\SessionConfig;
 use Tempest\Router\Session\SessionManager;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -28,16 +28,13 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 {
     private string $path = __DIR__ . '/Fixtures/tmp';
 
-    private LocalFilesystem $filesystem;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->path = __DIR__ . '/Fixtures/tmp';
-        $this->filesystem = new LocalFilesystem();
-        $this->filesystem->deleteDirectory($this->path, recursive: true);
-        $this->filesystem->ensureDirectoryExists($this->path);
+
+        Filesystem\ensure_directory_empty($this->path);
 
         $this->container->get(FrameworkKernel::class)->internalStorage = realpath($this->path);
 
@@ -60,7 +57,7 @@ final class SessionAuthenticatorTest extends FrameworkIntegrationTestCase
 
     protected function tearDown(): void
     {
-        $this->filesystem->deleteDirectory($this->path, recursive: true);
+        Filesystem\delete_directory($this->path);
     }
 
     public function test_authenticator(): void

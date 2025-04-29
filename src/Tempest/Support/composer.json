@@ -27,7 +27,8 @@
             "src/Comparison/functions.php",
             "src/Math/constants.php",
             "src/Math/functions.php",
-            "src/Json/functions.php"
+            "src/Json/functions.php",
+            "src/Filesystem/functions.php"
         ]
     },
     "autoload-dev": {
