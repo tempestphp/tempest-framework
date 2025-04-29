@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Cache;
 
-use DateInterval;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\CacheConfig;
 use Tempest\Cache\ProjectCache;
 use Tempest\Clock\MockClock;
+use Tempest\DateTime\Duration;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -19,11 +19,11 @@ final class CacheTest extends FrameworkIntegrationTestCase
     public function test_put(): void
     {
         $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock);
+        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
         $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
-        $interval = new DateInterval('P1D');
+        $interval = Duration::days(1);
 
-        $cache->put('a', 'a', $clock->now()->add($interval));
+        $cache->put('a', 'a', $clock->now()->plus($interval));
         $cache->put('b', 'b');
 
         $item = $pool->getItem('a');
@@ -43,11 +43,11 @@ final class CacheTest extends FrameworkIntegrationTestCase
     public function test_get(): void
     {
         $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock);
+        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
         $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
-        $interval = new DateInterval('P1D');
+        $interval = Duration::days(1);
 
-        $cache->put('a', 'a', $clock->now()->add($interval));
+        $cache->put('a', 'a', $clock->now()->plus($interval));
         $cache->put('b', 'b');
 
         $this->assertSame('a', $cache->get('a'));
@@ -62,15 +62,15 @@ final class CacheTest extends FrameworkIntegrationTestCase
     public function test_resolve(): void
     {
         $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock);
+        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
         $config = new CacheConfig(
             projectCachePool: $pool,
             enable: true,
         );
         $cache = new ProjectCache($config);
-        $interval = new DateInterval('P1D');
+        $interval = Duration::days(1);
 
-        $a = $cache->resolve('a', fn () => 'a', $clock->now()->add($interval));
+        $a = $cache->resolve('a', fn () => 'a', $clock->now()->plus($interval));
         $this->assertSame('a', $a);
 
         $b = $cache->resolve('b', fn () => 'b');

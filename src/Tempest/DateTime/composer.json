@@ -1,0 +1,24 @@
+{
+    "name": "tempest/datetime",
+    "description": "Alternative, more convenient DateTime implementation",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+				"tempest/support": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\DateTime\\": "src"
+        },
+        "files": [
+            "src/functions.php",
+            "src/constants.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\DateTime\\Tests\\": "tests"
+        }
+    }
+}

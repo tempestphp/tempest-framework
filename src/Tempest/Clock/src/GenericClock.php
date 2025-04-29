@@ -4,22 +4,42 @@ declare(strict_types=1);
 
 namespace Tempest\Clock;
 
-use DateTimeImmutable;
+use Psr\Clock\ClockInterface;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
+use Tempest\DateTime\Duration;
+use Tempest\DateTime\Timestamp;
+
+use const Tempest\DateTime\MILLISECONDS_PER_SECOND;
 
 final class GenericClock implements Clock
 {
-    public function now(): DateTimeImmutable
+    public function toPsrClock(): ClockInterface
     {
-        return new DateTimeImmutable('now');
+        return new PsrClock($this);
     }
 
-    public function time(): int
+    public function now(): DateTimeInterface
     {
-        return hrtime(true);
+        return DateTime::now();
     }
 
-    public function sleep(int $seconds): void
+    public function timestamp(): int
     {
-        sleep($seconds);
+        return Timestamp::monotonic()->getSeconds();
+    }
+
+    public function timestampMs(): int
+    {
+        return Timestamp::monotonic()->getMilliseconds();
+    }
+
+    public function sleep(int|Duration $milliseconds): void
+    {
+        if ($milliseconds instanceof Duration) {
+            $milliseconds = (int) $milliseconds->getTotalMilliseconds();
+        }
+
+        usleep($milliseconds * MILLISECONDS_PER_SECOND);
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Cookie;
 
-use DateTimeImmutable;
 use Tempest\Clock\Clock;
+use Tempest\DateTime\DateTimeInterface;
 
 final class CookieManager
 {
@@ -27,11 +27,8 @@ final class CookieManager
         return $this->cookies[$key] ?? null;
     }
 
-    public function set(
-        string $key,
-        string $value,
-        DateTimeImmutable|int|null $expiresAt = null,
-    ): Cookie {
+    public function set(string $key, string $value, DateTimeInterface|int|null $expiresAt = null): Cookie
+    {
         $cookie = $this->get($key) ?? new Cookie(key: $key);
 
         $cookie->value = $value;
@@ -45,7 +42,7 @@ final class CookieManager
     public function add(Cookie $cookie): void
     {
         if ($cookie->expiresAt !== null) {
-            $maxAge = $cookie->getExpiresAtTime() - $this->clock->time();
+            $maxAge = $cookie->getExpiresAtTime() - $this->clock->timestamp();
 
             $cookie->maxAge = max($maxAge, 0);
         }

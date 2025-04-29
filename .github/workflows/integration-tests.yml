@@ -28,7 +28,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup Bun
@@ -71,7 +71,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, intl, ftp, zip
           coverage: pcov
 
       - name: Setup problem matchers

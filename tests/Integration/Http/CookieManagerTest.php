@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
-use Tempest\Clock\Clock;
-use Tempest\Clock\MockClock;
 use Tempest\Router\Cookie\Cookie;
 use Tempest\Router\Cookie\CookieManager;
 use Tempest\Router\Cookie\SameSite;
@@ -51,14 +49,13 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
 
     public function test_manually_adding_a_cookie(): void
     {
-        $clock = new MockClock('2023-01-01 00:00:00');
-        $this->container->singleton(Clock::class, fn () => $clock);
+        $clock = $this->clock('2023-01-01 00:00:00');
         $cookies = $this->container->get(CookieManager::class);
 
         $cookies->add(new Cookie(
             key: 'key',
             value: 'value',
-            expiresAt: $clock->time() + 1,
+            expiresAt: $clock->timestamp() + 1,
             domain: 'test.com',
             path: '/test',
             secure: true,

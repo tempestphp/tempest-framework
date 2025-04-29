@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tempest\Framework\Testing;
 
-use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
@@ -14,6 +13,7 @@ use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Database\Migrations\MigrationManager;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\Method;
