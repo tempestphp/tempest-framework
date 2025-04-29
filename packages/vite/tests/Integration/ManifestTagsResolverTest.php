@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Vite\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Vite\Manifest\Manifest;
 use Tempest\Vite\PrefetchConfig;
 use Tempest\Vite\PrefetchStrategy;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\ManifestTagsResolver;
 use Tempest\Vite\ViteConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

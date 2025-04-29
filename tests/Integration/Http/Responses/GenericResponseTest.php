@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Cookie\Cookie;
 use Tempest\Http\Cookie\CookieManager;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

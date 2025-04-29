@@ -7,6 +7,9 @@
         "tempest/router": "dev-main",
         "tempest/database": "dev-main"
     },
+    "require-dev": {
+        "tempest/drift": "dev-main"
+    },
     "autoload": {
         "psr-4": {
             "Tempest\\Auth\\": "src"

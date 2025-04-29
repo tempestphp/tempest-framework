@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Cache\Tests\Integration;
 
 use Tempest\Cache\ProjectCache;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

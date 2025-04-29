@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Vite\Manifest\Chunk;
 use Tempest\Vite\TagCompiler\GenericTagCompiler;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\ViteConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration;
+namespace Tempest\Drift;
 
 use PHPUnit\Framework\TestCase;
 use Tempest\Container\Container;

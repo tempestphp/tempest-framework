@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Tests\Integration\Mappers;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Mapper\Mappers\JsonToObjectMapper;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectA;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\map;
 

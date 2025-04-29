@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Console\Testing;
 
 use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Console\Fixtures\ComplexCommand;
 use Tests\Tempest\Integration\Console\Fixtures\Hello;
 use Tests\Tempest\Integration\Console\Fixtures\InteractiveCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

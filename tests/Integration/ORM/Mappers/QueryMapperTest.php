@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
-use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
 use Tempest\Database\Id;
-use Tempest\Database\Query;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\query;
 

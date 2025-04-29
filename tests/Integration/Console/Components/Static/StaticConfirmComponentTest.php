@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

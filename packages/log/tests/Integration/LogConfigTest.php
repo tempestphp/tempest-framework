@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Log;
+namespace Tempest\Log\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Log\LogConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\root_path;
 

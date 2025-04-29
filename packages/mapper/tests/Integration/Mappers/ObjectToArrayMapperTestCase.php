@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Tests\Integration\Mappers;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectA;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectWithJsonSerialize;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectWithNullableProperties;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\map;
 

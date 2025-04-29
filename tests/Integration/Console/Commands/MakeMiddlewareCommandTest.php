@@ -7,8 +7,8 @@ namespace Tests\Tempest\Integration\Console\Commands;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Enums\MiddlewareType;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
 

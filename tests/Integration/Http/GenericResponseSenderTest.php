@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Responses\Download;
 use Tempest\Http\Responses\File;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
 

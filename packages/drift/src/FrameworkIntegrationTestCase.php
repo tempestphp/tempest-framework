@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration;
+namespace Tempest\Drift;
 
 use InvalidArgumentException;
 use Tempest\Console\ConsoleApplication;
@@ -41,10 +41,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         // We force forward slashes for consistency even on Windows.
-        $this->root = normalize(realpath(__DIR__ . '/../../'));
+        $this->root = normalize(realpath(__DIR__ . '/../../../'));
         $this->discoveryLocations = [
-            new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', __DIR__ . '/Console/Fixtures'),
-            new DiscoveryLocation('Tests\\Tempest\\Fixtures', __DIR__ . '/../Fixtures'),
+            new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', realpath(__DIR__ . '/../../../tests/Integration/Console/Fixtures')),
+            new DiscoveryLocation('Tests\\Tempest\\Fixtures', realpath(__DIR__ . '/../../../tests/Fixtures')),
         ];
 
         parent::setUp();
@@ -58,10 +58,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         // Database
         $this->container->addInitializer(CachedConnectionInitializer::class);
-        $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
+        $databaseConfigPath = __DIR__ . '/../../../tests/Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
-            copy(__DIR__ . '/../Fixtures/Config/database.sqlite.php', $databaseConfigPath);
+            copy(__DIR__ . '/../../../tests/Fixtures/Config/database.sqlite.php', $databaseConfigPath);
         }
 
         $this->container->config(require $databaseConfigPath);

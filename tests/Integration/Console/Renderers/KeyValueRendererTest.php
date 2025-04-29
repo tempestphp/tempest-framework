@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Renderers;
 
 use Tempest\Console\Components\Renderers\KeyValueRenderer;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

@@ -16,7 +16,7 @@ use Tempest\Database\Migrations\Migration as MigrationModel;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\AlterTableStatement;
 use Tempest\Database\QueryStatements\VarcharStatement;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

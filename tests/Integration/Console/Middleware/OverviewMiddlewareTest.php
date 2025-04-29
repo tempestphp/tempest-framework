@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Console\Middleware;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

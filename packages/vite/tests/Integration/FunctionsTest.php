@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Html\HtmlString;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\vite_tags;
 

@@ -9,8 +9,8 @@ use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Tables\PascalCaseStrategy;
 use Tempest\Database\Tables\PluralizedSnakeCaseStrategy;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Models\MultiWordModel;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

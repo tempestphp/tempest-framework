@@ -8,8 +8,8 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Exceptions\InvalidEnumArgument;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\ConsoleArgumentDefinition;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

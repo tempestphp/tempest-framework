@@ -8,11 +8,11 @@ use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\View\IconConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
 

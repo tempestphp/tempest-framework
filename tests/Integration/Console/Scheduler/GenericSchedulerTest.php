@@ -13,8 +13,8 @@ use Tempest\Console\Scheduler\Every;
 use Tempest\Console\Scheduler\GenericScheduler;
 use Tempest\Console\Scheduler\SchedulerConfig;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Reflection\MethodReflector;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

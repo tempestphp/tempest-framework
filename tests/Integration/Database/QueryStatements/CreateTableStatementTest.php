@@ -14,8 +14,8 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\UnsupportedDialect;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

@@ -10,7 +10,7 @@ use Tempest\Console\Components\Interactive\TaskComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
 use Tempest\Database\Connection\Connection;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

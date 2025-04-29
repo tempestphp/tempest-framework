@@ -2,11 +2,11 @@
 
 namespace Tempest\Mapper\Tests\Integration\Serializers;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializers\ArrayOfObjectsSerializer;
 use Tempest\Mapper\Serializers\EnumSerializer;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectWithSerializerProperties;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class ArrayOfObjectsSerializerTest extends FrameworkIntegrationTestCase
 {

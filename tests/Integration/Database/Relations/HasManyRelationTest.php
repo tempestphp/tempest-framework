@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Database\Relations;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToRelatedModel;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

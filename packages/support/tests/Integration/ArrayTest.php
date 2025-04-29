@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tempest\Support\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Str\ImmutableString;
 use Tempest\Support\Str\MutableString;
 use Tempest\Support\Tests\Integration\Fixtures\TestObject;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\arr;
 

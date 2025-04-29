@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Mapper\Tests\Integration;
 
 use DateTimeImmutable;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tempest\Mapper\Tests\Integration\Fixtures\EnumToCast;
@@ -23,7 +24,6 @@ use Tempest\Mapper\Tests\Integration\Fixtures\Person;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\make;
 use function Tempest\map;

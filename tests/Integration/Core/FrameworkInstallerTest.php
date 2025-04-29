@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

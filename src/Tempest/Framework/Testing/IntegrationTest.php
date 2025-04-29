@@ -54,7 +54,7 @@ abstract class IntegrationTest extends TestCase
         parent::setUp();
 
         // We force forward slashes for consistency even on Windows.
-        $this->root ??= normalize(realpath(__DIR__ . '/../../'));
+        $this->root ??= normalize(realpath(__DIR__ . '/../../../../'));
 
         $this->kernel ??= FrameworkKernel::boot(
             root: $this->root,

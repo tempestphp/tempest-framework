@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Http;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

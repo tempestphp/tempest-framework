@@ -13,10 +13,10 @@ use Tempest\Console\Highlight\TextTerminalTheme;
 use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Console\Input\UnsupportedInputBuffer;
 use Tempest\Console\Output\MemoryOutputBuffer;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Highlight\Highlighter;
 use Tempest\Reflection\MethodReflector;
 use Tests\Tempest\Integration\Console\Fixtures\MyConsole;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

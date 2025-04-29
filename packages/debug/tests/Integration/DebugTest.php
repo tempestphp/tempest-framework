@@ -7,8 +7,8 @@ namespace Tempest\Debug\Tests\Integration;
 use stdClass;
 use Tempest\Debug\Debug;
 use Tempest\Debug\ItemsDebugged;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\EventBus\EventBus;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

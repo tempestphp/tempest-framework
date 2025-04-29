@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Core;
 
 use Tempest\Container\Container;
 use Tempest\Core\Kernel\FinishDeferredTasks;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Controllers\DeferController;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\defer;
 use function Tempest\uri;

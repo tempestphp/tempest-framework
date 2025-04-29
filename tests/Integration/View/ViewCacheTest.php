@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\View;
 
 use Tempest\Cache\CacheConfig;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\path;
 

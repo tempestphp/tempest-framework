@@ -8,9 +8,9 @@ use Exception;
 use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

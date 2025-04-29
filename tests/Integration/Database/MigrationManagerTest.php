@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Migrations\Migration;
 use Tempest\Database\Migrations\MigrationManager;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

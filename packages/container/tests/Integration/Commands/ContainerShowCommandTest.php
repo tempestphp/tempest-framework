@@ -4,7 +4,7 @@ namespace Tempest\Container\Tests\Integration\Commands;
 
 use Tempest\Container\Commands\ContainerShowCommand;
 use Tempest\Container\Container;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
 {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Session\Session;
 use Tests\Tempest\Fixtures\Controllers\ValidationController;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\uri;
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\BladeViewRenderer;
 use Tempest\View\ViewConfig;
 use Tempest\View\ViewRenderer;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
 

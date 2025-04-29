@@ -8,6 +8,7 @@ use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Session\Session;
 use Tempest\Validation\Rules\AlphaNumeric;
 use Tempest\Validation\Rules\Between;
@@ -16,7 +17,6 @@ use Tempest\View\Exceptions\ViewVariableIsReserved;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Views\Chapter;
 use Tests\Tempest\Fixtures\Views\DocsView;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\view;
 

@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Console\ExitCode;
 use Tempest\Core\AppConfig;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Router\Static\StaticGenerateCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Static\Fixtures\StaticPageController;
 
 use function Tempest\root_path;

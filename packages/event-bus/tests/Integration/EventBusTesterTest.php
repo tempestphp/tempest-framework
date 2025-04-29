@@ -6,10 +6,10 @@ namespace Tempest\EventBus\Tests\Integration;
 
 use LogicException;
 use PHPUnit\Framework\ExpectationFailedException;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\EventBus\EventBus;
 use Tempest\EventBus\Testing\FakeEventBus;
 use Tempest\EventBus\Tests\Integration\Fixtures\FakeEvent;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

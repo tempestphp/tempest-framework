@@ -11,13 +11,13 @@ use Tempest\CommandBus\CommandBusConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;
 use Tempest\Database\Config\MysqlConfig;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\EventBus\EventBusConfig;
 use Tempest\Log\LogConfig;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\View\Renderers\BladeConfig;
 use Tempest\View\Renderers\TwigConfig;
 use Tempest\View\ViewConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
 

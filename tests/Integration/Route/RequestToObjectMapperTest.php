@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\UploadedFile;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
 use Tempest\Http\Mappers\RequestToObjectMapper;
@@ -11,7 +12,6 @@ use Tempest\Http\Upload;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\EnumForRequest;
 use Tests\Tempest\Integration\Route\Fixtures\RequestObjectA;
 use Tests\Tempest\Integration\Route\Fixtures\RequestWithEnum;

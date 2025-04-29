@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Console\Actions;
 
 use Tempest\Console\GenericConsole;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Console\Fixtures\ArrayInputCommand;
 use Tests\Tempest\Integration\Console\Fixtures\CommandWithMiddleware;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

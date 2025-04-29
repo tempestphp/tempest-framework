@@ -6,9 +6,9 @@ namespace Tempest\Support\Tests\Integration;
 
 use Closure;
 use PHPUnit\Framework\Attributes\TestWith;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Filesystem;
 use Tempest\Support\JavaScript\DependencyInstaller;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\Filesystem;
 

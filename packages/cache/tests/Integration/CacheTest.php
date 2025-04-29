@@ -9,7 +9,7 @@ use Tempest\Cache\CacheConfig;
 use Tempest\Cache\ProjectCache;
 use Tempest\Clock\MockClock;
 use Tempest\DateTime\Duration;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

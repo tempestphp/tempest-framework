@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tempest\Vite\Tests\Integration;
 
 use InvalidArgumentException;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Vite\Exceptions\DevelopmentServerNotRunningException;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Tempest\Vite\TagsResolver\NullTagsResolver;
 use Tempest\Vite\TagsResolver\TagsResolver;
 use Tempest\Vite\Vite;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

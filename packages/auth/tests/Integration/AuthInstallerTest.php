@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Auth\Tests\Integration;
 
 use Tempest\Core\Commands\InstallCommand;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

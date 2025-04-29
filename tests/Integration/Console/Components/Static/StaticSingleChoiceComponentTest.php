@@ -6,8 +6,8 @@ namespace Tests\Tempest\Integration\Console\Components\Static;
 
 use Tempest\Console\Console;
 use Tempest\Console\Key;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Console\Fixtures\TestStringEnum;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

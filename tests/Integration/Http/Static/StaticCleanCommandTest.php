@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Http\Static;
 
 use Tempest\Core\AppConfig;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Router\Static\StaticCleanCommand;
 use Tempest\Router\Static\StaticGenerateCommand;
-use Tempest\Router\Static\StaticPageConfig;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Http\Static\Fixtures\StaticPageController;
 
 use function Tempest\Support\path;

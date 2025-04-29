@@ -10,8 +10,7 @@ use Laminas\Diactoros\StreamFactory;
 use Laminas\Diactoros\Uri;
 use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
-use Tempest\HttpClient\HttpClient;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 use function Tempest\root_path;
 

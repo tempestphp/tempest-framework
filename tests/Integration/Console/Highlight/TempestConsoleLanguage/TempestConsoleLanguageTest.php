@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Console\Highlight\TempestConsoleLanguage\Injections\FileInjection;
 use Tempest\Console\Highlight\TempestConsoleLanguage\TempestConsoleLanguage;
 use Tempest\Console\Highlight\TempestTerminalTheme;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Highlight\Highlighter;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\root_path;
 

@@ -12,7 +12,7 @@ use Tempest\Auth\Install\User;
 use Tempest\Auth\Tests\Integration\Fixtures\UserPermissionBackedEnum;
 use Tempest\Auth\Tests\Integration\Fixtures\UserPermissionUnitEnum;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

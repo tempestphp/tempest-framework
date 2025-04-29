@@ -9,9 +9,9 @@ use Tempest\Database\DatabaseMigration;
 use Tempest\Database\MigrationDiscovery;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\get;
 

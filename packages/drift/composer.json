@@ -1,0 +1,28 @@
+{
+    "name": "tempest/drift",
+    "description": "Steady test utilities for rough development waters",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/core": "dev-main",
+        "tempest/console": "dev-main",
+        "tempest/container": "dev-main",
+        "tempest/database": "dev-main",
+        "tempest/discovery": "dev-main",
+        "tempest/reflection": "dev-main",
+        "tempest/router": "dev-main",
+        "tempest/support": "dev-main",
+        "tempest/view": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Drift\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Drift\\Tests\\": "tests"
+        }
+    }
+}

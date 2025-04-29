@@ -9,6 +9,7 @@ use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Responses\Ok;
 use Tempest\Http\Status;
 use Tempest\Router\GenericRouter;
@@ -23,7 +24,6 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\uri;
 

@@ -6,11 +6,11 @@ namespace Tempest\Vite\Tests\Integration;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Vite\Exceptions\ManifestEntrypointNotFoundException;
 use Tempest\Vite\Vite;
 use Tempest\Vite\ViteConfig;
 use Tempest\Vite\ViteDiscovery;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

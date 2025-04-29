@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Header;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
 use Tempest\Http\Responses\Back;
 use Tempest\Http\Status;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

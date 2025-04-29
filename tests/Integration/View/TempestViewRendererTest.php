@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Html\HtmlString;
 use Tempest\View\Exceptions\InvalidElement;
 use Tempest\View\ViewCache;
 use Tests\Tempest\Fixtures\Controllers\RelativeViewController;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\uri;
 use function Tempest\view;

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Core\Composer;
 use Tempest\Core\KernelException;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

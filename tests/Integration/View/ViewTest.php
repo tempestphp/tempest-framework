@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Status;
 use Tests\Tempest\Fixtures\Controllers\TestController;
 use Tests\Tempest\Fixtures\Views\ViewModel;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\uri;
 use function Tempest\view;

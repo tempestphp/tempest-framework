@@ -8,9 +8,9 @@ use Symfony\Component\Process\Process;
 use Tempest\CommandBus\AsyncCommandRepositories\MemoryRepository;
 use Tempest\CommandBus\CommandRepository;
 use Tempest\CommandBus\Tests\Integration\Fixtures\MyAsyncCommand;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Highlight\Themes\TerminalStyle;
 use Tests\Tempest\Fixtures\Handlers\MyAsyncCommandHandler;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\command;
 use function Tempest\Support\arr;

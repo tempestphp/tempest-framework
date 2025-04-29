@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Console\Middleware;
 
 use Tempest\Core\AppConfig;
 use Tempest\Core\Environment;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

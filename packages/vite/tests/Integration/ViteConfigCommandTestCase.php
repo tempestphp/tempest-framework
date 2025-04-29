@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tempest\Vite\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Vite\ViteConfig;
 use Tempest\Vite\ViteConfigCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

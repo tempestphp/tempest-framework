@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Tempest\Integration\Log;
+namespace Tempest\Log\Tests\Integration;
 
 use Monolog\Level;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LogLevel as PsrLogLevel;
 use ReflectionClass;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\EventBus\EventBus;
 use Tempest\Log\Channels\AppendLogChannel;
 use Tempest\Log\Channels\DailyLogChannel;
@@ -16,7 +17,6 @@ use Tempest\Log\GenericLogger;
 use Tempest\Log\LogConfig;
 use Tempest\Log\LogLevel;
 use Tempest\Log\MessageLogged;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

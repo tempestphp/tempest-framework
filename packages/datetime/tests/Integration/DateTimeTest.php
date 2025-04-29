@@ -4,7 +4,7 @@ namespace Tempest\DateTime\Tests\Integration;
 
 use Tempest\Clock\Clock;
 use Tempest\DateTime\DateTime;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 use function Tempest\Clock\now;
 

@@ -6,11 +6,11 @@ use DateTime;
 use DateTimeInterface;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Storage\Config\StorageConfig;
 use Tempest\Storage\ForbiddenStorageUsageException;
 use Tempest\Storage\MissingAdapterException;
 use Tempest\Storage\Storage;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 final class StorageTesterTest extends FrameworkIntegrationTestCase
 {

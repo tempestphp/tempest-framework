@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Router\GenericResponseSender;
 use Tempest\Router\ResponseSenderInitializer;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

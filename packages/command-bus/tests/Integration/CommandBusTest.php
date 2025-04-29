@@ -7,10 +7,10 @@ namespace Tempest\CommandBus\Tests\Integration;
 use Tempest\CommandBus\CommandBus;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\CommandBus\CommandHandlerNotFound;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Fixtures\Commands\MyBrokenCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommand;
 use Tests\Tempest\Fixtures\Commands\MyCommandBusMiddleware;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\command;
 

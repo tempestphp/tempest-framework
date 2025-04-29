@@ -6,13 +6,13 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\Session;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionId;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\path;
 

@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\View;
 
 use Tempest\Discovery\DiscoveryItems;
 use Tempest\Discovery\DiscoveryLocation;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\View\Components\Input;
 use Tempest\View\Exceptions\DuplicateViewComponent;
 use Tempest\View\ViewComponentDiscovery;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

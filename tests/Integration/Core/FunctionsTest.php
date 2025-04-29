@@ -7,9 +7,9 @@ namespace Tests\Tempest\Integration\Core;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Core\Composer;
 use Tempest\Core\FrameworkKernel;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\PathCouldNotBeMappedToNamespaceException;
 use Tempest\Support\Namespace\Psr4Namespace;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\internal_storage_path;
 use function Tempest\registered_namespace;

@@ -6,9 +6,9 @@ namespace Tests\Tempest\Integration\Framework\Commands;
 
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Framework\Commands\MigrateFreshCommand;
 use Tempest\Framework\Commands\MigrateValidateCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

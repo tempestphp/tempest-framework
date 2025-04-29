@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Tests\Integration\Mappers;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 use function Tempest\map;
 

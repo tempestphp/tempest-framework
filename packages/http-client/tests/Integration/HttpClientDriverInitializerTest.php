@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Integration;
+namespace Tempest\HttpClient\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\HttpClient\Driver\Psr18Driver;
 use Tempest\HttpClient\HttpClientDriver;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

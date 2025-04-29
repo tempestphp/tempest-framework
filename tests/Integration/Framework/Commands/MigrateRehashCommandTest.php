@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Framework\Commands;
 
-use PHPUnit\Framework\Assert;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Framework\Commands\MigrateFreshCommand;
 use Tempest\Framework\Commands\MigrateRehashCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

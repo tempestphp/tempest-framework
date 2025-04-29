@@ -2,6 +2,7 @@
 
 namespace Tempest\Mapper\Tests\Integration;
 
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Mapper\Serializers\ArrayToJsonSerializer;
 use Tempest\Mapper\Serializers\BooleanSerializer;
@@ -12,7 +13,6 @@ use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tempest\Mapper\Tests\Integration\Fixtures\DoubleStringSerializer;
 use Tempest\Mapper\Tests\Integration\Fixtures\ObjectWithSerializerProperties;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\reflect;
 

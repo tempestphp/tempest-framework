@@ -6,12 +6,12 @@ namespace Tempest\Vite\Tests\Integration;
 
 use Tempest\Core\Composer;
 use Tempest\Core\ComposerNamespace;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Support\Namespace\Psr4Namespace;
 use Tempest\Vite\Exceptions\FileSystemEntrypointNotFoundException;
 use Tempest\Vite\TagCompiler\TagCompiler;
 use Tempest\Vite\TagsResolver\DevelopmentTagsResolver;
 use Tempest\Vite\ViteBridgeFile;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

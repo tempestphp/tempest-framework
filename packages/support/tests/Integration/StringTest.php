@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Support\Tests\Integration;
 
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\str;
 

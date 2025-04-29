@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tempest\Console\Components\Interactive\TextInputComponent;
 use Tempest\Console\Console;
 use Tempest\Console\Terminal\Terminal;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 /**
  * @internal

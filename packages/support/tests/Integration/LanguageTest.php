@@ -6,7 +6,7 @@ namespace Tempest\Support\Tests\Integration;
 
 use Countable;
 use PHPUnit\Framework\Attributes\TestWith;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\Language\pluralize;
 use function Tempest\Support\Language\singularize;

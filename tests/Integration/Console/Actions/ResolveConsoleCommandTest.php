@@ -6,10 +6,10 @@ namespace Tests\Tempest\Integration\Console\Actions;
 
 use Tempest\Console\Actions\ResolveConsoleCommand;
 use Tempest\Console\ConsoleCommand;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Console\Fixtures\ArrayInputCommand;
 use Tests\Tempest\Integration\Console\Fixtures\CommandWithMiddleware;
 use Tests\Tempest\Integration\Console\Fixtures\CommandWithNonCommandMethods;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

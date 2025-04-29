@@ -7,8 +7,8 @@ namespace Tests\Tempest\Integration\Framework\Commands;
 use PHPUnit\Framework\Assert;
 use Tempest\Console\ExitCode;
 use Tempest\Database\Migrations\Migration;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Framework\Commands\MigrateUpCommand;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
  * @internal

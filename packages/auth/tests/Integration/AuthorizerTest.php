@@ -13,12 +13,12 @@ use Tempest\Auth\Tests\Integration\Fixtures\UserPermissionUnitEnum;
 use Tempest\Clock\Clock;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Drift\FrameworkIntegrationTestCase;
 use Tempest\Http\Session\Managers\FileSessionManager;
 use Tempest\Http\Session\SessionConfig;
 use Tempest\Http\Session\SessionManager;
 use Tempest\Support\Filesystem;
 use Tests\Tempest\Fixtures\Controllers\AdminController;
-use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Support\Filesystem;
 use function Tempest\uri;
