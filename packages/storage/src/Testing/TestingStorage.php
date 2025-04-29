@@ -2,9 +2,12 @@
 
 namespace Tempest\Storage\Testing;
 
+use Closure;
 use DateTimeInterface;
+use League\Flysystem\Config;
 use League\Flysystem\UrlGeneration\PublicUrlGenerator;
 use League\Flysystem\UrlGeneration\TemporaryUrlGenerator;
+use PHPUnit\Framework\Assert;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\DirectoryListing;
 use Tempest\Storage\GenericStorage;
@@ -182,5 +185,97 @@ final class TestingStorage implements Storage
             temporaryUrlGenerator: $temporaryUrlGenerator ?? $this->temporaryUrlGenerator,
             publicUrlGenerator: $publicUrlGenerator ?? $this->publicUrlGenerator,
         );
+    }
+
+    public function createTemporaryUrlsUsing(Closure $closure): void
+    {
+        $generator = new class($closure) implements TemporaryUrlGenerator {
+            public function __construct(
+                private readonly Closure $closure,
+            ) {}
+
+            public function temporaryUrl(string $path, DateTimeInterface $expiresAt, Config $config): string
+            {
+                return ($this->closure)($path, $expiresAt);
+            }
+        };
+
+        $this->setTemporaryUrlGenerator($generator);
+    }
+
+    public function createPublicUrlsUsing(Closure $closure): void
+    {
+        $generator = new class($closure) implements PublicUrlGenerator {
+            public function __construct(
+                private readonly Closure $closure,
+            ) {}
+
+            public function publicUrl(string $path, Config $config): string
+            {
+                return ($this->closure)($path);
+            }
+        };
+
+        $this->setPublicUrlGenerator($generator);
+    }
+
+    public function assertFileExists(string $path): void
+    {
+        Assert::assertTrue($this->fileExists($path), sprintf('File `%s` does not exist.', $path));
+    }
+
+    public function assertChecksumEquals(string $path, string $checksum): void
+    {
+        $this->assertFileExists($path);
+        Assert::assertEquals($checksum, $this->checksum($path), sprintf('File `%s` checksum does not match `%s`.', $path, $checksum));
+    }
+
+    public function assertSee(string $path, string $contents): void
+    {
+        $this->assertFileExists($path);
+        Assert::assertStringContainsString($contents, $this->read($path), sprintf('File `%s` does not contain `%s`.', $path, $contents));
+    }
+
+    public function assertDontSee(string $path, string $contents): void
+    {
+        $this->assertFileExists($path);
+        Assert::assertStringNotContainsString($contents, $this->read($path), sprintf('File `%s` contains `%s`.', $path, $contents));
+    }
+
+    public function assertFileDoesNotExist(string $path): void
+    {
+        Assert::assertFalse($this->fileExists($path), sprintf('File `%s` exists.', $path));
+    }
+
+    public function assertDirectoryExists(string $path): void
+    {
+        Assert::assertTrue($this->directoryExists($path), sprintf('Directory `%s` does not exist.', $path));
+    }
+
+    public function assertDirectoryEmpty(string $path = ''): void
+    {
+        $this->assertDirectoryExists($path);
+        Assert::assertEmpty($this->list($path)->toArray(), sprintf('Directory `%s` is not empty.', $path));
+    }
+
+    public function assertDirectoryNotEmpty(string $path): void
+    {
+        $this->assertDirectoryExists($path);
+        Assert::assertNotEmpty($this->list($path)->toArray(), sprintf('Directory `%s` is empty.', $path));
+    }
+
+    public function assertDirectoryDoesNotExist(string $path): void
+    {
+        Assert::assertFalse($this->directoryExists($path), sprintf('Directory `%s` exists.', $path));
+    }
+
+    public function assertFileOrDirectoryExists(string $path): void
+    {
+        Assert::assertTrue($this->fileOrDirectoryExists($path), sprintf('File or directory `%s` does not exist.', $path));
+    }
+
+    public function assertFileOrDirectoryDoesNotExist(string $path): void
+    {
+        Assert::assertFalse($this->fileOrDirectoryExists($path), sprintf('File or directory `%s` exists.', $path));
     }
 }

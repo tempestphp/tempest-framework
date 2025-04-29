@@ -16,6 +16,7 @@ use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\TypeReflector;
+use Tempest\Support\Arr;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -40,6 +41,13 @@ final class GenericContainer implements Container
     public function setDefinitions(array $definitions): self
     {
         $this->definitions = new ArrayIterator($definitions);
+
+        return $this;
+    }
+
+    public function setSingletons(array $singletons): self
+    {
+        $this->singletons = new ArrayIterator($singletons);
 
         return $this;
     }
@@ -85,9 +93,18 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function unregister(string $className): self
+    public function unregister(string $className, bool $tagged = false): self
     {
         unset($this->definitions[$className], $this->singletons[$className]);
+
+        if ($tagged) {
+            $singletons = Arr\filter(
+                array: $this->getSingletons(),
+                filter: static fn (mixed $_, string $key) => ! str_starts_with($key, "{$className}#"),
+            );
+
+            $this->setSingletons($singletons);
+        }
 
         return $this;
     }
@@ -237,6 +254,28 @@ final class GenericContainer implements Container
         foreach ($returnType->split() as $type) {
             $this->initializers[$this->resolveTaggedName($type->getName(), $singleton?->tag)] = $initializerClass->getName();
         }
+
+        return $this;
+    }
+
+    public function removeInitializer(ClassReflector|string $initializerClass): Container
+    {
+        if (! ($initializerClass instanceof ClassReflector)) {
+            $initializerClass = new ClassReflector($initializerClass);
+        }
+
+        if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
+            $index = array_find_key(
+                array: $this->dynamicInitializers->getArrayCopy(),
+                callback: static fn (string $className) => $className === $initializerClass->getName(),
+            );
+
+            unset($this->dynamicInitializers[$index]);
+
+            return $this;
+        }
+
+        unset($this->initializers[$initializerClass->getName()]);
 
         return $this;
     }

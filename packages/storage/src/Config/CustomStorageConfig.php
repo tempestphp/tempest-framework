@@ -3,6 +3,7 @@
 namespace Tempest\Storage\Config;
 
 use League\Flysystem\FilesystemAdapter;
+use UnitEnum;
 
 use function Tempest\get;
 
@@ -20,6 +21,11 @@ final class CustomStorageConfig implements StorageConfig
          * Whether the storage is read-only.
          */
         public bool $readonly = false,
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

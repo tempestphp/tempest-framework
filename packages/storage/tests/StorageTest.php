@@ -4,10 +4,9 @@ namespace Tempest\Storage\Tests;
 
 use League\Flysystem\UnableToWriteFile;
 use PHPUnit\Framework\TestCase;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Tempest\Storage\Config\LocalStorageConfig;
 use Tempest\Storage\GenericStorage;
+use Tempest\Support\Filesystem;
 
 final class StorageTest extends TestCase
 {
@@ -17,18 +16,7 @@ final class StorageTest extends TestCase
     {
         parent::tearDown();
 
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->fixtures, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST,
-        );
-
-        foreach ($files as $file) {
-            $file->isDir()
-                ? @rmdir($file->getRealPath())
-                : @unlink($file->getRealPath());
-        }
-
-        @rmdir($this->fixtures);
+        Filesystem\delete_directory($this->fixtures);
     }
 
     public function test_storage_write(): void
