@@ -191,7 +191,7 @@
         }
     },
     "scripts": {
-        "phpunit": "vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
+        "phpunit": "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
         "mago:fmt": "vendor/bin/mago fmt && vendor/bin/mago lint --fix --potentially-unsafe --fmt",
         "mago:lint": "vendor/bin/mago lint --minimum-level=note",
