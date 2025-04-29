@@ -17,6 +17,7 @@ tempest.log
 public/static
 tests/Unit/Log
 log/
+!packages/log
 node_modules
 dist
 profile/
