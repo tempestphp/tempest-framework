@@ -14,7 +14,7 @@ final readonly class BaseLayoutComponent implements ViewComponent
         return 'x-base-layout';
     }
 
-    public function compile(ViewComponentElement $_element): string
+    public function compile(ViewComponentElement $element): string
     {
         return <<<HTML
         <div class="base">

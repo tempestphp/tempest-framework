@@ -16,7 +16,7 @@ final readonly class MyViewComponentWithInjection implements ViewComponent
 
     public function __construct() {}
 
-    public function compile(ViewComponentElement $_element): string
+    public function compile(ViewComponentElement $element): string
     {
         return 'hi';
     }

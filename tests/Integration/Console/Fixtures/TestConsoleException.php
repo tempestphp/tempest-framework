@@ -9,7 +9,7 @@ use Tempest\Console\Exceptions\ConsoleException;
 
 final class TestConsoleException extends ConsoleException
 {
-    public function render(Console $_console): void
+    public function render(Console $console): void
     {
     }
 }
