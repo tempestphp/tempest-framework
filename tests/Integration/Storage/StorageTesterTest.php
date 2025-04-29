@@ -213,4 +213,16 @@ final class StorageTesterTest extends FrameworkIntegrationTestCase
         $storage = $this->container->get(Storage::class);
         $storage->write('bar.txt', 'baz');
     }
+
+    public function test_persistent_fake(): void
+    {
+        $storage = $this->storage->fake();
+        $storage->write('test.txt', '');
+
+        $storage = $this->storage->fake(persist: true);
+        $this->assertTrue($storage->fileExists('test.txt'));
+
+        $storage = $this->storage->fake(persist: true);
+        $this->assertTrue($storage->fileExists('test.txt'));
+    }
 }

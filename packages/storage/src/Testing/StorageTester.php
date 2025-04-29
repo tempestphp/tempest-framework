@@ -18,9 +18,9 @@ final readonly class StorageTester
     ) {}
 
     /**
-     * Forces the usage of a testing storage.
+     * Forces the usage of a testing storage. When setting `$persist` to `true`, the disk is not erased.
      */
-    public function fake(null|string|UnitEnum $tag = null): TestingStorage
+    public function fake(null|string|UnitEnum $tag = null, bool $persist = false): TestingStorage
     {
         $storage = new TestingStorage(match (true) {
             is_string($tag) => to_kebab_case($tag),
@@ -30,7 +30,9 @@ final readonly class StorageTester
 
         $this->container->singleton(Storage::class, $storage, $tag);
 
-        return $storage->cleanDirectory();
+        return $persist
+            ? $storage->createDirectory()
+            : $storage->cleanDirectory();
     }
 
     /**
