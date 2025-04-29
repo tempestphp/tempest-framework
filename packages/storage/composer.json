@@ -5,7 +5,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "league/flysystem": "^3.29.1"
+        "league/flysystem": "^3.29.1",
+        "tempest/container": "dev-main"
     },
     "require-dev": {
         "league/flysystem-aws-s3-v3": "^3.0",
