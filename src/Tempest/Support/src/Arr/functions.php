@@ -7,6 +7,7 @@ namespace Tempest\Support\Arr {
     use Countable;
     use Generator;
     use InvalidArgumentException;
+    use LogicException;
     use Random\Randomizer;
     use Tempest\Support\Str\ImmutableString;
     use Traversable;
@@ -1143,6 +1144,88 @@ namespace Tempest\Support\Arr {
         $length ??= count($array) - $offset;
 
         return array_slice($array, $offset, $length);
+    }
+
+    /**
+     * Returns a new list containing the range of numbers from `$start` to `$end`
+     * inclusive, with the step between elements being `$step` if provided, or 1 by
+     * default.
+     *
+     * If `$start > $end`, it returns a descending range instead of an empty one.
+     *
+     * Examples:
+     *
+     *     range(0, 5)
+     *     => array(0, 1, 2, 3, 4, 5)
+     *
+     *     range(5, 0)
+     *     => array(5, 4, 3, 2, 1, 0)
+     *
+     *     range(0.0, 3.0, 0.5)
+     *     => array(0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0)
+     *
+     *     range(3.0, 0.0, -0.5)
+     *     => array(3.0, 2.5, 2.0, 1.5, 1.0, 0.5, 0.0)
+     *
+     * @template T of int|float
+     *
+     * @param T $start
+     * @param T $end
+     * @param T|null $step
+     *
+     * @throws LogicException If $start < $end, and $step is negative.
+     *
+     * @return non-empty-list<T>
+     */
+    function range(int|float $start, int|float $end, int|float|null $step = null): array
+    {
+        if (((float) $start) === ((float) $end)) {
+            return [$start];
+        }
+
+        if ($start < $end) {
+            if (null === $step) {
+                /** @var T $step */
+                $step = 1;
+            }
+
+            if ($step < 0) {
+                throw new LogicException('If $end is greater than $start, then $step must be positive or null.');
+            }
+
+            $result = [];
+
+            /**
+             * @var int|float $start
+             * @var int|float $step
+             */
+            for ($i = $start; $i <= $end; $i += $step) {
+                $result[] = $i;
+            }
+
+            return $result;
+        }
+
+        if (null === $step) {
+            /** @var T $step */
+            $step = -1;
+        }
+
+        if ($step > 0) {
+            throw new LogicException('If $start is greater than $end, then $step must be negative or null.');
+        }
+
+        $result = [];
+
+        /**
+         * @var int|float $start
+         * @var int|float $step
+         */
+        for ($i = $start; $i >= $end; $i += $step) {
+            $result[] = $i;
+        }
+
+        return $result;
     }
 
     /**

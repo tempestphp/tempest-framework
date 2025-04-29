@@ -8,7 +8,8 @@
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",
-        "tempest/cache": "dev-main"
+        "tempest/cache": "dev-main",
+        "tempest/clock": "dev-main"
     },
     "autoload": {
         "files": [

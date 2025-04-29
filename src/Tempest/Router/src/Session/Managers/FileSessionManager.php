@@ -61,9 +61,9 @@ final readonly class FileSessionManager implements SessionManager
             return false;
         }
 
-        $validUntil = $session->createdAt->getTimestamp() + $this->sessionConfig->expirationInSeconds;
-
-        return ($validUntil - $this->clock->time()) > 0;
+        return $this->clock->now()->before(
+            other: $session->createdAt->plusSeconds($this->sessionConfig->expirationInSeconds),
+        );
     }
 
     private function getPath(SessionId $id): string

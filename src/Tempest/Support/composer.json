@@ -16,6 +16,7 @@
         "files": [
             "src/functions.php",
             "src/Str/functions.php",
+            "src/Str/constants.php",
             "src/Arr/functions.php",
             "src/Html/functions.php",
             "src/Random/functions.php",
@@ -23,6 +24,10 @@
             "src/Namespace/functions.php",
             "src/Language/functions.php",
             "src/Path/functions.php",
+            "src/Comparison/functions.php",
+            "src/Math/constants.php",
+            "src/Math/functions.php",
+            "src/Json/functions.php",
             "src/Filesystem/functions.php"
         ]
     },

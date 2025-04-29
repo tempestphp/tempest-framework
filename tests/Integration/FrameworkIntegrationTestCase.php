@@ -16,6 +16,7 @@ use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
 use Tempest\Database\Connection\CachedConnectionInitializer;
+use Tempest\Database\Connection\Connection;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -66,6 +67,11 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->container->config(require $databaseConfigPath);
 
         $this->rollbackDatabase();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->container->get(Connection::class)->close();
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application

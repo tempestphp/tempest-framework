@@ -310,6 +310,22 @@ trait ManipulatesString
     }
 
     /**
+     * Replaces all occurrences of the keys of `$replacements` with the corresponding values.
+     *
+     * @param array<string,Stringable|string> $replacements
+     */
+    public function replaceEvery(array $replacements): static
+    {
+        $haystack = $this->value;
+
+        foreach ($replacements as $needle => $replacement) {
+            $haystack = namespace\replace($this->value, $needle, (string) $replacement);
+        }
+
+        return $this->createOrModify($haystack);
+    }
+
+    /**
      * Strips the specified `$prefix` from the start of the string.
      */
     public function stripStart(array|Stringable|string $prefix): static
@@ -522,6 +538,62 @@ trait ManipulatesString
     public function insertAt(int $position, string $string): static
     {
         return $this->createOrModify(insert_at($this->value, $position, $string));
+    }
+
+    /**
+     * Returns the string padded to the total length by appending the `$pad_string` to the left.
+     *
+     * If the length of the input string plus the pad string exceeds the total
+     * length, the pad string will be truncated. If the total length is less than or
+     * equal to the length of the input string, no padding will occur.
+     *
+     * Example:
+     *      pad_left('Ay', 4)
+     *      => '  Ay'
+     *
+     *      pad_left('ay', 3, 'A')
+     *      => 'Aay'
+     *
+     *      pad_left('eet', 4, 'Yeeeee')
+     *      => 'Yeet'
+     *
+     *      pad_left('مرحبا', 8, 'م')
+     *      => 'ممممرحبا'
+     *
+     * @param non-empty-string $padString
+     * @param int<0, max> $totalLength
+     */
+    public function padLeft(int $totalLength, string $padString = ' '): static
+    {
+        return $this->createOrModify(namespace\pad_left($this->value, $totalLength, $padString));
+    }
+
+    /**
+     * Returns the string padded to the total length by appending the `$pad_string` to the right.
+     *
+     * If the length of the input string plus the pad string exceeds the total
+     * length, the pad string will be truncated. If the total length is less than or
+     * equal to the length of the input string, no padding will occur.
+     *
+     * Example:
+     *      pad_right('Ay', 4)
+     *      => 'Ay  '
+     *
+     *      pad_right('Ay', 5, 'y')
+     *      => 'Ayyyy'
+     *
+     *      pad_right('Yee', 4, 't')
+     *      => 'Yeet'
+     *
+     *      pad_right('مرحبا', 8, 'ا')
+     *      => 'مرحباااا'
+     *
+     * @param non-empty-string $padString
+     * @param int<0, max> $totalLength
+     */
+    public function padRight(int $totalLength, string $padString = ' '): static
+    {
+        return $this->createOrModify(namespace\pad_right($this->value, $totalLength, $padString));
     }
 
     /**

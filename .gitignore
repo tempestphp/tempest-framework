@@ -17,3 +17,6 @@ log/
 node_modules
 dist
 profile/
+db-main.sqlite
+db-tenant-1.sqlite
+db-tenant-2.sqlite

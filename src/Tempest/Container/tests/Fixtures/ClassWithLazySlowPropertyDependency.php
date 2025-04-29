@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Tempest\Container\Tests\Fixtures;
 
 use Tempest\Container\Inject;
-use Tempest\Container\Lazy;
+use Tempest\Container\Proxy;
 
 final class ClassWithLazySlowPropertyDependency
 {
     #[Inject]
-    #[Lazy]
+    #[Proxy]
     private(set) SlowDependency $dependency;
 
     public function __construct() {}

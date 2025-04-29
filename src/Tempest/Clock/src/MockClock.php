@@ -4,56 +4,90 @@ declare(strict_types=1);
 
 namespace Tempest\Clock;
 
-use DateInterval;
 use DateTimeImmutable;
-use DateTimeInterface;
+use Psr\Clock\ClockInterface;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
+use Tempest\DateTime\Duration;
+use Tempest\DateTime\Timestamp;
 
-// TODO(#985): Add lots of helper methods (addDay, addWeek, addYear, etc.)
 final class MockClock implements Clock
 {
-    private DateTimeImmutable $now;
+    private DateTimeInterface $now;
 
-    public function __construct(DateTimeInterface|string $now = 'now')
+    public function __construct(DateTimeImmutable|DateTimeInterface|string $now = 'now')
     {
-        $this->now = ($now instanceof DateTimeInterface)
-            ? DateTimeImmutable::createFromInterface($now)
-            : new DateTimeImmutable($now);
+        if ($now instanceof DateTimeImmutable) {
+            $this->now = DateTime::fromTimestamp(
+                Timestamp::fromParts($now->getTimestamp()),
+            );
+        } else {
+            $this->now = DateTime::parse($now);
+        }
     }
 
-    public function now(): DateTimeImmutable
+    public function toPsrClock(): ClockInterface
+    {
+        return new PsrClock($this);
+    }
+
+    public function now(): DateTimeInterface
     {
         return $this->now;
     }
 
-    public function time(): int
+    public function setNow(DateTimeInterface|string $now): void
     {
-        return $this->now->getTimestamp();
+        if ($now instanceof DateTimeInterface) {
+            $this->now = $now;
+        } else {
+            $this->now = DateTime::parse($now);
+        }
     }
 
-    public function sleep(int $seconds): void
+    public function timestamp(): int
     {
-        $this->now = $this->now->add(
-            new DateInterval("PT{$seconds}S"),
-        );
+        return $this->now->getTimestamp()->getSeconds();
     }
 
-    public function addInterval(DateInterval $interval): void
+    public function timestampMs(): int
     {
-        $this->now = $this->now->add($interval);
+        return $this->now->getTimestamp()->getMilliseconds();
     }
 
-    public function subInternal(DateInterval $interval): void
+    public function sleep(int|Duration $milliseconds): void
     {
-        $this->now = $this->now->sub($interval);
+        if ($milliseconds instanceof Duration) {
+            $this->addInterval($milliseconds);
+            return;
+        }
+
+        $this->now = $this->now->plusMilliseconds($milliseconds);
+    }
+
+    public function addInterval(Duration $duration): void
+    {
+        $this->now = $this->now->plus($duration);
+    }
+
+    public function subInternal(Duration $duration): void
+    {
+        $this->now = $this->now->minus($duration);
     }
 
     public function changeTime(int $seconds): void
     {
         if ($seconds < 0) {
             $seconds = abs($seconds);
-            $this->now = $this->now->sub(new DateInterval("PT{$seconds}S"));
+            $this->now = $this->now->minusSeconds($seconds);
         } else {
-            $this->now = $this->now->add(new DateInterval("PT{$seconds}S"));
+            $this->now = $this->now->plusSeconds($seconds);
         }
+    }
+
+    public function dd(): void
+    {
+        // @phpstan-ignore disallowed.function
+        dd($this->now); // @mago-expect best-practices/no-debug-symbols
     }
 }

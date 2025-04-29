@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router\Session;
 
-use DateTimeImmutable;
+use Tempest\DateTime\DateTimeInterface;
 
 use function Tempest\get;
 
@@ -22,7 +22,7 @@ final class Session
 
     public function __construct(
         public SessionId $id,
-        public DateTimeImmutable $createdAt,
+        public DateTimeInterface $createdAt,
         /** @var array<array-key, mixed> */
         public array $data = [],
     ) {}

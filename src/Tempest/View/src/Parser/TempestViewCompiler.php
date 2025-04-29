@@ -9,8 +9,10 @@ use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Mapper\Exceptions\ViewNotFound;
 use Tempest\View\Attribute;
 use Tempest\View\Attributes\AttributeFactory;
+use Tempest\View\Components\DynamicViewComponent;
 use Tempest\View\Element;
 use Tempest\View\Elements\ElementFactory;
+use Tempest\View\Elements\ViewComponentElement;
 use Tempest\View\View;
 
 use function Tempest\Support\arr;
@@ -130,13 +132,20 @@ final readonly class TempestViewCompiler
         $previous = null;
 
         foreach ($elements as $element) {
-            $children = $this->applyAttributes($element->getChildren());
+            $isDynamicViewComponent = $element instanceof ViewComponentElement && $element->getViewComponent() instanceof DynamicViewComponent;
 
-            $element
-                ->setPrevious($previous)
-                ->setChildren($children);
+            if (! $isDynamicViewComponent) {
+                $children = $this->applyAttributes($element->getChildren());
+                $element->setChildren($children);
+            }
+
+            $element->setPrevious($previous);
 
             foreach ($element->getAttributes() as $name => $value) {
+                if ($isDynamicViewComponent && $name !== ':is' && $name !== 'is') {
+                    continue;
+                }
+
                 // TODO: possibly refactor attribute construction to ElementFactory?
                 if ($value instanceof Attribute) {
                     $attribute = $value;

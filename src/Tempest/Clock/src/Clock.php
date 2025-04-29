@@ -4,14 +4,34 @@ declare(strict_types=1);
 
 namespace Tempest\Clock;
 
-use DateTimeImmutable;
 use Psr\Clock\ClockInterface;
+use Tempest\DateTime\DateTimeInterface;
+use Tempest\DateTime\Duration;
 
-interface Clock extends ClockInterface
+interface Clock
 {
-    public function now(): DateTimeImmutable;
+    /**
+     * Returns the current date and time.
+     */
+    public function now(): DateTimeInterface;
 
-    public function time(): int;
+    /**
+     * Returns the same instance as a PSR-7 Clock Interface.
+     */
+    public function toPsrClock(): ClockInterface;
 
-    public function sleep(int $seconds): void;
+    /**
+     * Returns the current timestamp in seconds.
+     */
+    public function timestamp(): int;
+
+    /**
+     * Returns the current timestamp in milliseconds.
+     */
+    public function timestampMs(): int;
+
+    /**
+     * Sleeps for the given number of milliseconds.
+     */
+    public function sleep(int|Duration $milliseconds): void;
 }

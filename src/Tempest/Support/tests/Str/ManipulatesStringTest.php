@@ -490,6 +490,14 @@ b'));
         $this->assertSame('abc', str('abc')->replaceAt(3, 1, '')->toString());
     }
 
+    #[TestWith(['Hello, you!', 'Hello, you!', ['You' => 'World']])]
+    #[TestWith(['Hello, World!', 'Hello, You!', ['You' => 'World']])]
+    #[TestWith(['Foo', 'Foo', ['bar' => 'baz']])]
+    public function test_replace_every(string $expected, string $haystack, iterable $replacements): void
+    {
+        $this->assertSame($expected, str($haystack)->replaceEvery($replacements)->toString());
+    }
+
     public function test_strip_tags(): void
     {
         $this->assertSame('Hello World', str('<p>Hello World</p>')->stripTags()->toString());
@@ -676,5 +684,23 @@ b'));
     public function test_strip_end(string $input, string|array $strip, string $output): void
     {
         $this->assertEquals($output, str($input)->stripEnd($strip)->toString());
+    }
+
+    #[TestWith(['aaay ', 'aaay', 5])]
+    #[TestWith(['aaayy', 'aaay', 5, 'y'])]
+    #[TestWith(['Yeet', 'Yee', 4, 't'])]
+    #[TestWith(['مرحباااا', 'مرحبا', 8, 'ا'])]
+    public function test_pad_right(string $expected, string $str, int $totalLength, string $padString = ' '): void
+    {
+        $this->assertSame($expected, str($str)->padRight($totalLength, $padString)->toString());
+    }
+
+    #[TestWith([' aaay', 'aaay', 5])]
+    #[TestWith(['Aaaay', 'aaay', 5, 'A'])]
+    #[TestWith(['Yeet', 'eet', 4, 'Yeeeee'])]
+    #[TestWith(['ممممرحبا', 'مرحبا', 8, 'م'])]
+    public function test_pad_left(string $expected, string $str, int $totalLength, string $padString = ' '): void
+    {
+        $this->assertSame($expected, str($str)->padLeft($totalLength, $padString)->toString());
     }
 }

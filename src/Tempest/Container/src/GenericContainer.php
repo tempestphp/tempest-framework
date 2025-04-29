@@ -99,6 +99,10 @@ final class GenericContainer implements Container
 
     public function singleton(string $className, mixed $definition, ?string $tag = null): self
     {
+        if ($definition instanceof HasTag) {
+            $tag = $definition->tag;
+        }
+
         $className = $this->resolveTaggedName($className, $tag);
 
         $this->singletons[$className] = $definition;
@@ -270,7 +274,7 @@ final class GenericContainer implements Container
 
             $object = match (true) {
                 $initializer instanceof Initializer => $initializer->initialize($this->clone()),
-                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $this->clone()),
+                $initializer instanceof DynamicInitializer => $initializer->initialize($class, $tag, $this->clone()),
             };
 
             $singleton = $initializerClass->getAttribute(Singleton::class) ?? $initializerClass->getMethod('initialize')->getAttribute(Singleton::class);
@@ -318,7 +322,7 @@ final class GenericContainer implements Container
             /** @var DynamicInitializer $initializer */
             $initializer = $this->resolve($initializerClass);
 
-            if (! $initializer->canInitialize($target)) {
+            if (! $initializer->canInitialize(class: $target, tag: $tag)) {
                 continue;
             }
 
@@ -358,7 +362,7 @@ final class GenericContainer implements Container
 
         foreach ($classReflector->getProperties() as $property) {
             if ($property->hasAttribute(Inject::class) && ! $property->isInitialized($instance)) {
-                if ($property->hasAttribute(Lazy::class)) {
+                if ($property->hasAttribute(Proxy::class)) {
                     $property->set($instance, $property->getType()->asClass()->getReflection()->newLazyProxy(
                         fn () => $this->get($property->getType()->getName()),
                     ));
@@ -404,7 +408,7 @@ final class GenericContainer implements Container
         }
 
         // Support lazy initialization
-        $lazy = $parameter->hasAttribute(Lazy::class);
+        $lazy = $parameter->hasAttribute(Proxy::class);
         // Loop through each type until we hit a match.
         foreach ($parameter->getType()->split() as $type) {
             try {
