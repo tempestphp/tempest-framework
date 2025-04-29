@@ -23,12 +23,6 @@ jobs:
           composer update --prefer-dist --no-interaction
           composer mago:install-binary
 
-      - name: Check Files
-        run: |
-          cat composer.json
-          ls -l packages/
-          ls -l packages/log
-
       - name: Run Mago 
         run: |
           ./vendor/bin/mago fmt --dry-run
