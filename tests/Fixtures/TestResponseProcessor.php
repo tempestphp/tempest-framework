@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Fixtures;
 
-use Tempest\Router\Request;
-use Tempest\Router\Response;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 use Tempest\Router\ResponseProcessor;
 
 // Tests that response processors are discovered

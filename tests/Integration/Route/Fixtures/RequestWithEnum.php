@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Integration\Route\Fixtures;
 
-use Tempest\Router\IsRequest;
-use Tempest\Router\Request;
+use Tempest\Http\IsRequest;
+use Tempest\Http\Request;
 
 class RequestWithEnum implements Request
 {

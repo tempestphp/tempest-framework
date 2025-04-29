@@ -2,7 +2,7 @@
 
 namespace Tests\Tempest\Integration\Route;
 
-use Tempest\Router\Response;
+use Tempest\Http\Response;
 use Tempest\Router\ResponseProcessor;
 
 final readonly class TestProcessedResponseProcessor implements ResponseProcessor

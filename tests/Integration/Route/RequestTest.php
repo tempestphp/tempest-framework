@@ -7,17 +7,16 @@ namespace Tests\Tempest\Integration\Route;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
+use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
-use Tempest\Router\GenericRequest;
-use Tempest\Router\RequestFactory;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Route\Fixtures\MemoryInputStream;
-
 use function Tempest\uri;
 
 /**

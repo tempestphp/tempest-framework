@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Static\Fixtures;
 
+use Tempest\Http\Response;
+use Tempest\Http\Responses\ServerError;
 use Tempest\Router\Get;
-use Tempest\Router\Response;
-use Tempest\Router\Responses\ServerError;
 use Tempest\Router\StaticPage;
 use Tempest\View\Exceptions\ViewCompilationError;
 use Tempest\View\View;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
-
 use function Tempest\view;
 
 final readonly class StaticPageController

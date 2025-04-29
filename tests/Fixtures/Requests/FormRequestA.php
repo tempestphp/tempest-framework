@@ -2,8 +2,8 @@
 
 namespace Tests\Tempest\Fixtures\Requests;
 
-use Tempest\Router\IsRequest;
-use Tempest\Router\Request;
+use Tempest\Http\IsRequest;
+use Tempest\Http\Request;
 
 final class FormRequestA implements Request
 {

@@ -7,14 +7,13 @@ namespace Tempest\Framework\Testing\Http;
 use Closure;
 use Generator;
 use PHPUnit\Framework\Assert;
+use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Response;
+use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use Tempest\Router\Cookie\CookieManager;
-use Tempest\Router\Response;
-use Tempest\Router\Session\Session;
 use Tempest\Validation\Rule;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
-
 use function Tempest\get;
 use function Tempest\Support\arr;
 
@@ -28,7 +27,7 @@ final class TestResponseHelper
         get => $this->response->status;
     }
 
-    /** @var \Tempest\Router\Header[] */
+    /** @var \Tempest\Http\Header[] */
     public array $headers {
         get => $this->response->headers;
     }

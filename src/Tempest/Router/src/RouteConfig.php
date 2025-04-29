@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Tempest\Core\Middleware;
-use Tempest\Router\Cookie\SetCookieMiddleware;
 
 final class RouteConfig
 {

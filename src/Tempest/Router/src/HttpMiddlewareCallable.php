@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Closure;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 
 final readonly class HttpMiddlewareCallable
 {

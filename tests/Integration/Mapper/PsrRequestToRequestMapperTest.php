@@ -8,10 +8,10 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
-use Tempest\Router\GenericRequest;
-use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
-use Tempest\Router\Request;
-use Tempest\Router\Upload;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
+use Tempest\Http\Request;
+use Tempest\Http\Upload;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

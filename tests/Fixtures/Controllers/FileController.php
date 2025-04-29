@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\File;
 use Tempest\Router\Get;
-use Tempest\Router\Response;
-use Tempest\Router\Responses\Download;
-use Tempest\Router\Responses\File;
 
 final readonly class FileController
 {

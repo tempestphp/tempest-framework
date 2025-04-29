@@ -12,10 +12,10 @@ use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Core\Kernel;
 use Tempest\EventBus\EventBus;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Status;
 use Tempest\Router\DataProvider;
-use Tempest\Router\GenericRequest;
 use Tempest\Router\Router;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
 use Tempest\Router\Static\Exceptions\NoTextualBodyException;
@@ -24,7 +24,6 @@ use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 use Tempest\Vite\Exceptions\ManifestNotFoundException;
 use Throwable;
-
 use function Tempest\Support\path;
 use function Tempest\uri;
 

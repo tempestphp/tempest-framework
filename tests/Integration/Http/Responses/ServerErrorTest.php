@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Status;
-use Tempest\Router\Responses\ServerError;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

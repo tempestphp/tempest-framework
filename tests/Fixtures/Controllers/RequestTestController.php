@@ -2,9 +2,9 @@
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Ok;
 use Tempest\Router\Post;
-use Tempest\Router\Response;
-use Tempest\Router\Responses\Ok;
 use Tests\Tempest\Fixtures\Requests\FormRequestA;
 
 final class RequestTestController

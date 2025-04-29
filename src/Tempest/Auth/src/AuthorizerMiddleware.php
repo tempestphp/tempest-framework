@@ -6,12 +6,12 @@ namespace Tempest\Auth;
 
 use Tempest\Container\Container;
 use Tempest\Core\Priority;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Forbidden;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
 use Tempest\Router\MatchedRoute;
-use Tempest\Router\Request;
-use Tempest\Router\Response;
-use Tempest\Router\Responses\Forbidden;
 
 #[Priority(Priority::HIGHEST)]
 final readonly class AuthorizerMiddleware implements HttpMiddleware

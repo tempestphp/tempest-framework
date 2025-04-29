@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http;
 
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Router\GenericRequest;
-use Tempest\Router\Request;
-use Tempest\Router\Session\Resolvers\HeaderSessionIdResolver;
-use Tempest\Router\Session\Session;
-use Tempest\Router\Session\SessionConfig;
+use Tempest\Http\Request;
+use Tempest\Http\Session\Resolvers\HeaderSessionIdResolver;
+use Tempest\Http\Session\Session;
+use Tempest\Http\Session\SessionConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
