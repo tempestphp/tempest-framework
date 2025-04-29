@@ -3,11 +3,11 @@
 namespace Tests\Tempest\Integration\Route;
 
 use Laminas\Diactoros\UploadedFile;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
+use Tempest\Http\Mappers\RequestToObjectMapper;
 use Tempest\Http\Method;
-use Tempest\Router\GenericRequest;
-use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
-use Tempest\Router\Mappers\RequestToObjectMapper;
-use Tempest\Router\Upload;
+use Tempest\Http\Upload;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\Rules\NotNull;
 use Tests\Tempest\Fixtures\Modules\Books\Requests\CreateBookRequest;

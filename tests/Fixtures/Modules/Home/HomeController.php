@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Fixtures\Modules\Home;
 
+use Tempest\Http\Request;
 use Tempest\Log\Logger;
 use Tempest\Router\Get;
-use Tempest\Router\Request;
 use Tempest\View\View;
 
 final readonly class HomeController

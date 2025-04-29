@@ -15,10 +15,6 @@ use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
-use Tempest\Router\MatchedRoute;
-use Tempest\Router\Request;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Run;
 
 final class FrameworkKernel implements Kernel
 {

@@ -16,9 +16,9 @@ use Tempest\Database\Migrations\MigrationManager;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\EventBus\Testing\EventBusTester;
 use Tempest\Framework\Testing\Http\HttpRouterTester;
+use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
-use Tempest\Router\GenericRequest;
-use Tempest\Router\Request;
+use Tempest\Http\Request;
 use Tempest\Storage\Testing\StorageTester;
 
 use function Tempest\Support\Path\normalize;

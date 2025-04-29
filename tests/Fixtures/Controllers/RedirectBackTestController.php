@@ -2,10 +2,10 @@
 
 namespace Tests\Tempest\Fixtures\Controllers;
 
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Back;
 use Tempest\Router\Get;
-use Tempest\Router\Request;
-use Tempest\Router\Response;
-use Tempest\Router\Responses\Back;
 
 final class RedirectBackTestController
 {

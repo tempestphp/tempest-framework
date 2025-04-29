@@ -2,8 +2,8 @@
 
 namespace Tempest\Router\ErrorResponses;
 
+use Tempest\Http\Response;
 use Tempest\Http\Status;
-use Tempest\Router\Response;
 use Tempest\Router\ResponseProcessor;
 use Tempest\View\GenericView;
 use Tempest\View\View;

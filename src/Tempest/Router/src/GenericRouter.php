@@ -9,17 +9,20 @@ use Psr\Http\Message\ServerRequestInterface as PsrRequest;
 use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
+use Tempest\Http\GenericRequest;
+use Tempest\Http\Mappers\PsrRequestToGenericRequestMapper;
+use Tempest\Http\Mappers\RequestToObjectMapper;
+use Tempest\Http\Mappers\RequestToPsrRequestMapper;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Invalid;
+use Tempest\Http\Responses\NotFound;
+use Tempest\Http\Responses\Ok;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
 use Tempest\Router\Exceptions\InvalidRouteException;
 use Tempest\Router\Exceptions\NotFoundException;
-use Tempest\Router\Mappers\PsrRequestToGenericRequestMapper;
-use Tempest\Router\Mappers\RequestToObjectMapper;
-use Tempest\Router\Mappers\RequestToPsrRequestMapper;
-use Tempest\Router\Responses\Invalid;
-use Tempest\Router\Responses\NotFound;
-use Tempest\Router\Responses\Ok;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tempest\Router\Routing\Matching\RouteMatcher;
 use Tempest\Validation\Exceptions\ValidationException;
@@ -232,7 +235,7 @@ final class GenericRouter implements Router
         }
 
         // We map the original request we got into this method to the right request class
-        /** @var \Tempest\Router\GenericRequest $request */
+        /** @var \Tempest\Http\GenericRequest $request */
         $request = map($psrRequest)->with(PsrRequestToGenericRequestMapper::class)->do();
 
         if ($requestClass !== Request::class && $requestClass !== GenericRequest::class) {

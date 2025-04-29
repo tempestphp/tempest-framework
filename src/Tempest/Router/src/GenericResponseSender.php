@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use Generator;
-use Tempest\Router\Responses\Download;
-use Tempest\Router\Responses\File;
+use Tempest\Http\ContentType;
+use Tempest\Http\Header;
+use Tempest\Http\Response;
+use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\File;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 

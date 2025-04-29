@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Tempest\Fixtures\Controllers;
 
 use Tempest\Discovery\SkipDiscovery;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 use Tempest\Router\HttpMiddleware;
 use Tempest\Router\HttpMiddlewareCallable;
-use Tempest\Router\Request;
-use Tempest\Router\Response;
 
 #[SkipDiscovery]
 final readonly class TestMiddleware implements HttpMiddleware

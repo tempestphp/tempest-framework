@@ -2,7 +2,7 @@
 
 namespace Tests\Tempest\Integration\Route\Fixtures;
 
-use Tempest\Router\Input\InputStream;
+use Tempest\Http\Input\InputStream;
 
 final readonly class MemoryInputStream implements InputStream
 {

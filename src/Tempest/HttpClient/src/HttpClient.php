@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\HttpClient;
 
-use Tempest\Router\Request;
-use Tempest\Router\Response;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 
 interface HttpClient
 {

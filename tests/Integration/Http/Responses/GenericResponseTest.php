@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Http\Responses;
 
+use Tempest\Http\Cookie\Cookie;
+use Tempest\Http\Cookie\CookieManager;
+use Tempest\Http\Responses\Ok;
+use Tempest\Http\Session\Session;
 use Tempest\Http\Status;
-use Tempest\Router\Cookie\Cookie;
-use Tempest\Router\Cookie\CookieManager;
-use Tempest\Router\Responses\Ok;
-use Tempest\Router\Session\Session;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**

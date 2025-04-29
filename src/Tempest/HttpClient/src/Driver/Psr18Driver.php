@@ -10,11 +10,11 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Tempest\Http\GenericResponse;
+use Tempest\Http\Request;
+use Tempest\Http\Response;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClientDriver;
-use Tempest\Router\GenericResponse;
-use Tempest\Router\Request;
-use Tempest\Router\Response;
 
 final class Psr18Driver implements ClientInterface, HttpClientDriver
 {

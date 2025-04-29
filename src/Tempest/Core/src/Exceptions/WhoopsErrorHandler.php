@@ -3,8 +3,8 @@
 namespace Tempest\Core\Exceptions;
 
 use Tempest\Container\Container;
+use Tempest\Http\Request;
 use Tempest\Router\MatchedRoute;
-use Tempest\Router\Request;
 use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
