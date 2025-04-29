@@ -41,10 +41,15 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         // We force forward slashes for consistency even on Windows.
         $this->root = normalize(realpath(__DIR__ . '/../../../'));
-        $this->discoveryLocations = [
-            new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', realpath(__DIR__ . '/../../../tests/Integration/Console/Fixtures')),
-            new DiscoveryLocation('Tests\\Tempest\\Fixtures', realpath(__DIR__ . '/../../../tests/Fixtures')),
-        ];
+
+        // TODO(aidan-casey): Clean this waaaaay up.
+        if ($consoleFixtures = realpath(__DIR__ . '/../../../tests/Integration/Console/Fixtures')) {
+            $this->discoveryLocations[] = new DiscoveryLocation('Tests\\Tempest\\Integration\\Console\\Fixtures', $consoleFixtures);
+        }
+
+        if ($fixtures = realpath(__DIR__ . '/../../../tests/Fixtures')) {
+            $this->discoveryLocations[] = new DiscoveryLocation('Tests\\Tempest\\Fixtures', $fixtures);
+        }
 
         parent::setUp();
 
