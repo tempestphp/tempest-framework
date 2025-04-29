@@ -16,7 +16,6 @@ use Tempest\Reflection\FunctionReflector;
 use Tempest\Reflection\MethodReflector;
 use Tempest\Reflection\ParameterReflector;
 use Tempest\Reflection\TypeReflector;
-use Tempest\Support\Arr;
 use Throwable;
 
 final class GenericContainer implements Container
@@ -98,9 +97,10 @@ final class GenericContainer implements Container
         unset($this->definitions[$className], $this->singletons[$className]);
 
         if ($tagged) {
-            $singletons = Arr\filter(
+            $singletons = array_filter(
                 array: $this->getSingletons(),
-                filter: static fn (mixed $_, string $key) => ! str_starts_with($key, "{$className}#"),
+                callback: static fn (mixed $_, string $key) => ! str_starts_with($key, "{$className}#"),
+                mode: \ARRAY_FILTER_USE_BOTH,
             );
 
             $this->setSingletons($singletons);
