@@ -22,13 +22,7 @@ parameters:
 			identifier: argument.named
 		-
 		    message: '#.*exec*#'
-		    path: src/Tempest/Console/src/Terminal/Terminal.php
-		-
-		    message: '#.*uninitialized readonly property \$console*#'
-		-
-		    message: '#.*uninitialized readonly property \$composer*#'
-		-
-		    message: '#.*uninitialized readonly property \$stubFileGenerator*#'
+		    path: packages/console/src/Terminal/Terminal.php
 
 	disallowedFunctionCalls:
 		-

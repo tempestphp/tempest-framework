@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\tests;
+namespace Tempest\View\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;

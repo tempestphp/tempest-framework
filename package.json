@@ -5,8 +5,8 @@
   ],
   "scripts": {
     "qa": "bun lint:fix && bun run test run && bun run build",
-    "lint": "eslint packages",
-    "lint:fix": "eslint --fix packages",
+    "lint": "eslint packages/vite-plugin-tempest",
+    "lint:fix": "eslint --fix packages/vite-plugin-tempest",
     "build": "bun --filter '*' build",
     "dev": "bun --filter '*' build:stub",
     "test": "vitest"

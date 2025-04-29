@@ -1,8 +1,16 @@
+# Top level directories
+/log/
+/package-lock.json
+
+# Top-level+Sub directories
 .cache/
 .idea/
 build/
 sessions/
 vendor/
+# @TODO(aidan-casey): clean this up
+packages/database.sqlite
+packages/database/src/database.sqlite
 src/Tempest/database.sqlite
 tests/Fixtures/database.sqlite
 tests/Unit/Console/test-console.log
@@ -13,7 +21,7 @@ debug.log
 tempest.log
 public/static
 tests/Unit/Log
-log/
+!packages/log
 node_modules
 dist
 profile/

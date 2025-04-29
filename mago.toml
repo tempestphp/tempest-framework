@@ -1,7 +1,7 @@
 php_version = "8.4.0"
 
 [source]
-paths = ["src", "tests"]
+paths = ["src", "packages", "tests"]
 includes = ["vendor"]
 excludes = [
   "./vendor/symfony/cache/Traits/ValueWrapper.php",

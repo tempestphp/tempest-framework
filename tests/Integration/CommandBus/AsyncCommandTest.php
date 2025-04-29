@@ -74,7 +74,7 @@ final class AsyncCommandTest extends FrameworkIntegrationTestCase
         $this->assertStringContainsString('FAILED', $output);
         $process->stop();
 
-        arr(glob(__DIR__ . '/../../../src/Tempest/CommandBus/src/stored-commands/*.failed.txt'))
+        arr(glob(__DIR__ . '/../../../packages/command-bus/src/stored-commands/*.failed.txt'))
             ->each(function (string $filename): void {
                 unlink($filename);
             });

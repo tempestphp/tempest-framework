@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Integration\Database;
+namespace Tests\Tempest\Integration\Database;
 
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;

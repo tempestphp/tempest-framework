@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Log;
+namespace Tests\Tempest\Integration\Log;
 
 use Tempest\Log\LogConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

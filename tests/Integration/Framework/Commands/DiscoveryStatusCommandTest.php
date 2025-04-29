@@ -22,7 +22,8 @@ final class DiscoveryStatusCommandTest extends FrameworkIntegrationTestCase
         }
 
         foreach ($this->kernel->discoveryLocations as $discoveryLocation) {
-            $output->assertContains(str(realpath($discoveryLocation->path))->afterLast(['src/', 'vendor/', 'tests/'])->toString());
+            // @TODO(aidan-casey): remove the src/ directory.
+            $output->assertContains(str(realpath($discoveryLocation->path))->afterLast(['src/', 'packages/', 'vendor/', 'tests/'])->toString());
         }
     }
 }
