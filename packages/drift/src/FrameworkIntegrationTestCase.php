@@ -45,6 +45,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         ));
 
         echo $this->root;
+        echo getcwd();
 
         //        $this->root = normalize(realpath(__DIR__ . '/../../../'));
 
