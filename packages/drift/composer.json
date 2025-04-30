@@ -12,6 +12,7 @@
         "tempest/discovery": "dev-main",
         "tempest/reflection": "dev-main",
         "tempest/router": "dev-main",
+        "tempest/storage": "dev-main",
         "tempest/support": "dev-main",
         "tempest/view": "dev-main"
     },
