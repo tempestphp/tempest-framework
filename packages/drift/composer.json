@@ -14,7 +14,8 @@
         "tempest/router": "dev-main",
         "tempest/storage": "dev-main",
         "tempest/support": "dev-main",
-        "tempest/view": "dev-main"
+        "tempest/view": "dev-main",
+        "tempest/vite": "dev-main"
     },
     "autoload": {
         "psr-4": {
