@@ -44,7 +44,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
             dirname($this->findComposerJson(getcwd())) ?? getcwd(),
         ));
 
-        echo $this->root;
         echo getcwd();
 
         //        $this->root = normalize(realpath(__DIR__ . '/../../../'));
