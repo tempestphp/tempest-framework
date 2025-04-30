@@ -40,7 +40,11 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     protected function setUp(): void
     {
         // We force forward slashes for consistency even on Windows.
-        $this->root = normalize(realpath(__DIR__ . '/../../../'));
+        $this->root = normalize(realpath(
+            dirname($this->findComposerJson(getcwd())) ?? getcwd(),
+        ));
+
+        //        $this->root = normalize(realpath(__DIR__ . '/../../../'));
 
         // TODO(aidan-casey): Clean this waaaaay up.
         if ($consoleFixtures = realpath(__DIR__ . '/../../../tests/Integration/Console/Fixtures')) {
@@ -180,5 +184,25 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $actual = str_replace([PHP_EOL, ' '], '', $actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    private function findComposerJson(?string $startDir = null): ?string
+    {
+        $dir = $startDir ?? getcwd();
+
+        while (true) {
+            $composerPath = $dir . DIRECTORY_SEPARATOR . 'composer.json';
+            if (file_exists($composerPath)) {
+                return $composerPath;
+            }
+
+            $parentDir = dirname($dir);
+            if ($parentDir === $dir) {
+                // Reached the root directory
+                return null;
+            }
+
+            $dir = $parentDir;
+        }
     }
 }
