@@ -66,11 +66,6 @@ trait IsDatabaseModel
         return query(self::class)->count();
     }
 
-    public static function countAll(): int
-    {
-        return query(self::class)->count()->execute();
-    }
-
     public static function create(mixed ...$params): self
     {
         model(self::class)->validate(...$params);
