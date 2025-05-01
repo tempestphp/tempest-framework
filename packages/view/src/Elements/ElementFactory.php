@@ -89,7 +89,8 @@ final class ElementFactory
             }
 
             if ($viewComponentClass === AnonymousViewComponent::class) {
-                throw new \Exception($token->tag . ' not resolved');
+                $attributes = implode(' ', $attributes);
+                throw new \Exception($token->tag . ' ' . $attributes . ' not resolved');
             }
 
             if (! ($viewComponentClass instanceof ViewComponent)) {

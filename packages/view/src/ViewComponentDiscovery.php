@@ -49,14 +49,10 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         preg_match('/(?<header>(.|\n)*?)<x-component name="(?<name>[\w\-]+)">/', $contents->toString(), $matches);
 
-        if (isset($matches['name'])) {
-            $view = $contents
-                ->replaceRegex('/^(.|\n)*?<x-component.*>/', '')
-                ->replaceRegex('/<\/x-component>$/', '')
-                ->toString();
-        } else {
-            $view = $contents->toString();
-        }
+        $view = $contents
+            ->replaceRegex('/^(.|\n)*?<x-component.*>/', '')
+            ->replaceRegex('/<\/x-component>$/', '')
+            ->toString();
 
         if ($fileName->startsWith('x-') && ! isset($matches['name'])) {
             $this->discoveryItems->add($location, [
