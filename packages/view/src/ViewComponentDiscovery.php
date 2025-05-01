@@ -50,7 +50,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
         preg_match('/(?<header>(.|\n)*?)<x-component name="(?<name>[\w\-]+)">/', $contents->toString(), $matches);
 
         $view = $contents
-            ->replaceRegex('/^(.|\n)*?<x-component.*>/', '')
+            ->replaceRegex('/^(.|\n)*?<x-component name="[\w\-]+">/', '')
             ->replaceRegex('/<\/x-component>$/', '')
             ->toString();
 
