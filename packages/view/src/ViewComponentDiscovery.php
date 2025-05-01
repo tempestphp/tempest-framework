@@ -47,8 +47,12 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         $contents = str(file_get_contents($path))->ltrim();
 
-        $header = $contents->match('/(?<header>(.|\n)*?)<x-component/', match: 'header');
-        $name = $contents->match('/(.|\n)*?<x-component name="(?<name>[\w\-]+)">/', match: 'name');
+        preg_match('/(?<header>(.|\n)*?)<x-component/', $contents->toString(), $header);
+        $header = $header['header'] ?? null;
+
+        preg_match('/(.|\n)*?<x-component name="(?<name>[\w\-]+)">/', $contents->toString(), $name);
+        $name = $name['name'] ?? null;
+
         $view = $contents->replaceRegex('/(.|\n)*?<x-component name="[\w\-]+">/', '')->replaceRegex('/<\/x-component>/', '')->trim()->toString();
 
         if ($fileName->startsWith('x-') && $name === null) {
