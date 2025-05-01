@@ -57,7 +57,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             ['/^(.|\n)*?<x-component name="[\w\-]+">/', '/<\/x-component>$/'],
             '',
             $contents->toString(),
-        ));
+        ) ?? '');
 
         if ($fileName->startsWith('x-') && $name === null) {
             $this->discoveryItems->add($location, [
