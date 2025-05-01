@@ -53,11 +53,15 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             matches: $matches,
         );
 
-        if ($fileName->startsWith('x-') && ! isset($matches['name'])) {
+        $header = $matches['header'] ?? null;
+        $view = $matches['view'] ?? null;
+        $name = $matches['name'] ?? null;
+
+        if ($fileName->startsWith('x-') && $name === null) {
             $this->discoveryItems->add($location, [
                 $fileName->toString(),
                 new AnonymousViewComponent(
-                    contents: $matches['view'] ?? $contents->toString(),
+                    contents: $view ?? $contents->toString(),
                     file: $path,
                 ),
             ]);
@@ -65,14 +69,14 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        if (! isset($matches['name'], $matches['header'])) {
+        if ($name === null || $header === null) {
             return;
         }
 
         $this->discoveryItems->add($location, [
-            $matches['name'],
+            $name,
             new AnonymousViewComponent(
-                contents: $matches['header'] . $matches['view'],
+                contents: $header . $view,
                 file: $path,
             ),
         ]);
