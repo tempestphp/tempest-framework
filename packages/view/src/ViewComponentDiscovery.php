@@ -9,6 +9,7 @@ use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Discovery\IsDiscovery;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Support\Str\ImmutableString;
 use Tempest\View\Components\AnonymousViewComponent;
 
 use function Tempest\Support\str;
@@ -43,15 +44,40 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             return;
         }
 
-        $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
-
         $contents = str(file_get_contents($path))->ltrim();
 
-        preg_match('/(?<header>(.|\n)*?)<x-component/', $contents->toString(), $header);
-        $header = $header['header'] ?? null;
+        if ($contents->contains('<x-component name="')) {
+            $this->registerElementComponent(
+                location: $location,
+                path: $path,
+                contents: $contents,
+            );
 
-        preg_match('/(.|\n)*?<x-component name="(?<name>[\w\-]+)">/', $contents->toString(), $name);
-        $name = $name['name'] ?? null;
+            return;
+        }
+
+        $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
+
+        if ($fileName->startsWith('x-')) {
+            $this->registerFileComponent(
+                location: $location,
+                path: $path,
+                fileName: $fileName,
+                contents: $contents,
+            );
+        }
+    }
+
+    private function registerElementComponent(DiscoveryLocation $location, string $path, ImmutableString $contents): void
+    {
+        $header = $contents
+            ->before('<x-component name="')
+            ->toString();
+
+        $name = $contents
+            ->afterFirst('<x-component name="')
+            ->before('"')
+            ->toString();
 
         $view = trim(preg_replace(
             ['/^(.|\n)*?<x-component name="[\w\-]+">/', '/<\/x-component>$/'],
@@ -59,26 +85,25 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             $contents->toString(),
         ) ?? '');
 
-        if ($fileName->startsWith('x-') && $name === null) {
-            $this->discoveryItems->add($location, [
-                $fileName->toString(),
-                new AnonymousViewComponent(
-                    contents: $view ?: $contents->toString(),
-                    file: $path,
-                ),
-            ]);
-
-            return;
-        }
-
-        if ($name === null || $header === null) {
-            return;
-        }
-
         $this->discoveryItems->add($location, [
             $name,
             new AnonymousViewComponent(
                 contents: $header . $view,
+                file: $path,
+            ),
+        ]);
+    }
+
+    private function registerFileComponent(
+        DiscoveryLocation $location,
+        string $path,
+        ImmutableString $fileName,
+        ImmutableString $contents
+    ): void {
+        $this->discoveryItems->add($location, [
+            $fileName->toString(),
+            new AnonymousViewComponent(
+                contents: $contents->toString(),
                 file: $path,
             ),
         ]);
