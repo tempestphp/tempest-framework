@@ -46,16 +46,6 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         $contents = str(file_get_contents($path))->ltrim();
 
-        if ($contents->contains('<x-component name="')) {
-            $this->registerElementComponent(
-                location: $location,
-                path: $path,
-                contents: $contents,
-            );
-
-            return;
-        }
-
         $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
 
         if ($fileName->startsWith('x-')) {
@@ -63,6 +53,12 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
                 location: $location,
                 path: $path,
                 fileName: $fileName,
+                contents: $contents,
+            );
+        } elseif ($contents->contains('<x-component name="')) {
+            $this->registerElementComponent(
+                location: $location,
+                path: $path,
                 contents: $contents,
             );
         }
