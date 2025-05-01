@@ -45,23 +45,22 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         $fileName = str(pathinfo($path, PATHINFO_FILENAME))->before('.');
 
-        $contents = str(file_get_contents($path))->ltrim();
+        $contents = ltrim(file_get_contents($path));
 
-        preg_match(
-            pattern: '/(?<header>(.|\n)*?)<x-component name="(?<name>[\w\-]+)">(?<view>(.|\n)*?)<\/x-component>/',
-            subject: $contents->toString(),
-            matches: $matches,
-        );
+        preg_match('/(?<header>(.|\n)*?)<x-component/', $contents, $header);
+        $header = $header['header'] ?? null;
 
-        $header = $matches['header'] ?? null;
-        $view = $matches['view'] ?? null;
-        $name = $matches['name'] ?? null;
+        preg_match('/(.|\n)*?<x-component name="(?<name>[\w\-]+)">/', $contents, $name);
+        $name = $name['name'] ?? null;
+
+        preg_match('/<x-component name="[\w\-]+">(?<view>(.|\n)*?)<\/x-component>/', $contents, $view);
+        $view = $view['view'] ?? null;
 
         if ($fileName->startsWith('x-') && $name === null) {
             $this->discoveryItems->add($location, [
                 $fileName->toString(),
                 new AnonymousViewComponent(
-                    contents: $view ?? $contents->toString(),
+                    contents: $view ?? $contents,
                     file: $path,
                 ),
             ]);
