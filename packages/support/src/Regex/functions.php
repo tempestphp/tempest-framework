@@ -77,7 +77,7 @@ namespace Tempest\Support\Regex {
     }
 
     /**
-     * Returns the specified match of `$pattern` in `$subject`. If no match is specified, returns the first group.
+     * Returns the specified match of `$pattern` in `$subject`. If no match is specified, returns the whole matching array.
      *
      * @param non-empty-string $pattern The pattern to match against.
      * @param 0|256|512|768 $flags
