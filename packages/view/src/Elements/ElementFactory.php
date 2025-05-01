@@ -88,11 +88,6 @@ final class ElementFactory
                 $viewComponentClass->setToken($token);
             }
 
-            if ($viewComponentClass === AnonymousViewComponent::class) {
-                $attributes = implode(' ', $attributes);
-                throw new \Exception($token->tag . ' ' . $attributes . ' not resolved');
-            }
-
             if (! ($viewComponentClass instanceof ViewComponent)) {
                 $viewComponentClass = $this->container->get($viewComponentClass);
             }
