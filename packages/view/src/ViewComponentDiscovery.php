@@ -79,11 +79,10 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
             ->before('"')
             ->toString();
 
-        $view = trim(preg_replace(
-            ['/^(.|\n)*?<x-component name="[\w\-]+">/', '/<\/x-component>$/'],
-            '',
-            $contents->toString(),
-        ) ?? '');
+        $view = $contents
+            ->afterFirst('<x-component name="' . $name . '">')
+            ->beforeLast('</x-component>')
+            ->toString();
 
         $this->discoveryItems->add($location, [
             $name,
