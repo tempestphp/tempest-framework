@@ -51,7 +51,9 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
 
         if (isset($matches['name'])) {
             $view = $contents
-                ->replaceRegex('/^(.|\n)*?<x-component.*>/', '')
+                ->replaceRegex('/^(?<header>(.|\n)*?)<x-component.*>/', function (array $matches): string {
+                    return $matches['header'] ?? '';
+                })
                 ->replaceRegex('/<\/x-component>$/', '')
                 ->toString();
         } else {
