@@ -85,12 +85,16 @@ namespace Tempest\Support\Regex {
     function get_match(
         Stringable|string $subject,
         Stringable|string $pattern,
-        array|Stringable|int|string $match = 1,
+        null|array|Stringable|int|string $match = null,
         mixed $default = null,
         int $flags = 0,
         int $offset = 0,
     ): null|int|string|array {
         $result = get_matches($subject, $pattern, false, $flags, $offset);
+
+        if ($match === null) {
+            return $result;
+        }
 
         if (is_array($match)) {
             return arr($result)
