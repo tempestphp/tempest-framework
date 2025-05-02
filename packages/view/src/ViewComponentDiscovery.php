@@ -93,7 +93,7 @@ final class ViewComponentDiscovery implements Discovery, DiscoversPath
         DiscoveryLocation $location,
         string $path,
         ImmutableString $fileName,
-        ImmutableString $contents
+        ImmutableString $contents,
     ): void {
         $this->discoveryItems->add($location, [
             $fileName->toString(),
