@@ -108,7 +108,7 @@
                                 </li>
                                 <li :foreach="$chapter['children'] as $url => $title">
                                     <a :href="$url" :data-on-this-page="$title" class="pl-4 group relative text-sm flex items-center focus-visible:outline-(--ui-primary) py-1 text-(--ui-text-dimmed) hover:text-(--ui-text) data-[active]:text-(--ui-primary) transition-colors">
-                                        {{ \Tempest\Support\Str\strip_tags($title) }}</span>
+                                        <span>{{ \Tempest\Support\Str\strip_tags($title) }}</span>
                                     </a>
                                 </li>
                             </x-template>
