@@ -11,6 +11,7 @@ use SplFileInfo;
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\DiscoveryDiscovery;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoversPath;
@@ -21,6 +22,8 @@ use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Throwable;
 
+use function Tempest\Support\Arr\contains;
+
 /** @internal */
 final class LoadDiscoveryClasses
 {
@@ -29,6 +32,7 @@ final class LoadDiscoveryClasses
     public function __construct(
         private readonly Kernel $kernel,
         private readonly Container $container,
+        private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
     ) {}
 
@@ -114,6 +118,10 @@ final class LoadDiscoveryClasses
 
                 $input = $file->getPathname();
 
+                if ($this->discoveryConfig->shouldBeSkipped($input)) {
+                    continue;
+                }
+
                 // We assume that any PHP file that starts with an uppercase letter will be a class
                 if ($file->getExtension() === 'php' && ucfirst($fileName) === $fileName) {
                     $className = $location->toClassName($file->getPathname());
@@ -165,6 +173,10 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
+        if ($this->discoveryConfig->shouldBeSkipped($input->getName())) {
+            return true;
+        }
+
         $attribute = $input->getAttribute(SkipDiscovery::class);
 
         if ($attribute === null) {
