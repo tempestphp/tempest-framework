@@ -10,7 +10,7 @@ use PHPUnit\Framework\Assert;
 use Tempest\Console\Actions\ExecuteConsoleCommand;
 use Tempest\Console\Components\InteractiveComponentRenderer;
 use Tempest\Console\Console;
-use Tempest\Console\Exceptions\ConsoleErrorHandler;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Console\ExitCode;
 use Tempest\Console\GenericConsole;
 use Tempest\Console\Input\ConsoleArgumentBag;
@@ -76,7 +76,7 @@ final class ConsoleTester
         $clone->container->singleton(Console::class, $console);
 
         $appConfig = $this->container->get(AppConfig::class);
-        $appConfig->errorHandlers[] = $clone->container->get(ConsoleErrorHandler::class);
+        $appConfig->exceptionProcessors[] = $clone->container->get(ConsoleExceptionHandler::class);
 
         $clone->output = $memoryOutputBuffer;
         $clone->input = $memoryInputBuffer;
