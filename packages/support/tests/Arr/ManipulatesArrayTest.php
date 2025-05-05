@@ -1189,12 +1189,12 @@ final class ManipulatesArrayTest extends TestCase
         $collection = arr([1, 2, 3]);
 
         $this->assertEquals(
-            $collection->remove(1)->toArray(),
+            $collection->removeKeys(1)->toArray(),
             [0 => 1, 2 => 3],
         );
 
         $this->assertEquals(
-            $collection->remove([0, 2])->toArray(),
+            $collection->removeKeys([0, 2])->toArray(),
             [1 => 2],
         );
     }
@@ -1208,12 +1208,12 @@ final class ManipulatesArrayTest extends TestCase
         ]);
 
         $this->assertEquals(
-            $collection->remove('first_name')->toArray(),
+            $collection->removeKeys('first_name')->toArray(),
             ['last_name' => 'Doe', 'age' => 42],
         );
 
         $this->assertEquals(
-            $collection->remove(['last_name', 'age'])->toArray(),
+            $collection->removeKeys(['last_name', 'age'])->toArray(),
             ['first_name' => 'John'],
         );
     }
@@ -1224,7 +1224,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertEquals(
             $collection
-                ->remove(42)
+                ->removeKeys(42)
                 ->toArray(),
             [1, 2, 3],
         );
@@ -1237,7 +1237,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertEquals(
             $collection
-                ->remove('foo')
+                ->removeKeys('foo')
                 ->toArray(),
             [
                 'first_name' => 'John',
@@ -1248,7 +1248,7 @@ final class ManipulatesArrayTest extends TestCase
 
         $this->assertEquals(
             $collection
-                ->remove(['bar', 'first_name'])
+                ->removeKeys(['bar', 'first_name'])
                 ->toArray(),
             [
                 'last_name' => 'Doe',
@@ -1264,9 +1264,9 @@ final class ManipulatesArrayTest extends TestCase
             'last_name' => 'Doe',
             'age' => 42,
         ])
-            ->remove(42)
-            ->remove('foo')
-            ->remove(['bar', 'first_name']);
+            ->removeKeys(42)
+            ->removeKeys('foo')
+            ->removeKeys(['bar', 'first_name']);
 
         $second_collection = arr([
             'first_name' => 'John',

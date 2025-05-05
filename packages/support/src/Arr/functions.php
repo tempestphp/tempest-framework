@@ -96,7 +96,7 @@ namespace Tempest\Support\Arr {
     }
 
     /**
-     * Gets a value from the array and remove it.
+     * Gets a value by its key from the array and remove it. Mutates the array.
      *
      * @template TKey of array-key
      * @template TValue
@@ -107,7 +107,7 @@ namespace Tempest\Support\Arr {
     function pull(array &$array, string|int $key, mixed $default = null): mixed
     {
         $value = get_by_key($array, $key, $default);
-        $array = namespace\remove($array, $key);
+        $array = namespace\forget_keys($array, $key);
 
         return $value;
     }
@@ -127,15 +127,7 @@ namespace Tempest\Support\Arr {
     }
 
     /**
-     * Alias of {@see \Tempest\Support\Arr\remove}.
-     */
-    function forget(iterable $array, string|int|array $keys): array
-    {
-        return namespace\remove(to_array($array), $keys);
-    }
-
-    /**
-     * Removes the specified items from the array.
+     * Removes the specified keys from the array. The array is not mutated.
      *
      * @template TKey of array-key
      * @template TValue
@@ -144,12 +136,65 @@ namespace Tempest\Support\Arr {
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      * @return array<TKey,TValue>
      */
-    function remove(array $array, string|int|array $keys): array
+    function remove_keys(iterable $array, string|int|array $keys): array
+    {
+        return namespace\forget_keys(to_array($array), $keys);
+    }
+
+    /**
+     * Removes the specified values from the array. The array is mutated.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey,TValue> $array
+     * @param TValue|array<TValue> $values The values to remove.
+     * @return array<TKey,TValue>
+     */
+    function remove_values(array $array, string|int|array $values): array
+    {
+        return namespace\forget_values(to_array($array), $values);
+    }
+
+    /**
+     * Removes the specified keys from the array. The array is mutated.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey,TValue> $array
+     * @param array-key|array<array-key> $keys The keys of the items to remove.
+     * @return array<TKey,TValue>
+     */
+    function forget_keys(array $array, string|int|array $keys): array
     {
         $keys = is_array($keys) ? $keys : [$keys];
 
         foreach ($keys as $key) {
             unset($array[$key]);
+        }
+
+        return $array;
+    }
+
+    /**
+     * Removes the specified values from the array. The array is mutated.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     *
+     * @param array<TKey,TValue> $array
+     * @param TValue|array<TValue> $values The values to remove.
+     * @return array<TKey,TValue>
+     */
+    function forget_values(array $array, string|int|array $values): array
+    {
+        $values = is_array($values) ? $values : [$values];
+
+        foreach ($values as $value) {
+            if (! is_null($key = array_find_key($array, fn (mixed $match) => $value === $match))) {
+                unset($array[$key]);
+            }
         }
 
         return $array;
