@@ -103,6 +103,18 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
+    public function test_allow_dead_links(): void
+    {
+        $this->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
+
+        $this->console
+            ->call(StaticGenerateCommand::class, ['--allow-dead-links' => true])
+            ->assertExitCode(ExitCode::SUCCESS);
+    }
+
     public function test_external_dead_links(): void
     {
         $this->registerRoute([StaticPageController::class, 'deadLink']);
@@ -116,5 +128,17 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('https://test.com/404')
             ->assertSee('https://google.com/404')
             ->assertExitCode(ExitCode::ERROR);
+    }
+
+    public function test_ignore_dead_links(): void
+    {
+        $this->registerRoute([StaticPageController::class, 'allowedDeadLink']);
+        $this->registerStaticPage([StaticPageController::class, 'allowedDeadLink']);
+
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
+
+        $this->console
+            ->call(StaticGenerateCommand::class)
+            ->assertExitCode(ExitCode::SUCCESS);
     }
 }

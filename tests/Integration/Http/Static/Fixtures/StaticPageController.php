@@ -58,4 +58,11 @@ final readonly class StaticPageController
             '<a href="https://google.com/404">foo</a>',
         ]);
     }
+
+    #[Get('/static/allowed-dead-link')]
+    #[StaticPage]
+    public function allowedDeadLink(): string
+    {
+        return sprintf('<a ssg-ignore href="%s">foo</a>', uri('/404'));
+    }
 }
