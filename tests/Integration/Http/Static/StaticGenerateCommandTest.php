@@ -103,6 +103,19 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
             ->assertExitCode(ExitCode::ERROR);
     }
 
+    public function test_dead_link_with_redirect(): void
+    {
+        $this->registerRoute([StaticPageController::class, 'redirectingRoute']);
+        $this->registerRoute([StaticPageController::class, 'hasRedirect']);
+        $this->registerStaticPage([StaticPageController::class, 'hasRedirect']);
+
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
+
+        $this->console
+            ->call(StaticGenerateCommand::class, ['--allow-external-dead-links' => false])
+            ->assertExitCode(ExitCode::SUCCESS);
+    }
+
     public function test_allow_dead_links(): void
     {
         $this->registerRoute([StaticPageController::class, 'deadLink']);

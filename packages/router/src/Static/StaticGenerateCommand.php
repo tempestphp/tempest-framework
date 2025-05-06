@@ -22,6 +22,7 @@ use Tempest\Router\Router;
 use Tempest\Router\Static\Exceptions\DeadLinksDetectedException;
 use Tempest\Router\Static\Exceptions\InvalidStatusCodeException;
 use Tempest\Router\Static\Exceptions\NoTextualBodyException;
+use Tempest\Support\Arr;
 use Tempest\Support\Regex;
 use Tempest\Support\Str;
 use Tempest\View\Exceptions\ViewCompilationError;
@@ -223,13 +224,21 @@ final class StaticGenerateCommand
 
             // Check internal links with router (/ or same base uri)
             if (Str\starts_with($link, '/') || Str\starts_with($this->getLinkWithoutProtocol($link), $this->getLinkWithoutProtocol($this->appConfig->baseUri))) {
-                $response = $this->router->dispatch(new GenericRequest(
-                    method: Method::GET,
-                    uri: match (true) {
+                do {
+                    $target ??= match (true) {
                         Str\starts_with($link, '/') => $this->appConfig->baseUri . '/' . Str\strip_start($link, '/'),
                         default => $link,
-                    },
-                ));
+                    };
+
+                    $response = $this->router->dispatch(new GenericRequest(
+                        method: Method::GET,
+                        uri: $target,
+                    ));
+
+                    if ($response->status->isRedirect()) {
+                        $target = Arr\first($response->getHeader('Location')->values);
+                    }
+                } while ($response->status->isRedirect());
 
                 if ($response->status->isClientError() || $response->status->isServerError()) {
                     $deadlinks[] = $link;
