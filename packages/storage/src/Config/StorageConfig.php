@@ -3,8 +3,9 @@
 namespace Tempest\Storage\Config;
 
 use League\Flysystem\FilesystemAdapter;
+use Tempest\Container\HasTag;
 
-interface StorageConfig
+interface StorageConfig extends HasTag
 {
     /**
      * Whether the storage is read-only.

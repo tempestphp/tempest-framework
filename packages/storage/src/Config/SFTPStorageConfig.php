@@ -5,6 +5,7 @@ namespace Tempest\Storage\Config;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
+use UnitEnum;
 
 final class SFTPStorageConfig implements StorageConfig
 {
@@ -22,7 +23,16 @@ final class SFTPStorageConfig implements StorageConfig
         public int $timeoutInSeconds = 10,
         public int $maxTries = 3,
         public ?string $hostFingerprint = null,
+
+        /**
+         * Whether the storage is read-only.
+         */
         public bool $readonly = false,
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

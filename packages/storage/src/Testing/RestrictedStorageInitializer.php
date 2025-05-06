@@ -3,17 +3,23 @@
 namespace Tempest\Storage\Testing;
 
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Discovery\SkipDiscovery;
+use Tempest\Reflection\ClassReflector;
 use Tempest\Storage\Storage;
 
 #[SkipDiscovery]
-final class RestrictedStorageInitializer implements Initializer
+final class RestrictedStorageInitializer implements DynamicInitializer
 {
-    #[Singleton]
-    public function initialize(Container $container): Storage
+    public function canInitialize(ClassReflector $class, ?string $tag): bool
     {
-        return new RestrictedStorage();
+        return $class->getType()->matches(Storage::class);
+    }
+
+    #[Singleton]
+    public function initialize(ClassReflector $class, ?string $tag, Container $container): Storage
+    {
+        return new RestrictedStorage($tag);
     }
 }
