@@ -2,6 +2,8 @@
 
 namespace Tempest\View\Parser;
 
+use Tempest\View\Exceptions\InvalidClosingTag;
+
 use function Tempest\Support\str;
 
 final class Token
@@ -79,6 +81,10 @@ final class Token
 
     public function setClosingToken(Token $closingToken): void
     {
+        if ($closingToken->tag && $this->tag !== $closingToken->tag) {
+            throw new InvalidClosingTag($this->tag, $closingToken->tag);
+        }
+
         $this->closingToken = $closingToken;
     }
 

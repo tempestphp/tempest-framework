@@ -5,6 +5,7 @@ namespace Tempest\Storage\Config;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
+use UnitEnum;
 
 final class FTPStorageConfig implements StorageConfig
 {
@@ -29,7 +30,16 @@ final class FTPStorageConfig implements StorageConfig
         public ?bool $ignorePassiveAddress = null,
         public bool $recurseManually = true,
         public bool $timestampsOnUnixListingsEnabled = false,
+
+        /**
+         * Whether the storage is read-only.
+         */
         public bool $readonly = false,
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

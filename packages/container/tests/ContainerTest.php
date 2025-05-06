@@ -443,6 +443,25 @@ final class ContainerTest extends TestCase
         $container->get(InterfaceA::class);
     }
 
+    public function test_unregister_tagged(): void
+    {
+        $container = new GenericContainer();
+
+        $container->singleton(
+            TaggedDependency::class,
+            new TaggedDependency('web'),
+            tag: 'web',
+        );
+
+        $this->assertInstanceOf(TaggedDependency::class, $container->get(TaggedDependency::class, 'web'));
+
+        $container->unregister(TaggedDependency::class, tagged: true);
+
+        $this->expectException(CannotResolveTaggedDependency::class);
+
+        $container->get(TaggedDependency::class, 'web');
+    }
+
     public function test_has(): void
     {
         $container = new GenericContainer();

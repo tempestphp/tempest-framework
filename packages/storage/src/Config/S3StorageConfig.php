@@ -5,6 +5,7 @@ namespace Tempest\Storage\Config;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\FilesystemAdapter;
+use UnitEnum;
 
 final class S3StorageConfig implements StorageConfig
 {
@@ -60,6 +61,11 @@ final class S3StorageConfig implements StorageConfig
          * Other options.
          */
         public array $options = [],
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

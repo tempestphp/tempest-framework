@@ -200,7 +200,9 @@ final readonly class TempestViewCompiler
                 return $matches[0];
             }
 
-            $imports[$matches[0]] = $matches[0];
+            $import = trim($matches[0]);
+
+            $imports[$import] = $import;
 
             return '';
         });
