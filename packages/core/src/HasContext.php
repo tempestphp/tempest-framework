@@ -7,5 +7,5 @@ interface HasContext
     /**
      * Provides context for the exception-handling pipeline.
      */
-    public function context(): array;
+    public function context(): iterable;
 }
