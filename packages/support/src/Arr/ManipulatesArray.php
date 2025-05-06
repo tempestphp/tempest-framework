@@ -115,21 +115,33 @@ trait ManipulatesArray
     }
 
     /**
-     * Removes the specified items from the array.
+     * Removes the specified keys and their values from the array.
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      */
-    public function remove(string|int|array $keys): static
+    public function removeKeys(string|int|array $keys): static
     {
-        return $this->createOrModify(namespace\remove($this->value, $keys));
+        return $this->createOrModify(remove_keys($this->value, $keys));
     }
 
     /**
-     * Alias of {@see \Tempest\Support\Arr\remove}.
+     * Removes the specified keys and their values from the array. Alias of `removeKeys`.
+     *
+     * @param array-key|array<array-key> $keys The keys of the items to remove.
      */
     public function forget(string|int|array $keys): static
     {
-        return $this->createOrModify(namespace\remove($this->value, $keys));
+        return $this->removeKeys($keys);
+    }
+
+    /**
+     * Removes the specified values from the array.
+     *
+     * @param TValue|array<TValue> $values The values to remove.
+     */
+    public function removeValues(string|int|array $values): static
+    {
+        return $this->createOrModify(remove_values($this->value, $values));
     }
 
     /**
