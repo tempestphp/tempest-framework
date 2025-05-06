@@ -27,8 +27,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
 
     public function test_static_site_generate_command(): void
     {
-        $appConfig = new AppConfig(baseUri: 'https://test.com');
-        $this->container->config($appConfig);
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
             ->call(StaticGenerateCommand::class)
@@ -56,8 +55,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->registerRoute([StaticPageController::class, 'http500']);
         $this->registerStaticPage([StaticPageController::class, 'http500']);
 
-        $appConfig = new AppConfig(baseUri: 'https://test.com');
-        $this->container->config($appConfig);
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
             ->call(StaticGenerateCommand::class)
@@ -70,8 +68,7 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->registerRoute([StaticPageController::class, 'noTextualContent']);
         $this->registerStaticPage([StaticPageController::class, 'noTextualContent']);
 
-        $appConfig = new AppConfig(baseUri: 'https://test.com');
-        $this->container->config($appConfig);
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
             ->call(StaticGenerateCommand::class)
@@ -84,12 +81,40 @@ final class StaticGenerateCommandTest extends FrameworkIntegrationTestCase
         $this->registerRoute([StaticPageController::class, 'vite']);
         $this->registerStaticPage([StaticPageController::class, 'vite']);
 
-        $appConfig = new AppConfig(baseUri: 'https://test.com');
-        $this->container->config($appConfig);
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
 
         $this->console
             ->call(StaticGenerateCommand::class)
             ->assertSee('A Vite build is needed for [/static/vite/a/b]')
+            ->assertExitCode(ExitCode::ERROR);
+    }
+
+    public function test_dead_link(): void
+    {
+        $this->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
+
+        $this->console
+            ->call(StaticGenerateCommand::class)
+            ->assertSee('1 DEAD LINK')
+            ->assertSee('https://test.com/404')
+            ->assertExitCode(ExitCode::ERROR);
+    }
+
+    public function test_external_dead_links(): void
+    {
+        $this->registerRoute([StaticPageController::class, 'deadLink']);
+        $this->registerStaticPage([StaticPageController::class, 'deadLink']);
+
+        $this->container->config(new AppConfig(baseUri: 'https://test.com'));
+
+        $this->console
+            ->call(StaticGenerateCommand::class, ['--allow-external-dead-links' => false])
+            ->assertSee('2 DEAD LINKS')
+            ->assertSee('https://test.com/404')
+            ->assertSee('https://google.com/404')
             ->assertExitCode(ExitCode::ERROR);
     }
 }
