@@ -19,6 +19,9 @@ use function Tempest\Support\arr;
 
 final readonly class Validator
 {
+    /**
+     * Validates the values of public properties on the specified object using attribute rules.
+     */
     public function validateObject(object $object): void
     {
         $class = new ClassReflector($object);
@@ -41,6 +44,8 @@ final readonly class Validator
     }
 
     /**
+     * Validates the specified `$values` for the corresponding public properties on the specified `$class`, using built-in PHP types and attribute rules.
+     *
      * @param ClassReflector|class-string $class
      */
     public function validateValuesForClass(ClassReflector|string $class, ?array $values, string $prefix = ''): array
@@ -89,6 +94,9 @@ final readonly class Validator
         return $failingRules;
     }
 
+    /**
+     * Validates `$value` against the specified `$property`, using built-in PHP types and attribute rules.
+     */
     public function validateValueForProperty(PropertyReflector $property, mixed $value): array
     {
         $rules = $property->getAttributes(Rule::class);
@@ -113,6 +121,9 @@ final readonly class Validator
         return $this->validateValue($value, $rules);
     }
 
+    /**
+     * Validates the specified `$value` against the specified set `$rules`.
+     */
     public function validateValue(mixed $value, Closure|Rule|array $rules): array
     {
         $failingRules = [];
@@ -126,6 +137,31 @@ final readonly class Validator
 
             if (! $rule->isValid($value)) {
                 $failingRules[] = $rule;
+            }
+        }
+
+        return $failingRules;
+    }
+
+    /**
+     * Validates the specified `$values` against the specified set `$rules`.
+     * The `$rules` array is expected to have the same keys as `$values`, associated with instance of {@see Tempest\Validation\Rule}.
+     * If `$rules` doesn't contain a key for a value, it will not be validated.
+     *
+     * @param array<string,mixed> $values
+     * @param array<string,\Tempest\Validation\Rule> $rules
+     */
+    public function validateValues(iterable $values, array $rules): array
+    {
+        $failingRules = [];
+
+        foreach ($values as $key => $value) {
+            if (! array_key_exists($key, $rules)) {
+                continue;
+            }
+
+            if ($failures = $this->validateValue($value, $rules[$key])) {
+                $failingRules[$key] = $failures;
             }
         }
 
