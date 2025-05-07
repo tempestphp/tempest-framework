@@ -35,7 +35,7 @@ trait ManipulatesArray
     /**
      * Creates an array from the specified `$string`, split by the given `$separator`.
      */
-    public static function explode(string|Stringable $string, string $separator = ' '): static
+    public static function explode(string|Stringable $string, string $separator = ' '): self
     {
         if ($separator === '') {
             return new static([(string) $string]);
@@ -59,7 +59,7 @@ trait ManipulatesArray
      *                     - {@see Countable} objects are converted to arrays
      *                     - {@see null} becomes an empty array
      */
-    public static function createFrom(mixed $input): static
+    public static function createFrom(mixed $input): self
     {
         return new static(namespace\to_array($input));
     }
@@ -85,7 +85,7 @@ trait ManipulatesArray
      *
      * @return static<array-key, static>
      */
-    public function chunk(int $size, bool $preserveKeys = true): static
+    public function chunk(int $size, bool $preserveKeys = true): self
     {
         return $this->createOrModify(array_map(fn (array $array) => new static($array), namespace\chunk($this->value, $size, $preserveKeys)));
     }
@@ -109,7 +109,7 @@ trait ManipulatesArray
     /**
      * Shuffles the array.
      */
-    public function shuffle(): static
+    public function shuffle(): self
     {
         return $this->createOrModify(namespace\shuffle($this->value));
     }
@@ -119,7 +119,7 @@ trait ManipulatesArray
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      */
-    public function removeKeys(string|int|array $keys): static
+    public function removeKeys(string|int|array $keys): self
     {
         return $this->createOrModify(remove_keys($this->value, $keys));
     }
@@ -129,7 +129,7 @@ trait ManipulatesArray
      *
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      */
-    public function forget(string|int|array $keys): static
+    public function forget(string|int|array $keys): self
     {
         return $this->removeKeys($keys);
     }
@@ -139,7 +139,7 @@ trait ManipulatesArray
      *
      * @param TValue|array<TValue> $values The values to remove.
      */
-    public function removeValues(string|int|array $values): static
+    public function removeValues(string|int|array $values): self
     {
         return $this->createOrModify(remove_values($this->value, $values));
     }
@@ -182,7 +182,7 @@ trait ManipulatesArray
      * @param string $value The key to assign the values from. Supports dot notation.
      * @param string|null $key The key to assign the keys from. Supports dot notation.
      */
-    public function pluck(string $value, ?string $key = null): static
+    public function pluck(string $value, ?string $key = null): self
     {
         return $this->createOrModify(namespace\pluck($this->value, $value, $key));
     }
@@ -192,7 +192,7 @@ trait ManipulatesArray
      *
      * @param TValue $values
      */
-    public function prepend(mixed ...$values): static
+    public function prepend(mixed ...$values): self
     {
         return $this->createOrModify(namespace\prepend($this->value, ...$values));
     }
@@ -202,7 +202,7 @@ trait ManipulatesArray
      *
      * @param TValue $values
      */
-    public function append(mixed ...$values): static
+    public function append(mixed ...$values): self
     {
         return $this->createOrModify(namespace\append($this->value, ...$values));
     }
@@ -212,7 +212,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function add(mixed $value): static
+    public function add(mixed $value): self
     {
         return $this->createOrModify(namespace\push($this->value, $value));
     }
@@ -220,7 +220,7 @@ trait ManipulatesArray
     /**
      * @alias of `add`.
      */
-    public function push(mixed $value): static
+    public function push(mixed $value): self
     {
         return $this->createOrModify(namespace\push($this->value, $value));
     }
@@ -230,7 +230,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function pad(int $size, mixed $value): static
+    public function pad(int $size, mixed $value): self
     {
         return $this->createOrModify(namespace\pad($this->value, $size, $value));
     }
@@ -240,7 +240,7 @@ trait ManipulatesArray
      *
      * @return static<TValue&array-key, TKey>
      */
-    public function flip(): static
+    public function flip(): self
     {
         return $this->createOrModify(namespace\flip($this->value));
     }
@@ -253,7 +253,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function unique(null|Closure|string $key = null, bool $shouldBeStrict = false): static
+    public function unique(null|Closure|string $key = null, bool $shouldBeStrict = false): self
     {
         return $this->createOrModify(namespace\unique($this->value, $key, $shouldBeStrict));
     }
@@ -265,7 +265,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function diff(array|self ...$arrays): static
+    public function diff(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\diff($this->value, ...$arrays));
     }
@@ -277,7 +277,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function diffKeys(array|self ...$arrays): static
+    public function diffKeys(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\diff_keys($this->value, ...$arrays));
     }
@@ -289,7 +289,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function intersect(array|self ...$arrays): static
+    public function intersect(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\intersect($this->value, ...$arrays));
     }
@@ -301,7 +301,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function intersectKeys(array|self ...$arrays): static
+    public function intersectKeys(array|self ...$arrays): self
     {
         return $this->createOrModify(namespace\intersect_keys($this->value, ...$arrays));
     }
@@ -313,7 +313,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TValue>
      */
-    public function merge(iterable ...$arrays): static
+    public function merge(iterable ...$arrays): self
     {
         return $this->createOrModify(namespace\merge($this->value, ...$arrays));
     }
@@ -327,7 +327,7 @@ trait ManipulatesArray
      *
      * @return static<array-key, TCombineValue>
      */
-    public function combine(array|self $values): static
+    public function combine(array|self $values): self
     {
         return $this->createOrModify(namespace\combine($this->value, $values));
     }
@@ -392,7 +392,7 @@ trait ManipulatesArray
      *
      * @param mixed $value The popped value will be stored in this variable
      */
-    public function pop(mixed &$value = null): static
+    public function pop(mixed &$value = null): self
     {
         return $this->createOrModify(namespace\pop($this->value, $value));
     }
@@ -402,7 +402,7 @@ trait ManipulatesArray
      *
      * @param mixed $value The unshifted value will be stored in this variable
      */
-    public function unshift(mixed &$value = null): static
+    public function unshift(mixed &$value = null): self
     {
         return $this->createOrModify(namespace\unshift($this->value, $value));
     }
@@ -410,7 +410,7 @@ trait ManipulatesArray
     /**
      * Returns a new instance of the array in reverse order.
      */
-    public function reverse(): static
+    public function reverse(): self
     {
         return $this->createOrModify(namespace\reverse($this->value));
     }
@@ -444,7 +444,7 @@ trait ManipulatesArray
      *
      * @return static<array-key, TKey>
      */
-    public function keys(): static
+    public function keys(): self
     {
         return $this->createOrModify(namespace\keys($this->value));
     }
@@ -454,7 +454,7 @@ trait ManipulatesArray
      *
      * @return static<int, TValue>
      */
-    public function values(): static
+    public function values(): self
     {
         return $this->createOrModify(namespace\values($this->value));
     }
@@ -465,7 +465,7 @@ trait ManipulatesArray
      *
      * @param null|Closure(mixed $value, mixed $key): bool $filter
      */
-    public function filter(?Closure $filter = null): static
+    public function filter(?Closure $filter = null): self
     {
         return $this->createOrModify(namespace\filter($this->value, $filter));
     }
@@ -475,7 +475,7 @@ trait ManipulatesArray
      *
      * @param Closure(mixed $value, mixed $key): void $each
      */
-    public function each(Closure $each): static
+    public function each(Closure $each): self
     {
         return $this->createOrModify(namespace\each($this->value, $each));
     }
@@ -489,7 +489,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TMapValue>
      */
-    public function map(Closure $map): static
+    public function map(Closure $map): self
     {
         return $this->createOrModify(namespace\map_iterable($this->value, $map));
     }
@@ -505,7 +505,7 @@ trait ManipulatesArray
      *
      * @param Closure(mixed $value, mixed $key): \Generator $map
      */
-    public function mapWithKeys(Closure $map): static
+    public function mapWithKeys(Closure $map): self
     {
         return $this->createOrModify(namespace\map_with_keys($this->value, $map));
     }
@@ -523,7 +523,7 @@ trait ManipulatesArray
     /**
      * Associates the given `$value` to the given `$key` on the instance.
      */
-    public function set(string $key, mixed $value): static
+    public function set(string $key, mixed $value): self
     {
         return $this->createOrModify(set_by_key($this->value, $key, $value));
     }
@@ -531,7 +531,7 @@ trait ManipulatesArray
     /**
      * @alias of `set`
      */
-    public function put(string $key, mixed $value): static
+    public function put(string $key, mixed $value): self
     {
         return $this->createOrModify(set_by_key($this->value, $key, $value));
     }
@@ -567,7 +567,7 @@ trait ManipulatesArray
     /**
      * Converts the dot-notation keys of the instance to a set of nested arrays.
      */
-    public function undot(): static
+    public function undot(): self
     {
         return $this->createOrModify(namespace\undot($this->value));
     }
@@ -575,7 +575,7 @@ trait ManipulatesArray
     /**
      * Returns a copy of the array that converts nested arrays to a single-dimension dot-notation array.
      */
-    public function dot(): static
+    public function dot(): self
     {
         return $this->createOrModify(namespace\dot($this->value));
     }
@@ -593,7 +593,7 @@ trait ManipulatesArray
      *
      * @param Closure(TValue, TKey): array-key $keyExtractor
      */
-    public function groupBy(Closure $keyExtractor): static
+    public function groupBy(Closure $keyExtractor): self
     {
         return $this->createOrModify(namespace\group_by($this->value, $keyExtractor));
     }
@@ -606,7 +606,7 @@ trait ManipulatesArray
      * arr(['foo', ['bar', 'baz']])->flatten(); // ['foo', 'bar', 'baz']
      * ```
      */
-    public function flatten(int|float $depth = INF): static
+    public function flatten(int|float $depth = INF): self
     {
         return $this->createOrModify(namespace\flatten($this->value, $depth));
     }
@@ -620,7 +620,7 @@ trait ManipulatesArray
      *
      * @return static<TKey, TMapValue>
      */
-    public function flatMap(Closure $map, int|float $depth = 1): static
+    public function flatMap(Closure $map, int|float $depth = 1): self
     {
         return $this->createOrModify(namespace\flat_map($this->value, $map, $depth));
     }
@@ -634,7 +634,7 @@ trait ManipulatesArray
      * @param class-string<T> $to
      * @return static<int,T>
      */
-    public function mapTo(string $to): static
+    public function mapTo(string $to): self
     {
         return $this->createOrModify(namespace\map_to($this->value, $to));
     }
@@ -676,7 +676,7 @@ trait ManipulatesArray
      * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
      * @return static<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
-    public function sort(bool $desc = false, ?bool $preserveKeys = null, int $flags = SORT_REGULAR): static
+    public function sort(bool $desc = false, ?bool $preserveKeys = null, int $flags = SORT_REGULAR): self
     {
         return $this->createOrModify(namespace\sort($this->value, $desc, $preserveKeys, $flags));
     }
@@ -692,7 +692,7 @@ trait ManipulatesArray
      *                                Defaults to `null`, which auto-detects preservation based on array type  (associative or list).
      * @return static<array-key, TValue> Key type depends on whether array keys are preserved or not.
      */
-    public function sortByCallback(callable $callback, ?bool $preserveKeys = null): static
+    public function sortByCallback(callable $callback, ?bool $preserveKeys = null): self
     {
         return $this->createOrModify(namespace\sort_by_callback($this->value, $callback, $preserveKeys));
     }
@@ -704,7 +704,7 @@ trait ManipulatesArray
      * @param int $flags Sorting flags to define comparison behavior, defaulting to `SORT_REGULAR`.
      * @return static<TKey, TValue>
      */
-    public function sortKeys(bool $desc = false, int $flags = SORT_REGULAR): static
+    public function sortKeys(bool $desc = false, int $flags = SORT_REGULAR): self
     {
         return $this->createOrModify(namespace\sort_keys($this->value, $desc, $flags));
     }
@@ -718,7 +718,7 @@ trait ManipulatesArray
      *                           greater than the second.
      * @return static<TKey, TValue>
      */
-    public function sortKeysByCallback(callable $callback): static
+    public function sortKeysByCallback(callable $callback): self
     {
         return $this->createOrModify(namespace\sort_keys_by_callback($this->value, $callback));
     }
@@ -731,7 +731,7 @@ trait ManipulatesArray
      * arr([1, 2, 3, 4, 5])->slice(2); // [3, 4, 5]
      * ```
      */
-    public function slice(int $offset, ?int $length = null): static
+    public function slice(int $offset, ?int $length = null): self
     {
         return $this->createOrModify(namespace\slice($this->value, $offset, $length));
     }
@@ -743,7 +743,7 @@ trait ManipulatesArray
      *
      * @return static<int, array<array<TValue>, array<TValue>>>
      */
-    public function partition(Closure $predicate): static
+    public function partition(Closure $predicate): self
     {
         $success = [];
         $failure = [];
@@ -765,7 +765,7 @@ trait ManipulatesArray
      *
      * @param (Closure(static): void) $callback
      */
-    public function tap(Closure $callback): static
+    public function tap(Closure $callback): self
     {
         tap($this, $callback);
 
@@ -775,7 +775,7 @@ trait ManipulatesArray
     /**
      * Dumps the instance.
      */
-    public function dump(mixed ...$dumps): static
+    public function dump(mixed ...$dumps): self
     {
         lw($this->value, ...$dumps);
 

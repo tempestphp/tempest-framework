@@ -27,7 +27,7 @@ trait IsEnumHelper
      *
      * @throws ValueError if the case name is not valid
      */
-    public static function fromName(string $name): static
+    public static function fromName(string $name): self
     {
         return static::tryFromName($name) ?? throw new ValueError(sprintf('"%s" is not a valid case name for enum "%s"', $name, static::class));
     }
@@ -49,7 +49,7 @@ trait IsEnumHelper
      * Gets the enum case by name, for Pure enums
      * This will not override the `from()` method for Backed enums
      */
-    public static function from(string $case): static
+    public static function from(string $case): self
     {
         return static::fromName($case);
     }
