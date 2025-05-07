@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
-use Tempest\Console\Exceptions\ConsoleErrorHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
-use Tempest\Core\Exceptions\WhoopsErrorHandler;
 use Tempest\Core\Kernel\FinishDeferredTasks;
 use Tempest\Core\Kernel\LoadConfig;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
 use Tempest\Core\Kernel\LoadDiscoveryLocations;
+use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
 
@@ -203,7 +202,7 @@ final class FrameworkKernel implements Kernel
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
         if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
-            new WhoopsErrorHandler($this->container)->register();
+            new RegisterEmergencyExceptionHandler($this->container)->register();
         }
 
         return $this;
@@ -218,14 +217,16 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
-        // We already have a non-CLI error handler.
-        if (PHP_SAPI !== 'cli') {
-            return $this;
-        }
-
-        $handler = $this->container->get(ConsoleErrorHandler::class);
-        set_exception_handler($handler->handleException(...));
-        set_error_handler($handler->handleError(...)); // @phpstan-ignore-line
+        $handler = $this->container->get(ExceptionHandler::class);
+        set_exception_handler($handler->handle(...));
+        set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
+            new \ErrorException(
+                message: $message,
+                code: $code,
+                filename: $filename,
+                line: $line,
+            ),
+        ));
 
         return $this;
     }

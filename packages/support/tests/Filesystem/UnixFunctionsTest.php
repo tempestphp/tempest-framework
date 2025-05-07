@@ -493,4 +493,18 @@ final class UnixFunctionsTest extends TestCase
 
         $this->assertTrue(is_dir($dir));
     }
+
+    public function test_delete_file_for_invalid_symlink(): void
+    {
+        $file = $this->fixtures . '/file.txt';
+        \file_put_contents($file, 'hello');
+        $link = $this->fixtures . '/link.txt';
+        symlink($file, $link);
+        unlink($file);
+
+        Filesystem\delete_file($link);
+
+        $this->assertFalse(is_file($link));
+        $this->assertFalse(is_link($link));
+    }
 }

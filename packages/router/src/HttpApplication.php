@@ -49,26 +49,18 @@ final readonly class HttpApplication implements Application
 
     public function run(): void
     {
-        try {
-            $router = $this->container->get(Router::class);
+        $router = $this->container->get(Router::class);
 
-            $psrRequest = $this->container->get(RequestFactory::class)->make();
+        $psrRequest = $this->container->get(RequestFactory::class)->make();
 
-            $responseSender = $this->container->get(ResponseSender::class);
+        $responseSender = $this->container->get(ResponseSender::class);
 
-            $responseSender->send(
-                $router->dispatch($psrRequest),
-            );
+        $responseSender->send(
+            $router->dispatch($psrRequest),
+        );
 
-            $this->container->get(Session::class)->cleanup();
+        $this->container->get(Session::class)->cleanup();
 
-            $this->container->get(Kernel::class)->shutdown();
-        } catch (Throwable $throwable) {
-            foreach ($this->container->get(AppConfig::class)->errorHandlers as $exceptionHandler) {
-                $exceptionHandler->handleException($throwable);
-            }
-
-            throw $throwable;
-        }
+        $this->container->get(Kernel::class)->shutdown();
     }
 }

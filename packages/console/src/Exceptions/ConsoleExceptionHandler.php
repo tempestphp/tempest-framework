@@ -8,8 +8,10 @@ use Tempest\Console\Console;
 use Tempest\Console\ExitCode;
 use Tempest\Console\HasExitCode;
 use Tempest\Console\Input\ConsoleArgumentBag;
+use Tempest\Container\Container;
 use Tempest\Container\Tag;
-use Tempest\Core\ErrorHandler;
+use Tempest\Core\AppConfig;
+use Tempest\Core\ExceptionHandler;
 use Tempest\Core\Kernel;
 use Tempest\Highlight\Escape;
 use Tempest\Highlight\Highlighter;
@@ -17,9 +19,11 @@ use Throwable;
 
 use function Tempest\Support\str;
 
-final readonly class ConsoleErrorHandler implements ErrorHandler
+final readonly class ConsoleExceptionHandler implements ExceptionHandler
 {
     public function __construct(
+        private AppConfig $appConfig,
+        private Container $container,
         private Kernel $kernel,
         #[Tag('console')]
         private Highlighter $highlighter,
@@ -27,50 +31,47 @@ final readonly class ConsoleErrorHandler implements ErrorHandler
         private ConsoleArgumentBag $argumentBag,
     ) {}
 
-    public function handleException(Throwable $throwable): void
+    public function handle(Throwable $throwable): void
     {
-        ll(exception: $throwable->getMessage());
-
-        $this->console
-            ->writeln()
-            ->error($throwable::class)
-            ->when(
-                condition: $throwable->getMessage(),
-                callback: fn (Console $console) => $console->error($throwable->getMessage()),
-            )
-            ->writeln()
-            ->writeln('In ' . $this->formatFileWithLine($throwable->getFile() . ':' . $throwable->getLine()))
-            ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
-            ->writeln();
-
-        if ($this->argumentBag->get('-v') !== null) {
-            foreach ($throwable->getTrace() as $i => $trace) {
-                $this->console->writeln("<style='bold fg-blue'>#{$i}</style> " . $this->formatTrace($trace));
+        try {
+            foreach ($this->appConfig->exceptionProcessors as $processor) {
+                $handler = $this->container->get($processor);
+                $throwable = $handler->process($throwable);
             }
 
-            $this->console->writeln();
-        } else {
             $this->console
-                ->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]))
-                ->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]))
                 ->writeln()
-                ->writeln('   <style="dim">Run with -v to show more.</style>')
+                ->error($throwable::class)
+                ->when(
+                    condition: $throwable->getMessage(),
+                    callback: fn (Console $console) => $console->error($throwable->getMessage()),
+                )
+                ->writeln()
+                ->writeln('In ' . $this->formatFileWithLine($throwable->getFile() . ':' . $throwable->getLine()))
+                ->writeln($this->getSnippet($throwable->getFile(), $throwable->getLine()))
                 ->writeln();
+
+            if ($this->argumentBag->get('-v') !== null) {
+                foreach ($throwable->getTrace() as $i => $trace) {
+                    $this->console->writeln("<style='bold fg-blue'>#{$i}</style> " . $this->formatTrace($trace));
+                }
+
+                $this->console->writeln();
+            } else {
+                $this->console
+                    ->writeln('<style="fg-blue bold">#0</style> ' . $this->formatTrace($throwable->getTrace()[0]))
+                    ->writeln('<style="fg-blue bold">#1</style> ' . $this->formatTrace($throwable->getTrace()[1]))
+                    ->writeln()
+                    ->writeln('   <style="dim">Run with -v to show more.</style>')
+                    ->writeln();
+            }
+        } finally {
+            $exitCode = ($throwable instanceof HasExitCode)
+                ? $throwable->getExitCode()
+                : ExitCode::ERROR;
+
+            $this->kernel->shutdown($exitCode->value);
         }
-
-        $exitCode = ($throwable instanceof HasExitCode) ? $throwable->getExitCode() : ExitCode::ERROR;
-
-        $this->kernel->shutdown($exitCode->value);
-    }
-
-    public function handleError(int $errNo, string $errstr, string $errFile, int $errLine): void
-    {
-        ll(error: $errstr);
-
-        $this->console
-            ->writeln()
-            ->error($errstr)
-            ->writeln($this->getSnippet($errFile, $errLine));
     }
 
     private function getSnippet(string $file, int $lineNumber): string

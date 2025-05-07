@@ -19,7 +19,6 @@ final readonly class ConsoleApplicationInitializer implements Initializer
     {
         $application = new ConsoleApplication(
             container: $container,
-            appConfig: $container->get(AppConfig::class),
             argumentBag: $container->get(ConsoleArgumentBag::class),
         );
 

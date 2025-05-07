@@ -34,7 +34,7 @@ final class ContainerShowCommandTest extends FrameworkIntegrationTestCase
                     return $this;
                 }
 
-                public function unregister(string $className): self
+                public function unregister(string $className, bool $tagged = false): self
                 {
                     $this->container->unregister($className);
 

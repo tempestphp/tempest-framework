@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\Core;
 
+use Tempest\Core\Exceptions\LogExceptionProcessor;
+
 use function Tempest\env;
 
 final class AppConfig
@@ -16,10 +18,8 @@ final class AppConfig
         ?Environment $environment = null,
         ?string $baseUri = null,
 
-        /** @var \Tempest\Core\ErrorHandler[] */
-        public array $errorHandlers = [
-            // …,
-        ],
+        /** @var class-string<\Tempest\Core\ExceptionProcessor>[] */
+        public array $exceptionProcessors = [],
     ) {
         $this->environment = $environment ?? Environment::fromEnv();
 

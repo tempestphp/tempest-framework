@@ -72,12 +72,12 @@ final class MutableArrayTest extends TestCase
         $collection = new MutableArray([1, 2, 3]);
 
         $this->assertEquals(
-            $collection->remove(1)->toArray(),
+            $collection->removeKeys(1)->toArray(),
             [0 => 1, 2 => 3],
         );
 
         $this->assertEquals(
-            $collection->remove([0, 2])->toArray(),
+            $collection->removeKeys([0, 2])->toArray(),
             [],
         );
     }
@@ -91,13 +91,28 @@ final class MutableArrayTest extends TestCase
         ]);
 
         $this->assertEquals(
-            $collection->remove('first_name')->toArray(),
+            $collection->removeKeys('first_name')->toArray(),
             ['last_name' => 'Doe', 'age' => 42],
         );
 
         $this->assertEquals(
-            $collection->remove(['last_name', 'age'])->toArray(),
+            $collection->removeKeys(['last_name', 'age'])->toArray(),
             [],
+        );
+    }
+
+    public function test_remove_values_with_basic_keys(): void
+    {
+        $collection = new MutableArray([1, 2, 3]);
+
+        $this->assertEquals(
+            $collection->removeValues(1)->toArray(),
+            [1 => 2, 2 => 3],
+        );
+
+        $this->assertEquals(
+            $collection->toArray(),
+            [1 => 2, 2 => 3],
         );
     }
 

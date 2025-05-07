@@ -71,7 +71,7 @@ final class HasConditionsTest extends TestCase
 
             public string $string = 'foo';
 
-            public function append(string $string): static
+            public function append(string $string): self
             {
                 $self = new self();
                 $self->string = $this->string . $string;
