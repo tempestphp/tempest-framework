@@ -185,6 +185,9 @@
             "Tests\\Tempest\\": "tests"
         }
     },
+    "bin": [
+        "packages/console/bin/tempest"
+    ],
     "config": {
         "allow-plugins": {
             "carthage-software/mago": true

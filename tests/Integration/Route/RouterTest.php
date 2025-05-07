@@ -8,12 +8,18 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
 use Tempest\Core\AppConfig;
+use Tempest\Core\Environment;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Http\HttpException;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Responses\ServerError;
 use Tempest\Http\Status;
+use Tempest\Reflection\MethodReflector;
 use Tempest\Router\GenericRouter;
+use Tempest\Router\Get;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Router;
+use Tempest\Router\Routing\Construction\DiscoveredRoute;
 use Tests\Tempest\Fixtures\Controllers\ControllerWithEnumBinding;
 use Tests\Tempest\Fixtures\Controllers\EnumForController;
 use Tests\Tempest\Fixtures\Controllers\TestController;
@@ -24,6 +30,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use Tests\Tempest\Integration\Route\Fixtures\Http500Controller;
 
 use function Tempest\uri;
 
@@ -265,5 +272,39 @@ final class RouterTest extends FrameworkIntegrationTestCase
             ->get('/')
             ->assertHeaderContains('X-Processed', 'true')
             ->assertOk();
+    }
+
+    public function test_error_response_processor_throws_http_exceptions_in_production(): void
+    {
+        $this->expectException(HttpException::class);
+
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->http->get('/non-existent');
+    }
+
+    public function test_error_response_processor_throws_http_exceptions_if_there_is_a_body(): void
+    {
+        $this->expectException(HttpException::class);
+
+        $this->container->get(RouteConfig::class)->staticRoutes['GET']['/returns-basic-500'] = DiscoveredRoute::fromRoute(
+            new Get('/returns-basic-500'),
+            MethodReflector::fromParts(Http500Controller::class, 'basic500'),
+        );
+
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->http->get('/returns-custom-500');
+    }
+
+    public function test_error_response_processor_does_not_throw_http_exceptions_if_there_is_a_body(): void
+    {
+        $this->container->get(RouteConfig::class)->staticRoutes['GET']['/returns-custom-500'] = DiscoveredRoute::fromRoute(
+            new Get('/returns-custom-500'),
+            MethodReflector::fromParts(Http500Controller::class, 'custom500'),
+        );
+
+        $this->container->get(AppConfig::class)->environment = Environment::PRODUCTION;
+        $this->http
+            ->get('/returns-custom-500')
+            ->assertStatus(Status::INTERNAL_SERVER_ERROR);
     }
 }

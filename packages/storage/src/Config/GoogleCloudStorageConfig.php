@@ -5,6 +5,7 @@ namespace Tempest\Storage\Config;
 use Google\Cloud\Storage\StorageClient;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\GoogleCloudStorage\GoogleCloudStorageAdapter;
+use UnitEnum;
 
 final class GoogleCloudStorageConfig implements StorageConfig
 {
@@ -45,6 +46,11 @@ final class GoogleCloudStorageConfig implements StorageConfig
          * Whether the storage is read-only.
          */
         public bool $readonly = false,
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

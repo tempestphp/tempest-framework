@@ -85,7 +85,7 @@ final class FunctionsTest extends TestCase
     {
         $this->assertSame('10', get_match('10-abc', '/(?<id>\d+)-.*/', match: 'id'));
         $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/', match: 1));
-        $this->assertSame('10', get_match('10-abc', '/(\d+)-.*/'));
+        $this->assertSame([0 => '10-abc', 1 => '10'], get_match('10-abc', '/(\d+)-.*/'));
         $this->assertSame('10-abc', get_match('10-abc', '/\d+-.*/', match: 0));
         $this->assertSame(null, get_match('10-abc', '/\d+-.*/', match: 1));
 

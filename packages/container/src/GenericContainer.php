@@ -44,6 +44,13 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    public function setSingletons(array $singletons): self
+    {
+        $this->singletons = new ArrayIterator($singletons);
+
+        return $this;
+    }
+
     public function setInitializers(array $initializers): self
     {
         $this->initializers = new ArrayIterator($initializers);
@@ -85,9 +92,19 @@ final class GenericContainer implements Container
         return $this;
     }
 
-    public function unregister(string $className): self
+    public function unregister(string $className, bool $tagged = false): self
     {
         unset($this->definitions[$className], $this->singletons[$className]);
+
+        if ($tagged) {
+            $singletons = array_filter(
+                array: $this->getSingletons(),
+                callback: static fn (mixed $_, string $key) => ! str_starts_with($key, "{$className}#"),
+                mode: \ARRAY_FILTER_USE_BOTH,
+            );
+
+            $this->setSingletons($singletons);
+        }
 
         return $this;
     }
@@ -237,6 +254,28 @@ final class GenericContainer implements Container
         foreach ($returnType->split() as $type) {
             $this->initializers[$this->resolveTaggedName($type->getName(), $singleton?->tag)] = $initializerClass->getName();
         }
+
+        return $this;
+    }
+
+    public function removeInitializer(ClassReflector|string $initializerClass): Container
+    {
+        if (! ($initializerClass instanceof ClassReflector)) {
+            $initializerClass = new ClassReflector($initializerClass);
+        }
+
+        if ($initializerClass->getType()->matches(DynamicInitializer::class)) {
+            $index = array_find_key(
+                array: $this->dynamicInitializers->getArrayCopy(),
+                callback: static fn (string $className) => $className === $initializerClass->getName(),
+            );
+
+            unset($this->dynamicInitializers[$index]);
+
+            return $this;
+        }
+
+        unset($this->initializers[$initializerClass->getName()]);
 
         return $this;
     }

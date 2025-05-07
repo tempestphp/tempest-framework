@@ -6,7 +6,7 @@ namespace Tempest\Router\Exceptions;
 
 use Exception;
 
-final class MissingControllerOutputException extends Exception
+final class MissingControllerOutputException extends Exception implements RouterException
 {
     public function __construct(string $controllerClass, string $controllerMethod)
     {

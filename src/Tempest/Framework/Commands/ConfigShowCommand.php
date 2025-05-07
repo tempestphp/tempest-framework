@@ -157,6 +157,12 @@ final readonly class ConfigShowCommand
             return '@...';
         }
 
+        if ($value instanceof ClassReflector) {
+            return [
+                '@type' => $value->getName(),
+            ];
+        }
+
         if (is_object($value)) {
             $result = [
                 '@type' => $value::class,

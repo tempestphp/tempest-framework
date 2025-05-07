@@ -6,6 +6,7 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\ZipArchive\FilesystemZipArchiveProvider;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
+use UnitEnum;
 
 final class ZipArchiveStorageConfig implements StorageConfig
 {
@@ -26,6 +27,11 @@ final class ZipArchiveStorageConfig implements StorageConfig
          * Whether the storage is read-only.
          */
         public bool $readonly = false,
+
+        /**
+         * Identifier for this storage configuration.
+         */
+        public null|string|UnitEnum $tag = null,
     ) {}
 
     public function createAdapter(): FilesystemAdapter

@@ -78,7 +78,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
     {
         $application = new ConsoleApplication(
             container: $this->container,
-            appConfig: $this->container->get(AppConfig::class),
             argumentBag: new ConsoleArgumentBag(['tempest', ...explode(' ', $command)]),
         );
 

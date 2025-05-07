@@ -72,12 +72,12 @@ final class ImmutableArrayTest extends TestCase
         $collection = new ImmutableArray([1, 2, 3]);
 
         $this->assertEquals(
-            $collection->remove(1)->toArray(),
+            $collection->removeKeys(1)->toArray(),
             [0 => 1, 2 => 3],
         );
 
         $this->assertEquals(
-            $collection->remove([0, 2])->toArray(),
+            $collection->removeKeys([0, 2])->toArray(),
             [1 => 2],
         );
     }
@@ -91,12 +91,53 @@ final class ImmutableArrayTest extends TestCase
         ]);
 
         $this->assertEquals(
-            $collection->remove('first_name')->toArray(),
+            $collection->removeKeys('first_name')->toArray(),
             ['last_name' => 'Doe', 'age' => 42],
         );
 
         $this->assertEquals(
-            $collection->remove(['last_name', 'age'])->toArray(),
+            $collection->removeKeys(['last_name', 'age'])->toArray(),
+            ['first_name' => 'John'],
+        );
+    }
+
+    public function test_remove_values_with_basic_keys(): void
+    {
+        $collection = new ImmutableArray([1, 2, 3]);
+
+        $this->assertEquals(
+            $collection->removeValues(1)->toArray(),
+            [1 => 2, 2 => 3],
+        );
+
+        $this->assertEquals(
+            $collection->toArray(),
+            [0 => 1, 1 => 2, 2 => 3],
+        );
+
+        $this->assertEquals(
+            $collection->removeValues([0, 2])->toArray(),
+            [0 => 1, 2 => 3],
+        );
+    }
+
+    public function test_remove_values_with_associative_keys(): void
+    {
+        $collection = new ImmutableArray([
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'age' => 42,
+        ]);
+
+        $this->assertEquals(
+            $collection->removeValues('John')->toArray(),
+            ['last_name' => 'Doe', 'age' => 42],
+        );
+
+        $this->assertEquals($collection->count(), 3);
+
+        $this->assertEquals(
+            $collection->removeValues(['Doe', 42])->toArray(),
             ['first_name' => 'John'],
         );
     }

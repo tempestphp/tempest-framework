@@ -31,12 +31,12 @@ trait ManipulatesString
      * Returns a new instance with the specified string,
      * or mutates the instance if this is a `MutableString`.
      */
-    abstract protected function createOrModify(Stringable|string $string): static;
+    abstract protected function createOrModify(Stringable|string $string): self;
 
     /**
      * Prefixes the instance with the given string.
      */
-    public function start(Stringable|string $prefix): static
+    public function start(Stringable|string $prefix): self
     {
         return $this->createOrModify(ensure_starts_with($this->value, $prefix));
     }
@@ -44,7 +44,7 @@ trait ManipulatesString
     /**
      * Caps the string with the given string.
      */
-    public function finish(Stringable|string $cap): static
+    public function finish(Stringable|string $cap): self
     {
         return $this->createOrModify(ensure_ends_with($this->value, $cap));
     }
@@ -52,7 +52,7 @@ trait ManipulatesString
     /**
      * Returns the remainder of the string after the first occurrence of the given value.
      */
-    public function afterFirst(Stringable|string|array $search): static
+    public function afterFirst(Stringable|string|array $search): self
     {
         return $this->createOrModify(after_first($this->value, $search));
     }
@@ -60,7 +60,7 @@ trait ManipulatesString
     /**
      * Returns the remainder of the string after the last occurrence of the given value.
      */
-    public function afterLast(Stringable|string|array $search): static
+    public function afterLast(Stringable|string|array $search): self
     {
         return $this->createOrModify(after_last($this->value, $search));
     }
@@ -68,7 +68,7 @@ trait ManipulatesString
     /**
      * Returns the portion of the string before the first occurrence of the given value.
      */
-    public function before(Stringable|string|array $search): static
+    public function before(Stringable|string|array $search): self
     {
         return $this->createOrModify(before_first($this->value, $search));
     }
@@ -76,7 +76,7 @@ trait ManipulatesString
     /**
      * Returns the portion of the string before the last occurrence of the given value.
      */
-    public function beforeLast(Stringable|string|array $search): static
+    public function beforeLast(Stringable|string|array $search): self
     {
         return $this->createOrModify(before_last($this->value, $search));
     }
@@ -84,7 +84,7 @@ trait ManipulatesString
     /**
      * Returns the portion of the string between the widest possible instances of the given strings.
      */
-    public function between(string|Stringable $from, string|Stringable $to): static
+    public function between(string|Stringable $from, string|Stringable $to): self
     {
         return $this->createOrModify(between($this->value, $from, $to));
     }
@@ -92,7 +92,7 @@ trait ManipulatesString
     /**
      * Removes all whitespace (or specified characters) from both ends of the instance.
      */
-    public function trim(string $characters = " \n\r\t\v\0"): static
+    public function trim(string $characters = " \n\r\t\v\0"): self
     {
         return $this->createOrModify(trim($this->value, $characters));
     }
@@ -100,7 +100,7 @@ trait ManipulatesString
     /**
      * Removes all whitespace (or specified characters) from the start of the instance.
      */
-    public function ltrim(string $characters = " \n\r\t\v\0"): static
+    public function ltrim(string $characters = " \n\r\t\v\0"): self
     {
         return $this->createOrModify(ltrim($this->value, $characters));
     }
@@ -108,7 +108,7 @@ trait ManipulatesString
     /**
      * Removes all whitespace (or specified characters) from the end of the instance.
      */
-    public function rtrim(string $characters = " \n\r\t\v\0"): static
+    public function rtrim(string $characters = " \n\r\t\v\0"): self
     {
         return $this->createOrModify(rtrim($this->value, $characters));
     }
@@ -116,7 +116,7 @@ trait ManipulatesString
     /**
      * Converts the string to its English plural form.
      */
-    public function pluralize(int|array|Countable $count = 2): static
+    public function pluralize(int|array|Countable $count = 2): self
     {
         return $this->createOrModify(pluralize($this->value, $count));
     }
@@ -124,7 +124,7 @@ trait ManipulatesString
     /**
      * Converts the last word to its English plural form.
      */
-    public function pluralizeLastWord(int|array|Countable $count = 2): static
+    public function pluralizeLastWord(int|array|Countable $count = 2): self
     {
         return $this->createOrModify(pluralize_last_word($this->value, $count));
     }
@@ -132,7 +132,7 @@ trait ManipulatesString
     /**
      * Creates a pseudo-random alpha-numeric string of the given length.
      */
-    public function random(int $length = 16): static
+    public function random(int $length = 16): self
     {
         return $this->createOrModify(secure_string($length));
     }
@@ -140,7 +140,7 @@ trait ManipulatesString
     /**
      * Converts the string to title case.
      */
-    public function title(): static
+    public function title(): self
     {
         return $this->createOrModify(to_title_case($this->value));
     }
@@ -148,7 +148,7 @@ trait ManipulatesString
     /**
      * Converts the instance to snake case.
      */
-    public function snake(Stringable|string $delimiter = '_'): static
+    public function snake(Stringable|string $delimiter = '_'): self
     {
         return $this->createOrModify(to_snake_case($this->value, $delimiter));
     }
@@ -156,7 +156,7 @@ trait ManipulatesString
     /**
      * Converts the instance to kebab case.
      */
-    public function kebab(): static
+    public function kebab(): self
     {
         return $this->createOrModify(to_kebab_case($this->value));
     }
@@ -164,7 +164,7 @@ trait ManipulatesString
     /**
      * Converts the instance to pascal case.
      */
-    public function pascal(): static
+    public function pascal(): self
     {
         return $this->createOrModify(to_pascal_case($this->value));
     }
@@ -172,7 +172,7 @@ trait ManipulatesString
     /**
      * Converts the instance to camel case.
      */
-    public function camel(): static
+    public function camel(): self
     {
         return $this->createOrModify(to_camel_case($this->value));
     }
@@ -182,7 +182,7 @@ trait ManipulatesString
      *
      * @param bool $replaceSymbols Adds some more replacements e.g. "£" with "pound".
      */
-    public function slug(Stringable|string $separator = '-', array $replacements = [], bool $replaceSymbols = true): static
+    public function slug(Stringable|string $separator = '-', array $replacements = [], bool $replaceSymbols = true): self
     {
         return $this->createOrModify(to_slug($this->value, $separator, $replacements, $replaceSymbols));
     }
@@ -190,7 +190,7 @@ trait ManipulatesString
     /**
      * Converts the current string to a naive sentence case.
      */
-    public function sentence(): static
+    public function sentence(): self
     {
         return $this->createOrModify(to_sentence_case($this->value));
     }
@@ -208,7 +208,7 @@ trait ManipulatesString
      *
      * @param string $language Language of the source string. Defaults to english.
      */
-    public function ascii(Stringable|string $language = 'en'): static
+    public function ascii(Stringable|string $language = 'en'): self
     {
         return $this->createOrModify(to_ascii($this->value, $language));
     }
@@ -224,7 +224,7 @@ trait ManipulatesString
     /**
      * Replaces consecutive instances of a given character with a single character.
      */
-    public function deduplicate(Stringable|string|iterable $characters = ' '): static
+    public function deduplicate(Stringable|string|iterable $characters = ' '): self
     {
         return $this->createOrModify(deduplicate($this->value, $characters));
     }
@@ -232,7 +232,7 @@ trait ManipulatesString
     /**
      * Converts the instance to lower case.
      */
-    public function lower(): static
+    public function lower(): self
     {
         return $this->createOrModify(to_lower_case($this->value));
     }
@@ -240,7 +240,7 @@ trait ManipulatesString
     /**
      * Converts the instance to upper case.
      */
-    public function upper(): static
+    public function upper(): self
     {
         return $this->createOrModify(to_upper_case($this->value));
     }
@@ -248,7 +248,7 @@ trait ManipulatesString
     /**
      * Changes the case of the first letter to uppercase.
      */
-    public function upperFirst(): static
+    public function upperFirst(): self
     {
         return $this->createOrModify(upper_first($this->value));
     }
@@ -256,7 +256,7 @@ trait ManipulatesString
     /**
      * Changes the case of the first letter to lowercase.
      */
-    public function lowerFirst(): static
+    public function lowerFirst(): self
     {
         return $this->createOrModify(lower_first($this->value));
     }
@@ -264,7 +264,7 @@ trait ManipulatesString
     /**
      * Keeps only the base name of the instance.
      */
-    public function basename(string $suffix = ''): static
+    public function basename(string $suffix = ''): self
     {
         return $this->createOrModify(basename($this->value, $suffix));
     }
@@ -272,7 +272,7 @@ trait ManipulatesString
     /**
      * Keeps only the base name of the instance, assuming the instance is a class name.
      */
-    public function classBasename(): static
+    public function classBasename(): self
     {
         return $this->createOrModify(class_basename($this->value));
     }
@@ -280,7 +280,7 @@ trait ManipulatesString
     /**
      * Replaces the first occurrence of `$search` with `$replace`.
      */
-    public function replaceFirst(array|Stringable|string $search, Stringable|string $replace): static
+    public function replaceFirst(array|Stringable|string $search, Stringable|string $replace): self
     {
         return $this->createOrModify(replace_first($this->value, $search, $replace));
     }
@@ -288,7 +288,7 @@ trait ManipulatesString
     /**
      * Replaces the last occurrence of `$search` with `$replace`.
      */
-    public function replaceLast(array|Stringable|string $search, Stringable|string $replace): static
+    public function replaceLast(array|Stringable|string $search, Stringable|string $replace): self
     {
         return $this->createOrModify(replace_last($this->value, $search, $replace));
     }
@@ -296,7 +296,7 @@ trait ManipulatesString
     /**
      * Replaces `$search` with `$replace` if `$search` is at the end of the instance.
      */
-    public function replaceEnd(array|Stringable|string $search, Stringable|string $replace): static
+    public function replaceEnd(array|Stringable|string $search, Stringable|string $replace): self
     {
         return $this->createOrModify(replace_end($this->value, $search, $replace));
     }
@@ -304,7 +304,7 @@ trait ManipulatesString
     /**
      * Replaces `$search` with `$replace` if `$search` is at the start of the instance.
      */
-    public function replaceStart(array|Stringable|string $search, Stringable|string $replace): static
+    public function replaceStart(array|Stringable|string $search, Stringable|string $replace): self
     {
         return $this->createOrModify(replace_start($this->value, $search, $replace));
     }
@@ -314,7 +314,7 @@ trait ManipulatesString
      *
      * @param array<string,Stringable|string> $replacements
      */
-    public function replaceEvery(array $replacements): static
+    public function replaceEvery(array $replacements): self
     {
         $haystack = $this->value;
 
@@ -328,7 +328,7 @@ trait ManipulatesString
     /**
      * Strips the specified `$prefix` from the start of the string.
      */
-    public function stripStart(array|Stringable|string $prefix): static
+    public function stripStart(array|Stringable|string $prefix): self
     {
         return $this->createOrModify(strip_start($this->value, $prefix));
     }
@@ -336,7 +336,7 @@ trait ManipulatesString
     /**
      * Strips the specified `$suffix` from the end of the string.
      */
-    public function stripEnd(array|Stringable|string $suffix): static
+    public function stripEnd(array|Stringable|string $suffix): self
     {
         return $this->createOrModify(strip_end($this->value, $suffix));
     }
@@ -349,7 +349,7 @@ trait ManipulatesString
      * str('Lorem dolor')->replaceAt(6, 5, 'ipsum'); // Lorem ipsum
      * ```
      */
-    public function replaceAt(int $position, int $length, Stringable|string $replace): static
+    public function replaceAt(int $position, int $length, Stringable|string $replace): self
     {
         return $this->createOrModify(replace_at($this->value, $position, $length, $replace));
     }
@@ -357,7 +357,7 @@ trait ManipulatesString
     /**
      * Appends the given strings to the instance.
      */
-    public function append(string|Stringable ...$append): static
+    public function append(string|Stringable ...$append): self
     {
         return $this->createOrModify(append($this->value, ...$append));
     }
@@ -365,7 +365,7 @@ trait ManipulatesString
     /**
      * Prepends the given strings to the instance.
      */
-    public function prepend(string|Stringable ...$prepend): static
+    public function prepend(string|Stringable ...$prepend): self
     {
         return $this->createOrModify(prepend($this->value, ...$prepend));
     }
@@ -378,7 +378,7 @@ trait ManipulatesString
      * str('Scott')->wrap(before: 'Leon ', after: ' Kennedy'); // Leon Scott Kennedy
      * ```
      */
-    public function wrap(string|Stringable $before, string|Stringable|null $after = null): static
+    public function wrap(string|Stringable $before, string|Stringable|null $after = null): self
     {
         return $this->createOrModify(wrap($this->value, $before, $after));
     }
@@ -392,7 +392,7 @@ trait ManipulatesString
      *  str('Scott Kennedy')->unwrap(before: 'Leon ', after: ' Kennedy', strict: false); // Scott
      * ```
      */
-    public function unwrap(string|Stringable $before, string|Stringable|null $after = null, bool $strict = true): static
+    public function unwrap(string|Stringable $before, string|Stringable|null $after = null, bool $strict = true): self
     {
         return $this->createOrModify(unwrap($this->value, $before, $after, $strict));
     }
@@ -400,7 +400,7 @@ trait ManipulatesString
     /**
      * Extracts an excerpt from the instance.
      */
-    public function excerpt(int $from, int $to, bool $asArray = false): static|ImmutableArray
+    public function excerpt(int $from, int $to, bool $asArray = false): self|ImmutableArray
     {
         $value = excerpt($this->value, $from, $to, $asArray);
 
@@ -419,7 +419,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->truncate(5, end: '...'); // Lorem...
      * ```
      */
-    public function truncate(int $characters, Stringable|string $end = ''): static
+    public function truncate(int $characters, Stringable|string $end = ''): self
     {
         return $this->createOrModify(truncate_end($this->value, $characters, $end));
     }
@@ -432,7 +432,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->truncateStart(5, start: '...'); // ...ipsum
      * ```
      */
-    public function truncateStart(int $characters, string $start = ''): static
+    public function truncateStart(int $characters, string $start = ''): self
     {
         return $this->createOrModify(truncate_start($this->value, $characters, $start));
     }
@@ -445,7 +445,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->reverse(); // muspi meroL
      * ```
      */
-    public function reverse(): static
+    public function reverse(): self
     {
         return $this->createOrModify(reverse($this->value));
     }
@@ -459,7 +459,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->substr(6); // ipsum
      * ```
      */
-    public function substr(int $start, ?int $length = null): static
+    public function substr(int $start, ?int $length = null): self
     {
         return $this->createOrModify(mb_substr($this->value, $start, $length));
     }
@@ -467,7 +467,7 @@ trait ManipulatesString
     /**
      * Takes the specified amount of characters. If `$length` is negative, starts from the end.
      */
-    public function take(int $length): static
+    public function take(int $length): self
     {
         return $this->createOrModify(take($this->value, $length));
     }
@@ -483,7 +483,7 @@ trait ManipulatesString
      * str('<p>Lorem <strong>ipsum</strong></p>')->stripTags(allowed: 'strong'); // Lorem <strong>ipsum</strong>
      * ```
      */
-    public function stripTags(null|string|array $allowed = null): static
+    public function stripTags(null|string|array $allowed = null): self
     {
         return $this->createOrModify(strip_tags($this->value, $allowed));
     }
@@ -496,7 +496,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->alignCenter(width: 20);
      * ```
      */
-    public function alignCenter(?int $width, int $padding = 0): static
+    public function alignCenter(?int $width, int $padding = 0): self
     {
         return $this->createOrModify(align_center($this->value, $width, $padding));
     }
@@ -509,7 +509,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->alignRight(width: 20);
      * ```
      */
-    public function alignRight(?int $width, int $padding = 0): static
+    public function alignRight(?int $width, int $padding = 0): self
     {
         return $this->createOrModify(align_right($this->value, $width, $padding));
     }
@@ -522,7 +522,7 @@ trait ManipulatesString
      * str('Lorem ipsum')->alignLeft(width: 20);
      * ```
      */
-    public function alignLeft(?int $width, int $padding = 0): static
+    public function alignLeft(?int $width, int $padding = 0): self
     {
         return $this->createOrModify(align_left($this->value, $width, $padding));
     }
@@ -535,7 +535,7 @@ trait ManipulatesString
      * str('Lorem ipsum sit amet')->insertAt(11, ' dolor'); // Lorem ipsum dolor sit amet
      * ```
      */
-    public function insertAt(int $position, string $string): static
+    public function insertAt(int $position, string $string): self
     {
         return $this->createOrModify(insert_at($this->value, $position, $string));
     }
@@ -563,7 +563,7 @@ trait ManipulatesString
      * @param non-empty-string $padString
      * @param int<0, max> $totalLength
      */
-    public function padLeft(int $totalLength, string $padString = ' '): static
+    public function padLeft(int $totalLength, string $padString = ' '): self
     {
         return $this->createOrModify(namespace\pad_left($this->value, $totalLength, $padString));
     }
@@ -591,7 +591,7 @@ trait ManipulatesString
      * @param non-empty-string $padString
      * @param int<0, max> $totalLength
      */
-    public function padRight(int $totalLength, string $padString = ' '): static
+    public function padRight(int $totalLength, string $padString = ' '): self
     {
         return $this->createOrModify(namespace\pad_right($this->value, $totalLength, $padString));
     }
@@ -615,7 +615,7 @@ trait ManipulatesString
     /**
      * Formats the string.
      */
-    public function format(mixed ...$args): static
+    public function format(mixed ...$args): self
     {
         return $this->createOrModify(vsprintf($this->value, $args));
     }
@@ -623,7 +623,7 @@ trait ManipulatesString
     /**
      * Replaces all occurrences of the given `$search` with `$replace`.
      */
-    public function replace(Stringable|string|array $search, Stringable|string|array $replace): static
+    public function replace(Stringable|string|array $search, Stringable|string|array $replace): self
     {
         return $this->createOrModify(replace($this->value, $search, $replace));
     }
@@ -631,7 +631,7 @@ trait ManipulatesString
     /**
      * Removes all occurrences of the given `$search`.
      */
-    public function erase(Stringable|string|array $search): static
+    public function erase(Stringable|string|array $search): self
     {
         return $this->createOrModify(replace($this->value, $search, ''));
     }
@@ -639,7 +639,7 @@ trait ManipulatesString
     /**
      * Replaces the patterns matching the given regular expression.
      */
-    public function replaceRegex(array|string $regex, array|string|callable $replace): static
+    public function replaceRegex(array|string $regex, array|string|callable $replace): self
     {
         return $this->createOrModify(Regex\replace($this->value, $regex, $replace));
     }
@@ -726,7 +726,7 @@ trait ManipulatesString
     /**
      * Implodes the given array into a string by a separator.
      */
-    public static function implode(ArrayAccess|array $parts, string $glue = ' '): static
+    public static function implode(ArrayAccess|array $parts, string $glue = ' '): self
     {
         return new static(arr($parts)->implode($glue));
     }
@@ -734,7 +734,7 @@ trait ManipulatesString
     /**
      * Joins all values using the specified `$glue`. The last item of the string is separated by `$finalGlue`.
      */
-    public static function join(ArrayAccess|array $parts, string $glue = ', ', ?string $finalGlue = ' and '): static
+    public static function join(ArrayAccess|array $parts, string $glue = ', ', ?string $finalGlue = ' and '): self
     {
         return new static(arr($parts)->join($glue, $finalGlue));
     }
@@ -776,7 +776,7 @@ trait ManipulatesString
      *
      * @param (Closure(static): void) $callback
      */
-    public function tap(Closure $callback): static
+    public function tap(Closure $callback): self
     {
         tap($this, $callback);
 
@@ -794,7 +794,7 @@ trait ManipulatesString
     /**
      * Dumps the instance.
      */
-    public function dump(mixed ...$dumps): static
+    public function dump(mixed ...$dumps): self
     {
         lw($this->value, ...$dumps);
 

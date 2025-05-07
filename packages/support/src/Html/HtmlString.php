@@ -20,7 +20,7 @@ final class HtmlString implements StringInterface
     /**
      * Creates an HTML tag with the specified optional attributes and content.
      */
-    public static function createTag(string $tag, array $attributes = [], ?string $content = null): static
+    public static function createTag(string $tag, array $attributes = [], ?string $content = null): self
     {
         return create_tag($tag, $attributes, $content);
     }
@@ -45,7 +45,7 @@ final class HtmlString implements StringInterface
      * Returns a new instance with the specified string,
      * or mutates the instance if this is a `MutableString`.
      */
-    protected function createOrModify(Stringable|string $string): static
+    protected function createOrModify(Stringable|string $string): self
     {
         return new static($string);
     }

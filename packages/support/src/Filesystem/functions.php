@@ -214,6 +214,20 @@ namespace Tempest\Support\Filesystem {
      */
     function delete_file(string $file): void
     {
+        if (namespace\is_symbolic_link($file)) {
+            [$result, $errorMessage] = box(static fn (): bool => unlink($file));
+
+            if ($result === false && namespace\is_symbolic_link($file)) { // @phpstan-ignore booleanAnd.rightAlwaysTrue
+                throw new Exceptions\RuntimeException(sprintf(
+                    'Failed to delete symbolic link "%s": %s.',
+                    $file,
+                    $errorMessage ?? 'internal error',
+                ));
+            }
+
+            return;
+        }
+
         if (! namespace\exists($file)) {
             throw Exceptions\NotFoundException::forFile($file);
         }

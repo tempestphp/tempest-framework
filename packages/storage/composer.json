@@ -5,17 +5,19 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "league/flysystem": "^3.29.1"
+        "league/flysystem": "^3.29.1",
+        "tempest/container": "dev-main"
     },
     "require-dev": {
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-read-only": "^3.0",
-				"league/flysystem-ftp": "^3.0",
-				"league/flysystem-memory": "^3.0",
-				"league/flysystem-ziparchive": "^3.0",
-				"league/flysystem-sftp-v3": "^3.0",
-				"league/flysystem-azure-blob-storage": "^3.0",
-				"league/flysystem-google-cloud-storage": "^3.0"
+        "league/flysystem-ftp": "^3.0",
+        "league/flysystem-memory": "^3.0",
+        "league/flysystem-ziparchive": "^3.0",
+        "league/flysystem-sftp-v3": "^3.0",
+        "league/flysystem-azure-blob-storage": "^3.0",
+        "league/flysystem-google-cloud-storage": "^3.0",
+        "tempest/support": "dev-main"
     },
     "autoload": {
         "psr-4": {
