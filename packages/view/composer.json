@@ -5,11 +5,11 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^8.4",
-        "tempest/core": "1.0.0-beta.1",
-        "tempest/container": "1.0.0-beta.1",
-        "tempest/validation": "1.0.0-beta.1",
-        "tempest/cache": "1.0.0-beta.1",
-        "tempest/clock": "1.0.0-beta.1"
+        "tempest/core": "dev-main",
+        "tempest/container": "dev-main",
+        "tempest/validation": "dev-main",
+        "tempest/cache": "dev-main",
+        "tempest/clock": "dev-main"
     },
     "autoload": {
         "files": [
