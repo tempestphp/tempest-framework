@@ -5,12 +5,12 @@ namespace Tests\Tempest\Integration\Http\Fixtures;
 use Exception;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Redirect;
-use Tempest\Router\Exceptions\SendsResponse;
+use Tempest\Router\Exceptions\ConvertsToResponse;
 
 /**
  * Used by HttpExceptionHandlerTest.
  */
-final class ExceptionThatSendsRedirectResponse extends Exception implements SendsResponse
+final class ExceptionThatConvertsToRedirectResponse extends Exception implements ConvertsToResponse
 {
     public function toResponse(): Response
     {

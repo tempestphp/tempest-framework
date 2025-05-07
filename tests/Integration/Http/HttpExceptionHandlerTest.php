@@ -17,7 +17,7 @@ use Tempest\Router\Exceptions\HttpExceptionHandler;
 use Tempest\Router\Exceptions\NotFoundException;
 use Tempest\Router\ResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
-use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatSendsRedirectResponse;
+use Tests\Tempest\Integration\Http\Fixtures\ExceptionThatConvertsToRedirectResponse;
 use Tests\Tempest\Integration\Http\Fixtures\ExceptionWithContext;
 use Tests\Tempest\Integration\Http\Fixtures\NullExceptionProcessor;
 
@@ -97,7 +97,7 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
     {
         $this->callExceptionHandler(function (): void {
             $handler = $this->container->get(HttpExceptionHandler::class);
-            $handler->handle(new ExceptionThatSendsRedirectResponse());
+            $handler->handle(new ExceptionThatConvertsToRedirectResponse());
         });
 
         $this->assertInstanceOf(Redirect::class, $this->response);

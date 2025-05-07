@@ -31,7 +31,7 @@ final readonly class HttpExceptionHandler implements ExceptionHandler
             }
 
             $response = match (true) {
-                $throwable instanceof SendsResponse => $throwable->toResponse(),
+                $throwable instanceof ConvertsToResponse => $throwable->toResponse(),
                 $throwable instanceof NotFoundException => $this->renderErrorResponse(Status::NOT_FOUND),
                 $throwable instanceof HttpException => $this->renderErrorResponse($throwable->status, $throwable),
                 default => $this->renderErrorResponse(Status::INTERNAL_SERVER_ERROR),

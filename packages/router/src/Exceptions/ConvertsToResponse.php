@@ -9,7 +9,7 @@ use Tempest\Http\Response;
  *
  * @phpstan-require-extends \Throwable
  */
-interface SendsResponse
+interface ConvertsToResponse
 {
     /**
      * Gets a response to be sent to the client.
