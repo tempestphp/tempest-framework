@@ -33,7 +33,7 @@ trait GeneratesArguments
             }
 
             /** @phpstan-ignore-next-line method.notFound */
-            if ($reflectionMethod->getReturnType()?->getName() !== 'static') {
+            if ($reflectionMethod->getReturnType()?->getName() !== 'self') {
                 continue;
             }
 

@@ -33,7 +33,7 @@ enum Order: int
      *
      * @return static The default instance of the enum, which is `Order::Equal`.
      */
-    public static function default(): static
+    public static function default(): self
     {
         return self::EQUAL;
     }
