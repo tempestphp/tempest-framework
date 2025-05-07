@@ -33,6 +33,7 @@ use Throwable;
 
 use function Tempest\Support\Language\pluralize;
 use function Tempest\Support\path;
+use function Tempest\Support\str;
 use function Tempest\uri;
 
 final class StaticGenerateCommand
@@ -226,7 +227,7 @@ final class StaticGenerateCommand
             if (Str\starts_with($link, '/') || Str\starts_with($this->getLinkWithoutProtocol($link), $this->getLinkWithoutProtocol($this->appConfig->baseUri))) {
                 do {
                     $target ??= match (true) {
-                        Str\starts_with($link, '/') => $this->appConfig->baseUri . '/' . Str\strip_start($link, '/'),
+                        ! Str\starts_with($link, '/') => str($link)->stripStart($this->appConfig->baseUri)->finish('/')->toString(),
                         default => $link,
                     };
 
