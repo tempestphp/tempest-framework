@@ -36,7 +36,7 @@ final class MutableString implements StringInterface
      * Returns a new instance with the specified string,
      * or mutates the instance if this is a `MutableString`.
      */
-    protected function createOrModify(Stringable|string $string): static
+    protected function createOrModify(Stringable|string $string): self
     {
         $this->value = (string) $string;
 

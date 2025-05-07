@@ -35,9 +35,9 @@ final class ImmutableString implements StringInterface
      * Applies the given `$callback` if the `$condition` is true.
      *
      * @param mixed|Closure(static): bool $condition
-     * @param Closure(static): static $callback
+     * @param Closure(static): self $callback
      */
-    public function when(mixed $condition, Closure $callback): static
+    public function when(mixed $condition, Closure $callback): self
     {
         if ($condition instanceof Closure) {
             $condition = $condition($this);
@@ -54,7 +54,7 @@ final class ImmutableString implements StringInterface
      * Returns a new instance with the specified string,
      * or mutates the instance if this is a `MutableString`.
      */
-    protected function createOrModify(Stringable|string $string): static
+    protected function createOrModify(Stringable|string $string): self
     {
         return new static($string);
     }

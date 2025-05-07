@@ -319,7 +319,7 @@ final class ConsoleTester
 
     public function dd(): self
     {
-        ld($this->output->asFormattedString());
+        ld($this->output->asUnformattedString());
 
         return $this;
     }

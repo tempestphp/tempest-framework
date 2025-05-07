@@ -21,7 +21,7 @@ final class Path implements StringInterface
         $this->value = namespace\normalize(...$paths);
     }
 
-    protected function createOrModify(Stringable|string $string): static
+    protected function createOrModify(Stringable|string $string): self
     {
         return new static($string);
     }
@@ -37,7 +37,7 @@ final class Path implements StringInterface
     /**
      * Returns the entire path.
      */
-    public function path(): static
+    public function path(): self
     {
         return $this->createOrModify($this->value);
     }
@@ -45,7 +45,7 @@ final class Path implements StringInterface
     /**
      * Keeps only the directory name.
      */
-    public function dirname(): static
+    public function dirname(): self
     {
         return $this->createOrModify($this->info(PATHINFO_DIRNAME));
     }
@@ -53,7 +53,7 @@ final class Path implements StringInterface
     /**
      * Keeps only the filename.
      */
-    public function filename(): static
+    public function filename(): self
     {
         return $this->createOrModify($this->info(PATHINFO_FILENAME));
     }
@@ -61,7 +61,7 @@ final class Path implements StringInterface
     /**
      * Keeps only the basename.
      */
-    public function basename(string $suffix = ''): static
+    public function basename(string $suffix = ''): self
     {
         return $this->createOrModify($this->info(PATHINFO_BASENAME))->stripEnd($suffix);
     }
@@ -69,7 +69,7 @@ final class Path implements StringInterface
     /**
      * Keeps only the extension.
      */
-    public function extension(): static
+    public function extension(): self
     {
         return $this->createOrModify($this->info(PATHINFO_EXTENSION));
     }
