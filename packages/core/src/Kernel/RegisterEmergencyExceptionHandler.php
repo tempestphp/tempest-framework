@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Core\Exceptions;
+namespace Tempest\Core\Kernel;
 
 use Tempest\Container\Container;
 use Tempest\Http\Request;
@@ -9,7 +9,7 @@ use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
-final readonly class WhoopsErrorHandler
+final readonly class RegisterEmergencyExceptionHandler
 {
     public function __construct(
         private Container $container,

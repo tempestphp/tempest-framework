@@ -9,7 +9,6 @@ use Tempest\Console\Input\ConsoleArgumentBag;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Router\HttpApplication;
 
@@ -21,7 +20,6 @@ final readonly class ApplicationInitializer implements Initializer
         if (PHP_SAPI === 'cli') {
             return new ConsoleApplication(
                 container: $container,
-                appConfig: $container->get(AppConfig::class),
                 argumentBag: new ConsoleArgumentBag(['argv']),
             );
         }

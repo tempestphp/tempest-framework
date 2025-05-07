@@ -6,7 +6,7 @@ namespace Tempest\Router\Exceptions;
 
 use Exception;
 
-final class InvalidRouteException extends Exception
+final class InvalidRouteException extends Exception implements RouterException
 {
     public function __construct(string $controllerClass, string $controllerMethod)
     {
