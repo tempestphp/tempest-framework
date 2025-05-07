@@ -190,6 +190,9 @@
             "carthage-software/mago": true
         }
     },
+    "bin": [
+        "packages/console/bin/tempest"
+    ],
     "scripts": {
         "phpunit": "@php -d memory_limit=2G vendor/bin/phpunit --display-warnings --display-skipped --display-deprecations --display-errors --display-notices",
         "coverage": "vendor/bin/phpunit --coverage-html build/reports/html --coverage-clover build/reports/clover.xml",
