@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Route;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
+use ReflectionException;
 use Tempest\Core\AppConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Http\Responses\Ok;
@@ -92,6 +93,14 @@ final class RouterTest extends FrameworkIntegrationTestCase
 
         $this->assertSame('https://test.com/abc', $router->toUri('/abc'));
         $this->assertEquals('https://test.com/test/1/a/b/c/d', $router->toUri([TestController::class, 'withCustomRegexParams'], id: 1, name: 'a/b/c/d'));
+    }
+
+    public function test_uri_generation_with_invalid_fqcn(): void
+    {
+        $router = $this->container->get(GenericRouter::class);
+
+        $this->expectException(ReflectionException::class);
+        $router->toUri(TestController::class . 'Invalid');
     }
 
     public function test_uri_generation_with_query_param(): void
