@@ -2,8 +2,10 @@
 
 namespace Tempest\Core;
 
-use Tempest\Debug\Debug;
+use Tempest\Log\Logger;
 use Throwable;
+
+use function Tempest\get;
 
 /**
  * An exception processor that logs exceptions.
@@ -12,14 +14,13 @@ final class LogExceptionProcessor implements ExceptionProcessor
 {
     public function process(Throwable $throwable): Throwable
     {
-        $items = [
-            'exception' => $throwable->getMessage(),
-            'context' => ($throwable instanceof HasContext)
-                ? $throwable->context()
-                : [],
-        ];
-
-        Debug::resolve()->log($items, writeToOut: false);
+        get(Logger::class)
+            ?->error(
+                $throwable->getMessage(),
+                [
+                    'exception' => $throwable,
+                ],
+            );
 
         return $throwable;
     }
