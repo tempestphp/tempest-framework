@@ -138,11 +138,13 @@ namespace Tempest\Support\Arr {
      */
     function remove_keys(iterable $array, string|int|array $keys): array
     {
-        return namespace\forget_keys(to_array($array), $keys);
+        $array = to_array($array);
+
+        return namespace\forget_keys($array, $keys);
     }
 
     /**
-     * Removes the specified values from the array. The array is mutated.
+     * Removes the specified values from the array. The array is not mutated.
      *
      * @template TKey of array-key
      * @template TValue
@@ -153,7 +155,9 @@ namespace Tempest\Support\Arr {
      */
     function remove_values(array $array, string|int|array $values): array
     {
-        return namespace\forget_values(to_array($array), $values);
+        $array = to_array($array);
+
+        return namespace\forget_values($array, $values);
     }
 
     /**
@@ -166,7 +170,7 @@ namespace Tempest\Support\Arr {
      * @param array-key|array<array-key> $keys The keys of the items to remove.
      * @return array<TKey,TValue>
      */
-    function forget_keys(array $array, string|int|array $keys): array
+    function forget_keys(array &$array, string|int|array $keys): array
     {
         $keys = is_array($keys) ? $keys : [$keys];
 
@@ -187,7 +191,7 @@ namespace Tempest\Support\Arr {
      * @param TValue|array<TValue> $values The values to remove.
      * @return array<TKey,TValue>
      */
-    function forget_values(array $array, string|int|array $values): array
+    function forget_values(array &$array, string|int|array $values): array
     {
         $values = is_array($values) ? $values : [$values];
 
