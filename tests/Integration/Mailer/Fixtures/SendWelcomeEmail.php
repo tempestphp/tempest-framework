@@ -20,7 +20,7 @@ final class SendWelcomeEmail implements Email
 
     public Content $content {
         get => new Content(
-            html: view('./welcome.view.php', fullName: $this->fullName),
+            html: view(__DIR__ . '/welcome.view.php', fullName: $this->fullName),
         );
     }
 
