@@ -888,4 +888,13 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
             <div thing="c">c</div>
         ', $html);
     }
+
+    public function test_escape_expression_attribute_in_view_components(): void
+    {
+        $this->registerViewComponent('x-test', '<div class="foo" ::escaped="foo"></div>');
+
+        $html = $this->render('<x-test/>');
+
+        $this->assertSnippetsMatch('<div class="foo" :escaped="foo"></div>', $html);
+    }
 }
