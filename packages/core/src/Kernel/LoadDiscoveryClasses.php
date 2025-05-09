@@ -173,7 +173,6 @@ final class LoadDiscoveryClasses
 
     private function shouldSkipBasedOnConfig(ClassReflector|string $input): bool
     {
-        return false;
         if ($input instanceof ClassReflector) {
             $input = $input->getName();
         }
