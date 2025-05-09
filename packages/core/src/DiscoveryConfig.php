@@ -8,7 +8,9 @@ final class DiscoveryConfig
 
     public function shouldSkip(string $input): bool
     {
-        return $this->skipDiscovery[$input] ?? false;
+        return $this->skipDiscovery[$input]
+            ?? $this->skipDiscovery[str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $input)]
+            ?? false;
     }
 
     public function skipClasses(string ...$classNames): self
