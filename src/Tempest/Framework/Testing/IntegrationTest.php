@@ -19,6 +19,7 @@ use Tempest\Framework\Testing\Http\HttpRouterTester;
 use Tempest\Http\GenericRequest;
 use Tempest\Http\Method;
 use Tempest\Http\Request;
+use Tempest\Mail\Testing\MailerTester;
 use Tempest\Storage\Testing\StorageTester;
 
 use function Tempest\Support\Path\normalize;
@@ -49,6 +50,8 @@ abstract class IntegrationTest extends TestCase
 
     protected StorageTester $storage;
 
+    protected MailerTester $mail;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,6 +71,7 @@ abstract class IntegrationTest extends TestCase
         $this->installer = $this->container->get(InstallerTester::class);
         $this->eventBus = $this->container->get(EventBusTester::class);
         $this->storage = $this->container->get(StorageTester::class);
+        $this->mail = $this->container->get(MailerTester::class);
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();

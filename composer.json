@@ -31,6 +31,7 @@
         "psr/http-message": "^1.0|^2.0",
         "psr/log": "^3.0.0",
         "symfony/cache": "^7.2",
+        "symfony/mailer": "^7.2.6",
         "symfony/process": "^7.1",
         "symfony/uid": "^7.1",
         "symfony/var-dumper": "^7.1",
@@ -63,6 +64,7 @@
         "rector/rector": "^2.0-rc2",
         "spatie/phpunit-snapshot-assertions": "^5.1.8",
         "spaze/phpstan-disallowed-calls": "^4.0",
+        "symfony/postmark-mailer": "^7.2.6",
         "symplify/monorepo-builder": "^11.2",
         "tempest/blade": "^0.1.0",
         "twig/twig": "^3.16"
@@ -84,6 +86,7 @@
         "tempest/http": "self.version",
         "tempest/http-client": "self.version",
         "tempest/log": "self.version",
+        "tempest/mailer": "self.version",
         "tempest/mapper": "self.version",
         "tempest/reflection": "self.version",
         "tempest/router": "self.version",
@@ -118,6 +121,7 @@
             "Tempest\\HttpClient\\": "packages/http-client/src",
             "Tempest\\Http\\": "packages/http/src",
             "Tempest\\Log\\": "packages/log/src",
+            "Tempest\\Mail\\": "packages/mailer/src",
             "Tempest\\Mapper\\": "packages/mapper/src",
             "Tempest\\Reflection\\": "packages/reflection/src",
             "Tempest\\Router\\": "packages/router/src",
@@ -174,6 +178,9 @@
             "Tempest\\HttpClient\\Tests\\": "packages/http-client/tests",
             "Tempest\\Http\\Tests\\": "packages/http/tests",
             "Tempest\\Log\\Tests\\": "packages/log/tests",
+            "Tempest\\Mail\\Tests\\": [
+                "packages/mailer/tests"
+            ],
             "Tempest\\Mapper\\Tests\\": "packages/mapper/tests",
             "Tempest\\Reflection\\Tests\\": "packages/reflection/tests",
             "Tempest\\Router\\Tests\\": "packages/router/tests",
