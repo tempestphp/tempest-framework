@@ -38,7 +38,6 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
     #[Test]
     public function do_not_discover_global_path(): void
     {
-        lw($this->container->get(DiscoveryConfig::class));
         $this->assertFalse(GlobalHiddenPathDiscovery::$discovered);
     }
 
