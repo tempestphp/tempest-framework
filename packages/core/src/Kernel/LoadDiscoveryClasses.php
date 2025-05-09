@@ -22,8 +22,6 @@ use Tempest\Discovery\SkipDiscovery;
 use Tempest\Reflection\ClassReflector;
 use Throwable;
 
-use function Tempest\Support\Arr\contains;
-
 /** @internal */
 final class LoadDiscoveryClasses
 {
@@ -104,6 +102,7 @@ final class LoadDiscoveryClasses
             /** @var SplFileInfo $file */
             foreach ($files as $file) {
                 $fileName = $file->getFilename();
+
                 if ($fileName === '') {
                     continue;
                 }
@@ -118,7 +117,7 @@ final class LoadDiscoveryClasses
 
                 $input = $file->getPathname();
 
-                if ($this->discoveryConfig->shouldBeSkipped($input)) {
+                if ($this->shouldSkipBasedOnConfig($fileName)) {
                     continue;
                 }
 
@@ -137,6 +136,10 @@ final class LoadDiscoveryClasses
                     } elseif (class_exists($className)) {
                         $input = new ClassReflector($className);
                     }
+                }
+
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    continue;
                 }
 
                 if ($input instanceof ClassReflector) {
@@ -168,15 +171,21 @@ final class LoadDiscoveryClasses
         $this->appliedDiscovery[$discovery::class] = true;
     }
 
+    private function shouldSkipBasedOnConfig(ClassReflector|string $input): bool
+    {
+        return false;
+        if ($input instanceof ClassReflector) {
+            $input = $input->getName();
+        }
+
+        return in_array($input, $this->discoveryConfig->skipDiscovery, strict: true);
+    }
+
     /**
      * Check whether discovery for a specific class should be skipped based on the #[SkipDiscovery] attribute
      */
     private function shouldSkipDiscoveryForClass(Discovery $discovery, ClassReflector $input): bool
     {
-        if ($this->discoveryConfig->shouldBeSkipped($input->getName())) {
-            return true;
-        }
-
         $attribute = $input->getAttribute(SkipDiscovery::class);
 
         if ($attribute === null) {
