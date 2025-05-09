@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Core;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tempest\Core\DiscoveryConfig;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
@@ -37,6 +38,7 @@ final class LoadDiscoveryClassesTest extends FrameworkIntegrationTestCase
     #[Test]
     public function do_not_discover_global_path(): void
     {
+        lw($this->container->get(DiscoveryConfig::class));
         $this->assertFalse(GlobalHiddenPathDiscovery::$discovered);
     }
 
