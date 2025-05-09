@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
-use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
 use PHPUnit\Framework\Attributes\Test;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Migrations\RunnableMigrations;
 use Tests\Tempest\Fixtures\Discovery\HiddenDatabaseMigration;
 use Tests\Tempest\Fixtures\Discovery\HiddenMigratableDatabaseMigration;
 use Tests\Tempest\Fixtures\GlobalHiddenDiscovery;
+use Tests\Tempest\Fixtures\GlobalHiddenPathDiscovery;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\get;
