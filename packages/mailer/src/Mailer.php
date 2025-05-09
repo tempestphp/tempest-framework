@@ -16,9 +16,9 @@ final class Mailer
     {
         $html = $this->renderer->render(view($path, ...$params));
 
-        [$header, $body] = explode(PHP_EOL, $html, 2);
+        [$headerString, $body] = explode(PHP_EOL, $html, 2);
 
-        $email = $this->makeEmail($header, $body);
+        $email = $this->makeEmail($headerString, $body);
 
         $this->sendEmail($email);
     }
@@ -32,26 +32,17 @@ final class Mailer
         ld($email);
     }
 
-    private function makeEmail(string $header, string $body): Email
+    private function makeEmail(string $headerString, string $body): Email
     {
         $parsedHeaders = [];
 
-        $headers = explode(';', $header);
+        preg_match_all('/(?<header>\w+)="(?<value>.*?)"/', $headerString, $headers);
 
-        foreach ($headers as $header) {
-            if (trim($header) === '') {
-                continue;
-            }
+        foreach ($headers[0] as $i => $line) {
+            $header = $headers['header'][$i];
+            $value = $headers['value'][$i];
 
-            [$name, $value] = explode(':', $header);
-
-            $value = trim($value);
-
-            if ($value === '') {
-                $value = null;
-            }
-            
-            $parsedHeaders[trim($name)] = $value;
+            $parsedHeaders[$header] = $value;
         }
 
         $parsedHeaders['attachments'] = explode(',', $parsedHeaders['attachments'] ?? '');
