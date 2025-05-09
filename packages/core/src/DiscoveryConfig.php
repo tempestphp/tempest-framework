@@ -23,6 +23,8 @@ final class DiscoveryConfig
     public function skipPaths(string ...$paths): self
     {
         foreach ($paths as $path) {
+            $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+
             $realpath = realpath($path);
 
             if ($realpath === false) {
