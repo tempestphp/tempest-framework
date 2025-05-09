@@ -76,7 +76,7 @@ final class CacheConfig
         return $current;
     }
 
-    private function enableCache(null|bool $enable): bool
+    private function enableCache(?bool $enable): ?bool
     {
         if ($this->isDiscoveryGenerateCommand()) {
             return false;
