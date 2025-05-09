@@ -117,7 +117,7 @@ final class LoadDiscoveryClasses
 
                 $input = $file->getPathname();
 
-                if ($this->shouldSkipBasedOnConfig($fileName)) {
+                if ($this->shouldSkipBasedOnConfig($input)) {
                     continue;
                 }
 
@@ -177,7 +177,7 @@ final class LoadDiscoveryClasses
             $input = $input->getName();
         }
 
-        return in_array($input, $this->discoveryConfig->skipDiscovery, strict: true);
+        return $this->discoveryConfig->shouldSkip($input);
     }
 
     /**
