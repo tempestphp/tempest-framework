@@ -95,7 +95,7 @@ Continue to read how Tempest works in [the docs](https://tempestphp.com).
 
 ## Contributing
 
-We welcome contributing to Tempest! We only ask that you take a quick look at our [guidelines](https://tempestphp.com/docs/internals/contributing/).
+We welcome contributing to Tempest! We only ask that you take a quick look at our [guidelines](https://tempestphp.com/main/extra-topics/contributing).
 
 An easy way to get started is to head on over to the issues page to see some ways you might help out.
 

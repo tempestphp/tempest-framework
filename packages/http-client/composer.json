@@ -10,8 +10,8 @@
         "tempest/container": "dev-main",
         "tempest/http": "dev-main",
         "tempest/router": "dev-main",
-        "psr-discovery/http-factory-implementations": "1.x-dev",
-        "psr-discovery/http-client-implementations": "1.x-dev"
+        "psr-discovery/http-factory-implementations": "^1.4",
+        "psr-discovery/http-client-implementations": "^1.2"
     },
     "require-dev": {
         "aidan-casey/mock-client": "dev-master",

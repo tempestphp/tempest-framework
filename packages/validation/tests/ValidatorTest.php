@@ -238,4 +238,41 @@ final class ValidatorTest extends TestCase
 
         $this->assertEmpty($failingRules);
     }
+
+    public function test_validate_values_some_invalid(): void
+    {
+        $failingRules = new Validator()->validateValues(
+            [
+                'name' => '',
+                'email' => 'invalid-email',
+                'age' => 0,
+            ],
+            [
+                'name' => [new IsString(), new NotNull()],
+                'email' => [new Email()],
+                'age' => [new IsInteger(), new NotNull()],
+            ],
+        );
+
+        $this->assertCount(1, $failingRules);
+        $this->assertInstanceOf(Email::class, $failingRules['email'][0]);
+    }
+
+    public function test_validate_values_all_valid(): void
+    {
+        $failingRules = new Validator()->validateValues(
+            [
+                'name' => '',
+                'email' => 'foo@bar.baz',
+                'age' => 0,
+            ],
+            [
+                'name' => [new IsString(), new NotNull()],
+                'email' => [new Email()],
+                'age' => [new IsInteger(), new NotNull()],
+            ],
+        );
+
+        $this->assertCount(0, $failingRules);
+    }
 }
