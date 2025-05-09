@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Id;
@@ -11,27 +12,37 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
-final readonly class InsertQueryBuilder
+final class InsertQueryBuilder implements BuildsQuery
 {
     private InsertStatement $insert;
 
+    private array $after = [];
+
     public function __construct(
-        private string|object $model,
-        private array $rows,
-        private SerializerFactory $serializerFactory,
+        private readonly string|object $model,
+        private readonly array $rows,
+        private readonly SerializerFactory $serializerFactory,
     ) {
         $this->insert = new InsertStatement($this->resolveTableDefinition());
     }
 
     public function execute(mixed ...$bindings): Id
     {
-        return $this->build()->execute(...$bindings);
+        $id = $this->build()->execute(...$bindings);
+
+        foreach ($this->after as $after) {
+            $query = $after($id);
+
+            if ($query instanceof BuildsQuery) {
+                $query->build()->execute();
+            }
+        }
+
+        return $id;
     }
 
-    public function build(): Query
+    public function build(mixed ...$bindings): Query
     {
-        $bindings = [];
-
         foreach ($this->resolveEntries() as $entry) {
             $this->insert->addEntry($entry);
 
@@ -44,6 +55,13 @@ final readonly class InsertQueryBuilder
             $this->insert,
             $bindings,
         );
+    }
+
+    public function then(Closure ...$callbacks): self
+    {
+        $this->after = [...$this->after, ...$callbacks];
+
+        return $this;
     }
 
     private function resolveEntries(): array
@@ -78,7 +96,7 @@ final readonly class InsertQueryBuilder
 
                 $value = $property->getValue($model);
 
-                // BelongsTo and HasMany relations are included
+                // BelongsTo and reverse HasMany relations are included
                 if ($property->getType()->isRelation()) {
                     $column .= '_id';
 
