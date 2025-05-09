@@ -177,6 +177,10 @@ final class LoadDiscoveryClasses
             $input = $input->getName();
         }
 
+        if (str_contains($input, 'GlobalHiddenPathDiscovery')) {
+            lw($input);
+        }
+
         return $this->discoveryConfig->shouldSkip($input);
     }
 
