@@ -2,10 +2,11 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
-use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
-use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -151,15 +152,26 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_attach_new_has_many_relation_on_update(): void
     {
-        $this->markTestSkipped('Not implemented yet');
+        $this->migrate(CreateMigrationsTable::class, CreateBookTable::class, CreateChapterTable::class);
 
-        //        query(Book::class)
-        //            ->insert(
-        //                title: 'Timeline Taxi',
-        //                chapters: [
-        //                    Chapter::new(title: 'Chapter 01'),
-        //                ],
-        //            )
-        //            ->build();
+        $id = query(Book::class)
+            ->insert(title: 'Timeline Taxi')
+            ->then(
+                fn (Id $id) => query(Chapter::class)->insert(
+                    ['title' => 'Chapter 01', 'book_id' => $id],
+                    ['title' => 'Chapter 02', 'book_id' => $id],
+                ),
+                fn (Id $id) => query(Chapter::class)->insert(
+                    ['title' => 'Chapter 03', 'book_id' => $id],
+                ),
+            )
+            ->execute();
+
+        $book = Book::select()->with('chapters')->get($id);
+
+        $this->assertCount(3, $book->chapters);
+        $this->assertSame('Chapter 01', $book->chapters[1]->title);
+        $this->assertSame('Chapter 02', $book->chapters[2]->title);
+        $this->assertSame('Chapter 03', $book->chapters[3]->title);
     }
 }

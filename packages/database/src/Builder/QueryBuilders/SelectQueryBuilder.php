@@ -26,7 +26,7 @@ use function Tempest\Support\arr;
 /**
  * @template TModelClass of object
  */
-final class SelectQueryBuilder
+final class SelectQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -57,7 +57,7 @@ final class SelectQueryBuilder
      */
     public function first(mixed ...$bindings): mixed
     {
-        $query = $this->build($bindings);
+        $query = $this->build(...$bindings);
 
         $result = map($query)->collection()->to($this->modelClass);
 
@@ -79,7 +79,7 @@ final class SelectQueryBuilder
     /** @return TModelClass[] */
     public function all(mixed ...$bindings): array
     {
-        return map($this->build($bindings))->collection()->to($this->modelClass);
+        return map($this->build(...$bindings))->collection()->to($this->modelClass);
     }
 
     /**
@@ -182,7 +182,7 @@ final class SelectQueryBuilder
         return $this->build()->getSql();
     }
 
-    public function build(array $bindings = []): Query
+    public function build(mixed ...$bindings): Query
     {
         $resolvedRelations = $this->resolveRelations();
 

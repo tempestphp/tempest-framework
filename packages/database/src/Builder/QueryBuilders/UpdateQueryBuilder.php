@@ -15,7 +15,7 @@ use Tempest\Support\Conditions\HasConditions;
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
-final class UpdateQueryBuilder
+final class UpdateQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -61,7 +61,7 @@ final class UpdateQueryBuilder
         return $this;
     }
 
-    public function build(): Query
+    public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();
 
@@ -72,8 +72,6 @@ final class UpdateQueryBuilder
         if (model($this->model)->isObjectModel() && is_object($this->model)) {
             $this->where('`id` = ?', id: $this->model->id->id);
         }
-
-        $bindings = [];
 
         foreach ($values as $value) {
             $bindings[] = $value;

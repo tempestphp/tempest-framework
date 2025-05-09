@@ -13,6 +13,8 @@ final class Query
     public function __construct(
         public string|QueryStatement $sql,
         public array $bindings = [],
+        /** @var \Closure[] $executeAfter */
+        public array $executeAfter = [],
     ) {}
 
     public function execute(mixed ...$bindings): Id
