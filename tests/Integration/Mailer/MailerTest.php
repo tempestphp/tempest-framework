@@ -23,7 +23,7 @@ final class MailerTest extends FrameworkIntegrationTestCase
             files: [
                 __DIR__ . '/Fixtures/attachment.txt',
                 __DIR__ . '/test-mail.view.php',
-            ]
+            ],
         );
     }
 }

@@ -3,6 +3,7 @@
 namespace Tempest\Mailer;
 
 use Tempest\View\ViewRenderer;
+
 use function Tempest\view;
 
 final class Mailer
