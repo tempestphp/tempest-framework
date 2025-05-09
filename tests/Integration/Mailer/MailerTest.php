@@ -17,6 +17,10 @@ final class MailerTest extends FrameworkIntegrationTestCase
             to: 'brendt@stitcher.io',
             subject: 'Hello there',
             name: 'Brent',
+            files: [
+                __DIR__ . '/Fixtures/attachment.txt',
+                __DIR__ . '/test-mail.view.php',
+            ]
         );
     }
 }

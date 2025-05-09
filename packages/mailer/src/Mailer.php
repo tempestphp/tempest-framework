@@ -39,10 +39,16 @@ final class Mailer
         $headers = explode(';', $header);
 
         foreach ($headers as $header) {
+            if (trim($header) === '') {
+                continue;
+            }
+
             [$name, $value] = explode(':', $header);
 
             $parsedHeaders[trim($name)] = trim($value);
         }
+
+        $parsedHeaders['attachments'] = explode(',', $parsedHeaders['attachments'] ?? '');
 
         $data = [
             ...$parsedHeaders,
