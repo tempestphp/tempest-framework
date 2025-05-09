@@ -33,5 +33,6 @@
     <env name="BASE_URI" value="" />
     <env name="CACHE" value="null" />
     <env name="DISCOVERY_CACHE" value="true" />
+    <env name="MAIL_FROM" value="brendt@stitcher.io" />
   </php>
 </phpunit>

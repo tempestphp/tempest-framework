@@ -1,0 +1,21 @@
+{
+    "name": "tempest/mailer",
+    "description": "A component for mails.",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "tempest/core": "dev-main",
+        "tempest/view": "dev-main"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tempest\\Mailer\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tempest\\Mailer\\Tests\\": "tests"
+        }
+    }
+}
