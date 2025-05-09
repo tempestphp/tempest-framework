@@ -45,7 +45,13 @@ final class Mailer
 
             [$name, $value] = explode(':', $header);
 
-            $parsedHeaders[trim($name)] = trim($value);
+            $value = trim($value);
+
+            if ($value === '') {
+                $value = null;
+            }
+            
+            $parsedHeaders[trim($name)] = $value;
         }
 
         $parsedHeaders['attachments'] = explode(',', $parsedHeaders['attachments'] ?? '');

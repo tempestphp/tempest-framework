@@ -11,12 +11,15 @@ final class MailerTest extends FrameworkIntegrationTestCase
     {
         $mailer = $this->container->get(Mailer::class);
 
+        $user = (object) [
+            'email' => 'brendt@stitcher.io',
+            'name' => 'Brent Roose',
+            'first_name' => 'Brent',
+        ];
+
         $mailer->send(
             __DIR__ . '/test-mail.view.php',
-            from: 'sender@tempestphp.com',
-            to: 'brendt@stitcher.io',
-            subject: 'Hello there',
-            name: 'Brent',
+            user: $user,
             files: [
                 __DIR__ . '/Fixtures/attachment.txt',
                 __DIR__ . '/test-mail.view.php',
