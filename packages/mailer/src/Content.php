@@ -14,7 +14,7 @@ final class Content
     public function __construct(
         public null|string|View $html = null,
         public ?string $text = null,
-        /** @var Tempest\Mail\Attachments\Attachment[] */
+        /** @var Attachment[] */
         public array $attachments = [],
     ) {
         if (! $text && ! $html) {

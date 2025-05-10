@@ -7,12 +7,12 @@ use Closure;
 /**
  * Represents an attachment that leaves in the local filesystem.
  */
-final class DataAttachment implements Attachment
+final readonly class DataAttachment implements Attachment
 {
     private function __construct(
-        public readonly Closure $resolve,
-        public readonly ?string $name,
-        public readonly ?string $contentType,
+        public Closure $resolve,
+        public ?string $name,
+        public ?string $contentType,
     ) {}
 
     /**

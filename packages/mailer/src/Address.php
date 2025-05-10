@@ -4,11 +4,11 @@ namespace Tempest\Mail;
 
 use Stringable;
 
-final class Address implements Stringable
+final readonly class Address implements Stringable
 {
     public function __construct(
-        public readonly string $email,
-        public readonly ?string $name = null,
+        public string $email,
+        public ?string $name = null,
     ) {}
 
     public function __toString(): string
