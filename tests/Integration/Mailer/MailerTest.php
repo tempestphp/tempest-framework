@@ -8,7 +8,7 @@ use Tempest\Mail\Exceptions\MissingExpeditorAddressException;
 use Tempest\Mail\Exceptions\MissingRecipientAddressException;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Mailer;
-use Tempest\Mail\StorageAttachment;
+use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Transports\Smtp\Scheme;
 use Tempest\Mail\Transports\Smtp\SmtpMailerConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;

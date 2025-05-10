@@ -6,6 +6,7 @@ use Closure;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
+use Symfony\Component\Mime\Part\DataPart;
 use Tempest\Mail\Address;
 use Tempest\Mail\Email;
 use Tempest\Mail\Priority;
@@ -274,7 +275,11 @@ final class SentTestingEmail implements SentEmail
             }
         }
 
-        Assert::fail(sprintf('Failed asserting that the email has an attachment named `%s`.', $filename));
+        Assert::fail(sprintf(
+            'Failed asserting that the email has an attachment named `%s`. Existing attachments: %s.',
+            $filename,
+            Arr\join(Arr\map_iterable($attachments, fn (DataPart $attachment) => $attachment->getName())),
+        ));
 
         return $this;
     }

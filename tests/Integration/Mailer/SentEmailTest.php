@@ -3,13 +3,16 @@
 namespace Tests\Tempest\Integration\Mailer;
 
 use Tempest\Mail\Address;
+use Tempest\Mail\Attachments\DataAttachment;
+use Tempest\Mail\Attachments\FileAttachment;
+use Tempest\Mail\Attachments\StorageAttachment;
 use Tempest\Mail\Content;
 use Tempest\Mail\Envelope;
 use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Priority;
-use Tempest\Mail\StorageAttachment;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
+use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
 
@@ -134,6 +137,40 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent->assertSeeInHtml('Welcome Jon Doe');
         $sent->assertSubjectContains('Welcome Jon Doe');
         $sent->assertSentTo('jon@doe.co');
+    }
+
+    public function test_assert_attachment_from_closure(): void
+    {
+        $sent = $this->sendTestEmail(content: new Content(
+            text: 'Hello',
+            attachments: [
+                DataAttachment::fromClosure(fn () => 'hey', name: 'file.txt', contentType: 'text/plain'),
+            ],
+        ));
+
+        $sent->assertAttached('file.txt', function (TestingAttachment $attachment): void {
+            $attachment->assertNamed('file.txt');
+            $attachment->assertNotNamed('foo.txt');
+            $attachment->assertType('text');
+            $attachment->assertNotType('image');
+        });
+    }
+
+    public function test_assert_attachment_from_filesystem(): void
+    {
+        $sent = $this->sendTestEmail(content: new Content(
+            text: 'Hello',
+            attachments: [
+                FileAttachment::fromPath(__FILE__),
+            ],
+        ));
+
+        $sent->assertAttached('SentEmailTest.php', function (TestingAttachment $attachment): void {
+            $attachment->assertNamed('SentEmailTest.php');
+            $attachment->assertNotNamed('foo.txt');
+            $attachment->assertType('text');
+            $attachment->assertNotType('image');
+        });
     }
 
     public function test_assert_attachment_from_storage(): void

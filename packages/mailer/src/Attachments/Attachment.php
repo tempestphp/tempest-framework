@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Mail;
+namespace Tempest\Mail\Attachments;
 
 interface Attachment
 {

@@ -2,6 +2,7 @@
 
 namespace Tempest\Mail;
 
+use Tempest\Mail\Attachments\Attachment;
 use Tempest\Mail\Exceptions\MissingContentException;
 use Tempest\View\View;
 
@@ -13,7 +14,7 @@ final class Content
     public function __construct(
         public null|string|View $html = null,
         public ?string $text = null,
-        /** @var Attachment[] */
+        /** @var Tempest\Mail\Attachments\Attachment[] */
         public array $attachments = [],
     ) {
         if (! $text && ! $html) {
