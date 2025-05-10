@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Mail;
 
+use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 use Tempest\Mail\Exceptions\MissingExpeditorAddressException;
 use Tempest\Mail\Exceptions\MissingRecipientAddressException;
@@ -11,6 +12,8 @@ use Tempest\Mapper\Mapper;
 use Tempest\Support\Arr;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
+
+use function Tempest\Support\arr;
 
 final readonly class EmailToSymfonyEmailMapper implements Mapper
 {
@@ -35,7 +38,7 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         $symfonyEmail = new SymfonyEmail();
 
         if ($email->envelope->from) {
-            $symfonyEmail->from(...Arr\wrap($email->envelope->from));
+            $symfonyEmail->from(...$this->convertAddresses($email->envelope->from));
         } elseif ($this->mailerConfig->from) {
             $symfonyEmail->from($this->mailerConfig->from);
         } else {
@@ -43,30 +46,28 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         }
 
         if ($email->envelope->to) {
-            $symfonyEmail->to(...Arr\wrap($email->envelope->to));
+            $symfonyEmail->to(...$this->convertAddresses($email->envelope->to));
         } else {
             throw new MissingRecipientAddressException();
         }
 
         if ($email->envelope->cc) {
-            $symfonyEmail->cc(...Arr\wrap($email->envelope->cc));
+            $symfonyEmail->cc(...$this->convertAddresses($email->envelope->cc));
         }
 
         if ($email->envelope->bcc) {
-            $symfonyEmail->bcc(...Arr\wrap($email->envelope->bcc));
+            $symfonyEmail->bcc(...$this->convertAddresses($email->envelope->bcc));
         }
 
         if ($email->envelope->replyTo) {
-            $symfonyEmail->replyTo(...Arr\wrap($email->envelope->replyTo));
+            $symfonyEmail->replyTo(...$this->convertAddresses($email->envelope->replyTo));
         }
 
         if ($email->envelope->subject) {
             $symfonyEmail->subject($email->envelope->subject);
         }
 
-        if ($email->envelope->priority) {
-            $symfonyEmail->priority($email->envelope->priority->value);
-        }
+        $symfonyEmail->priority($email->envelope->priority->value);
 
         if ($email->content->text) {
             $symfonyEmail->text($email->content->text);
@@ -84,5 +85,20 @@ final readonly class EmailToSymfonyEmailMapper implements Mapper
         }
 
         return $symfonyEmail;
+    }
+
+    private function convertAddresses(null|string|array|Address $addresses): array
+    {
+        return arr($addresses)
+            ->map(function (string|Address|SymfonyAddress $address) {
+                return match (true) {
+                    $address instanceof SymfonyAddress => $address,
+                    $address instanceof Address => new SymfonyAddress($address->email, $address->name),
+                    is_string($address) => SymfonyAddress::create($address),
+                    default => null,
+                };
+            })
+            ->filter()
+            ->toArray();
     }
 }

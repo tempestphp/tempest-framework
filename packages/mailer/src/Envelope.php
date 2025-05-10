@@ -2,8 +2,6 @@
 
 namespace Tempest\Mail;
 
-use Symfony\Component\Mime\Address;
-
 /**
  * Represents the envelope of an email.
  */
@@ -16,6 +14,6 @@ final class Envelope
         public null|string|array|Address $cc = null,
         public null|string|array|Address $bcc = null,
         public null|string|array|Address $replyTo = null,
-        public ?Priority $priority = null,
+        public Priority $priority = Priority::NORMAL,
     ) {}
 }

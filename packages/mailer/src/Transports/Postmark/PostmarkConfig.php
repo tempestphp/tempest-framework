@@ -7,7 +7,7 @@ use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkSmtpTransport;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkTransportFactory;
 use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\Mime\Address;
+use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
 use UnitEnum;
 

@@ -4,7 +4,7 @@ namespace Tempest\Mail\Transports;
 
 use Symfony\Component\Mailer\Transport\NullTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\Mime\Address;
+use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
 use UnitEnum;
 

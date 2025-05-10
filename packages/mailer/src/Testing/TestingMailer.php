@@ -43,11 +43,6 @@ final class TestingMailer implements Mailer
         return new SentTestingEmail(
             original: $email,
             symfonyEmail: $symfonyEmail,
-            id: Random\secure_string(length: 20),
-            html: ($email->content->html instanceof View)
-                ? $this->viewRenderer->render($email->content->html)
-                : $email->content->html,
-            text: $email->content->text,
         );
     }
 

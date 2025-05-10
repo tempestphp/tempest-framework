@@ -6,7 +6,7 @@ use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransportFactory;
 use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\Mime\Address;
+use Tempest\Mail\Address;
 use Tempest\Mail\MailerConfig;
 use UnitEnum;
 

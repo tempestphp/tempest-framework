@@ -3,7 +3,6 @@
 namespace Tempest\Mail;
 
 use Symfony\Component\Mailer\Transport\TransportInterface;
-use Symfony\Component\Mime\Address;
 use Tempest\Container\HasTag;
 
 interface MailerConfig extends HasTag

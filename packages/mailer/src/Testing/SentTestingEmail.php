@@ -4,15 +4,15 @@ namespace Tempest\Mail\Testing;
 
 use Closure;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\ExpectationFailedException;
-use PHPUnit\Framework\GeneratorNotSupportedException;
-use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Address as SymfonyAddress;
 use Symfony\Component\Mime\Email as SymfonyEmail;
+use Tempest\Mail\Address;
 use Tempest\Mail\Email;
 use Tempest\Mail\Priority;
 use Tempest\Mail\SentEmail;
 use Tempest\Support\Arr;
+
+use function Tempest\Support\arr;
 
 final class SentTestingEmail implements SentEmail
 {
@@ -28,15 +28,16 @@ final class SentTestingEmail implements SentEmail
     }
 
     public string $raw {
-        get => $this->html ?: $this->text;
+        get => $this->symfonyEmail->getBody()->bodyToString();
+    }
+
+    public string $id {
+        get => $this->symfonyEmail->generateMessageId();
     }
 
     public function __construct(
-        private readonly Email $original,
-        private readonly SymfonyEmail $symfonyEmail,
-        public readonly string $id,
-        public readonly ?string $html,
-        public readonly ?string $text,
+        private(set) readonly Email $original,
+        private(set) readonly SymfonyEmail $symfonyEmail,
     ) {}
 
     /**
@@ -46,7 +47,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringContainsString(
             needle: $expect,
-            haystack: $this->original->envelope->subject,
+            haystack: $this->symfonyEmail->getSubject(),
             message: "Failed asserting that the email's subject is `{$expect}`.",
         );
 
@@ -59,7 +60,7 @@ final class SentTestingEmail implements SentEmail
     public function assertSentTo(string|array $addresses): self
     {
         return $this->assertAddressListContains(
-            haystack: $this->original->envelope->to,
+            haystack: $this->symfonyEmail->getTo(),
             needles: $addresses,
             message: 'Failed asserting that the email was sent to [%s]. The recipients are [%s].',
         );
@@ -71,7 +72,7 @@ final class SentTestingEmail implements SentEmail
     public function assertNotSentTo(string|array $addresses): self
     {
         return $this->assertAddressListDoesNotContain(
-            haystack: $this->original->envelope->to,
+            haystack: $this->symfonyEmail->getTo(),
             needles: $addresses,
             message: 'Failed asserting that the email was not sent to [%s]. The recipients are [%s].',
         );
@@ -83,7 +84,7 @@ final class SentTestingEmail implements SentEmail
     public function assertFrom(string|array $addresses): self
     {
         return $this->assertAddressListContains(
-            haystack: $this->original->envelope->from,
+            haystack: $this->symfonyEmail->getFrom(),
             needles: $addresses,
             message: 'Failed asserting that the email was sent from [%s]. The expeditors are [%s].',
         );
@@ -95,7 +96,7 @@ final class SentTestingEmail implements SentEmail
     public function assertNotFrom(string|array $addresses): self
     {
         return $this->assertAddressListDoesNotContain(
-            haystack: $this->original->envelope->from,
+            haystack: $this->symfonyEmail->getFrom(),
             needles: $addresses,
             message: 'Failed asserting that the email was not sent from [%s]. The expeditors are [%s].',
         );
@@ -107,7 +108,7 @@ final class SentTestingEmail implements SentEmail
     public function assertCarbonCopy(string|array $addresses): self
     {
         return $this->assertAddressListContains(
-            haystack: $this->original->envelope->cc,
+            haystack: $this->symfonyEmail->getCc(),
             needles: $addresses,
             message: 'Failed asserting that [%s] were included in carbon copies. The carbon copy recipients are [%s].',
         );
@@ -119,7 +120,7 @@ final class SentTestingEmail implements SentEmail
     public function assertNotCarbonCopy(string|array $addresses): self
     {
         return $this->assertAddressListDoesNotContain(
-            haystack: $this->original->envelope->cc,
+            haystack: $this->symfonyEmail->getCc(),
             needles: $addresses,
             message: 'Failed asserting that [%s] were not included in carbon copies. The carbonm copy recipients are [%s].',
         );
@@ -131,7 +132,7 @@ final class SentTestingEmail implements SentEmail
     public function assertBlindCarbonCopy(string|array $addresses): self
     {
         return $this->assertAddressListContains(
-            haystack: $this->original->envelope->bcc,
+            haystack: $this->symfonyEmail->getBcc(),
             needles: $addresses,
             message: 'Failed asserting that [%s] were included in blind carbon copies. The blind carbon copy recipients are [%s].',
         );
@@ -143,7 +144,7 @@ final class SentTestingEmail implements SentEmail
     public function assertNotBlindCarbonCopy(string|array $addresses): self
     {
         return $this->assertAddressListDoesNotContain(
-            haystack: $this->original->envelope->cc,
+            haystack: $this->symfonyEmail->getBcc(),
             needles: $addresses,
             message: 'Failed asserting that [%s] were not included in blind carbon copies. The blind carbon copy recipients are [%s].',
         );
@@ -160,23 +161,8 @@ final class SentTestingEmail implements SentEmail
 
         Assert::assertSame(
             expected: $priority,
-            actual: $this->original->envelope->priority,
-            message: $this->original->envelope->priority
-                ? 'Failed asserting that the email has a priority of [%s]. The priority is [%s].'
-                : 'Failed asserting that the email has a priority of [%s]. The email does not have a specific priority.',
-        );
-
-        return $this;
-    }
-
-    /**
-     * Asserts that the email does not have a priority.
-     */
-    public function assertNoPriority(): self
-    {
-        Assert::assertNull(
-            actual: $this->original->envelope->priority,
-            message: 'Failed asserting that the email does not have a priority.',
+            actual: $this->symfonyEmail->getPriority(),
+            message: 'Failed asserting that the email has a priority of [%s]. The priority is [%s].',
         );
 
         return $this;
@@ -217,7 +203,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringContainsString(
             needle: $expect,
-            haystack: $this->html,
+            haystack: $this->symfonyEmail->getHtmlBody(),
             message: "Failed asserting that the email's HTML contains `{$expect}`.",
         );
 
@@ -231,7 +217,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringNotContainsString(
             needle: $expect,
-            haystack: $this->raw,
+            haystack: $this->symfonyEmail->getHtmlBody(),
             message: "Failed asserting that the email's HTML does not contain `{$expect}`.",
         );
 
@@ -245,7 +231,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringContainsString(
             needle: $expect,
-            haystack: $this->text,
+            haystack: $this->symfonyEmail->getTextBody(),
             message: "Failed asserting that the email's text contains `{$expect}`.",
         );
 
@@ -259,7 +245,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringNotContainsString(
             needle: $expect,
-            haystack: $this->text,
+            haystack: $this->symfonyEmail->getTextBody(),
             message: "Failed asserting that the email's text does not contain `{$expect}`.",
         );
 
@@ -296,13 +282,7 @@ final class SentTestingEmail implements SentEmail
     private function assertAddressListContains(null|string|array|Address $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
-        $haystack = Arr\map_iterable(
-            array: Arr\wrap($haystack),
-            map: fn (Address|string $address) => match (true) {
-                $address instanceof Address => $address->getAddress(),
-                default => $address,
-            },
-        );
+        $haystack = $this->convertAddresses($haystack);
 
         foreach ($needles as $address) {
             Assert::assertContains(
@@ -318,13 +298,7 @@ final class SentTestingEmail implements SentEmail
     private function assertAddressListDoesNotContain(null|string|array|Address $haystack, string|array $needles, string $message): self
     {
         $needles = Arr\wrap($needles);
-        $haystack = Arr\map_iterable(
-            array: Arr\wrap($haystack),
-            map: fn (Address|string $address) => match (true) {
-                $address instanceof Address => $address->getAddress(),
-                default => $address,
-            },
-        );
+        $haystack = $this->convertAddresses($haystack);
 
         foreach ($needles as $address) {
             Assert::assertNotContains(
@@ -335,5 +309,20 @@ final class SentTestingEmail implements SentEmail
         }
 
         return $this;
+    }
+
+    private function convertAddresses(null|string|array|Address $addresses): array
+    {
+        return arr($addresses)
+            ->map(function (string|Address|SymfonyAddress $address) {
+                return match (true) {
+                    $address instanceof SymfonyAddress => $address->getAddress(),
+                    $address instanceof Address => $address->email,
+                    is_string($address) => $address,
+                    default => null,
+                };
+            })
+            ->filter()
+            ->toArray();
     }
 }
