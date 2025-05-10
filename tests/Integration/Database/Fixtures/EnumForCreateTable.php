@@ -6,4 +6,5 @@ enum EnumForCreateTable: string
 {
     case FOO = 'foo';
     case BAR = 'bar';
+    case SELF = self::class;
 }
