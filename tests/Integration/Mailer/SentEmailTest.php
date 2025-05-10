@@ -26,6 +26,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
                 cc: ['cc1@doe.co', 'cc2@doe.co'],
                 bcc: ['bcc1@doe.co', 'bcc2@doe.co'],
                 from: 'no-reply@tempestphp.com',
+                headers: ['X-Foo' => 'bar'],
             ),
             content: $content ?? new Content(
                 text: 'Hello Jon in Text',
@@ -70,6 +71,9 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
         $sent->assertNotFrom('imaginary-expeditor@example.com');
 
         $sent->assertPriority(Priority::NORMAL);
+
+        $sent->assertHasHeader('X-Foo');
+        $sent->assertHasHeader('X-Foo', 'bar');
     }
 
     public function test_send_to_address_vo(): void

@@ -47,7 +47,7 @@ final class SentTestingEmail implements SentEmail
     {
         Assert::assertStringContainsString(
             needle: $expect,
-            haystack: $this->symfonyEmail->getSubject(),
+            haystack: $this->symfonyEmail->getSubject() ?? '',
             message: "Failed asserting that the email's subject is `{$expect}`.",
         );
 
@@ -275,6 +275,30 @@ final class SentTestingEmail implements SentEmail
         }
 
         Assert::fail(sprintf('Failed asserting that the email has an attachment named `%s`.', $filename));
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the email has a header with the given name.
+     */
+    public function assertHasHeader(string $header, ?string $value = null): self
+    {
+        $headers = Arr\to_array($this->symfonyEmail->getHeaders()->all());
+
+        Assert::assertArrayHasKey(
+            key: mb_strtolower($header),
+            array: $headers,
+            message: sprintf('Failed asserting that the email has a header `%s`.', $header),
+        );
+
+        if ($value !== null) {
+            Assert::assertSame(
+                expected: $value,
+                actual: $headers[mb_strtolower($header)]->getBodyAsString(),
+                message: sprintf('Failed asserting that the email has a header `%s` with value `%s`.', $header, $value),
+            );
+        }
 
         return $this;
     }
