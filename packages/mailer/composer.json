@@ -6,6 +6,7 @@
     "require": {
         "php": "^8.4",
         "tempest/reflection": "dev-main",
+        "tempest/support": "dev-main",
         "symfony/mailer": "^7.2.6"
     },
     "require-dev": {
