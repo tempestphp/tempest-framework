@@ -3,6 +3,9 @@
 namespace Tempest\Mail\Exceptions;
 
 use Exception;
+use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesApiAsyncAwsTransport;
+use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesHttpAsyncAwsTransport;
+use Symfony\Component\Mailer\Bridge\Amazon\Transport\SesSmtpTransport;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkApiTransport;
 use Symfony\Component\Mailer\Bridge\Postmark\Transport\PostmarkSmtpTransport;
 
@@ -24,6 +27,9 @@ final class MissingTransportException extends Exception implements MailerExcepti
         return match ($this->missing) {
             PostmarkApiTransport::class => 'symfony/postmark-mailer',
             PostmarkSmtpTransport::class => 'symfony/postmark-mailer',
+            SesApiAsyncAwsTransport::class => 'symfony/amazon-mailer',
+            SesHttpAsyncAwsTransport::class => 'symfony/amazon-mailer',
+            SesSmtpTransport::class => 'symfony/amazon-mailer',
             default => null,
         };
     }

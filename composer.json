@@ -64,6 +64,7 @@
         "rector/rector": "^2.0-rc2",
         "spatie/phpunit-snapshot-assertions": "^5.1.8",
         "spaze/phpstan-disallowed-calls": "^4.0",
+        "symfony/amazon-mailer": "^7.2.0",
         "symfony/postmark-mailer": "^7.2.6",
         "symplify/monorepo-builder": "^11.2",
         "tempest/blade": "^0.1.0",

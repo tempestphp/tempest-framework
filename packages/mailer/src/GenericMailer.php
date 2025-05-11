@@ -5,7 +5,6 @@ namespace Tempest\Mail;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 use Tempest\Mail\Exceptions\MissingTransportException;
 use Tempest\Mail\MailerConfig;
-use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
 use function Tempest\map;
