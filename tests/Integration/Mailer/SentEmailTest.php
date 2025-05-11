@@ -12,7 +12,6 @@ use Tempest\Mail\GenericEmail;
 use Tempest\Mail\Priority;
 use Tempest\Mail\Testing\SentTestingEmail;
 use Tempest\Mail\Testing\TestingAttachment;
-use Tempest\Support\Filesystem;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use Tests\Tempest\Integration\Mailer\Fixtures\SendWelcomeEmail;
 
@@ -122,7 +121,7 @@ final class SentEmailTest extends FrameworkIntegrationTestCase
     public function test_rendered_html(): void
     {
         $sent = $this->sendTestEmail(content: new Content(
-            html: view('./Fixtures/welcome.view.php', fullName: 'Jon Doe'),
+            html: view(__DIR__ . '/Fixtures/welcome.view.php', fullName: 'Jon Doe'),
         ));
 
         $sent->assertSeeInHtml('Welcome Jon Doe');
