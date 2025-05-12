@@ -1,5 +1,18 @@
+# Fix line endings for Windows
+bin/tempest text=auto eol=lf
+src/Installers/tempest text=auto eol=lf
+
 # Exclude build/test files from the release
 .github/                  export-ignore
+tests/                    export-ignore
 .gitattributes            export-ignore
 .gitignore                export-ignore
+phpunit.xml               export-ignore
 README.md                 export-ignore
+
+# Configure diff output
+*.view.php diff=html
+*.php diff=php
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
