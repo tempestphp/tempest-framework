@@ -7,6 +7,7 @@ use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -182,7 +183,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_then_method(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
