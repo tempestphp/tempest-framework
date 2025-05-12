@@ -1,3 +1,10 @@
+# Fix line endings for Windows
+tempest text=auto eol=lf
+bin/* text=auto eol=lf
+packages/console/bin/tempest text=auto eol=lf
+packages/console/src/Installers/tempest text=auto eol=lf
+src/Tempest/Framework/Installers/tempest text=auto eol=lf
+
 # Exclude build/test files from the release
 /bin/                     export-ignore
 .github/                  export-ignore
@@ -15,5 +22,9 @@ rector.php                export-ignore
 cliff.toml                export-ignore
 .commitlintrc.json        export-ignore
 
-# Configure diff output for .php and .phar files.
+# Configure diff output
+*.view.php diff=html
 *.php diff=php
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
