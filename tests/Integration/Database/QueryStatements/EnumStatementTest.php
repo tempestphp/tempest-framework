@@ -7,7 +7,7 @@ use Tempest\Database\QueryStatements\EnumStatement;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-class EnumStatementTest extends FrameworkIntegrationTestCase
+final class EnumStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_it_can_compile_an_enum_statement_for_mysql(): void
     {
