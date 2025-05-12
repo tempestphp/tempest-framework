@@ -20,7 +20,7 @@ final class CreateChapterTable implements DatabaseMigration
         return CreateTableStatement::forModel(Chapter::class)
             ->primary()
             ->text('title')
-            ->text('contents', default: '')
+            ->text('contents', nullable: true, default: '')
             ->belongsTo('chapters.book_id', 'books.id');
     }
 
