@@ -7,7 +7,7 @@ use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
-class CreateEnumTypeStatementTest extends FrameworkIntegrationTestCase
+final class CreateEnumTypeStatementTest extends FrameworkIntegrationTestCase
 {
     public function test_it_can_compile_create_enum_type_statement(): void
     {
