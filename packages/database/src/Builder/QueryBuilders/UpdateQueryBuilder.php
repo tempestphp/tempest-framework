@@ -3,6 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
+use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
@@ -86,7 +87,9 @@ final class UpdateQueryBuilder implements BuildsQuery
 
     private function resolveValues(): ImmutableArray
     {
-        if (! model($this->model)->isObjectModel()) {
+        $modelDefinition = model($this->model);
+
+        if (! $modelDefinition->isObjectModel()) {
             return arr($this->values);
         }
 
@@ -97,8 +100,12 @@ final class UpdateQueryBuilder implements BuildsQuery
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
-            if ($property->getIterableType()?->isRelation()) {
+            if ($modelDefinition->isHasManyRelation($property->getName())) {
                 throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
+            }
+
+            if ($modelDefinition->isHasOneRelation($property->getName())) {
+                throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
             }
 
             if ($property->getType()->isRelation()) {

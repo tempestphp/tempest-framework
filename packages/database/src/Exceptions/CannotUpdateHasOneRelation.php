@@ -4,7 +4,7 @@ namespace Tempest\Database\Exceptions;
 
 use Exception;
 
-final class CannotUpdateHasManyRelation extends Exception
+final class CannotUpdateHasOneRelation extends Exception
 {
     public function __construct(string $modelName, string $relationName)
     {

@@ -2,6 +2,8 @@
 
 namespace Tests\Tempest\Integration\Database\Builder;
 
+use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
+use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
@@ -150,7 +152,35 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(10, $bookQuery->bindings[1]);
     }
 
-    public function test_attach_new_has_many_relation_on_update(): void
+    public function test_inserting_has_many_via_parent_model_throws_exception(): void
+    {
+        try {
+            query(Book::class)
+                ->insert(
+                    title: 'Timeline Taxi',
+                    chapters: ['title' => 'Chapter 01'],
+                )
+                ->build();
+        } catch (CannotInsertHasManyRelation $cannotInsertHasManyRelation) {
+            $this->assertStringContainsString(Book::class . '::$chapters', $cannotInsertHasManyRelation->getMessage());
+        }
+    }
+
+    public function test_inserting_has_one_via_parent_model_throws_exception(): void
+    {
+        try {
+            query(Book::class)
+                ->insert(
+                    title: 'Timeline Taxi',
+                    isbn: ['value' => '979-8344313764'],
+                )
+                ->build();
+        } catch (CannotInsertHasOneRelation $cannotInsertHasOneRelation) {
+            $this->assertStringContainsString(Book::class . '::$isbn', $cannotInsertHasOneRelation->getMessage());
+        }
+    }
+
+    public function test_then_method(): void
     {
         $this->migrate(CreateMigrationsTable::class, CreateBookTable::class, CreateChapterTable::class);
 

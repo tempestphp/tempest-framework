@@ -5,12 +5,16 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
+use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
+
+use function Tempest\Database\model;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
@@ -43,12 +47,22 @@ final class InsertQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        foreach ($this->resolveEntries() as $entry) {
-            $this->insert->addEntry($entry);
+        $definition = model($this->model);
 
-            foreach ($entry as $value) {
+        foreach ($this->resolveData() as $data) {
+            foreach ($data as $key => $value) {
+                if ($definition->isHasManyRelation($key)) {
+                    throw new CannotInsertHasManyRelation($definition->getName(), $key);
+                }
+
+                if ($definition->isHasOneRelation($key)) {
+                    throw new CannotInsertHasOneRelation($definition->getName(), $key);
+                }
+
                 $bindings[] = $value;
             }
+
+            $this->insert->addEntry($data);
         }
 
         return new Query(
@@ -64,7 +78,7 @@ final class InsertQueryBuilder implements BuildsQuery
         return $this;
     }
 
-    private function resolveEntries(): array
+    private function resolveData(): array
     {
         $entries = [];
 
@@ -77,6 +91,8 @@ final class InsertQueryBuilder implements BuildsQuery
             }
 
             // The rest are model objects
+            $definition = model($model);
+
             $modelClass = new ClassReflector($model);
 
             $entry = [];
@@ -87,8 +103,8 @@ final class InsertQueryBuilder implements BuildsQuery
                     continue;
                 }
 
-                // HasMany relations are skipped
-                if ($property->getIterableType()?->isRelation()) {
+                // HasMany and HasOne relations are skipped
+                if ($definition->isHasManyRelation($property->getName()) || $definition->isHasOneRelation($property->getName())) {
                     continue;
                 }
 
@@ -111,7 +127,7 @@ final class InsertQueryBuilder implements BuildsQuery
                     };
                 }
 
-                // Check if value needs serialization
+                // Check if the value needs serialization
                 $serializer = $this->serializerFactory->forProperty($property);
 
                 if ($value !== null && $serializer !== null) {
