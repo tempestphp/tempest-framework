@@ -6,6 +6,6 @@ namespace Tempest\Console\Scheduler;
 
 enum OutputMode: string
 {
-    case Overwrite = '>';
-    case Append = '>>';
+    case OVERWRITE = '>';
+    case APPEND = '>>';
 }
