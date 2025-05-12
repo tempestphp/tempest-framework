@@ -122,9 +122,9 @@ namespace Tempest\Support\Regex {
      * @param non-empty-string $pattern The pattern to search for.
      * @param null|positive-int $limit The maximum possible replacements for $pattern within $haystack.
      */
-    function replace(array|string $haystack, array|string $pattern, callable|array|string $replacement, ?int $limit = null): string
+    function replace(array|string $haystack, array|string $pattern, Closure|array|string $replacement, ?int $limit = null): string
     {
-        if (is_callable($replacement)) {
+        if ($replacement instanceof Closure) {
             return (string) call_preg('preg_replace_callback', static fn (): ?string => preg_replace_callback(
                 $pattern,
                 $replacement,
