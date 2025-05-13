@@ -24,7 +24,7 @@ final class UnknownArgumentsException extends ConsoleException
                     '<code>%s</code>',
                     $argument->name,
                 ))
-                ->implode(','),
+                ->implode(', '),
         ));
     }
 }
