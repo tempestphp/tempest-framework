@@ -22,7 +22,7 @@ final readonly class ForceMiddleware implements ConsoleMiddleware
 
     public function __invoke(Invocation $invocation, ConsoleMiddlewareCallable $next): ExitCode|int
     {
-        if ($invocation->argumentBag->get('-f') || $invocation->argumentBag->get(GlobalFlags::FORCE->value)) {
+        if ($invocation->argumentBag->get(GlobalFlags::FORCE_SHORTHAND->value) || $invocation->argumentBag->get(GlobalFlags::FORCE->value)) {
             if ($this->console instanceof GenericConsole) {
                 $this->console->setForced();
             }

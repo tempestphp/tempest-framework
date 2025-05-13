@@ -22,12 +22,15 @@ final class ValidateNamedArgumentsMiddleware implements ConsoleMiddleware
         $allowedParameterNames = arr($invocation->consoleCommand->getArgumentDefinitions())
             ->flatMap(function (ConsoleArgumentDefinition $definition) {
                 return [$definition->name, ...$definition->aliases];
+            })
+            ->map(function (string $name) {
+                return ltrim($name, '-');
             });
 
         $invalidInput = arr($invocation->argumentBag->arguments)
             ->filter(fn (ConsoleInputArgument $argument) => $argument->name !== null)
-            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->contains($argument->name))
-            ->filter(fn (ConsoleInputArgument $argument) => ! in_array($argument->name, GlobalFlags::values()));
+            ->filter(fn (ConsoleInputArgument $argument) => ! $allowedParameterNames->contains(ltrim($argument->name, '-')))
+            ->filter(fn (ConsoleInputArgument $argument) => ! in_array($argument->name, GlobalFlags::values(), strict: true));
 
         if ($invalidInput->isNotEmpty()) {
             throw new UnknownArgumentsException(

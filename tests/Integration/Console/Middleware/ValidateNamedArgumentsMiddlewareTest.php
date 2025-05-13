@@ -12,7 +12,7 @@ final class ValidateNamedArgumentsMiddlewareTest extends FrameworkIntegrationTes
             ->call('test:test --unknown --foo --no-flag --help --force --no-interaction')
             ->assertError()
             ->assertContains('unknown')
-            ->assertContains('foo')
+            ->assertDoesNotContain('foo')
             ->assertDoesNotContain('flag')
             ->assertDoesNotContain('force')
             ->assertDoesNotContain('help')

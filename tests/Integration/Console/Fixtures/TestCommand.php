@@ -30,9 +30,12 @@ asd</comment>');
     }
 
     #[ConsoleCommand]
-    public function test(bool $flag = false, bool $_foo = false): void
+    public function test(bool $flag = false, bool $foo = false): void
     {
-        ld($flag);
+        if ($flag && $foo) {
+            $this->console->writeln('ok');
+        }
+
         $this->console->confirm('yes or no?');
     }
 }
