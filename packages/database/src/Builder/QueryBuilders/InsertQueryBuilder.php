@@ -2,8 +2,11 @@
 
 namespace Tempest\Database\Builder\QueryBuilders;
 
+use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
+use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
@@ -11,33 +14,55 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
 
-final readonly class InsertQueryBuilder
+use function Tempest\Database\model;
+
+final class InsertQueryBuilder implements BuildsQuery
 {
     private InsertStatement $insert;
 
+    private array $after = [];
+
     public function __construct(
-        private string|object $model,
-        private array $rows,
-        private SerializerFactory $serializerFactory,
+        private readonly string|object $model,
+        private readonly array $rows,
+        private readonly SerializerFactory $serializerFactory,
     ) {
         $this->insert = new InsertStatement($this->resolveTableDefinition());
     }
 
     public function execute(mixed ...$bindings): Id
     {
-        return $this->build()->execute(...$bindings);
+        $id = $this->build()->execute(...$bindings);
+
+        foreach ($this->after as $after) {
+            $query = $after($id);
+
+            if ($query instanceof BuildsQuery) {
+                $query->build()->execute();
+            }
+        }
+
+        return $id;
     }
 
-    public function build(): Query
+    public function build(mixed ...$bindings): Query
     {
-        $bindings = [];
+        $definition = model($this->model);
 
-        foreach ($this->resolveEntries() as $entry) {
-            $this->insert->addEntry($entry);
+        foreach ($this->resolveData() as $data) {
+            foreach ($data as $key => $value) {
+                if ($definition->isHasManyRelation($key)) {
+                    throw new CannotInsertHasManyRelation($definition->getName(), $key);
+                }
 
-            foreach ($entry as $value) {
+                if ($definition->isHasOneRelation($key)) {
+                    throw new CannotInsertHasOneRelation($definition->getName(), $key);
+                }
+
                 $bindings[] = $value;
             }
+
+            $this->insert->addEntry($data);
         }
 
         return new Query(
@@ -46,7 +71,14 @@ final readonly class InsertQueryBuilder
         );
     }
 
-    private function resolveEntries(): array
+    public function then(Closure ...$callbacks): self
+    {
+        $this->after = [...$this->after, ...$callbacks];
+
+        return $this;
+    }
+
+    private function resolveData(): array
     {
         $entries = [];
 
@@ -59,6 +91,8 @@ final readonly class InsertQueryBuilder
             }
 
             // The rest are model objects
+            $definition = model($model);
+
             $modelClass = new ClassReflector($model);
 
             $entry = [];
@@ -69,8 +103,8 @@ final readonly class InsertQueryBuilder
                     continue;
                 }
 
-                // HasMany relations are skipped
-                if ($property->getIterableType()?->isRelation()) {
+                // HasMany and HasOne relations are skipped
+                if ($definition->isHasManyRelation($property->getName()) || $definition->isHasOneRelation($property->getName())) {
                     continue;
                 }
 
@@ -78,7 +112,7 @@ final readonly class InsertQueryBuilder
 
                 $value = $property->getValue($model);
 
-                // BelongsTo and HasMany relations are included
+                // BelongsTo and reverse HasMany relations are included
                 if ($property->getType()->isRelation()) {
                     $column .= '_id';
 
@@ -93,7 +127,7 @@ final readonly class InsertQueryBuilder
                     };
                 }
 
-                // Check if value needs serialization
+                // Check if the value needs serialization
                 $serializer = $this->serializerFactory->forProperty($property);
 
                 if ($value !== null && $serializer !== null) {
