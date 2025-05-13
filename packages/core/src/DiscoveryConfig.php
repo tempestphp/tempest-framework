@@ -8,11 +8,10 @@ final class DiscoveryConfig
 
     public function shouldSkip(string $input): bool
     {
-        if (str_contains($input, 'GlobalHiddenPathDiscovery.php')) {
-            lw($this->skipDiscovery, $input);
-        }
-
-        return $this->skipDiscovery[$input] ?? $this->skipDiscovery[str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $input)] ?? false;
+        return $this->skipDiscovery[$input]
+            ?? $this->skipDiscovery[str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $input)]
+            ?? $this->skipDiscovery[realpath($input)]
+            ?? false;
     }
 
     public function skipClasses(string ...$classNames): self
