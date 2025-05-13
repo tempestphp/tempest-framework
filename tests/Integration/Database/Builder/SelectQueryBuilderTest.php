@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
+use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -229,5 +233,43 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $this->assertSame($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
+    }
+
+    public function test_select_first_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        $author = query('authors')
+            ->select()
+            ->whereField('id', 2)
+            ->first();
+
+        $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null], $author);
+    }
+
+    public function test_select_all_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent', 'type' => AuthorType::B],
+            ['id' => 2, 'name' => 'Other', 'type' => null],
+            ['id' => 3, 'name' => 'Another', 'type' => AuthorType::A],
+        )->execute();
+
+        $authors = query('authors')
+            ->select()
+            ->where('name <> ?', 'Brent')
+            ->all();
+
+        $this->assertSame(
+            [['id' => 2, 'name' => 'Other', 'type' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a']],
+            $authors,
+        );
     }
 }

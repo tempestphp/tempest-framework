@@ -59,6 +59,10 @@ final class SelectQueryBuilder implements BuildsQuery
     {
         $query = $this->build(...$bindings);
 
+        if (! $this->modelDefinition) {
+            return $query->fetchFirst();
+        }
+
         $result = map($query)->collection()->to($this->modelClass);
 
         if ($result === []) {
@@ -79,7 +83,13 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return TModelClass[] */
     public function all(mixed ...$bindings): array
     {
-        return map($this->build(...$bindings))->collection()->to($this->modelClass);
+        $query = $this->build(...$bindings);
+
+        if (! $this->modelDefinition) {
+            return $query->fetch();
+        }
+
+        return map($query)->collection()->to($this->modelClass);
     }
 
     /**
@@ -124,7 +134,14 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        $field = $this->modelDefinition->getFieldDefinition($field);
+        if ($this->modelDefinition) {
+            $field = $this->modelDefinition->getFieldDefinition($field);
+        } else {
+            $field = new FieldDefinition(
+                $this->resolveTable($this->modelClass),
+                $field,
+            );
+        }
 
         return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }

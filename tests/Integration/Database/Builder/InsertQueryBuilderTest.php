@@ -205,4 +205,18 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('Chapter 02', $book->chapters[2]->title);
         $this->assertSame('Chapter 03', $book->chapters[3]->title);
     }
+
+    public function test_insert_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        $count = query('authors')->count()->execute();
+
+        $this->assertSame(2, $count);
+    }
 }

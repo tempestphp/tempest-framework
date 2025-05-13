@@ -8,7 +8,9 @@ use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
 use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -259,5 +261,23 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ['Chapter 01', 1, 10],
             $query->bindings,
         );
+    }
+
+    public function test_update_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        query('authors')->update(
+            name: 'Brendt',
+        )->where('id = ?', 1)->execute();
+
+        $count = query('authors')->count()->where('name = ?', 'Brendt')->execute();
+
+        $this->assertSame(1, $count);
     }
 }
