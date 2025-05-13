@@ -30,22 +30,14 @@ final readonly class ConsoleArgumentDefinition
         $default = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
         $boolean = $type->getName() === 'bool' || is_bool($default);
 
-        $name = static::normalizeName($attribute->name ?? $parameter->getName(), boolean: $boolean);
-
-        $aliases = $attribute->aliases ?? [];
-
-        if (strlen($name) === 1) {
-            $aliases[] = "-{$name}";
-        }
-
         return new ConsoleArgumentDefinition(
-            name: $name,
+            name: static::normalizeName($attribute->name ?? $parameter->getName(), boolean: $boolean),
             type: $type->getName(),
             default: $default,
             hasDefault: $parameter->isDefaultValueAvailable(),
             position: $parameter->getPosition(),
             description: $attribute?->description,
-            aliases: $aliases,
+            aliases: $attribute->aliases ?? [],
             help: $attribute?->help,
         );
     }
