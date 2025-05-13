@@ -30,8 +30,9 @@ asd</comment>');
     }
 
     #[ConsoleCommand]
-    public function test(): void
+    public function test(bool $flag = false, bool $_foo = false): void
     {
+        ld($flag);
         $this->console->confirm('yes or no?');
     }
 }
