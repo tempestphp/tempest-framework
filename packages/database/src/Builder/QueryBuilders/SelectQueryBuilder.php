@@ -37,6 +37,8 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private SelectStatement $select;
 
+    private array $joins = [];
+
     private array $relations = [];
 
     private array $bindings = [];
@@ -171,6 +173,14 @@ final class SelectQueryBuilder implements BuildsQuery
     }
 
     /** @return self<TModelClass> */
+    public function join(string ...$joins): self
+    {
+        $this->joins = [...$this->joins, ...$joins];
+
+        return $this;
+    }
+
+    /** @return self<TModelClass> */
     public function with(string ...$relations): self
     {
         $this->relations = [...$this->relations, ...$relations];
@@ -202,6 +212,10 @@ final class SelectQueryBuilder implements BuildsQuery
     public function build(mixed ...$bindings): Query
     {
         $resolvedRelations = $this->resolveRelations();
+
+        foreach ($this->joins as $join) {
+            $this->select->join[] = new JoinStatement($join);
+        }
 
         foreach ($resolvedRelations as $relation) {
             $this->select->columns = $this->select->columns->append(...$relation->getFieldDefinitions()->map(fn (FieldDefinition $field) => (string) $field->withAlias()));

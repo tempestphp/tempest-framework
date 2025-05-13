@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
-use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
-use Tempest\Database\Query;
-use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -93,6 +90,22 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $book = Book::select()->where('title = ?', 'B')->first();
 
         $this->assertSame('B', $book->title);
+    }
+
+    public function test_join(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+        );
+
+        $author = Author::new(name: 'Brent')->save();
+        Book::new(title: 'A', author: $author)->save();
+
+        $query = query(Book::class)->select()->join('authors on authors.id = books.author_id')->first();
+
+        $this->assertSame('Brent', $query->author->name);
     }
 
     public function test_order_by(): void
