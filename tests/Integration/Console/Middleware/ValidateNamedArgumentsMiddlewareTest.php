@@ -16,7 +16,6 @@ final class ValidateNamedArgumentsMiddlewareTest extends FrameworkIntegrationTes
             ->assertDoesNotContain('flag')
             ->assertDoesNotContain('force')
             ->assertDoesNotContain('help')
-            ->assertDoesNotContain('interaction')
-            ->print();
+            ->assertDoesNotContain('interaction');
     }
 }
