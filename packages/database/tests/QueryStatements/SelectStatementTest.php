@@ -33,7 +33,7 @@ final class SelectStatementTest extends TestCase
             offset: 100,
         );
 
-        $expected = <<<SQL
+        $expectedWithBackticks = <<<SQL
         SELECT `a`, `b`, `c`, `bar`.`d` AS `d_alias`
         FROM `foo` AS `bar`
         INNER JOIN foo ON bar.id = foo.id
@@ -45,8 +45,21 @@ final class SelectStatementTest extends TestCase
         OFFSET 100
         SQL;
 
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::MYSQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::POSTGRESQL));
-        $this->assertSame($expected, $statement->compile(DatabaseDialect::SQLITE));
+        $this->assertSame($expectedWithBackticks, $statement->compile(DatabaseDialect::MYSQL));
+        $this->assertSame($expectedWithBackticks, $statement->compile(DatabaseDialect::POSTGRESQL));
+
+        $expectedWithoutBackticks = <<<SQL
+        SELECT a, b, c, bar.d AS d_alias
+        FROM foo AS bar
+        INNER JOIN foo ON bar.id = foo.id
+        WHERE foo = "bar"
+        ORDER BY foo DESC
+        GROUP BY foo
+        HAVING foo = "bar"
+        LIMIT 10
+        OFFSET 100
+        SQL;
+
+        $this->assertSame($expectedWithoutBackticks, $statement->compile(DatabaseDialect::SQLITE));
     }
 }

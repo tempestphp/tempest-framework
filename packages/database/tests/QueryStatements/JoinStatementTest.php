@@ -12,52 +12,52 @@ final class JoinStatementTest extends TestCase
     {
         $this->assertSame(
             'INNER JOIN authors on authors.id = books.author_id',
-            new JoinStatement('authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'inner join authors on authors.id = books.author_id',
-            new JoinStatement('inner join authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('inner join authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'INNER JOIN authors on authors.id = books.author_id',
-            new JoinStatement('INNER JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('INNER JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'LEFT JOIN authors on authors.id = books.author_id',
-            new JoinStatement('LEFT JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('LEFT JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'RIGHT JOIN authors on authors.id = books.author_id',
-            new JoinStatement('RIGHT JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('RIGHT JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'FULL JOIN authors on authors.id = books.author_id',
-            new JoinStatement('FULL JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('FULL JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'JOIN authors on authors.id = books.author_id',
-            new JoinStatement('JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'FULL OUTER JOIN authors on authors.id = books.author_id',
-            new JoinStatement('FULL OUTER JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('FULL OUTER JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'FULL JOIN authors on authors.id = books.author_id',
-            new JoinStatement('FULL JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('FULL JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
 
         $this->assertSame(
             'SELF JOIN authors on authors.id = books.author_id',
-            new JoinStatement('SELF JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL)
+            new JoinStatement('SELF JOIN authors on authors.id = books.author_id')->compile(DatabaseDialect::MYSQL),
         );
     }
 }

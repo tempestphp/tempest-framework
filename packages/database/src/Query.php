@@ -36,6 +36,7 @@ final class Query
 
     public function fetch(mixed ...$bindings): array
     {
+        lw($this->getSql());
         return $this->getDatabase()->fetch($this->withBindings($bindings));
     }
 

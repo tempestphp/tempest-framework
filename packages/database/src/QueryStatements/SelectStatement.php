@@ -29,20 +29,12 @@ final class SelectStatement implements QueryStatement
         $columns = $this->columns->isEmpty()
             ? '*'
             : $this->columns
-                ->map(function (string|Stringable $column) {
+                ->map(function (string|Stringable $column) use ($dialect) {
                     if ($column instanceof FieldDefinition) {
                         return (string) $column;
                     }
 
-                    if (! str_starts_with($column, '`')) {
-                        $column = "`{$column}";
-                    }
-
-                    if (! str_ends_with($column, '`')) {
-                        $column = "{$column}`";
-                    }
-
-                    return (string) $column;
+                    return new FieldStatement($column)->compile($dialect);
                 })
                 ->implode(', ');
 
@@ -95,6 +87,15 @@ final class SelectStatement implements QueryStatement
                 ->implode(PHP_EOL);
         }
 
-        return $query->implode(PHP_EOL);
+        $compiled = $query->implode(PHP_EOL);
+
+        /* TODO: this should be improved.
+         * More specifically, \Tempest\Database\Builder\FieldDefinition should be aware of the dialect,
+         * or the whole ORM should be refactored to use \Tempest\Database\QueryStatements\FieldStatement*/
+//        if ($dialect === DatabaseDialect::SQLITE) {
+//            $compiled = $compiled->replace('`', '');
+//        }
+
+        return $compiled;
     }
 }

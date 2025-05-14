@@ -103,9 +103,15 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $author = Author::new(name: 'Brent')->save();
         Book::new(title: 'A', author: $author)->save();
 
-        $query = query(Book::class)->select()->join('authors on authors.id = books.author_id')->first();
+        $query = query('books')->select('books.title AS book_title', 'authors.name')->join('authors on authors.id = books.author_id');
 
-        $this->assertSame('Brent', $query->author->name);
+        $this->assertSame(
+            [
+                'book_title' => 'A',
+                'name' => 'Brent',
+            ],
+            $query->first(),
+        );
     }
 
     public function test_order_by(): void
