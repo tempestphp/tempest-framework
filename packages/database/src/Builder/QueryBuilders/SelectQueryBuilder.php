@@ -9,6 +9,7 @@ use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Id;
+use Tempest\Database\Mappers\DatabaseModelMapper;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
@@ -65,7 +66,10 @@ final class SelectQueryBuilder implements BuildsQuery
             return $query->fetchFirst();
         }
 
-        $result = map($query)->collection()->to($this->modelClass);
+        $result = map($query)
+            ->collection()
+            ->with(DatabaseModelMapper::class)
+            ->to($this->modelClass);
 
         if ($result === []) {
             return null;

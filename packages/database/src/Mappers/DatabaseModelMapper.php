@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Database\Mappers;
 
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Query;
 use Tempest\Mapper\CasterFactory;
 use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-final readonly class QueryToModelMapper implements Mapper
+// TODO: refactor
+final readonly class DatabaseModelMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,
@@ -19,7 +19,7 @@ final readonly class QueryToModelMapper implements Mapper
 
     public function canMap(mixed $from, mixed $to): bool
     {
-        return $from instanceof Query;
+        return false;
     }
 
     public function map(mixed $from, mixed $to): array
