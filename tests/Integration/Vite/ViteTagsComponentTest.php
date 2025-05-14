@@ -20,10 +20,6 @@ final class ViteTagsComponentTest extends FrameworkIntegrationTestCase
         parent::setUp();
 
         $this->vite->setRootDirectory(__DIR__ . '/Fixtures/tmp');
-
-        if (PHP_OS_FAMILY === 'Windows') {
-            dump($this->container->get(ViewCache::class));
-        }
     }
 
     public function test_dev_entrypoint(): void

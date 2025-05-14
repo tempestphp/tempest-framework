@@ -14,11 +14,17 @@ final class ViewCacheInitializer implements Initializer
     #[Singleton]
     public function initialize(Container $container): ViewCache
     {
-        return new ViewCache(
+        $viewCache = new ViewCache(
             enabled: $this->shouldCacheBeEnabled(
                 $container->get(AppConfig::class)->environment->isProduction(),
             ),
         );
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            dump($viewCache, env('VIEW_CACHE'), env('INTERNAL_CACHES'));
+        }
+
+        return $viewCache;
     }
 
     private function shouldCacheBeEnabled(bool $isProduction): bool
