@@ -13,7 +13,10 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\DiscoveryCache;
 use Tempest\Support\Str;
+use Tempest\View\IconCache;
+use Tempest\View\ViewCache;
 use UnitEnum;
 
 use function Tempest\Support\arr;
@@ -28,7 +31,7 @@ final readonly class CacheStatusCommand
     ) {}
 
     #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
-    public function __invoke(): void
+    public function __invoke(bool $internal = true): void
     {
         if (! ($this->container instanceof GenericContainer)) {
             $this->console->error('Clearing caches is only available when using the default container.');
@@ -39,8 +42,24 @@ final readonly class CacheStatusCommand
             ->map(fn ($_, string $key) => $this->container->get(Cache::class, $key === CacheConfig::class ? null : Str\after_last($key, '#')))
             ->values();
 
-        $this->console->header('Cache status');
-        $this->console->keyValue('Total caches', (string) count($caches));
+        if ($internal) {
+            $this->console->header('Internal caches');
+
+            foreach ([ViewCache::class, IconCache::class, DiscoveryCache::class] as $cacheName) {
+                /** @var Cache $cache */
+                $cache = $this->container->get($cacheName);
+
+                $this->console->keyValue(
+                    key: $cacheName,
+                    value: match ($cache->enabled) {
+                        true => '<style="bold fg-green">ENABLED</style>',
+                        false => '<style="bold fg-red">DISABLED</style>',
+                    },
+                );
+            }
+        }
+
+        $this->console->header('User caches');
 
         /** @var Cache $cache */
         foreach ($caches as $cache) {

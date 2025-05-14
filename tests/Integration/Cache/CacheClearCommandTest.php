@@ -6,7 +6,9 @@ namespace Tests\Tempest\Integration\Cache;
 
 use Tempest\Cache\Commands\CacheClearCommand;
 use Tempest\Cache\Config\InMemoryCacheConfig;
-use Tempest\Cache\ProjectCache;
+use Tempest\Core\DiscoveryCache;
+use Tempest\View\IconCache;
+use Tempest\View\ViewCache;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -89,5 +91,25 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('default')
             ->assertSee('my-cache')
             ->assertSeeCount('CLEARED', expectedCount: 2);
+    }
+
+    public function test_clear_internal_caches(): void
+    {
+        $this->console
+            ->call(CacheClearCommand::class, ['all' => true, 'internal' => true])
+            ->assertSee(ViewCache::class)
+            ->assertSee(IconCache::class)
+            ->assertSee(DiscoveryCache::class)
+            ->assertSeeCount('CLEARED', expectedCount: 3);
+    }
+
+    public function test_clear_internal_cache(): void
+    {
+        $this->console
+            ->call(CacheClearCommand::class, ['internal' => true])
+            ->submit('0')
+            ->submit('yes')
+            ->assertSee(ViewCache::class)
+            ->assertSeeCount('CLEARED', expectedCount: 1);
     }
 }
