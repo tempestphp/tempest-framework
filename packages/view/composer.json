@@ -8,8 +8,8 @@
         "tempest/core": "dev-main",
         "tempest/container": "dev-main",
         "tempest/validation": "dev-main",
-        "tempest/cache": "dev-main",
-        "tempest/clock": "dev-main"
+        "tempest/clock": "dev-main",
+        "symfony/cache": "^7.2"
     },
     "autoload": {
         "files": [

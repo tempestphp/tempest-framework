@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tempest\Core\Commands;
 
-use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\Console;
 use Tempest\Console\ConsoleArgument;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\Kernel;
 
 use function Tempest\root_path;
@@ -32,17 +32,17 @@ final readonly class DiscoveryStatusCommand
         $this->console->header('Discovery status');
         $this->console->keyValue('Registered locations', (string) count($this->kernel->discoveryLocations));
         $this->console->keyValue('Loaded discovery classes', (string) count($this->kernel->discoveryClasses));
-        $this->console->keyValue('Cache', match ($this->discoveryCache->isEnabled()) {
+        $this->console->keyValue('Cache', match ($this->discoveryCache->enabled) {
             true => '<style="fg-green bold">ENABLED</style>',
             false => '<style="fg-gray bold">DISABLED</style>',
         });
-        $this->console->keyValue('Cache strategy', match ($this->discoveryCache->getStrategy()) {
+        $this->console->keyValue('Cache strategy', match ($this->discoveryCache->strategy) {
             DiscoveryCacheStrategy::FULL => '<style="fg-green bold">FULL</style>',
             DiscoveryCacheStrategy::PARTIAL => '<style="fg-blue bold">PARTIAL</style>',
             DiscoveryCacheStrategy::NONE => '<style="fg-gray bold">NO CACHING</style>',
             DiscoveryCacheStrategy::INVALID => '<style="fg-red bold">INVALID</style>',
         });
-        $this->console->keyValue('Cache validity', match ($this->discoveryCache->isValid()) {
+        $this->console->keyValue('Cache validity', match ($this->discoveryCache->valid) {
             true => '<style="fg-blue bold">OK</style>',
             false => '<style="fg-red bold">CORRUPTED</style>',
         });

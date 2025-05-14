@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
+use Tempest\View\IconCache;
 use Tempest\View\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 

@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Cache\CacheConfig;
+use Tempest\Cache\OldCacheConfig;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;
@@ -91,10 +91,6 @@ final class MakeConfigCommandTest extends FrameworkIntegrationTestCase
             'log_config' => [
                 'configType' => ConfigType::LOG,
                 'expectedConfigClass' => LogConfig::class,
-            ],
-            'cache_config' => [
-                'configType' => ConfigType::CACHE,
-                'expectedConfigClass' => CacheConfig::class,
             ],
             'console_config' => [
                 'configType' => ConfigType::CONSOLE,

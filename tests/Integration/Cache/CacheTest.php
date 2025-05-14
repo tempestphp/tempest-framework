@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Cache;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Tempest\Cache\CacheConfig;
+use Tempest\Cache\Config\InMemoryCacheConfig;
+use Tempest\Cache\GenericCache;
+use Tempest\Cache\OldCacheConfig;
 use Tempest\Cache\ProjectCache;
 use Tempest\Clock\MockClock;
 use Tempest\DateTime\Duration;
@@ -18,10 +20,12 @@ final class CacheTest extends FrameworkIntegrationTestCase
 {
     public function test_put(): void
     {
-        $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
         $interval = Duration::days(1);
+        $clock = $this->clock();
+        $cache = new GenericCache(
+            cacheConfig: new InMemoryCacheConfig(),
+            adapter: $pool = new ArrayAdapter(clock: $clock->toPsrClock()),
+        );
 
         $cache->put('a', 'a', $clock->now()->plus($interval));
         $cache->put('b', 'b');
@@ -42,10 +46,12 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_get(): void
     {
-        $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
         $interval = Duration::days(1);
+        $clock = $this->clock();
+        $cache = new GenericCache(
+            cacheConfig: new InMemoryCacheConfig(),
+            adapter: $pool = new ArrayAdapter(clock: $clock->toPsrClock()),
+        );
 
         $cache->put('a', 'a', $clock->now()->plus($interval));
         $cache->put('b', 'b');
@@ -61,14 +67,12 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_resolve(): void
     {
-        $clock = new MockClock();
-        $pool = new ArrayAdapter(clock: $clock->toPsrClock());
-        $config = new CacheConfig(
-            projectCachePool: $pool,
-            enable: true,
-        );
-        $cache = new ProjectCache($config);
         $interval = Duration::days(1);
+        $clock = $this->clock();
+        $cache = new GenericCache(
+            cacheConfig: new InMemoryCacheConfig(),
+            adapter: new ArrayAdapter(clock: $clock->toPsrClock()),
+        );
 
         $a = $cache->resolve('a', fn () => 'a', $clock->now()->plus($interval));
         $this->assertSame('a', $a);
@@ -87,11 +91,9 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_remove(): void
     {
-        $pool = new ArrayAdapter();
-        $cache = new ProjectCache(new CacheConfig(projectCachePool: $pool, enable: true));
+        $cache = new GenericCache(new InMemoryCacheConfig());
 
         $cache->put('a', 'a');
-
         $cache->remove('a');
 
         $this->assertNull($cache->get('a'));
@@ -99,8 +101,7 @@ final class CacheTest extends FrameworkIntegrationTestCase
 
     public function test_clear(): void
     {
-        $pool = new ArrayAdapter();
-        $cache = new ProjectCache(cacheConfig: new CacheConfig(projectCachePool: $pool));
+        $cache = new GenericCache(new InMemoryCacheConfig());
 
         $cache->put('a', 'a');
         $cache->put('b', 'b');
