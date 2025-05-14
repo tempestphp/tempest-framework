@@ -4,6 +4,7 @@ namespace Tempest\Database\Builder;
 
 use ReflectionException;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\HasOne;
 use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Validation\Exceptions\ValidationException;
@@ -69,7 +70,7 @@ final class ModelInspector
                 continue;
             }
 
-            if ($property->getIterableType()?->isRelation()) {
+            if ($this->isHasManyRelation($property->getName()) || $this->isHasOneRelation($property->getName())) {
                 continue;
             }
 
@@ -79,6 +80,44 @@ final class ModelInspector
         }
 
         return $values;
+    }
+
+    public function isHasManyRelation(string $name): bool
+    {
+        if (! $this->isObjectModel()) {
+            return false;
+        }
+
+        if (! $this->modelClass->hasProperty($name)) {
+            return false;
+        }
+
+        $property = $this->modelClass->getProperty($name);
+
+        if ($property->getIterableType()?->isRelation()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isHasOneRelation(string $name): bool
+    {
+        if (! $this->isObjectModel()) {
+            return false;
+        }
+
+        if (! $this->modelClass->hasProperty($name)) {
+            return false;
+        }
+
+        $property = $this->modelClass->getProperty($name);
+
+        if ($property->hasAttribute(HasOne::class)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function validate(mixed ...$data): void
@@ -110,5 +149,14 @@ final class ModelInspector
         if ($failingRules !== []) {
             throw new ValidationException($this->modelClass->getName(), $failingRules);
         }
+    }
+
+    public function getName(): string
+    {
+        if ($this->isObjectModel()) {
+            return $this->modelClass->getName();
+        }
+
+        return $this->modelClass;
     }
 }

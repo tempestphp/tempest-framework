@@ -26,7 +26,7 @@ use function Tempest\Support\arr;
 /**
  * @template TModelClass of object
  */
-final class SelectQueryBuilder
+final class SelectQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -57,7 +57,11 @@ final class SelectQueryBuilder
      */
     public function first(mixed ...$bindings): mixed
     {
-        $query = $this->build($bindings);
+        $query = $this->build(...$bindings);
+
+        if (! $this->modelDefinition) {
+            return $query->fetchFirst();
+        }
 
         $result = map($query)->collection()->to($this->modelClass);
 
@@ -79,7 +83,13 @@ final class SelectQueryBuilder
     /** @return TModelClass[] */
     public function all(mixed ...$bindings): array
     {
-        return map($this->build($bindings))->collection()->to($this->modelClass);
+        $query = $this->build(...$bindings);
+
+        if (! $this->modelDefinition) {
+            return $query->fetch();
+        }
+
+        return map($query)->collection()->to($this->modelClass);
     }
 
     /**
@@ -124,7 +134,14 @@ final class SelectQueryBuilder
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        $field = $this->modelDefinition->getFieldDefinition($field);
+        if ($this->modelDefinition) {
+            $field = $this->modelDefinition->getFieldDefinition($field);
+        } else {
+            $field = new FieldDefinition(
+                $this->resolveTable($this->modelClass),
+                $field,
+            );
+        }
 
         return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }
@@ -182,7 +199,7 @@ final class SelectQueryBuilder
         return $this->build()->getSql();
     }
 
-    public function build(array $bindings = []): Query
+    public function build(mixed ...$bindings): Query
     {
         $resolvedRelations = $this->resolveRelations();
 

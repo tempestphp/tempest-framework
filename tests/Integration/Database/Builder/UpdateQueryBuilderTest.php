@@ -3,10 +3,14 @@
 namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
+use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
+use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Exceptions\InvalidUpdateStatement;
 use Tempest\Database\Id;
+use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Query;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -199,20 +203,32 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame([5, 10], $bookQuery->bindings);
     }
 
-    public function test_attach_new_has_many_relation_on_update(): void
+    public function test_update_has_many_relation_via_parent_model_throws_exception(): void
     {
-        $this->markTestSkipped('Not implemented yet');
+        try {
+            query(Book::class)
+                ->update(
+                    title: 'Timeline Taxi',
+                    chapters: ['title' => 'Chapter 01'],
+                )
+                ->build();
+        } catch (CannotUpdateHasManyRelation $cannotUpdateHasManyRelation) {
+            $this->assertStringContainsString(Book::class . '::$chapters', $cannotUpdateHasManyRelation->getMessage());
+        }
+    }
 
-        //        $book = Book::new(
-        //            id: new Id(10),
-        //        );
-        //        query($book)
-        //            ->update(
-        //                chapters: [
-        //                    Chapter::new(title: 'Chapter 01'),
-        //                ],
-        //            )
-        //            ->build();
+    public function test_update_has_one_relation_via_parent_model_throws_exception(): void
+    {
+        try {
+            query(Book::class)
+                ->update(
+                    title: 'Timeline Taxi',
+                    isbn: ['value' => '979-8344313764'],
+                )
+                ->build();
+        } catch (CannotUpdateHasOneRelation $cannotUpdateHasOneRelation) {
+            $this->assertStringContainsString(Book::class . '::$isbn', $cannotUpdateHasOneRelation->getMessage());
+        }
     }
 
     public function test_update_on_plain_table_with_conditions(): void
@@ -245,5 +261,23 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             ['Chapter 01', 1, 10],
             $query->bindings,
         );
+    }
+
+    public function test_update_with_non_object_model(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        query('authors')->update(
+            name: 'Brendt',
+        )->where('id = ?', 1)->execute();
+
+        $count = query('authors')->count()->where('name = ?', 'Brendt')->execute();
+
+        $this->assertSame(1, $count);
     }
 }

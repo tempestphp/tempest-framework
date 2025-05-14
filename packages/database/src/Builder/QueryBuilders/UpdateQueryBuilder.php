@@ -3,6 +3,7 @@
 namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Exceptions\CannotUpdateHasManyRelation;
+use Tempest\Database\Exceptions\CannotUpdateHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\UpdateStatement;
@@ -15,7 +16,7 @@ use Tempest\Support\Conditions\HasConditions;
 use function Tempest\Database\model;
 use function Tempest\Support\arr;
 
-final class UpdateQueryBuilder
+final class UpdateQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -61,7 +62,7 @@ final class UpdateQueryBuilder
         return $this;
     }
 
-    public function build(): Query
+    public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();
 
@@ -72,8 +73,6 @@ final class UpdateQueryBuilder
         if (model($this->model)->isObjectModel() && is_object($this->model)) {
             $this->where('`id` = ?', id: $this->model->id->id);
         }
-
-        $bindings = [];
 
         foreach ($values as $value) {
             $bindings[] = $value;
@@ -88,7 +87,9 @@ final class UpdateQueryBuilder
 
     private function resolveValues(): ImmutableArray
     {
-        if (! model($this->model)->isObjectModel()) {
+        $modelDefinition = model($this->model);
+
+        if (! $modelDefinition->isObjectModel()) {
             return arr($this->values);
         }
 
@@ -99,8 +100,12 @@ final class UpdateQueryBuilder
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
-            if ($property->getIterableType()?->isRelation()) {
+            if ($modelDefinition->isHasManyRelation($property->getName())) {
                 throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
+            }
+
+            if ($modelDefinition->isHasOneRelation($property->getName())) {
+                throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
             }
 
             if ($property->getType()->isRelation()) {
