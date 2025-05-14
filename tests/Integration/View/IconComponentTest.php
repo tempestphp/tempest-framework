@@ -22,8 +22,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->container->get(IconCache::class)->clear();
         $this->container->get(ConfigCache::class)->clear();
+
+        $iconCache = $this->container->get(IconCache::class);
+        $iconCache->enabled = true;
+        $iconCache->clear();
     }
 
     public function test_it_renders_an_icon(): void

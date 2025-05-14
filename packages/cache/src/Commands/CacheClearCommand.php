@@ -12,6 +12,7 @@ use Tempest\Console\HasConsole;
 use Tempest\Console\Middleware\CautionMiddleware;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Support\Str;
 use Tempest\View\IconCache;
@@ -24,7 +25,7 @@ final readonly class CacheClearCommand
 {
     use HasConsole;
 
-    private const DEFAULT_CACHE = 'default';
+    private const string DEFAULT_CACHE = 'default';
 
     public function __construct(
         private Cache $cache,
@@ -54,7 +55,7 @@ final readonly class CacheClearCommand
 
     private function clearInternalCaches(bool $all = false): void
     {
-        $caches = [ViewCache::class, IconCache::class, DiscoveryCache::class];
+        $caches = [ConfigCache::class, ViewCache::class, IconCache::class, DiscoveryCache::class];
 
         if ($all === false && count($caches) > 1) {
             $caches = $this->ask(

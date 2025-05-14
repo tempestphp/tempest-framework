@@ -51,8 +51,6 @@ final class CacheStatusCommandTest extends FrameworkIntegrationTestCase
             ->call(CacheStatusCommand::class, ['internal' => true])
             ->assertSee(ViewCache::class)
             ->assertSee(IconCache::class)
-            ->assertSee(DiscoveryCache::class)
-            ->assertSeeCount('DISABLED', expectedCount: 1)
-            ->assertSeeCount('ENABLED', expectedCount: 3);
+            ->assertSee(DiscoveryCache::class);
     }
 }

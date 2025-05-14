@@ -14,23 +14,19 @@ final class DiscoveryCacheInitializer implements Initializer
     public function initialize(Container $container): DiscoveryCache
     {
         return new DiscoveryCache(
-            strategy: $this->resolveDiscoveryCacheStrategy(),
+            strategy: $this->resolveDiscoveryCacheStrategy(
+                $container->get(AppConfig::class)->environment->isProduction(),
+            ),
         );
     }
 
-    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
+    private function resolveDiscoveryCacheStrategy(bool $isProduction): DiscoveryCacheStrategy
     {
         if ($this->isDiscoveryGenerateCommand()) {
             return DiscoveryCacheStrategy::NONE;
         }
 
-        $cache = env('CACHE');
-
-        if ($cache !== null) {
-            $current = DiscoveryCacheStrategy::make($cache);
-        } else {
-            $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
-        }
+        $current = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $isProduction));
 
         if ($current === DiscoveryCacheStrategy::NONE) {
             return $current;

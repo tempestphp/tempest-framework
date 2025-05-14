@@ -13,6 +13,8 @@ use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\AppConfig;
+use Tempest\Core\ConfigCache;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Support\Str;
 use Tempest\View\IconCache;
@@ -28,6 +30,8 @@ final readonly class CacheStatusCommand
     public function __construct(
         private Console $console,
         private Container $container,
+        private AppConfig $appConfig,
+        private DiscoveryCache $discoveryCache,
     ) {}
 
     #[ConsoleCommand(name: 'cache:status', description: 'Shows which caches are enabled')]
@@ -45,7 +49,7 @@ final readonly class CacheStatusCommand
         if ($internal) {
             $this->console->header('Internal caches');
 
-            foreach ([ViewCache::class, IconCache::class, DiscoveryCache::class] as $cacheName) {
+            foreach ([ConfigCache::class, ViewCache::class, IconCache::class] as $cacheName) {
                 /** @var Cache $cache */
                 $cache = $this->container->get($cacheName);
 
@@ -56,6 +60,22 @@ final readonly class CacheStatusCommand
                         false => '<style="bold fg-red">DISABLED</style>',
                     },
                 );
+            }
+
+            $this->console->keyValue(
+                key: DiscoveryCache::class,
+                value: match ($this->discoveryCache->valid) {
+                    false => '<style="bold fg-red">INVALID</style>',
+                    true => match ($this->discoveryCache->enabled) {
+                        true => '<style="bold fg-green">ENABLED</style>',
+                        false => '<style="bold fg-red">DISABLED</style>',
+                    },
+                },
+            );
+
+            if ($this->appConfig->environment->isProduction() && ! $this->discoveryCache->enabled) {
+                $this->console->writeln();
+                $this->console->error('Discovery cache is disabled in production. This is not recommended.');
             }
         }
 

@@ -14,16 +14,18 @@ final class ConfigCacheInitializer implements Initializer
     public function initialize(Container $container): ConfigCache
     {
         return new ConfigCache(
-            enabled: $this->shouldCacheBeEnabled(),
+            enabled: $this->shouldCacheBeEnabled(
+                $container->get(AppConfig::class)->environment->isProduction(),
+            ),
         );
     }
 
-    private function shouldCacheBeEnabled(): bool
+    private function shouldCacheBeEnabled(bool $isProduction): bool
     {
-        if (env('CACHE') === true) {
-            return true;
+        if (env('INTERNAL_CACHES') === false) {
+            return false;
         }
 
-        return (bool) env('CONFIG_CACHE', default: false);
+        return (bool) env('CONFIG_CACHE', default: $isProduction);
     }
 }

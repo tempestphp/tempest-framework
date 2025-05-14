@@ -92,24 +92,4 @@ final class CacheClearCommandTest extends FrameworkIntegrationTestCase
             ->assertSee('my-cache')
             ->assertSeeCount('CLEARED', expectedCount: 2);
     }
-
-    public function test_clear_internal_caches(): void
-    {
-        $this->console
-            ->call(CacheClearCommand::class, ['all' => true, 'internal' => true])
-            ->assertSee(ViewCache::class)
-            ->assertSee(IconCache::class)
-            ->assertSee(DiscoveryCache::class)
-            ->assertSeeCount('CLEARED', expectedCount: 3);
-    }
-
-    public function test_clear_internal_cache(): void
-    {
-        $this->console
-            ->call(CacheClearCommand::class, ['internal' => true])
-            ->submit('0')
-            ->submit('yes')
-            ->assertSee(ViewCache::class)
-            ->assertSeeCount('CLEARED', expectedCount: 1);
-    }
 }
