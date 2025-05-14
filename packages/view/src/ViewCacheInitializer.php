@@ -20,10 +20,6 @@ final class ViewCacheInitializer implements Initializer
             ),
         );
 
-        if (PHP_OS_FAMILY === 'Windows') {
-            dump($viewCache, env('VIEW_CACHE'), env('INTERNAL_CACHES'));
-        }
-
         return $viewCache;
     }
 

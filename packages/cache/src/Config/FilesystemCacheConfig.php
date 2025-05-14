@@ -2,7 +2,6 @@
 
 namespace Tempest\Cache\Config;
 
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UnitEnum;
 
@@ -34,7 +33,7 @@ final class FilesystemCacheConfig implements CacheConfig
     {
         return new FilesystemAdapter(
             namespace: $this->namespace ?? '',
-            directory: $this->directory ?? internal_storage_path('/cache'),
+            directory: $this->directory ?? internal_storage_path('cache/project'),
         );
     }
 }

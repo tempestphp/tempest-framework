@@ -19,7 +19,7 @@ final class ConfigCache
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool ??= new FilesystemAdapter(
-            directory: internal_storage_path('/cache/config'),
+            directory: internal_storage_path('cache/config'),
         );
     }
 

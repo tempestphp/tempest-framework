@@ -16,7 +16,7 @@ final class ViewCache
         private ?ViewCachePool $pool = null,
     ) {
         $this->pool ??= new ViewCachePool(
-            directory: internal_storage_path('/cache/views'),
+            directory: internal_storage_path('cache/views'),
         );
     }
 

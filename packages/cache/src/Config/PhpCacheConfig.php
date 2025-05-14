@@ -34,7 +34,7 @@ final class PhpCacheConfig implements CacheConfig
     {
         return new PhpFilesAdapter(
             namespace: $this->namespace ?? '',
-            directory: $this->directory ?? internal_storage_path('/cache'),
+            directory: $this->directory ?? internal_storage_path('cache/project'),
         );
     }
 }

@@ -28,7 +28,7 @@ final class DiscoveryCache
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
-            directory: internal_storage_path('/cache/discovery'),
+            directory: internal_storage_path('cache/discovery'),
         );
     }
 

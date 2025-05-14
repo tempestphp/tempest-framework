@@ -19,7 +19,7 @@ final class IconCache
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool ??= new FilesystemAdapter(
-            directory: internal_storage_path('/cache/icons'),
+            directory: internal_storage_path('cache/icons'),
         );
     }
 
