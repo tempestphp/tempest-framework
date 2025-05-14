@@ -200,6 +200,18 @@ namespace Tempest\Support\Str {
     }
 
     /**
+     * Converts the last word of the given string to its English plural form.
+     */
+    function singularize_last_word(Stringable|string $string): string
+    {
+        $string = (string) $string;
+        $parts = preg_split('/(.)(?=[A-Z])/u', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $lastWord = array_pop($parts);
+
+        return implode('', $parts) . Language\singularize($lastWord);
+    }
+
+    /**
      * Ensures the given string starts with the specified `$prefix`.
      */
     function ensure_starts_with(Stringable|string $string, Stringable|string $prefix): string

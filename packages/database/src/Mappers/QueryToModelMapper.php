@@ -11,7 +11,7 @@ use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
 // TODO: refactor
-final readonly class DatabaseModelMapper implements Mapper
+final readonly class QueryToModelMapper implements Mapper
 {
     public function __construct(
         private CasterFactory $casterFactory,

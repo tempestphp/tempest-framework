@@ -16,19 +16,28 @@ final readonly class FieldStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $parts = explode(' AS ', str_replace(' as ', ' AS ', $this->field));
 
+        if (count($parts) === 1) {
+            $field = $parts[0];
+            $alias = null;
+        } else {
+            $field = $parts[0];
+            $alias = $parts[1];
+        }
 
-        return arr(explode(' AS ', (string) $this->field))
-            ->map(function (string $part) use ($dialect) {
-                return
-                    arr(explode('.', $part))
-                        ->map(fn (string $part) => trim($part, '` '))
-                        ->map(fn (string $part) => match ($dialect) {
-                            DatabaseDialect::SQLITE => $part,
-                            default => sprintf('`%s`', $part),
-                        })
-                        ->implode('.');
+        $field = arr(explode('.', $field))
+            ->map(fn (string $part) => trim($part, '` '))
+            ->map(fn (string $part) => match ($dialect) {
+                DatabaseDialect::SQLITE => $part,
+                default => sprintf('`%s`', $part),
             })
-            ->implode(' AS ');
+            ->implode('.');
+
+        if ($alias === null) {
+            return $field;
+        }
+
+        return sprintf('%s AS `%s`', $field, trim($alias, '`'));
     }
 }

@@ -50,13 +50,18 @@ final class FieldStatementTest extends TestCase
     public function test_with_as(): void
     {
         $this->assertSame(
-            'parent.through[].id AS parent.through[].id',
-            new FieldStatement('`parent.through[]`.`id` AS `parent.through[].id`')->compile(DatabaseDialect::SQLITE),
+            'authors.name AS `authors.name`',
+            new FieldStatement('authors.name AS `authors.name`')->compile(DatabaseDialect::SQLITE),
         );
 
         $this->assertSame(
-            '`parent.through[]`.`id` AS `parent.through[].id`',
-            new FieldStatement('`parent.through[]`.`id` AS `parent.through[].id`')->compile(DatabaseDialect::MYSQL),
+            'authors.name AS `authors.name`',
+            new FieldStatement('authors.name AS authors.name')->compile(DatabaseDialect::SQLITE),
+        );
+
+        $this->assertSame(
+            '`authors`.`name` AS `authors.name`',
+            new FieldStatement('authors.name AS `authors.name`')->compile(DatabaseDialect::MYSQL),
         );
     }
 }

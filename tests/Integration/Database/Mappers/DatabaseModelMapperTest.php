@@ -2,27 +2,176 @@
 
 namespace Integration\Database\Mappers;
 
+use Tempest\Database\Mappers\SelectModelMapper;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 use function Tempest\Database\query;
+use function Tempest\map;
 
 final class DatabaseModelMapperTest extends FrameworkIntegrationTestCase
 {
     public function test_map(): void
     {
-        $this->seed();
+        $data = $this->data();
 
-        $query = query('books')
-            ->select(
-                'books.title',
-                'authors.name',
-            )
-            ->build()
-        ;
+        $books = map($data)->with(SelectModelMapper::class)->to(Book::class);
+
+        $this->assertCount(4, $books);
+        $this->assertSame('LOTR 1', $books[0]->title);
+        $this->assertSame('LOTR 2', $books[1]->title);
+        $this->assertSame('LOTR 3', $books[2]->title);
+        $this->assertSame('Timeline Taxi', $books[3]->title);
+
+        $book = $books[0];
+        $this->assertSame('Tolkien', $book->author->name);
+        $this->assertCount(3, $book->chapters);
+
+        $this->assertSame('LOTR 1.1', $book->chapters[0]->title);
+        $this->assertSame('LOTR 1.2', $book->chapters[1]->title);
+        $this->assertSame('LOTR 1.3', $book->chapters[2]->title);
+
+        $this->assertSame('lotr-1', $book->isbn->value);
+    }
+
+    private function data(): array
+    {
+        return [
+            0 => [
+                'books.id' => 1,
+                'authors.id' => 2,
+                'chapters.id' => 1,
+                'isbns.id' => 1,
+                'books.title' => 'LOTR 1',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 1.1',
+                'isbns.value' => 'lotr-1',
+            ],
+            1 => [
+                'books.id' => 1,
+                'authors.id' => 2,
+                'chapters.id' => 2,
+                'isbns.id' => 1,
+                'books.title' => 'LOTR 1',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 1.2',
+                'isbns.value' => 'lotr-1',
+            ],
+            2 => [
+                'books.id' => 1,
+                'authors.id' => 2,
+                'chapters.id' => 3,
+                'isbns.id' => 1,
+                'books.title' => 'LOTR 1',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 1.3',
+                'isbns.value' => 'lotr-1',
+            ],
+            3 => [
+                'books.id' => 2,
+                'authors.id' => 2,
+                'chapters.id' => 4,
+                'isbns.id' => 2,
+                'books.title' => 'LOTR 2',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 2.1',
+                'isbns.value' => 'lotr-2',
+            ],
+            4 => [
+                'books.id' => 2,
+                'authors.id' => 2,
+                'chapters.id' => 5,
+                'isbns.id' => 2,
+                'books.title' => 'LOTR 2',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 2.2',
+                'isbns.value' => 'lotr-2',
+            ],
+            5 => [
+                'books.id' => 2,
+                'authors.id' => 2,
+                'chapters.id' => 6,
+                'isbns.id' => 2,
+                'books.title' => 'LOTR 2',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 2.3',
+                'isbns.value' => 'lotr-2',
+            ],
+            6 => [
+                'books.id' => 3,
+                'authors.id' => 2,
+                'chapters.id' => 7,
+                'isbns.id' => 3,
+                'books.title' => 'LOTR 3',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 3.1',
+                'isbns.value' => 'lotr-3',
+            ],
+            7 => [
+                'books.id' => 3,
+                'authors.id' => 2,
+                'chapters.id' => 8,
+                'isbns.id' => 3,
+                'books.title' => 'LOTR 3',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 3.2',
+                'isbns.value' => 'lotr-3',
+            ],
+            8 => [
+                'books.id' => 3,
+                'authors.id' => 2,
+                'chapters.id' => 9,
+                'isbns.id' => 3,
+                'books.title' => 'LOTR 3',
+                'authors.name' => 'Tolkien',
+                'chapters.title' => 'LOTR 3.3',
+                'isbns.value' => 'lotr-3',
+            ],
+            9 => [
+                'books.id' => 4,
+                'authors.id' => 1,
+                'chapters.id' => 10,
+                'isbns.id' => 4,
+                'books.title' => 'Timeline Taxi',
+                'authors.name' => 'Brent',
+                'chapters.title' => 'Timeline Taxi Chapter 1',
+                'isbns.value' => 'tt',
+            ],
+            10 => [
+                'books.id' => 4,
+                'authors.id' => 1,
+                'chapters.id' => 11,
+                'isbns.id' => 4,
+                'books.title' => 'Timeline Taxi',
+                'authors.name' => 'Brent',
+                'chapters.title' => 'Timeline Taxi Chapter 2',
+                'isbns.value' => 'tt',
+            ],
+            11 => [
+                'books.id' => 4,
+                'authors.id' => 1,
+                'chapters.id' => 12,
+                'isbns.id' => 4,
+                'books.title' => 'Timeline Taxi',
+                'authors.name' => 'Brent',
+                'chapters.title' => 'Timeline Taxi Chapter 3',
+                'isbns.value' => 'tt',
+            ],
+            12 => [
+                'books.id' => 4,
+                'authors.id' => 1,
+                'chapters.id' => 13,
+                'isbns.id' => 4,
+                'books.title' => 'Timeline Taxi',
+                'authors.name' => 'Brent',
+                'chapters.title' => 'Timeline Taxi Chapter 4',
+                'isbns.value' => 'tt',
+            ],
+        ];
     }
 
     private function seed(): void

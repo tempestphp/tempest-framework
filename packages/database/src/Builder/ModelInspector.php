@@ -3,7 +3,9 @@
 namespace Tempest\Database\Builder;
 
 use ReflectionException;
+use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
@@ -12,6 +14,7 @@ use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
 use function Tempest\get;
+use function Tempest\Support\str;
 
 final class ModelInspector
 {
@@ -19,7 +22,8 @@ final class ModelInspector
 
     public function __construct(
         private object|string $model,
-    ) {
+    )
+    {
         if ($this->model instanceof ClassReflector) {
             $this->modelClass = $this->model;
         } else {
@@ -70,7 +74,7 @@ final class ModelInspector
                 continue;
             }
 
-            if ($this->isHasManyRelation($property->getName()) || $this->isHasOneRelation($property->getName())) {
+            if ($this->getHasMany($property->getName()) || $this->getHasOne($property->getName())) {
                 continue;
             }
 
@@ -82,42 +86,91 @@ final class ModelInspector
         return $values;
     }
 
-    public function isHasManyRelation(string $name): bool
+    public function getBelongsTo(string $name): ?BelongsTo
     {
         if (! $this->isObjectModel()) {
-            return false;
+            return null;
+        }
+
+        $singularizedName = str($name)->singularizeLastWord();
+
+        if (! $singularizedName->equals($name)) {
+            return $this->getBelongsTo($singularizedName);
         }
 
         if (! $this->modelClass->hasProperty($name)) {
-            return false;
+            return null;
         }
 
         $property = $this->modelClass->getProperty($name);
 
-        if ($property->getIterableType()?->isRelation()) {
-            return true;
+        if ($belongsTo = $property->getAttribute(BelongsTo::class)) {
+            return $belongsTo;
         }
 
-        return false;
-    }
-
-    public function isHasOneRelation(string $name): bool
-    {
-        if (! $this->isObjectModel()) {
-            return false;
+        if (! $property->getType()->isRelation()) {
+            return null;
         }
-
-        if (! $this->modelClass->hasProperty($name)) {
-            return false;
-        }
-
-        $property = $this->modelClass->getProperty($name);
 
         if ($property->hasAttribute(HasOne::class)) {
-            return true;
+            return null;
         }
 
-        return false;
+        $belongsTo = new BelongsTo($property->getName());
+        $belongsTo->property = $property;
+
+        return $belongsTo;
+    }
+
+    public function getHasOne(string $name): ?HasOne
+    {
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        $singularizedName = str($name)->singularizeLastWord();
+
+        if (! $singularizedName->equals($name)) {
+            return $this->getHasOne($singularizedName);
+        }
+
+        if (! $this->modelClass->hasProperty($name)) {
+            return null;
+        }
+
+        $property = $this->modelClass->getProperty($name);
+
+        if ($hasOne = $property->getAttribute(HasOne::class)) {
+            return $hasOne;
+        }
+
+        return null;
+    }
+
+    public function getHasMany(string $name): ?HasMany
+    {
+        if (! $this->isObjectModel()) {
+            return null;
+        }
+
+        if (! $this->modelClass->hasProperty($name)) {
+            return null;
+        }
+
+        $property = $this->modelClass->getProperty($name);
+
+        if ($hasMany = $property->getAttribute(HasMany::class)) {
+            return $hasMany;
+        }
+
+        if (! $property->getIterableType()?->isRelation()) {
+            return null;
+        }
+
+        $hasMany = new HasMany(inversePropertyName: $property->getName());
+        $hasMany->property = $property;
+
+        return $hasMany;
     }
 
     public function validate(mixed ...$data): void
@@ -158,5 +211,15 @@ final class ModelInspector
         }
 
         return $this->modelClass;
+    }
+
+    public function getPrimaryKey(): string
+    {
+        return 'id';
+    }
+
+    public function getPrimaryField(): string
+    {
+        return $this->getTableDefinition()->name . '.' . $this->getPrimaryKey();
     }
 }
