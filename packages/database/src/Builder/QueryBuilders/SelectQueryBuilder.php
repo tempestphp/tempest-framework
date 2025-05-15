@@ -7,7 +7,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\Query;
@@ -33,7 +33,7 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;
 
-    private ?ModelDefinition $modelDefinition;
+    private ModelInspector $model;
 
     private SelectStatement $select;
 
@@ -45,15 +45,14 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
-        $this->modelDefinition = ModelDefinition::tryFrom($model);
         $this->modelClass = is_object($model) ? $model::class : $model;
-        $model = model($this->modelClass);
+        $this->model = model($this->modelClass);
 
         $this->select = new SelectStatement(
-            table: $this->resolveTable($model),
-            fields: $fields ?? $model
-                ->getSelectFields()
-                ->map(fn (string $fieldName) => new FieldStatement("{$model->getTableName()}.{$fieldName}")->withAlias()),
+            table: $this->model->getTableDefinition(),
+            fields: $fields ?? $this->model
+            ->getSelectFields()
+            ->map(fn (string $fieldName) => new FieldStatement("{$this->model->getTableName()}.{$fieldName}")->withAlias()),
         );
     }
 
@@ -64,7 +63,7 @@ final class SelectQueryBuilder implements BuildsQuery
     {
         $query = $this->build(...$bindings);
 
-        if (! $this->modelDefinition) {
+        if (! $this->model->isObjectModel()) {
             return $query->fetchFirst();
         }
 
@@ -92,7 +91,7 @@ final class SelectQueryBuilder implements BuildsQuery
     {
         $query = $this->build(...$bindings);
 
-        if (! $this->modelDefinition) {
+        if (! $this->model->isObjectModel()) {
             return $query->fetch();
         }
 
@@ -143,14 +142,10 @@ final class SelectQueryBuilder implements BuildsQuery
     /** @return self<TModelClass> */
     public function whereField(string $field, mixed $value): self
     {
-        if ($this->modelDefinition) {
-            $field = $this->modelDefinition->getFieldDefinition($field);
-        } else {
-            $field = new FieldDefinition(
-                $this->resolveTable($this->modelClass),
-                $field,
-            );
-        }
+        $field = new FieldDefinition(
+            $this->model->getTableDefinition(),
+            $field,
+        );
 
         return $this->where("{$field} = :{$field->name}", ...[$field->name => $value]);
     }
@@ -236,15 +231,6 @@ final class SelectQueryBuilder implements BuildsQuery
     private function clone(): self
     {
         return clone $this;
-    }
-
-    private function resolveTable(string|object $model): TableDefinition
-    {
-        if ($this->modelDefinition === null) {
-            return new TableDefinition($model);
-        }
-
-        return $this->modelDefinition->getTableDefinition();
     }
 
     /** @return \Tempest\Database\Relation[] */

@@ -33,7 +33,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT `title`, `index`
+        SELECT title, index
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?
@@ -69,7 +69,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT `authors`.`name` AS `authors.name`, `authors`.`type` AS `authors.type`, `authors`.`id` AS `authors.id`
+        SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.id AS `authors.id`
         FROM `authors`
         SQL;
 
@@ -241,7 +241,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT `title`, `index`
+        SELECT title, index
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?

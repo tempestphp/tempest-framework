@@ -123,7 +123,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?)
         SQL;
 
-        $this->assertSame($expectedAuthorQuery, $authorQuery->getSql());
+        $this->assertSame($expectedAuthorQuery, $authorQuery->toSql());
         $this->assertSame('Brent', $authorQuery->bindings[0]);
     }
 
@@ -201,9 +201,9 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $book = Book::select()->with('chapters')->get($id);
 
         $this->assertCount(3, $book->chapters);
-        $this->assertSame('Chapter 01', $book->chapters[1]->title);
-        $this->assertSame('Chapter 02', $book->chapters[2]->title);
-        $this->assertSame('Chapter 03', $book->chapters[3]->title);
+        $this->assertSame('Chapter 01', $book->chapters[0]->title);
+        $this->assertSame('Chapter 02', $book->chapters[1]->title);
+        $this->assertSame('Chapter 03', $book->chapters[2]->title);
     }
 
     public function test_insert_with_non_object_model(): void

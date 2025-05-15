@@ -175,7 +175,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             INSERT INTO `authors` (`name`)
             VALUES (?)
             SQL,
-            $authorQuery->getSql(),
+            $authorQuery->toSql(),
         );
 
         $this->assertSame(['Brent'], $authorQuery->bindings);
