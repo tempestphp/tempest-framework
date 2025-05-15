@@ -6,6 +6,7 @@ namespace Tempest\Database\Builder\Relations;
 
 use Tempest\Support\Arr\ImmutableArray;
 
+// TODO: remove
 interface Relation
 {
     public function getRelationName(): string;

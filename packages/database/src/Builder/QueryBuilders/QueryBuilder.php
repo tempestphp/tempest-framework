@@ -17,7 +17,7 @@ final readonly class QueryBuilder
     {
         return new SelectQueryBuilder(
             model: $this->model,
-            columns: $columns !== [] ? arr($columns) : null,
+            fields: $columns !== [] ? arr($columns) : null,
         );
     }
 

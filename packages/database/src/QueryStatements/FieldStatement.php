@@ -8,21 +8,30 @@ use Tempest\Database\QueryStatement;
 
 use function Tempest\Support\arr;
 
-final readonly class FieldStatement implements QueryStatement
+final class FieldStatement implements QueryStatement
 {
+    private bool $withAlias = false;
+
     public function __construct(
-        private string|Stringable $field,
+        private readonly string|Stringable $field,
     ) {}
 
     public function compile(DatabaseDialect $dialect): string
     {
         $parts = explode(' AS ', str_replace(' as ', ' AS ', $this->field));
 
+        $field = $parts[0];
+
         if (count($parts) === 1) {
-            $field = $parts[0];
             $alias = null;
+
+            if ($this->withAlias) {
+                $alias = sprintf(
+                    '`%s`',
+                    str_replace('`', '', $field),
+                );
+            }
         } else {
-            $field = $parts[0];
             $alias = $parts[1];
         }
 
@@ -39,5 +48,12 @@ final readonly class FieldStatement implements QueryStatement
         }
 
         return sprintf('%s AS `%s`', $field, trim($alias, '`'));
+    }
+
+    public function withAlias(): self
+    {
+        $this->withAlias = true;
+
+        return $this;
     }
 }

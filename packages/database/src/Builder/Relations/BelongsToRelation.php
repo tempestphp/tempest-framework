@@ -37,10 +37,10 @@ final readonly class BelongsToRelation implements Relation
         $relationModelClass = $property->getType()->asClass();
 
         $localTable = TableDefinition::for($property->getClass(), $alias);
-        $localField = new FieldDefinition($localTable, $belongsTo->localPropertyName);
+        $localField = new FieldDefinition($localTable, $belongsTo->ownerJoin);
 
         $joinTable = TableDefinition::for($property->getType()->asClass(), "{$alias}.{$property->getName()}");
-        $joinField = new FieldDefinition($joinTable, $belongsTo->inversePropertyName);
+        $joinField = new FieldDefinition($joinTable, $belongsTo->relationJoin);
 
         return new self($relationModelClass, $localField, $joinField);
     }

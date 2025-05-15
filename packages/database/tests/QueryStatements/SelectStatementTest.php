@@ -23,7 +23,7 @@ final class SelectStatementTest extends TestCase
 
         $statement = new SelectStatement(
             table: $tableDefinition,
-            columns: arr(['`a`', 'b', 'c', new FieldDefinition($tableDefinition, 'd', 'd_alias')]),
+            fields: arr(['`a`', 'b', 'c', new FieldDefinition($tableDefinition, 'd', 'd_alias')]),
             join: arr(new JoinStatement('INNER JOIN foo ON bar.id = foo.id')),
             where: arr(new WhereStatement('`foo` = "bar"')),
             orderBy: arr(new OrderByStatement('`foo` DESC')),

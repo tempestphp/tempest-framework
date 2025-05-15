@@ -8,6 +8,8 @@ use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -290,5 +292,89 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             [['id' => 2, 'name' => 'Other', 'type' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a']],
             $authors,
         );
+    }
+
+    public function test_select_includes_belongs_to(): void
+    {
+        $query = query(Book::class)->select();
+
+        $this->assertSame(<<<SQL
+        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`
+        FROM `books`
+        SQL, $query->build()->getSql());
+    }
+
+    public function test_with_belongs_to_relation(): void
+    {
+        $query = query(Book::class)
+            ->select()
+            ->with('author', 'chapters', 'isbn')
+            ->build();
+
+        $this->assertSame(<<<SQL
+        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `authors.name`, authors.type AS `authors.type`, authors.id AS `authors.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbns.value`, isbns.book_id AS `isbns.book_id`
+        FROM `books`
+        LEFT JOIN authors ON authors.id = books.author_id
+        LEFT JOIN chapters ON chapters.book_id = books.id
+        LEFT JOIN isbns ON isbns.book_id = books.id
+        SQL, $query->getSql());
+    }
+
+    public function test_select_query_execute_with_relations(): void
+    {
+        $this->seed();
+
+        $query = query(Book::class)
+            ->select()
+            ->with('author', 'chapters', 'isbn');
+
+        ld($query->all());
+        ld($query->build()->getSql());
+    }
+
+    private function seed(): void
+    {
+        $this->migrate(
+            CreateMigrationsTable::class,
+            CreateAuthorTable::class,
+            CreateBookTable::class,
+            CreateChapterTable::class,
+            CreateIsbnTable::class,
+        );
+
+        query('authors')->insert(
+            ['name' => 'Brent'],
+            ['name' => 'Tolkien'],
+        )->execute();
+
+        query('books')->insert(
+            ['title' => 'LOTR 1', 'author_id' => 2],
+            ['title' => 'LOTR 2', 'author_id' => 2],
+            ['title' => 'LOTR 3', 'author_id' => 2],
+            ['title' => 'Timeline Taxi', 'author_id' => 1],
+        )->execute();
+
+        query('isbns')->insert(
+            ['value' => 'lotr-1', 'book_id' => 1],
+            ['value' => 'lotr-2', 'book_id' => 2],
+            ['value' => 'lotr-3', 'book_id' => 3],
+            ['value' => 'tt', 'book_id' => 4],
+        )->execute();
+
+        query('chapters')->insert(
+            ['title' => 'LOTR 1.1', 'book_id' => 1],
+            ['title' => 'LOTR 1.2', 'book_id' => 1],
+            ['title' => 'LOTR 1.3', 'book_id' => 1],
+            ['title' => 'LOTR 2.1', 'book_id' => 2],
+            ['title' => 'LOTR 2.2', 'book_id' => 2],
+            ['title' => 'LOTR 2.3', 'book_id' => 2],
+            ['title' => 'LOTR 3.1', 'book_id' => 3],
+            ['title' => 'LOTR 3.2', 'book_id' => 3],
+            ['title' => 'LOTR 3.3', 'book_id' => 3],
+            ['title' => 'Timeline Taxi Chapter 1', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 2', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 3', 'book_id' => 4],
+            ['title' => 'Timeline Taxi Chapter 4', 'book_id' => 4],
+        )->execute();
     }
 }

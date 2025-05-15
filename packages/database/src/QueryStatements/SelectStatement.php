@@ -13,7 +13,7 @@ final class SelectStatement implements QueryStatement
 {
     public function __construct(
         public TableDefinition $table,
-        public ImmutableArray $columns = new ImmutableArray(),
+        public ImmutableArray $fields = new ImmutableArray(),
         public ImmutableArray $join = new ImmutableArray(),
         public ImmutableArray $where = new ImmutableArray(),
         public ImmutableArray $orderBy = new ImmutableArray(),
@@ -26,15 +26,15 @@ final class SelectStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        $columns = $this->columns->isEmpty()
+        $columns = $this->fields->isEmpty()
             ? '*'
-            : $this->columns
-                ->map(function (string|Stringable $column) use ($dialect) {
-                    if ($column instanceof FieldDefinition) {
-                        return (string) $column;
+            : $this->fields
+                ->map(function (string|Stringable|FieldStatement $field) use ($dialect) {
+                    if (! $field instanceof FieldStatement) {
+                        $field = new FieldStatement($field);
                     }
 
-                    return new FieldStatement($column)->compile($dialect);
+                    return $field->compile($dialect);
                 })
                 ->implode(', ');
 

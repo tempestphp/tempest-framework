@@ -10,7 +10,9 @@ use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\QueryToModelMapper;
+use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\Query;
+use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
@@ -20,6 +22,7 @@ use Tempest\Database\Virtual;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 
+use function Tempest\Database\model;
 use function Tempest\map;
 use function Tempest\reflect;
 use function Tempest\Support\arr;
@@ -44,14 +47,17 @@ final class SelectQueryBuilder implements BuildsQuery
 
     private array $bindings = [];
 
-    public function __construct(string|object $model, ?ImmutableArray $columns = null)
+    public function __construct(string|object $model, ?ImmutableArray $fields = null)
     {
         $this->modelDefinition = ModelDefinition::tryFrom($model);
         $this->modelClass = is_object($model) ? $model::class : $model;
+        $model = model($this->modelClass);
 
         $this->select = new SelectStatement(
             table: $this->resolveTable($model),
-            columns: $columns ?? $this->resolveColumns(),
+            fields: $fields ?? $model
+                ->getSelectFields()
+                ->map(fn (string $fieldName) => new FieldStatement("{$model->getTableName()}.{$fieldName}")->withAlias()),
         );
     }
 
@@ -66,9 +72,9 @@ final class SelectQueryBuilder implements BuildsQuery
             return $query->fetchFirst();
         }
 
-        $result = map($query)
+        $result = map($query->fetch())
             ->collection()
-            ->with(QueryToModelMapper::class)
+            ->with(SelectModelMapper::class)
             ->to($this->modelClass);
 
         if ($result === []) {
@@ -95,7 +101,10 @@ final class SelectQueryBuilder implements BuildsQuery
             return $query->fetch();
         }
 
-        return map($query)->collection()->to($this->modelClass);
+        return map($query->fetch())
+            ->collection()
+            ->with(SelectModelMapper::class)
+            ->to($this->modelClass);
     }
 
     /**
@@ -215,15 +224,16 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        $resolvedRelations = $this->resolveRelations();
-
         foreach ($this->joins as $join) {
             $this->select->join[] = new JoinStatement($join);
         }
 
-        foreach ($resolvedRelations as $relation) {
-            $this->select->columns = $this->select->columns->append(...$relation->getFieldDefinitions()->map(fn (FieldDefinition $field) => (string) $field->withAlias()));
-            $this->select->join[] = new JoinStatement($relation->getStatement());
+        foreach ($this->getIncludedRelations() as $relation) {
+            $this->select->fields = $this->select->fields->append(
+                ...$relation->getSelectFields()
+            );
+
+            $this->select->join[] = $relation->getJoinStatement();
         }
 
         return new Query($this->select, [...$this->bindings, ...$bindings]);
@@ -243,32 +253,27 @@ final class SelectQueryBuilder implements BuildsQuery
         return $this->modelDefinition->getTableDefinition();
     }
 
-    private function resolveColumns(): ImmutableArray
+    /** @return \Tempest\Database\Relation[] */
+    private function getIncludedRelations(): array
     {
-        if ($this->modelDefinition === null) {
-            return arr();
+        $definition = model($this->modelClass);
+
+        if (! $definition->isObjectModel()) {
+            return [];
         }
 
-        return $this->modelDefinition
-            ->getFieldDefinitions()
-            ->filter(fn (FieldDefinition $field) => ! reflect($this->modelClass, $field->name)->hasAttribute(Virtual::class))
-            ->map(fn (FieldDefinition $field) => (string) $field->withAlias());
-    }
+        $relations = $definition->getEagerRelations();
 
-    private function resolveRelations(): ImmutableArray
-    {
-        if ($this->modelDefinition === null) {
-            return arr();
-        }
+        foreach ($this->relations as $relation) {
+            $relation = $definition->getRelation($relation);
 
-        $relations = $this->modelDefinition->getEagerRelations();
-
-        foreach ($this->relations as $relationName) {
-            foreach ($this->modelDefinition->getRelations($relationName) as $relation) {
-                $relations[$relation->getRelationName()] = $relation;
+            if (! $relation) {
+                continue;
             }
+
+            $relations[$relation->property->getName()] = $relation;
         }
 
-        return arr($relations);
+        return $relations;
     }
 }

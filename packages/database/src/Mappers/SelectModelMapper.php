@@ -64,7 +64,7 @@ final class SelectModelMapper implements Mapper
                 if ($hasMany = $model->getHasMany($mainField)) {
                     $hasManyRelations[$mainField] ??= $hasMany;
 
-                    $hasManyId = $row[$hasMany->fieldName];
+                    $hasManyId = $row[$hasMany->idField()];
 
                     $data[$hasMany->property->getName()][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
                 }

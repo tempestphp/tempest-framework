@@ -5,15 +5,21 @@ namespace Tempest\Database\Builder;
 use ReflectionException;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Eager;
 use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
+use Tempest\Database\Relation;
 use Tempest\Database\Table;
+use Tempest\Database\Virtual;
 use Tempest\Reflection\ClassReflector;
+use Tempest\Reflection\PropertyReflector;
+use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
 use function Tempest\get;
+use function Tempest\Support\arr;
 use function Tempest\Support\str;
 
 final class ModelInspector
@@ -55,6 +61,11 @@ final class ModelInspector
             ->getName($this->modelClass->getName());
 
         return new TableDefinition($specificName ?? $conventionalName);
+    }
+
+    public function getTableName(): string
+    {
+        return $this->getTableDefinition()->name;
     }
 
     public function getPropertyValues(): array
@@ -116,7 +127,7 @@ final class ModelInspector
             return null;
         }
 
-        $belongsTo = new BelongsTo($property->getName());
+        $belongsTo = new BelongsTo();
         $belongsTo->property = $property;
 
         return $belongsTo;
@@ -167,10 +178,65 @@ final class ModelInspector
             return null;
         }
 
-        $hasMany = new HasMany(inversePropertyName: $property->getName());
+        $hasMany = new HasMany();
         $hasMany->property = $property;
 
         return $hasMany;
+    }
+
+    public function getSelectFields(): ImmutableArray
+    {
+        if (! $this->isObjectModel()) {
+            return arr();
+        }
+
+        $selectFields = arr();
+
+        foreach ($this->modelClass->getPublicProperties() as $property) {
+            $relation = $this->getRelation($property->getName());
+
+            if ($relation instanceof HasMany || $relation instanceof HasOne) {
+                continue;
+            }
+
+            if ($property->hasAttribute(Virtual::class)) {
+                continue;
+            }
+
+            if ($relation instanceof BelongsTo) {
+                $selectFields[] = $relation->getOwnerFieldName();
+            } else {
+                $selectFields[] = $property->getName();
+            }
+        }
+
+        return $selectFields;
+    }
+
+    public function getRelation(string|PropertyReflector $name): ?Relation
+    {
+        $name = $name instanceof PropertyReflector ? $name->getName() : $name;
+
+        return $this->getBelongsTo($name)
+            ?? $this->getHasOne($name)
+            ?? $this->getHasMany($name);
+    }
+
+    public function getEagerRelations(): array
+    {
+        if (! $this->isObjectModel()) {
+            return [];
+        }
+
+        $relations = [];
+
+        foreach ($this->modelClass->getPublicProperties() as $property) {
+            if ($property->hasAttribute(Eager::class)) {
+                $relations[$property->getName()] = $this->getRelation($property);
+            }
+        }
+
+        return array_filter($relations);
     }
 
     public function validate(mixed ...$data): void
