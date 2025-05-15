@@ -8,6 +8,8 @@ use Tempest\Support\Arr\ImmutableArray;
 
 interface Relation extends PropertyAttribute
 {
+    public function setParent(string $name): self;
+
     public function getSelectFields(): ImmutableArray;
 
     public function getJoinStatement(): JoinStatement;

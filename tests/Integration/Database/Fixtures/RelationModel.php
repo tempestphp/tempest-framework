@@ -28,4 +28,6 @@ final class RelationModel
     /** @var \Tests\Tempest\Integration\Database\Fixtures\OwnerModel[] */
     #[HasMany(relationJoin: 'overwritten.overwritten_id')]
     public array $relationJoinFieldAndTable = [];
+
+    public string $name;
 }

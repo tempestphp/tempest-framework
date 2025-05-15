@@ -81,4 +81,15 @@ final class FieldStatementTest extends TestCase
                 ->compile(DatabaseDialect::MYSQL),
         );
     }
+
+    public function test_with_alias_prefix(): void
+    {
+        $this->assertSame(
+            'authors.name AS `parent.authors.name`',
+            new FieldStatement('authors.name')
+                ->withAlias()
+                ->withAliasPrefix('parent')
+                ->compile(DatabaseDialect::SQLITE),
+        );
+    }
 }

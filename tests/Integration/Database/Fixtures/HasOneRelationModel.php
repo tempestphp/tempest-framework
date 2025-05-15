@@ -24,4 +24,6 @@ final class HasOneRelationModel
 
     #[HasOne(relationJoin: 'overwritten.overwritten_id')]
     public OwnerModel $relationJoinFieldAndTable;
+
+    public string $name;
 }

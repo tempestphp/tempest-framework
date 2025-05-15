@@ -11,6 +11,7 @@ use function Tempest\Support\arr;
 final class FieldStatement implements QueryStatement
 {
     private bool $withAlias = false;
+    private ?string $aliasPrefix = null;
 
     public function __construct(
         private readonly string|Stringable $field,
@@ -27,7 +28,8 @@ final class FieldStatement implements QueryStatement
 
             if ($this->withAlias) {
                 $alias = sprintf(
-                    '`%s`',
+                    '`%s%s`',
+                    $this->aliasPrefix ? "$this->aliasPrefix." : "",
                     str_replace('`', '', $field),
                 );
             }
@@ -50,6 +52,13 @@ final class FieldStatement implements QueryStatement
         }
 
         return sprintf('%s AS `%s`', $field, trim($alias, '`'));
+    }
+
+    public function withAliasPrefix(?string $prefix = null): self
+    {
+        $this->aliasPrefix = $prefix;
+
+        return $this;
     }
 
     public function withAlias(): self

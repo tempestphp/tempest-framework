@@ -18,6 +18,7 @@ use Tempest\Validation\Exceptions\ValidationException;
 use Tempest\Validation\SkipValidation;
 use Tempest\Validation\Validator;
 
+use function Tempest\Database\model;
 use function Tempest\get;
 use function Tempest\Support\arr;
 use function Tempest\Support\str;
@@ -28,7 +29,8 @@ final class ModelInspector
 
     public function __construct(
         private object|string $model,
-    ) {
+    )
+    {
         if ($this->model instanceof ClassReflector) {
             $this->modelClass = $this->model;
         } else {
@@ -217,6 +219,38 @@ final class ModelInspector
         $name = ($name instanceof PropertyReflector) ? $name->getName() : $name;
 
         return $this->getBelongsTo($name) ?? $this->getHasOne($name) ?? $this->getHasMany($name);
+    }
+
+    public function resolveRelations(string $relationString, string $parent = ''): array
+    {
+        if ($relationString === '') {
+            return [];
+        }
+
+        $relationNames = explode('.', $relationString);
+
+        $currentRelationName = $relationNames[0];
+
+        $currentRelation = $this->getRelation($currentRelationName);
+
+        if ($currentRelation === null) {
+            return [];
+        }
+
+        unset($relationNames[0]);
+
+        $newRelationString = implode('.', $relationNames);
+        $currentRelation->setParent($parent);
+        $newParent = ltrim(sprintf(
+            '%s.%s',
+            $parent,
+            $currentRelationName,
+        ), '.');
+
+        return [
+            $currentRelation,
+            ...model($currentRelation->property->getType()->asClass())->resolveRelations($newRelationString, $newParent)
+        ];
     }
 
     public function getEagerRelations(): array

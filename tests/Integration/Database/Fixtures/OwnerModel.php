@@ -23,4 +23,6 @@ final class OwnerModel
 
     #[BelongsTo(ownerJoin: 'overwritten.overwritten_id')]
     public RelationModel $ownerJoinFieldAndTable;
+
+    public string $name;
 }

@@ -5,6 +5,7 @@ namespace Integration\Database;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasOne;
 use Tests\Tempest\Integration\Database\Fixtures\HasOneRelationModel;
+use Tests\Tempest\Integration\Database\Fixtures\RelationModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 use function Tempest\Database\model;
@@ -68,6 +69,17 @@ final class HasOneTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             'LEFT JOIN owner ON owner.relation_id = overwritten.overwritten_id',
             $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_has_one_with_parent(): void
+    {
+        $model = model(HasOneRelationModel::class);
+        $relation = $model->getRelation('owner')->setParent('parent');
+
+        $this->assertSame(
+            'owner.relation_id AS `parent.owner.relation_id`',
+            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
         );
     }
 }

@@ -324,10 +324,14 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
 
-        $child = ChildModel::get($childA->id, ['through.parent']);
-        $child2 = ChildModel::get($childB->id, ['through2.parent']);
+        $child = ChildModel::select()
+            ->with('through.parent')
+            ->get($childA->id);
 
         $this->assertSame('parent', $child->through->parent->name);
+
+        $child2 = ChildModel::get($childB->id, ['through2.parent']);
+
         $this->assertSame('parent', $child2->through2->parent->name);
     }
 

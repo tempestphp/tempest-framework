@@ -258,14 +258,14 @@ final class SelectQueryBuilder implements BuildsQuery
 
         $relations = $definition->getEagerRelations();
 
-        foreach ($this->relations as $relation) {
-            $relation = $definition->getRelation($relation);
+        foreach ($this->relations as $relationString) {
+            $resolvedRelations = $definition->resolveRelations($relationString);
 
-            if (! $relation) {
+            if ($resolvedRelations === []) {
                 continue;
             }
 
-            $relations[$relation->property->getName()] = $relation;
+            $relations = [...$relations, ...$resolvedRelations];
         }
 
         return $relations;

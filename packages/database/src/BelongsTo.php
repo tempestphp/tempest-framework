@@ -18,15 +18,28 @@ final class BelongsTo implements Relation
 {
     public PropertyReflector $property;
 
+    private ?string $parent = null;
+
     public function __construct(
         private readonly ?string $relationJoin = null,
         private readonly ?string $ownerJoin = null,
     ) {}
 
+    public function setParent(string $name): self
+    {
+        $this->parent = $name;
+
+        return $this;
+    }
+
     public function getOwnerFieldName(): string
     {
         if ($this->ownerJoin) {
-            return explode('.', $this->ownerJoin)[1];
+            if (strpos($this->ownerJoin, '.') !== false) {
+                return explode('.', $this->ownerJoin)[1];
+            } else {
+                return $this->ownerJoin;
+            }
         }
 
         $relationModel = model($this->property->getType()->asClass());
@@ -40,7 +53,9 @@ final class BelongsTo implements Relation
 
         return $relationModel
             ->getSelectFields()
-            ->map(fn ($field) => new FieldStatement($relationModel->getTableName() . '.' . $field)->withAlias());
+            ->map(fn ($field) => new FieldStatement(
+                $relationModel->getTableName() . '.' . $field
+            )->withAlias()->withAliasPrefix($this->parent));
     }
 
     public function getJoinStatement(): JoinStatement

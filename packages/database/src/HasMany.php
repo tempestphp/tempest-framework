@@ -18,10 +18,19 @@ final class HasMany implements Relation
 {
     public PropertyReflector $property;
 
+    private ?string $parent = null;
+
     public function __construct(
         public ?string $ownerJoin = null,
         public ?string $relationJoin = null,
     ) {}
+
+    public function setParent(string $name): self
+    {
+        $this->parent = $name;
+
+        return $this;
+    }
 
     public function getSelectFields(): ImmutableArray
     {
@@ -29,7 +38,9 @@ final class HasMany implements Relation
 
         return $relationModel
             ->getSelectFields()
-            ->map(fn ($field) => new FieldStatement($relationModel->getTableName() . '.' . $field)->withAlias());
+            ->map(fn ($field) => new FieldStatement(
+                $relationModel->getTableName() . '.' . $field,
+            )->withAlias()->withAliasPrefix($this->parent));
     }
 
     public function idField(): string

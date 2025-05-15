@@ -4,6 +4,7 @@ namespace Integration\Database;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasMany;
+use Tests\Tempest\Integration\Database\Fixtures\OwnerModel;
 use Tests\Tempest\Integration\Database\Fixtures\RelationModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -68,6 +69,17 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             'LEFT JOIN owner ON owner.relation_id = overwritten.overwritten_id',
             $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
+        );
+    }
+
+    public function test_has_many_with_parent(): void
+    {
+        $model = model(RelationModel::class);
+        $relation = $model->getRelation('owners')->setParent('parent');
+
+        $this->assertSame(
+            'owner.relation_id AS `parent.owner.relation_id`',
+            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
         );
     }
 }

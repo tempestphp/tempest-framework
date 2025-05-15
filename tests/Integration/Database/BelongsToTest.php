@@ -75,4 +75,15 @@ final class BelongsToTest extends FrameworkIntegrationTestCase
             $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
+
+    public function test_belongs_to_with_parent(): void
+    {
+        $model = model(OwnerModel::class);
+        $relation = $model->getRelation('relation')->setParent('parent');
+
+        $this->assertSame(
+            'relation.name AS `parent.relation.name`',
+            $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
+        );
+    }
 }
