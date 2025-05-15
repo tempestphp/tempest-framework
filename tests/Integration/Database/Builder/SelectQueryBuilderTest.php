@@ -70,7 +70,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.id AS `authors.id`
+        SELECT authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id`
         FROM `authors`
         SQL;
 
@@ -271,7 +271,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->whereField('id', 2)
             ->first();
 
-        $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null], $author);
+        $this->assertSame(['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], $author);
     }
 
     public function test_select_all_with_non_object_model(): void
@@ -290,7 +290,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->all();
 
         $this->assertSame(
-            [['id' => 2, 'name' => 'Other', 'type' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a']],
+            [['id' => 2, 'name' => 'Other', 'type' => null, 'publisher_id' => null], ['id' => 3, 'name' => 'Another', 'type' => 'a', 'publisher_id' => null]],
             $authors,
         );
     }
@@ -313,7 +313,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $this->assertSame(<<<SQL
-        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `authors.name`, authors.type AS `authors.type`, authors.id AS `authors.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbns.value`, isbns.book_id AS `isbns.book_id`
+        SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `authors.name`, authors.type AS `authors.type`, authors.publisher_id AS `authors.publisher_id`, authors.id AS `authors.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbns.value`, isbns.book_id AS `isbns.book_id`
         FROM `books`
         LEFT JOIN authors ON authors.id = books.author_id
         LEFT JOIN chapters ON chapters.book_id = books.id

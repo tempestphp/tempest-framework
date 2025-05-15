@@ -40,51 +40,81 @@ final class SelectModelMapper implements Mapper
     {
         $data = [];
 
-        $mainTable = $model->getTableDefinition()->name;
-
-        $hasManyRelations = [];
+//        $hasManyRelations = [];
 
         foreach ($rows as $row) {
-            foreach ($row as $field => $value) {
-                $parts = explode('.', $field);
+            $row = $this->normalizeRow($model, $row);
 
-                $mainField = $parts[0];
-
-                // Main fields
-                if ($mainField === $mainTable) {
-                    $data[$parts[1]] = $value;
-                    continue;
-                }
-
-                $relation = $model->getRelation($parts[0]);
-
-                // IF count > 2
-
-                // BelongsTo
-                if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
-                    $data[$relation->name][$parts[1]] = $value;
-                    continue;
-                }
-
-                // HasMany
-                if ($relation instanceof HasMany) {
-                    $hasManyId = $row[$relation->idField()];
-
-                    if ($hasManyId === null) {
-                        // Empty has many relations are initialized it with an empty array
-                        $data[$relation->name] ??= [];
-                        continue;
-                    }
-
-                    $hasManyRelations[$relation->name] ??= $relation;
-
-                    $data[$relation->name][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
+            foreach ($row as $key => $value) {
+                if (is_array($value)) {
+                    $data[$key] ??= [];
+                    $data[$key] = [...$data[$key], ...$value];
+                } else {
+                    $data[$key] = $value;
                 }
             }
         }
 
-        foreach ($hasManyRelations as $name => $hasMany) {
-            $data[$name] = array_values($data[$name]);
+//        foreach ($hasManyRelations as $name => $hasMany) {
+//            $data[$name] = array_values($data[$name]);
+//        }
+
+        return $data;
+    }
+
+    public function normalizeRow(ModelInspector $model, array $row): array
+    {
+        $mainTable = $model->getTableName();
+
+        $data = [];
+
+        foreach ($row as $field => $value) {
+            $parts = explode('.', $field);
+
+            $mainField = $parts[0];
+
+            // Main fields
+            if ($mainField === $mainTable) {
+                $data[$parts[1]] = $value;
+                continue;
+            }
+
+            $relation = $model->getRelation($parts[0]);
+
+            // Nested relations
+            if (count($parts) > 2) {
+                $subRelation = model($relation)->getRelation($parts[1]);
+
+                $data[$relation->name][$subRelation->name] ??= [];
+
+                $data[$relation->name][$subRelation->name] = [
+                    ...$data[$relation->name][$subRelation->name],
+                    ...$this->normalizeRow(model($subRelation), [
+                        implode('.', array_slice($parts, 1)) => $value,
+                    ]),
+                ];
+
+                continue;
+            }
+
+            // BelongsTo
+            if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
+                $data[$relation->name][$parts[1]] = $value;
+                continue;
+            }
+
+            // HasMany
+            if ($relation instanceof HasMany) {
+                $hasManyId = $row[$relation->idField()];
+
+                if ($hasManyId === null) {
+                    // Empty has many relations are initialized it with an empty array
+                    $data[$relation->name] ??= [];
+                    continue;
+                }
+
+                $data[$relation->name][$hasManyId][$parts[1]] = $value;
+            }
         }
 
         return $data;

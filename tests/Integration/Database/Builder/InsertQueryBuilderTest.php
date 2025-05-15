@@ -79,17 +79,17 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query(Author::class)
             ->insert(
                 $author,
-                ['name' => 'other name', 'type' => AuthorType::B->value],
+                ['name' => 'other name', 'type' => AuthorType::B->value, 'publisher_id' => null],
             )
             ->build();
 
         $expected = <<<SQL
-        INSERT INTO `authors` (`name`, `type`)
-        VALUES (?, ?), (?, ?)
+        INSERT INTO `authors` (`name`, `type`, `publisher_id`)
+        VALUES (?, ?, ?), (?, ?, ?)
         SQL;
 
         $this->assertSame($expected, $query->toSql());
-        $this->assertSame(['brent', 'a', 'other name', 'b'], $query->bindings);
+        $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);
     }
 
     public function test_insert_on_model_table_with_new_relation(): void
