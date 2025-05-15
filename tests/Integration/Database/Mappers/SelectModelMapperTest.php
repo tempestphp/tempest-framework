@@ -3,6 +3,7 @@
 namespace Integration\Database\Mappers;
 
 use Tempest\Database\Mappers\SelectModelMapper;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -77,6 +78,23 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $books = map($data)->with(SelectModelMapper::class)->to(Book::class);
 
         $this->assertSame('Houghton Mifflin', $books[0]->author->publisher->name);
+    }
+
+    public function test_deeply_nested_has_many_map(): void
+    {
+        $data = [
+            [
+                'authors.id' => 1,
+                'authors.name' => 'Tolkien',
+                'books.id' => 1,
+                'books.title' => 'LOTR',
+                'books.chapters.id' => 1,
+                'books.chapters.title' => 'LOTR 1.1',
+            ],
+        ];
+
+        $authors = map($data)->with(SelectModelMapper::class)->to(Author::class);
+        ld($authors[0]->books[0]->chapters);
     }
 
     private function data(): array

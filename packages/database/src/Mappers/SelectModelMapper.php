@@ -87,12 +87,16 @@ final class SelectModelMapper implements Mapper
 
                 $data[$relation->name][$subRelation->name] ??= [];
 
-                $data[$relation->name][$subRelation->name] = [
-                    ...$data[$relation->name][$subRelation->name],
-                    ...$this->normalizeRow(model($subRelation), [
-                        implode('.', array_slice($parts, 1)) => $value,
-                    ]),
-                ];
+                if ($subRelation instanceof BelongsTo || $subRelation instanceof HasOne) {
+                    $data[$relation->name][$subRelation->name] = [
+                        ...$data[$relation->name][$subRelation->name],
+                        ...$this->normalizeRow(model($subRelation), [
+                            implode('.', array_slice($parts, 1)) => $value,
+                        ]),
+                    ];
+                } elseif ($subRelation instanceof HasMany) {
+                    // TODO: deeply nested has many relations
+                }
 
                 continue;
             }
