@@ -324,12 +324,26 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->seed();
 
-        $query = query(Book::class)
+        $books = query(Book::class)
             ->select()
-            ->with('author', 'chapters', 'isbn');
+            ->with('author', 'chapters', 'isbn')
+            ->all();
 
-        ld($query->all());
-        ld($query->build()->getSql());
+        $this->assertCount(4, $books);
+        $this->assertSame('LOTR 1', $books[0]->title);
+        $this->assertSame('LOTR 2', $books[1]->title);
+        $this->assertSame('LOTR 3', $books[2]->title);
+        $this->assertSame('Timeline Taxi', $books[3]->title);
+
+        $book = $books[0];
+        $this->assertSame('Tolkien', $book->author->name);
+        $this->assertCount(3, $book->chapters);
+
+        $this->assertSame('LOTR 1.1', $book->chapters[0]->title);
+        $this->assertSame('LOTR 1.2', $book->chapters[1]->title);
+        $this->assertSame('LOTR 1.3', $book->chapters[2]->title);
+
+        $this->assertSame('lotr-1', $book->isbn->value);
     }
 
     private function seed(): void

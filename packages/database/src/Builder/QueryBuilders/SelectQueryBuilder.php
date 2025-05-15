@@ -73,7 +73,6 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         $result = map($query->fetch())
-            ->collection()
             ->with(SelectModelMapper::class)
             ->to($this->modelClass);
 
@@ -102,7 +101,6 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return map($query->fetch())
-            ->collection()
             ->with(SelectModelMapper::class)
             ->to($this->modelClass);
     }
