@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Attribute;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
@@ -16,13 +17,9 @@ final class HasMany implements Relation
 {
     public PropertyReflector $property;
 
-    public string $fieldName {
-        get => $this->property->getName() . '.' . $this->localPropertyName;
-    }
-
     public function __construct(
-        public ?string $relationJoin = null,
         public ?string $ownerJoin = null,
+        public ?string $relationJoin = null,
     ) {}
 
     public function getSelectFields(): ImmutableArray
@@ -47,37 +44,63 @@ final class HasMany implements Relation
 
     public function getJoinStatement(): JoinStatement
     {
-        $relationModel = model($this->property->getIterableType()->asClass());
-        $ownerModel = model($this->property->getClass());
+        $ownerModel = model($this->property->getIterableType()->asClass());
+        $relationModel = model($this->property->getClass());
 
-        // chapters.book_id
-        $relationJoin = $this->relationJoin;
+        $ownerJoin = $this->getOwnerJoin($ownerModel, $relationModel);
+        $relationJoin = $this->getRelationJoin($relationModel);
 
-        if (! $relationJoin) {
-            $relationJoin = sprintf(
-                '%s.%s',
-                $relationModel->getTableName(),
-                str($ownerModel->getTableName())->singularizeLastWord() . '_' . $ownerModel->getPrimaryKey(),
-            );
-        }
+        return new JoinStatement(sprintf(
+            'LEFT JOIN %s ON %s = %s',
+            $ownerModel->getTableName(),
+            $ownerJoin,
+            $relationJoin,
+        ));
+    }
 
-        // books.id
+    private function getOwnerJoin(ModelInspector $ownerModel, ModelInspector $relationModel): string
+    {
         $ownerJoin = $this->ownerJoin;
 
-        if (! $ownerJoin) {
+        if ($ownerJoin && ! strpos($ownerJoin, '.')) {
             $ownerJoin = sprintf(
                 '%s.%s',
                 $ownerModel->getTableName(),
-                $ownerModel->getPrimaryKey(),
+                $ownerJoin,
             );
         }
 
-        // LEFT JOIN chapters ON chapters.book_id = books.id
-        return new JoinStatement(sprintf(
-            'LEFT JOIN %s ON %s = %s',
+        if ($ownerJoin) {
+            return $ownerJoin;
+        }
+
+        return sprintf(
+            '%s.%s',
+            $ownerModel->getTableName(),
+            str($relationModel->getTableName())->singularizeLastWord() . '_' . $relationModel->getPrimaryKey(),
+        );
+    }
+
+    private function getRelationJoin(ModelInspector $relationModel): string
+    {
+        $relationJoin = $this->relationJoin;
+
+        if ($relationJoin && ! strpos($relationJoin, '.')) {
+            $relationJoin = sprintf(
+                '%s.%s',
+                $relationModel->getTableName(),
+                $relationJoin,
+            );
+        }
+
+        if ($relationJoin) {
+            return $relationJoin;
+        }
+
+        return sprintf(
+            '%s.%s',
             $relationModel->getTableName(),
-            $relationJoin,
-            $ownerJoin,
-        ));
+            $relationModel->getPrimaryKey(),
+        );
     }
 }
