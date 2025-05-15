@@ -79,7 +79,7 @@ final class SelectModelMapper implements Mapper
                 }
             }
         }
-
+ld($data, $hasManyRelations);
         foreach ($hasManyRelations as $name => $hasMany) {
             $data[$name] = array_values($data[$name]);
         }

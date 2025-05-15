@@ -112,7 +112,9 @@ final class ModelInspector
             return null;
         }
 
-        $singularizedName = str($name)->singularizeLastWord();
+        $name = str($name)->camel();
+
+        $singularizedName = $name->singularizeLastWord();
 
         if (! $singularizedName->equals($name)) {
             return $this->getBelongsTo($singularizedName);
@@ -148,7 +150,9 @@ final class ModelInspector
             return null;
         }
 
-        $singularizedName = str($name)->singularizeLastWord();
+        $name = str($name)->camel();
+
+        $singularizedName = $name->singularizeLastWord();
 
         if (! $singularizedName->equals($name)) {
             return $this->getHasOne($singularizedName);
@@ -172,6 +176,8 @@ final class ModelInspector
         if (! $this->isObjectModel()) {
             return null;
         }
+
+        $name = str($name)->camel();
 
         if (! $this->modelClass->hasProperty($name)) {
             return null;
@@ -247,17 +253,19 @@ final class ModelInspector
 
         unset($relationNames[0]);
 
+        $relationModel = model($currentRelation);
+
         $newRelationString = implode('.', $relationNames);
         $currentRelation->setParent($parent);
         $newParent = ltrim(sprintf(
             '%s.%s',
             $parent,
-            $currentRelationName,
+            $relationModel->getTableName(),
         ), '.');
 
-        $relations = [$currentRelation];
+        $relations = [$relationModel->getTableName() => $currentRelation];
 
-        return [...$relations, ...model($currentRelation)->resolveRelations($newRelationString, $newParent)];
+        return [...$relations, ...$relationModel->resolveRelations($newRelationString, $newParent)];
     }
 
     public function resolveEagerRelations(string $parent = ''): array

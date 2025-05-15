@@ -10,6 +10,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
+use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -344,6 +345,18 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame('LOTR 1.3', $book->chapters[2]->title);
 
         $this->assertSame('lotr-1', $book->isbn->value);
+    }
+
+    public function test_eager_loads_combined_with_manual_loads(): void
+    {
+        $query = AWithEager::select()->with('b.c')->toSql();
+
+        $this->assertSame(<<<SQL
+        SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id`
+        FROM `a`
+        LEFT JOIN b ON b.id = a.b_id
+        LEFT JOIN c ON c.id = b.c_id
+        SQL, $query);
     }
 
     private function seed(): void
