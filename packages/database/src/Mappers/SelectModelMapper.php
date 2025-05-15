@@ -73,13 +73,13 @@ final class SelectModelMapper implements Mapper
                         continue;
                     }
 
-                    $hasManyRelations[$mainField] ??= $hasMany;
+                    $hasManyRelations[$hasMany->property->getName()] ??= $hasMany;
 
                     $data[$hasMany->property->getName()][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
                 }
             }
         }
-ld($data, $hasManyRelations);
+
         foreach ($hasManyRelations as $name => $hasMany) {
             $data[$name] = array_values($data[$name]);
         }
