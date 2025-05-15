@@ -12,6 +12,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
 
+// TODO: remove
 final readonly class ModelDefinition
 {
     private ClassReflector $modelClass;

@@ -10,7 +10,7 @@ use Tempest\Mapper\Mapper;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Reflection\PropertyReflector;
 
-// TODO: refactor
+// TODO: remove
 final readonly class QueryToModelMapper implements Mapper
 {
     public function __construct(
