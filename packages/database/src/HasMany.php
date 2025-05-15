@@ -18,6 +18,10 @@ final class HasMany implements Relation
 {
     public PropertyReflector $property;
 
+    public string $name {
+        get => $this->property->getName();
+    }
+
     private ?string $parent = null;
 
     public function __construct(

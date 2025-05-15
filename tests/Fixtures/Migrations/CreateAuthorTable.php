@@ -6,6 +6,7 @@ namespace Tests\Tempest\Fixtures\Migrations;
 
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\BelongsToStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\PrimaryKeyStatement;
@@ -18,14 +19,11 @@ final class CreateAuthorTable implements DatabaseMigration
 
     public function up(): QueryStatement
     {
-        return new CreateTableStatement(
-            'authors',
-            [
-                new PrimaryKeyStatement(),
-                new TextStatement('name'),
-                new TextStatement('type', nullable: true),
-            ],
-        );
+        return CreateTableStatement::forModel(Author::class)
+            ->primary()
+            ->text('name')
+            ->text('type', nullable: true)
+            ->belongsTo('authors.publisher_id', 'publishers.id', nullable: true);
     }
 
     public function down(): QueryStatement

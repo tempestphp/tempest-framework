@@ -14,6 +14,7 @@ use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionBackedEnum;
 use Tests\Tempest\Integration\Auth\Fixtures\UserPermissionUnitEnum;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Database\query;
 
 /**

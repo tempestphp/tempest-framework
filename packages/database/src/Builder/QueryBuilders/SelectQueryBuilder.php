@@ -51,8 +51,8 @@ final class SelectQueryBuilder implements BuildsQuery
         $this->select = new SelectStatement(
             table: $this->model->getTableDefinition(),
             fields: $fields ?? $this->model
-            ->getSelectFields()
-            ->map(fn (string $fieldName) => new FieldStatement("{$this->model->getTableName()}.{$fieldName}")->withAlias()),
+                ->getSelectFields()
+                ->map(fn (string $fieldName) => new FieldStatement("{$this->model->getTableName()}.{$fieldName}")->withAlias()),
         );
     }
 

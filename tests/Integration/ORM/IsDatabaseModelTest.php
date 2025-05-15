@@ -16,6 +16,7 @@ use Tempest\Mapper\SerializerFactory;
 use Tempest\Validation\Exceptions\ValidationException;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Models\A;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Models\AWithLazy;
@@ -107,6 +108,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );

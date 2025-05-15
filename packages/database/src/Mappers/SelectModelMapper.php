@@ -2,7 +2,10 @@
 
 namespace Tempest\Database\Mappers;
 
+use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
+use Tempest\Database\HasMany;
+use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
 
@@ -43,39 +46,39 @@ final class SelectModelMapper implements Mapper
 
         foreach ($rows as $row) {
             foreach ($row as $field => $value) {
-                $mainField = explode('.', $field)[0];
+                $parts = explode('.', $field);
+
+                $mainField = $parts[0];
 
                 // Main fields
                 if ($mainField === $mainTable) {
-                    $data[substr($field, strlen($mainTable) + 1)] = $value;
+                    $data[$parts[1]] = $value;
                     continue;
                 }
+
+                $relation = $model->getRelation($parts[0]);
+
+                // IF count > 2
 
                 // BelongsTo
-                if ($belongsTo = $model->getBelongsTo($mainField)) {
-                    $data[$belongsTo->property->getName()][str_replace($mainField . '.', '', $field)] = $value;
-                    continue;
-                }
-
-                // HasOne
-                if ($hasOne = $model->getHasOne($mainField)) {
-                    $data[$hasOne->property->getName()][str_replace($mainField . '.', '', $field)] = $value;
+                if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
+                    $data[$relation->name][$parts[1]] = $value;
                     continue;
                 }
 
                 // HasMany
-                if ($hasMany = $model->getHasMany($mainField)) {
-                    $hasManyId = $row[$hasMany->idField()];
+                if ($relation instanceof HasMany) {
+                    $hasManyId = $row[$relation->idField()];
 
                     if ($hasManyId === null) {
                         // Empty has many relations are initialized it with an empty array
-                        $data[$hasMany->property->getName()] ??= [];
+                        $data[$relation->name] ??= [];
                         continue;
                     }
 
-                    $hasManyRelations[$hasMany->property->getName()] ??= $hasMany;
+                    $hasManyRelations[$relation->name] ??= $relation;
 
-                    $data[$hasMany->property->getName()][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
+                    $data[$relation->name][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
                 }
             }
         }

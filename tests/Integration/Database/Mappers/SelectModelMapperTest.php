@@ -33,6 +33,52 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('lotr-1', $book->isbn->value);
     }
 
+    public function test_has_many_map(): void
+    {
+        $data = [
+            [
+                'books.id' => 1,
+                'books.title' => 'LOTR',
+                'chapters.id' => 1,
+                'chapters.title' => 'LOTR 1.1',
+            ],
+            [
+                'books.id' => 1,
+                'chapters.id' => 2,
+                'chapters.title' => 'LOTR 1.2',
+            ],
+            [
+                'books.id' => 1,
+                'chapters.id' => 3,
+                'chapters.title' => 'LOTR 1.3',
+            ],
+        ];
+
+        $books = map($data)->with(SelectModelMapper::class)->to(Book::class);
+        $this->assertCount(3, $books[0]->chapters);
+        $this->assertSame('LOTR 1.1', $books[0]->chapters[0]->title);
+        $this->assertSame('LOTR 1.2', $books[0]->chapters[1]->title);
+        $this->assertSame('LOTR 1.3', $books[0]->chapters[2]->title);
+    }
+
+    public function test_deeply_nested_map(): void
+    {
+        $data = [
+            [
+                'books.id' => 1,
+                'books.title' => 'LOTR 1',
+                'authors.name' => 'Tolkien',
+                'authors.publishers.id' => 2,
+                'authors.publishers.name' => 'Houghton Mifflin',
+                'authors.publishers.description' => 'Hello!',
+            ],
+        ];
+
+        $books = map($data)->with(SelectModelMapper::class)->to(Book::class);
+
+        $this->assertSame('Houghton Mifflin', $books[0]->author->publisher->name);
+    }
+
     private function data(): array
     {
         return [
