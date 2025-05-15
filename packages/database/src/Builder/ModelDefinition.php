@@ -82,39 +82,6 @@ final readonly class ModelDefinition
         return $relations;
     }
 
-    /** @return \Tempest\Database\Builder\Relations\Relation[] */
-    public function getEagerRelations(): array
-    {
-        $relations = [];
-
-        foreach ($this->buildEagerRelationNames($this->modelClass) as $relationName) {
-            foreach ($this->getRelations($relationName) as $relation) {
-                $relations[$relation->getRelationName()] = $relation;
-            }
-        }
-
-        return $relations;
-    }
-
-    private function buildEagerRelationNames(ClassReflector $class): array
-    {
-        $relations = [];
-
-        foreach ($class->getPublicProperties() as $property) {
-            if (! $property->hasAttribute(Eager::class)) {
-                continue;
-            }
-
-            $relations[] = $property->getName();
-
-            foreach ($this->buildEagerRelationNames($property->getType()->asClass()) as $childRelation) {
-                $relations[] = "{$property->getName()}.{$childRelation}";
-            }
-        }
-
-        return $relations;
-    }
-
     public function getTableDefinition(): TableDefinition
     {
         $specificName = $this->modelClass

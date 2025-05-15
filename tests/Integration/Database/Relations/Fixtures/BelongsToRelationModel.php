@@ -8,19 +8,19 @@ use Tempest\Database\HasMany;
 use Tempest\Database\IsDatabaseModel;
 use Tempest\Database\Table;
 
-#[Table('belongs_to_related')]
-final class BelongsToRelatedModel
+#[Table('relation')]
+final class BelongsToRelationModel
 {
     use IsDatabaseModel;
 
-    /** @var \Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToParentModel[] */
+    /** @var \Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToOwnerModel[] */
     public array $inferred = [];
 
     #[HasMany('other_id')]
-    /** @var \Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToParentModel[] */
+    /** @var \Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToOwnerModel[] */
     public array $attribute = [];
 
-    #[HasMany('other_id', BelongsToParentModel::class, 'other_id')]
+    #[HasMany('other_id', BelongsToOwnerModel::class, 'other_id')]
     public array $full = [];
 
     /** @var \Tests\Tempest\Integration\Database\Relations\Fixtures\HasOneParentModel[] */

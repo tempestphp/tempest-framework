@@ -6,7 +6,7 @@ namespace Tests\Tempest\Integration\Database\Relations;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\InvalidRelation;
-use Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToRelatedModel;
+use Tests\Tempest\Integration\Database\Relations\Fixtures\BelongsToRelationModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
 /**
@@ -16,7 +16,7 @@ final class HasManyRelationTest extends FrameworkIntegrationTestCase
 {
     public function test_cannot_find_inverse(): void
     {
-        $definition = new ModelDefinition(BelongsToRelatedModel::class);
+        $definition = new ModelDefinition(BelongsToRelationModel::class);
 
         $this->expectException(InvalidRelation::class);
         $definition->getRelations('invalid');
@@ -24,7 +24,7 @@ final class HasManyRelationTest extends FrameworkIntegrationTestCase
 
     public function test_inferred_has_many_relation(): void
     {
-        $definition = new ModelDefinition(BelongsToRelatedModel::class);
+        $definition = new ModelDefinition(BelongsToRelationModel::class);
         $inferredRelation = $definition->getRelations('inferred');
 
         $this->assertCount(1, $inferredRelation);
@@ -37,7 +37,7 @@ final class HasManyRelationTest extends FrameworkIntegrationTestCase
 
     public function test_attribute_with_defaults_has_many_relation(): void
     {
-        $definition = new ModelDefinition(BelongsToRelatedModel::class);
+        $definition = new ModelDefinition(BelongsToRelationModel::class);
         $relation = $definition->getRelations('attribute');
 
         $this->assertCount(1, $relation);
@@ -50,7 +50,7 @@ final class HasManyRelationTest extends FrameworkIntegrationTestCase
 
     public function test_fully_filled_attribute_has_many_relation(): void
     {
-        $definition = new ModelDefinition(BelongsToRelatedModel::class);
+        $definition = new ModelDefinition(BelongsToRelationModel::class);
         $relation = $definition->getRelations('full');
 
         $this->assertCount(1, $relation);

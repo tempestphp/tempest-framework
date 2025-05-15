@@ -6,6 +6,7 @@ namespace Tempest\Database\Exceptions;
 
 use Exception;
 
+// TODO remove
 final class InvalidRelation extends Exception
 {
     public static function inversePropertyNotFound(string $modelClass, string $modelProperty, string $relatedClass): self

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Attribute;
+use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
@@ -17,8 +18,8 @@ final class BelongsTo implements Relation
     public PropertyReflector $property;
 
     public function __construct(
-        public ?string $relationJoin = null,
-        public ?string $ownerJoin = null,
+        private readonly ?string $relationJoin = null,
+        private readonly ?string $ownerJoin = null,
     ) {}
 
     public function getOwnerFieldName(): string
@@ -44,30 +45,10 @@ final class BelongsTo implements Relation
     public function getJoinStatement(): JoinStatement
     {
         $relationModel = model($this->property->getType()->asClass());
+        $ownerModel = model($this->property->getClass());
 
-        // authors.id
-        $relationJoin = $this->relationJoin;
-
-        if (! $relationJoin) {
-            $relationJoin = sprintf(
-                '%s.%s',
-                $relationModel->getTableName(),
-                $relationModel->getPrimaryKey(),
-            );
-        }
-
-        // books.author_id
-        $ownerJoin = $this->ownerJoin;
-
-        if (! $ownerJoin) {
-            $ownerModel = model($this->property->getClass());
-
-            $ownerJoin = sprintf(
-                '%s.%s',
-                $ownerModel->getTableName(),
-                $this->getOwnerFieldName(),
-            );
-        }
+        $relationJoin = $this->getRelationJoin($relationModel);
+        $ownerJoin = $this->getOwnerJoin($ownerModel);
 
         // LEFT JOIN authors ON authors.id = books.author_id
         return new JoinStatement(sprintf(
@@ -76,5 +57,49 @@ final class BelongsTo implements Relation
             $relationJoin,
             $ownerJoin,
         ));
+    }
+
+    private function getRelationJoin(ModelInspector $relationModel): string
+    {
+        $relationJoin = $this->relationJoin;
+
+        if ($relationJoin && ! strpos($relationJoin, '.')) {
+            $relationJoin = sprintf('%s.%s',
+                $relationModel->getTableName(),
+                $relationJoin,
+            );
+        }
+
+        if ($relationJoin) {
+            return $relationJoin;
+        }
+
+        return sprintf(
+            '%s.%s',
+            $relationModel->getTableName(),
+            $relationModel->getPrimaryKey(),
+        );
+    }
+
+    private function getOwnerJoin(ModelInspector $ownerModel): string
+    {
+        $ownerJoin = $this->ownerJoin;
+
+        if ($ownerJoin && ! strpos($ownerJoin, '.')) {
+            $ownerJoin = sprintf('%s.%s',
+                $ownerModel->getTableName(),
+                $ownerJoin,
+            );
+        }
+
+        if ($ownerJoin) {
+            return $ownerJoin;
+        }
+
+        return sprintf(
+            '%s.%s',
+            $ownerModel->getTableName(),
+            $this->getOwnerFieldName(),
+        );
     }
 }
