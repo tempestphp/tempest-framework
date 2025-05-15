@@ -2,13 +2,17 @@
 
 namespace Tempest\HttpApi;
 
+use Tempest\Reflection\ClassReflector;
+
 trait HasResourceRecord
 {
     public static function getResourceRecord(): string
     {
-        if (property_exists(static::class, 'resourceRecord')) {
-            return static::$resourceRecord;
-        }
+        $resourceClassReflector = new ClassReflector(static::class);
+
+        if ($resourceRecord = $resourceClassReflector->getAttribute(ResourceRecord::class)) {
+            return $resourceRecord->resourceRecord;
+        };
 
         return static::class;
     }
