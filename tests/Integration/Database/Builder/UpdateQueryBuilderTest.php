@@ -37,7 +37,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `title` = ?, `index` = ?
             WHERE `id` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -58,7 +58,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             UPDATE `chapters`
             SET `index` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -74,7 +74,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         query('chapters')
             ->update(index: 0)
             ->build()
-            ->getSql();
+            ->toSql();
     }
 
     public function test_model_update_with_values(): void
@@ -92,7 +92,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `title` = ?
             WHERE `id` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -120,7 +120,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `title` = ?
             WHERE `id` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -163,7 +163,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `author_id` = ?
             WHERE `id` = ?
             SQL,
-            $bookQuery->getSql(),
+            $bookQuery->toSql(),
         );
 
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[0]);
@@ -197,7 +197,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `author_id` = ?
             WHERE `id` = ?
             SQL,
-            $bookQuery->getSql(),
+            $bookQuery->toSql(),
         );
 
         $this->assertSame([5, 10], $bookQuery->bindings);
@@ -254,7 +254,7 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
             SET `title` = ?, `index` = ?
             WHERE `id` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(

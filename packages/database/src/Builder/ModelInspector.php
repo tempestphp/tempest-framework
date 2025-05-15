@@ -27,19 +27,27 @@ final class ModelInspector
 {
     private ?ClassReflector $modelClass;
 
-    public function __construct(
-        private object|string $model,
-    )
+    private object|string $model;
+
+    public function __construct(object|string $model)
     {
-        if ($this->model instanceof ClassReflector) {
-            $this->modelClass = $this->model;
+        if ($model instanceof HasMany) {
+            $model = $model->property->getIterableType()->asClass();
+            $this->modelClass = $model;
+        } elseif ($model instanceof BelongsTo || $model instanceof HasOne) {
+            $model = $model->property->getType()->asClass();
+            $this->modelClass = $model;
+        } elseif ($model instanceof ClassReflector) {
+            $this->modelClass = $model;
         } else {
             try {
-                $this->modelClass = new ClassReflector($this->model);
+                $this->modelClass = new ClassReflector($model);
             } catch (ReflectionException) {
                 $this->modelClass = null;
             }
         }
+
+        $this->model = $model;
     }
 
     public function isObjectModel(): bool
@@ -247,13 +255,12 @@ final class ModelInspector
             $currentRelationName,
         ), '.');
 
-        return [
-            $currentRelation,
-            ...model($currentRelation->property->getType()->asClass())->resolveRelations($newRelationString, $newParent)
-        ];
+        $relations = [$currentRelation];
+
+        return [...$relations, ...model($currentRelation)->resolveRelations($newRelationString, $newParent)];
     }
 
-    public function getEagerRelations(): array
+    public function resolveEagerRelations(string $parent = ''): array
     {
         if (! $this->isObjectModel()) {
             return [];
@@ -262,8 +269,26 @@ final class ModelInspector
         $relations = [];
 
         foreach ($this->modelClass->getPublicProperties() as $property) {
-            if ($property->hasAttribute(Eager::class)) {
-                $relations[$property->getName()] = $this->getRelation($property);
+            if (! $property->hasAttribute(Eager::class)) {
+                continue;
+            }
+
+            $currentRelationName = $property->getName();
+            $currentRelation = $this->getRelation($currentRelationName);
+
+            if (! $currentRelation) {
+                continue;
+            }
+
+            $relations[$property->getName()] = $currentRelation->setParent($parent);
+            $newParent = ltrim(sprintf(
+                '%s.%s',
+                $parent,
+                $currentRelationName,
+            ), '.');
+
+            foreach (model($currentRelation)->resolveEagerRelations($newParent) as $name => $nestedEagerRelation) {
+                $relations[$name] = $nestedEagerRelation;
             }
         }
 

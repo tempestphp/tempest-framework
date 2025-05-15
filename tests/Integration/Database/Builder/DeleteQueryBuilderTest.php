@@ -25,7 +25,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             DELETE FROM `foo`
             WHERE `bar` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -45,7 +45,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             <<<SQL
             DELETE FROM `authors`
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
     }
 
@@ -63,7 +63,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             DELETE FROM `authors`
             WHERE `id` = :id
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -91,7 +91,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             DELETE FROM `foo`
             WHERE `bar` = ?
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(

@@ -62,6 +62,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();

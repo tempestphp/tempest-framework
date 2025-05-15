@@ -26,7 +26,7 @@ final readonly class GenericDatabase implements Database
 
         try {
             $this->connection
-                ->prepare($query->getSql())
+                ->prepare($query->toSql())
                 ->execute($bindings);
         } catch (PDOException $pdoException) {
             throw new QueryException($query, $bindings, $pdoException);
@@ -40,7 +40,7 @@ final readonly class GenericDatabase implements Database
 
     public function fetch(Query $query): array
     {
-        $pdoQuery = $this->connection->prepare($query->getSql());
+        $pdoQuery = $this->connection->prepare($query->toSql());
 
         $pdoQuery->execute($this->resolveBindings($query));
 

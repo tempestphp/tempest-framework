@@ -213,7 +213,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
     public function toSql(): string
     {
-        return $this->build()->getSql();
+        return $this->build()->toSql();
     }
 
     public function build(mixed ...$bindings): Query
@@ -256,7 +256,7 @@ final class SelectQueryBuilder implements BuildsQuery
             return [];
         }
 
-        $relations = $definition->getEagerRelations();
+        $relations = $definition->resolveEagerRelations();
 
         foreach ($this->relations as $relationString) {
             $resolvedRelations = $definition->resolveRelations($relationString);

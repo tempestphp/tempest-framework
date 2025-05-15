@@ -45,6 +45,11 @@ final class InsertQueryBuilder implements BuildsQuery
         return $id;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $definition = model($this->model);

@@ -54,18 +54,26 @@ final class SelectModelMapper implements Mapper
                 // BelongsTo
                 if ($belongsTo = $model->getBelongsTo($mainField)) {
                     $data[$belongsTo->property->getName()][str_replace($mainField . '.', '', $field)] = $value;
+                    continue;
                 }
 
                 // HasOne
                 if ($hasOne = $model->getHasOne($mainField)) {
                     $data[$hasOne->property->getName()][str_replace($mainField . '.', '', $field)] = $value;
+                    continue;
                 }
 
                 // HasMany
                 if ($hasMany = $model->getHasMany($mainField)) {
-                    $hasManyRelations[$mainField] ??= $hasMany;
-
                     $hasManyId = $row[$hasMany->idField()];
+
+                    if ($hasManyId === null) {
+                        // Empty has many relations are initialized it with an empty array
+                        $data[$hasMany->property->getName()] ??= [];
+                        continue;
+                    }
+
+                    $hasManyRelations[$mainField] ??= $hasMany;
 
                     $data[$hasMany->property->getName()][$hasManyId][str_replace($mainField . '.', '', $field)] = $value;
                 }

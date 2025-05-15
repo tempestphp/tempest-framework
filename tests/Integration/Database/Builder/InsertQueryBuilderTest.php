@@ -34,7 +34,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             INSERT INTO `chapters` (`title`, `index`)
             VALUES (?, ?)
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -60,7 +60,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             INSERT INTO `chapters` (`chapter`, `index`)
             VALUES (?, ?), (?, ?), (?, ?)
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -88,7 +88,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?, ?), (?, ?)
         SQL;
 
-        $this->assertSame($expected, $query->getSql());
+        $this->assertSame($expected, $query->toSql());
         $this->assertSame(['brent', 'a', 'other name', 'b'], $query->bindings);
     }
 
@@ -112,7 +112,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?, ?)
         SQL;
 
-        $this->assertSame($expectedBookQuery, $bookQuery->getSql());
+        $this->assertSame($expectedBookQuery, $bookQuery->toSql());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[1]);
 
@@ -148,7 +148,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?, ?)
         SQL;
 
-        $this->assertSame($expectedBookQuery, $bookQuery->getSql());
+        $this->assertSame($expectedBookQuery, $bookQuery->toSql());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
     }

@@ -286,8 +286,8 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $parent = ParentModel::get($parent->id, ['through.child']);
 
-        $this->assertSame('A', $parent->through[1]->child->name);
-        $this->assertSame('B', $parent->through[2]->child->name);
+        $this->assertSame('A', $parent->through[0]->child->name);
+        $this->assertSame('B', $parent->through[1]->child->name);
     }
 
     public function test_empty_has_many_relation(): void
@@ -301,7 +301,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         $parent = new ParentModel(name: 'parent')->save();
 
-        $parent = ParentModel::get($parent->id, ['through.child']);
+        $parent = ParentModel::select()->with('through.child')->get($parent->id);
 
         $this->assertInstanceOf(ParentModel::class, $parent);
         $this->assertEmpty($parent->through);
@@ -317,20 +317,16 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         );
 
         $parent = new ParentModel(name: 'parent')->save();
-
         $childA = new ChildModel(name: 'A')->save();
-
         $childB = new ChildModel(name: 'B')->save();
 
         new ThroughModel(parent: $parent, child: $childA, child2: $childB)->save();
 
-        $child = ChildModel::select()
-            ->with('through.parent')
-            ->get($childA->id);
+        $child = ChildModel::select()->with('through.parent')->get($childA->id);
 
         $this->assertSame('parent', $child->through->parent->name);
 
-        $child2 = ChildModel::get($childB->id, ['through2.parent']);
+        $child2 = ChildModel::select()->with('through2.parent')->get($childB->id);
 
         $this->assertSame('parent', $child2->through2->parent->name);
     }
@@ -400,6 +396,7 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
         )->save();
 
         $a = AWithEager::select()->first();
+        $this->assertTrue(isset($a->b));
         $this->assertTrue(isset($a->b->c));
     }
 

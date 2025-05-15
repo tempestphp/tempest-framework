@@ -41,7 +41,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         ORDER BY `index` ASC
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
         $this->assertSame($expected, $sql);
@@ -52,7 +52,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')->select()->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT *
@@ -66,7 +66,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)->select()->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT `authors`.`name` AS `authors.name`, `authors`.`type` AS `authors.type`, `authors`.`id` AS `authors.id`
@@ -249,7 +249,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         ORDER BY `index` ASC
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
         $this->assertSame($expected, $sql);
@@ -301,7 +301,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertSame(<<<SQL
         SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`
         FROM `books`
-        SQL, $query->build()->getSql());
+        SQL, $query->build()->toSql());
     }
 
     public function test_with_belongs_to_relation(): void
@@ -317,7 +317,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         LEFT JOIN authors ON authors.id = books.author_id
         LEFT JOIN chapters ON chapters.book_id = books.id
         LEFT JOIN isbns ON isbns.book_id = books.id
-        SQL, $query->getSql());
+        SQL, $query->toSql());
     }
 
     public function test_select_query_execute_with_relations(): void

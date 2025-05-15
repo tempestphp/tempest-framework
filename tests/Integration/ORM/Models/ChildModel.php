@@ -16,7 +16,7 @@ final class ChildModel
     #[HasOne]
     public ThroughModel $through;
 
-    #[HasOne('child2')]
+    #[HasOne(ownerJoin: 'child2_id')]
     public ThroughModel $through2;
 
     public function __construct(
