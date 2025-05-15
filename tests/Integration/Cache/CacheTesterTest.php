@@ -55,6 +55,9 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
 
         $cache->assertNotCached('foo');
         $cache->assertNotEmpty();
+
+        $cache->assertKeyHasValue('key', 'value');
+        $cache->assertKeyDoesNotHaveValue('key', 'not-the-right-value');
     }
 
     public function test_prevent_usage_without_fake(): void

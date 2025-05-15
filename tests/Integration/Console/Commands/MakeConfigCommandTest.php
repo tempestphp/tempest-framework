@@ -6,7 +6,6 @@ namespace Tests\Tempest\Integration\Console\Commands;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use Tempest\Cache\OldCacheConfig;
 use Tempest\CommandBus\CommandBusConfig;
 use Tempest\Console\ConsoleConfig;
 use Tempest\Console\Enums\ConfigType;

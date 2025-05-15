@@ -4,9 +4,11 @@ namespace Tempest\Cache\Testing;
 
 use Closure;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\ExpectationFailedException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Clock\ClockInterface;
+use Stringable;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\Config\CustomCacheConfig;
@@ -35,22 +37,42 @@ final class TestingCache implements Cache
         );
     }
 
-    public function put(string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
     {
         return $this->cache->put($key, $value, $expiration);
     }
 
-    public function get(string $key): mixed
+    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
+    {
+        return $this->cache->putMany($values, $expiration);
+    }
+
+    public function increment(Stringable|string $key, int $by = 1): int
+    {
+        return $this->cache->increment($key, $by);
+    }
+
+    public function decrement(Stringable|string $key, int $by = 1): int
+    {
+        return $this->cache->decrement($key, $by);
+    }
+
+    public function get(Stringable|string $key): mixed
     {
         return $this->cache->get($key);
     }
 
-    public function resolve(string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    public function getMany(iterable $key): array
+    {
+        return $this->cache->getMany($key);
+    }
+
+    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
     {
         return $this->cache->resolve($key, $callback, $expiration);
     }
 
-    public function remove(string $key): void
+    public function remove(Stringable|string $key): void
     {
         $this->cache->remove($key);
     }
@@ -58,6 +80,38 @@ final class TestingCache implements Cache
     public function clear(): void
     {
         $this->cache->clear();
+    }
+
+    /**
+     * Asserts that the given `$key` is cached and matches the expected `$value`.
+     */
+    public function assertKeyHasValue(Stringable|string $key, mixed $value): self
+    {
+        $this->assertCached($key);
+
+        Assert::assertSame(
+            expected: $value,
+            actual: $this->get($key),
+            message: "Cache key [{$key}] does not match the expected value.",
+        );
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the given `$key` is cached and does not match the given `$value`.
+     */
+    public function assertKeyDoesNotHaveValue(Stringable|string $key, mixed $value): self
+    {
+        $this->assertCached($key);
+
+        Assert::assertNotSame(
+            expected: $value,
+            actual: $this->get($key),
+            message: "Cache key [{$key}] matches the given value.",
+        );
+
+        return $this;
     }
 
     /**

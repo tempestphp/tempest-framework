@@ -4,6 +4,7 @@ namespace Tempest\Cache\Testing;
 
 use Closure;
 use Psr\Cache\CacheItemInterface;
+use Stringable;
 use Tempest\Cache\Cache;
 use Tempest\Cache\ForbiddenCacheUsageException;
 use Tempest\DateTime\DateTimeInterface;
@@ -16,22 +17,42 @@ final class RestrictedCache implements Cache
         private ?string $tag = null,
     ) {}
 
-    public function put(string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
+    public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
     {
         throw new ForbiddenCacheUsageException($this->tag);
     }
 
-    public function get(string $key): mixed
+    public function putMany(iterable $values, null|Duration|DateTimeInterface $expiration = null): array
     {
         throw new ForbiddenCacheUsageException($this->tag);
     }
 
-    public function resolve(string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    public function increment(Stringable|string $key, int $by = 1): int
     {
         throw new ForbiddenCacheUsageException($this->tag);
     }
 
-    public function remove(string $key): void
+    public function decrement(Stringable|string $key, int $by = 1): int
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
+
+    public function get(Stringable|string $key): mixed
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
+
+    public function getMany(iterable $key): array
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
+
+    public function resolve(Stringable|string $key, Closure $callback, null|Duration|DateTimeInterface $expiration = null): mixed
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
+
+    public function remove(Stringable|string $key): void
     {
         throw new ForbiddenCacheUsageException($this->tag);
     }
