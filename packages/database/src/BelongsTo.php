@@ -35,7 +35,7 @@ final class BelongsTo implements Relation
     public function getOwnerFieldName(): string
     {
         if ($this->ownerJoin) {
-            if (strpos($this->ownerJoin, '.') !== false) {
+            if (str_contains($this->ownerJoin, '.')) {
                 return explode('.', $this->ownerJoin)[1];
             } else {
                 return $this->ownerJoin;
@@ -54,8 +54,10 @@ final class BelongsTo implements Relation
         return $relationModel
             ->getSelectFields()
             ->map(fn ($field) => new FieldStatement(
-                $relationModel->getTableName() . '.' . $field
-            )->withAlias()->withAliasPrefix($this->parent));
+                $relationModel->getTableName() . '.' . $field,
+            )
+                ->withAlias()
+                ->withAliasPrefix($this->parent));
     }
 
     public function getJoinStatement(): JoinStatement

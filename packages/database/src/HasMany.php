@@ -40,7 +40,9 @@ final class HasMany implements Relation
             ->getSelectFields()
             ->map(fn ($field) => new FieldStatement(
                 $relationModel->getTableName() . '.' . $field,
-            )->withAlias()->withAliasPrefix($this->parent));
+            )
+                ->withAlias()
+                ->withAliasPrefix($this->parent));
     }
 
     public function idField(): string
