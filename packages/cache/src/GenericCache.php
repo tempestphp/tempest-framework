@@ -11,6 +11,7 @@ use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 use Tempest\Support\Arr;
+use Tempest\Support\Random;
 
 final class GenericCache implements Cache
 {
@@ -20,6 +21,29 @@ final class GenericCache implements Cache
         private ?CacheItemPoolInterface $adapter = null,
     ) {
         $this->adapter ??= $this->cacheConfig->createAdapter();
+    }
+
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock
+    {
+        if ($expiration instanceof Duration) {
+            $expiration = DateTime::now()->plus($expiration);
+        }
+
+        return new GenericLock(
+            key: (string) $key,
+            owner: $owner ? ((string) $owner) : Random\secure_string(length: 10),
+            cache: $this,
+            expiration: $expiration,
+        );
+    }
+
+    public function has(Stringable|string $key): bool
+    {
+        if (! $this->enabled) {
+            return false;
+        }
+
+        return $this->adapter->getItem((string) $key)->isHit();
     }
 
     public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface

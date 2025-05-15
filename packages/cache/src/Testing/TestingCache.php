@@ -4,8 +4,6 @@ namespace Tempest\Cache\Testing;
 
 use Closure;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\ExpectationFailedException;
 use Psr\Cache\CacheItemInterface;
 use Psr\Clock\ClockInterface;
 use Stringable;
@@ -13,8 +11,10 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Tempest\Cache\Cache;
 use Tempest\Cache\Config\CustomCacheConfig;
 use Tempest\Cache\GenericCache;
+use Tempest\Cache\GenericLock;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
+use Tempest\Support\Random;
 
 final class TestingCache implements Cache
 {
@@ -35,6 +35,21 @@ final class TestingCache implements Cache
             cacheConfig: new CustomCacheConfig(adapter: ArrayAdapter::class, tag: $tag),
             adapter: $this->adapter,
         );
+    }
+
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): TestingLock
+    {
+        return new TestingLock(new GenericLock(
+            key: (string) $key,
+            owner: $owner ? ((string) $owner) : Random\secure_string(length: 10),
+            cache: $this->cache,
+            expiration: $expiration,
+        ));
+    }
+
+    public function has(Stringable|string $key): bool
+    {
+        return $this->cache->has($key);
     }
 
     public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
@@ -168,6 +183,26 @@ final class TestingCache implements Cache
             condition: $this->adapter->getValues() !== [],
             message: 'Cache is empty.',
         );
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the specified lock is being held.
+     */
+    public function assertLocked(string|Stringable $key, null|Stringable|string $by = null, null|DateTimeInterface|Duration $until = null): self
+    {
+        $this->lock($key)->assertLocked($by, $until);
+
+        return $this;
+    }
+
+    /**
+     * Asserts that the specified lock is not being held.
+     */
+    public function assertNotLocked(string|Stringable $key, null|Stringable|string $by = null): self
+    {
+        $this->lock($key)->assertNotLocked($by);
 
         return $this;
     }

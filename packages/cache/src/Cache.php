@@ -21,6 +21,15 @@ interface Cache
     }
 
     /**
+     * Returns a lock for the specified key. The lock is not acquired until `acquire()` is called.
+     *
+     * @param Stringable|string $key The identifier of the lock.
+     * @param null|Duration|DateTimeInterface $expiration The expiration time for the lock. If not specified, the lock will not expire.
+     * @param null|Stringable|string $owner The owner of the lock, which will be used to identify the process releasing it. If not specified, a random string will be used.
+     */
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock;
+
+    /**
      * Sets the specified key to the specified value in the cache. Optionally, specify an expiration.
      */
     public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface;
@@ -51,6 +60,11 @@ interface Cache
      * @return array<TValue,mixed>
      */
     public function getMany(iterable $key): array;
+
+    /**
+     * Determines whether the cache contains the specified key.
+     */
+    public function has(Stringable|string $key): bool;
 
     /**
      * Increments the value associated with the specified key by the specified amount. If the key does not exist, it is created with the specified amount.

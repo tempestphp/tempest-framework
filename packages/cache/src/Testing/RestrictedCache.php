@@ -7,6 +7,7 @@ use Psr\Cache\CacheItemInterface;
 use Stringable;
 use Tempest\Cache\Cache;
 use Tempest\Cache\ForbiddenCacheUsageException;
+use Tempest\Cache\Lock;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
 
@@ -16,6 +17,16 @@ final class RestrictedCache implements Cache
     public function __construct(
         private ?string $tag = null,
     ) {}
+
+    public function lock(Stringable|string $key, null|Duration|DateTimeInterface $expiration = null, null|Stringable|string $owner = null): Lock
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
+
+    public function has(Stringable|string $key): bool
+    {
+        throw new ForbiddenCacheUsageException($this->tag);
+    }
 
     public function put(Stringable|string $key, mixed $value, null|Duration|DateTimeInterface $expiration = null): CacheItemInterface
     {

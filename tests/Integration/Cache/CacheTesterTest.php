@@ -2,6 +2,7 @@
 
 namespace Tests\Tempest\Integration\Cache;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use Tempest\Cache\Cache;
 use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Cache\ForbiddenCacheUsageException;
@@ -110,5 +111,33 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
 
         $clock->addInterval(Duration::minutes(10)->withSeconds(1));
         $cache->assertNotCached('key');
+    }
+
+    public function test_lock_assertions(): void
+    {
+        $cache = $this->cache->fake();
+        $lock = $cache->lock('processing');
+
+        $lock->assertNotLocked();
+
+        $this->assertTrue($lock->acquire());
+
+        $lock->assertLocked();
+        $lock->assertLocked(by: $lock->owner);
+
+        $lock->assertNotLocked(by: 'other-owner');
+
+        $cache->assertLocked($lock->key);
+    }
+
+    public function test_assert_not_locked_while_locked(): void
+    {
+        $cache = $this->cache->fake();
+        $lock = $cache->lock('processing');
+
+        $this->assertTrue($lock->acquire());
+
+        $this->expectException(ExpectationFailedException::class);
+        $lock->assertNotLocked();
     }
 }
