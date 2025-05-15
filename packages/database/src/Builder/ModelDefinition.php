@@ -5,14 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Builder;
 
 use ReflectionException;
-use Tempest\Database\BelongsTo;
-use Tempest\Database\Builder\Relations\BelongsToRelation;
-use Tempest\Database\Builder\Relations\HasManyRelation;
-use Tempest\Database\Builder\Relations\HasOneRelation;
 use Tempest\Database\Config\DatabaseConfig;
-use Tempest\Database\Eager;
-use Tempest\Database\HasMany;
-use Tempest\Database\HasOne;
 use Tempest\Database\Table;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -39,47 +32,6 @@ final readonly class ModelDefinition
         } else {
             $this->modelClass = new ClassReflector($model);
         }
-    }
-
-    /** @return \Tempest\Database\Builder\Relations\Relation[] */
-    public function getRelations(string $relationName): array
-    {
-        $relations = [];
-        $relationNames = explode('.', $relationName);
-        $alias = $this->getTableDefinition()->name;
-        $class = $this->modelClass;
-
-        foreach ($relationNames as $relationNamePart) {
-            $property = $class->getProperty($relationNamePart);
-
-            if ($property->hasAttribute(HasMany::class)) {
-                /** @var HasMany $relationAttribute */
-                $relationAttribute = $property->getAttribute(HasMany::class);
-                $relations[] = HasManyRelation::fromAttribute($relationAttribute, $property, $alias);
-                $class = HasManyRelation::getRelationModelClass($property, $relationAttribute)->getType()->asClass();
-                $alias .= ".{$property->getName()}";
-            } elseif ($property->getType()->isIterable()) {
-                $relations[] = HasManyRelation::fromInference($property, $alias);
-                $class = $property->getIterableType()->asClass();
-                $alias .= ".{$property->getName()}[]";
-            } elseif ($property->hasAttribute(HasOne::class)) {
-                $relations[] = new HasOneRelation($property, $alias);
-                $class = $property->getType()->asClass();
-                $alias .= ".{$property->getName()}";
-            } elseif ($property->hasAttribute(BelongsTo::class)) {
-                /** @var BelongsTo $relationAttribute */
-                $relationAttribute = $property->getAttribute(BelongsTo::class);
-                $relations[] = BelongsToRelation::fromAttribute($relationAttribute, $property, $alias);
-                $class = $property->getType()->asClass();
-                $alias .= ".{$property->getName()}";
-            } else {
-                $relations[] = BelongsToRelation::fromInference($property, $alias);
-                $class = $property->getType()->asClass();
-                $alias .= ".{$property->getName()}";
-            }
-        }
-
-        return $relations;
     }
 
     public function getTableDefinition(): TableDefinition
