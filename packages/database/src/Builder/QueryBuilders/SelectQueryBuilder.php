@@ -228,7 +228,7 @@ final class SelectQueryBuilder implements BuildsQuery
 
         foreach ($this->getIncludedRelations() as $relation) {
             $this->select->fields = $this->select->fields->append(
-                ...$relation->getSelectFields()
+                ...$relation->getSelectFields(),
             );
 
             $this->select->join[] = $relation->getJoinStatement();

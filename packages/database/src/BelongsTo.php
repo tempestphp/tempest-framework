@@ -10,6 +10,7 @@ use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\str;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
@@ -64,10 +65,7 @@ final class BelongsTo implements Relation
         $relationJoin = $this->relationJoin;
 
         if ($relationJoin && ! strpos($relationJoin, '.')) {
-            $relationJoin = sprintf('%s.%s',
-                $relationModel->getTableName(),
-                $relationJoin,
-            );
+            $relationJoin = sprintf('%s.%s', $relationModel->getTableName(), $relationJoin);
         }
 
         if ($relationJoin) {
@@ -86,10 +84,7 @@ final class BelongsTo implements Relation
         $ownerJoin = $this->ownerJoin;
 
         if ($ownerJoin && ! strpos($ownerJoin, '.')) {
-            $ownerJoin = sprintf('%s.%s',
-                $ownerModel->getTableName(),
-                $ownerJoin,
-            );
+            $ownerJoin = sprintf('%s.%s', $ownerModel->getTableName(), $ownerJoin);
         }
 
         if ($ownerJoin) {

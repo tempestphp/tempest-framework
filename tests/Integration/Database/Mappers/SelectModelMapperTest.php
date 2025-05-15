@@ -5,6 +5,7 @@ namespace Integration\Database\Mappers;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\map;
 
 final class SelectModelMapperTest extends FrameworkIntegrationTestCase

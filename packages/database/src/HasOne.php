@@ -10,6 +10,7 @@ use Tempest\Database\QueryStatements\FieldStatement;
 use Tempest\Database\QueryStatements\JoinStatement;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Support\Arr\ImmutableArray;
+
 use function Tempest\Support\str;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]

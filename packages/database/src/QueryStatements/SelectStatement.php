@@ -30,7 +30,7 @@ final class SelectStatement implements QueryStatement
             ? '*'
             : $this->fields
                 ->map(function (string|Stringable|FieldStatement $field) use ($dialect) {
-                    if (! $field instanceof FieldStatement) {
+                    if (! ($field instanceof FieldStatement)) {
                         $field = new FieldStatement($field);
                     }
 
@@ -92,9 +92,9 @@ final class SelectStatement implements QueryStatement
         /* TODO: this should be improved.
          * More specifically, \Tempest\Database\Builder\FieldDefinition should be aware of the dialect,
          * or the whole ORM should be refactored to use \Tempest\Database\QueryStatements\FieldStatement*/
-//        if ($dialect === DatabaseDialect::SQLITE) {
-//            $compiled = $compiled->replace('`', '');
-//        }
+        //        if ($dialect === DatabaseDialect::SQLITE) {
+        //            $compiled = $compiled->replace('`', '');
+        //        }
 
         return $compiled;
     }

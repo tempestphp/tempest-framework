@@ -37,10 +37,12 @@ final class FieldStatement implements QueryStatement
 
         $field = arr(explode('.', $field))
             ->map(fn (string $part) => trim($part, '` '))
-            ->map(fn (string $part) => match ($dialect) {
-                DatabaseDialect::SQLITE => $part,
-                default => sprintf('`%s`', $part),
-            })
+            ->map(
+                fn (string $part) => match ($dialect) {
+                    DatabaseDialect::SQLITE => $part,
+                    default => sprintf('`%s`', $part),
+                },
+            )
             ->implode('.');
 
         if ($alias === null) {

@@ -6,6 +6,7 @@ use Tempest\Database\BelongsTo;
 use Tempest\Database\Config\DatabaseDialect;
 use Tests\Tempest\Integration\Database\Fixtures\OwnerModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Database\model;
 
 final class BelongsToTest extends FrameworkIntegrationTestCase

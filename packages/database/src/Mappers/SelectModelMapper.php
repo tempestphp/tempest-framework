@@ -5,6 +5,7 @@ namespace Tempest\Database\Mappers;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
+
 use function Tempest\Database\model;
 use function Tempest\map;
 use function Tempest\Support\arr;

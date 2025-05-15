@@ -69,12 +69,16 @@ final class FieldStatementTest extends TestCase
     {
         $this->assertSame(
             'authors.name AS `authors.name`',
-            new FieldStatement('authors.name')->withAlias()->compile(DatabaseDialect::SQLITE),
+            new FieldStatement('authors.name')
+                ->withAlias()
+                ->compile(DatabaseDialect::SQLITE),
         );
 
         $this->assertSame(
             '`authors`.`name` AS `authors.name`',
-            new FieldStatement('`authors`.`name`')->withAlias()->compile(DatabaseDialect::MYSQL),
+            new FieldStatement('`authors`.`name`')
+                ->withAlias()
+                ->compile(DatabaseDialect::MYSQL),
         );
     }
 }

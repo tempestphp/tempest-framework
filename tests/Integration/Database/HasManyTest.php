@@ -6,6 +6,7 @@ use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\HasMany;
 use Tests\Tempest\Integration\Database\Fixtures\RelationModel;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+
 use function Tempest\Database\model;
 
 final class HasManyTest extends FrameworkIntegrationTestCase
@@ -18,7 +19,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertSame(
             'LEFT JOIN owner ON owner.relation_id = relation.id',
-            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE)
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
 
@@ -30,7 +31,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertSame(
             'LEFT JOIN owner ON owner.overwritten_id = relation.id',
-            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE)
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
 
@@ -42,7 +43,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertSame(
             'LEFT JOIN owner ON overwritten.overwritten_id = relation.id',
-            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE)
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
 
@@ -54,7 +55,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertSame(
             'LEFT JOIN owner ON owner.relation_id = relation.overwritten_id',
-            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE)
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
 
@@ -66,7 +67,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertSame(
             'LEFT JOIN owner ON owner.relation_id = overwritten.overwritten_id',
-            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE)
+            $relation->getJoinStatement()->compile(DatabaseDialect::SQLITE),
         );
     }
 }
