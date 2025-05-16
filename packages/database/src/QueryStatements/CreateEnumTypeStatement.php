@@ -23,6 +23,7 @@ final readonly class CreateEnumTypeStatement implements QueryStatement
     {
         $cases = arr($this->enumClass::cases())
             ->map(fn (UnitEnum|BackedEnum $case) => ($case instanceof BackedEnum) ? $case->value : $case->name)
+            ->map(fn (string $value) => str_replace('\\', '\\\\', $value))
             ->map(fn (string $value) => "'{$value}'");
 
         return match ($dialect) {
