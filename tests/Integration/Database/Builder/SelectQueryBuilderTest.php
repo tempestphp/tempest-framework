@@ -10,6 +10,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
 use Tests\Tempest\Fixtures\Migrations\CreateIsbnTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Models\AWithEager;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
@@ -35,17 +36,17 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
         $expected = <<<SQL
         SELECT title, index
-        FROM `chapters`
-        WHERE `title` = ?
-        AND `index` <> ?
-        OR `createdAt` > ?
-        ORDER BY `index` ASC
+        FROM chapters
+        WHERE title = ?
+        AND index <> ?
+        OR createdAt > ?
+        ORDER BY index ASC
         SQL;
 
         $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
@@ -60,7 +61,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         FROM `chapters`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_select_from_model(): void
@@ -74,13 +75,14 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         FROM `authors`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_where_statement(): void
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -99,6 +101,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -121,6 +124,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -139,6 +143,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -159,6 +164,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -182,6 +188,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -208,6 +215,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -253,13 +261,13 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
     public function test_select_first_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent'],
@@ -276,7 +284,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_select_all_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent', 'type' => AuthorType::B],
@@ -299,7 +307,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Book::class)->select();
 
-        $this->assertSame(<<<SQL
+        $this->assertSameWithoutBackticks(<<<SQL
         SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`
         FROM `books`
         SQL, $query->build()->toSql());
@@ -312,7 +320,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ->with('author', 'chapters', 'isbn')
             ->build();
 
-        $this->assertSame(<<<SQL
+        $this->assertSameWithoutBackticks(<<<SQL
         SELECT books.title AS `books.title`, books.author_id AS `books.author_id`, books.id AS `books.id`, authors.name AS `author.name`, authors.type AS `author.type`, authors.publisher_id AS `author.publisher_id`, authors.id AS `author.id`, chapters.title AS `chapters.title`, chapters.contents AS `chapters.contents`, chapters.book_id AS `chapters.book_id`, chapters.id AS `chapters.id`, isbns.value AS `isbn.value`, isbns.book_id AS `isbn.book_id`, isbns.id AS `isbn.id`
         FROM `books`
         LEFT JOIN authors ON authors.id = books.author_id
@@ -351,7 +359,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = AWithEager::select()->with('b.c')->toSql();
 
-        $this->assertSame(<<<SQL
+        $this->assertSameWithoutBackticks(<<<SQL
         SELECT a.b_id AS `a.b_id`, a.id AS `a.id`, b.c_id AS `b.c_id`, b.id AS `b.id`, c.name AS `b.c.name`, c.id AS `b.c.id`
         FROM `a`
         LEFT JOIN b ON b.id = a.b_id
@@ -363,6 +371,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
             CreateChapterTable::class,
@@ -403,5 +412,13 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ['title' => 'Timeline Taxi Chapter 3', 'book_id' => 4],
             ['title' => 'Timeline Taxi Chapter 4', 'book_id' => 4],
         )->execute();
+    }
+
+    private function assertSameWithoutBackticks(string $expected, string $actual): void
+    {
+        $this->assertSame(
+            str_replace('`', '', $expected),
+            str_replace('`', '', $actual),
+        );
     }
 }

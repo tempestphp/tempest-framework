@@ -13,7 +13,7 @@ use Tests\Tempest\Fixtures\Modules\Books\Models\Isbn;
 
 final class CreateIsbnTable implements DatabaseMigration
 {
-    private(set) string $name = '0000-00-00_create_isbns_table';
+    private(set) string $name = '0000-00-04_create_isbns_table';
 
     public function up(): QueryStatement
     {

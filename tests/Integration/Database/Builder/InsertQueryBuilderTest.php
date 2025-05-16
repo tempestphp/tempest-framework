@@ -10,6 +10,7 @@ use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -183,7 +184,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_then_method(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
@@ -208,7 +209,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_insert_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent'],
