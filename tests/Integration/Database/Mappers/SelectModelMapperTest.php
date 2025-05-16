@@ -107,7 +107,6 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
     {
         $data = [
             [
-                'users.password' => '$2y$12$sH1n2N7iE6F8RNDceiAHG.WWtXU7j9f2IBwsi3zIb.QMvn0Cwxpi6',
                 'users.name' => 'Brent',
                 'users.email' => 'brendt@stitcher.io',
                 'users.id' => 1,
