@@ -140,4 +140,14 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
         $this->expectException(ExpectationFailedException::class);
         $lock->assertNotLocked();
     }
+
+    public function test_lock_assertion_with_different_owner(): void
+    {
+        $testingCache = $this->cache->fake();
+
+        $actualCache = $this->container->get(Cache::class);
+        $actualCache->lock('processing')->acquire();
+
+        $testingCache->assertLocked('processing');
+    }
 }
