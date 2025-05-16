@@ -49,6 +49,11 @@ final class HasMany implements Relation
                 ->withAliasPrefix($this->parent));
     }
 
+    public function primaryKey(): string
+    {
+        return model($this->property->getIterableType()->asClass())->getPrimaryKey();
+    }
+
     public function idField(): string
     {
         $relationModel = model($this->property->getIterableType()->asClass());

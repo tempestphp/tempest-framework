@@ -85,16 +85,21 @@ final class SelectModelMapperTest extends FrameworkIntegrationTestCase
         $data = [
             [
                 'authors.id' => 1,
-                'authors.name' => 'Tolkien',
                 'books.id' => 1,
-                'books.title' => 'LOTR',
                 'books.chapters.id' => 1,
                 'books.chapters.title' => 'LOTR 1.1',
+            ],
+            [
+                'authors.id' => 1,
+                'books.id' => 1,
+                'books.chapters.id' => 2,
+                'books.chapters.title' => 'LOTR 1.2',
             ],
         ];
 
         $authors = map($data)->with(SelectModelMapper::class)->to(Author::class);
-        ld($authors[0]->books[0]->chapters);
+
+        $this->assertCount(2, $authors[0]->books[0]->chapters);
     }
 
     private function data(): array

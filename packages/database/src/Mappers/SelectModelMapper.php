@@ -2,6 +2,7 @@
 
 namespace Tempest\Database\Mappers;
 
+use Exception;
 use Tempest\Database\BelongsTo;
 use Tempest\Database\Builder\ModelInspector;
 use Tempest\Database\HasMany;
@@ -9,6 +10,7 @@ use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
 
+use Tempest\Support\Arr\MutableArray;
 use function Tempest\Database\model;
 use function Tempest\map;
 use function Tempest\Support\arr;
@@ -38,35 +40,40 @@ final class SelectModelMapper implements Mapper
 
     private function normalizeFields(ModelInspector $model, array $rows): array
     {
-        $data = [];
-
-//        $hasManyRelations = [];
+        $data = new MutableArray();
 
         foreach ($rows as $row) {
-            $row = $this->normalizeRow($model, $row);
-
-            foreach ($row as $key => $value) {
-                if (is_array($value)) {
-                    $data[$key] ??= [];
-                    $data[$key] = [...$data[$key], ...$value];
-                } else {
-                    $data[$key] = $value;
-                }
-            }
+            $this->normalizeRow($model, $row, $data);
         }
 
-//        foreach ($hasManyRelations as $name => $hasMany) {
-//            $data[$name] = array_values($data[$name]);
-//        }
+        return $this->values($model, $data->toArray());
+    }
+
+    private function values(ModelInspector $model, array $data): array
+    {
+        foreach ($data as $key => $value) {
+            $relation = $model->getRelation($key);
+
+            if (! $relation instanceof HasMany) {
+                continue;
+            }
+
+            $mapped = [];
+            $relationModel = model($relation);
+
+            foreach ($value as $item) {
+                $mapped[] = $this->values($relationModel, $item);
+            }
+
+            $data[$key] = $mapped;
+        }
 
         return $data;
     }
 
-    public function normalizeRow(ModelInspector $model, array $row): array
+    public function normalizeRow(ModelInspector $model, array $row, MutableArray $data): array
     {
         $mainTable = $model->getTableName();
-
-        $data = [];
 
         foreach ($row as $field => $value) {
             $parts = explode('.', $field);
@@ -75,52 +82,39 @@ final class SelectModelMapper implements Mapper
 
             // Main fields
             if ($mainField === $mainTable) {
-                $data[$parts[1]] = $value;
+                $data->set($parts[1], $value);
                 continue;
             }
 
-            $relation = $model->getRelation($parts[0]);
+            // Relations
+            $key = '';
+            $originalKey = '';
+            $currentModel = $model;
 
-            // Nested relations
-            if (count($parts) > 2) {
-                $subRelation = model($relation)->getRelation($parts[1]);
+            foreach ($parts as $part) {
+                $relation = $currentModel->getRelation($part);
 
-                $data[$relation->name][$subRelation->name] ??= [];
+                if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
+                    $key .= $relation->name . '.';
+                    $originalKey .= $relation->name . '.';
+                } elseif ($relation instanceof HasMany) {
+                    $id = $data->get($key . $relation->idField())
+                        ?? $row[$originalKey . $relation->idField()]
+                        ?? null;
 
-                if ($subRelation instanceof BelongsTo || $subRelation instanceof HasOne) {
-                    $data[$relation->name][$subRelation->name] = [
-                        ...$data[$relation->name][$subRelation->name],
-                        ...$this->normalizeRow(model($subRelation), [
-                            implode('.', array_slice($parts, 1)) => $value,
-                        ]),
-                    ];
-                } elseif ($subRelation instanceof HasMany) {
-                    // TODO: deeply nested has many relations
+                    $key .= $relation->name . '.' . $id . '.';
+                    $originalKey .= $relation->name . '.';
+                } else {
+                    $key .= $part;
+                    break;
                 }
 
-                continue;
+                $currentModel = model($relation);
             }
 
-            // BelongsTo
-            if ($relation instanceof BelongsTo || $relation instanceof HasOne) {
-                $data[$relation->name][$parts[1]] = $value;
-                continue;
-            }
-
-            // HasMany
-            if ($relation instanceof HasMany) {
-                $hasManyId = $row[$relation->idField()];
-
-                if ($hasManyId === null) {
-                    // Empty has many relations are initialized it with an empty array
-                    $data[$relation->name] ??= [];
-                    continue;
-                }
-
-                $data[$relation->name][$hasManyId][$parts[1]] = $value;
-            }
+            $data->set($key, $value);
         }
 
-        return $data;
+        return $data->toArray();
     }
 }
