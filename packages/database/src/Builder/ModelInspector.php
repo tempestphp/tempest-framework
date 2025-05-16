@@ -260,10 +260,10 @@ final class ModelInspector
         $newParent = ltrim(sprintf(
             '%s.%s',
             $parent,
-            $relationModel->getTableName(),
+            $currentRelationName,
         ), '.');
 
-        $relations = [$relationModel->getTableName() => $currentRelation];
+        $relations = [$currentRelationName => $currentRelation];
 
         return [...$relations, ...$relationModel->resolveRelations($newRelationString, $newParent)];
     }

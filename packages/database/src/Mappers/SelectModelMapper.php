@@ -33,9 +33,10 @@ final class SelectModelMapper implements Mapper
             ->groupBy(function (array $data) use ($idField) {
                 return $data[$idField];
             })
-            ->map(fn (array $rows) => $this->normalizeFields($model, $rows));
+            ->map(fn (array $rows) => $this->normalizeFields($model, $rows))
+            ->values();
 
-        return map($parsed->values()->toArray())->collection()->to($to);
+        return map($parsed->toArray())->collection()->to($to);
     }
 
     private function normalizeFields(ModelInspector $model, array $rows): array
@@ -98,12 +99,21 @@ final class SelectModelMapper implements Mapper
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
                 } elseif ($relation instanceof HasMany) {
-                    $id = $data->get($key . $relation->idField())
+                    $hasManyId = $data->get($key . $relation->idField())
                         ?? $row[$originalKey . $relation->idField()]
                         ?? null;
 
-                    $key .= $relation->name . '.' . $id . '.';
                     $originalKey .= $relation->name . '.';
+
+                    if (! $data->has(trim($originalKey, '.'))) {
+                        $data->set(trim($originalKey, '.'), []);
+                    }
+
+                    if ($hasManyId === null) {
+                        break;
+                    }
+
+                    $key .= $relation->name . '.' . $hasManyId . '.';
                 } else {
                     $key .= $part;
                     break;
@@ -112,7 +122,9 @@ final class SelectModelMapper implements Mapper
                 $currentModel = model($relation);
             }
 
-            $data->set($key, $value);
+            if ($key) {
+                $data->set($key, $value);
+            }
         }
 
         return $data->toArray();

@@ -78,7 +78,7 @@ final class HasManyTest extends FrameworkIntegrationTestCase
         $relation = $model->getRelation('owners')->setParent('parent');
 
         $this->assertSame(
-            'owner.relation_id AS `parent.owner.relation_id`',
+            'owner.relation_id AS `parent.owners.relation_id`',
             $relation->getSelectFields()[0]->compile(DatabaseDialect::SQLITE),
         );
     }

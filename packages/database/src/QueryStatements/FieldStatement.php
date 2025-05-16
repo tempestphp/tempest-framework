@@ -10,7 +10,7 @@ use function Tempest\Support\arr;
 
 final class FieldStatement implements QueryStatement
 {
-    private bool $withAlias = false;
+    private null|bool|string $alias = null;
     private ?string $aliasPrefix = null;
 
     public function __construct(
@@ -25,12 +25,19 @@ final class FieldStatement implements QueryStatement
 
         if (count($parts) === 1) {
             $alias = null;
+            $aliasPrefix = $this->aliasPrefix ? "{$this->aliasPrefix}." : '';
 
-            if ($this->withAlias) {
+            if ($this->alias === true) {
                 $alias = sprintf(
                     '`%s%s`',
-                    $this->aliasPrefix ? "{$this->aliasPrefix}." : '',
+                    $aliasPrefix,
                     str_replace('`', '', $field),
+                );
+            } elseif($this->alias) {
+                $alias = sprintf(
+                    '`%s%s`',
+                    $aliasPrefix,
+                    $this->alias,
                 );
             }
         } else {
@@ -61,9 +68,9 @@ final class FieldStatement implements QueryStatement
         return $this;
     }
 
-    public function withAlias(): self
+    public function withAlias(bool|string $alias = true): self
     {
-        $this->withAlias = true;
+        $this->alias = $alias;
 
         return $this;
     }

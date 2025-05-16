@@ -57,11 +57,13 @@ final class BelongsTo implements Relation
 
         return $relationModel
             ->getSelectFields()
-            ->map(fn ($field) => new FieldStatement(
-                $relationModel->getTableName() . '.' . $field,
-            )
-                ->withAlias()
-                ->withAliasPrefix($this->parent));
+            ->map(function ($field) use ($relationModel) {
+                return new FieldStatement(
+                    $relationModel->getTableName() . '.' . $field,
+                )->withAlias(
+                    sprintf('%s.%s', $this->property->getName(), $field)
+                )->withAliasPrefix($this->parent);
+            });
     }
 
     public function getJoinStatement(): JoinStatement
