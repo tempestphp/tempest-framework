@@ -89,13 +89,6 @@ final class SelectStatement implements QueryStatement
 
         $compiled = $query->implode(PHP_EOL);
 
-        /* TODO: this should be improved.
-         * More specifically, \Tempest\Database\Builder\FieldDefinition should be aware of the dialect,
-         * or the whole ORM should be refactored to use \Tempest\Database\QueryStatements\FieldStatement*/
-        //        if ($dialect === DatabaseDialect::SQLITE) {
-        //            $compiled = $compiled->replace('`', '');
-        //        }
-
         return $compiled;
     }
 }
