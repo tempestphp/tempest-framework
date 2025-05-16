@@ -9,8 +9,8 @@ use Tempest\Database\HasMany;
 use Tempest\Database\HasOne;
 use Tempest\Discovery\SkipDiscovery;
 use Tempest\Mapper\Mapper;
-
 use Tempest\Support\Arr\MutableArray;
+
 use function Tempest\Database\model;
 use function Tempest\map;
 use function Tempest\Support\arr;
@@ -55,7 +55,7 @@ final class SelectModelMapper implements Mapper
         foreach ($data as $key => $value) {
             $relation = $model->getRelation($key);
 
-            if (! $relation instanceof HasMany) {
+            if (! ($relation instanceof HasMany)) {
                 continue;
             }
 
@@ -99,9 +99,7 @@ final class SelectModelMapper implements Mapper
                     $key .= $relation->name . '.';
                     $originalKey .= $relation->name . '.';
                 } elseif ($relation instanceof HasMany) {
-                    $hasManyId = $data->get($key . $relation->idField())
-                        ?? $row[$originalKey . $relation->idField()]
-                        ?? null;
+                    $hasManyId = $data->get($key . $relation->idField()) ?? $row[$originalKey . $relation->idField()] ?? null;
 
                     $originalKey .= $relation->name . '.';
 

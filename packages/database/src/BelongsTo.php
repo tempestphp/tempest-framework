@@ -60,9 +60,11 @@ final class BelongsTo implements Relation
             ->map(function ($field) use ($relationModel) {
                 return new FieldStatement(
                     $relationModel->getTableName() . '.' . $field,
-                )->withAlias(
-                    sprintf('%s.%s', $this->property->getName(), $field)
-                )->withAliasPrefix($this->parent);
+                )
+                    ->withAlias(
+                        sprintf('%s.%s', $this->property->getName(), $field),
+                    )
+                    ->withAliasPrefix($this->parent);
             });
     }
 

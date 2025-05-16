@@ -44,9 +44,11 @@ final class HasMany implements Relation
             ->getSelectFields()
             ->map(fn ($field) => new FieldStatement(
                 $relationModel->getTableName() . '.' . $field,
-            )->withAlias(
-                sprintf('%s.%s', $this->property->getName(), $field),
-            )->withAliasPrefix($this->parent));
+            )
+                ->withAlias(
+                    sprintf('%s.%s', $this->property->getName(), $field),
+                )
+                ->withAliasPrefix($this->parent));
     }
 
     public function primaryKey(): string
@@ -60,7 +62,7 @@ final class HasMany implements Relation
 
         return sprintf(
             '%s.%s',
-            $relationModel->getTableName(),
+            $this->property->getName(),
             $relationModel->getPrimaryKey(),
         );
     }

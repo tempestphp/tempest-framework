@@ -49,13 +49,13 @@ final class SelectStatementTest extends TestCase
         $this->assertSame($expectedWithBackticks, $statement->compile(DatabaseDialect::POSTGRESQL));
 
         $expectedWithoutBackticks = <<<SQL
-        SELECT a, b, c, bar.d AS d_alias
-        FROM foo AS bar
+        SELECT a, b, c, bar.d AS `d_alias`
+        FROM `foo` AS `bar`
         INNER JOIN foo ON bar.id = foo.id
-        WHERE foo = "bar"
-        ORDER BY foo DESC
-        GROUP BY foo
-        HAVING foo = "bar"
+        WHERE `foo` = "bar"
+        ORDER BY `foo` DESC
+        GROUP BY `foo`
+        HAVING `foo` = "bar"
         LIMIT 10
         OFFSET 100
         SQL;

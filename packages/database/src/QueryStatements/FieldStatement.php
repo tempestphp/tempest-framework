@@ -33,7 +33,7 @@ final class FieldStatement implements QueryStatement
                     $aliasPrefix,
                     str_replace('`', '', $field),
                 );
-            } elseif($this->alias) {
+            } elseif ($this->alias) {
                 $alias = sprintf(
                     '`%s%s`',
                     $aliasPrefix,
