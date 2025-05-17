@@ -10,6 +10,7 @@ use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Fixtures\Modules\Books\Models\AuthorType;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
@@ -34,7 +35,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             INSERT INTO `chapters` (`title`, `index`)
             VALUES (?, ?)
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -60,7 +61,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             INSERT INTO `chapters` (`chapter`, `index`)
             VALUES (?, ?), (?, ?), (?, ?)
             SQL,
-            $query->getSql(),
+            $query->toSql(),
         );
 
         $this->assertSame(
@@ -79,17 +80,17 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $query = query(Author::class)
             ->insert(
                 $author,
-                ['name' => 'other name', 'type' => AuthorType::B->value],
+                ['name' => 'other name', 'type' => AuthorType::B->value, 'publisher_id' => null],
             )
             ->build();
 
         $expected = <<<SQL
-        INSERT INTO `authors` (`name`, `type`)
-        VALUES (?, ?), (?, ?)
+        INSERT INTO `authors` (`name`, `type`, `publisher_id`)
+        VALUES (?, ?, ?), (?, ?, ?)
         SQL;
 
-        $this->assertSame($expected, $query->getSql());
-        $this->assertSame(['brent', 'a', 'other name', 'b'], $query->bindings);
+        $this->assertSame($expected, $query->toSql());
+        $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);
     }
 
     public function test_insert_on_model_table_with_new_relation(): void
@@ -112,7 +113,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?, ?)
         SQL;
 
-        $this->assertSame($expectedBookQuery, $bookQuery->getSql());
+        $this->assertSame($expectedBookQuery, $bookQuery->toSql());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertInstanceOf(Query::class, $bookQuery->bindings[1]);
 
@@ -123,7 +124,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?)
         SQL;
 
-        $this->assertSame($expectedAuthorQuery, $authorQuery->getSql());
+        $this->assertSame($expectedAuthorQuery, $authorQuery->toSql());
         $this->assertSame('Brent', $authorQuery->bindings[0]);
     }
 
@@ -148,7 +149,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         VALUES (?, ?)
         SQL;
 
-        $this->assertSame($expectedBookQuery, $bookQuery->getSql());
+        $this->assertSame($expectedBookQuery, $bookQuery->toSql());
         $this->assertSame('Timeline Taxi', $bookQuery->bindings[0]);
         $this->assertSame(10, $bookQuery->bindings[1]);
     }
@@ -183,7 +184,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
 
     public function test_then_method(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class, CreateBookTable::class, CreateChapterTable::class);
 
         $id = query(Book::class)
             ->insert(title: 'Timeline Taxi')
@@ -201,14 +202,14 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $book = Book::select()->with('chapters')->get($id);
 
         $this->assertCount(3, $book->chapters);
-        $this->assertSame('Chapter 01', $book->chapters[1]->title);
-        $this->assertSame('Chapter 02', $book->chapters[2]->title);
-        $this->assertSame('Chapter 03', $book->chapters[3]->title);
+        $this->assertSame('Chapter 01', $book->chapters[0]->title);
+        $this->assertSame('Chapter 02', $book->chapters[1]->title);
+        $this->assertSame('Chapter 03', $book->chapters[2]->title);
     }
 
     public function test_insert_with_non_object_model(): void
     {
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         query('authors')->insert(
             ['id' => 1, 'name' => 'Brent'],

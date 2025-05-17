@@ -90,7 +90,7 @@ final class CountQueryBuilder implements BuildsQuery
 
     public function toSql(): string
     {
-        return $this->build()->getSql();
+        return $this->build()->toSql();
     }
 
     public function build(mixed ...$bindings): Query

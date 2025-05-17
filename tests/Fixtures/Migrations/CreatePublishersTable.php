@@ -8,23 +8,22 @@ use Tempest\Database\DatabaseMigration;
 use Tempest\Database\QueryStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
-use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
+use Tests\Tempest\Fixtures\Modules\Books\Models\Publisher;
 
-final class CreateAuthorTable implements DatabaseMigration
+final class CreatePublishersTable implements DatabaseMigration
 {
-    private(set) string $name = '0000-00-01_create_authors_table';
+    private(set) string $name = '0000-00-00_create_publishers_table';
 
     public function up(): QueryStatement
     {
-        return CreateTableStatement::forModel(Author::class)
+        return CreateTableStatement::forModel(Publisher::class)
             ->primary()
             ->text('name')
-            ->text('type', nullable: true)
-            ->belongsTo('authors.publisher_id', 'publishers.id', nullable: true);
+            ->text('description');
     }
 
     public function down(): QueryStatement
     {
-        return DropTableStatement::forModel(Author::class);
+        return DropTableStatement::forModel(Publisher::class);
     }
 }

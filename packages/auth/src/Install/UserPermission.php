@@ -10,8 +10,7 @@ final class UserPermission
 {
     use IsDatabaseModel;
 
-    public function __construct(
-        public User $user,
-        public Permission $permission,
-    ) {}
+    public User $user;
+
+    public Permission $permission;
 }
