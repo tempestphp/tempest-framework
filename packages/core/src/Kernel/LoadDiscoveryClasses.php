@@ -11,6 +11,7 @@ use SplFileInfo;
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\DiscoveryDiscovery;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoversPath;
@@ -29,6 +30,7 @@ final class LoadDiscoveryClasses
     public function __construct(
         private readonly Kernel $kernel,
         private readonly Container $container,
+        private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
     ) {}
 
@@ -100,6 +102,7 @@ final class LoadDiscoveryClasses
             /** @var SplFileInfo $file */
             foreach ($files as $file) {
                 $fileName = $file->getFilename();
+
                 if ($fileName === '') {
                     continue;
                 }
@@ -113,6 +116,10 @@ final class LoadDiscoveryClasses
                 }
 
                 $input = $file->getPathname();
+
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    continue;
+                }
 
                 // We assume that any PHP file that starts with an uppercase letter will be a class
                 if ($file->getExtension() === 'php' && ucfirst($fileName) === $fileName) {
@@ -129,6 +136,10 @@ final class LoadDiscoveryClasses
                     } elseif (class_exists($className)) {
                         $input = new ClassReflector($className);
                     }
+                }
+
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    continue;
                 }
 
                 if ($input instanceof ClassReflector) {
@@ -158,6 +169,15 @@ final class LoadDiscoveryClasses
         $discovery->apply();
 
         $this->appliedDiscovery[$discovery::class] = true;
+    }
+
+    private function shouldSkipBasedOnConfig(ClassReflector|string $input): bool
+    {
+        if ($input instanceof ClassReflector) {
+            $input = $input->getName();
+        }
+
+        return $this->discoveryConfig->shouldSkip($input);
     }
 
     /**

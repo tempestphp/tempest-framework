@@ -22,10 +22,10 @@ final readonly class LoadDiscoveryLocations
     public function __invoke(): void
     {
         $this->kernel->discoveryLocations = [
-            ...$this->kernel->discoveryLocations,
             ...$this->discoverCorePackages(),
             ...$this->discoverVendorPackages(),
             ...$this->discoverAppNamespaces(),
+            ...$this->kernel->discoveryLocations,
         ];
     }
 
