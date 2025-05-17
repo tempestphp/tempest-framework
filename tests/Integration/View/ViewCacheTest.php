@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Cache\CacheConfig;
 use Tempest\View\ViewCache;
 use Tempest\View\ViewCachePool;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -18,19 +17,15 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
 {
     private const string DIRECTORY = __DIR__ . '/.cache';
 
-    private CacheConfig $cacheConfig;
-
-    private ViewCache $cache;
+    private ViewCache $viewCache;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->cacheConfig = new CacheConfig();
-
-        $this->cache = new ViewCache(
-            $this->cacheConfig,
-            new ViewCachePool(
+        $this->viewCache = new ViewCache(
+            enabled: true,
+            pool: new ViewCachePool(
                 directory: self::DIRECTORY,
             ),
         );
@@ -52,7 +47,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
 
     public function test_view_cache(): void
     {
-        $path = $this->cache->getCachedViewPath('path', fn () => 'hi');
+        $path = $this->viewCache->getCachedViewPath('path', fn () => 'hi');
 
         $this->assertFileExists($path);
         $this->assertSame('hi', file_get_contents($path));
@@ -62,7 +57,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
     {
         $hit = 0;
 
-        $this->cacheConfig->enable = false;
+        $this->viewCache->enabled = false;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
@@ -70,8 +65,8 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
             return 'hi';
         };
 
-        $this->cache->getCachedViewPath('path', $compileFunction);
-        $path = $this->cache->getCachedViewPath('path', $compileFunction);
+        $this->viewCache->getCachedViewPath('path', $compileFunction);
+        $path = $this->viewCache->getCachedViewPath('path', $compileFunction);
 
         $this->assertFileExists($path);
         $this->assertSame('hi', file_get_contents($path));
@@ -82,7 +77,7 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
     {
         $hit = 0;
 
-        $this->cacheConfig->enable = true;
+        $this->viewCache->enabled = true;
 
         $compileFunction = function () use (&$hit) {
             $hit += 1;
@@ -90,8 +85,8 @@ final class ViewCacheTest extends FrameworkIntegrationTestCase
             return 'hi';
         };
 
-        $this->cache->getCachedViewPath('path', $compileFunction);
-        $path = $this->cache->getCachedViewPath('path', $compileFunction);
+        $this->viewCache->getCachedViewPath('path', $compileFunction);
+        $path = $this->viewCache->getCachedViewPath('path', $compileFunction);
 
         $this->assertFileExists($path);
         $this->assertSame('hi', file_get_contents($path));

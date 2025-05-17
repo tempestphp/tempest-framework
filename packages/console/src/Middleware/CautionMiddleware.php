@@ -25,7 +25,7 @@ final readonly class CautionMiddleware implements ConsoleMiddleware
         $environment = $this->appConfig->environment;
 
         if ($environment->isProduction() || $environment->isStaging()) {
-            $continue = $this->console->confirm('Caution! Do you wish to continue?');
+            $continue = $this->console->confirm('This command might be destructive. Do you wish to continue?');
 
             if (! $continue) {
                 return ExitCode::CANCELLED;

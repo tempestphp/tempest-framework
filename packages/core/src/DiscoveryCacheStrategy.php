@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Cache;
+namespace Tempest\Core;
 
 enum DiscoveryCacheStrategy: string
 {

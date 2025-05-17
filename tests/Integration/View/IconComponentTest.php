@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\View;
 
-use Tempest\Cache\IconCache;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ConfigCache;
 use Tempest\Core\Environment;
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
+use Tempest\View\IconCache;
 use Tempest\View\IconConfig;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -22,8 +22,11 @@ final class IconComponentTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
-        $this->container->get(IconCache::class)->clear();
         $this->container->get(ConfigCache::class)->clear();
+
+        $iconCache = $this->container->get(IconCache::class);
+        $iconCache->enabled = true;
+        $iconCache->clear();
     }
 
     public function test_it_renders_an_icon(): void

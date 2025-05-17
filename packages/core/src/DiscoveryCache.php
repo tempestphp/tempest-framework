@@ -5,39 +5,42 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Psr\Cache\CacheItemPoolInterface;
+use RuntimeException;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Tempest\Cache\Cache;
-use Tempest\Cache\CacheConfig;
-use Tempest\Cache\DiscoveryCacheStrategy;
-use Tempest\Cache\IsCache;
 use Tempest\Discovery\Discovery;
 use Tempest\Discovery\DiscoveryItems;
 use Throwable;
 
 use function Tempest\internal_storage_path;
 
-final class DiscoveryCache implements Cache
+final class DiscoveryCache
 {
-    use IsCache {
-        clear as parentClear;
+    public bool $enabled {
+        get => $this->valid && $this->strategy->isEnabled();
     }
 
-    private CacheItemPoolInterface $pool;
+    public bool $valid {
+        get => $this->strategy->isValid();
+    }
 
     public function __construct(
-        private readonly CacheConfig $cacheConfig,
-        ?CacheItemPoolInterface $pool = null,
+        private(set) DiscoveryCacheStrategy $strategy,
+        private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool = $pool ?? new PhpFilesAdapter(
-            directory: $this->cacheConfig->directory . '/discovery',
+            directory: internal_storage_path('cache/discovery'),
         );
     }
 
     public function restore(string $className): ?DiscoveryItems
     {
-        $key = str_replace('\\', '_', $className);
+        if (! $this->enabled) {
+            return null;
+        }
 
-        return $this->get($key);
+        return $this->pool
+            ->getItem(str_replace('\\', '_', $className))
+            ->get();
     }
 
     public function store(Discovery $discovery, DiscoveryItems $discoveryItems): void
@@ -51,39 +54,13 @@ final class DiscoveryCache implements Cache
         $this->pool->save($item);
     }
 
-    protected function getCachePool(): CacheItemPoolInterface
-    {
-        return $this->pool;
-    }
-
-    public function isEnabled(): bool
-    {
-        if (! $this->isValid()) {
-            return false;
-        }
-
-        if ($this->cacheConfig->enable) {
-            return true;
-        }
-
-        return $this->cacheConfig->discoveryCache->isEnabled();
-    }
-
-    public function isValid(): bool
-    {
-        return $this->cacheConfig->discoveryCache->isValid();
-    }
-
     public function clear(): void
     {
-        $this->parentClear();
+        if (! $this->pool->clear()) {
+            throw new RuntimeException('Could not clear discovery cache.');
+        }
 
         $this->storeStrategy(DiscoveryCacheStrategy::INVALID);
-    }
-
-    public function getStrategy(): DiscoveryCacheStrategy
-    {
-        return $this->cacheConfig->discoveryCache;
     }
 
     public function storeStrategy(DiscoveryCacheStrategy $strategy): void

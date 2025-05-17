@@ -45,7 +45,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
             subheader: 'This is an overview of available commands.' . PHP_EOL . 'Type <em><command> --help</em> to get more help about a specific command.',
         );
 
-        if ($this->discoveryCache->isEnabled()) {
+        if ($this->discoveryCache->enabled) {
             $this->console->writeln();
             $this->console->error('<style="bold">Caution</style>: discovery cache is enabled');
         }
@@ -93,7 +93,7 @@ final readonly class OverviewMiddleware implements ConsoleMiddleware
 
         $this->console
             ->unless(
-                condition: $this->discoveryCache->isValid(),
+                condition: $this->discoveryCache->valid,
                 callback: fn (Console $console) => $console->writeln()->error('Discovery cache invalid. Run discovery:generate to enable discovery caching.'),
             );
     }
