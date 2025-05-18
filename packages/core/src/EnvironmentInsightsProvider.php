@@ -24,7 +24,7 @@ final class EnvironmentInsightsProvider implements InsightsProvider
         ];
     }
 
-    private function getComposerVersion(): string
+    private function getComposerVersion(): Insight|string
     {
         if (! function_exists('shell_exec')) {
             return 'shell_exec disabled';
@@ -33,14 +33,14 @@ final class EnvironmentInsightsProvider implements InsightsProvider
         $output = shell_exec('composer --version --no-ansi 2>&1');
 
         if (! $output) {
-            return 'Composer not installed';
+            return new Insight('Not installed', Insight::ERROR);
         }
 
         return \Tempest\Support\Regex\get_match(
             subject: $output,
             pattern: "/Composer version (\S+)/",
             match: 0,
-            default: 'unknown',
+            default: new Insight('Unknown', Insight::ERROR),
         );
     }
 
