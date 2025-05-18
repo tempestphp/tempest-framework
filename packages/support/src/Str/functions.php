@@ -63,12 +63,13 @@ namespace Tempest\Support\Str {
             return $string;
         }
 
-        $string = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string);
+        $string = preg_replace('/(?<=\p{Ll}|\p{N})(\p{Lu})/u', $delimiter . '$1', $string);
+        $string = preg_replace('/(?<=\p{Lu})(\p{Lu}\p{Ll})/u', $delimiter . '$1', $string);
         $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
-        return deduplicate($string, $delimiter);
+        return namespace\deduplicate($string, $delimiter);
     }
 
     /**

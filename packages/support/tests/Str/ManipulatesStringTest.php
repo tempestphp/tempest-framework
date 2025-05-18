@@ -79,22 +79,27 @@ final class ManipulatesStringTest extends TestCase
         $this->assertTrue(str('foo-bar_baz')->kebab()->equals('foo-bar-baz'));
     }
 
-    public function test_snake(): void
+    #[TestWith(['', ''])]
+    #[TestWith(['foo bar', 'foo_bar'])]
+    #[TestWith(['foo - bar', 'foo_bar'])]
+    #[TestWith(['foo__bar', 'foo_bar'])]
+    #[TestWith(['_foo__bar', 'foo_bar'])]
+    #[TestWith(['-foo__bar', 'foo_bar'])]
+    #[TestWith(['fooBar', 'foo_bar'])]
+    #[TestWith(['foo_bar', 'foo_bar'])]
+    #[TestWith(['foo_bar1', 'foo_bar1'])]
+    #[TestWith(['1foo_bar', '1foo_bar'])]
+    #[TestWith(['1foo_bar11', '1foo_bar11'])]
+    #[TestWith(['1foo_1bar1', '1foo_1bar1'])]
+    #[TestWith(['foo-barBaz', 'foo_bar_baz'])]
+    #[TestWith(['foo-bar_baz', 'foo_bar_baz'])]
+    #[TestWith(['Application URI', 'application_uri'])]
+    #[TestWith(['URI', 'uri'])]
+    #[TestWith(['XMLHTTPRequest', 'xmlhttp_request'])]
+    #[TestWith(['HTTPRequest', 'http_request'])]
+    public function test_snake(string $input, string $output): void
     {
-        $this->assertTrue(str('')->snake()->equals(''));
-        $this->assertTrue(str('foo bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('foo - bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('foo__bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('_foo__bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('-foo__bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('fooBar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('foo_bar')->snake()->equals('foo_bar'));
-        $this->assertTrue(str('foo_bar1')->snake()->equals('foo_bar1'));
-        $this->assertTrue(str('1foo_bar')->snake()->equals('1foo_bar'));
-        $this->assertTrue(str('1foo_bar11')->snake()->equals('1foo_bar11'));
-        $this->assertTrue(str('1foo_1bar1')->snake()->equals('1foo_1bar1'));
-        $this->assertTrue(str('foo-barBaz')->snake()->equals('foo_bar_baz'));
-        $this->assertTrue(str('foo-bar_baz')->snake()->equals('foo_bar_baz'));
+        $this->assertEquals($output, str($input)->snake()->toString());
     }
 
     #[TestWith([0])]
