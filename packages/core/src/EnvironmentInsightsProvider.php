@@ -38,8 +38,8 @@ final class EnvironmentInsightsProvider implements InsightsProvider
 
         return \Tempest\Support\Regex\get_match(
             subject: $output,
-            pattern: "/Composer version (\S+)/",
-            match: 0,
+            pattern: "/Composer version (?<version>\S+)/",
+            match: 'version',
             default: new Insight('Unknown', Insight::ERROR),
         );
     }
