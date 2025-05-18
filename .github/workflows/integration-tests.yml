@@ -63,6 +63,15 @@ jobs:
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -81,9 +90,6 @@ jobs:
 
       - name: Install dependencies
         run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction
-
-      - name: 'Setup Redis'
-        uses: supercharge/redis-github-action@1.7.0
 
       - name: 'Setup MySQL'
         if: ${{ matrix.database == 'mysql' }}
