@@ -44,7 +44,7 @@ final class Query
         return $this->getDatabase()->fetchFirst($this->withBindings($bindings));
     }
 
-    public function getSql(): string
+    public function toSql(): string
     {
         $sql = $this->sql;
 

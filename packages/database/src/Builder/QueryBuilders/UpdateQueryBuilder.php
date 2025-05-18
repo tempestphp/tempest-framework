@@ -62,6 +62,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         return $this;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $values = $this->resolveValues();
@@ -100,11 +105,11 @@ final class UpdateQueryBuilder implements BuildsQuery
         foreach ($this->values as $column => $value) {
             $property = $modelClass->getProperty($column);
 
-            if ($modelDefinition->isHasManyRelation($property->getName())) {
+            if ($modelDefinition->getHasMany($property->getName())) {
                 throw new CannotUpdateHasManyRelation($modelClass->getName(), $property->getName());
             }
 
-            if ($modelDefinition->isHasOneRelation($property->getName())) {
+            if ($modelDefinition->getHasOne($property->getName())) {
                 throw new CannotUpdateHasOneRelation($modelClass->getName(), $property->getName());
             }
 

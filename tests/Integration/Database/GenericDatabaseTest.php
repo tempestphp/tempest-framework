@@ -9,6 +9,7 @@ use Tempest\Database\Database;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\Migrations\Migration;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -33,7 +34,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
     {
         $database = $this->container->get(Database::class);
 
-        $this->migrate(CreateMigrationsTable::class, CreateAuthorTable::class);
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
 
         $database->withinTransaction(function (): never {
             new Author(name: 'test')->save();

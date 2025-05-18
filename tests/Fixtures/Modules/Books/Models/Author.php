@@ -17,5 +17,6 @@ final class Author implements Bindable
 
         /** @var \Tests\Tempest\Fixtures\Modules\Books\Models\Book[] */
         public array $books = [],
+        public ?Publisher $publisher = null,
     ) {}
 }

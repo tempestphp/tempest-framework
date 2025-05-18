@@ -33,7 +33,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         OR `createdAt` > ?
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
         $this->assertSame($expected, $sql);
@@ -46,7 +46,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->count('*')
             ->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT COUNT(*)
@@ -60,7 +60,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query('chapters')->count('title')->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT COUNT(`title`)
@@ -97,7 +97,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->distinct()
             ->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT COUNT(DISTINCT `title`)
@@ -111,7 +111,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
     {
         $query = query(Author::class)->count()->build();
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
 
         $expected = <<<SQL
         SELECT COUNT(*)
@@ -149,7 +149,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         OR `createdAt` > ?
         SQL;
 
-        $sql = $query->getSql();
+        $sql = $query->toSql();
         $bindings = $query->bindings;
 
         $this->assertSame($expected, $sql);

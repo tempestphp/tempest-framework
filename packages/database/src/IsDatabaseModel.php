@@ -120,7 +120,7 @@ trait IsDatabaseModel
 
         $type = $property->getType();
 
-        if ($type->isIterable()) {
+        if ($type->isRelation()) {
             throw new MissingRelation($this, $name);
         }
 

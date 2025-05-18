@@ -13,6 +13,7 @@ use Tempest\Http\RequestFactory;
 use Tempest\Http\Status;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\BookController;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Book;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -117,6 +118,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );
@@ -145,6 +147,7 @@ final class RequestTest extends FrameworkIntegrationTestCase
     {
         $this->migrate(
             CreateMigrationsTable::class,
+            CreatePublishersTable::class,
             CreateAuthorTable::class,
             CreateBookTable::class,
         );

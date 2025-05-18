@@ -20,4 +20,12 @@ final class StringTest extends FrameworkIntegrationTestCase
         $this->assertTrue(str('VortexField')->pluralizeLastWord()->equals('VortexFields'));
         $this->assertTrue(str('MultipleWordsInOneString')->pluralizeLastWord()->equals('MultipleWordsInOneStrings'));
     }
+
+    public function test_singularize(): void
+    {
+        $this->assertTrue(str('RealHumans')->singularizeLastWord()->equals('RealHuman'));
+        $this->assertTrue(str('Models')->singularizeLastWord()->equals('Model'));
+        $this->assertTrue(str('VortexFields')->singularizeLastWord()->equals('VortexField'));
+        $this->assertTrue(str('MultipleWordsInOneStrings')->singularizeLastWord()->equals('MultipleWordsInOneString'));
+    }
 }

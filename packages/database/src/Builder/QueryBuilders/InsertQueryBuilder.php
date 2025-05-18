@@ -45,17 +45,22 @@ final class InsertQueryBuilder implements BuildsQuery
         return $id;
     }
 
+    public function toSql(): string
+    {
+        return $this->build()->toSql();
+    }
+
     public function build(mixed ...$bindings): Query
     {
         $definition = model($this->model);
 
         foreach ($this->resolveData() as $data) {
             foreach ($data as $key => $value) {
-                if ($definition->isHasManyRelation($key)) {
+                if ($definition->getHasMany($key)) {
                     throw new CannotInsertHasManyRelation($definition->getName(), $key);
                 }
 
-                if ($definition->isHasOneRelation($key)) {
+                if ($definition->getHasOne($key)) {
                     throw new CannotInsertHasOneRelation($definition->getName(), $key);
                 }
 
@@ -104,7 +109,7 @@ final class InsertQueryBuilder implements BuildsQuery
                 }
 
                 // HasMany and HasOne relations are skipped
-                if ($definition->isHasManyRelation($property->getName()) || $definition->isHasOneRelation($property->getName())) {
+                if ($definition->getHasMany($property->getName()) || $definition->getHasOne($property->getName())) {
                     continue;
                 }
 

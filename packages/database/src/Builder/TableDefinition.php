@@ -7,6 +7,7 @@ namespace Tempest\Database\Builder;
 use Stringable;
 use Tempest\Reflection\ClassReflector;
 
+// TODO: remove
 final readonly class TableDefinition implements Stringable
 {
     public function __construct(
