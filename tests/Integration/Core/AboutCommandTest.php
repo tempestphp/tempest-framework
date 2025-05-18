@@ -45,4 +45,11 @@ final class AboutCommandTest extends FrameworkIntegrationTestCase
             ->call(AboutCommand::class)
             ->assertSee(Kernel::VERSION);
     }
+
+    public function test_json(): void
+    {
+        $this->console
+            ->call(AboutCommand::class, ['json' => true])
+            ->assertJson();
+    }
 }
