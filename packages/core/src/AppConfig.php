@@ -20,6 +20,11 @@ final class AppConfig
 
         /** @var class-string<\Tempest\Core\ExceptionProcessor>[] */
         public array $exceptionProcessors = [],
+
+        /**
+         * @var array<class-string<\Tempest\Core\InsightsProvider>>
+         */
+        public array $insightsProviders = [],
     ) {
         $this->environment = $environment ?? Environment::fromEnv();
 
