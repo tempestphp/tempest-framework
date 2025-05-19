@@ -12,6 +12,7 @@ use Tempest\Container\GenericContainer;
 use Tempest\Core\AppConfig;
 use Tempest\Core\DiscoveryCache;
 use Tempest\Core\DiscoveryCacheStrategy;
+use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
 use Tempest\Core\Kernel\LoadDiscoveryClasses;
@@ -61,6 +62,7 @@ final readonly class DiscoveryGenerateCommand
         $loadDiscoveryClasses = new LoadDiscoveryClasses(
             kernel: $kernel,
             container: $kernel->container,
+            discoveryConfig: $kernel->container->get(DiscoveryConfig::class),
             discoveryCache: $this->discoveryCache,
         );
 
