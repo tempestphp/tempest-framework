@@ -6,6 +6,11 @@ const VITE_CONFIG_COMMAND = 'vite:config'
 
 export async function loadTempestConfiguration(): Promise<TempestViteConfiguration> {
 	try {
+		const override = process.env.TEMPEST_PLUGIN_CONFIGURATION_OVERRIDE
+		if (override) {
+			return JSON.parse(override)
+		}
+
 		const { stdout } = await exec(`${php.value} ${TEMPEST_BIN} ${VITE_CONFIG_COMMAND}`)
 		const json = stdout.match(/\{.*\}/s)
 
