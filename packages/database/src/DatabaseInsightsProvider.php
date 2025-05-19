@@ -43,8 +43,8 @@ final class DatabaseInsightsProvider implements InsightsProvider
         // TODO: support displaying multiple databases, after cache PR
         [$versionQuery, $regex] = match (get_class($this->databaseConfig)) {
             SQLiteConfig::class => ['SELECT sqlite_version() AS version;', '/(?<version>.*)/'],
-            PostgresConfig::class => ['SELECT version() AS version;', '/(?<version>.*)/'],
-            MysqlConfig::class => ['SELECT version() AS version;', "/PostgreSQL (?<version>\S+)/"],
+            PostgresConfig::class => ['SELECT version() AS version;', "/PostgreSQL (?<version>\S+)/"],
+            MysqlConfig::class => ['SELECT version() AS version;', '/^(?<version>\d+\.\d+\.\d+)(?:-\w+)?/'],
             default => [null, null],
         };
 
