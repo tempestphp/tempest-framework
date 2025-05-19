@@ -319,7 +319,9 @@ trait DateTimeConvenienceMethods
      */
     public function getWeekday(): Weekday
     {
-        return Weekday::from((int) $this->format(
+        // Settings nanoseconds to 1 to a avoid rounding
+        // errors with extreme values (eg. 999_999_999)
+        return Weekday::from((int) $this->withNanoseconds(1)->format(
             pattern: 'e',
             locale: Locale::ENGLISH_UNITED_KINGDOM,
         ));

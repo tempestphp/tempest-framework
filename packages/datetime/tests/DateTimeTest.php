@@ -490,8 +490,8 @@ final class DateTimeTest extends TestCase
         $this->assertSame(59, $datetime->minusSeconds(1)->getSeconds());
         $this->assertSame(59, $datetime->minusSecond()->getSeconds());
 
-        $this->assertSame(999999999, $datetime->minusNanoseconds(1)->getNanoseconds());
-        $this->assertSame(999999999, $datetime->minusNanosecond()->getNanoseconds());
+        $this->assertSame(999_999_999, $datetime->minusNanoseconds(1)->getNanoseconds());
+        $this->assertSame(999_999_999, $datetime->minusNanosecond()->getNanoseconds());
     }
 
     public function test_minus_months_edge_cases(): void
@@ -631,6 +631,72 @@ final class DateTimeTest extends TestCase
         $this->assertSame(59, $new->getMinutes());
         $this->assertSame(59, $new->getSeconds());
         $this->assertSame(999999999, $new->getNanoseconds());
+    }
+
+    public function test_start_of_week(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->startOfWeek();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(19, $new->getDay());
+        $this->assertSame(0, $new->getHours());
+    }
+
+    public function test_end_of_week(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->endOfWeek();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(25, $new->getDay());
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+    }
+
+    public function test_start_of_month(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->startOfMonth();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(1, $new->getDay());
+        $this->assertSame(Weekday::THURSDAY, $new->getWeekday());
+        $this->assertSame(0, $new->getHours());
+    }
+
+    public function test_end_of_month(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00', timezone: Timezone::EUROPE_PARIS);
+        $new = $date->endOfMonth();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(31, $new->getDay());
+        $this->assertSame(Weekday::SATURDAY, $new->getWeekday());
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+    }
+
+    public function test_end_of_month_edge_cases(): void
+    {
+        $date = DateTime::parse('2025-02-21 12:00');
+        $this->assertSame(2, $date->endOfMonth()->getMonth());
+        $this->assertSame(28, $date->endOfMonth()->getDay());
+        $this->assertSame(Weekday::FRIDAY, $date->endOfMonth()->getWeekday());
+
+        $date = DateTime::parse('2024-02-21 12:00');
+        $this->assertSame(2, $date->endOfMonth()->getMonth());
+        $this->assertSame(29, $date->endOfMonth()->getDay());
+        $this->assertSame(Weekday::THURSDAY, $date->endOfMonth()->getWeekday());
+
+        $date = DateTime::parse('2024-12-31 12:00');
+        $this->assertSame(12, $date->endOfMonth()->getMonth());
+        $this->assertSame(31, $date->endOfMonth()->getDay());
+        $this->assertSame(23, $date->endOfMonth()->getHours());
+        $this->assertSame(59, $date->endOfMonth()->getMinutes());
+        $this->assertSame(59, $date->endOfMonth()->getSeconds());
     }
 
     public function test_timezone_info(): void

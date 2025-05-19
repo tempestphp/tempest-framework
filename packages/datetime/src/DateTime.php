@@ -8,7 +8,6 @@ use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
 use Tempest\Clock\Clock;
 use Tempest\Container\GenericContainer;
-use Tempest\DateTime\Exception\UnexpectedValueException;
 use Tempest\Support\Language\Locale;
 
 /**
@@ -520,7 +519,55 @@ final readonly class DateTime implements DateTimeInterface
      */
     public function endOfDay(): static
     {
-        return $this->withTime(23, 59, 59, 999999999);
+        return $this->withTime(23, 59, 59, 999_999_999);
+    }
+
+    /**
+     * Returns a new instance set to the start of the week.
+     */
+    public function startOfWeek(): static
+    {
+        return $this->withDay($this->day - ($this->getWeekday()->value - 1))->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the week.
+     */
+    public function endOfWeek(): static
+    {
+        return $this->withDay($this->getDay() + (7 - $this->getWeekday()->value))->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the month.
+     */
+    public function startOfMonth(): static
+    {
+        return $this->withDay(1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the month.
+     */
+    public function endOfMonth(): static
+    {
+        return $this->withDay(Month::from($this->month)->getDaysForYear($this->year))->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the year.
+     */
+    public function startOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 1, 1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the year.
+     */
+    public function endOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 12, Month::DECEMBER->getDaysForYear($this->getYear()))->endOfDay();
     }
 
     #[\Override]
