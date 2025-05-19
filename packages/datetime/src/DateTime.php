@@ -8,6 +8,7 @@ use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
 use Tempest\Clock\Clock;
 use Tempest\Container\GenericContainer;
+use Tempest\DateTime\Exception\UnexpectedValueException;
 use Tempest\Support\Language\Locale;
 
 /**
@@ -504,6 +505,22 @@ final readonly class DateTime implements DateTimeInterface
             $seconds,
             $nanoseconds,
         );
+    }
+
+    /**
+     * Returns a new instance set to midnight of the same day.
+     */
+    public function startOfDay(): static
+    {
+        return $this->withTime(0, 0, 0, 0);
+    }
+
+    /**
+     * Returns a new instance set to the end of the day.
+     */
+    public function endOfDay(): static
+    {
+        return $this->withTime(23, 59, 59, 999999999);
     }
 
     #[\Override]

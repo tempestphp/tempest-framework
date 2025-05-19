@@ -611,6 +611,28 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getNanoseconds());
     }
 
+    public function test_start_of_day(): void
+    {
+        $date = DateTime::todayAt(14, 0);
+        $new = $date->startOfDay();
+
+        $this->assertSame(0, $new->getHours());
+        $this->assertSame(0, $new->getMinutes());
+        $this->assertSame(0, $new->getSeconds());
+        $this->assertSame(0, $new->getNanoseconds());
+    }
+
+    public function test_end_of_day(): void
+    {
+        $date = DateTime::todayAt(14, 0);
+        $new = $date->endOfDay();
+
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+        $this->assertSame(999999999, $new->getNanoseconds());
+    }
+
     public function test_timezone_info(): void
     {
         $timeZone = Timezone::EUROPE_BRUSSELS;
