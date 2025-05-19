@@ -18,9 +18,7 @@ final class MockClock implements Clock
     public function __construct(DateTimeImmutable|DateTimeInterface|string $now = 'now')
     {
         if ($now instanceof DateTimeImmutable) {
-            $this->now = DateTime::fromTimestamp(
-                Timestamp::fromParts($now->getTimestamp()),
-            );
+            $this->now = DateTime::fromTimestamp($now->getTimestamp());
         } else {
             $this->now = DateTime::parse($now);
         }

@@ -2,10 +2,11 @@
 
 namespace Tests\Tempest\Integration\Mapper\Fixtures;
 
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
+use DateTime as NativeDateTime;
+use DateTimeImmutable as NativeDateTimeImmutable;
+use DateTimeInterface as NativeDateTimeInterface;
 use Stringable;
+use Tempest\DateTime\DateTime;
 use Tempest\Mapper\SerializeWith;
 
 // @mago-expect maintainability/too-many-properties
@@ -32,11 +33,13 @@ final class ObjectWithSerializerProperties
 
     public SerializableObject $serializableObject;
 
-    public DateTimeImmutable $dateTimeImmutableProp;
+    public NativeDateTimeImmutable $nativeDateTimeImmutableProp;
+
+    public NativeDateTime $nativeDateTimeProp;
+
+    public NativeDateTimeInterface $nativeDateTimeInterfaceProp;
 
     public DateTime $dateTimeProp;
-
-    public DateTimeInterface $dateTimeInterfaceProp;
 
     public function __construct()
     {
@@ -44,8 +47,9 @@ final class ObjectWithSerializerProperties
         $this->doubleStringProp = new DoubleStringObject('a');
         $this->jsonSerializableObject = new JsonSerializableObject();
         $this->serializableObject = new SerializableObject();
-        $this->dateTimeImmutableProp = new DateTimeImmutable('2025-01-01');
-        $this->dateTimeProp = new DateTime('2025-01-01');
-        $this->dateTimeInterfaceProp = new DateTimeImmutable('2025-01-01');
+        $this->nativeDateTimeImmutableProp = new NativeDateTimeImmutable('2025-01-01');
+        $this->nativeDateTimeProp = new NativeDateTime('2025-01-01');
+        $this->nativeDateTimeInterfaceProp = new NativeDateTimeImmutable('2025-01-01');
+        $this->dateTimeProp = DateTime::parse('2025-01-01');
     }
 }

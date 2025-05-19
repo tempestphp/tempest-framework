@@ -12,15 +12,18 @@ use Tempest\Validation\Rule;
 use Throwable;
 
 #[Attribute]
-final readonly class BeforeDate implements Rule
+final readonly class BetweenDates implements Rule
 {
-    private DateTimeInterface $date;
+    private DateTimeInterface $first;
+    private DateTimeInterface $second;
 
     public function __construct(
-        DateTimeInterface|NativeDateTimeInterface|string $date = 'now',
+        DateTimeInterface|NativeDateTimeInterface|string $first,
+        DateTimeInterface|NativeDateTimeInterface|string $second,
         private bool $inclusive = false,
     ) {
-        $this->date = DateTime::parse($date);
+        $this->first = DateTime::parse($first);
+        $this->second = DateTime::parse($second);
     }
 
     public function isValid(mixed $value): bool
@@ -32,22 +35,14 @@ final readonly class BeforeDate implements Rule
         }
 
         if ($this->inclusive) {
-            return $value->beforeOrAtTheSameTime($this->date);
+            return $value->betweenTimeInclusive($this->first, $this->second);
         }
 
-        return $value->before($this->date);
+        return $value->betweenTimeExclusive($this->first, $this->second);
     }
 
     public function message(): string
     {
-        $message[] = 'Value must be a date before';
-
-        if ($this->inclusive) {
-            $message[] = 'or equal to';
-        }
-
-        $message[] = $this->date->format();
-
-        return implode(' ', $message);
+        return "Value must be a date between {$this->first} and {$this->second}";
     }
 }

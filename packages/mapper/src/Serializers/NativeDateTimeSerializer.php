@@ -4,34 +4,27 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Serializers;
 
-use DateTimeInterface as NativeDateTimeInterface;
-use Tempest\DateTime\DateTime;
-use Tempest\DateTime\DateTimeInterface;
-use Tempest\DateTime\FormatPattern;
+use DateTimeInterface;
 use Tempest\Mapper\Exceptions\CannotSerializeValue;
 use Tempest\Mapper\Serializer;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
 
-final readonly class DateTimeSerializer implements Serializer
+final readonly class NativeDateTimeSerializer implements Serializer
 {
     public function __construct(
-        private FormatPattern|string $format = FormatPattern::ISO8601,
+        private string $format = 'Y-m-d H:i:s',
     ) {}
 
     public static function fromProperty(PropertyReflector $property): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? FormatPattern::ISO8601;
+        $format = $property->getAttribute(DateTimeFormat::class)->format ?? 'Y-m-d H:i:s';
 
         return new self($format);
     }
 
     public function serialize(mixed $input): string
     {
-        if ($input instanceof NativeDateTimeInterface) {
-            $input = DateTime::parse($input);
-        }
-
         if (! ($input instanceof DateTimeInterface)) {
             throw new CannotSerializeValue(DateTimeInterface::class);
         }

@@ -30,5 +30,7 @@ final class DateTimeTest extends FrameworkIntegrationTestCase
         $clock->sleep(milliseconds: 250);
 
         $this->assertEquals('1735689600250', now()->getTimestamp()->getMilliseconds());
+
+        $this->assertEquals($clock->now(), DateTime::parse('now'));
     }
 }

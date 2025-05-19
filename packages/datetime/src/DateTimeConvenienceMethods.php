@@ -334,6 +334,17 @@ trait DateTimeConvenienceMethods
     }
 
     /**
+     * Adds a year to this date-time object, returning a new instance with the added year.
+     *
+     * @throws Exception\UnderflowException If adding the years results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the years results in an arithmetic overflow.
+     */
+    public function plusYear(): static
+    {
+        return $this->plusYears(1);
+    }
+
+    /**
      * Adds the specified years to this date-time object, returning a new instance with the added years.
      *
      * @throws Exception\UnexpectedValueException If adding the years results in an arithmetic issue.
@@ -344,6 +355,17 @@ trait DateTimeConvenienceMethods
     }
 
     /**
+     * Subtracts a year from this date-time object, returning a new instance with the subtracted year.
+     *
+     * @throws Exception\UnderflowException If subtracting the years results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the years results in an arithmetic overflow.
+     */
+    public function minusYear(): static
+    {
+        return $this->minusYears(1);
+    }
+
+    /**
      * Subtracts the specified years from this date-time object, returning a new instance with the subtracted years.
      *
      * @throws Exception\UnexpectedValueException If subtracting the years results in an arithmetic issue.
@@ -351,6 +373,17 @@ trait DateTimeConvenienceMethods
     public function minusYears(int $years): static
     {
         return $this->minusMonths($years * MONTHS_PER_YEAR);
+    }
+
+    /**
+     * Adds a month to this date-time object, returning a new instance with the added month.
+     *
+     * @throws Exception\UnderflowException If adding the months results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the months results in an arithmetic overflow.
+     */
+    public function plusMonth(): static
+    {
+        return $this->plusMonths(1);
     }
 
     /**
@@ -387,6 +420,17 @@ trait DateTimeConvenienceMethods
     }
 
     /**
+     * Subtracts a month from this date-time object, returning a new instance with the subtracted month.
+     *
+     * @throws Exception\UnderflowException If subtracting the months results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the months results in an arithmetic overflow.
+     */
+    public function minusMonth(): static
+    {
+        return $this->minusMonths(1);
+    }
+
+    /**
      * Subtracts the specified months from this date-time object, returning a new instance with the subtracted months.
      *
      * @throws Exception\UnexpectedValueException If subtracting the months results in an arithmetic issue.
@@ -420,6 +464,17 @@ trait DateTimeConvenienceMethods
     }
 
     /**
+     * Adds a day to this date-time object, returning a new instance with the added day.
+     *
+     * @throws Exception\UnderflowException If adding the days results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the days results in an arithmetic overflow.
+     */
+    public function plusDay(): static
+    {
+        return $this->plusDays(1);
+    }
+
+    /**
      * Adds the specified days to this date-time object, returning a new instance with the added days.
      *
      * @throws Exception\UnderflowException If adding the days results in an arithmetic underflow.
@@ -428,6 +483,17 @@ trait DateTimeConvenienceMethods
     public function plusDays(int $days): static
     {
         return $this->plus(Duration::days($days));
+    }
+
+    /**
+     * Subtracts a day from this date-time object, returning a new instance with the subtracted day.
+     *
+     * @throws Exception\UnderflowException If subtracting the days results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the days results in an arithmetic overflow.
+     */
+    public function minusDay(): static
+    {
+        return $this->minusDays(1);
     }
 
     /**
