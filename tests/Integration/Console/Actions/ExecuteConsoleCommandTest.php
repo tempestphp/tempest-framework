@@ -44,13 +44,4 @@ final class ExecuteConsoleCommandTest extends FrameworkIntegrationTestCase
             ->call(ArrayInputCommand::class, ['--input=a', '--input=b'])
             ->assertSee('["a","b"]');
     }
-
-    public function test_command_with_positional_argument_with_space(): void
-    {
-        $this->markTestSkipped('Failing test.');
-
-        // $this->console
-        //     ->call('complex a "b b" c --flag')
-        //     ->assertSee('ab bc');
-    }
 }

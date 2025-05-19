@@ -35,7 +35,7 @@ final class CacheConfig
         /** Used as a global override, should be true in production, null in local */
         ?bool $enable = null,
     ) {
-        $this->enable = $enable ?? env('CACHE');
+        $this->enable = $this->enableCache($enable);
         $this->iconCache = (bool) env('ICON_CACHE', true);
         $this->projectCache = (bool) env('PROJECT_CACHE', false);
         $this->viewCache = (bool) env('VIEW_CACHE', false);
@@ -51,12 +51,8 @@ final class CacheConfig
 
     private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
     {
-        if (PHP_SAPI === 'cli') {
-            $command = $_SERVER['argv'][1] ?? null;
-
-            if ($command === 'dg' || $command === 'discovery:generate') {
-                return DiscoveryCacheStrategy::NONE;
-            }
+        if ($this->isDiscoveryGenerateCommand()) {
+            return DiscoveryCacheStrategy::NONE;
         }
 
         $cache = env('CACHE');
@@ -78,5 +74,25 @@ final class CacheConfig
         }
 
         return $current;
+    }
+
+    private function enableCache(?bool $enable): ?bool
+    {
+        if ($this->isDiscoveryGenerateCommand()) {
+            return false;
+        }
+
+        return $enable ?? env('CACHE');
+    }
+
+    private function isDiscoveryGenerateCommand(): bool
+    {
+        if (PHP_SAPI !== 'cli') {
+            return false;
+        }
+
+        $command = $_SERVER['argv'][1] ?? null;
+
+        return $command === 'dg' || $command === 'discovery:generate';
     }
 }

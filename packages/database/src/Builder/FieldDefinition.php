@@ -11,6 +11,7 @@ use Tempest\Support\Arr\ImmutableArray;
 
 use function Tempest\get;
 
+// TODO: remove
 final class FieldDefinition implements Stringable
 {
     public function __construct(

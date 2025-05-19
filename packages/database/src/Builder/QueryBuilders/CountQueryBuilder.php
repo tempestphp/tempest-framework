@@ -15,7 +15,7 @@ use Tempest\Support\Conditions\HasConditions;
 /**
  * @template TModelClass of object
  */
-final class CountQueryBuilder
+final class CountQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -90,10 +90,10 @@ final class CountQueryBuilder
 
     public function toSql(): string
     {
-        return $this->build()->getSql();
+        return $this->build()->toSql();
     }
 
-    public function build(array $bindings = []): Query
+    public function build(mixed ...$bindings): Query
     {
         return new Query($this->count, [...$this->bindings, ...$bindings]);
     }

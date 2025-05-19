@@ -63,12 +63,13 @@ namespace Tempest\Support\Str {
             return $string;
         }
 
-        $string = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $string);
+        $string = preg_replace('/(?<=\p{Ll}|\p{N})(\p{Lu})/u', $delimiter . '$1', $string);
+        $string = preg_replace('/(?<=\p{Lu})(\p{Lu}\p{Ll})/u', $delimiter . '$1', $string);
         $string = preg_replace('![^' . preg_quote($delimiter) . '\pL\pN\s]+!u', $delimiter, mb_strtolower($string, 'UTF-8'));
         $string = preg_replace('/\s+/u', $delimiter, $string);
         $string = trim($string, $delimiter);
 
-        return deduplicate($string, $delimiter);
+        return namespace\deduplicate($string, $delimiter);
     }
 
     /**
@@ -197,6 +198,18 @@ namespace Tempest\Support\Str {
         $lastWord = array_pop($parts);
 
         return implode('', $parts) . pluralize($lastWord, $count);
+    }
+
+    /**
+     * Converts the last word of the given string to its English plural form.
+     */
+    function singularize_last_word(Stringable|string $string): string
+    {
+        $string = (string) $string;
+        $parts = preg_split('/(.)(?=[A-Z])/u', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $lastWord = array_pop($parts);
+
+        return implode('', $parts) . Language\singularize($lastWord);
     }
 
     /**

@@ -32,7 +32,8 @@ final class PhpDataElement implements Element, WrapsElement
 
         // We'll declare the variable in PHP right before the actual element
         $variableDeclaration = sprintf(
-            '$_%sIsLocal = isset($%s) === false; $%s ??= %s ?? null;',
+            '$_%sIsLocal = $_%sIsLocal ?? isset($%s) === false; $%s ??= %s ?? null;',
+            $localVariableName,
             $localVariableName,
             $localVariableName,
             $localVariableName,
@@ -44,7 +45,8 @@ final class PhpDataElement implements Element, WrapsElement
         // And we'll remove it right after the element, this way we've created a "local scope"
         // where the variable is only available to that specific element.
         $variableRemoval = sprintf(
-            'if ($_%sIsLocal) { unset($%s); }',
+            'if ($_%sIsLocal ?? null) { unset($%s); }; unset($_%sIsLocal)',
+            $localVariableName,
             $localVariableName,
             $localVariableName,
         );

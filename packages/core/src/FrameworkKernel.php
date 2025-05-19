@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Core;
 
 use Dotenv\Dotenv;
+use Tempest\Console\Exceptions\ConsoleExceptionHandler;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
 use Tempest\Core\Kernel\FinishDeferredTasks;
@@ -14,6 +15,7 @@ use Tempest\Core\Kernel\LoadDiscoveryLocations;
 use Tempest\Core\Kernel\RegisterEmergencyExceptionHandler;
 use Tempest\Core\ShellExecutors\GenericShellExecutor;
 use Tempest\EventBus\EventBus;
+use Tempest\Router\Exceptions\HttpExceptionHandler;
 
 final class FrameworkKernel implements Kernel
 {
@@ -50,7 +52,7 @@ final class FrameworkKernel implements Kernel
         )
             ->validateRoot()
             ->loadEnv()
-            ->registerEmergencyErrorHandler()
+            ->registerEmergencyExceptionHandler()
             ->registerShutdownFunction()
             ->registerInternalStorage()
             ->registerKernel()
@@ -58,7 +60,7 @@ final class FrameworkKernel implements Kernel
             ->loadDiscoveryLocations()
             ->loadConfig()
             ->loadDiscovery()
-            ->registerErrorHandler()
+            ->registerExceptionHandler()
             ->event(KernelEvent::BOOTED);
     }
 
@@ -190,7 +192,7 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerEmergencyErrorHandler(): self
+    public function registerEmergencyExceptionHandler(): self
     {
         $environment = Environment::fromEnv();
 
@@ -208,7 +210,7 @@ final class FrameworkKernel implements Kernel
         return $this;
     }
 
-    public function registerErrorHandler(): self
+    public function registerExceptionHandler(): self
     {
         $appConfig = $this->container->get(AppConfig::class);
 
@@ -217,16 +219,25 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
-        $handler = $this->container->get(ExceptionHandler::class);
-        set_exception_handler($handler->handle(...));
-        set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
-            new \ErrorException(
-                message: $message,
-                code: $code,
-                filename: $filename,
-                line: $line,
-            ),
-        ));
+        // We need an exception handler for the CLI in every
+        // environment, and one for HTTP only in production.
+        $handler = match (true) {
+            PHP_SAPI === 'cli' => $this->container->get(ConsoleExceptionHandler::class),
+            $appConfig->environment->isProduction() => $this->container->get(HttpExceptionHandler::class),
+            default => null,
+        };
+
+        if ($handler) {
+            set_exception_handler($handler->handle(...));
+            set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
+                new \ErrorException(
+                    message: $message,
+                    code: $code,
+                    filename: $filename,
+                    line: $line,
+                ),
+            ));
+        }
 
         return $this;
     }

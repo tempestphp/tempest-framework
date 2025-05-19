@@ -27,7 +27,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(<<<'SQL'
         INSERT INTO `authors` (`name`)
         VALUES (?)
-        SQL, $query->getSql());
+        SQL, $query->toSql());
         $this->assertSame(['test'], $query->bindings);
     }
 
@@ -41,7 +41,7 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
         UPDATE `authors`
         SET `name` = ?
         WHERE `id` = ?
-        SQL, $query->getSql());
+        SQL, $query->toSql());
 
         $this->assertSame(['other', 1], $query->bindings);
     }

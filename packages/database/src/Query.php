@@ -13,6 +13,8 @@ final class Query
     public function __construct(
         public string|QueryStatement $sql,
         public array $bindings = [],
+        /** @var \Closure[] $executeAfter */
+        public array $executeAfter = [],
     ) {}
 
     public function execute(mixed ...$bindings): Id
@@ -42,7 +44,7 @@ final class Query
         return $this->getDatabase()->fetchFirst($this->withBindings($bindings));
     }
 
-    public function getSql(): string
+    public function toSql(): string
     {
         $sql = $this->sql;
 

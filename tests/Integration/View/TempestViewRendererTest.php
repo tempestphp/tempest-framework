@@ -702,4 +702,11 @@ final class TempestViewRendererTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('', $html);
     }
+
+    public function test_escape_expression_attribute(): void
+    {
+        $html = $this->render('<div ::escaped="foo">');
+
+        $this->assertSnippetsMatch('<div :escaped="foo"></div>', $html);
+    }
 }

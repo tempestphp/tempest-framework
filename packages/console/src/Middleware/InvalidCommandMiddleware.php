@@ -61,12 +61,12 @@ final readonly class InvalidCommandMiddleware implements ConsoleMiddleware
             } else {
                 $value = $this->console->ask(
                     question: $name,
-                    default: $argument->default,
-                    hint: $argument->help ?: $argument->description,
                     options: match (true) {
                         $isEnum => $argument->type::cases(),
                         default => null,
                     },
+                    default: $argument->default,
+                    hint: $argument->help ?: $argument->description,
                     validation: array_filter([
                         $isEnum
                             ? new IsEnum($argument->type)

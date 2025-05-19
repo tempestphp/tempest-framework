@@ -14,7 +14,7 @@ use function Tempest\Database\model;
 /**
  * @template TModelClass of object
  */
-final class DeleteQueryBuilder
+final class DeleteQueryBuilder implements BuildsQuery
 {
     use HasConditions;
 
@@ -61,8 +61,13 @@ final class DeleteQueryBuilder
         return $this;
     }
 
-    public function build(): Query
+    public function toSql(): string
     {
-        return new Query($this->delete, $this->bindings);
+        return $this->build()->toSql();
+    }
+
+    public function build(mixed ...$bindings): Query
+    {
+        return new Query($this->delete, [...$this->bindings, ...$bindings]);
     }
 }

@@ -75,9 +75,6 @@ final class ConsoleTester
 
         $clone->container->singleton(Console::class, $console);
 
-        $appConfig = $this->container->get(AppConfig::class);
-        $appConfig->exceptionProcessors[] = $clone->container->get(ConsoleExceptionHandler::class);
-
         $clone->output = $memoryOutputBuffer;
         $clone->input = $memoryInputBuffer;
 

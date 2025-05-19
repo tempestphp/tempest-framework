@@ -871,4 +871,30 @@ final class ViewComponentTest extends FrameworkIntegrationTestCase
 
         $this->assertSnippetsMatch('<a>testing</a>', $html);
     }
+
+    public function test_repeated_local_var_across_view_components(): void
+    {
+        $this->registerViewComponent('x-test', '<div :thing="$thing">{{ $thing }}</div>');
+
+        $html = $this->render(<<<'HTML'
+        <x-test thing="a" />
+        <x-test thing="b" />
+        <x-test thing="c" />
+        HTML);
+
+        $this->assertSnippetsMatch('
+            <div thing="a">a</div>
+            <div thing="b">b</div>
+            <div thing="c">c</div>
+        ', $html);
+    }
+
+    public function test_escape_expression_attribute_in_view_components(): void
+    {
+        $this->registerViewComponent('x-test', '<div class="foo" ::escaped="foo"></div>');
+
+        $html = $this->render('<x-test/>');
+
+        $this->assertSnippetsMatch('<div class="foo" :escaped="foo"></div>', $html);
+    }
 }

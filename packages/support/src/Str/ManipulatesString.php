@@ -130,6 +130,14 @@ trait ManipulatesString
     }
 
     /**
+     * Converts the last word to its English plural form.
+     */
+    public function singularizeLastWord(): self
+    {
+        return $this->createOrModify(singularize_last_word($this->value));
+    }
+
+    /**
      * Creates a pseudo-random alpha-numeric string of the given length.
      */
     public function random(int $length = 16): self
