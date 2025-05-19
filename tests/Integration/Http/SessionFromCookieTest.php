@@ -49,6 +49,6 @@ final class SessionFromCookieTest extends FrameworkIntegrationTestCase
         $cookie = $cookieManager->get(Session::ID);
 
         $this->assertEquals(1, $cookie->maxAge);
-        $this->assertEquals($clock->timestamp() + 1, $cookie->getExpiresAtTime());
+        $this->assertEquals($clock->seconds() + 1, $cookie->getExpiresAtTime());
     }
 }

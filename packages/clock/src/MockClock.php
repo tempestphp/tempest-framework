@@ -9,6 +9,7 @@ use Psr\Clock\ClockInterface;
 use Tempest\DateTime\DateTime;
 use Tempest\DateTime\DateTimeInterface;
 use Tempest\DateTime\Duration;
+use Tempest\DateTime\Timestamp;
 
 final class MockClock implements Clock
 {
@@ -37,12 +38,17 @@ final class MockClock implements Clock
         $this->now = DateTime::parse($now);
     }
 
-    public function timestamp(): int
+    public function timestamp(): Timestamp
+    {
+        return $this->now->getTimestamp();
+    }
+
+    public function seconds(): int
     {
         return $this->now->getTimestamp()->getSeconds();
     }
 
-    public function timestampMs(): int
+    public function milliseconds(): int
     {
         return $this->now->getTimestamp()->getMilliseconds();
     }

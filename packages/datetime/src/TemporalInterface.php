@@ -84,6 +84,16 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function betweenTimeExclusive(TemporalInterface $a, TemporalInterface $b): bool;
 
     /**
+     * Checks if this instance is in the future.
+     */
+    public function isFuture(): bool;
+
+    /**
+     * Checks if this instance is in the past.
+     */
+    public function isPast(): bool;
+
+    /**
      * Adds the specified duration to this temporal object, returning a new instance with the added duration.
      *
      * @throws Exception\UnderflowException If adding the duration results in an arithmetic underflow.
@@ -278,7 +288,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
     public function between(TemporalInterface $other): Duration;
 
     /**
-     * Formats this {@see TemporalInterface} instance based on a specific pattern, with optional customization for timezone and locale.
+     * Formats this {@see Tempest\DateTime\TemporalInterface} instance based on a specific pattern, with optional customization for timezone and locale.
      *
      * This method allows for detailed customization of the output string by specifying a format pattern. If no pattern is provided,
      * a default, implementation-specific pattern will be used. Additionally, the method supports specifying a timezone and locale
@@ -294,7 +304,7 @@ interface TemporalInterface extends Comparable, Equable, JsonSerializable, Strin
      * @param null|Timezone $timezone Optional timezone for formatting. If null, uses the system's default timezone.
      * @param null|Locale $locale Optional locale for formatting. If null, uses the system's default locale.
      *
-     * @return string The formatted {@see TemporalInterface} instance string, according to the specified pattern, timezone, and locale.
+     * @return string The formatted {@see Tempest\DateTime\TemporalInterface} instance string, according to the specified pattern, timezone, and locale.
      *
      * @see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
      * @see Timezone::default()

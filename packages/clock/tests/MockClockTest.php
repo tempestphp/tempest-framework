@@ -41,7 +41,7 @@ final class MockClockTest extends TestCase
         $time = DateTime::parse('2024-09-11 13:54:23');
         $clock = new MockClock($time);
 
-        $this->assertEquals($time->getTimestamp()->getSeconds(), $clock->timestamp());
+        $this->assertEquals($time->getTimestamp()->getSeconds(), $clock->seconds());
     }
 
     public function test_mock_clock_sleeps_time(): void
@@ -52,7 +52,7 @@ final class MockClockTest extends TestCase
         $clock = new MockClock($oldTime);
         $clock->sleep(2_000);
 
-        $this->assertSame($expectedTime->getTimestamp()->getSeconds(), $clock->timestamp());
+        $this->assertSame($expectedTime->getTimestamp()->getSeconds(), $clock->seconds());
     }
 
     public function test_mock_clock_can_change_time(): void
@@ -65,11 +65,11 @@ final class MockClockTest extends TestCase
         $clock->minus(2);
 
         $this->assertEquals($subtractedTime, $clock->now());
-        $this->assertEquals($subtractedTime->getTimestamp()->getSeconds(), $clock->timestamp());
+        $this->assertEquals($subtractedTime->getTimestamp()->getSeconds(), $clock->seconds());
 
         $clock->plus(4);
 
         $this->assertEquals($addedTime, $clock->now());
-        $this->assertEquals($addedTime->getTimestamp()->getSeconds(), $clock->timestamp());
+        $this->assertEquals($addedTime->getTimestamp()->getSeconds(), $clock->seconds());
     }
 }

@@ -116,6 +116,16 @@ trait TemporalConvenienceMethods
         return $ca !== Comparison\Order::EQUAL && $cb !== Comparison\Order::EQUAL && $ca !== $cb;
     }
 
+    public function isFuture(): bool
+    {
+        return $this->after(Timestamp::now());
+    }
+
+    public function isPast(): bool
+    {
+        return $this->before(Timestamp::now());
+    }
+
     /**
      * Adds an hour to this temporal object, returning a new instance with the added hour.
      *

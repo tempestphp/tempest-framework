@@ -6,8 +6,6 @@ namespace Tempest\DateTime;
 
 use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
-use Tempest\Clock\Clock;
-use Tempest\Container\GenericContainer;
 use Tempest\Support\Language\Locale;
 
 /**
@@ -116,7 +114,7 @@ final readonly class DateTime implements DateTimeInterface
      */
     public static function now(?Timezone $timezone = null): DateTime
     {
-        return self::resolveFromContainer($timezone) ?? self::fromTimestamp(Timestamp::now(), $timezone);
+        return self::fromTimestamp(Timestamp::now(), $timezone);
     }
 
     /**
@@ -584,27 +582,5 @@ final readonly class DateTime implements DateTimeInterface
             'seconds' => $this->seconds,
             'nanoseconds' => $this->nanoseconds,
         ];
-    }
-
-    private static function resolveFromContainer(?Timezone $timezone = null): ?DateTime
-    {
-        if (! class_exists(GenericContainer::class)) {
-            return null;
-        }
-
-        if (is_null(GenericContainer::instance())) {
-            return null;
-        }
-
-        if (! GenericContainer::instance()->has(Clock::class)) {
-            return null;
-        }
-
-        $interface = GenericContainer::instance()
-            ->get(Clock::class)
-            ->now()
-            ->convertToTimezone($timezone);
-
-        return DateTime::parse($interface);
     }
 }
