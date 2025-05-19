@@ -238,6 +238,14 @@ final class DateTimeTest extends TestCase
         $this->assertSame($datetime->getTimezone(), $parsed->getTimezone());
     }
 
+    public function test_parse_icu(): void
+    {
+        $parsed = DateTime::fromPattern('2025-01-01 10:00', pattern: 'yyyy-MM-dd HH:mm');
+
+        $this->assertEquals('2025-01-01 10:00', $parsed->format(pattern: 'yyyy-MM-dd HH:mm'));
+        $this->assertEquals(1735725600, $parsed->getTimestamp()->getSeconds());
+    }
+
     public function test_parse_timestamp(): void
     {
         $expected = DateTime::fromTimestamp(1747670452940);
