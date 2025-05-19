@@ -263,6 +263,14 @@ final class TimestampTest extends TestCase
         $this->assertSame($expected === Order::EQUAL, $a->betweenTimeInclusive($b, $b));
     }
 
+    public function test_future_past(): void
+    {
+        $now = Timestamp::monotonic();
+
+        $this->assertFalse($now->minusSecond()->isFuture());
+        $this->assertFalse($now->plusSecond()->isPast());
+    }
+
     public function test_nanoseconds_modifications(): void
     {
         $timestamp = Timestamp::fromParts(0, 100);

@@ -55,7 +55,7 @@ final class CookieManagerTest extends FrameworkIntegrationTestCase
         $cookies->add(new Cookie(
             key: 'key',
             value: 'value',
-            expiresAt: $clock->timestamp() + 1,
+            expiresAt: $clock->seconds() + 1,
             domain: 'test.com',
             path: '/test',
             secure: true,

@@ -8,6 +8,7 @@ use Tempest\Mapper\Serializers\BooleanSerializer;
 use Tempest\Mapper\Serializers\DateTimeSerializer;
 use Tempest\Mapper\Serializers\FloatSerializer;
 use Tempest\Mapper\Serializers\IntegerSerializer;
+use Tempest\Mapper\Serializers\NativeDateTimeSerializer;
 use Tempest\Mapper\Serializers\SerializableSerializer;
 use Tempest\Mapper\Serializers\StringSerializer;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -34,8 +35,9 @@ final class SerializerFactoryTest extends FrameworkIntegrationTestCase
         $this->assertInstanceOf(DoubleStringSerializer::class, $factory->forProperty($class->getProperty('doubleStringProp')));
         $this->assertInstanceOf(SerializableSerializer::class, $factory->forProperty($class->getProperty('jsonSerializableObject')));
         $this->assertInstanceOf(SerializableSerializer::class, $factory->forProperty($class->getProperty('serializableObject')));
-        $this->assertInstanceOf(DateTimeSerializer::class, $factory->forProperty($class->getProperty('dateTimeImmutableProp')));
+        $this->assertInstanceOf(NativeDateTimeSerializer::class, $factory->forProperty($class->getProperty('nativeDateTimeImmutableProp')));
+        $this->assertInstanceOf(NativeDateTimeSerializer::class, $factory->forProperty($class->getProperty('nativeDateTimeProp')));
+        $this->assertInstanceOf(NativeDateTimeSerializer::class, $factory->forProperty($class->getProperty('nativeDateTimeInterfaceProp')));
         $this->assertInstanceOf(DateTimeSerializer::class, $factory->forProperty($class->getProperty('dateTimeProp')));
-        $this->assertInstanceOf(DateTimeSerializer::class, $factory->forProperty($class->getProperty('dateTimeInterfaceProp')));
     }
 }

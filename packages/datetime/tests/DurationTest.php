@@ -35,10 +35,15 @@ final class DurationTest extends TestCase
     public function test_named_constructors(): void
     {
         $this->assertSame(168.0, DateTime\Duration::weeks(1)->getTotalHours());
+        $this->assertSame(168.0, DateTime\Duration::week()->getTotalHours());
         $this->assertSame(24.0, DateTime\Duration::days(1)->getTotalHours());
+        $this->assertSame(24.0, DateTime\Duration::day()->getTotalHours());
         $this->assertSame(1.0, DateTime\Duration::hours(1)->getTotalHours());
+        $this->assertSame(1.0, DateTime\Duration::hour()->getTotalHours());
         $this->assertSame(1.0, DateTime\Duration::minutes(1)->getTotalMinutes());
+        $this->assertSame(1.0, DateTime\Duration::minute()->getTotalMinutes());
         $this->assertSame(1.0, DateTime\Duration::seconds(1)->getTotalSeconds());
+        $this->assertSame(1.0, DateTime\Duration::second()->getTotalSeconds());
         $this->assertSame(1.0, DateTime\Duration::milliseconds(1)->getTotalMilliseconds());
         $this->assertSame(1.0, DateTime\Duration::microseconds(1)->getTotalMicroseconds());
         $this->assertSame(1, DateTime\Duration::nanoseconds(1)->getNanoseconds());

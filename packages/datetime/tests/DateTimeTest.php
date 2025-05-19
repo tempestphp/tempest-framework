@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime\Tests;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -236,6 +238,63 @@ final class DateTimeTest extends TestCase
         $this->assertSame($datetime->getTimezone(), $parsed->getTimezone());
     }
 
+    public function test_parse_icu(): void
+    {
+        $parsed = DateTime::fromPattern('2025-01-01 10:00', pattern: 'yyyy-MM-dd HH:mm');
+
+        $this->assertEquals('2025-01-01 10:00', $parsed->format(pattern: 'yyyy-MM-dd HH:mm'));
+        $this->assertEquals(1735725600, $parsed->getTimestamp()->getSeconds());
+    }
+
+    public function test_parse_timestamp(): void
+    {
+        $expected = DateTime::fromTimestamp(1747670452940);
+        $parsed = DateTime::parse(1747670452940);
+
+        $this->assertEquals($expected->getTimestamp(), $parsed->getTimestamp());
+        $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
+    }
+
+    public function test_parse_from_native(): void
+    {
+        $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0);
+        $parsed = DateTime::parse(new DateTimeImmutable('2024-01-01 10:00:00'));
+
+        $this->assertEquals($expected->getTimestamp(), $parsed->getTimestamp());
+        $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
+    }
+
+    public function test_parse_from_native_with_timezone(): void
+    {
+        $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0)
+            ->convertToTimezone(Timezone::AMERICA_NEW_YORK);
+
+        $parsed = DateTime::parse(new DateTimeImmutable('2024-01-01 10:00:00')->setTimezone(new DateTimeZone('America/New_York')));
+
+        $this->assertEquals($expected->getTimestamp(), $parsed->getTimestamp());
+        $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
+    }
+
+    public function test_parse_from_timestamp(): void
+    {
+        $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0);
+        $parsed = DateTime::fromTimestamp(new DateTimeImmutable('2024-01-01 10:00:00')->getTimestamp());
+
+        $this->assertEquals($expected->getTimestamp(), $parsed->getTimestamp());
+        $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
+    }
+
+    public function test_parse_from_timestamp_with_timezone(): void
+    {
+        $expected = DateTime::fromParts(Timezone::default(), 2024, Month::JANUARY, 1, 10, 0, 0, 0)
+            ->convertToTimezone(Timezone::AMERICA_NEW_YORK);
+
+        $parsed = DateTime::fromTimestamp(new DateTimeImmutable('2024-01-01 10:00:00')->getTimestamp(), timezone: Timezone::AMERICA_NEW_YORK);
+
+        $this->assertEquals($expected->getTimestamp(), $parsed->getTimestamp());
+        $this->assertSame($expected->getTimezone(), $parsed->getTimezone());
+    }
+
     public function test_parse_with_timezone(): void
     {
         $datetime = DateTime::fromParts(Timezone::AMERICA_NEW_YORK, 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
@@ -345,32 +404,28 @@ final class DateTimeTest extends TestCase
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
-        $new = $datetime->plusYears(1);
-        $this->assertSame(2025, $new->getYear());
+        $this->assertSame(2025, $datetime->plusYears(1)->getYear());
+        $this->assertSame(2025, $datetime->plusYear()->getYear());
 
-        $new = $datetime->plusMonths(1);
-        $this->assertSame(3, $new->getMonth());
+        $this->assertSame(3, $datetime->plusMonths(1)->getMonth());
+        $this->assertSame(3, $datetime->plusMonth()->getMonth());
+        $this->assertSame($datetime, $datetime->plusMonths(0));
+        $this->assertSame(1, $datetime->plusMonths(-1)->getMonth());
 
-        $new = $datetime->plusMonths(0);
-        $this->assertSame($datetime, $new);
+        $this->assertSame(5, $datetime->plusDays(1)->getDay());
+        $this->assertSame(5, $datetime->plusDay()->getDay());
 
-        $new = $datetime->plusMonths(-1);
-        $this->assertSame(1, $new->getMonth());
+        $this->assertSame(15, $datetime->plusHours(1)->getHours());
+        $this->assertSame(15, $datetime->plusHour()->getHours());
 
-        $new = $datetime->plusDays(1);
-        $this->assertSame(5, $new->getDay());
+        $this->assertSame(1, $datetime->plusMinutes(1)->getMinutes());
+        $this->assertSame(1, $datetime->plusMinute()->getMinutes());
 
-        $new = $datetime->plusHours(1);
-        $this->assertSame(15, $new->getHours());
+        $this->assertSame(1, $datetime->plusSeconds(1)->getSeconds());
+        $this->assertSame(1, $datetime->plusSecond()->getSeconds());
 
-        $new = $datetime->plusMinutes(1);
-        $this->assertSame(1, $new->getMinutes());
-
-        $new = $datetime->plusSeconds(1);
-        $this->assertSame(1, $new->getSeconds());
-
-        $new = $datetime->plusNanoseconds(1);
-        $this->assertSame(1, $new->getNanoseconds());
+        $this->assertSame(1, $datetime->plusNanoseconds(1)->getNanoseconds());
+        $this->assertSame(1, $datetime->plusNanosecond()->getNanoseconds());
     }
 
     public function test_plus_months_edge_cases(): void
@@ -415,32 +470,28 @@ final class DateTimeTest extends TestCase
     {
         $datetime = DateTime::fromParts(Timezone::default(), 2024, Month::FEBRUARY, 4, 14, 0, 0, 0);
 
-        $new = $datetime->minusYears(1);
-        $this->assertSame(2023, $new->getYear());
+        $this->assertSame(2023, $datetime->minusYears(1)->getYear());
+        $this->assertSame(2023, $datetime->minusYear()->getYear());
 
-        $new = $datetime->minusMonths(1);
-        $this->assertSame(1, $new->getMonth());
+        $this->assertSame(1, $datetime->minusMonths(1)->getMonth());
+        $this->assertSame(1, $datetime->minusMonth()->getMonth());
+        $this->assertSame(3, $datetime->minusMonths(-1)->getMonth());
+        $this->assertSame($datetime, $datetime->minusMonths(0));
 
-        $new = $datetime->minusMonths(0);
-        $this->assertSame($datetime, $new);
+        $this->assertSame(3, $datetime->minusDays(1)->getDay());
+        $this->assertSame(3, $datetime->minusDay()->getDay());
 
-        $new = $datetime->minusMonths(-1);
-        $this->assertSame(3, $new->getMonth());
+        $this->assertSame(13, $datetime->minusHours(1)->getHours());
+        $this->assertSame(13, $datetime->minusHour()->getHours());
 
-        $new = $datetime->minusDays(1);
-        $this->assertSame(3, $new->getDay());
+        $this->assertSame(59, $datetime->minusMinutes(1)->getMinutes());
+        $this->assertSame(59, $datetime->minusMinute()->getMinutes());
 
-        $new = $datetime->minusHours(1);
-        $this->assertSame(13, $new->getHours());
+        $this->assertSame(59, $datetime->minusSeconds(1)->getSeconds());
+        $this->assertSame(59, $datetime->minusSecond()->getSeconds());
 
-        $new = $datetime->minusMinutes(1);
-        $this->assertSame(59, $new->getMinutes());
-
-        $new = $datetime->minusSeconds(1);
-        $this->assertSame(59, $new->getSeconds());
-
-        $new = $datetime->minusNanoseconds(1);
-        $this->assertSame(999999999, $new->getNanoseconds());
+        $this->assertSame(999_999_999, $datetime->minusNanoseconds(1)->getNanoseconds());
+        $this->assertSame(999_999_999, $datetime->minusNanosecond()->getNanoseconds());
     }
 
     public function test_minus_months_edge_cases(): void
@@ -558,6 +609,94 @@ final class DateTimeTest extends TestCase
         $this->assertSame(0, $new->getMinutes());
         $this->assertSame(0, $new->getSeconds());
         $this->assertSame(0, $new->getNanoseconds());
+    }
+
+    public function test_start_of_day(): void
+    {
+        $date = DateTime::todayAt(14, 0);
+        $new = $date->startOfDay();
+
+        $this->assertSame(0, $new->getHours());
+        $this->assertSame(0, $new->getMinutes());
+        $this->assertSame(0, $new->getSeconds());
+        $this->assertSame(0, $new->getNanoseconds());
+    }
+
+    public function test_end_of_day(): void
+    {
+        $date = DateTime::todayAt(14, 0);
+        $new = $date->endOfDay();
+
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+        $this->assertSame(999999999, $new->getNanoseconds());
+    }
+
+    public function test_start_of_week(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->startOfWeek();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(19, $new->getDay());
+        $this->assertSame(0, $new->getHours());
+    }
+
+    public function test_end_of_week(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->endOfWeek();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(25, $new->getDay());
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+    }
+
+    public function test_start_of_month(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00');
+        $new = $date->startOfMonth();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(1, $new->getDay());
+        $this->assertSame(Weekday::THURSDAY, $new->getWeekday());
+        $this->assertSame(0, $new->getHours());
+    }
+
+    public function test_end_of_month(): void
+    {
+        $date = DateTime::parse('2025-05-21 12:00', timezone: Timezone::EUROPE_PARIS);
+        $new = $date->endOfMonth();
+
+        $this->assertSame(5, $new->getMonth());
+        $this->assertSame(31, $new->getDay());
+        $this->assertSame(Weekday::SATURDAY, $new->getWeekday());
+        $this->assertSame(23, $new->getHours());
+        $this->assertSame(59, $new->getMinutes());
+        $this->assertSame(59, $new->getSeconds());
+    }
+
+    public function test_end_of_month_edge_cases(): void
+    {
+        $date = DateTime::parse('2025-02-21 12:00');
+        $this->assertSame(2, $date->endOfMonth()->getMonth());
+        $this->assertSame(28, $date->endOfMonth()->getDay());
+        $this->assertSame(Weekday::FRIDAY, $date->endOfMonth()->getWeekday());
+
+        $date = DateTime::parse('2024-02-21 12:00');
+        $this->assertSame(2, $date->endOfMonth()->getMonth());
+        $this->assertSame(29, $date->endOfMonth()->getDay());
+        $this->assertSame(Weekday::THURSDAY, $date->endOfMonth()->getWeekday());
+
+        $date = DateTime::parse('2024-12-31 12:00');
+        $this->assertSame(12, $date->endOfMonth()->getMonth());
+        $this->assertSame(31, $date->endOfMonth()->getDay());
+        $this->assertSame(23, $date->endOfMonth()->getHours());
+        $this->assertSame(59, $date->endOfMonth()->getMinutes());
+        $this->assertSame(59, $date->endOfMonth()->getSeconds());
     }
 
     public function test_timezone_info(): void

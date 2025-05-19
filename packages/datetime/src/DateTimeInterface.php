@@ -17,7 +17,7 @@ interface DateTimeInterface extends TemporalInterface
      *
      * @see Timezone::default()
      */
-    public static function fromTimestamp(Timestamp $timestamp, ?Timezone $timezone = null): static;
+    public static function fromTimestamp(int|Timestamp $timestamp, ?Timezone $timezone = null): static;
 
     /**
      * Checks if this {@see DateTimeInterface} instance is equal to the given {@see DateTimeInterface} instance including the timezone.
@@ -306,12 +306,28 @@ interface DateTimeInterface extends TemporalInterface
     public function isLeapYear(): bool;
 
     /**
+     * Adds a year to this date-time object, returning a new instance with the added year.
+     *
+     * @throws Exception\UnderflowException If adding the years results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the years results in an arithmetic overflow.
+     */
+    public function plusYear(): static;
+
+    /**
      * Adds the specified years to this date-time object, returning a new instance with the added years.
      *
      * @throws Exception\UnderflowException If adding the years results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the years results in an arithmetic overflow.
      */
     public function plusYears(int $years): static;
+
+    /**
+     * Adds a month to this date-time object, returning a new instance with the added month.
+     *
+     * @throws Exception\UnderflowException If adding the months results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the months results in an arithmetic overflow.
+     */
+    public function plusMonth(): static;
 
     /**
      * Adds the specified months to this date-time object, returning a new instance with the added months.
@@ -322,12 +338,28 @@ interface DateTimeInterface extends TemporalInterface
     public function plusMonths(int $months): static;
 
     /**
+     * Adds a day to this date-time object, returning a new instance with the added day.
+     *
+     * @throws Exception\UnderflowException If adding the days results in an arithmetic underflow.
+     * @throws Exception\OverflowException If adding the days results in an arithmetic overflow.
+     */
+    public function plusDay(): static;
+
+    /**
      * Adds the specified days to this date-time object, returning a new instance with the added days.
      *
      * @throws Exception\UnderflowException If adding the days results in an arithmetic underflow.
      * @throws Exception\OverflowException If adding the days results in an arithmetic overflow.
      */
     public function plusDays(int $days): static;
+
+    /**
+     * Subtracts a year from this date-time object, returning a new instance with the subtracted year.
+     *
+     * @throws Exception\UnderflowException If subtracting the years results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the years results in an arithmetic overflow.
+     */
+    public function minusYear(): static;
 
     /**
      * Subtracts the specified years from this date-time object, returning a new instance with the subtracted years.
@@ -338,12 +370,28 @@ interface DateTimeInterface extends TemporalInterface
     public function minusYears(int $years): static;
 
     /**
+     * Subtracts a month from this date-time object, returning a new instance with the subtracted month.
+     *
+     * @throws Exception\UnderflowException If subtracting the months results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the months results in an arithmetic overflow.
+     */
+    public function minusMonth(): static;
+
+    /**
      * Subtracts the specified months from this date-time object, returning a new instance with the subtracted months.
      *
      * @throws Exception\UnderflowException If subtracting the months results in an arithmetic underflow.
      * @throws Exception\OverflowException If subtracting the months results in an arithmetic overflow.
      */
     public function minusMonths(int $months): static;
+
+    /**
+     * Subtracts a day from this date-time object, returning a new instance with the subtracted day.
+     *
+     * @throws Exception\UnderflowException If subtracting the days results in an arithmetic underflow.
+     * @throws Exception\OverflowException If subtracting the days results in an arithmetic overflow.
+     */
+    public function minusDay(): static;
 
     /**
      * Subtracts the specified days from this date-time object, returning a new instance with the subtracted days.
