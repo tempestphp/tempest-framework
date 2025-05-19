@@ -11,6 +11,7 @@ use SplFileInfo;
 use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\DiscoveryDiscovery;
 use Tempest\Core\Kernel;
 use Tempest\Discovery\DiscoversPath;
@@ -29,6 +30,7 @@ final class LoadDiscoveryClasses
     public function __construct(
         private readonly Kernel $kernel,
         private readonly Container $container,
+        private readonly DiscoveryConfig $discoveryConfig,
         private readonly DiscoveryCache $discoveryCache,
     ) {}
 
@@ -100,6 +102,7 @@ final class LoadDiscoveryClasses
             /** @var SplFileInfo $file */
             foreach ($files as $file) {
                 $fileName = $file->getFilename();
+
                 if ($fileName === '') {
                     continue;
                 }
@@ -112,7 +115,11 @@ final class LoadDiscoveryClasses
                     continue;
                 }
 
-                $input = $file->getPathname();
+                $input = $file->getRealPath();
+
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    continue;
+                }
 
                 // We assume that any PHP file that starts with an uppercase letter will be a class
                 if ($file->getExtension() === 'php' && ucfirst($fileName) === $fileName) {
@@ -131,6 +138,10 @@ final class LoadDiscoveryClasses
                     }
                 }
 
+                if ($this->shouldSkipBasedOnConfig($input)) {
+                    continue;
+                }
+
                 if ($input instanceof ClassReflector) {
                     // If the input is a class, we'll call `discover`
                     if (! $this->shouldSkipDiscoveryForClass($discovery, $input)) {
@@ -138,7 +149,7 @@ final class LoadDiscoveryClasses
                     }
                 } elseif ($discovery instanceof DiscoversPath) {
                     // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
-                    $discovery->discoverPath($location, realpath($input));
+                    $discovery->discoverPath($location, $input);
                 }
             }
         }
@@ -158,6 +169,15 @@ final class LoadDiscoveryClasses
         $discovery->apply();
 
         $this->appliedDiscovery[$discovery::class] = true;
+    }
+
+    private function shouldSkipBasedOnConfig(ClassReflector|string $input): bool
+    {
+        if ($input instanceof ClassReflector) {
+            $input = $input->getName();
+        }
+
+        return $this->discoveryConfig->shouldSkip($input);
     }
 
     /**
