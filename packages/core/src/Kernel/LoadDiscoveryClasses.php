@@ -115,7 +115,7 @@ final class LoadDiscoveryClasses
                     continue;
                 }
 
-                $input = $file->getPathname();
+                $input = $file->getRealPath();
 
                 if ($this->shouldSkipBasedOnConfig($input)) {
                     continue;
@@ -149,7 +149,7 @@ final class LoadDiscoveryClasses
                     }
                 } elseif ($discovery instanceof DiscoversPath) {
                     // If the input is NOT a class, AND the discovery class can discover paths, we'll call `discoverPath`
-                    $discovery->discoverPath($location, realpath($input));
+                    $discovery->discoverPath($location, $input);
                 }
             }
         }
