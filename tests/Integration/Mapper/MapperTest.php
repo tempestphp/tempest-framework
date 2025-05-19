@@ -283,6 +283,11 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('{"name":"Guillaume","nativeDate":"2025-03-02","date":"2024-01-01","enum":"foo"}', $json);
 
         $fromJson = map($json)->to(ObjectThatShouldUseCasters::class);
+        $fromArray = map($array)->to(ObjectThatShouldUseCasters::class);
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            dump($object, $array, $json, $fromJson, $fromArray);
+        }
 
         $this->assertSame('Guillaume', $fromJson->name);
         $this->assertSame(EnumToCast::FOO, $fromJson->enum);
@@ -290,8 +295,6 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame('2024-01-01', $fromJson->date->format('yyyy-MM-dd'));
         $this->assertInstanceOf(DateTimeImmutable::class, $fromJson->nativeDate);
         $this->assertSame('2025-03-02', $fromJson->nativeDate->format('Y-m-d'));
-
-        $fromArray = map($array)->to(ObjectThatShouldUseCasters::class);
 
         $this->assertSame('Guillaume', $fromArray->name);
         $this->assertSame(EnumToCast::FOO, $fromArray->enum);
