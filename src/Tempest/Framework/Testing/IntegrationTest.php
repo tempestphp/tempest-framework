@@ -89,7 +89,7 @@ abstract class IntegrationTest extends TestCase
         }
     }
 
-    protected function clock(DateTimeInterface|string $now): MockClock
+    protected function clock(DateTimeInterface|string $now = 'now'): MockClock
     {
         $clock = new MockClock($now);
 

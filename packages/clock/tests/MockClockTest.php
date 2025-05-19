@@ -62,12 +62,12 @@ final class MockClockTest extends TestCase
         $addedTime = DateTime::parse('2024-09-11 13:54:25');
         $clock = new MockClock($dateTime);
 
-        $clock->changeTime(-2);
+        $clock->minus(2);
 
         $this->assertEquals($subtractedTime, $clock->now());
         $this->assertEquals($subtractedTime->getTimestamp()->getSeconds(), $clock->timestamp());
 
-        $clock->changeTime(4);
+        $clock->plus(4);
 
         $this->assertEquals($addedTime, $clock->now());
         $this->assertEquals($addedTime->getTimestamp()->getSeconds(), $clock->timestamp());
