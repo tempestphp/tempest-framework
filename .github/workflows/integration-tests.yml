@@ -96,7 +96,7 @@ jobs:
       - name: Set database config - ${{ matrix.database }}
         run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
 
-      - name: List discovered locations
+      - name: Tempest about
         run: php ./tempest about
 
       - name: List discovered locations
