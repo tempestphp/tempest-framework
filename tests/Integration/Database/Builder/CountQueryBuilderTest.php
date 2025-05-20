@@ -6,6 +6,9 @@ namespace Tests\Tempest\Integration\Database\Builder;
 
 use Tempest\Database\Builder\QueryBuilders\CountQueryBuilder;
 use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
+use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
+use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
 
@@ -26,7 +29,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS `count`
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?
@@ -36,7 +39,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
     }
 
@@ -49,11 +52,11 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS `count`
         FROM `chapters`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_count_query_with_specified_field(): void
@@ -63,11 +66,11 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT COUNT(`title`)
+        SELECT COUNT(`title`) AS `count`
         FROM `chapters`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_count_query_without_specifying_column_cannot_be_distinct(): void
@@ -100,11 +103,11 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT COUNT(DISTINCT `title`)
+        SELECT COUNT(DISTINCT `title`) AS `count`
         FROM `chapters`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_count_from_model(): void
@@ -114,11 +117,11 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
 
         $expected = <<<SQL
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS `count`
         FROM `authors`
         SQL;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
     }
 
     public function test_count_query_with_conditions(): void
@@ -142,7 +145,7 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = <<<SQL
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS `count`
         FROM `chapters`
         WHERE `title` = ?
         AND `index` <> ?
@@ -152,7 +155,21 @@ final class CountQueryBuilderTest extends FrameworkIntegrationTestCase
         $sql = $query->toSql();
         $bindings = $query->bindings;
 
-        $this->assertSame($expected, $sql);
+        $this->assertSameWithoutBackticks($expected, $sql);
         $this->assertSame(['Timeline Taxi', '1', '2025-01-01'], $bindings);
+    }
+
+    public function test_count(): void
+    {
+        $this->migrate(CreateMigrationsTable::class, CreatePublishersTable::class, CreateAuthorTable::class);
+
+        query('authors')->insert(
+            ['id' => 1, 'name' => 'Brent'],
+            ['id' => 2, 'name' => 'Other'],
+        )->execute();
+
+        $count = query('authors')->count()->execute();
+
+        $this->assertSame(2, $count);
     }
 }

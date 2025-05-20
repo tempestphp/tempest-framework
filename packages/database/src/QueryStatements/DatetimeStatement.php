@@ -27,7 +27,7 @@ final readonly class DatetimeStatement implements QueryStatement
             default => sprintf(
                 '`%s` DATETIME %s %s',
                 $this->name,
-                $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
+                $this->default !== null ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             )
         };

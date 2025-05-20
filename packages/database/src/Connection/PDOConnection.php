@@ -13,8 +13,6 @@ final class PDOConnection implements Connection
 {
     private ?PDO $pdo = null;
 
-    private int|string|null $lastInsertId = null;
-
     public function __construct(
         private(set) readonly DatabaseConfig $config,
     ) {}

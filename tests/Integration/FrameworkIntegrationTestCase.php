@@ -176,4 +176,19 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
         $this->assertSame($expected, $actual);
     }
+
+    protected function assertSameWithoutBackticks(string $expected, string $actual): void
+    {
+        $clean = function (string $string): string {
+            return \Tempest\Support\str($string)
+                ->replace('`', '')
+                ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
+                ->toString();
+        };
+
+        $this->assertSame(
+            $clean($expected),
+            $clean($actual),
+        );
+    }
 }

@@ -21,18 +21,21 @@ final class CountStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $countField = new FieldStatement(sprintf(
+            'COUNT(%s) AS %s',
+            $this->getCountArgument(),
+            $this->getKey(),
+        ));
+
         $query = arr([
-            sprintf(
-                'SELECT COUNT(%s)',
-                $this->getCountArgument(),
-            ),
+            sprintf('SELECT %s', $countField->compile($dialect)),
             sprintf('FROM `%s`', $this->table->name),
         ]);
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                ->map(fn (WhereStatement $where) => $where->compile($dialect))
-                ->implode(PHP_EOL);
+                    ->map(fn (WhereStatement $where) => $where->compile($dialect))
+                    ->implode(PHP_EOL);
         }
 
         return $query->implode(PHP_EOL);
@@ -51,6 +54,6 @@ final class CountStatement implements QueryStatement
 
     public function getKey(): string
     {
-        return "COUNT({$this->getCountArgument()})";
+        return 'count';
     }
 }

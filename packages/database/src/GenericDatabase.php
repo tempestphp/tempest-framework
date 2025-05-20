@@ -31,12 +31,18 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $statement = $this->connection->prepare($query->toSql());
+            foreach (explode(';', $query->toSql()) as $sql) {
+                if (! $sql) {
+                    continue;
+                }
 
-            $statement->execute($bindings);
+                $statement = $this->connection->prepare($sql . ';');
 
-            $this->lastStatement = $statement;
-            $this->lastQuery = $query;
+                $statement->execute($bindings);
+
+                $this->lastStatement = $statement;
+                $this->lastQuery = $query;
+            }
         } catch (PDOException $pdoException) {
             throw new QueryException($query, $bindings, $pdoException);
         }
@@ -46,6 +52,7 @@ final class GenericDatabase implements Database
     {
         $sql = $this->lastQuery->toSql();
 
+        // TODO: properly determine whether a query is an insert or not
         if (! str_starts_with($sql, 'INSERT')) {
             return null;
         }
@@ -57,7 +64,7 @@ final class GenericDatabase implements Database
             $lastInsertId = $this->connection->lastInsertId();
         }
 
-        return new Id($lastInsertId);
+        return Id::tryFrom($lastInsertId);
     }
 
     public function fetch(Query $query): array

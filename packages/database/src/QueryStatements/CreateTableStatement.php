@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -43,7 +42,8 @@ final class CreateTableStatement implements QueryStatement
         OnDelete $onDelete = OnDelete::RESTRICT,
         OnUpdate $onUpdate = OnUpdate::NO_ACTION,
         bool $nullable = false,
-    ): self {
+    ): self
+    {
         [, $localKey] = explode('.', $local);
 
         $this->integer($localKey, nullable: $nullable);
@@ -62,7 +62,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new TextStatement(
             name: $name,
             nullable: $nullable,
@@ -77,7 +78,8 @@ final class CreateTableStatement implements QueryStatement
         int $length = 255,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new VarcharStatement(
             name: $name,
             size: $length,
@@ -92,7 +94,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new CharStatement(
             name: $name,
             nullable: $nullable,
@@ -107,7 +110,8 @@ final class CreateTableStatement implements QueryStatement
         bool $unsigned = false,
         bool $nullable = false,
         ?int $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new IntegerStatement(
             name: $name,
             unsigned: $unsigned,
@@ -122,7 +126,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?float $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new FloatStatement(
             name: $name,
             nullable: $nullable,
@@ -136,7 +141,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new DatetimeStatement(
             name: $name,
             nullable: $nullable,
@@ -150,7 +156,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new DateStatement(
             name: $name,
             nullable: $nullable,
@@ -164,7 +171,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?bool $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new BooleanStatement(
             name: $name,
             nullable: $nullable,
@@ -178,7 +186,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -192,7 +201,8 @@ final class CreateTableStatement implements QueryStatement
         string $name,
         bool $nullable = false,
         array $default = [],
-    ): self {
+    ): self
+    {
         $this->statements[] = new JsonStatement(
             name: $name,
             nullable: $nullable,
@@ -207,9 +217,8 @@ final class CreateTableStatement implements QueryStatement
         string $enumClass,
         bool $nullable = false,
         null|UnitEnum|BackedEnum $default = null,
-    ): self {
-        $this->statements[] = new CreateEnumTypeStatement($enumClass);
-
+    ): self
+    {
         $this->statements[] = new EnumStatement(
             name: $name,
             enumClass: $enumClass,
@@ -225,7 +234,8 @@ final class CreateTableStatement implements QueryStatement
         array $values,
         bool $nullable = false,
         ?string $default = null,
-    ): self {
+    ): self
+    {
         $this->statements[] = new SetStatement(
             name: $name,
             values: $values,
@@ -280,9 +290,9 @@ final class CreateTableStatement implements QueryStatement
 
         if ($this->indexStatements !== []) {
             $createIndices = PHP_EOL . arr($this->indexStatements)
-                ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
-                ->implode(';' . PHP_EOL)
-                ->append(';');
+                    ->map(fn (QueryStatement $queryStatement) => str($queryStatement->compile($dialect))->trim()->replace('  ', ' '))
+                    ->implode(';' . PHP_EOL)
+                    ->append(';');
         } else {
             $createIndices = '';
         }

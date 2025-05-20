@@ -205,7 +205,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::select()->where('title <> "A"')->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->where('title <> \'A\'')->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);
@@ -412,13 +412,5 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
             ['title' => 'Timeline Taxi Chapter 3', 'book_id' => 4],
             ['title' => 'Timeline Taxi Chapter 4', 'book_id' => 4],
         )->execute();
-    }
-
-    private function assertSameWithoutBackticks(string $expected, string $actual): void
-    {
-        $this->assertSame(
-            str_replace('`', '', $expected),
-            str_replace('`', '', $actual),
-        );
     }
 }

@@ -23,16 +23,10 @@ final readonly class TextStatement implements QueryStatement
                 $this->name,
                 $this->nullable ? '' : 'NOT NULL',
             ),
-            DatabaseDialect::POSTGRESQL => sprintf(
-                '`%s` TEXT %s %s',
-                $this->name,
-                $this->default !== null ? "DEFAULT '{$this->default}'" : '',
-                $this->nullable ? '' : 'NOT NULL',
-            ),
             default => sprintf(
                 '`%s` TEXT %s %s',
                 $this->name,
-                $this->default !== null ? "DEFAULT \"{$this->default}\"" : '',
+                $this->default !== null ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
         };
