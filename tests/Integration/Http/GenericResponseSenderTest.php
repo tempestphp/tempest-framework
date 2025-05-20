@@ -6,8 +6,10 @@ namespace Tests\Tempest\Integration\Http;
 
 use Tempest\Http\GenericResponse;
 use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\ServerSentEvent;
 use Tempest\Http\Status;
 use Tempest\Router\GenericResponseSender;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -109,5 +111,45 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $output = ob_get_clean();
 
         $this->assertStringContainsString('Hello Brent!', $output);
+    }
+
+    public function test_stream(): void
+    {
+        ob_start();
+        $response = new EventStream(fn () => yield 'hello');
+        $responseSender = $this->container->get(GenericResponseSender::class);
+        $responseSender->send($response);
+        $output = ob_get_clean();
+
+        // restore phpunit's output buffer
+        ob_start();
+
+        $this->assertStringContainsString('event: message', $output);
+        $this->assertStringContainsString('data: "hello"', $output);
+    }
+
+    public function test_stream_with_custom_event(): void
+    {
+        ob_start();
+        $response = new EventStream(function () {
+            yield new ServerSentEvent(data: 'hello', event: 'first');
+            yield new ServerSentEvent(data: 'goodbye', event: 'last');
+        });
+        $responseSender = $this->container->get(GenericResponseSender::class);
+        $responseSender->send($response);
+        $output = ob_get_clean();
+
+        // restore phpunit's output buffer
+        ob_start();
+
+        $this->assertSame(<<<TXT
+        event: first
+        data: "hello"
+
+        event: last
+        data: "goodbye"
+
+
+        TXT, $output);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tempest\Router;
 
+use Tempest\Clock\Clock;
 use Tempest\Container\Container;
 use Tempest\Container\Initializer;
 use Tempest\Container\Singleton;
