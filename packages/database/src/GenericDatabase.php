@@ -8,16 +8,22 @@ use BackedEnum;
 use DateTimeInterface;
 use PDO;
 use PDOException;
+use PDOStatement;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 
-final readonly class GenericDatabase implements Database
+final class GenericDatabase implements Database
 {
+    private PDOStatement|null $lastStatement = null;
+    private Query|null $lastQuery = null;
+
     public function __construct(
-        private(set) Connection $connection,
-        private(set) TransactionManager $transactionManager,
+        private(set) readonly Connection $connection,
+        private(set) readonly TransactionManager $transactionManager,
+        private(set) readonly DatabaseDialect $dialect,
     ) {}
 
     public function execute(Query $query): void
@@ -25,17 +31,33 @@ final readonly class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-            $this->connection
-                ->prepare($query->toSql())
-                ->execute($bindings);
+            $statement = $this->connection->prepare($query->toSql());
+
+            $statement->execute($bindings);
+
+            $this->lastStatement = $statement;
+            $this->lastQuery = $query;
         } catch (PDOException $pdoException) {
             throw new QueryException($query, $bindings, $pdoException);
         }
     }
 
-    public function getLastInsertId(): Id
+    public function getLastInsertId(): Id|null
     {
-        return new Id($this->connection->lastInsertId());
+        $sql = $this->lastQuery->toSql();
+
+        if (! str_starts_with($sql, 'INSERT')) {
+            return null;
+        }
+
+        if ($this->dialect === DatabaseDialect::POSTGRESQL) {
+            $data = $this->lastStatement->fetch(PDO::FETCH_ASSOC);
+            $lastInsertId = $data['id'] ?? null;
+        } else {
+            $lastInsertId = $this->connection->lastInsertId();
+        }
+
+        return new Id($lastInsertId);
     }
 
     public function fetch(Query $query): array

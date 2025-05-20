@@ -6,6 +6,7 @@ namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseConfig;
 
+use Tempest\Database\Config\DatabaseDialect;
 use function Tempest\get;
 
 final class Query
@@ -17,7 +18,7 @@ final class Query
         public array $executeAfter = [],
     ) {}
 
-    public function execute(mixed ...$bindings): Id
+    public function execute(mixed ...$bindings): Id|null
     {
         $this->bindings = [...$this->bindings, ...$bindings];
 
@@ -48,8 +49,14 @@ final class Query
     {
         $sql = $this->sql;
 
+        $dialect = $this->getDatabaseConfig()->dialect;
+
         if ($sql instanceof QueryStatement) {
-            return $sql->compile($this->getDatabaseConfig()->dialect);
+            $sql = $sql->compile($dialect);
+        }
+
+        if ($dialect === DatabaseDialect::POSTGRESQL) {
+            $sql = str_replace('`', '', $sql);
         }
 
         return $sql;

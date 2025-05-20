@@ -58,7 +58,10 @@ final class FieldStatement implements QueryStatement
             return $field;
         }
 
-        return sprintf('%s AS `%s`', $field, trim($alias, '`'));
+        return match($dialect) {
+            DatabaseDialect::POSTGRESQL => sprintf('%s AS "%s"', $field, trim($alias, '`')),
+            default => sprintf('%s AS `%s`', $field, trim($alias, '`')),
+        };
     }
 
     public function withAliasPrefix(?string $prefix = null): self

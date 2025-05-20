@@ -37,6 +37,7 @@ final readonly class DatabaseInitializer implements DynamicInitializer
         return new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
+            $container->get(DatabaseConfig::class)->dialect,
         );
     }
 }

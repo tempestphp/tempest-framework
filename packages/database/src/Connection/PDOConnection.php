@@ -13,6 +13,8 @@ final class PDOConnection implements Connection
 {
     private ?PDO $pdo = null;
 
+    private int|string|null $lastInsertId = null;
+
     public function __construct(
         private(set) readonly DatabaseConfig $config,
     ) {}
@@ -53,13 +55,19 @@ final class PDOConnection implements Connection
         return $this->pdo->lastInsertId();
     }
 
-    public function prepare(string $sql): false|PDOStatement
+    public function prepare(string $sql): PDOStatement
     {
         if ($this->pdo === null) {
             throw new ConnectionClosed();
         }
 
-        return $this->pdo->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
+
+        if ($statement === false) {
+            throw new ConnectionClosed();
+        }
+
+        return $statement;
     }
 
     public function close(): void

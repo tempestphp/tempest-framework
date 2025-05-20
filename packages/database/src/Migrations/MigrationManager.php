@@ -258,7 +258,8 @@ final readonly class MigrationManager
         return array_map(
             fn (array $item) => match ($dialect) {
                 DatabaseDialect::SQLITE => new TableMigrationDefinition($item['name']),
-                default => new TableMigrationDefinition(array_values($item)[0]),
+                DatabaseDialect::POSTGRESQL => new TableMigrationDefinition($item['table_name']),
+                DatabaseDialect::MYSQL => new TableMigrationDefinition(array_values($item)[0]),
             },
             new ShowTablesStatement()->fetch($dialect),
         );
