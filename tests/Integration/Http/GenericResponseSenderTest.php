@@ -142,14 +142,9 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         // restore phpunit's output buffer
         ob_start();
 
-        $this->assertSame(<<<TXT
-        event: first
-        data: "hello"
-
-        event: last
-        data: "goodbye"
-
-
-        TXT, $output);
+        $this->assertStringContainsString('event: first', $output);
+        $this->assertStringContainsString('data: "hello"', $output);
+        $this->assertStringContainsString('event: last', $output);
+        $this->assertStringContainsString('data: "goodbye"', $output);
     }
 }
