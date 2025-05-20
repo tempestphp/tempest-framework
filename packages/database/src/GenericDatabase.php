@@ -13,7 +13,7 @@ use Tempest\Database\Exceptions\QueryException;
 use Tempest\Database\Transactions\TransactionManager;
 use Throwable;
 
-final class GenericDatabase implements Database
+final readonly class GenericDatabase implements Database
 {
     public function __construct(
         private(set) Connection $connection,
