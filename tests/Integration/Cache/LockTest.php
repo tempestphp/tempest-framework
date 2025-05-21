@@ -71,11 +71,11 @@ final class LockTest extends FrameworkIntegrationTestCase
         $this->assertTrue($lock->expiration->equals($clock->now()->plusHours(1)));
 
         // Still locked after 30 min
-        $clock->addInterval(Duration::minutes(30));
+        $clock->plus(Duration::minutes(30));
         $this->assertFalse($lock->acquire());
 
         // No longer locked after another 30 min (total 1h)
-        $clock->addInterval(Duration::minutes(30));
+        $clock->plus(Duration::minutes(30));
         $this->assertTrue($lock->acquire());
         $this->assertFalse($lock->release());
     }
@@ -117,7 +117,7 @@ final class LockTest extends FrameworkIntegrationTestCase
         $externalLock->acquire();
 
         // Skip the set duration
-        $clock->addInterval(Duration::hours(1));
+        $clock->plus(Duration::hours(1));
 
         // Try executing a callback for the specified duration
         $this->assertTrue($cache->lock('processing')->execute(fn () => true, wait: Duration::hours(1))); // @phpstan-ignore method.alreadyNarrowedType

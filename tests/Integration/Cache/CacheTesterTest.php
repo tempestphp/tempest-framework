@@ -109,7 +109,7 @@ final class CacheTesterTest extends FrameworkIntegrationTestCase
         $cache->put('key', 'value', expiration: Duration::minutes(10));
         $cache->assertCached('key');
 
-        $clock->addInterval(Duration::minutes(10)->withSeconds(1));
+        $clock->plus(Duration::minutes(10)->withSeconds(1));
         $cache->assertNotCached('key');
     }
 
