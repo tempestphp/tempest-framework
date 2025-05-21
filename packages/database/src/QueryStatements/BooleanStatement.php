@@ -17,10 +17,19 @@ final readonly class BooleanStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $default = null;
+
+        if ($this->default !== null) {
+            $default = match ($dialect) {
+                DatabaseDialect::POSTGRESQL => $this->default ? 'true' : 'false',
+                default => $this->default ? '1' : '0',
+            };
+        }
+
         return sprintf(
             '`%s` BOOLEAN %s %s',
             $this->name,
-            $this->default ? "DEFAULT {$this->default}" : '',
+            $default !== null ? "DEFAULT {$default}" : '',
             $this->nullable ? '' : 'NOT NULL',
         );
     }

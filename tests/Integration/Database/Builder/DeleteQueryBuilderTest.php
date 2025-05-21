@@ -21,7 +21,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->where('`bar` = ?', 'boo')
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `foo`
             WHERE `bar` = ?
@@ -29,7 +29,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             $query->toSql(),
         );
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             'boo',
             $query->bindings[0],
         );
@@ -42,7 +42,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->allowAll()
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `authors`
             SQL,
@@ -59,7 +59,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             ->delete()
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `authors`
             WHERE `id` = :id
@@ -87,7 +87,7 @@ final class DeleteQueryBuilderTest extends FrameworkIntegrationTestCase
             )
             ->build();
 
-        $this->assertSame(
+        $this->assertSameWithoutBackticks(
             <<<SQL
             DELETE FROM `foo`
             WHERE `bar` = ?

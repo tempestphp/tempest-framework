@@ -10,8 +10,14 @@ use Tempest\Database\Query;
 
 trait CanExecuteStatement
 {
-    public function execute(DatabaseDialect $dialect): Id
+    public function execute(DatabaseDialect $dialect): ?Id
     {
-        return new Query($this->compile($dialect))->execute();
+        $sql = $this->compile($dialect);
+
+        if (! $sql) {
+            return null;
+        }
+
+        return new Query($sql)->execute();
     }
 }

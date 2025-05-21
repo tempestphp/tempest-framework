@@ -37,7 +37,7 @@ final readonly class JsonStatement implements QueryStatement
             DatabaseDialect::POSTGRESQL => sprintf(
                 '`%s` JSONB %s %s',
                 $this->name,
-                $this->default !== null ? "DEFAULT (\"{$this->default}\")" : '',
+                $this->default !== null ? "DEFAULT ('{$this->default}')" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
         };

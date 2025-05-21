@@ -46,7 +46,7 @@ final class InsertStatement implements QueryStatement
             })
             ->implode(', ');
 
-        return sprintf(
+        $sql = sprintf(
             <<<SQL
             INSERT INTO %s (%s)
             VALUES %s
@@ -55,5 +55,11 @@ final class InsertStatement implements QueryStatement
             $columns->map(fn (string $column) => "`{$column}`")->implode(', '),
             $entryPlaceholders,
         );
+
+        if ($dialect === DatabaseDialect::POSTGRESQL) {
+            $sql .= ' RETURNING *';
+        }
+
+        return $sql;
     }
 }

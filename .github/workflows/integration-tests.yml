@@ -5,6 +5,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
+env:
+  POSTGRES_USER: runner
+  POSTGRES_PASSWORD: ''
+  POSTGRES_DB: postgres
 
 jobs:
   vitest:
@@ -28,7 +32,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, intl, ftp, zip
+          extensions: dom, curl, libxml, mbstring, pcntl, fileinfo, pdo, sqlite, pdo_sqlite, pdo_mysql, pdo_pgsql intl, ftp, zip
           coverage: pcov
 
       - name: Setup Bun
@@ -60,6 +64,9 @@ jobs:
         stability:
           - prefer-stable
           - prefer-lowest
+        exclude:
+          - os: windows-latest
+            database: postgres
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
@@ -94,7 +101,10 @@ jobs:
         uses: ankane/setup-postgres@v1
 
       - name: Set database config - ${{ matrix.database }}
-        run: php -r "file_exists('tests/Fixtures/Config/database.config.php') || copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
+        run: php -r "copy('tests/Fixtures/Config/database.${{ matrix.database }}.php', 'tests/Fixtures/Config/database.config.php');"
+
+      - name: Tempest about
+        run: php ./tempest about
 
       - name: List discovered locations
         run: php ./tempest discovery:status
