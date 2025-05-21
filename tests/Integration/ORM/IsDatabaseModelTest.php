@@ -6,6 +6,7 @@ namespace Tests\Tempest\Integration\ORM;
 
 use Carbon\Carbon;
 use DateTimeImmutable;
+use Integration\ORM\Migrations\CreateCasterEnumType;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Exceptions\MissingRelation;
 use Tempest\Database\Exceptions\MissingValue;
@@ -506,15 +507,15 @@ final class IsDatabaseModelTest extends FrameworkIntegrationTestCase
 
         new CasterModel(
             date: new DateTimeImmutable('2025-01-01 00:00:00'),
-            array: ['a', 'b', 'c'],
-            enum: CasterEnum::BAR,
+            array_prop: ['a', 'b', 'c'],
+            enum_prop: CasterEnum::BAR,
         )->save();
 
         $model = CasterModel::select()->first();
 
         $this->assertSame(new DateTimeImmutable('2025-01-01 00:00:00')->format('c'), $model->date->format('c'));
-        $this->assertSame(['a', 'b', 'c'], $model->array);
-        $this->assertSame(CasterEnum::BAR, $model->enum);
+        $this->assertSame(['a', 'b', 'c'], $model->array_prop);
+        $this->assertSame(CasterEnum::BAR, $model->enum_prop);
     }
 
     public function test_find(): void
