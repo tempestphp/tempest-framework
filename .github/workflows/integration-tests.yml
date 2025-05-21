@@ -64,6 +64,9 @@ jobs:
         stability:
           - prefer-stable
           - prefer-lowest
+        exclude:
+          - os: windows-latest
+            database: postgres
 
     name: "Run tests: PHP ${{ matrix.php }} - ${{ matrix.database }} - ${{ matrix.stability }} - ${{ matrix.os }}"
 
