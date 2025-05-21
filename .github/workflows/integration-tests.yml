@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 0 * * *'
 env:
-  POSTGRES_USER: postgres
+  POSTGRES_USER: runner
   POSTGRES_PASSWORD: password
   POSTGRES_DB: app
 
