@@ -25,6 +25,8 @@ final class RouteConfig
         public Middleware $middleware = new Middleware(
             SetCookieMiddleware::class,
         ),
+
+        public bool $throwHttpExceptions = true,
     ) {}
 
     public function apply(RouteConfig $newConfig): void

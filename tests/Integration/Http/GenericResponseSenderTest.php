@@ -119,6 +119,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         $response = new EventStream(fn () => yield 'hello');
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
 
         // restore phpunit's output buffer
@@ -137,6 +138,7 @@ final class GenericResponseSenderTest extends FrameworkIntegrationTestCase
         });
         $responseSender = $this->container->get(GenericResponseSender::class);
         $responseSender->send($response);
+
         $output = ob_get_clean();
 
         // restore phpunit's output buffer
