@@ -13,12 +13,10 @@ final class PostgresConfig implements DatabaseConfig
 {
     public string $dsn {
         get => sprintf(
-            'pgsql:host=%s;port=%s;dbname=%s;user=%s;password=%s',
+            'pgsql:host=%s;port=%s;dbname=%s',
             $this->host,
             $this->port,
             $this->database,
-            $this->username,
-            $this->password,
         );
     }
 
@@ -34,7 +32,7 @@ final class PostgresConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $username = 'postgres',
         #[SensitiveParameter]
-        public string $password = '',
+        public ?string $password = null,
         #[SensitiveParameter]
         public string $database = 'app',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),

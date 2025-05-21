@@ -98,6 +98,10 @@ final class PDOConnection implements Connection
             return;
         }
 
-        $this->pdo = new PDO($this->config->dsn);
+        $this->pdo = new PDO(
+            dsn: $this->config->dsn,
+            username: $this->config->username,
+            password: $this->config->password,
+        );
     }
 }
