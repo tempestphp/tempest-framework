@@ -32,7 +32,7 @@ final class GenericDatabase implements Database
 
         try {
             foreach (explode(';', $query->toSql()) as $sql) {
-                if (! $sql) {
+                if (! trim($sql)) {
                     continue;
                 }
 
