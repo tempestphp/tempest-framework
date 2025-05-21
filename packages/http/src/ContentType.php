@@ -27,6 +27,7 @@ enum ContentType: string
     case DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     case EOT = 'application/vnd.ms-fontobject';
     case EPUB = 'application/epub+zip';
+    case EVENT_STREAM = 'text/event-stream';
     case GZ = 'application/gzip';
     case GIF = 'image/gif';
     case HTML = 'text/html';

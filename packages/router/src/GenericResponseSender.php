@@ -9,7 +9,10 @@ use Tempest\Http\ContentType;
 use Tempest\Http\Header;
 use Tempest\Http\Response;
 use Tempest\Http\Responses\Download;
+use Tempest\Http\Responses\EventStream;
 use Tempest\Http\Responses\File;
+use Tempest\Http\ServerSentEvent;
+use Tempest\Support\Json;
 use Tempest\View\View;
 use Tempest\View\ViewRenderer;
 
@@ -22,10 +25,8 @@ final readonly class GenericResponseSender implements ResponseSender
     public function send(Response $response): Response
     {
         ob_start();
-
         $this->sendHeaders($response);
         ob_flush();
-
         $this->sendContent($response);
         ob_end_flush();
 
@@ -68,6 +69,11 @@ final readonly class GenericResponseSender implements ResponseSender
 
     private function sendContent(Response $response): void
     {
+        if ($response instanceof EventStream) {
+            $this->sendEventStream($response);
+            return;
+        }
+
         $body = $response->body;
 
         if ($response instanceof File || $response instanceof Download) {
@@ -81,5 +87,36 @@ final readonly class GenericResponseSender implements ResponseSender
         }
 
         ob_flush();
+    }
+
+    private function sendEventStream(EventStream $response): void
+    {
+        if (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+
+        foreach ($response->body as $message) {
+            if (connection_aborted()) {
+                break;
+            }
+
+            $event = 'message';
+            $data = Json\encode($message);
+
+            if ($message instanceof ServerSentEvent) {
+                $event = $message->event;
+                $data = Json\encode($message->data);
+            }
+
+            echo "event: {$event}\n";
+            echo "data: {$data}";
+            echo "\n\n";
+
+            if (ob_get_level() > 0) {
+                ob_flush();
+            }
+
+            flush();
+        }
     }
 }
