@@ -7,7 +7,7 @@ on:
     - cron: '0 0 * * *'
 env:
   POSTGRES_USER: runner
-  POSTGRES_PASSWORD: password
+  POSTGRES_PASSWORD: ''
   POSTGRES_DB: app
 
 jobs:
