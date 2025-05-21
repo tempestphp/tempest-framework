@@ -32,7 +32,7 @@ final class PostgresConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $username = 'postgres',
         #[SensitiveParameter]
-        public ?string $password = null,
+        public string $password = '',
         #[SensitiveParameter]
         public string $database = 'app',
         public NamingStrategy $namingStrategy = new PluralizedSnakeCaseStrategy(),
