@@ -8,7 +8,7 @@ on:
 env:
   POSTGRES_USER: runner
   POSTGRES_PASSWORD: ''
-  POSTGRES_DB: app
+  POSTGRES_DB: postgres
 
 jobs:
   vitest:
