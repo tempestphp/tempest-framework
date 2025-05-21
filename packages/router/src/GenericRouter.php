@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router;
 
 use BackedEnum;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
-use ReflectionException;
 use Tempest\Container\Container;
 use Tempest\Core\AppConfig;
 use Tempest\Http\GenericRequest;
@@ -18,6 +18,7 @@ use Tempest\Http\Response;
 use Tempest\Http\Responses\Invalid;
 use Tempest\Http\Responses\NotFound;
 use Tempest\Http\Responses\Ok;
+use Tempest\Http\Responses\ServerError;
 use Tempest\Mapper\ObjectFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\ControllerActionHasNoReturn;
@@ -32,23 +33,14 @@ use function Tempest\map;
 use function Tempest\Support\Regex\replace;
 use function Tempest\Support\str;
 
-final class GenericRouter implements Router
+final readonly class GenericRouter implements Router
 {
-    private bool $handleExceptions = true;
-
     public function __construct(
-        private readonly Container $container,
-        private readonly RouteMatcher $routeMatcher,
-        private readonly AppConfig $appConfig,
-        private readonly RouteConfig $routeConfig,
+        private Container $container,
+        private RouteMatcher $routeMatcher,
+        private AppConfig $appConfig,
+        private RouteConfig $routeConfig,
     ) {}
-
-    public function throwExceptions(): self
-    {
-        $this->handleExceptions = false;
-
-        return $this;
-    }
 
     public function dispatch(Request|PsrRequest $request): Response
     {
@@ -69,25 +61,16 @@ final class GenericRouter implements Router
             return new NotFound();
         }
 
-        $this->container->singleton(
-            MatchedRoute::class,
-            fn () => $matchedRoute,
-        );
+        $this->container->singleton(MatchedRoute::class, fn () => $matchedRoute);
 
-        $callable = $this->getCallable($matchedRoute);
-
-        if ($this->handleExceptions) {
-            try {
-                $request = $this->resolveRequest($request, $matchedRoute);
-                $response = $callable($request);
-            } catch (NotFoundException) {
-                return new NotFound();
-            } catch (ValidationException $validationException) {
-                return new Invalid($validationException->subject, $validationException->failingRules);
-            }
-        } else {
+        try {
+            $callable = $this->getCallable($matchedRoute);
             $request = $this->resolveRequest($request, $matchedRoute);
             $response = $callable($request);
+        } catch (NotFoundException) {
+            return new NotFound();
+        } catch (ValidationException $validationException) {
+            return new Invalid($validationException->subject, $validationException->failingRules);
         }
 
         return $response;
