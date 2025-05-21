@@ -8,6 +8,7 @@ use PDO;
 use PDOStatement;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\ConnectionClosed;
+use Throwable;
 
 final class PDOConnection implements Connection
 {
@@ -66,6 +67,24 @@ final class PDOConnection implements Connection
         }
 
         return $statement;
+    }
+
+    public function ping(): bool
+    {
+        try {
+            $statement = $this->prepare('SELECT 1');
+            $statement->execute();
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    public function reconnect(): void
+    {
+        $this->close();
+        $this->connect();
     }
 
     public function close(): void

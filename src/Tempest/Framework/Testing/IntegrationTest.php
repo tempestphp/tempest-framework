@@ -9,6 +9,7 @@ use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
 use Tempest\Container\Container;
+use Tempest\Container\GenericContainer;
 use Tempest\Core\AppConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
@@ -35,7 +36,7 @@ abstract class IntegrationTest extends TestCase
 
     protected Kernel $kernel;
 
-    protected Container $container;
+    protected Container|GenericContainer $container;
 
     protected ConsoleTester $console;
 
