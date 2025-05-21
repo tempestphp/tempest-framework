@@ -11,7 +11,7 @@ final class CasterModel
 
     public function __construct(
         public DateTimeImmutable $date,
-        public array $array,
-        public CasterEnum $enum,
+        public array $array_prop,
+        public CasterEnum $enum_prop,
     ) {}
 }

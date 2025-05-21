@@ -19,6 +19,11 @@ final class FieldStatementTest extends TestCase
             'table.field',
             new FieldStatement('`table`.`field`')->compile(DatabaseDialect::SQLITE),
         );
+
+        $this->assertSame(
+            'COUNT(*) AS `count`',
+            new FieldStatement('COUNT(*) AS count')->compile(DatabaseDialect::MYSQL),
+        );
     }
 
     public function test_mysql(): void
@@ -31,6 +36,11 @@ final class FieldStatementTest extends TestCase
         $this->assertSame(
             '`table`.`field`',
             new FieldStatement('table.field')->compile(DatabaseDialect::MYSQL),
+        );
+
+        $this->assertSame(
+            'COUNT(*) AS `count`',
+            new FieldStatement('COUNT(*) AS count')->compile(DatabaseDialect::MYSQL),
         );
     }
 

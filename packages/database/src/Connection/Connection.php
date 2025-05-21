@@ -16,7 +16,7 @@ interface Connection
 
     public function lastInsertId(): false|string;
 
-    public function prepare(string $sql): false|PDOStatement;
+    public function prepare(string $sql): PDOStatement;
 
     public function close(): void;
 

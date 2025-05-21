@@ -30,7 +30,7 @@ final class GenericContainer implements Container
         private ArrayIterator $singletons = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, class-string> $initializers */
-        private ArrayIterator $initializers = new ArrayIterator(),
+        public ArrayIterator $initializers = new ArrayIterator(),
 
         /** @var ArrayIterator<array-key, class-string> $dynamicInitializers */
         private ArrayIterator $dynamicInitializers = new ArrayIterator(),

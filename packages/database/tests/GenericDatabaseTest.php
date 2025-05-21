@@ -6,6 +6,7 @@ namespace Tempest\Database\Tests;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
@@ -32,6 +33,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
+            DatabaseDialect::SQLITE,
         );
 
         $result = $database->withinTransaction(function () {
@@ -58,6 +60,7 @@ final class GenericDatabaseTest extends TestCase
         $database = new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
+            DatabaseDialect::SQLITE,
         );
 
         $result = $database->withinTransaction(function (): never {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\ORM\Mappers;
 
 use Tempest\Database\Builder\QueryBuilders\UpdateQueryBuilder;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -24,10 +25,20 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = query(Author::class)->insert($author)->build();
 
-        $this->assertSame(<<<'SQL'
-        INSERT INTO `authors` (`name`)
-        VALUES (?)
-        SQL, $query->toSql());
+        $dialect = $this->container->get(DatabaseDialect::class);
+
+        $expected = match ($dialect) {
+            DatabaseDialect::POSTGRESQL => <<<'SQL'
+            INSERT INTO authors (name)
+            VALUES (?) RETURNING *
+            SQL,
+            default => <<<'SQL'
+            INSERT INTO `authors` (`name`)
+            VALUES (?)
+            SQL,
+        };
+
+        $this->assertSame($expected, $query->toSql());
         $this->assertSame(['test'], $query->bindings);
     }
 
@@ -37,11 +48,22 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $query = query($author)->update(name: 'other')->build();
 
-        $this->assertSame(<<<'SQL'
-        UPDATE `authors`
-        SET `name` = ?
-        WHERE `id` = ?
-        SQL, $query->toSql());
+        $dialect = $this->container->get(DatabaseDialect::class);
+
+        $expected = match ($dialect) {
+            DatabaseDialect::POSTGRESQL => <<<'SQL'
+            UPDATE authors
+            SET name = ?
+            WHERE id = ?
+            SQL,
+            default => <<<'SQL'
+            UPDATE `authors`
+            SET `name` = ?
+            WHERE `id` = ?
+            SQL,
+        };
+
+        $this->assertSame($expected, $query->toSql());
 
         $this->assertSame(['other', 1], $query->bindings);
     }

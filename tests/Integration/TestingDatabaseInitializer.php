@@ -2,19 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Tempest\Database;
+namespace Tests\Tempest\Integration;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Database\Config\DatabaseConfig;
+use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
+use Tempest\Database\Database;
+use Tempest\Database\GenericDatabase;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\Reflection\ClassReflector;
 
-final readonly class DatabaseInitializer implements DynamicInitializer
+final class TestingDatabaseInitializer implements DynamicInitializer
 {
+    private static ?PDOConnection $connection = null;
+
     public function canInitialize(ClassReflector $class, ?string $tag): bool
     {
         return $class->getType()->matches(Database::class);
@@ -23,21 +28,24 @@ final readonly class DatabaseInitializer implements DynamicInitializer
     #[Singleton]
     public function initialize(ClassReflector $class, ?string $tag, Container $container): Database
     {
-        $container->singleton(Connection::class, function () use ($tag, $container) {
+        if (self::$connection === null) {
             $config = $container->get(DatabaseConfig::class, $tag);
-
             $connection = new PDOConnection($config);
             $connection->connect();
 
-            return $connection;
-        });
+            self::$connection = $connection;
+        }
 
-        $connection = $container->get(Connection::class);
+        if (self::$connection->ping() === false) {
+            self::$connection->reconnect();
+        }
+
+        $container->singleton(Connection::class, self::$connection);
 
         return new GenericDatabase(
-            $connection,
-            new GenericTransactionManager($connection),
-            $container->get(DatabaseConfig::class)->dialect,
+            self::$connection,
+            new GenericTransactionManager(self::$connection),
+            $container->get(DatabaseDialect::class),
         );
     }
 }

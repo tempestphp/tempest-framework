@@ -8,6 +8,7 @@ use PDO;
 use PDOStatement;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Exceptions\ConnectionClosed;
+use Throwable;
 
 final class PDOConnection implements Connection
 {
@@ -53,13 +54,37 @@ final class PDOConnection implements Connection
         return $this->pdo->lastInsertId();
     }
 
-    public function prepare(string $sql): false|PDOStatement
+    public function prepare(string $sql): PDOStatement
     {
         if ($this->pdo === null) {
             throw new ConnectionClosed();
         }
 
-        return $this->pdo->prepare($sql);
+        $statement = $this->pdo->prepare($sql);
+
+        if ($statement === false) {
+            throw new ConnectionClosed();
+        }
+
+        return $statement;
+    }
+
+    public function ping(): bool
+    {
+        try {
+            $statement = $this->prepare('SELECT 1');
+            $statement->execute();
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    public function reconnect(): void
+    {
+        $this->close();
+        $this->connect();
     }
 
     public function close(): void
@@ -74,9 +99,9 @@ final class PDOConnection implements Connection
         }
 
         $this->pdo = new PDO(
-            $this->config->dsn,
-            $this->config->username,
-            $this->config->password,
+            dsn: $this->config->dsn,
+            username: $this->config->username,
+            password: $this->config->password,
         );
     }
 }

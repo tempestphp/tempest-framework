@@ -17,7 +17,7 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            "`enum` ENUM('foo', 'bar', 'Tests\\\\Tempest\\\\Integration\\\\Database\\\\Fixtures\\\\EnumForCreateTable')  NOT NULL",
+            "`enum` ENUM('foo', 'bar')  NOT NULL",
             $enumStatement->compile(DatabaseDialect::MYSQL),
         );
     }
@@ -43,7 +43,7 @@ final class EnumStatementTest extends FrameworkIntegrationTestCase
         );
 
         $this->assertSame(
-            '`enum` Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable  NOT NULL',
+            '"enum" "Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable"  NOT NULL',
             $enumStatement->compile(DatabaseDialect::POSTGRESQL),
         );
     }
