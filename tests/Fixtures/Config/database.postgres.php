@@ -8,5 +8,5 @@ use function Tempest\env;
 
 return new PostgresConfig(
     username: env('POSTGRES_USER', 'postgres'),
-    password: env('POSTGRES_PASSWORD', ''),
+    password: env('POSTGRES_PASSWORD', '') ?? '',
 );
