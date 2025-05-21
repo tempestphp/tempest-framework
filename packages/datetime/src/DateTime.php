@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Tempest\DateTime;
 
+use DateTimeInterface as NativeDateTimeInterface;
 use IntlCalendar;
-use Tempest\Clock\Clock;
-use Tempest\Container\GenericContainer;
 use Tempest\Support\Language\Locale;
 
 /**
@@ -115,7 +114,7 @@ final readonly class DateTime implements DateTimeInterface
      */
     public static function now(?Timezone $timezone = null): DateTime
     {
-        return self::resolveFromContainer($timezone) ?? self::fromTimestamp(Timestamp::now(), $timezone);
+        return self::fromTimestamp(Timestamp::now(), $timezone);
     }
 
     /**
@@ -142,7 +141,7 @@ final readonly class DateTime implements DateTimeInterface
     }
 
     /**
-     * Creates a {@see DateTime} instance from individual date and time components.
+     * Creates a {@see Tempest\DateTime\DateTime} instance from individual date and time components.
      *
      * This method constructs a DateTime object using the specified year, month, day, hour, minute, second,
      * and nanosecond components within a given timezone. It validates each component against the Gregorian calendar
@@ -150,7 +149,7 @@ final readonly class DateTime implements DateTimeInterface
      * days in a month (considering leap years), hours (0-23), minutes (0-59), and seconds (0-59).
      *
      * Note: In cases where the specified time occurs twice (such as during the end of daylight saving time), the earlier occurrence
-     * is returned. To obtain the later occurrence, you can adjust the returned instance using `->plusHours(1)`.
+     * is returned. To obtain the later occurrence, you can adjust the returned instance using `->plusHour()`.
      *
      * @param Month|int<1, 12> $month
      * @param int<1, 31> $day
@@ -208,18 +207,21 @@ final readonly class DateTime implements DateTimeInterface
     }
 
     /**
-     * Creates a {@see DateTime} instance from a timestamp, representing the same point in time.
-     *
-     * This method converts a {@see DateTime} into a {@see DateTime} instance calculated for the specified timezone.
+     * Creates a {@see Tempest\DateTime\DateTime} instance from a timestamp, representing the same point in time.
+     * If the timestamp is an integer, it must be a seconds-based timestamp.
      *
      * @param null|Timezone $timezone Optional timezone. If null, uses the system's default timezone.
      *
      * @see Timezone::default()
      */
     #[\Override]
-    public static function fromTimestamp(Timestamp $timestamp, ?Timezone $timezone = null): static
+    public static function fromTimestamp(int|Timestamp $timestamp, ?Timezone $timezone = null): static
     {
         $timezone ??= Timezone::default();
+
+        if (is_int($timestamp)) {
+            $timestamp = Timestamp::fromParts($timestamp);
+        }
 
         /** @var IntlCalendar $calendar */
         $calendar = IntlCalendar::createInstance(namespace\to_intl_timezone($timezone));
@@ -238,43 +240,55 @@ final readonly class DateTime implements DateTimeInterface
     }
 
     /**
-     * Parses a date and time string into an instance of {@see DateTime}. This method accepts the same parameters as the {@see \DateTime} constructor.
+     * Parses the given value into an instance of {@see Tempest\DateTime\DateTime}. The value may be an integer, second-based timestamp, a native datetime string, a native {@see \DateTimeInterface}, or a {@see Tempest\DateTime\DateTime}.
      *
-     * The {@see fromPattern} or {@see fromString} methods are recommended instead if you already know the format of the date string to parse.
+     * The {@see fromPattern} methods is recommended instead if you already know the format of the date string to parse.
      *
      * Example usage:
      *
      * ```php
-     * $raw_string = '2023-03-15 12:00:00';
-     * $parsed_timestamp = DateTime\Timestamp::parse($raw_string);
+     * $parsed = DateTime\DateTime::parse($input);
      * ```
      *
-     * @param TemporalInterface|string $string The date and time string to parse.
+     * @param NativeDateTimeInterface|TemporalInterface|string|int $string The date and time to parse.
      * @param null|Timezone $timezone Optional timezone for parsing. If null, uses the system's default timezone.
      *
      * @throws Exception\RuntimeException If the parsing process fails.
      *
-     * @return static Returns an instance of {@see DateTime} representing the parsed date and time.
+     * @return static Returns an instance of {@see Tempest\DateTime\DateTime} representing the parsed date and time.
      */
-    public static function parse(TemporalInterface|string $string, ?Timezone $timezone = null): static
+    public static function parse(NativeDateTimeInterface|TemporalInterface|string|int $string, ?Timezone $timezone = null): static
     {
+        if (is_int($string)) {
+            return self::fromTimestamp($string);
+        }
+
+        if (is_string($string) && trim($string) === 'now') {
+            return self::now($timezone);
+        }
+
+        if ($string instanceof NativeDateTimeInterface) {
+            return self::fromTimestamp(
+                timestamp: Timestamp::fromParts($string->getTimestamp()),
+                timezone: $timezone ?? Timezone::tryFrom($string->getTimezone()?->getName() ?? ''),
+            );
+        }
+
         if ($string instanceof TemporalInterface) {
             return self::fromTimestamp($string->getTimestamp());
         }
 
         return self::fromTimestamp(
-            Timestamp::fromParts(new \DateTime($string)->getTimestamp()),
-            $timezone,
+            timestamp: Timestamp::fromParts(new \DateTime($string)->getTimestamp()),
+            timezone: $timezone,
         );
     }
 
     /**
-     * Parses a date and time string into an instance of {@see DateTime} using a specific format pattern, with optional customization for timezone and locale.
+     * Parses a date and time string into an instance of {@see Tempest\DateTime\DateTime} using a specific format pattern, with optional customization for timezone and locale.
      *
-     * This method is specifically designed for cases where a custom format pattern is used to parse the input string.
-     *
+     *  This method is specifically designed for cases where a custom format pattern is used to parse the input string.
      * It allows for precise control over the parsing process by specifying the exact format pattern that matches the input string.
-     *
      * Additionally, the method supports specifying a timezone and locale for parsing, enabling accurate interpretation of locale-specific formats.
      *
      * Example usage:
@@ -304,13 +318,10 @@ final readonly class DateTime implements DateTimeInterface
     }
 
     /**
-     * Creates an instance of {@see DateTime} from a date and time string, formatted according to specified styles for date and time,
-     * with optional customization for timezone and locale.
+     * Creates an instance of {@see Tempest\DateTime\DateTime} from a date and time string, formatted according to specified styles for date and time, with optional customization for timezone and locale.
      *
-     * This method provides a more abstracted approach to parsing, allowing users  to specify styles rather than a custom pattern.
-     *
+     * This method provides a more abstracted approach to parsing, allowing users to specify styles rather than a custom pattern.
      * This is particularly useful for parsing strings that follow common date and time formats.
-     *
      * Additionally, the timezone and locale parameters enable accurate parsing of strings in locale-specific formats.
      *
      * Example usage:
@@ -493,6 +504,70 @@ final readonly class DateTime implements DateTimeInterface
         );
     }
 
+    /**
+     * Returns a new instance set to midnight of the same day.
+     */
+    public function startOfDay(): static
+    {
+        return $this->withTime(0, 0, 0, 0);
+    }
+
+    /**
+     * Returns a new instance set to the end of the day.
+     */
+    public function endOfDay(): static
+    {
+        return $this->withTime(23, 59, 59, 999_999_999);
+    }
+
+    /**
+     * Returns a new instance set to the start of the week.
+     */
+    public function startOfWeek(): static
+    {
+        return $this->withDay($this->day - ($this->getWeekday()->value - 1))->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the week.
+     */
+    public function endOfWeek(): static
+    {
+        return $this->withDay($this->getDay() + (7 - $this->getWeekday()->value))->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the month.
+     */
+    public function startOfMonth(): static
+    {
+        return $this->withDay(1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the month.
+     */
+    public function endOfMonth(): static
+    {
+        return $this->withDay(Month::from($this->month)->getDaysForYear($this->year))->endOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the start of the year.
+     */
+    public function startOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 1, 1)->startOfDay();
+    }
+
+    /**
+     * Returns a new instance set to the end of the year.
+     */
+    public function endOfYear(): static
+    {
+        return $this->withDate($this->getYear(), 12, Month::DECEMBER->getDaysForYear($this->getYear()))->endOfDay();
+    }
+
     #[\Override]
     public function jsonSerialize(): array
     {
@@ -507,27 +582,5 @@ final readonly class DateTime implements DateTimeInterface
             'seconds' => $this->seconds,
             'nanoseconds' => $this->nanoseconds,
         ];
-    }
-
-    private static function resolveFromContainer(?Timezone $timezone = null): ?DateTime
-    {
-        if (! class_exists(GenericContainer::class)) {
-            return null;
-        }
-
-        if (is_null(GenericContainer::instance())) {
-            return null;
-        }
-
-        if (! GenericContainer::instance()->has(Clock::class)) {
-            return null;
-        }
-
-        $interface = GenericContainer::instance()
-            ->get(Clock::class)
-            ->now()
-            ->convertToTimezone($timezone);
-
-        return DateTime::parse($interface);
     }
 }

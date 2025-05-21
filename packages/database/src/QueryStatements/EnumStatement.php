@@ -50,10 +50,10 @@ final readonly class EnumStatement implements QueryStatement
                 $this->nullable ? '' : 'NOT NULL',
             ),
             DatabaseDialect::POSTGRESQL => sprintf(
-                '`%s` %s %s %s',
+                '"%s" "%s" %s %s',
                 $this->name,
                 str($this->enumClass)->replace('\\\\', '_'),
-                $defaultValue !== null ? "DEFAULT (\"{$defaultValue}\")" : '',
+                $defaultValue !== null ? "DEFAULT ('{$defaultValue}')" : '',
                 $this->nullable ? '' : 'NOT NULL',
             ),
         };

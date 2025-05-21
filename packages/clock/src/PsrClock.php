@@ -13,6 +13,6 @@ final readonly class PsrClock implements ClockInterface
 
     public function now(): DateTimeImmutable
     {
-        return DateTimeImmutable::createFromTimestamp($this->clock->timestamp());
+        return DateTimeImmutable::createFromTimestamp($this->clock->seconds());
     }
 }

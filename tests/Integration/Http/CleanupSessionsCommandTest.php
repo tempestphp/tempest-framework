@@ -32,11 +32,11 @@ final class CleanupSessionsCommandTest extends FrameworkIntegrationTestCase
 
         $sessionManager->set(new SessionId('session_a'), 'test', 'value');
 
-        $clock->changeTime(9);
+        $clock->plus(9);
 
         $sessionManager->set(new SessionId('session_b'), 'test', 'value');
 
-        $clock->changeTime(2);
+        $clock->plus(2);
 
         $this->console
             ->call('session:clean')

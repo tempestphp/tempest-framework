@@ -8,7 +8,7 @@ interface Database
 {
     public function execute(Query $query): void;
 
-    public function getLastInsertId(): Id;
+    public function getLastInsertId(): ?Id;
 
     public function fetch(Query $query): array;
 

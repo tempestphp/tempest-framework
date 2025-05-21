@@ -6,7 +6,6 @@ namespace Tempest\Database\QueryStatements;
 
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\QueryStatement;
-use Tempest\Database\UnsupportedDialect;
 
 final readonly class ConstraintStatement implements QueryStatement
 {

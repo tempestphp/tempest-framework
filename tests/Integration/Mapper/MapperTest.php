@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Tempest\Integration\Mapper;
 
 use DateTimeImmutable;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
 use Tempest\Mapper\Exceptions\MissingValuesException;
 use Tempest\Mapper\Mappers\ObjectToArrayMapper;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
@@ -246,15 +248,62 @@ final class MapperTest extends FrameworkIntegrationTestCase
         $this->assertSame(
             expected: [
                 'name' => 'Guillaume',
-                'date' => '2025-03-02',
+                'nativeDate' => '2025-03-02',
+                'date' => '2024-01-01',
                 'enum' => 'foo',
             ],
             actual: map(new ObjectThatShouldUseCasters(
                 name: 'Guillaume',
-                date: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+                date: DateTime::parse('2024-01-01'),
+                nativeDate: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
                 enum: EnumToCast::FOO,
             ))->toArray(),
         );
+    }
+
+    public function test_map_two_way(): void
+    {
+        $object = new ObjectThatShouldUseCasters(
+            name: 'Guillaume',
+            date: DateTime::parse('2024-01-01'),
+            nativeDate: DateTimeImmutable::createFromFormat('Y-m-d', '2025-03-02'),
+            enum: EnumToCast::FOO,
+        );
+
+        $array = map($object)->toArray();
+        $json = map($object)->toJson();
+
+        $this->assertSame([
+            'name' => 'Guillaume',
+            'nativeDate' => '2025-03-02',
+            'date' => '2024-01-01',
+            'enum' => 'foo',
+        ], $array);
+
+        $this->assertSame('{"name":"Guillaume","nativeDate":"2025-03-02","date":"2024-01-01","enum":"foo"}', $json);
+
+        $fromJson = map($json)->to(ObjectThatShouldUseCasters::class);
+        $fromArray = map($array)->to(ObjectThatShouldUseCasters::class);
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $this->markTestIncomplete('`fromJson` becomes an array instead of the proper object, only on Windows.');
+        }
+
+        $this->assertInstanceOf(ObjectThatShouldUseCasters::class, $fromJson);
+        $this->assertSame('Guillaume', $fromJson->name);
+        $this->assertSame(EnumToCast::FOO, $fromJson->enum);
+        $this->assertInstanceOf(DateTimeInterface::class, $fromJson->date);
+        $this->assertSame('2024-01-01', $fromJson->date->format('yyyy-MM-dd'));
+        $this->assertInstanceOf(DateTimeImmutable::class, $fromJson->nativeDate);
+        $this->assertSame('2025-03-02', $fromJson->nativeDate->format('Y-m-d'));
+
+        $this->assertInstanceOf(ObjectThatShouldUseCasters::class, $fromArray);
+        $this->assertSame('Guillaume', $fromArray->name);
+        $this->assertSame(EnumToCast::FOO, $fromArray->enum);
+        $this->assertInstanceOf(DateTimeInterface::class, $fromArray->date);
+        $this->assertSame('2024-01-01', $fromArray->date->format('yyyy-MM-dd'));
+        $this->assertInstanceOf(DateTimeImmutable::class, $fromArray->nativeDate);
+        $this->assertSame('2025-03-02', $fromArray->nativeDate->format('Y-m-d'));
     }
 
     public function test_multiple_map_from_source(): void

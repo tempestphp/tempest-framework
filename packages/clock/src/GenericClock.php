@@ -24,12 +24,17 @@ final class GenericClock implements Clock
         return DateTime::now();
     }
 
-    public function timestamp(): int
+    public function timestamp(): Timestamp
+    {
+        return Timestamp::monotonic();
+    }
+
+    public function seconds(): int
     {
         return Timestamp::monotonic()->getSeconds();
     }
 
-    public function timestampMs(): int
+    public function milliseconds(): int
     {
         return Timestamp::monotonic()->getMilliseconds();
     }

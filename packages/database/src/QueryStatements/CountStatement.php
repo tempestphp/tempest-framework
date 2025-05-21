@@ -21,11 +21,14 @@ final class CountStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
+        $countField = new FieldStatement(sprintf(
+            'COUNT(%s) AS %s',
+            $this->getCountArgument(),
+            $this->getKey(),
+        ));
+
         $query = arr([
-            sprintf(
-                'SELECT COUNT(%s)',
-                $this->getCountArgument(),
-            ),
+            sprintf('SELECT %s', $countField->compile($dialect)),
             sprintf('FROM `%s`', $this->table->name),
         ]);
 
@@ -51,6 +54,6 @@ final class CountStatement implements QueryStatement
 
     public function getKey(): string
     {
-        return "COUNT({$this->getCountArgument()})";
+        return 'count';
     }
 }

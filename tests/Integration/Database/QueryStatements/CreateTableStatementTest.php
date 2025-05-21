@@ -12,7 +12,10 @@ use Tempest\Database\Exceptions\InvalidDefaultValue;
 use Tempest\Database\Exceptions\InvalidValue;
 use Tempest\Database\Migrations\CreateMigrationsTable;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CompoundStatement;
+use Tempest\Database\QueryStatements\CreateEnumTypeStatement;
 use Tempest\Database\QueryStatements\CreateTableStatement;
+use Tempest\Database\QueryStatements\DropEnumTypeStatement;
 use Tempest\Database\UnsupportedDialect;
 use Tests\Tempest\Integration\Database\Fixtures\EnumForCreateTable;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -29,7 +32,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
+                return new CreateTableStatement('test_table')
                     ->text('text', default: 'default')
                     ->char('char', default: 'd')
                     ->varchar('varchar', default: 'default')
@@ -64,7 +67,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
+                return new CreateTableStatement('test_table')
                     ->set('set', values: ['foo', 'bar'], default: 'foo');
             }
 
@@ -95,8 +98,8 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
-                    ->array('array', default: ['foo', 'bar']);
+                return new CreateTableStatement('test_table')
+                    ->array('test_array', default: ['foo', 'bar']);
             }
 
             public function down(): ?QueryStatement
@@ -115,12 +118,35 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
     public function test_enum_statement(): void
     {
-        $migration = new class() implements DatabaseMigration {
+        $this->migrate(CreateMigrationsTable::class);
+
+        if ($this->container->get(DatabaseDialect::class) === DatabaseDialect::POSTGRESQL) {
+            $enumTypeMigration = new class() implements DatabaseMigration {
+                public string $name = '0';
+
+                public function up(): QueryStatement
+                {
+                    return new CompoundStatement(
+                        new DropEnumTypeStatement(EnumForCreateTable::class),
+                        new CreateEnumTypeStatement(EnumForCreateTable::class),
+                    );
+                }
+
+                public function down(): ?QueryStatement
+                {
+                    return null;
+                }
+            };
+
+            $this->migrate($enumTypeMigration);
+        }
+
+        $tableMigration = new class() implements DatabaseMigration {
             public string $name = '0';
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
+                return new CreateTableStatement('test_table')
                     ->enum(
                         name: 'enum',
                         enumClass: EnumForCreateTable::class,
@@ -134,10 +160,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
             }
         };
 
-        $this->migrate(
-            CreateMigrationsTable::class,
-            $migration,
-        );
+        $this->migrate($tableMigration);
 
         $this->expectNotToPerformAssertions();
     }
@@ -149,7 +172,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
+                return new CreateTableStatement('test_table')
                     ->json('json', default: '{default: "invalid json"}');
             }
 
@@ -175,7 +198,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
 
             public function up(): QueryStatement
             {
-                return new CreateTableStatement('table')
+                return new CreateTableStatement('test_table')
                     ->set('set', values: []);
             }
 

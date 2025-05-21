@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tempest\Database\QueryStatements;
 
 use BackedEnum;
-use Symfony\Component\VarDumper\Cloner\Data;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
 use Tempest\Database\Config\DatabaseDialect;
@@ -208,8 +207,6 @@ final class CreateTableStatement implements QueryStatement
         bool $nullable = false,
         null|UnitEnum|BackedEnum $default = null,
     ): self {
-        $this->statements[] = new CreateEnumTypeStatement($enumClass);
-
         $this->statements[] = new EnumStatement(
             name: $name,
             enumClass: $enumClass,

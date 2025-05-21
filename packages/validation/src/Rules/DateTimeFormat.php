@@ -5,33 +5,46 @@ declare(strict_types=1);
 namespace Tempest\Validation\Rules;
 
 use Attribute;
-use DateTime;
-use DateTimeInterface;
+use DateTimeImmutable as NativeDateTimeImmutable;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\FormatPattern;
 use Tempest\Validation\Rule;
 
 #[Attribute]
 final readonly class DateTimeFormat implements Rule
 {
-    public const string FORMAT = 'Y-m-d H:i:s';
-
+    /**
+     * @param string|FormatPattern $format An ICU or legacy datetime format ({@see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax}, {@see https://www.php.net/manual/en/datetime.format.php}).
+     */
     public function __construct(
-        public string $format = self::FORMAT,
+        public string|FormatPattern $format,
     ) {}
 
     public function isValid(mixed $value): bool
     {
-        $value = match ($value instanceof DateTimeInterface) {
-            true => $value->format($this->format),
-            default => $value,
-        };
-
-        if (! is_string($value) || ! $value) {
+        if (! is_string($value)) {
             return false;
         }
 
-        $date = DateTime::createFromFormat($this->format, $value);
+        return $this->validateIcuFormat($value) || $this->validateNativeFormat($value);
+    }
 
-        return $date && $date->format($this->format) === $value;
+    private function validateIcuFormat(string $value): bool
+    {
+        try {
+            return $value === DateTime::fromPattern($value, $this->format)->format($this->format);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    private function validateNativeFormat(string $value): bool
+    {
+        if (! ($date = NativeDateTimeImmutable::createFromFormat($this->format, $value))) {
+            return false;
+        }
+
+        return $date->format($this->format) === $value;
     }
 
     public function message(): string

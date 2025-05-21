@@ -29,7 +29,7 @@ final class GenericClockTest extends TestCase
     public function test_that_generic_clock_returns_the_current_time(): void
     {
         $timeBefore = new DateTimeImmutable()->getTimestamp();
-        $clockTime = new GenericClock()->timestamp();
+        $clockTime = new GenericClock()->seconds();
         $timeAfter = new DateTimeImmutable()->getTimestamp();
 
         $this->assertGreaterThanOrEqual($timeBefore, $clockTime);

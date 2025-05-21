@@ -22,29 +22,42 @@ final readonly class BelongsToStatement implements QueryStatement
         [$localTable, $localKey] = explode('.', $this->local);
         [$foreignTable, $foreignKey] = explode('.', $this->foreign);
 
-        return match ($dialect) {
-            DatabaseDialect::MYSQL, DatabaseDialect::POSTGRESQL => new ConstraintStatement(
-                ConstraintNameStatement::fromString(
-                    sprintf(
-                        'fk_%s_%s_%s',
-                        strtolower($foreignTable),
-                        strtolower($localTable),
-                        strtolower($localKey),
-                    ),
-                ),
-                new RawStatement(
-                    sprintf(
-                        'FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
-                        $localTable,
-                        $localKey,
-                        $foreignTable,
-                        $foreignKey,
-                        'ON DELETE ' . $this->onDelete->value,
-                        'ON UPDATE ' . $this->onUpdate->value,
-                    ),
-                ),
-            )->compile($dialect),
+        $constraintName = ConstraintNameStatement::fromString(
+            sprintf(
+                'fk_%s_%s_%s',
+                strtolower($foreignTable),
+                strtolower($localTable),
+                strtolower($localKey),
+            ),
+        );
+
+        $statement = match ($dialect) {
+            DatabaseDialect::MYSQL => new ConstraintStatement(
+                $constraintName,
+                new RawStatement(sprintf(
+                    'FOREIGN KEY %s(%s) REFERENCES %s(%s) %s %s',
+                    $localTable,
+                    $localKey,
+                    $foreignTable,
+                    $foreignKey,
+                    'ON DELETE ' . $this->onDelete->value,
+                    'ON UPDATE ' . $this->onUpdate->value,
+                )),
+            ),
+            DatabaseDialect::POSTGRESQL => new ConstraintStatement(
+                $constraintName,
+                new RawStatement(sprintf(
+                    'FOREIGN KEY(%s) REFERENCES %s(%s) %s %s',
+                    $localKey,
+                    $foreignTable,
+                    $foreignKey,
+                    'ON DELETE ' . $this->onDelete->value,
+                    'ON UPDATE ' . $this->onUpdate->value,
+                )),
+            ),
             DatabaseDialect::SQLITE => throw new UnsupportedDialect(),
         };
+
+        return $statement->compile($dialect);
     }
 }

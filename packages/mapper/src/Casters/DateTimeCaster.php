@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tempest\Mapper\Casters;
 
-use DateTime;
-use DateTimeImmutable;
-use DateTimeInterface;
+use DateTimeInterface as NativeDateTimeInterface;
+use Tempest\DateTime\DateTime;
+use Tempest\DateTime\DateTimeInterface;
+use Tempest\DateTime\FormatPattern;
 use Tempest\Mapper\Caster;
 use Tempest\Reflection\PropertyReflector;
 use Tempest\Validation\Rules\DateTimeFormat;
@@ -14,18 +15,14 @@ use Tempest\Validation\Rules\DateTimeFormat;
 final readonly class DateTimeCaster implements Caster
 {
     public function __construct(
-        private string $format = DateTimeFormat::FORMAT,
-        private bool $immutable = true,
+        private FormatPattern|string $format = FormatPattern::ISO8601,
     ) {}
 
-    public static function fromProperty(PropertyReflector $property): DateTimeCaster
+    public static function fromProperty(PropertyReflector $property): self
     {
-        $format = $property->getAttribute(DateTimeFormat::class)->format ?? DateTimeFormat::FORMAT;
-
-        return match ($property->getType()->getName()) {
-            DateTime::class => new DateTimeCaster($format, immutable: false),
-            default => new DateTimeCaster($format, immutable: true),
-        };
+        return new self(
+            $property->getAttribute(DateTimeFormat::class)->format ?? FormatPattern::ISO8601,
+        );
     }
 
     public function cast(mixed $input): ?DateTimeInterface
@@ -38,14 +35,10 @@ final readonly class DateTimeCaster implements Caster
             return $input;
         }
 
-        $class = $this->immutable ? DateTimeImmutable::class : DateTime::class;
-
-        $date = $class::createFromFormat($this->format, $input);
-
-        if (! $date) {
-            return new $class($input);
+        try {
+            return DateTime::parse($input);
+        } catch (\Throwable) {
+            return null;
         }
-
-        return $date;
     }
 }

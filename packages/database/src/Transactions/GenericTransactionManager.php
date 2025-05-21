@@ -9,7 +9,7 @@ use Tempest\Database\Exceptions\CouldNotBeginTransaction;
 use Tempest\Database\Exceptions\CouldNotCommitTransaction;
 use Tempest\Database\Exceptions\CouldNotRollbackTransaction;
 
-final class GenericTransactionManager implements TransactionManager
+final readonly class GenericTransactionManager implements TransactionManager
 {
     public function __construct(
         private Connection $connection,

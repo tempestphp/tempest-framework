@@ -11,12 +11,11 @@ use Tempest\Console\Output\MemoryOutputBuffer;
 use Tempest\Console\Output\StdoutOutputBuffer;
 use Tempest\Console\OutputBuffer;
 use Tempest\Console\Testing\ConsoleTester;
-use Tempest\Core\AppConfig;
 use Tempest\Core\Application;
 use Tempest\Core\ShellExecutor;
 use Tempest\Core\ShellExecutors\NullShellExecutor;
-use Tempest\Database\Connection\CachedConnectionInitializer;
-use Tempest\Database\Connection\Connection;
+use Tempest\Database\Connection\ConnectionInitializer;
+use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Migrations\MigrationManager;
 use Tempest\Discovery\DiscoveryLocation;
 use Tempest\Framework\Testing\IntegrationTest;
@@ -57,7 +56,10 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->console = new ConsoleTester($this->container);
 
         // Database
-        $this->container->addInitializer(CachedConnectionInitializer::class);
+        $this->container
+            ->removeInitializer(DatabaseInitializer::class)
+            ->addInitializer(TestingDatabaseInitializer::class);
+
         $databaseConfigPath = __DIR__ . '/../Fixtures/Config/database.config.php';
 
         if (! file_exists($databaseConfigPath)) {
@@ -71,7 +73,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function tearDown(): void
     {
-        $this->container->get(Connection::class)->close();
+        //        $this->container->get(Connection::class)->close();
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application
@@ -175,5 +177,20 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $actual = str_replace([PHP_EOL, ' '], '', $actual);
 
         $this->assertSame($expected, $actual);
+    }
+
+    protected function assertSameWithoutBackticks(string $expected, string $actual): void
+    {
+        $clean = function (string $string): string {
+            return \Tempest\Support\str($string)
+                ->replace('`', '')
+                ->replaceRegex('/AS \"(?<alias>.*?)\"/', fn (array $matches) => "AS {$matches['alias']}")
+                ->toString();
+        };
+
+        $this->assertSame(
+            $clean($expected),
+            $clean($actual),
+        );
     }
 }
