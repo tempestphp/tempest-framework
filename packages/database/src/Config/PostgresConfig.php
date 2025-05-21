@@ -32,7 +32,7 @@ final class PostgresConfig implements DatabaseConfig
         #[SensitiveParameter]
         public string $port = '5432',
         #[SensitiveParameter]
-        public string $username = '',
+        public string $username = 'postgres',
         #[SensitiveParameter]
         public string $password = '',
         #[SensitiveParameter]

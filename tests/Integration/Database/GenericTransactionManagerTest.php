@@ -11,6 +11,7 @@ use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreatePublishersTable;
 use Tests\Tempest\Fixtures\Modules\Books\Models\Author;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
+use function Tempest\Database\query;
 
 /**
  * @internal

@@ -36,10 +36,11 @@ final class TestingDatabaseInitializer implements DynamicInitializer
             self::$connection = $connection;
         }
 
-        if (self::$connection->ping() === false)
-        {
+        if (self::$connection->ping() === false) {
             self::$connection->reconnect();
         }
+
+        $container->singleton(Connection::class, self::$connection);
 
         return new GenericDatabase(
             self::$connection,
