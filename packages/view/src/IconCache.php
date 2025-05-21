@@ -1,6 +1,6 @@
 <?php
 
-namespace Tempest\Core;
+namespace Tempest\View;
 
 use Closure;
 use Psr\Cache\CacheItemInterface;
@@ -12,15 +12,24 @@ use Tempest\DateTime\Duration;
 
 use function Tempest\internal_storage_path;
 
-final class ConfigCache
+final class IconCache
 {
     public function __construct(
         public bool $enabled = false,
         private ?CacheItemPoolInterface $pool = null,
     ) {
         $this->pool ??= new FilesystemAdapter(
-            directory: internal_storage_path('cache/config'),
+            directory: internal_storage_path('cache/icons'),
         );
+    }
+
+    public function get(string $key): mixed
+    {
+        if (! $this->enabled) {
+            return null;
+        }
+
+        return $this->pool->getItem($key)->get();
     }
 
     public function clear(): void

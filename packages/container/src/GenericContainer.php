@@ -70,9 +70,22 @@ final class GenericContainer implements Container
         return $this->definitions->getArrayCopy();
     }
 
-    public function getSingletons(): array
+    /**
+     * Returns all registered singletons. If `$interface` is specified, returns only singletons for that interface.
+     */
+    public function getSingletons(?string $interface = null): array
     {
-        return $this->singletons->getArrayCopy();
+        $singletons = $this->singletons->getArrayCopy();
+
+        if (is_null($interface)) {
+            return $singletons;
+        }
+
+        return array_filter(
+            array: $singletons,
+            callback: static fn (mixed $_, string $key) => str_starts_with($key, "{$interface}#") || $key === $interface,
+            mode: \ARRAY_FILTER_USE_BOTH,
+        );
     }
 
     public function getInitializers(): array

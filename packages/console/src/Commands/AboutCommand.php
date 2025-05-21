@@ -17,6 +17,8 @@ use Tempest\Support\Arr;
 use Tempest\Support\Json;
 use Tempest\Support\Str;
 
+use function Tempest\Support\arr;
+
 final readonly class AboutCommand
 {
     public function __construct(
@@ -70,21 +72,32 @@ final readonly class AboutCommand
         $this->console->writeRaw(Json\encode($json));
     }
 
-    private function formatInsight(Stringable|Insight|string $value): string
+    private function formatInsight(Stringable|Insight|array|string $value): string
     {
-        if ($value instanceof Insight) {
-            return $value->formattedValue;
-        }
+        return arr($value)
+            ->filter()
+            ->map(function (Stringable|Insight|string $value) {
+                if ($value instanceof Insight) {
+                    return $value->formattedValue;
+                }
 
-        return (string) $value;
+                return (string) $value;
+            })
+            ->implode(', ')
+            ->toString();
     }
 
-    private function rawInsight(Stringable|Insight|string $value): string
+    private function rawInsight(Stringable|Insight|array|string $value): array
     {
-        if ($value instanceof Insight) {
-            return $value->value;
-        }
+        return arr($value)
+            ->filter()
+            ->map(function (Stringable|Insight|string $value) {
+                if ($value instanceof Insight) {
+                    return $value->value;
+                }
 
-        return Str\strip_tags((string) $value);
+                return Str\strip_tags((string) $value);
+            })
+            ->toArray();
     }
 }

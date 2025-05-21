@@ -8,9 +8,9 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Container\Container;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\DiscoveryDiscovery;
 use Tempest\Core\Kernel;
@@ -69,7 +69,7 @@ final class LoadDiscoveryClasses
         /** @var Discovery $discovery */
         $discovery = $this->container->get($discoveryClass);
 
-        if ($this->discoveryCache->isEnabled()) {
+        if ($this->discoveryCache->enabled) {
             $discovery->setItems(
                 $this->discoveryCache->restore($discoveryClass) ?? new DiscoveryItems(),
             );
@@ -87,7 +87,7 @@ final class LoadDiscoveryClasses
     {
         $discovery = $this->resolveDiscovery($discoveryClass);
 
-        if ($this->discoveryCache->getStrategy() === DiscoveryCacheStrategy::FULL && $discovery->getItems()->isLoaded()) {
+        if ($this->discoveryCache->strategy === DiscoveryCacheStrategy::FULL && $discovery->getItems()->isLoaded()) {
             return $discovery;
         }
 
@@ -199,11 +199,11 @@ final class LoadDiscoveryClasses
      */
     private function shouldSkipLocation(DiscoveryLocation $location): bool
     {
-        if (! $this->discoveryCache->isEnabled()) {
+        if (! $this->discoveryCache->enabled) {
             return false;
         }
 
-        return match ($this->discoveryCache->getStrategy()) {
+        return match ($this->discoveryCache->strategy) {
             // If discovery cache is disabled, no locations should be skipped, all should always be discovered
             DiscoveryCacheStrategy::NONE, DiscoveryCacheStrategy::INVALID => false,
             // If discover cache is enabled, all locations cache should be skipped

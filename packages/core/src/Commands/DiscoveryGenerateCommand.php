@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Tempest\Core\Commands;
 
 use Closure;
-use Tempest\Cache\DiscoveryCacheStrategy;
 use Tempest\Console\ConsoleCommand;
 use Tempest\Console\HasConsole;
 use Tempest\Container\Container;
 use Tempest\Container\GenericContainer;
+use Tempest\Core\AppConfig;
 use Tempest\Core\DiscoveryCache;
+use Tempest\Core\DiscoveryCacheStrategy;
 use Tempest\Core\DiscoveryConfig;
 use Tempest\Core\FrameworkKernel;
 use Tempest\Core\Kernel;
@@ -25,12 +26,13 @@ final readonly class DiscoveryGenerateCommand
     public function __construct(
         private Kernel $kernel,
         private DiscoveryCache $discoveryCache,
+        private AppConfig $appConfig,
     ) {}
 
     #[ConsoleCommand(name: 'discovery:generate', description: 'Compile and cache all discovery according to the configured discovery caching strategy')]
     public function __invoke(): void
     {
-        $strategy = $this->resolveDiscoveryCacheStrategy();
+        $strategy = DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE', default: $this->appConfig->environment->isProduction()));
 
         if ($strategy === DiscoveryCacheStrategy::NONE) {
             $this->info('Discovery cache disabled, nothing to generate.');
@@ -76,17 +78,6 @@ final readonly class DiscoveryGenerateCommand
 
             $this->discoveryCache->store($discovery, $discoveryItems);
         }
-    }
-
-    private function resolveDiscoveryCacheStrategy(): DiscoveryCacheStrategy
-    {
-        $cache = env('CACHE');
-
-        if ($cache !== null) {
-            return DiscoveryCacheStrategy::make($cache);
-        }
-
-        return DiscoveryCacheStrategy::make(env('DISCOVERY_CACHE'));
     }
 
     public function resolveKernel(): Kernel
