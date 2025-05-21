@@ -138,6 +138,11 @@ final class GenericContainer implements Container
         return $this;
     }
 
+    /**
+     * @template TClassName of object
+     * @param class-string<TClassName> $className
+     * @return null|TClassName
+     */
     public function get(string $className, ?string $tag = null, mixed ...$params): ?object
     {
         $this->resolveChain();
