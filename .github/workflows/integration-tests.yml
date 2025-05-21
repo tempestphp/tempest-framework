@@ -5,6 +5,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
+env:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: app
 
 jobs:
   vitest:
