@@ -36,7 +36,7 @@ abstract class IntegrationTest extends TestCase
 
     protected Kernel $kernel;
 
-    protected Container|GenericContainer $container;
+    protected GenericContainer $container;
 
     protected ConsoleTester $console;
 
@@ -62,6 +62,7 @@ abstract class IntegrationTest extends TestCase
             discoveryLocations: $this->discoveryLocations,
         );
 
+        // @phpstan-ignore-next-line
         $this->container = $this->kernel->container;
 
         $this->console = $this->container->get(ConsoleTester::class);

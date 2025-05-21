@@ -47,9 +47,17 @@ final class FieldStatement implements QueryStatement
         $field = arr(explode('.', $field))
             ->map(fn (string $part) => trim($part, '` '))
             ->map(
-                fn (string $part) => match ($dialect) {
-                    DatabaseDialect::SQLITE => $part,
-                    default => sprintf('`%s`', $part),
+                function (string $part) use ($dialect) {
+                    // Function calls are never wrapped in backticks.
+                    if (str_contains($part, '(')) {
+                        return $part;
+                    }
+
+                    if ($dialect === DatabaseDialect::SQLITE) {
+                        return $part;
+                    }
+
+                    return sprintf('`%s`', $part);
                 },
             )
             ->implode('.');
