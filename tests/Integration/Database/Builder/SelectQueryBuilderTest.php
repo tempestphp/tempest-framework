@@ -205,7 +205,7 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         $this->assertCount(4, $results);
 
         $results = [];
-        Book::select()->where('title <> \'A\'')->chunk(function (array $chunk) use (&$results): void {
+        Book::select()->where("title <> 'A'")->chunk(function (array $chunk) use (&$results): void {
             $results = [...$results, ...$chunk];
         }, 2);
         $this->assertCount(3, $results);

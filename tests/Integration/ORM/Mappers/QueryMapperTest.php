@@ -29,13 +29,13 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
-        INSERT INTO authors (name)
-        VALUES (?) RETURNING *
-        SQL,
+            INSERT INTO authors (name)
+            VALUES (?) RETURNING *
+            SQL,
             default => <<<'SQL'
-        INSERT INTO `authors` (`name`)
-        VALUES (?)
-        SQL,
+            INSERT INTO `authors` (`name`)
+            VALUES (?)
+            SQL,
         };
 
         $this->assertSame($expected, $query->toSql());
@@ -52,15 +52,15 @@ final class QueryMapperTest extends FrameworkIntegrationTestCase
 
         $expected = match ($dialect) {
             DatabaseDialect::POSTGRESQL => <<<'SQL'
-        UPDATE authors
-        SET name = ?
-        WHERE id = ?
-        SQL,
+            UPDATE authors
+            SET name = ?
+            WHERE id = ?
+            SQL,
             default => <<<'SQL'
-        UPDATE `authors`
-        SET `name` = ?
-        WHERE `id` = ?
-        SQL,
+            UPDATE `authors`
+            SET `name` = ?
+            WHERE `id` = ?
+            SQL,
         };
 
         $this->assertSame($expected, $query->toSql());

@@ -39,7 +39,7 @@ final class DropTableStatement implements QueryStatement
             $statements[] = $dropReference->compile($dialect);
         }
 
-        $statements[] = match($dialect) {
+        $statements[] = match ($dialect) {
             DatabaseDialect::POSTGRESQL => sprintf('DROP TABLE IF EXISTS `%s` CASCADE', $this->tableName),
             default => sprintf('DROP TABLE IF EXISTS `%s`', $this->tableName),
         };

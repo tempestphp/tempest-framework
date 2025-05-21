@@ -8,6 +8,6 @@ final class NoLastInsertIdAvailable extends Exception
 {
     public function __construct()
     {
-        parent::__construct("No last insert id available.");
+        parent::__construct('No last insert id available.');
     }
 }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Database;
 
 use Tempest\Database\Config\DatabaseConfig;
-
 use Tempest\Database\Config\DatabaseDialect;
+
 use function Tempest\get;
 
 final class Query
@@ -18,7 +18,7 @@ final class Query
         public array $executeAfter = [],
     ) {}
 
-    public function execute(mixed ...$bindings): Id|null
+    public function execute(mixed ...$bindings): ?Id
     {
         $this->bindings = [...$this->bindings, ...$bindings];
 

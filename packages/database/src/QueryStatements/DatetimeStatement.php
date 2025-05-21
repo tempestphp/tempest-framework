@@ -17,7 +17,7 @@ final readonly class DatetimeStatement implements QueryStatement
 
     public function compile(DatabaseDialect $dialect): string
     {
-        return match($dialect){
+        return match ($dialect) {
             DatabaseDialect::POSTGRESQL => sprintf(
                 '`%s` TIMESTAMP %s %s',
                 $this->name,
@@ -29,7 +29,7 @@ final readonly class DatetimeStatement implements QueryStatement
                 $this->name,
                 $this->default !== null ? "DEFAULT '{$this->default}'" : '',
                 $this->nullable ? '' : 'NOT NULL',
-            )
+            ),
         };
     }
 }

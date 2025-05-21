@@ -32,10 +32,9 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = $this->buildExpectedInsert(<<<SQL
-            INSERT INTO `chapters` (`title`, `index`)
-            VALUES (?, ?)
-            SQL,
-        );
+        INSERT INTO `chapters` (`title`, `index`)
+        VALUES (?, ?)
+        SQL);
 
         $this->assertSameWithoutBackticks(
             $expected,
@@ -61,10 +60,9 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
             ->build();
 
         $expected = $this->buildExpectedInsert(<<<SQL
-            INSERT INTO `chapters` (`chapter`, `index`)
-            VALUES (?, ?), (?, ?), (?, ?)
-            SQL,
-        );
+        INSERT INTO `chapters` (`chapter`, `index`)
+        VALUES (?, ?), (?, ?), (?, ?)
+        SQL);
 
         $this->assertSameWithoutBackticks(
             $expected,
@@ -94,8 +92,7 @@ final class InsertQueryBuilderTest extends FrameworkIntegrationTestCase
         $expected = $this->buildExpectedInsert(<<<SQL
         INSERT INTO `authors` (`name`, `type`, `publisher_id`)
         VALUES (?, ?, ?), (?, ?, ?)
-        SQL,
-        );
+        SQL);
 
         $this->assertSameWithoutBackticks($expected, $query->toSql());
         $this->assertSame(['brent', 'a', null, 'other name', 'b', null], $query->bindings);

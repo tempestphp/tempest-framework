@@ -17,8 +17,8 @@ use Throwable;
 
 final class GenericDatabase implements Database
 {
-    private PDOStatement|null $lastStatement = null;
-    private Query|null $lastQuery = null;
+    private ?PDOStatement $lastStatement = null;
+    private ?Query $lastQuery = null;
 
     public function __construct(
         private(set) readonly Connection $connection,
@@ -48,7 +48,7 @@ final class GenericDatabase implements Database
         }
     }
 
-    public function getLastInsertId(): Id|null
+    public function getLastInsertId(): ?Id
     {
         $sql = $this->lastQuery->toSql();
 

@@ -73,7 +73,7 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
 
     protected function tearDown(): void
     {
-//        $this->container->get(Connection::class)->close();
+        //        $this->container->get(Connection::class)->close();
     }
 
     protected function actAsConsoleApplication(string $command = ''): Application

@@ -10,7 +10,7 @@ use Tempest\Database\Query;
 
 trait CanExecuteStatement
 {
-    public function execute(DatabaseDialect $dialect): Id|null
+    public function execute(DatabaseDialect $dialect): ?Id
     {
         $sql = $this->compile($dialect);
 

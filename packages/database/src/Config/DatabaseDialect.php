@@ -23,7 +23,7 @@ enum DatabaseDialect: string
 
     public function isTableNotFoundError(PDOException $exception): bool
     {
-        return match($this) {
+        return match ($this) {
             self::MYSQL => $exception->getCode() === '42S02' && str_contains($exception->getMessage(), 'table'),
             self::SQLITE => $exception->getCode() === 'HY000' && str_contains($exception->getMessage(), 'table'),
             self::POSTGRESQL => $exception->getCode() === '42P01' && str_contains($exception->getMessage(), 'relation'),

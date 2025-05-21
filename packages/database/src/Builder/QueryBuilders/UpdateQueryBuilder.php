@@ -34,7 +34,7 @@ final class UpdateQueryBuilder implements BuildsQuery
         );
     }
 
-    public function execute(mixed ...$bindings): Id|null
+    public function execute(mixed ...$bindings): ?Id
     {
         return $this->build()->execute(...$bindings);
     }

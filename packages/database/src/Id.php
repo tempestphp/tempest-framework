@@ -13,7 +13,7 @@ final readonly class Id implements Stringable
 {
     public string|int $id;
 
-    public static function tryFrom(string|int|self|null $id): self|null
+    public static function tryFrom(string|int|self|null $id): ?self
     {
         if ($id === null) {
             return null;

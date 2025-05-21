@@ -128,7 +128,7 @@ final class CreateTableStatementTest extends FrameworkIntegrationTestCase
                 {
                     return new CompoundStatement(
                         new DropEnumTypeStatement(EnumForCreateTable::class),
-                        new CreateEnumTypeStatement(EnumForCreateTable::class)
+                        new CreateEnumTypeStatement(EnumForCreateTable::class),
                     );
                 }
 

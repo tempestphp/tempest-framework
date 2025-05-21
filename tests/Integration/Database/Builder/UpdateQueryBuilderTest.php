@@ -171,9 +171,9 @@ final class UpdateQueryBuilderTest extends FrameworkIntegrationTestCase
         $authorQuery = $bookQuery->bindings[0];
 
         $expected = <<<SQL
-            INSERT INTO `authors` (`name`)
-            VALUES (?)
-            SQL;
+        INSERT INTO `authors` (`name`)
+        VALUES (?)
+        SQL;
 
         if ($this->container->get(DatabaseDialect::class) === DatabaseDialect::POSTGRESQL) {
             $expected .= ' RETURNING *';

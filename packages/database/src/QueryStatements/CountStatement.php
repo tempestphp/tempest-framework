@@ -34,8 +34,8 @@ final class CountStatement implements QueryStatement
 
         if ($this->where->isNotEmpty()) {
             $query[] = 'WHERE ' . $this->where
-                    ->map(fn (WhereStatement $where) => $where->compile($dialect))
-                    ->implode(PHP_EOL);
+                ->map(fn (WhereStatement $where) => $where->compile($dialect))
+                ->implode(PHP_EOL);
         }
 
         return $query->implode(PHP_EOL);
