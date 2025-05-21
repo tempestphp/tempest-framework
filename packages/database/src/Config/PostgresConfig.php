@@ -13,10 +13,12 @@ final class PostgresConfig implements DatabaseConfig
 {
     public string $dsn {
         get => sprintf(
-            'pgsql:host=%s;port=%s;dbname=%s',
+            'pgsql:host=%s;port=%s;dbname=%s;user=%s;password=%s',
             $this->host,
             $this->port,
             $this->database,
+            $this->username,
+            $this->password,
         );
     }
 
