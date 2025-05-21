@@ -69,9 +69,11 @@ final class GenericDatabase implements Database
 
     public function fetch(Query $query): array
     {
+        $bindings = $this->resolveBindings($query);
+
         $pdoQuery = $this->connection->prepare($query->toSql());
 
-        $pdoQuery->execute($this->resolveBindings($query));
+        $pdoQuery->execute($bindings);
 
         return $pdoQuery->fetchAll(PDO::FETCH_NAMED);
     }
@@ -89,8 +91,6 @@ final class GenericDatabase implements Database
             $callback();
 
             $this->transactionManager->commit();
-        } catch (PDOException) {
-            return false;
         } catch (Throwable) {
             $this->transactionManager->rollback();
 
