@@ -3,14 +3,21 @@
 namespace Tempest\Database;
 
 use Tempest\Container\Container;
-use Tempest\Container\Initializer;
+use Tempest\Container\DynamicInitializer;
 use Tempest\Database\Config\DatabaseConfig;
 use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
-final class DatabaseDialectInitializer implements Initializer
+final class DatabaseDialectInitializer implements DynamicInitializer
 {
-    public function initialize(Container $container): DatabaseDialect
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
-        return $container->get(DatabaseConfig::class)->dialect;
+        return $class->is(DatabaseDialect::class);
+    }
+
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
+    {
+        return $container->get(DatabaseConfig::class, $tag)->dialect;
     }
 }

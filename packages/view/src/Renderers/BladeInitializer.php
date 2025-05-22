@@ -10,12 +10,13 @@ use Tempest\Container\DynamicInitializer;
 use Tempest\Container\Singleton;
 use Tempest\Container\Tag;
 use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 use function Tempest\internal_storage_path;
 
 final readonly class BladeInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, ?string $tag): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         if (! class_exists(Blade::class)) {
             return false;
@@ -25,7 +26,7 @@ final readonly class BladeInitializer implements DynamicInitializer
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, ?string $tag, Container $container): object
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): object
     {
         $bladeConfig = $container->get(BladeConfig::class);
 

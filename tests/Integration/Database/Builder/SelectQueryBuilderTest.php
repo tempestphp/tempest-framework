@@ -7,6 +7,7 @@ namespace Tests\Tempest\Integration\Database\Builder;
 use Tempest\Database\Builder\QueryBuilders\SelectQueryBuilder;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\Migrations\CreateMigrationsTable;
+use Tempest\Database\Migrations\MigrationManager;
 use Tests\Tempest\Fixtures\Migrations\CreateAuthorTable;
 use Tests\Tempest\Fixtures\Migrations\CreateBookTable;
 use Tests\Tempest\Fixtures\Migrations\CreateChapterTable;
@@ -328,21 +329,6 @@ final class SelectQueryBuilderTest extends FrameworkIntegrationTestCase
         LEFT JOIN chapters ON chapters.book_id = books.id
         LEFT JOIN isbns ON isbns.book_id = books.id
         SQL, $query->toSql());
-    }
-
-    public function test_with_multiple_connections(): void
-    {
-        $this->container->config(new SQLiteConfig(
-            path: 'main.sqlite',
-            tag: 'main',
-        ));
-
-        $this->container->config(new SQLiteConfig(
-            path: 'backup.sqlite',
-            tag: 'backup',
-        ));
-
-        $this->migrate();
     }
 
     public function test_select_query_execute_with_relations(): void

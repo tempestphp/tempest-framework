@@ -12,32 +12,36 @@ use Tempest\Database\Connection\Connection;
 use Tempest\Database\Connection\PDOConnection;
 use Tempest\Database\Transactions\GenericTransactionManager;
 use Tempest\Reflection\ClassReflector;
+use UnitEnum;
 
 final readonly class DatabaseInitializer implements DynamicInitializer
 {
-    public function canInitialize(ClassReflector $class, ?string $tag): bool
+    public function canInitialize(ClassReflector $class, null|string|UnitEnum $tag): bool
     {
         return $class->getType()->matches(Database::class);
     }
 
     #[Singleton]
-    public function initialize(ClassReflector $class, ?string $tag, Container $container): Database
+    public function initialize(ClassReflector $class, null|string|UnitEnum $tag, Container $container): Database
     {
-        $container->singleton(Connection::class, function () use ($tag, $container) {
-            $config = $container->get(DatabaseConfig::class, $tag);
+        $container->singleton(
+            className: Connection::class,
+            definition: function () use ($tag, $container) {
+                $config = $container->get(DatabaseConfig::class, $tag);
 
-            $connection = new PDOConnection($config);
-            $connection->connect();
+                $connection = new PDOConnection($config);
+                $connection->connect();
 
-            return $connection;
-        });
+                return $connection;
+            },
+            tag: $tag,
+        );
 
-        $connection = $container->get(Connection::class);
+        $connection = $container->get(Connection::class, $tag);
 
         return new GenericDatabase(
             $connection,
             new GenericTransactionManager($connection),
-            $container->get(DatabaseConfig::class)->dialect,
         );
     }
 }

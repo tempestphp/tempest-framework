@@ -7,6 +7,7 @@ namespace Tempest\Database\Migrations;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
+use Tempest\Database\ChoosesDatabase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -21,20 +22,23 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Throwable;
-use UnitEnum;
 
+use function Tempest\Database\query;
 use function Tempest\event;
 
 final class MigrationManager
 {
+    use ChoosesDatabase;
+
     private Database $database {
-        get => $this->container->get(Database::class, $this->tag);
+        get => $this->container->get(Database::class, $this->inDatabase);
     }
 
-    private null|string|UnitEnum $tag = null;
+    private DatabaseDialect $dialect {
+        get => $this->container->get(DatabaseDialect::class, $this->inDatabase);
+    }
 
     public function __construct(
-        private readonly DatabaseDialect $dialect,
         private readonly RunnableMigrations $migrations,
         private readonly Container $container,
     ) {}
@@ -42,11 +46,11 @@ final class MigrationManager
     public function up(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
         } catch (PDOException $pdoException) {
             if ($this->dialect->isTableNotFoundError($pdoException)) {
                 $this->executeUp(new CreateMigrationsTable());
-                $existingMigrations = Migration::all();
+                $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
             } else {
                 throw $pdoException;
             }
@@ -69,7 +73,7 @@ final class MigrationManager
     public function down(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
         } catch (PDOException $pdoException) {
             if (! $this->dialect->isTableNotFoundError($pdoException)) {
                 throw $pdoException;
@@ -124,7 +128,9 @@ final class MigrationManager
     public function rehashAll(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()
+                ->inDatabase($this->inDatabase)
+                ->all();
         } catch (PDOException) {
             return;
         }
@@ -155,7 +161,7 @@ final class MigrationManager
     public function validate(): void
     {
         try {
-            $existingMigrations = Migration::all();
+            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
         } catch (PDOException) {
             return;
         }
@@ -214,9 +220,11 @@ final class MigrationManager
                 $this->database->execute($query);
             }
 
-            Migration::create(
-                name: $migration->name,
-                hash: $this->getMigrationHash($migration),
+            $this->database->execute(
+                query(Migration::class)->insert(
+                    name: $migration->name,
+                    hash: $this->getMigrationHash($migration),
+                ),
             );
         } catch (PDOException $pdoException) {
             event(new MigrationFailed($migration->name, $pdoException));

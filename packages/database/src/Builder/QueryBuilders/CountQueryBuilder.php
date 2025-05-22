@@ -6,6 +6,7 @@ namespace Tempest\Database\Builder\QueryBuilders;
 
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
+use Tempest\Database\ChoosesDatabase;
 use Tempest\Database\Exceptions\CannotCountDistinctWithoutSpecifyingAColumn;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\CountStatement;
@@ -17,7 +18,7 @@ use Tempest\Support\Conditions\HasConditions;
  */
 final class CountQueryBuilder implements BuildsQuery
 {
-    use HasConditions;
+    use HasConditions, ChoosesDatabase;
 
     private ?ModelDefinition $modelDefinition;
 
@@ -95,7 +96,8 @@ final class CountQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        return new Query($this->count, [...$this->bindings, ...$bindings]);
+        return new Query($this->count, [...$this->bindings, ...$bindings])
+            ->inDatabase($this->inDatabase);
     }
 
     private function resolveTable(string|object $model): TableDefinition
