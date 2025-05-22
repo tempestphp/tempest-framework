@@ -88,8 +88,7 @@ final class UpdateQueryBuilder implements BuildsQuery
             $bindings[] = $binding;
         }
 
-        return new Query($this->update, $bindings)
-            ->useDatabase($this->useDatabase);
+        return new Query($this->update, $bindings)->useDatabase($this->useDatabase);
     }
 
     private function resolveValues(): ImmutableArray

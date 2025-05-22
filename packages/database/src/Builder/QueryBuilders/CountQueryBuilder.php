@@ -96,8 +96,7 @@ final class CountQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        return new Query($this->count, [...$this->bindings, ...$bindings])
-            ->useDatabase($this->useDatabase);
+        return new Query($this->count, [...$this->bindings, ...$bindings])->useDatabase($this->useDatabase);
     }
 
     private function resolveTable(string|object $model): TableDefinition

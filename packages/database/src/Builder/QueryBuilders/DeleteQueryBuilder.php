@@ -69,7 +69,6 @@ final class DeleteQueryBuilder implements BuildsQuery
 
     public function build(mixed ...$bindings): Query
     {
-        return new Query($this->delete, [...$this->bindings, ...$bindings])
-            ->useDatabase($this->useDatabase);
+        return new Query($this->delete, [...$this->bindings, ...$bindings])->useDatabase($this->useDatabase);
     }
 }

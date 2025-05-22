@@ -74,8 +74,7 @@ final class InsertQueryBuilder implements BuildsQuery
             $this->insert->addEntry($data);
         }
 
-        return new Query($this->insert, $bindings)
-            ->useDatabase($this->useDatabase);
+        return new Query($this->insert, $bindings)->useDatabase($this->useDatabase);
     }
 
     public function then(Closure ...$callbacks): self

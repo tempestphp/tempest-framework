@@ -226,8 +226,7 @@ final class SelectQueryBuilder implements BuildsQuery
             $this->select->join[] = $relation->getJoinStatement();
         }
 
-        return new Query($this->select, [...$this->bindings, ...$bindings])
-            ->useDatabase($this->useDatabase);
+        return new Query($this->select, [...$this->bindings, ...$bindings])->useDatabase($this->useDatabase);
     }
 
     private function clone(): self
