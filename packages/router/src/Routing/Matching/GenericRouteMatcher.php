@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tempest\Router\Routing\Matching;
 
 use Psr\Http\Message\ServerRequestInterface as PsrRequest;
+use Tempest\Router\Exceptions\InvalidEnumParameterException;
+use Tempest\Router\Exceptions\NotFoundException;
 use Tempest\Router\MatchedRoute;
 use Tempest\Router\RouteConfig;
 use Tempest\Router\Routing\Construction\DiscoveredRoute;
@@ -59,7 +61,11 @@ final readonly class GenericRouteMatcher implements RouteMatcher
         $route = $routesForMethod[$matchResult->mark];
 
         // Extract the parameters based on the route and matches
-        $routeParams = $this->extractParams($route, $matchResult->matches);
+        try {
+            $routeParams = $this->extractParams($route, $matchResult->matches);
+        } catch (InvalidEnumParameterException) {
+            return null;
+        }
 
         return new MatchedRoute($route, $routeParams);
     }
@@ -81,6 +87,10 @@ final readonly class GenericRouteMatcher implements RouteMatcher
 
             if ($parameterReflector->getType()->isBackedEnum()) {
                 $value = $parameterReflector->getType()->asClass()->callStatic('tryFrom', $value);
+
+                if ($value === null) {
+                    throw new InvalidEnumParameterException($route->handler, $parameterReflector);
+                }
             }
 
             $valueMap[$param] = $value;

@@ -150,9 +150,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
             $this->assertStringContainsString('Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown', $cannotResolveTaggedDependency->getMessage());
         }
     }
-    
+
     public function test_with_migration_command(): void
     {
-        
     }
 }
