@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Database\Migrations;
 
 use PDOException;
+use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
@@ -20,15 +21,22 @@ use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
 use Throwable;
+use UnitEnum;
 
 use function Tempest\event;
 
-final readonly class MigrationManager
+final class MigrationManager
 {
+    private Database $database {
+        get => $this->container->get(Database::class, $this->tag);
+    }
+
+    private null|string|UnitEnum $tag = null;
+
     public function __construct(
-        private DatabaseDialect $dialect,
-        private Database $database,
-        private RunnableMigrations $migrations,
+        private readonly DatabaseDialect $dialect,
+        private readonly RunnableMigrations $migrations,
+        private readonly Container $container,
     ) {}
 
     public function up(): void
