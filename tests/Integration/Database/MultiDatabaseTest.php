@@ -3,6 +3,8 @@
 namespace Integration\Database;
 
 use Tempest\Container\Exceptions\CannotResolveTaggedDependency;
+use Tempest\Database\Config\DatabaseDialect;
+use Tempest\Database\Config\MysqlConfig;
 use Tempest\Database\Config\SQLiteConfig;
 use Tempest\Database\DatabaseInitializer;
 use Tempest\Database\Id;
@@ -113,6 +115,29 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $this->assertSame(1, query(Publisher::class)->count()->inDatabase('main')->execute());
         $this->assertSame(2, query(Publisher::class)->count()->inDatabase('backup')->execute());
+    }
+
+    public function test_with_different_dialects(): void
+    {
+        if ($this->container->get(DatabaseDialect::class) !== DatabaseDialect::MYSQL) {
+            $this->markTestSkipped('We only test this in the MySQL test action');
+        }
+
+        $this->container->config(new SQLiteConfig(
+            path: __DIR__ . '/Fixtures/main.sqlite',
+            tag: 'sqlite-main',
+        ));
+
+        $this->container->config(new MysqlConfig(
+            tag: 'mysql-main',
+        ));
+
+        $migrationManager = $this->container->get(MigrationManager::class);
+
+        $migrationManager->inDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->inDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
+
+        $this->expectNotToPerformAssertions();
     }
 
     public function test_fails_with_unknown_connection(): void
