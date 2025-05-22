@@ -183,7 +183,7 @@ final readonly class MigrationManager
         if ($statement instanceof CompoundStatement) {
             $statements = $statement->statements;
         } else {
-             $statements = [$statement];
+            $statements = [$statement];
         }
 
         if ($statement instanceof HasLeadingStatements) {

@@ -31,18 +31,19 @@ final class GenericDatabase implements Database
         $bindings = $this->resolveBindings($query);
 
         try {
-//            foreach (explode(';', $query->toSql()) as $sql) {
-//                if (! trim($sql)) {
-//                    continue;
-//                }
+            //            foreach (explode(';', $query->toSql()) as $sql) {
+            //                if (! trim($sql)) {
+            //                    continue;
+            //                }
 
-                $statement = $this->connection->prepare($query->toSql());
+            $statement = $this->connection->prepare($query->toSql());
 
-                $statement->execute($bindings);
+            $statement->execute($bindings);
 
-                $this->lastStatement = $statement;
-                $this->lastQuery = $query;
-//            }
+            $this->lastStatement = $statement;
+            $this->lastQuery = $query;
+
+            //            }
         } catch (PDOException $pdoException) {
             throw new QueryException($query, $bindings, $pdoException);
         }
