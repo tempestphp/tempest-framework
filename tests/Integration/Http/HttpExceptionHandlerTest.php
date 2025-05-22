@@ -143,6 +143,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
     public function test_exception_handler_runs_exception_processors(): void
     {
+        $this->exceptions->preventReporting(false);
+
         $this->container->get(AppConfig::class)->exceptionProcessors[] = NullExceptionProcessor::class;
 
         $thrown = new ExceptionWithContext();

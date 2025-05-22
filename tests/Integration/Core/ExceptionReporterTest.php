@@ -3,6 +3,7 @@
 namespace Tests\Tempest\Integration\Core;
 
 use Exception;
+use GPBMetadata\Google\Type\Expr;
 use Tempest\Core\AppConfig;
 use Tempest\Core\ExceptionReporter;
 use Tests\Tempest\Integration\FrameworkIntegrationTestCase;
@@ -16,6 +17,7 @@ final class ExceptionReporterTest extends FrameworkIntegrationTestCase
     {
         parent::setUp();
 
+        $this->exceptions->preventReporting(prevent: false);
         $this->container->get(AppConfig::class)->exceptionProcessors = [NullExceptionProcessor::class];
     }
 
