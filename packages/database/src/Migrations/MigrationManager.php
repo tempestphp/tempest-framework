@@ -197,6 +197,11 @@ final readonly class MigrationManager
         try {
             foreach ($statements as $statement) {
                 $sql = $statement->compile($this->dialect);
+
+                if (! trim($sql)) {
+                    continue;
+                }
+
                 $query = new Query($sql);
                 $this->database->execute($query);
             }
