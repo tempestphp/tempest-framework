@@ -71,11 +71,6 @@ abstract class FrameworkIntegrationTestCase extends IntegrationTest
         $this->rollbackDatabase();
     }
 
-    protected function tearDown(): void
-    {
-        //        $this->container->get(Connection::class)->close();
-    }
-
     protected function actAsConsoleApplication(string $command = ''): Application
     {
         $application = new ConsoleApplication(

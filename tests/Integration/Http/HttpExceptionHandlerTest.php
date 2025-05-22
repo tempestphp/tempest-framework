@@ -154,6 +154,8 @@ final class HttpExceptionHandlerTest extends FrameworkIntegrationTestCase
 
         $this->assertContains($thrown, NullExceptionProcessor::$exceptions);
         $this->assertArrayHasKey('foo', NullExceptionProcessor::$exceptions[0]->context());
+
+        NullExceptionProcessor::$exceptions = [];
     }
 
     private function callExceptionHandler(Closure $callback): void

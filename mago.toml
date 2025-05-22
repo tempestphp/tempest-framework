@@ -64,6 +64,11 @@ name = "strictness/require-return-type"
 ignore_arrow_function = true
 ignore_closure = true
 
+# https://github.com/carthage-software/mago/issues/206
+[[linter.rules]]
+name = "best-practices/literal-named-argument"
+level = "off"
+
 # https://github.com/carthage-software/mago/issues/146
 [[linter.rules]]
 name = "strictness/require-strict-types"
