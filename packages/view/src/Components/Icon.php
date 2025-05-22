@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Tempest\View\Components;
 
 use Exception;
-use Tempest\Cache\IconCache;
 use Tempest\Clock\Clock;
 use Tempest\Core\AppConfig;
 use Tempest\Http\Status;
 use Tempest\HttpClient\HttpClient;
 use Tempest\Support\Html\HtmlString;
 use Tempest\Support\Str\ImmutableString;
+use Tempest\View\IconCache;
 use Tempest\View\IconConfig;
 
 final readonly class Icon
@@ -84,7 +84,7 @@ final readonly class Icon
 
             return $this->iconCache->resolve(
                 key: "iconify-{$prefix}-{$name}",
-                cache: fn () => $this->download($prefix, $name),
+                callback: fn () => $this->download($prefix, $name),
                 expiresAt: $this->iconConfig->cacheDuration
                     ? $this->clock->now()->plusSeconds($this->iconConfig->cacheDuration)
                     : null,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tempest\Framework\Testing;
 
 use PHPUnit\Framework\TestCase;
+use Tempest\Cache\Testing\CacheTester;
 use Tempest\Clock\Clock;
 use Tempest\Clock\MockClock;
 use Tempest\Console\Testing\ConsoleTester;
@@ -50,6 +51,8 @@ abstract class IntegrationTest extends TestCase
 
     protected StorageTester $storage;
 
+    protected CacheTester $cache;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -70,6 +73,7 @@ abstract class IntegrationTest extends TestCase
         $this->installer = $this->container->get(InstallerTester::class);
         $this->eventBus = $this->container->get(EventBusTester::class);
         $this->storage = $this->container->get(StorageTester::class);
+        $this->cache = $this->container->get(CacheTester::class);
 
         $this->vite = $this->container->get(ViteTester::class);
         $this->vite->preventTagResolution();

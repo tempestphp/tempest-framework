@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Tempest\Integration\Core;
 
+use Tempest\Cache\Config\InMemoryCacheConfig;
 use Tempest\Console\Commands\AboutCommand;
 use Tempest\Core\AppConfig;
 use Tempest\Core\Kernel;
@@ -51,5 +52,23 @@ final class AboutCommandTest extends FrameworkIntegrationTestCase
         $this->console
             ->call(AboutCommand::class, ['json' => true])
             ->assertJson();
+    }
+
+    public function test_cache(): void
+    {
+        $this->console
+            ->call(AboutCommand::class)
+            ->assertSee('INTERNAL CACHES')
+            ->assertSee('USER CACHES')
+            ->assertSee('Filesystem,');
+    }
+
+    public function test_another_cache(): void
+    {
+        $this->container->config(new InMemoryCacheConfig());
+
+        $this->console
+            ->call(AboutCommand::class)
+            ->assertSee('In-memory,');
     }
 }
