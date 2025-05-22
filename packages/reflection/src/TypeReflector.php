@@ -151,10 +151,16 @@ final readonly class TypeReflector implements Reflector
 
     public function isEnum(): bool
     {
-        if ($this->matches(UnitEnum::class)) {
-            return true;
-        }
+        return $this->isUnitEnum() || $this->isBackedEnum();
+    }
 
+    public function isUnitEnum(): bool
+    {
+        return $this->matches(UnitEnum::class);
+    }
+
+    public function isBackedEnum(): bool
+    {
         return $this->matches(BackedEnum::class);
     }
 

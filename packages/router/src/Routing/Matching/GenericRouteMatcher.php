@@ -73,8 +73,17 @@ final readonly class GenericRouteMatcher implements RouteMatcher
     private function extractParams(DiscoveredRoute $route, array $routeMatches): array
     {
         $valueMap = [];
+
         foreach ($route->parameters as $i => $param) {
-            $valueMap[$param] = $routeMatches[$i + 1];
+            $value = $routeMatches[$i + 1];
+
+            $parameterReflector = $route->handler->getParameter($param);
+
+            if ($parameterReflector->getType()->isBackedEnum()) {
+                $value = $parameterReflector->getType()->asClass()->callStatic('tryFrom', $value);
+            }
+
+            $valueMap[$param] = $value;
         }
 
         return $valueMap;

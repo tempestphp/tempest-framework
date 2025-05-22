@@ -6,7 +6,6 @@ namespace Tempest\Router;
 
 use Tempest\Container\Container;
 use Tempest\Container\DynamicInitializer;
-use Tempest\Container\Tag;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Router\Exceptions\NotFoundException;
 use UnitEnum;
