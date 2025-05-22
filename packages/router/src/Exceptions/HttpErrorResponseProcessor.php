@@ -35,6 +35,9 @@ final readonly class HttpErrorResponseProcessor implements ResponseProcessor
             return $response;
         }
 
-        throw new HttpException(status: $response->status, response: $response);
+        throw new HttpException(
+            status: $response->status,
+            cause: $response,
+        );
     }
 }

@@ -13,7 +13,8 @@ final class HttpException extends Exception implements HasContext
     public function __construct(
         public readonly Status $status,
         ?string $message = null,
-        public readonly ?Response $response = null,
+        public readonly ?Response $cause = null,
+        public ?Response $response = null,
         ?\Throwable $previous = null,
     ) {
         parent::__construct($message ?: '', $status->value, $previous);
@@ -24,7 +25,7 @@ final class HttpException extends Exception implements HasContext
         return [
             'status' => $this->status->value,
             'message' => $this->message,
-            'response' => $this->response,
+            'cause' => $this->cause,
             'previous' => $this->getPrevious()?->getMessage(),
         ];
     }

@@ -205,7 +205,7 @@ final class FrameworkKernel implements Kernel
         // In development, we want to register a developer-friendly error
         // handler as soon as possible to catch any kind of exception.
         if (PHP_SAPI !== 'cli' && ! $environment->isProduction()) {
-            new RegisterEmergencyExceptionHandler($this->container)->register();
+            new RegisterEmergencyExceptionHandler()->register();
         }
 
         return $this;
@@ -220,25 +220,17 @@ final class FrameworkKernel implements Kernel
             return $this;
         }
 
-        // We need an exception handler for the CLI in every
-        // environment, and one for HTTP only in production.
-        $handler = match (true) {
-            PHP_SAPI === 'cli' => $this->container->get(ConsoleExceptionHandler::class),
-            $appConfig->environment->isProduction() => $this->container->get(HttpExceptionHandler::class),
-            default => null,
-        };
+        $handler = $this->container->get(ExceptionHandler::class);
 
-        if ($handler) {
-            set_exception_handler($handler->handle(...));
-            set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
-                new \ErrorException(
-                    message: $message,
-                    code: $code,
-                    filename: $filename,
-                    line: $line,
-                ),
-            ));
-        }
+        set_exception_handler($handler->handle(...));
+        set_error_handler(fn (int $code, string $message, string $filename, int $line) => $handler->handle(
+            new \ErrorException(
+                message: $message,
+                code: $code,
+                filename: $filename,
+                line: $line,
+            ),
+        ));
 
         return $this;
     }
