@@ -64,7 +64,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Main 1',
                 description: 'Description Main 1',
             )
-            ->inDatabase('main')
+            ->useDatabase('main')
             ->execute();
 
         query(Publisher::class)
@@ -73,7 +73,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Main 2',
                 description: 'Description Main 2',
             )
-            ->inDatabase('main')
+            ->useDatabase('main')
             ->execute();
 
         query(Publisher::class)
@@ -82,7 +82,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Backup 1',
                 description: 'Description Backup 1',
             )
-            ->inDatabase('backup')
+            ->useDatabase('backup')
             ->execute();
 
         query(Publisher::class)
@@ -91,11 +91,11 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
                 name: 'Backup 2',
                 description: 'Description Backup 2',
             )
-            ->inDatabase('backup')
+            ->useDatabase('backup')
             ->execute();
 
-        $publishersMain = query(Publisher::class)->select()->inDatabase('main')->all();
-        $publishersBackup = query(Publisher::class)->select()->inDatabase('backup')->all();
+        $publishersMain = query(Publisher::class)->select()->useDatabase('main')->all();
+        $publishersBackup = query(Publisher::class)->select()->useDatabase('backup')->all();
 
         $this->assertCount(2, $publishersMain);
         $this->assertSame('Main 1', $publishersMain[0]->name);
@@ -105,16 +105,16 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $this->assertSame('Backup 1', $publishersBackup[0]->name);
         $this->assertSame('Backup 2', $publishersBackup[1]->name);
 
-        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->inDatabase('main')->execute();
-        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->inDatabase('backup')->execute();
+        query(Publisher::class)->update(name: 'Updated Main 1')->where('id = ?', 1)->useDatabase('main')->execute();
+        query(Publisher::class)->update(name: 'Updated Backup 1')->where('id = ?', 1)->useDatabase('backup')->execute();
 
-        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->inDatabase('main')->first()->name);
-        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->inDatabase('backup')->first()->name);
+        $this->assertSame('Updated Main 1', query(Publisher::class)->select()->where('id = ?', 1)->useDatabase('main')->first()->name);
+        $this->assertSame('Updated Backup 1', query(Publisher::class)->select()->where('id = ?', 1)->useDatabase('backup')->first()->name);
 
-        query(Publisher::class)->delete()->where('id = ?', 1)->inDatabase('main')->execute();
+        query(Publisher::class)->delete()->where('id = ?', 1)->useDatabase('main')->execute();
 
-        $this->assertSame(1, query(Publisher::class)->count()->inDatabase('main')->execute());
-        $this->assertSame(2, query(Publisher::class)->count()->inDatabase('backup')->execute());
+        $this->assertSame(1, query(Publisher::class)->count()->useDatabase('main')->execute());
+        $this->assertSame(2, query(Publisher::class)->count()->useDatabase('backup')->execute());
     }
 
     public function test_with_different_dialects(): void

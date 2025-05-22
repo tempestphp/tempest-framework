@@ -7,7 +7,6 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\FieldDefinition;
 use Tempest\Database\Builder\ModelInspector;
-use Tempest\Database\ChoosesDatabase;
 use Tempest\Database\Id;
 use Tempest\Database\Mappers\SelectModelMapper;
 use Tempest\Database\Query;
@@ -17,6 +16,7 @@ use Tempest\Database\QueryStatements\OrderByStatement;
 use Tempest\Database\QueryStatements\RawStatement;
 use Tempest\Database\QueryStatements\SelectStatement;
 use Tempest\Database\QueryStatements\WhereStatement;
+use Tempest\Database\UsesDatabase;
 use Tempest\Support\Arr\ImmutableArray;
 use Tempest\Support\Conditions\HasConditions;
 use UnitEnum;
@@ -29,7 +29,7 @@ use function Tempest\map;
  */
 final class SelectQueryBuilder implements BuildsQuery
 {
-    use HasConditions, ChoosesDatabase;
+    use HasConditions, UsesDatabase;
 
     /** @var class-string<TModelClass> $modelClass */
     private readonly string $modelClass;
@@ -227,7 +227,7 @@ final class SelectQueryBuilder implements BuildsQuery
         }
 
         return new Query($this->select, [...$this->bindings, ...$bindings])
-            ->inDatabase($this->inDatabase);
+            ->useDatabase($this->useDatabase);
     }
 
     private function clone(): self

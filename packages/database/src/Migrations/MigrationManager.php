@@ -7,7 +7,6 @@ namespace Tempest\Database\Migrations;
 use PDOException;
 use Tempest\Container\Container;
 use Tempest\Database\Builder\ModelDefinition;
-use Tempest\Database\ChoosesDatabase;
 use Tempest\Database\Config\DatabaseDialect;
 use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
@@ -21,6 +20,7 @@ use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
+use Tempest\Database\UsesDatabase;
 use Throwable;
 
 use function Tempest\Database\query;
@@ -28,14 +28,14 @@ use function Tempest\event;
 
 final class MigrationManager
 {
-    use ChoosesDatabase;
+    use UsesDatabase;
 
     private Database $database {
-        get => $this->container->get(Database::class, $this->inDatabase);
+        get => $this->container->get(Database::class, $this->useDatabase);
     }
 
     private DatabaseDialect $dialect {
-        get => $this->container->get(DatabaseDialect::class, $this->inDatabase);
+        get => $this->container->get(DatabaseDialect::class, $this->useDatabase);
     }
 
     public function __construct(
@@ -46,11 +46,11 @@ final class MigrationManager
     public function up(): void
     {
         try {
-            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
+            $existingMigrations = Migration::select()->useDatabase($this->useDatabase)->all();
         } catch (PDOException $pdoException) {
             if ($this->dialect->isTableNotFoundError($pdoException)) {
                 $this->executeUp(new CreateMigrationsTable());
-                $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
+                $existingMigrations = Migration::select()->useDatabase($this->useDatabase)->all();
             } else {
                 throw $pdoException;
             }
@@ -73,7 +73,7 @@ final class MigrationManager
     public function down(): void
     {
         try {
-            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
+            $existingMigrations = Migration::select()->useDatabase($this->useDatabase)->all();
         } catch (PDOException $pdoException) {
             if (! $this->dialect->isTableNotFoundError($pdoException)) {
                 throw $pdoException;
@@ -129,7 +129,7 @@ final class MigrationManager
     {
         try {
             $existingMigrations = Migration::select()
-                ->inDatabase($this->inDatabase)
+                ->useDatabase($this->useDatabase)
                 ->all();
         } catch (PDOException) {
             return;
@@ -161,7 +161,7 @@ final class MigrationManager
     public function validate(): void
     {
         try {
-            $existingMigrations = Migration::select()->inDatabase($this->inDatabase)->all();
+            $existingMigrations = Migration::select()->useDatabase($this->useDatabase)->all();
         } catch (PDOException) {
             return;
         }

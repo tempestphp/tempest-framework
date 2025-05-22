@@ -5,12 +5,12 @@ namespace Tempest\Database\Builder\QueryBuilders;
 use Closure;
 use Tempest\Database\Builder\ModelDefinition;
 use Tempest\Database\Builder\TableDefinition;
-use Tempest\Database\ChoosesDatabase;
 use Tempest\Database\Exceptions\CannotInsertHasManyRelation;
 use Tempest\Database\Exceptions\CannotInsertHasOneRelation;
 use Tempest\Database\Id;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatements\InsertStatement;
+use Tempest\Database\UsesDatabase;
 use Tempest\Mapper\SerializerFactory;
 use Tempest\Reflection\ClassReflector;
 use Tempest\Support\Arr\ImmutableArray;
@@ -20,7 +20,7 @@ use function Tempest\Database\model;
 
 final class InsertQueryBuilder implements BuildsQuery
 {
-    use HasConditions, ChoosesDatabase;
+    use HasConditions, UsesDatabase;
 
     private InsertStatement $insert;
 
@@ -75,7 +75,7 @@ final class InsertQueryBuilder implements BuildsQuery
         }
 
         return new Query($this->insert, $bindings)
-            ->inDatabase($this->inDatabase);
+            ->useDatabase($this->useDatabase);
     }
 
     public function then(Closure ...$callbacks): self
