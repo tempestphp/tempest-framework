@@ -53,10 +53,10 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
     {
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        $migrationManager->inDatabase('main')->executeUp(new CreateMigrationsTable());
-        $migrationManager->inDatabase('main')->executeUp(new CreatePublishersTable());
-        $migrationManager->inDatabase('backup')->executeUp(new CreateMigrationsTable());
-        $migrationManager->inDatabase('backup')->executeUp(new CreatePublishersTable());
+        $migrationManager->useDatabase('main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->useDatabase('main')->executeUp(new CreatePublishersTable());
+        $migrationManager->useDatabase('backup')->executeUp(new CreateMigrationsTable());
+        $migrationManager->useDatabase('backup')->executeUp(new CreatePublishersTable());
 
         query(Publisher::class)
             ->insert(
@@ -134,8 +134,8 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
 
         $migrationManager = $this->container->get(MigrationManager::class);
 
-        $migrationManager->inDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
-        $migrationManager->inDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->useDatabase('sqlite-main')->executeUp(new CreateMigrationsTable());
+        $migrationManager->useDatabase('mysql-main')->executeUp(new CreateMigrationsTable());
 
         $this->expectNotToPerformAssertions();
     }
@@ -145,7 +145,7 @@ final class MultiDatabaseTest extends FrameworkIntegrationTestCase
         $migrationManager = $this->container->get(MigrationManager::class);
 
         try {
-            $migrationManager->inDatabase('unknown')->executeUp(new CreateMigrationsTable());
+            $migrationManager->useDatabase('unknown')->executeUp(new CreateMigrationsTable());
         } catch (CannotResolveTaggedDependency $cannotResolveTaggedDependency) {
             $this->assertStringContainsString('Could not resolve tagged dependency Tempest\Database\Config\DatabaseConfig#unknown', $cannotResolveTaggedDependency->getMessage());
         }
