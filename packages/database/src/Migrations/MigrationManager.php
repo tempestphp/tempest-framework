@@ -11,8 +11,11 @@ use Tempest\Database\Database;
 use Tempest\Database\DatabaseMigration as MigrationInterface;
 use Tempest\Database\DatabaseMigration;
 use Tempest\Database\Exceptions\QueryException;
+use Tempest\Database\HasLeadingStatements;
+use Tempest\Database\HasTrailingStatements;
 use Tempest\Database\Query;
 use Tempest\Database\QueryStatement;
+use Tempest\Database\QueryStatements\CompoundStatement;
 use Tempest\Database\QueryStatements\DropTableStatement;
 use Tempest\Database\QueryStatements\SetForeignKeyChecksStatement;
 use Tempest\Database\QueryStatements\ShowTablesStatement;
@@ -177,10 +180,26 @@ final readonly class MigrationManager
             return;
         }
 
-        $query = new Query($statement->compile($this->dialect));
+        if ($statement instanceof CompoundStatement) {
+            $statements = $statement->statements;
+        } else {
+             $statements = [$statement];
+        }
+
+        if ($statement instanceof HasLeadingStatements) {
+            $statements = [...$statement->leadingStatements, ...$statements];
+        }
+
+        if ($statement instanceof HasTrailingStatements) {
+            $statements = [...$statements, ...$statement->trailingStatements];
+        }
 
         try {
-            $this->database->execute($query);
+            foreach ($statements as $statement) {
+                $sql = $statement->compile($this->dialect);
+                $query = new Query($sql);
+                $this->database->execute($query);
+            }
 
             Migration::create(
                 name: $migration->name,

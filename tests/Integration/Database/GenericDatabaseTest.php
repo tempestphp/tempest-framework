@@ -60,7 +60,7 @@ final class GenericDatabaseTest extends FrameworkIntegrationTestCase
         $db = $this->container->get(Database::class);
         $db->execute(
             new Query(<<<SQL
-                INSERT INTO publishers ('name', 'description')
+                INSERT INTO publishers (`name`, `description`)
                 VALUES ('Foo', 'Bar; Baz;')
             SQL),
         );

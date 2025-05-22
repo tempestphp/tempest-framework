@@ -11,7 +11,8 @@ use function Tempest\Support\arr;
 
 final readonly class CompoundStatement implements QueryStatement
 {
-    private array $statements;
+    /** @var array|\Tempest\Database\QueryStatement[] */
+    private(set) array $statements;
 
     public function __construct(QueryStatement ...$statements)
     {
